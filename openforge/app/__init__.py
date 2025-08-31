@@ -26,6 +26,29 @@ def init_app(app: Flask):
     app.config["FILE_DOMAIN"] = os.environ.get(
         "FILE_DOMAIN", "https://objects.openforge.tools"
     )
+
+    # OAuth configuration
+    app.config["FRONTEND_URL"] = os.environ.get("FRONTEND_URL", "http://localhost:3000")
+    app.config["PATREON_CLIENT_ID"] = os.environ.get("PATREON_CLIENT_ID")
+    app.config["PATREON_CLIENT_SECRET"] = os.environ.get("PATREON_CLIENT_SECRET")
+    app.config["GOOGLE_CLIENT_ID"] = os.environ.get("GOOGLE_CLIENT_ID")
+    app.config["GOOGLE_CLIENT_SECRET"] = os.environ.get("GOOGLE_CLIENT_SECRET")
+
+    # Patreon tier mapping configuration
+    # These can be overridden in environment variables as JSON
+    if os.environ.get("PATREON_TIER_MAP"):
+        import json
+
+        app.config["PATREON_TIER_MAP"] = json.loads(os.environ["PATREON_TIER_MAP"])
+
+    if os.environ.get("PATREON_TIER_AMOUNTS"):
+        import json
+
+        app.config["PATREON_TIER_AMOUNTS"] = json.loads(
+            os.environ["PATREON_TIER_AMOUNTS"]
+        )
+
+    app.config["DB"] = db
     app.db = db
     app.session_service = SessionService(
         db, app.config["API_TOKEN"], app.config["SECRET_KEY"]
