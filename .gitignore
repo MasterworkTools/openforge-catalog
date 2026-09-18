@@ -63,3 +63,6 @@ tmp/
 coverage.xml
 
 .cursor
+
+# Patreon API credentials (client secret + tokens) — never commit
+.patreon

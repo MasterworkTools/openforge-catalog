@@ -2,6 +2,15 @@
 
 Each H2 below names a reviewer. The one-line summary tells the main loop **what the reviewer checks and when to spawn it** — use it to decide whether the PR diff is in scope. The body points at `.reviewers/<name>.md`, which the spawned Task reads as its complete specification.
 
+## general-reviewer
+
+**What it checks:** the whole PR, generalist pass — logic correctness against claims/docs (verified empirically, not by plausibility), domain/design soundness against upcoming beads tickets, contract fidelity against authoritative sources, cross-cutting interactions between the PR's parts, PR-body/docstring accuracy, design-level house style. Explicitly does NOT duplicate the specialist reviewers' dimensions.
+**When to spawn:** **every PR, every round** — this repo has no Gemini/Cursor, so this reviewer is the broad-coverage pass. Never skipped for scope; last to retire under diminishing returns. Posts a single structured PR comment (not line comments) and per-item verdicts on verification rounds.
+
+Read `.reviewers/general-reviewer.md` and follow it as your complete review specification.
+
+---
+
 ## complexity-reviewer
 
 **What it checks:** McCabe complexity > 10 (hard floor), the CLAUDE.md "And/Or" test and one-screen rule, nesting depth ≥ 4, parameter count > 5, class size > 20 public methods, nested ternaries, redundant single-call wrappers, generic identifiers in long functions. Covers Python and TypeScript/React.
@@ -128,10 +137,13 @@ Read `.reviewers/credentials-hygiene-reviewer.md` and follow it as your complete
 
 Each reviewer runs independently and reports findings without coordination. A reviewer's silence on something is not an endorsement — it just means that reviewer didn't see anything in its scope.
 
+**No external review bots on this repo.** Gemini Code Assist and Cursor Bugbot are not installed; do not burn `--wait` cycles polling for them. `general-reviewer` is the pack's broad-coverage substitute and spawns on every PR alongside the in-scope specialists.
+
 **Per-reviewer file scope:**
 
 | Reviewer | Files in scope |
 |----------|----------------|
+| `general-reviewer` | everything — spawns on every PR, every round |
 | `complexity-reviewer` | `*.py`, `*.ts`, `*.tsx` (skips tests) |
 | `error-handling-reviewer` | `*.py` (production code) |
 | `test-coverage-reviewer` | `*.py`, `src/**/*.ts(x)` |
@@ -146,7 +158,7 @@ Each reviewer runs independently and reports findings without coordination. A re
 | `js-async-reviewer` | `src/**/*.ts(x)` with async/promise code |
 | `credentials-hygiene-reviewer` | everything (auth code, fixtures, artifacts, `.gitignore`) |
 
-Skip reviewers whose file scope doesn't match the PR diff.
+Skip reviewers whose file scope doesn't match the PR diff. (`general-reviewer`'s scope is "everything," so it always matches — the skip rule never applies to it by construction.)
 
 ## Branch targeting
 
@@ -169,6 +181,8 @@ Every finding must be tagged with a beads-style priority:
 | **P3** | Advisory — deferrable with a beads ticket | Complexity heuristic findings, dead code, log-level nits, state-management patterns, utility duplication, docs for new env vars |
 
 **Default severity per reviewer:**
+
+- `general-reviewer`: maps its Critical/Medium/Minor sections to **P1/P2/P3**.
 
 - `credentials-hygiene-reviewer`, `resource-leak-reviewer` (DB connections): **P1** by default.
 - `error-handling-reviewer`: **P2** by default; **P1** for silent swallows and `return` in `finally`.
