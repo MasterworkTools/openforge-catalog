@@ -24,9 +24,10 @@ fi
 SOURCE_ENV=$(aws lambda get-function-configuration --profile "$SOURCE_PROFILE" \
   --function-name "$SOURCE_FUNCTION" --query 'Environment.Variables' --output json)
 
-SECRET_JSON=$(python3 - "$SOURCE_ENV" <<'PY'
-import json, secrets, sys
-src = json.loads(sys.argv[1])
+# Secrets travel by stdin and environment, never argv (argv is world-readable in /proc).
+SECRET_JSON=$(SOURCE_ENV="$SOURCE_ENV" python3 - <<'PY'
+import json, os, secrets, sys
+src = json.loads(os.environ["SOURCE_ENV"])
 out = {
     "API_TOKEN": secrets.token_urlsafe(32),
     "SECRET_KEY": secrets.token_urlsafe(48),
@@ -41,7 +42,7 @@ PY
 
 aws secretsmanager create-secret --profile "$PROFILE" --name "$SECRET_NAME" \
   --description "openforge-catalog ${ENVIRONMENT} runtime secrets (read by terraform/environments/${ENVIRONMENT})" \
-  --secret-string "$SECRET_JSON" --query ARN --output text
+  --secret-string file:///dev/stdin --query ARN --output text <<<"$SECRET_JSON"
 
 # Verification without disclosure: key names and value lengths.
-python3 -c 'import json,sys; d=json.loads(sys.argv[1]); print({k: len(v) for k, v in d.items()})' "$SECRET_JSON"
+python3 -c 'import json,sys; d=json.load(sys.stdin); print({k: len(v) for k, v in d.items()})' <<<"$SECRET_JSON"

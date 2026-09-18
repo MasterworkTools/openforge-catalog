@@ -18,20 +18,16 @@ locals {
 
 # ─── Runtime secrets ──────────────────────────────────────────────────────────
 # openforge-catalog/production/app is created once by scripts/create-app-secret.sh
-# (API_TOKEN, SECRET_KEY, CLOUDFLARE_*). The database password is the RDS-managed
-# master secret from the baseline.
+# (API_TOKEN, SECRET_KEY, CLOUDFLARE_*). The database password is NOT copied here:
+# the RDS-managed master secret can rotate, so the Lambda reads it at cold start
+# from DB_SECRET_ARN (openforge/db/__init__.py).
 
 data "aws_secretsmanager_secret_version" "app" {
   secret_id = "${local.name}/production/app"
 }
 
-data "aws_secretsmanager_secret_version" "db" {
-  secret_id = local.infra.db_secret_arn
-}
-
 locals {
   app_secret = jsondecode(data.aws_secretsmanager_secret_version.app.secret_string)
-  db_secret  = jsondecode(data.aws_secretsmanager_secret_version.db.secret_string)
 }
 
 # ─── API Lambda ───────────────────────────────────────────────────────────────
@@ -58,6 +54,19 @@ resource "aws_iam_role_policy_attachment" "api_vpc" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
 }
 
+data "aws_iam_policy_document" "api_db_secret" {
+  statement {
+    actions   = ["secretsmanager:GetSecretValue"]
+    resources = [local.infra.db_secret_arn]
+  }
+}
+
+resource "aws_iam_role_policy" "api_db_secret" {
+  name   = "${local.name}-api-db-secret"
+  role   = aws_iam_role.api.id
+  policy = data.aws_iam_policy_document.api_db_secret.json
+}
+
 resource "aws_cloudwatch_log_group" "api" {
   name              = "/aws/lambda/${local.name}-api"
   retention_in_days = 30
@@ -69,8 +78,12 @@ resource "aws_lambda_function" "api" {
   package_type  = "Image"
   image_uri     = "${local.infra.ecr_repository_urls["openforge_catalog/api"]}:${var.image_tag}"
   architectures = ["x86_64"]
-  memory_size   = 128 # as staging runs it
+  memory_size   = 128 # as staging runs it (openforge_catalog-gvw: tune after Power Tuning)
   timeout       = 30
+
+  # Each warm container holds a 4-connection pool; 50 containers is 200 sessions,
+  # well under Aurora's cap, and bounds a traffic burst's Lambda bill.
+  reserved_concurrent_executions = 50
 
   vpc_config {
     subnet_ids         = local.infra.subnet_ids
@@ -80,7 +93,7 @@ resource "aws_lambda_function" "api" {
   environment {
     variables = {
       PGHOST                       = local.infra.db_cluster_endpoint
-      PGPASSWORD                   = local.db_secret.password
+      DB_SECRET_ARN                = local.infra.db_secret_arn
       API_TOKEN                    = local.app_secret.API_TOKEN
       SECRET_KEY                   = local.app_secret.SECRET_KEY
       CLOUDFLARE_ENDPOINT          = local.app_secret.CLOUDFLARE_ENDPOINT

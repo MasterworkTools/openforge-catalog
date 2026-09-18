@@ -203,7 +203,11 @@ runs `tofu apply -var image_tag=<sha>` after the image push and before the S3 sy
 merge to `main` deploys the image it just built. Release PRs get a plan comment from the
 `Production Plan` workflow. Runtime secrets live in Secrets Manager
 (`openforge-catalog/production/app`, created once by `scripts/create-app-secret.sh`), never
-in the repo. Staging's hand-built Lambda and ALB are not yet under tofu.
+in the repo; the database password is read at cold start from `DB_SECRET_ARN` so the
+RDS-managed secret may rotate. Prerequisites, once per account: the app secret, and the
+repo-level GitHub secret `AWS_ROLE_ARN_PRODUCTION` = openforge-infra's
+`deploy_role_arns["openforge-catalog"]` (read by both the `production` and `production-plan`
+environments). Staging's hand-built Lambda and ALB are not yet under tofu.
 
 ### Code Review Process
 1. **Initial development**: Written in Cursor

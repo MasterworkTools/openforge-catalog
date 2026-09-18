@@ -5,7 +5,7 @@ on:
     branches: [main]
 concurrency:
   group: ${{ github.head_ref || github.ref_name }}
-  cancel-in-progress: true
+  cancel-in-progress: false # a cancelled tofu apply leaves a half-applied state and a held lock
 permissions:
   id-token: write
   contents: read
