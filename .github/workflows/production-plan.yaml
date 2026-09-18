@@ -1,0 +1,58 @@
+name: Production Plan
+
+# Release PRs (test -> main) get a production plan posted, so the apply that
+# runs on merge has been read first. image_tag is the PR head sha: the image
+# does not exist yet, so the plan shows the Lambda image change it will make.
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+  pull-requests: write
+  id-token: write
+
+jobs:
+  plan:
+    name: Plan — production
+    runs-on: ubuntu-latest
+    environment: production-plan
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Configure Production deploy role
+        uses: aws-actions/configure-aws-credentials@v5
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN_PRODUCTION }}
+          role-session-name: production-tofu-plan
+          aws-region: us-east-1
+
+      - uses: opentofu/setup-opentofu@v1
+        with:
+          tofu_version: "1.9.0"
+          tofu_wrapper: false
+
+      - name: tofu plan
+        working-directory: terraform/environments/production
+        run: |
+          tofu init -input=false
+          tofu validate
+          tofu plan -input=false -no-color -lock=false -var image_tag=${{ github.event.pull_request.head.sha }} 2>&1 | tee plan-output.txt
+          exit ${PIPESTATUS[0]}
+
+      - name: Post plan to PR
+        uses: actions/github-script@v8
+        if: always()
+        with:
+          script: |
+            const fs = require('fs');
+            const file = 'terraform/environments/production/plan-output.txt';
+            const out = fs.existsSync(file) ? fs.readFileSync(file, 'utf8') : 'plan did not run (init or credentials failed) — see the job log';
+            const text = out.length > 60000 ? out.substring(0, 60000) + '\n\n...(truncated)' : out;
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `## Tofu Plan — production\n\n<details>\n<summary>Show Plan</summary>\n\n\`\`\`\n${text}\n\`\`\`\n</details>`,
+            });

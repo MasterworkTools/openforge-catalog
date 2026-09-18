@@ -143,10 +143,42 @@ jobs:
           provenance: false
           tags: "908027381953.dkr.ecr.us-east-1.amazonaws.com/openforge_catalog/api:${{ github.sha }}"
 
-  frontend-deploy:
-    name: Production Frontend Deploy
+  tofu-apply:
+    name: Production Tofu Apply
     needs: docker-build
     if: ${{ needs.docker-build.result == 'success' }}
+    runs-on: ubuntu-latest
+    environment: production
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Configure Production deploy role
+        uses: aws-actions/configure-aws-credentials@v5
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN_PRODUCTION }}
+          role-session-name: production-tofu
+          aws-region: us-east-1
+
+      - uses: opentofu/setup-opentofu@v1
+        with:
+          tofu_version: "1.9.0"
+          tofu_wrapper: false
+
+      # Deploys the image this run just pushed: the Lambda's image_uri is the git sha.
+      - name: tofu apply
+        working-directory: terraform/environments/production
+        run: |
+          tofu init -input=false
+          tofu plan -input=false -no-color -var image_tag=${{ github.sha }} -out=tfplan
+          tofu apply -input=false -auto-approve tfplan
+
+  frontend-deploy:
+    name: Production Frontend Deploy
+    needs: tofu-apply
+    if: ${{ needs.tofu-apply.result == 'success' }}
     runs-on: ubuntu-latest
     permissions:
       id-token: write
