@@ -23,7 +23,7 @@ class FakeSecretsManager:
 def _fake_boto3(monkeypatch, client):
     import boto3
 
-    monkeypatch.setattr(boto3, "client", lambda service: client)
+    monkeypatch.setattr(boto3, "client", lambda service, **kwargs: client)
 
 
 def test_db_secret_arn_supplies_the_password(monkeypatch):

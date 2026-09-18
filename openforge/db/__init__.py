@@ -89,8 +89,13 @@ def _password_from_secret(arn):
     pass a reconnect hook to ConnectionPool if rotation is ever enabled.
     """
     import boto3  # only Lambda sets DB_SECRET_ARN; keep the import off the CLI path
+    from botocore.config import Config
 
-    secret = boto3.client("secretsmanager").get_secret_value(SecretId=arn)
+    # Fail fast if the VPC has no path to Secrets Manager: botocore's default
+    # 60 s connect timeout would outlast the function timeout and hide the cause.
+    fast_fail = Config(connect_timeout=3, retries={"max_attempts": 2})
+    client = boto3.client("secretsmanager", config=fast_fail)
+    secret = client.get_secret_value(SecretId=arn)
     return json.loads(secret["SecretString"])["password"]
 
 
