@@ -195,6 +195,20 @@ gh pr create --base test --title "feat: my feature"
 gh pr create --base main --title "release: deploy to production"
 ```
 
+### Production infrastructure (`terraform/environments/production`)
+
+The API Lambda, its ALB, and the frontend bucket are OpenTofu in this repo, layered on
+openforge-infra's state (network, Aurora, ECR, deploy role). The `Production` workflow
+runs `tofu apply -var image_tag=<sha>` after the image push and before the S3 sync, so a
+merge to `main` deploys the image it just built. Release PRs get a plan comment from the
+`Production Plan` workflow. Runtime secrets live in Secrets Manager
+(`openforge-catalog/production/app`, created once by `scripts/create-app-secret.sh`), never
+in the repo; the database password is read at cold start from `DB_SECRET_ARN` so the
+RDS-managed secret may rotate. Prerequisites, once per account: the app secret, and the
+repo-level GitHub secret `AWS_ROLE_ARN_PRODUCTION` = openforge-infra's
+`deploy_role_arns["openforge-catalog"]` (read by both the `production` and `production-plan`
+environments). Staging's hand-built Lambda and ALB are not yet under tofu.
+
 ### Code Review Process
 1. **Initial development**: Written in Cursor
 2. **PR creation**: Push to GitHub

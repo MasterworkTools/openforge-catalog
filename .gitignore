@@ -66,3 +66,15 @@ coverage.xml
 
 # Patreon API credentials (client secret + tokens) — never commit
 .patreon
+
+# OpenTofu
+.terraform/
+*.tfplan
+tfplan
+plan-output.txt
+
+*.tfstate
+*.tfstate.*
+crash.log
+crash.*.log
+*.auto.tfvars

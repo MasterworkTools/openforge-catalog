@@ -1,4 +1,6 @@
+import json
 import logging
+from urllib.parse import quote
 
 import psycopg
 from flask import current_app
@@ -62,6 +64,8 @@ def db_url(vars, ext_logger=None):
         args["user"] = vars["PGUSER"]
     if "PGPASSWORD" in vars:
         args["password"] = vars["PGPASSWORD"]
+    elif "DB_SECRET_ARN" in vars:
+        args["password"] = _password_from_secret(vars["DB_SECRET_ARN"])
     if "PGHOST" in vars:
         args["host"] = vars["PGHOST"]
     if "PGPORT" in vars:
@@ -71,7 +75,28 @@ def db_url(vars, ext_logger=None):
     if "LOG_LEVEL" in vars:
         LOGGER.setLevel(vars["LOG_LEVEL"])
 
-    return f"postgresql://{args['user']}:{args['password']}@{args['host']}:{args['port']}/{args['database']}"
+    # libpq percent-decodes the URI, so a password containing '%' must be encoded.
+    password = quote(args["password"], safe="")
+    return f"postgresql://{args['user']}:{password}@{args['host']}:{args['port']}/{args['database']}"
+
+
+def _password_from_secret(arn):
+    """Read the password from an RDS-managed Secrets Manager secret.
+
+    Fetched once per process (the pool is built at init), so a rotated
+    password reaches new Lambda containers without a redeploy.
+    ponytail: warm containers keep the old password until they recycle;
+    pass a reconnect hook to ConnectionPool if rotation is ever enabled.
+    """
+    import boto3  # only Lambda sets DB_SECRET_ARN; keep the import off the CLI path
+    from botocore.config import Config
+
+    # Fail fast if the VPC has no path to Secrets Manager: botocore's default
+    # 60 s connect timeout would outlast the function timeout and hide the cause.
+    fast_fail = Config(connect_timeout=3, retries={"max_attempts": 2})
+    client = boto3.client("secretsmanager", config=fast_fail)
+    secret = client.get_secret_value(SecretId=arn)
+    return json.loads(secret["SecretString"])["password"]
 
 
 def get_logger():
