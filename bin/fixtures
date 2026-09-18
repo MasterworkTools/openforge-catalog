@@ -2,17 +2,52 @@
 import os
 import sys
 
-from openforge.db import PgDB
-from openforge.db.fixtures import load_fixtures
-
 import click
+
+from openforge.db import PgDB
+from openforge.db.fixtures import find_fixtures, load_fixtures
 
 
 @click.command()
-def main():
-    db = PgDB(os.environ)
-    with db.pool.connection() as conn:
-        load_fixtures(conn)
+@click.option("--alt", default="")
+@click.option("--fixture", help="Load only the specified fixture file")
+@click.option(
+    "--full-replacement",
+    is_flag=True,
+    help="Use full replacement mode (wipes all data)",
+)
+@click.option("--dry-run", is_flag=True, help="Preview changes without applying")
+@click.option("--verbose", is_flag=True, help="Enable verbose debug output")
+def main(alt, fixture, full_replacement, dry_run, verbose):
+    with PgDB(os.environ) as db:
+        with db.pool.connection() as conn:
+            if fixture:
+                # If fixture is specified, only load that file
+                ffiles = [
+                    f for f in find_fixtures(alt) if os.path.basename(f) == fixture
+                ]
+                if not ffiles:
+                    sys.stderr.write(
+                        f"Fixture {fixture} not found in fixtures directory\n"
+                    )
+                    sys.exit(1)
+                load_fixtures(
+                    conn,
+                    alt,
+                    ffiles,
+                    incremental=not full_replacement,
+                    dry_run=dry_run,
+                    verbose=verbose,
+                )
+            else:
+                # Otherwise load all fixtures
+                load_fixtures(
+                    conn,
+                    alt,
+                    incremental=not full_replacement,
+                    dry_run=dry_run,
+                    verbose=verbose,
+                )
 
 
 if __name__ == "__main__":

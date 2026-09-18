@@ -1,0 +1,157 @@
+BlueprintDocumentation:
+  type: object
+  properties:
+    id:
+      type: string
+      pattern: "^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$"
+    blueprint_id:
+      type: string
+      pattern: "^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$"
+    document:
+      type: string
+      description: Documentation content (markdown supported)
+    document_type:
+      type: string
+      enum: [changelog, instructions]
+      description: Type of documentation
+    is_live:
+      type: boolean
+      description: Whether this documentation is live and visible to users
+      default: true
+    created_at:
+      type: string
+      format: date-time
+    updated_at:
+      type: string
+      format: date-time
+  required:
+    - blueprint_id
+    - document
+    - document_type
+    - is_live
+  additionalProperties: false
+
+BlueprintDocumentationList:
+  type: object
+  properties:
+    documentation:
+      type: array
+      items:
+        $ref: '#/components/schemas/BlueprintDocumentation'
+  required:
+    - documentation
+  additionalProperties: false
+
+BlueprintDocumentationCreate:
+  type: object
+  properties:
+    document:
+      type: string
+      description: Documentation content (markdown supported)
+    document_type:
+      type: string
+      enum: [changelog, instructions]
+      description: Type of documentation
+    is_live:
+      type: boolean
+      description: Whether this documentation is live and visible to users
+      default: true
+  required:
+    - document
+    - document_type
+  additionalProperties: false
+
+BlueprintDocumentationUpdate:
+  type: object
+  properties:
+    document:
+      type: string
+      description: Documentation content (markdown supported)
+    document_type:
+      type: string
+      enum: [changelog, instructions]
+      description: Type of documentation
+    is_live:
+      type: boolean
+      description: Whether this documentation is live and visible to users
+  required:
+    - document
+  additionalProperties: false
+
+ChangelogHistory:
+  type: object
+  properties:
+    changelogs:
+      type: array
+      items:
+        type: object
+        properties:
+          blueprint_id:
+            type: string
+            pattern: "^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$"
+          blueprint_name:
+            type: string
+          changelog:
+            type: string
+            nullable: true
+            description: Changelog content or null if no changelog exists
+          created_at:
+            type: string
+            format: date-time
+            nullable: true
+            description: When changelog was created or null if no changelog exists
+          depth:
+            type: integer
+            description: Depth in the changelog chain (0 = current blueprint)
+          successor_id:
+            type: string
+            pattern: "^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$"
+            nullable: true
+            description: ID of the successor blueprint in the chain
+          deprecated:
+            type: boolean
+            description: Whether this blueprint version is deprecated
+    has_more:
+      type: boolean
+      description: Whether there are more changelogs available
+    total_count:
+      type: integer
+      description: Total number of changelogs in the history
+  required:
+    - changelogs
+    - has_more
+    - total_count
+  additionalProperties: false
+
+CombinedBlueprintDocumentation:
+  type: object
+  properties:
+    blueprint_id:
+      type: string
+      pattern: "^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$"
+      description: ID of the blueprint
+    blueprint_name:
+      type: string
+      description: Name of the blueprint
+    blueprint_documentation:
+      type: array
+      items:
+        $ref: '#/components/schemas/BlueprintDocumentation'
+      description: All documentation entries for this blueprint
+    changelog_history:
+      $ref: '#/components/schemas/ChangelogHistory'
+      description: Recursive changelog history through successor chain
+    tag_documentation:
+      type: object
+      additionalProperties:
+        type: array
+        items:
+          $ref: '../tag_documentation.yaml#/components/schemas/TagDocumentation'
+      description: 'Documentation for all tags associated with this blueprint, keyed by tag (e.g., "texture|dungeon_stone": [TagDocumentation[]])'
+  required:
+    - blueprint_id
+    - blueprint_name
+    - blueprint_documentation
+    - changelog_history
+    - tag_documentation
+  additionalProperties: false

@@ -1,0 +1,241 @@
+#!/usr/bin/env python
+"""Generate multi-angle sprite sheet for STL file.
+
+This script generates a sprite sheet with 10 isometric camera angles for a
+single STL file. Can optionally upload to R2 and update the database.
+
+Usage:
+    ./generate_sprite path/to/model.stl
+    ./generate_sprite path/to/model.stl --upload --db-update
+    ./generate_sprite path/to/model.stl --dry-run
+"""
+
+import hashlib
+import json
+import os
+import subprocess
+import sys
+
+import click
+
+from openforge.data.io import create_sprite_sheet, get_s3_client, upload_file
+
+
+def _validate_args(ctx, stl_file, upload, dry_run):
+    """Validate command-line arguments and adjust flags as needed.
+
+    Returns:
+        bool: upload flag (adjusted if needed)
+    """
+    if not stl_file.endswith(".stl"):
+        sys.stderr.write("Error: Input file must be an STL file (.stl extension)\n")
+        ctx.exit(1)
+
+    if dry_run and upload:
+        sys.stderr.write("Warning: --dry-run mode, ignoring --upload flag\n")
+        upload = False
+
+    return upload
+
+
+def _calculate_file_md5(stl_file):
+    """Calculate MD5 hash of a file using chunked reading.
+
+    Args:
+        stl_file: Path to the file
+
+    Returns:
+        str: MD5 hash as hex string
+    """
+    md5_hash = hashlib.md5()
+    with open(stl_file, "rb") as f:
+        for chunk in iter(lambda: f.read(4096), b""):
+            md5_hash.update(chunk)
+    return md5_hash.hexdigest()
+
+
+def _upload_sprite_to_r2(ctx, sprite_path, stl_file, verbose):
+    """Upload sprite sheet to Cloudflare R2.
+
+    Args:
+        ctx: Click context for exit
+        sprite_path: Path to the generated sprite sheet
+        stl_file: Path to the original STL file (for MD5 calculation)
+        verbose: Whether to print verbose output
+
+    Returns:
+        str: URL of the uploaded sprite, or None on error
+    """
+    if verbose:
+        sys.stderr.write("Uploading sprite sheet to R2...\n")
+
+    try:
+        config = {
+            key: os.environ.get(key)
+            for key in [
+                "CLOUDFLARE_ENDPOINT",
+                "AWS_ACCESS_KEY_ID",
+                "AWS_SECRET_ACCESS_KEY",
+                "FILE_DOMAIN",
+                "S3_BUCKET_NAME",
+            ]
+        }
+        s3_client = get_s3_client(config)
+
+        # Calculate MD5 for the STL file
+        md5 = _calculate_file_md5(stl_file)
+
+        file_metadata = {"md5": md5}
+        sprite_key = upload_file(
+            file_metadata, sprite_path, s3_client, "sprites", None, config, verbose
+        )
+        sprite_url = f"{config.get('FILE_DOMAIN', '')}/{sprite_key}"
+
+        if verbose:
+            sys.stderr.write(f"Uploaded to: {sprite_url}\n")
+
+        return sprite_url
+
+    except KeyError as e:
+        sys.stderr.write(f"Error: Missing environment variable: {e}\n")
+        sys.stderr.write(
+            "Required: CLOUDFLARE_ENDPOINT, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY\n"
+        )
+        raise
+    except Exception as e:
+        sys.stderr.write(f"Error uploading sprite sheet: {e}\n")
+        if verbose:
+            import traceback
+
+            traceback.print_exc()
+        raise
+
+
+def _print_json_output(sprite_path, sprite_url, sprite_metadata):
+    """Print sprite metadata as JSON for fixture integration.
+
+    Args:
+        sprite_path: Local path to sprite file
+        sprite_url: R2 URL of sprite (or None)
+        sprite_metadata: Sprite metadata dictionary
+    """
+    output = {
+        "sprite_path": sprite_path,
+        "sprite_url": sprite_url,
+        "sprite_metadata": sprite_metadata,
+    }
+    print(json.dumps(output, indent=2))
+
+
+def _print_human_output(sprite_path, sprite_url, sprite_metadata):
+    """Print human-readable sprite information.
+
+    Args:
+        sprite_path: Local path to sprite file
+        sprite_url: R2 URL of sprite (or None)
+        sprite_metadata: Sprite metadata dictionary
+    """
+    print("Sprite sheet generated successfully!")
+    print(f"  Local path: {sprite_path}")
+    if sprite_url:
+        print(f"  R2 URL: {sprite_url}")
+    grid = f"{sprite_metadata['grid_rows']}x{sprite_metadata['grid_cols']}"
+    tile = f"{sprite_metadata['tile_size']}x{sprite_metadata['tile_size']}"
+    print(f"  Grid: {grid}")
+    print(f"  Tile size: {tile}")
+    print(f"  Angles: {len(sprite_metadata['angles'])}")
+    print(f"  Default angle: {sprite_metadata['default_angle']}")
+
+
+def _cleanup_local_file(sprite_path, verbose):
+    """Remove local sprite file after successful upload.
+
+    Args:
+        sprite_path: Path to the sprite file to remove
+        verbose: Whether to print verbose output
+    """
+    if os.path.exists(sprite_path):
+        if verbose:
+            sys.stderr.write(f"Cleaning up local sprite file: {sprite_path}\n")
+        os.remove(sprite_path)
+
+
+@click.command()
+@click.argument("stl_file", type=click.Path(exists=True))
+@click.option(
+    "--tile-size", default=512, type=int, help="Size of each square tile (default 512)"
+)
+@click.option(
+    "--upload", is_flag=True, help="Upload sprite sheet to R2 (requires credentials)"
+)
+@click.option(
+    "--dry-run",
+    is_flag=True,
+    help="Generate sprite locally but don't upload",
+)
+@click.option("--verbose", is_flag=True, help="Enable verbose output")
+@click.option(
+    "--output-json",
+    is_flag=True,
+    help="Output sprite metadata as JSON (for fixture integration)",
+)
+@click.pass_context
+def main(ctx, stl_file, tile_size, upload, dry_run, verbose, output_json):
+    """Generate multi-angle sprite sheet for an STL file.
+
+    STL_FILE: Path to the STL file to process
+    """
+    # Validate arguments
+    upload = _validate_args(ctx, stl_file, upload, dry_run)
+
+    # Generate sprite sheet
+    if verbose:
+        sys.stderr.write(f"Generating sprite sheet for {stl_file}...\n")
+        sys.stderr.write(f"Tile size: {tile_size}x{tile_size}\n")
+
+    try:
+        sprite_path, sprite_metadata = create_sprite_sheet(stl_file, tile_size)
+    except subprocess.CalledProcessError as e:
+        sys.stderr.write(f"Error running stl-thumb: {e}\n")
+        sys.stderr.write(f"STDERR:\n{e.stderr}\n")
+        ctx.exit(1)
+    except Exception as e:
+        sys.stderr.write(f"Error generating sprite sheet: {e}\n")
+        if verbose:
+            import traceback
+
+            traceback.print_exc()
+        ctx.exit(1)
+
+    if verbose:
+        sys.stderr.write(f"Sprite sheet generated: {sprite_path}\n")
+        grid = f"{sprite_metadata['grid_rows']}x{sprite_metadata['grid_cols']}"
+        sys.stderr.write(f"Grid: {grid}\n")
+        sys.stderr.write(f"Angles: {len(sprite_metadata['angles'])}\n")
+
+    try:
+        # Upload to R2 if requested
+        sprite_url = None
+        if upload:
+            sprite_url = _upload_sprite_to_r2(ctx, sprite_path, stl_file, verbose)
+        elif verbose:
+            sys.stderr.write("Skipping upload (use --upload flag to enable)\n")
+
+        # Output results
+        if output_json:
+            _print_json_output(sprite_path, sprite_url, sprite_metadata)
+        else:
+            _print_human_output(sprite_path, sprite_url, sprite_metadata)
+    except Exception:
+        # The error is already printed in the helper function.
+        ctx.exit(1)
+    finally:
+        # Clean up local file if uploaded (or on error during upload)
+        if upload:
+            _cleanup_local_file(sprite_path, verbose)
+
+    ctx.exit(0)
+
+
+if __name__ == "__main__":
+    sys.exit(main())

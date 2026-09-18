@@ -1,11 +1,13 @@
 #!/usr/bin/env python
 import os
 
-from openforge.db import PgDB
-from openforge.db.schema import get_schema_versions, get_current_schema_version
-from openforge.db.schema import SchemaBase
-
 import click
+
+from openforge.db import PgDB
+from openforge.db.schema import (
+    get_current_schema_version,
+    get_schema_versions,
+)
 
 
 @click.group()
@@ -19,10 +21,10 @@ def cli(ctx, debug):
 @cli.command()
 @click.pass_context
 def up(ctx):
-    db = PgDB(os.environ)
+    db = PgDB(os.environ, use_pool=False)
     versions = get_schema_versions()
     for schema in versions:
-        with db.pool.connection() as conn:
+        with db.connection() as conn:
             result = schema(conn).up()
             if result:
                 conn.commit()
@@ -34,10 +36,10 @@ def up(ctx):
 @click.argument("ver", type=int)
 @click.pass_context
 def down(ctx, ver):
-    db = PgDB(os.environ)
+    db = PgDB(os.environ, use_pool=False)
     versions = get_schema_versions()
     for schema in reversed(versions):
-        with db.pool.connection() as conn:
+        with db.connection() as conn:
             result = schema(conn).down(ver)
             if result:
                 conn.commit()
@@ -48,16 +50,15 @@ def down(ctx, ver):
 @cli.command()
 @click.pass_context
 def version(ctx):
-    db = PgDB(os.environ)
+    db = PgDB(os.environ, use_pool=False)
     versions = get_schema_versions()
-    with db.pool.connection() as conn:
+    with db.connection() as conn:
         with conn.cursor() as curs:
             try:
                 version = get_current_schema_version(curs)
-                print(
-                    f"Current schema version: {version}.  Max version: {versions[-1].version}"
-                )
-            except Exception as e:
+                max_version = versions[-1].version
+                print(f"Current schema version: {version}.  Max version: {max_version}")
+            except Exception:
                 print("No schema version found")
 
 

@@ -1,0 +1,47 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash -c 'if [[ \"$1\" == *.py ]]; then echo \"Running ruff on Python file: $1\"; ruff check --fix \"$1\" && ruff format \"$1\"; fi'"
+          },
+          {
+            "type": "command",
+            "command": "bash -c 'if [[ \"$1\" == bin/* ]] && [[ \"$1\" != *.sh ]]; then echo \"Running ruff on bin script: $1\"; ruff check --fix \"$1\" && ruff format \"$1\"; fi'"
+          },
+          {
+            "type": "command",
+            "command": "bash -c 'if [[ \"$1\" =~ \\.(js|jsx|ts|tsx)$ ]]; then echo \"Running ESLint on JS/TS file: $1\"; npm run lint -- --fix \"$1\" && npx jest --findRelatedTests \"$1\"; fi'"
+          },
+          {
+            "type": "command",
+            "command": "bash -c 'if command -v pre-commit >/dev/null 2>&1 && [ -f .pre-commit-config.yaml ]; then echo \"Fixing whitespace in: $1\"; pre-commit run trailing-whitespace --files \"$1\" 2>/dev/null || true; pre-commit run end-of-file-fixer --files \"$1\" 2>/dev/null || true; fi'"
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash -c 'if echo \"$1\" | grep -iE \"(commit|push|pr|pull request)\" > /dev/null; then echo \"🔍 Detected commit intent. Will run pre-commit checks...\"; if ! curl -s http://localhost:5328/health > /dev/null 2>&1; then echo \"⚠️ WARNING: Flask not running! Integration tests will fail. Start with: npm run flask-dev\"; fi; fi'"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash -c 'if echo \"$1\" | grep -iE \"ready.*commit|commit.*ready|finished.*changes\" > /dev/null; then echo \"📋 Running full test suite...\"; pytest tests/ && pytest integration_tests/ && npm test && npm run lint && npm run type-check && ruff check . && echo \"✅ All pre-commit checks passed!\"; fi'"
+          }
+        ]
+      }
+    ]
+  }
+}

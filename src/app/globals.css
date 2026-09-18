@@ -100,3 +100,74 @@ html, body {
     @apply bg-background text-foreground;
   }
 }
+
+@layer components {
+  .prose {
+    @apply text-foreground;
+  }
+
+  .prose h1 {
+    @apply text-2xl font-bold mb-4 text-foreground;
+  }
+
+  .prose h2 {
+    @apply text-xl font-semibold mb-3 text-foreground;
+  }
+
+  .prose h3 {
+    @apply text-lg font-medium mb-2 text-foreground;
+  }
+
+  .prose p {
+    @apply mb-3 text-foreground;
+  }
+
+  .prose ul {
+    @apply list-disc list-inside mb-3 text-foreground;
+  }
+
+  .prose ol {
+    @apply list-decimal list-inside mb-3 text-foreground;
+  }
+
+  .prose li {
+    @apply mb-1 text-foreground;
+  }
+
+  .prose strong {
+    @apply font-semibold text-foreground;
+  }
+
+  .prose em {
+    @apply italic text-foreground;
+  }
+
+  .prose code {
+    @apply bg-muted px-1 py-0.5 rounded text-sm font-mono text-foreground;
+  }
+
+  .prose pre {
+    @apply bg-muted p-3 rounded mb-3 overflow-x-auto;
+  }
+
+  .prose pre code {
+    @apply bg-transparent p-0;
+  }
+
+  .prose blockquote {
+    @apply border-l-4 border-muted-foreground pl-4 italic text-muted-foreground mb-3;
+  }
+
+  .prose img {
+    @apply max-w-full h-auto rounded;
+  }
+
+  .prose a {
+    @apply text-blue-600 hover:underline visited:text-purple-600;
+  }
+
+  /* Documentation-specific link styling */
+  .documentation-tab a {
+    @apply text-blue-600 hover:underline visited:text-purple-600;
+  }
+}

@@ -1,9 +1,9 @@
-import os
 import operator
-from importlib import import_module
+import os
 from abc import ABC, abstractmethod
+from importlib import import_module
 
-from psycopg import sql, connection, cursor
+from psycopg import connection, cursor, sql
 
 
 class SchemaBase(ABC):

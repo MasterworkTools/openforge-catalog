@@ -1,0 +1,186 @@
+build: |
+  These tags are based around underlying system you want to use for building a tile.
+  Wall on Tile for example has a wall that takes up part of the floor space, but is much easier to reason about when setting up a map quickly while GMing, while Separate Wall has the wall outside the floor, giving more play room,
+  but is harder to tesselate.
+build|separate wall: Wall off of tile. Gives more gameplay space, harder to reason about tesselating. Recommended for builds that the GM does between sessions in prep.  Separate walls are also used to build walls on tile via the s2w system.
+build|wall on tile: Wall is on the tile taking up half a floor. Gives less game space, so you probably need to alter maps a little to accomodate. Much easier to reason about quickly. Recommended for GMs who build the map during game time.
+build|s2w: A combined system that lets you make wall on tile using separate wall components. This is the future, as it lets you use the same parts to accomplish both.  Most of the parts for this system are tagged as separate wall, only special parts used as adapters, or corners are tagged with this tag.
+build|s-system: Combines a wall with a floor in a system that works pretty well for maps with lots of rooms with shared walls. Very easy to reason about
+build|thick wall: Used generally for underground locations, and designed to be more visually impressive. Caves, mines, dwarven halls, sewers. Every wall takes up a full inch.
+
+component: |
+  These tags represent all the cool fun things you can have on the tile. Arrow Slits, Doorways, Grating, LED torch walls, these tags let you browse between these choices.
+component|adapter: 'Items that allow interlinking between various systems.'
+component|adapter|low: 'Items that allow interlinking between various systems.  These adapters are low profile allowing more space for miniatures to move.'
+component|adapter|mirror: 'Items that allow interlinking between various systems. These adapters are mirrored versions allowing forward/backward or left/right setups.'
+component|adapter|separate_wall: 'Items that allow interlinking between various systems.  For instance, moving from the Separate Wall to either the S-System or the Wall on Tile tiles.'
+component|adapter|s_system: 'Items that allow interlinking between various systems.  For instance, moving from the S-System to either the Separate Wall or the Wall on Tile tiles.'
+component|adapter|wall_on_tile: 'Items that allow interlinking between various systems.  For instance, moving from the Wall on Tile system to either the S-System or the Separate Walls tiles.'
+component|archway: 'Cool fun items allows you to jazz-up your builds.  Various archways can give clues to the adventurers that pass through them.'
+component|arrow_slit: 'Cool fun items allows you to jazz-up your builds.  Arrow slits can provide views to the other side of walls or help defend against the attacking hoard.'
+component|arrow_slit|1: 'Cool fun items allows you to jazz-up your builds.  Arrow slits can provide views to the other side of walls or help defend against the attacking hoard.  This is a narrow 1" tile piece.'
+component|arrow_slit|2: 'Cool fun items allows you to jazz-up your builds.  Arrow slits can provide views to the other side of walls or help defend against the attacking hoard.  This is a regular 2" tile piece.'
+component|boss_door: 'Cool fun items allows you to jazz-up your builds.  Boss doors can lead to the "Big Bad" or to treasure.  The only way to know is go through.'
+component|boss_door|archway: 'Cool fun items allows you to jazz-up your builds.  Boss doors can lead to the "Big Bad" or to treasure.  The only way to know is go through. A simple stone-cut archway to pass though'
+component|boss_door|dungeon_door: 'Cool fun items allows you to jazz-up your builds.  Boss doors can lead to the "Big Bad" or to treasure.  The only way to know is go through. A dungeon door to pass though'
+component|boss_door|dungeon_gateway: 'Cool fun items allows you to jazz-up your builds.  Boss doors can lead to the "Big Bad" or to treasure.  The only way to know is go through. A larger dungeon door to pass though'
+component|boss_door|dwarven_door: 'Cool fun items allows you to jazz-up your builds.  Boss doors can lead to the "Big Bad" or to treasure.  The only way to know is go through. A metal well-crafted door in a stone cut archway to pass though'
+component|boss_door|reverse: 'Cool fun items allows you to jazz-up your builds.  Boss doors can lead to the "Big Bad" or to treasure.  The only way to know is go through.  This is a mirrored version of the base wooden Boss Door.'
+component|boss_door|skull: 'Cool fun items allows you to jazz-up your builds.  Boss doors can lead to the "Big Bad" or to treasure.  The only way to know is go through. A dungeon door with an enlarged horned skull atop in a dungeon stone archway to pass though'
+component|boss_door|sun_door: 'Cool fun items allows you to jazz-up your builds.  Boss doors can lead to the "Big Bad" or to treasure.  The only way to know is go through. A metal well-crafted door for a temple or Holt Shrine in a stone cut archway to pass though'
+component|boss_door|wooden_door: 'Cool fun items allows you to jazz-up your builds.  Boss doors can lead to the "Big Bad" or to treasure.  The only way to know is go through. A wooden well-crafted door for a dining hall or throne room in a stone cut archway to pass though'
+component|brazier: 'Cool fun items allows you to jazz-up your builds.  2x2 floor space for a fire pit cauldron or smaller basin.'
+component|brazier|large: 'Cool fun items allows you to jazz-up your builds.  2x2 floor space for a fire pit cauldron.'
+component|brazier|small: 'Cool fun items allows you to jazz-up your builds.  2x2 floor space for a small basin sitting on a pedestal.'
+component|bubbling_pool: 'Cool fun items allows you to jazz-up your builds.  2x2 edge pieces for a large 8x8 pool or a 4x4 single tile topper to give adventurers pause in their explorations.'
+component|collapsed: 'Cool fun items allows you to jazz-up your builds. Damaged wall sections showing either recent or long past violence in this passage.'
+component|collapsed_block: 'Cool fun items allows you to jazz-up your builds. Various floor rubble sizes to impede the adventurers’ paths.'
+component|collapsed_block|a: 'Cool fun items allows you to jazz-up your builds. 2x2 floor rubble.'
+component|collapsed_block|b: 'Cool fun items allows you to jazz-up your builds. 2x2 floor rubble.'
+component|collapsed_block|c: 'Cool fun items allows you to jazz-up your builds. 2x2 floor rubble.'
+component|collapsed_block|d: 'Cool fun items allows you to jazz-up your builds. 2x2 floor rubble.'
+component|collapsed_blocks: 'Cool fun items allows you to jazz-up your builds. Various floor rubble sizes to impede the adventurers’ paths.'
+component|collapsed_blocks|a: 'Cool fun items allows you to jazz-up your builds. 2x2 floor rubble.'
+component|collapsed_blocks|b: 'Cool fun items allows you to jazz-up your builds. 2x2 floor rubble.'
+component|collapsed_blocks|c: 'Cool fun items allows you to jazz-up your builds. 2x2 floor rubble.'
+component|collapsed_blocks|d: 'Cool fun items allows you to jazz-up your builds. 2x2 floor rubble.'
+component|collapsed|full: 'Cool fun items allows you to jazz-up your builds. Minor damaged full wall height sections showing either recent or long past violence in this passage.'
+component|collapsed|full-low: 'Cool fun items allows you to jazz-up your builds. More severe damaged full wall height sections showing either recent or long past violence in this passage.'
+component|collapsed|full-minimal: 'Cool fun items allows you to jazz-up your builds. More severe damaged full height wall sections showing either recent or long past violence in this passage.'
+component|collapsed|low: 'Cool fun items allows you to jazz-up your builds. More severe damaged half height wall sections showing either recent or long past violence in this passage.'
+component|collapsed|low-full: 'Cool fun items allows you to jazz-up your builds. More severe damaged full wall height sections showing either recent or long past violence in this passage.'
+component|collapsed|low-minimal: 'Cool fun items allows you to jazz-up your builds. More severe damaged half height wall sections showing either recent or long past violence in this passage.'
+component|collapsed|minimal: 'Cool fun items allows you to jazz-up your builds. More severe damaged quarter height wall sections showing either recent or long past violence in this passage.'
+component|collapsed|minimal-full: 'Cool fun items allows you to jazz-up your builds. More severe damaged full height wall sections showing either recent or long past violence in this passage.'
+component|collapsed|minimal-low: 'Cool fun items allows you to jazz-up your builds. More severe damaged half height wall sections showing either recent or long past violence in this passage.'
+component|collapsed|mirror: 'Cool fun items allows you to jazz-up your builds. More severe damaged full height wall sections showing either recent or long past violence in this passage.  Sections are reversed from other collapsed components'
+component|collapsed_section: 'Cool fun items allows you to jazz-up your builds. Most severely damaged full height wall sections showing either recent or long past violence in this passage.'
+component|collapsing_blocks: 'Cool fun items allows you to jazz-up your builds. 2x2 wall rubble on the floor.'
+component|collapsing_blocks|a: 'Cool fun items allows you to jazz-up your builds. 2x2 wall rubble on the floor.'
+component|collapsing_blocks|b: 'Cool fun items allows you to jazz-up your builds. 2x2 wall rubble on the floor.'
+component|collapsing_blocks|c: 'Cool fun items allows you to jazz-up your builds. 2x2 wall rubble on the floor.'
+component|collapsing_blocks|d: 'Cool fun items allows you to jazz-up your builds. 2x2 wall rubble on the floor.'
+component|door: 'Cool fun items allows you to jazz-up your builds. Doors allowing adventuring parties to advance or escape into other areas.'
+component|door|arched: 'Cool fun items allows you to jazz-up your builds. Doors allowing adventuring parties to advance or escape into other areas.  Cut stone archway door frames.'
+component|door|narrow: 'Cool fun items allows you to jazz-up your builds. Doors allowing adventuring parties to advance or escape into other areas.  2x cut stone arch or square door frames.'
+component|door|open: 'Cool fun items allows you to jazz-up your builds. Doors allowing adventuring parties to advance or escape into other areas.  Open doors are simple door frames without doors.'
+component|door|rectangular: 'Cool fun items allows you to jazz-up your builds. Doors allowing adventuring parties to advance or escape into other areas.  Rectangle door frames in 1x or 2x sizes.'
+component|door|standard: 'Cool fun items allows you to jazz-up your builds. Doors allowing adventuring parties to advance or escape into other areas.  Standard door frames in 1x or 2x flat wall and 90° curved wall.'
+component|door|very_narrow: 'Cool fun items allows you to jazz-up your builds. Doors allowing adventuring parties to advance or escape into other areas.  Narrow door frames in 1x flat wall and 45° curved wall.'
+component|door|wide: 'Cool fun items allows you to jazz-up your builds. Doors allowing adventuring parties to advance or escape into other areas.  Wide door frames in 2x flat wall with cut stone and dungeon stone arches.'
+component|drain: 'Cool fun items allows you to jazz-up your builds.  Grated wall drains in 1x, 1.5x, 2x, 3x, and 4x wall length sizes.'
+component|fountain: 'Cool fun items allows you to jazz-up your builds.  Lion head water fountain wall in cut stone, dungeon stone, or eroded dungeon stone 2x2 piece.'
+component|fountain|arched: 'Cool fun items allows you to jazz-up your builds.  Lion head water fountain wall in cut stone, dungeon stone, or eroded dungeon stone 2x2 piece.'
+component|full_pillar: 'Cool fun items allows you to jazz-up your builds.  Standalone full or half size pillar in round or square styles in cut stone, dungeon stone, or eroded dungeon stone with round or square bottoms and tops on either 1x1 or 2x2 bases other options include places to hang torches.'
+component|full_pillar|round: 'Cool fun items allows you to jazz-up your builds.  Standalone full or half size pillar in round styles in cut stone, dungeon stone, or eroded dungeon stone with round bottoms and tops on either 1x1 or 2x2 bases other options include places to hang torches.'
+component|full_pillar|square: 'Cool fun items allows you to jazz-up your builds.  Standalone full or half size pillar in square styles in cut stone, dungeon stone, or eroded dungeon stone with square bottoms and tops on either 1x1 or 2x2 bases other options include places to hang torches.'
+component|full_pillar|tall: 'Cool fun items allows you to jazz-up your builds.  Standalone full pillar in round or square styles in cut stone, dungeon stone, or eroded dungeon stone with round or square bottoms and tops on either 1x1 or 2x2 bases other options include places to hang torches.'
+component|full_pillar|torch: 'Cool fun items allows you to jazz-up your builds.  Standalone full or half size pillar in round or square styles in cut stone, dungeon stone, or eroded dungeon stone with round or square bottoms and tops on either 1x1 or 2x2 bases with places to hang torches.'
+component|grate: 'Cool fun items allows you to jazz-up your builds.  Grate wall sections in various widths (1x, 2x,3x, and 4x) and includes a 2x2 corner section that allows portcullis to be places inside the walls on cut stone, dungeon stone, or eroded dungeon stone bases.'
+component|grate|widened: 'Cool fun items allows you to jazz-up your builds.  Grate wall sections in 2x2 widths on cut stone, dungeon stone, or eroded dungeon stone bases.'
+component|infinite_hallway: 'Cool fun items allows you to jazz-up your builds.  Create an endless hallway using 2x2 base with full size wall.'
+component|infinite_hallway|glass: 'Cool fun items allows you to jazz-up your builds.  Create an endless hallway using 2x2 base with full size wall adding torches and glass inserts to make a fun house presentation.'
+component|infinite_hallway|torch: 'Cool fun items allows you to jazz-up your builds.  Create an endless hallway using 2x2 base with full size wall adding torches.'
+component|loculus: 'Cool fun items allows you to jazz-up your builds.  Create catacombs with this item to bury you dead adventuring mates!'
+component|magnetic: 'Cool fun items allows you to jazz-up your builds.  Various full straight and curved wall pieces that allow hanging banners, trophy heads and other accessories via utilization of a magnet.'
+component|magnetic|reverse: 'Cool fun items allows you to jazz-up your builds.  Various full straight and curved wall pieces that allow hanging banners, trophy heads and other accessories via utilization of a magnet.'
+component|niche: 'Cool fun items allows you to jazz-up your builds.  Various full straight and curved wall pieces that have an indention carved out.'
+component|outcrop: 'Cool fun items allows you to jazz-up your builds.  Varity of rocks and boulders protruding from a full wall piece.  Primary used in cavernous build types.'
+component|outcrop|1: 'Cool fun items allows you to jazz-up your builds.  Varity of rocks and boulders protruding from a full wall piece that typically covers a 1.2x2 space.  Primary used in cavernous build types.'
+component|outcrop|2: 'Cool fun items allows you to jazz-up your builds.  Varity of rocks and boulders protruding from a full wall piece that typically covers a 2.2x2 space.  Primary used in cavernous build types.'
+component|outcrop|a: 'Cool fun items allows you to jazz-up your builds.  Varity of rocks and boulders protruding from a full wall piece that typically covers a a.2x2 space.  Primary used in cavernous build types.'
+component|outcrop|b: 'Cool fun items allows you to jazz-up your builds.  Varity of rocks and boulders protruding from a full wall piece that typically covers a b.2x2 space.  Primary used in cavernous build types.'
+component|phone_portal: 'Cool fun items allows you to jazz-up your builds.  Create a "portal" that your adventurers can magically move between planes of existence or simply to another part of the dungeon.  This item requires a cell phone with an appropriate screen image to produce the desired effect.'
+component|pool: 'Cool fun items allows you to jazz-up your builds.  These items allow the creation of bodies of water.  Size, configuration, and floor type dungeon stone or eroded dungeon stone are for you to choose.'
+component|pool|1x1_cut: 'Cool fun items allows you to jazz-up your builds.  These items allow the creation of bodies of water.  Water size 1x1 on a 2x2 floor type dungeon stone or eroded dungeon stone.'
+component|pool|1x2_cut: 'Cool fun items allows you to jazz-up your builds.  These items allow the creation of bodies of water.  Water size 2x1 on a 2x2 floor type dungeon stone or eroded dungeon stone.'
+component|pool|1x2x1_cut: 'Cool fun items allows you to jazz-up your builds.  These items allow the creation of bodies of water.  Water size 3x1 on a 2x2 floor type dungeon stone or eroded dungeon stone.'
+component|pool|2x1_cut: 'Cool fun items allows you to jazz-up your builds.  These items allow the creation of bodies of water.  Water size 2x1 on a 2x2 floor type dungeon stone or eroded dungeon stone.'
+component|pool|corner: 'Cool fun items allows you to jazz-up your builds.  These items allow the creation of bodies of water.  Water corner various sizes on a 2x2 floor type dungeon stone or eroded dungeon stone.'
+component|pool|curved: 'Cool fun items allows you to jazz-up your builds.  These items allow the creation of bodies of water.  Water curved various sizes on a 2x2 floor type dungeon stone or eroded dungeon stone.'
+component|pool|diagonal: 'Cool fun items allows you to jazz-up your builds.  These items allow the creation of bodies of water.  Water straight diagonal sizes on a 2x2 floor type dungeon stone or eroded dungeon stone.'
+component|pool|internal_corner: 'Cool fun items allows you to jazz-up your builds.  These items allow the creation of bodies of water.  Water with a small floor corner tab in various sizes.'
+component|pool|round: 'Cool fun items allows you to jazz-up your builds.  These items allow the creation of bodies of water.  Single round pool on 2x2, 3x3, 4x4 on either dungeon stone or eroded dungeon stone floor types.'
+component|pool|stairs: 'Cool fun items allows you to jazz-up your builds.  These items allow the creation of bodies of water.  Stairs allowing easy access to a body of water on a 2x2 floor type dungeon stone or eroded dungeon stone.'
+component|pool|wall: 'Cool fun items allows you to jazz-up your builds.  These items allow the creation of bodies of water.  Very short wall pieces to edge the body of water in various sizes and lengths in floor type dungeon stone or eroded dungeon stone.'
+component|portcullis: 'Cool fun items allows you to jazz-up your builds.  Full size wall pieces allowing iron bars to either block your adventures path or prevent the advancement of creatures following.'
+component|portcullis|narrow: 'Cool fun items allows you to jazz-up your builds.  Full size wall pieces allowing iron bars to either block your adventures path or prevent the advancement of creatures following.  Narrow 1.5x1 or 2x1 or curved wall sizes based on cut stone or dungeon stone or eroded dungeon stone.'
+component|portcullis|standard: 'Cool fun items allows you to jazz-up your builds.  Full size wall pieces allowing iron bars to either block your adventures path or prevent the advancement of creatures following.  Standard wall size 2x1 or curved wall sizes based on dungeon stone or eroded dungeon stone.'
+component|portcullis|very_narrow: 'Cool fun items allows you to jazz-up your builds.  Full size wall pieces allowing iron bars to either block your adventures path or prevent the advancement of creatures following.  Very narrow wall size 1.5x1 curved wall sizes based on dungeon stone or eroded dungeon stone.'
+component|portcullis|wide: 'Cool fun items allows you to jazz-up your builds.  Full size wall pieces allowing iron bars to either block your adventures path or prevent the advancement of creatures following.  Wide wall size 3x1, 3x2, 4x1, or 4x2, wall sizes based on dungeon stone or eroded dungeon stone.'
+component|railings: 'Cool fun items allows you to jazz-up your builds.  Variety of pieces that allow building banisters, or guardrails.'
+component|railings|external_corner: 'Cool fun items allows you to jazz-up your builds.  Variety of pieces that allow building banisters, or guardrails.  Corner in 1x or 2x sizes'
+component|railings|internal_corner: 'Cool fun items allows you to jazz-up your builds.  Variety of pieces that allow building banisters, or guardrails.  Corner in 1x or 2x sizes'
+component|secret_door: 'Cool fun items allows you to jazz-up your builds.  Add mystery to the blan, boring dungeon tunnel or room, the adventurers discover a secret door!!  Size 2x1 wall (full or low) with either notch or magnetic fasteners to close /open the hidden wall door.'
+component|secret_door|broken_hole: Cool fun items allows you to jazz-up your builds.  Add mystery to the blan, boring dungeon tunnel or room, the adventurers discover a secret door!!  Size 2x1 wall full wall with destroyed or missing door!  It's an opening in the wall!
+component|secret_door|low: 'Cool fun items allows you to jazz-up your builds.  Add mystery to the blan, boring dungeon tunnel or room, the adventurers discover a secret door!!  Size 2x1 low wall with either notch or magnetic fasteners to close /open the hidden wall door.'
+component|slope: 'Cool fun items allows you to jazz-up your builds.  Sloping full size wall pieces for cavernous build types.'
+component|sluice: 'Cool fun items allows you to jazz-up your builds.  Yuck! Your adventures are exploring the sewers!  All kinds of icky are found in the variety of brick type items used in this nasty crawl.'
+component|sluice|corner: 'Cool fun items allows you to jazz-up your builds.  Yuck! Your adventures are exploring the sewers!  All kinds of icky are found in the variety of brick type items used in this nasty crawl.  2x2 corner.'
+component|sluice|cross: 'Cool fun items allows you to jazz-up your builds.  Yuck! Your adventures are exploring the sewers!  All kinds of icky are found in the variety of brick type items used in this nasty crawl.  2x2 cross junction.'
+component|sluice|end: 'Cool fun items allows you to jazz-up your builds.  Yuck! Your adventures are exploring the sewers!  All kinds of icky are found in the variety of brick type items used in this nasty crawl.  2x2 end.'
+component|sluice|half: 'Cool fun items allows you to jazz-up your builds.  Yuck! Your adventures are exploring the sewers!  All kinds of icky are found in the variety of brick type items used in this nasty crawl.  1x1 and 2x1 half curved side edges.'
+component|sluice|straight: 'Cool fun items allows you to jazz-up your builds.  Yuck! Your adventures are exploring the sewers!  All kinds of icky are found in the variety of brick type items used in this nasty crawl.  1x1 and 2x1 full curved floor.'
+component|sluice|tee: 'Cool fun items allows you to jazz-up your builds.  Yuck! Your adventures are exploring the sewers!  All kinds of icky are found in the variety of brick type items used in this nasty crawl.  2x2 tee junction.'
+component|spirit: 'Cool fun items allows you to jazz-up your builds.  2x2 door frames with runes and 2x2 wall with magic star image.'
+component|torch: 'Cool fun items allows you to jazz-up your builds.  Add torches to your dungeons!!  Light your adventurer’s way down a musty hall or bring luminescence to a large library.  Torches can be mounted on full or low straight or curved walls in either high, mid, or low positions.  Additionally, they can be mounted on square or round columns.'
+component|torch|a: 'Cool fun items allows you to jazz-up your builds.  Add torches to your dungeons!!  Light your adventurer’s way down a musty hall or bring luminescence to a large library.  Torches can be mounted on full or low curved walls in either high, mid, or low positions.'
+component|torch|b: 'Cool fun items allows you to jazz-up your builds.  Add torches to your dungeons!!  Light your adventurer’s way down a musty hall or bring luminescence to a large library.  Torches can be mounted on full or low curved walls in either high, mid, or low positions.'
+component|torch|low: 'Cool fun items allows you to jazz-up your builds.  Add torches to your dungeons!!  Light your adventurer’s way down a musty hall or bring luminescence to a large library.  Torches can be mounted on full or low straight or curved walls in low positions.  Additionally, they can be mounted on square or round columns.'
+component|torch|mid: 'Cool fun items allows you to jazz-up your builds.  Add torches to your dungeons!!  Light your adventurer’s way down a musty hall or bring luminescence to a large library.  Torches can be mounted on full or low straight or curved walls in mid, positions.  Additionally, they can be mounted on square or round columns.'
+component|torch|high: 'Cool fun items allows you to jazz-up your builds.  Add torches to your dungeons!!  Light your adventurer’s way down a musty hall or bring luminescence to a large library.  Torches can be mounted on full or low straight or curved walls in high positions.  Additionally, they can be mounted on square or round columns.'
+component|wall: Cool fun items allows you to jazz-up your builds.  What can one say about walls?!?  They come in such a variety that to list here would be exhausting.  But I'll try...  Walls come in cut stone, dungeon stone, eroded dungeon stone, town, cavern types.  They can be straight or curved.  They can be very narrow to enormous in length.
+component|wall|standard: Cool fun items allows you to jazz-up your builds.  What can one say about walls?!?  They come in such a variety that to list here would be exhausting.  But I'll try...  Walls come in cut stone, dungeon stone, eroded dungeon stone, town, cavern types.  They can be straight or curved.  They can be very narrow to enormous in length.  These are full height.
+component|wall|low: Cool fun items allows you to jazz-up your builds.  What can one say about walls?!?  They come in such a variety that to list here would be exhausting.  But I'll try...  Walls come in cut stone, dungeon stone, eroded dungeon stone, town, cavern types.  They can be straight or curved.  They can be very narrow to enormous in length.  These are half height.
+component|window: Cool fun items allows you to jazz-up your builds.  What can one say about windows (same as walls)?!?  They come in such a variety that to list here would be exhausting.  But I'll try...  Windows come in cut stone, dungeon stone, eroded dungeon stone, town types in straight and curved walls.
+component|window|arched: Cool fun items allows you to jazz-up your builds.  What can one say about windows (same as walls)?!?  They come in such a variety that to list here would be exhausting.  But I'll try...  Windows come in cut stone, dungeon stone, eroded dungeon stone, town types in straight and curved walls.  These have single arched frames.
+component|window|double: Cool fun items allows you to jazz-up your builds.  What can one say about windows (same as walls)?!?  They come in such a variety that to list here would be exhausting.  But I'll try...  Windows come in cut stone, dungeon stone, eroded dungeon stone, town types in straight and curved walls.  These have 2x arched frames.
+component|window|narrow: Cool fun items allows you to jazz-up your builds.  What can one say about windows (same as walls)?!?  They come in such a variety that to list here would be exhausting.  But I'll try...  Windows come in cut stone, dungeon stone, eroded dungeon stone, town types in straight 1x1 and 1.5x1 width walls.  These have single arched and square frames.
+component|window|square: Cool fun items allows you to jazz-up your builds.  What can one say about windows (same as walls)?!?  They come in such a variety that to list here would be exhausting.  But I'll try...  Windows come in cut stone, dungeon stone, town types in straight 1x1 through 4x1 width walls.  These have single and double square frames.
+
+connection: |
+  These tags represent the connection options for the tile. Dragonlock, Openlock, Openforge, Magnetic, Side, Pegs, and Topless are all options for how to connect tiles together.
+connection|dragonlock: the DragonLock system from Fat Dragon Games.
+connection|openlock: The OpenLock system from Printable Scenery
+connection|openlock|topless: Openlock but with no bridging. easier to print and less fragile.
+connection|openlock|unsupported: 'Openlock, but with no supports printed in place.  Use this if you want to put in your own supports, or if your printer is really good at bridging'
+connection|openforge: A system where the parts are all printed separately, including a base that has actual connection options. This system is designed for mixing and matching and maximum flexibility.
+connection|openforge|split: 'Various items where a top piece may or may not be applied.'
+connection|magnetic: 'A magnetic system designed for using spheres'
+connection|magnetic|flex: A magnetic system designed for using spheres or disks
+connection|pegs: Openlock's pegs which help register tiles sitting on top of tiles.
+connection|left: 'Items that require two parts (L/R) to create.  This is the left side.'
+connection|right: 'Items that require two parts (L/R) to create.  This is the right side.'
+connection|side: Openlock, but on the side of walls
+connection|side|dragonlock: 'DragonLock, but on the side of walls'
+connection|side|filament: 'Filament, but on the side of walls'
+connection|side|openlock: 'OpenLock, but on the side of walls'
+connection|topless: 'OpenLock without the overhang and therefore, no supports, which in turn means no sagging and less work after you print to get the tile ready.'
+
+
+decoration: |
+  These tags represent the decoration options for the tile. Air, Earth, Fire, Water, Demon, Celtic Knot are all options for how to decorate the tile.
+
+interface: |
+  Some parts are used for a multi part build. Interface is used to encode the tags that describe those relationships. So like a window can have a frame and shutters. Interface relates to how those parts connect to each other.
+  Part defines the actual pieces.
+
+part: |
+  Some parts are used for a multi part build. Part defines the actual pieces.
+
+scatter: |
+  Scatter holds non tile stuff. Barrels, statues, that kind of thing.
+
+shape: |
+  Shape holds tags that define the actual shape of the intended part, and some times the role the part has in a tile.
+
+size: |
+  Size has the quantitative definitions. the tile is 2 squares on the x, 4 squares on the y. A curve is 90 degrees or 45. This does have some qualitative tags as well.
+
+texture: |
+  Texture holds tags that define the actual texture of the intended part. Dungeon stone, cut stone, towne, sewer, cave are all options for how to texture the tile.
+texture|dungeon_stone: Openforge's flagship. Dungeon stone has the most parts for building an incredible variety of tiles. So far as we are aware, dungeon stone is the most complete set of gaming tiles produced in industry. One thing to be aware of, when i comes to floors, there are two floor textures. Eroded is the first texture we ever designed, and it is showing it's age, but it's the most complete. Block is a better design, but it still is missing a few floors.
+texture|cut-stone: Designed to be a plain tile texture that looks good enough, but is intended to not distract visually. The second most complete set.
+texture|towne: Whattle and daube tudor style buildings. Offers a bunch of visual options.
+texture|sewer: Sewers. Get your ick on.
+texture|cave: Natural caves

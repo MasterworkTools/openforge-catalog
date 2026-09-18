@@ -1,0 +1,134 @@
+- name: "S2W: Wall on Tile: Corner (Any, Single Piece)"
+  type: "blueprint"
+  tags:
+    - object|tile
+    - object|tile|wall_on_tile
+    - build|s2w
+    - build|s2w|single_piece
+    - shape|corner
+  config:
+    parts:
+      - name: column
+        tags:
+          require:
+            - tag: shape|column|corner
+            - tag: build|s2w
+            - tag: size|column_shape|L
+          deny:
+            - tag: shape|column|low
+          constrain:
+            - tag: connection|side
+              siblings: [right wall, left wall]
+      - name: right wall
+        tags:
+          require:
+            - tag: build|s2w
+            - tag: shape|corner|right
+            - tag: connection|openforge
+            - tag: size|width|2
+          deny:
+            - tag: shape|column|low
+          constrain:
+            - tag: connection|side
+              siblings: [column, left wall]
+        fulfills:
+          - part: base
+      - name: left wall
+        tags:
+          require:
+            - tag: build|s2w
+            - tag: shape|corner|left
+            - tag: connection|openforge
+            - tag: size|width|2
+          deny:
+            - tag: shape|column|low
+          constrain:
+            - tag: connection|side
+              siblings: [right wall, column]
+        fulfills:
+          - part: base
+      - name: floor
+        tags:
+          require:
+            - tag: shape|floor
+            - tag: shape|floor|corner
+            - tag: build|s2w
+            - tag: size|width|2
+            - tag: size|depth|2
+            - tag: connection|openforge
+      - name: base
+        tags:
+          require:
+            - tag: shape|base
+            - tag: shape|base|square
+            - tag: size|width|2
+            - tag: size|depth|2
+          deny:
+            - tag: shape|wall
+            - tag: build|s2w
+            - tag: shape|option|notch
+
+- name: "S2W: Wall on Tile: Corner (Any, Modular)"
+  type: "blueprint"
+  tags:
+    - object|tile
+    - object|tile|wall_on_tile
+    - build|s2w
+    - build|s2w|modular
+    - shape|corner
+  config:
+    parts:
+      - name: column
+        tags:
+          require:
+            - tag: size|column_shape|L
+          deny:
+            - tag: build|s2w
+            - tag: shape|column|low
+          constrain:
+            - tag: connection|side
+              siblings: [right wall, left wall]
+      - name: right wall
+        tags:
+          require:
+            - tag: shape|wall
+            - tag: size|width|1.5
+          deny:
+            - tag: shape|column|low
+          constrain:
+            - tag: connection|side
+              siblings: [column, left wall]
+      - name: left wall
+        tags:
+          require:
+            - tag: shape|wall
+            - tag: size|width|1.5
+          deny:
+            - tag: shape|column|low
+          constrain:
+            - tag: connection|side
+              siblings: [right wall, column]
+      - name: floor
+        tags:
+          require:
+            - tag: shape|floor
+            - tag: shape|floor|corner
+            - tag: build|s2w
+            - tag: size|width|2
+            - tag: size|depth|2
+      - name: base
+        tags:
+          require:
+            - tag: shape|base
+            - tag: shape|base|corner
+            - tag: size|width|2
+            - tag: size|depth|2
+          deny:
+            - tag: shape|wall
+            - tag: shape|base|wall
+            - tag: shape|option|notch
+          constrain:
+            - tag: connection
+              siblings: [right wall, left wall]
+            - filter: connection|side
+            - filter: connection|openforge

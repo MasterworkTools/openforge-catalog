@@ -21,6 +21,13 @@
 scratch
 
 .env
+
+# traffic captures — carry live credentials (JWTs, cookies); never commit.
+# Raw request/response dumps of ANY extension belong in captures/ (ignored)
+# or the session scratchpad, never elsewhere in the repo tree.
+*.har
+captures/
+
 # debug
 npm-debug.log*
 yarn-debug.log*
@@ -46,3 +53,28 @@ dist
 
 # postgres
 db-data
+
+# yarn
+yarn.lock
+*.next
+
+tmp/
+.coverage
+coverage.xml
+
+.cursor
+
+# Patreon API credentials (client secret + tokens) — never commit
+.patreon
+
+# OpenTofu
+.terraform/
+*.tfplan
+tfplan
+plan-output.txt
+
+*.tfstate
+*.tfstate.*
+crash.log
+crash.*.log
+*.auto.tfvars

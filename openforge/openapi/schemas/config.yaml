@@ -1,0 +1,82 @@
+"$schema": "https://json-schema.org/draft/2020-12/schema"
+type: object
+properties:
+  parts:
+    type: array
+    items:
+      type: object
+      properties:
+        name:
+          type: string
+        id:
+          type: string
+        optional:
+          type: boolean
+          default: false
+        tags:
+          type: object
+          properties:
+            accept:
+              type: array
+              items:
+                type: object
+                properties:
+                  tag:
+                    type: string
+                  additionalProperties: false
+            require:
+              type: array
+              items:
+                type: object
+                properties:
+                  tag:
+                    type: string
+                  additionalProperties: false
+            deny:
+              type: array
+              items:
+                type: object
+                properties:
+                  tag:
+                    type: string
+                  additionalProperties: false
+            constrain:
+              type: array
+              items:
+                oneOf:
+                  - type: object
+                    properties:
+                      tag:
+                        type: string
+                      siblings:
+                        type: array
+                        items:
+                          type: string
+                      parent:
+                        type: boolean
+                        default: true
+                    additionalProperties: false
+                  - type: object
+                    properties:
+                      filter:
+                        type: string
+                    additionalProperties: false
+          additionalProperties: false
+        fulfills:
+          type: array
+          items:
+            type: object
+            properties:
+              part:
+                type: string
+              additionalProperties: false
+      additionalProperties: false
+  fulfills:
+    type: array
+    items:
+      type: object
+      properties:
+        part:
+          type: string
+        additionalProperties: false
+additionalProperties: false

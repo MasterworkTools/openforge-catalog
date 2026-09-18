@@ -1,351 +1,22 @@
 #!/usr/bin/env python
 
 # pylint: disable=E1101,C0114,C0116
-import re
 import os
-import io
 import sys
-import hashlib
-import datetime
-import json
 
-from openforge.data import sizes
-
-try:
-    from yaml import CLoader as Loader, CDumper as Dumper, safe_load
-except ImportError:
-    from yaml import Loader, Dumper, safe_load
-from pprint import pprint
-
-import sh
 import click
+import jsonschema.exceptions
+import yaml
 from dotenv import dotenv_values
-import boto3
-from botocore.client import Config
-from botocore.exceptions import ClientError
 
-
-def parse_bonuses(data):
-    options = None
-    descriptor = None
-    texture = None
-    orig = data
-
-    def _split_by(char):
-        parts = data.split(char)
-        if len(parts) == 1:
-            return parts[0], []
-        assert len(parts) == 2, parts
-        return parts[0], parts[1].split(",")
-
-    data, options = _split_by("+")
-    data, descriptor = _split_by("#")
-    data, texture = _split_by("%")
-    if len(texture) > 0:
-        assert len(texture) == 1, orig
-        texture = texture[0]
-    return data, texture, descriptor, options
-
-
-def get_piece(file, tags):
-    if len(file["path"]) == 0:
-        return None, file
-    file["piece"] = file["path"].pop(0)
-    piece, texture, descriptor, options = parse_bonuses(file["piece"])
-    if texture:
-        file["floor_texture"] = texture
-    file["piece"] = piece
-    if len(descriptor) > 0:
-        file["piece_descriptor"] = descriptor
-    if len(options) > 0:
-        file["piece_options"] = options
-    return file, None
-
-
-def get_function(file, tags):
-    function = file["path"].pop(0)
-    function, texture, descriptor, options = parse_bonuses(function)
-    assert not texture, file
-    file["function"] = function
-    if len(descriptor) > 0:
-        file["function_descriptor"] = descriptor
-    if len(options) > 0:
-        file["function_options"] = options
-    return file
-
-
-def get_scheme(file, tags):
-    file["scheme"] = file["path"].pop(0)
-    return file
-
-
-def get_texture(file, tags):
-    tag = ("texture", file["path"].pop(0))
-    tags.add(tag)
-    return file
-
-
-def parse_texture(texture, tags):
-    parts = texture.split("%")
-    main = parts.pop(0)
-    for m in main.split(","):
-        if m.find("+") > 0:
-            raise Exception(f"Texture {m} contains +")
-        tags.add(("texture", m))
-    if len(parts) == 0:
-        return
-    subtex = parts.pop(0)
-    for o in subtex.split(","):
-        if o.find("+") > 0:
-            raise Exception(f"Subtexture {o} contains +")
-        tags.add(("texture", "floor", o))
-
-
-def parse_form(form, tags):
-    texture, form = form.split("#")
-    parse_texture(texture, tags)
-    parts = form.split(",")
-    for part in parts:
-        parse_form_part(part, tags)
-
-
-def parse_form_part(part, tags):
-    parts = part.split("+")
-    form = parts.pop(0)
-    t = []
-    t.append(("component", form))
-    tags.add(("component", form))
-    for fp in parts:
-        t.append(("component", form, fp))
-        tags.add(("component", form, fp))
-
-
-def parse_size(size, tags):
-    for tag in sizes[size]:
-        tags.add(tag)
-
-
-def parse_connection(connection, tags):
-    def _add_connections(connections):
-        for connection in connections:
-            if "+" in connection:
-                options = connection.split("+")
-                connection = options.pop(0)
-                for option in options:
-                    tags.add(("connection", connection, option))
-            tags.add(("connection", connection))
-
-    parts = connection.split(",")
-    _add_connections(parts)
-
-
-def parse_filename(file, tags):
-    try:
-        parts = file["file"].split(".")
-        extension = parts.pop()
-        form = parts.pop(0)
-        size = parts.pop(0)
-        connection = None
-        if len(parts) > 0:
-            connection = parts.pop()
-        if len(parts) == 1:
-            if re.match(r"^\d", parts[0]):
-                size = f"{size}.{parts.pop(0)}"
-        assert connection
-        assert len(parts) == 0, parts
-        parse_form(form, tags)
-        parse_size(size, tags)
-        parse_connection(connection, tags)
-    except Exception as e:
-        sys.stderr.write(f"Can't parse: {file['full_name']}\n")
-        sys.stderr.write(f"{e}\n")
-        raise e
-
-
-def parse_path(file, tags):
-    path = file["path"]
-    builds = [
-        ("s2w", "s2w"),
-        ("separate_wall", "separate wall"),
-        ("wall_on_tile", "wall on tile"),
-        ("s_system", "s-system"),
-        ("thick_wall", "thick wall"),
-    ]
-    for build in builds:
-        if build[0] in path:
-            tags.add(("build", build[1]))
-    components = [("bases", "base")]
-    for component in components:
-        if component[0] in path:
-            tags.add(("component", component[1]))
-
-
-def parse_files(path, files, md5, verbose, upload, config):
-    def _get_metadata_file(path):
-        metadata_file = os.path.join(path, "metadata.yaml")
-        if os.path.exists(metadata_file):
-            try:
-                with open(metadata_file, "r") as f:
-                    return safe_load(f)
-            except Exception as e:
-                sys.stderr.write(f"Error reading metadata file: {e}\n")
-        return None
-
-    def _get_metadata(path, fn):
-        data = _get_metadata_file(path)
-        if data:
-            if fn in data:
-                return data[fn]
-        return None
-
-    def _get_s3_client(config):
-        s3_client = boto3.client(
-            service_name="s3",
-            endpoint_url=config["CLOUDFLARE_ENDPOINT"],
-            aws_access_key_id=config["AWS_ACCESS_KEY_ID"],
-            aws_secret_access_key=config["AWS_SECRET_ACCESS_KEY"],
-            config=Config(signature_version="s3v4"),
-            region_name="auto",
-        )
-        return s3_client
-
-    def _create_image(name, url):
-        return {"image_name": name, "image_url": url}
-
-    newfiles = []
-    s3_client = _get_s3_client(config)
-    for file in files:
-        if verbose:
-            sys.stderr.write(f"Processing: {file}\n")
-        full_file = os.path.join(path, file)
-        local_path = os.path.dirname(full_file)
-        fn = os.path.basename(full_file)
-        f = {}
-        t = set()
-        o = {"type": "model", "file_metadata": f, "tags": t}
-        parts = file.split("/")
-        f["full_name"] = file
-        f["file"] = fn
-        f["path"] = parts
-        metadata = _get_metadata(local_path, fn)
-        if metadata and metadata.get("ignore", False):
-            continue
-        # Calculate MD5 hash of the file
-        if md5:
-            with open(full_file, "rb") as fh:
-                md5hash = hashlib.md5(fh.read()).hexdigest()
-                f["md5"] = md5hash
-        stat = os.stat(full_file)
-        f["size"] = stat.st_size
-        f["changed"] = datetime.datetime.fromtimestamp(stat.st_ctime).isoformat()
-        f["modified"] = datetime.datetime.fromtimestamp(stat.st_mtime).isoformat()
-        if upload:
-            if not md5:
-                raise Exception("MD5 is required for upload")
-            model_address = upload_file(f, full_file, s3_client, "models")
-            f["storage_address"] = f"{config['FILE_DOMAIN']}/{model_address}"
-            thumb_path = create_thumbnail(full_file)
-            thumb_address = upload_file(f, thumb_path, s3_client, "thumbnails")
-            images = o.get("images", [])
-            images.append(
-                _create_image("thumbnail", f"{config['FILE_DOMAIN']}/{thumb_address}")
-            )
-            o["images"] = images
-        parse_filename(f, t)
-        parse_path(f, t)
-        del f["path"]
-        newfiles.append(o)
-    return newfiles
-
-
-def upload_file(f, file_path, s3_client, object_path):
-    bucket = "openforge-models"
-    _, fn = os.path.split(file_path)
-    parts = fn.split(".")
-    extension = parts.pop()
-    object_name = f"{object_path}/{f['md5'][:6]}/{f['md5']}.{extension}"
-    try:
-        object_information = s3_client.head_object(Bucket=bucket, Key=object_name)
-    except ClientError as ce:
-        if ce.response["Error"]["Code"] == "404":
-            response = s3_client.upload_fileobj(
-                io.BytesIO(open(file_path, "rb").read()), bucket, object_name
-            )
-        else:
-            raise ce
-    return object_name
-
-
-def create_thumbnail(file_path):
-    path, fn = os.path.split(file_path)
-    parts = fn.split(".")
-    _ = parts.pop()
-    base = ".".join(parts)
-    thumb_path = os.path.join(path, f"{base}-thumb.png")
-    sh.stl_thumb(file_path, thumb_path)
-    return thumb_path
-
-
-def clean_files(path, files):
-    newfiles = []
-    for file in files:
-        parts = file.split(path)
-        if len(parts) == 1:
-            continue
-        assert len(parts) == 2, parts
-        newfiles.append(parts[1])
-    return newfiles
-
-
-def _extract_skip(metadata_files: list[str]) -> set[str]:
-    skip = set()
-    for metadata_file in metadata_files:
-        path, _ = os.path.split(metadata_file)
-        with open(metadata_file, "r") as f:
-            metadata = safe_load(f)
-        for key, value in metadata.items():
-            if value.get("ignore", False):
-                skip.add(os.path.join(path, key))
-    return skip
-
-
-def find_files(path, subset):
-    metadata_files = [
-        f
-        for f in sh.find(
-            os.path.join(path, subset), "-type", "f", "-name", "metadata.yaml"
-        ).split("\n")
-        if f
-    ]
-    skip = _extract_skip(metadata_files)
-    files = [
-        f
-        for f in sh.find(
-            os.path.join(path, subset), "-type", "f", "-name", "*.stl"
-        ).split("\n")
-        if f
-    ]
-
-    retfiles = []
-    for f in files:
-        add = True
-        for s in skip:
-            if f.startswith(s):
-                add = False
-                break
-        if add:
-            retfiles.append(f)
-
-    return retfiles
-
-
-def print_files(files):
-    def set_handler(obj):
-        if isinstance(obj, (set, tuple)):
-            return list(obj)
-        raise TypeError(f"Object of type {type(obj)} is not JSON serializable")
-
-    print(json.dumps(files, default=set_handler, indent=4))
+from openforge.data.incremental import (
+    IncrementalScanner,
+    parse_files_incremental,
+    print_files_with_transformer,
+    print_incremental_changes,
+    print_incremental_diff,
+)
+from openforge.data.scanner import clean_files, find_files, parse_files, print_files
 
 
 @click.command()
@@ -356,8 +27,114 @@ def print_files(files):
 @click.option("--md5/--no-md5", default=True, help="Calculate MD5 hash for files")
 @click.option("--verbose/--no-verbose", default=False, help="Verbose output")
 @click.option("--upload/--no-upload", default=False, help="Upload files to R2")
-def main(path, subset, md5, verbose, upload):
-    config = dotenv_values(".env")
+@click.option(
+    "--sprites/--no-sprites", default=True, help="Generate sprite sheet thumbnails"
+)
+@click.option("--update", help="Update existing fixture file incrementally")
+@click.option("--dry-run", is_flag=True, help="Preview changes without writing files")
+@click.option(
+    "--incremental", is_flag=True, help="Output only changed data by full_path"
+)
+@click.option(
+    "--skip-schema-validation",
+    is_flag=True,
+    help="Skip schema validation for old fixture files",
+)
+def main(
+    path,
+    subset,
+    md5,
+    verbose,
+    upload,
+    sprites,
+    update,
+    dry_run,
+    incremental,
+    skip_schema_validation,
+):
+    """Run dropbox scanner with incremental or full scan mode."""
+    # Load config from .env file in bin directory
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    env_path = os.path.join(script_dir, ".env")
+
+    config = dotenv_values(env_path)
+    if verbose and not config:
+        print(
+            f"Warning: No .env file found at {env_path} or is empty, "
+            "using environment variables only",
+            file=sys.stderr,
+        )
+
+    # Add sprites flag to config
+    if sprites:
+        config = dict(config) if config else {}
+        config["ENABLE_SPRITE_THUMBNAILS"] = True
+
+    if update:
+        run_incremental_mode(
+            path,
+            subset,
+            verbose,
+            upload,
+            update,
+            dry_run,
+            incremental,
+            config,
+            skip_schema_validation,
+        )
+    else:
+        run_full_scan_mode(path, subset, md5, verbose, upload, config)
+
+
+def run_incremental_mode(
+    path,
+    subset,
+    verbose,
+    upload,
+    update,
+    dry_run,
+    incremental,
+    config,
+    skip_schema_validation,
+):
+    """Run incremental scanning workflow."""
+    try:
+        scanner = IncrementalScanner(
+            update, verbose, skip_schema_validation=skip_schema_validation
+        )
+        subset = scanner.get_subset_path()
+        if verbose:
+            print(f"Detected subset path: {subset}", file=sys.stderr)
+    except (
+        FileNotFoundError,
+        ValueError,
+        jsonschema.exceptions.ValidationError,
+        yaml.YAMLError,
+        OSError,
+    ) as e:
+        print(f"Error loading fixture file: {e}", file=sys.stderr)
+        sys.exit(1)
+
+    files = find_files(path, subset)
+    files = clean_files(path, files)
+    files = parse_files_incremental(
+        path, files, scanner, verbose, upload, config, dry_run, incremental
+    )
+
+    # Handle different output modes
+    if dry_run:
+        # Output diff format showing only changes
+        print_incremental_diff(files, scanner, verbose)
+    elif incremental:
+        # Output only changed data by full_path
+        print_incremental_changes(files, scanner)
+    else:
+        # Normal mode - output complete updated fixture with transformer applied
+        print_files_with_transformer(files)
+
+
+def run_full_scan_mode(path, subset, md5, verbose, upload, config):
+    """Run normal scanning workflow."""
     files = find_files(path, subset)
     files = clean_files(path, files)
     files = parse_files(path, files, md5, verbose, upload, config)
@@ -365,4 +142,4 @@ def main(path, subset, md5, verbose, upload):
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    main()

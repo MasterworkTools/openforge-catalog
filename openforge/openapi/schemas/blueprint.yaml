@@ -12,7 +12,7 @@ properties:
       - model
       - blueprint
   blueprint_config:
-    type: object
+    "$ref": "config.yaml"
   file_md5:
     type: string
   file_size:
@@ -21,9 +21,6 @@ properties:
     type: string
   full_name:
     type: string
-  file_changed_at:
-    type: string
-    format: date-time
   file_modified_at:
     type: string
     format: date-time
@@ -48,6 +45,12 @@ properties:
           type: string
         image_url:
           type: string
+  successor_id:
+    type: string
+    pattern: "^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$"
+    nullable: true
+  deprecated:
+    type: boolean
 required:
   - blueprint_name
   - blueprint_type

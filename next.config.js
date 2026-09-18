@@ -1,6 +1,14 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  rewrites: async () => {
+  output: process.env.BACKEND_API ? undefined : "export",
+  trailingSlash: true,
+  env: {
+    NEXT_PUBLIC_BASE_GENERATOR_URL: process.env.NEXT_PUBLIC_BASE_GENERATOR_URL || 'http://localhost:8000',
+  },
+}
+
+if (process.env.BACKEND_API) {
+  nextConfig.rewrites = async () => {
     return [
       {
         source: '/api/:path*',
@@ -10,7 +18,7 @@ const nextConfig = {
             : '/api/',
       },
     ]
-  },
+  }
 }
 
 module.exports = nextConfig

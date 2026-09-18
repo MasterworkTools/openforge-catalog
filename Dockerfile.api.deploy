@@ -1,17 +1,16 @@
-FROM public.ecr.aws/lambda/python:3.11
+FROM public.ecr.aws/lambda/python:3.11.2025.02.25.16
 
-WORKDIR /app
+WORKDIR /var/task
 
-RUN yum install -y postgresql-devel libpq-devel python3-devel libyaml-devel
+RUN yum install -y gcc python-setuptools python-devel postgresql-devel libyaml-devel
 
 COPY requirements.txt .
-RUN pip3 install -r requirements.txt
+RUN pip install -r requirements.txt
 
 COPY setup.py .
-COPY bin ./bin
+COPY bin/* .
+COPY bin/ bin/
 COPY openforge ./openforge
-RUN python3 setup.py install
+RUN python setup.py install
 
-COPY api/index.py ./index.py
-
-CMD ["index.lambda_handler"]
+CMD ["openforge.app.index.lambda_handler"]

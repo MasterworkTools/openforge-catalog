@@ -1,0 +1,42 @@
+.resultsContainer {
+}
+
+.selectedTagsContainer {
+  background-color: #ddd;
+  padding: 8px;
+  border-radius: 5px;
+  margin-bottom: 8px;
+}
+
+.selectedTagsContainer__header {
+  font-weight: bold;
+  font-size: small;
+}
+
+.selectedTagsContainer ul {
+}
+
+.selectedTagsContainer li {
+}
+
+.selectedTagsContainer button {
+}
+
+.selectedTagsContainer button:hover {
+}
+
+.octicon {
+  vertical-align: text-bottom;
+}
+
+.blueprintListItem {
+  cursor: pointer;
+}
+
+.blueprintListItem.selected {
+  background-color: lightblue;
+}
+
+.resultsContainer h2 {
+  font-weight: bold;
+}

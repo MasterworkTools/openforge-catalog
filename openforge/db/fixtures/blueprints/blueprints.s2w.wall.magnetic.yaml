@@ -1,0 +1,94 @@
+- name: "S2W: Wall on Tile: Wall: Magnetic (Single Piece)"
+  type: "blueprint"
+  tags:
+    - object|tile
+    - object|tile|wall_on_tile
+    - build|s2w
+    - build|s2w|single_piece
+    - component|magnetic
+    - shape|wall
+  config:
+    parts:
+      - name: wall
+        tags:
+          require:
+            - tag: build|separate wall
+            - tag: component|magnetic
+            - tag: shape|wall
+            - tag: connection|openforge
+          deny:
+            - tag: shape|curved
+            - tag: size|width|1.5
+          constrain:
+            - tag: size|width
+        fulfills:
+          - part: base
+      - name: floor
+        tags:
+          require:
+            - tag: shape|floor
+            - tag: shape|floor|wall
+            - tag: build|s2w
+          constrain:
+            - tag: size|width
+            - tag: size|depth
+      - name: base
+        tags:
+          require:
+            - tag: shape|base
+            - tag: shape|base|square
+          deny:
+            - tag: shape|wall
+            - tag: build|s2w
+            - tag: shape|option|notch
+          constrain:
+            - tag: size|width
+            - tag: size|depth
+
+- name: "S2W: Wall on Tile: Wall: Magnetic (Modular)"
+  type: "blueprint"
+  tags:
+    - object|tile
+    - object|tile|wall_on_tile
+    - build|s2w
+    - build|s2w|modular
+    - component|magnetic
+    - shape|wall
+  config:
+    parts:
+      - name: wall
+        tags:
+          require:
+            - tag: build|separate wall
+            - tag: component|magnetic
+            - tag: shape|wall
+          deny:
+            - tag: shape|curved
+            - tag: size|width|1.5
+          constrain:
+            - tag: size|width
+      - name: floor
+        tags:
+          require:
+            - tag: shape|floor
+            - tag: shape|floor|wall
+            - tag: build|s2w
+          constrain:
+            - tag: size|width
+            - tag: size|depth
+      - name: base
+        tags:
+          require:
+            - tag: shape|base
+            - tag: shape|base|wall
+            - tag: build|s2w
+          deny:
+            - tag: shape|base|corner
+            - tag: shape|option|notch
+          constrain:
+            - tag: size|width
+            - tag: size|depth
+            - tag: connection
+              siblings: [wall]
+            - filter: connection|side
+            - filter: connection|openforge

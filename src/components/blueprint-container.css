@@ -1,0 +1,31 @@
+.blueprintContainer {
+  padding: 20px;
+}
+
+.blueprintContainer h2 {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.blueprintLinks {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.blueprintLinks button {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  color: inherit;
+}
+
+.blueprintLinks button:hover {
+  opacity: 0.8;
+}
+
+.octicon {
+  vertical-align: text-bottom;
+}

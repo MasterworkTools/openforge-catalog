@@ -1,0 +1,46 @@
+repos:
+  # JavaScript/TypeScript linting and formatting
+  - repo: local
+    hooks:
+      - id: eslint
+        name: ESLint
+        entry: bash -c 'npm run lint -- --fix "$@" || npm run lint -- "$@"' --
+        language: system
+        files: \.(js|jsx|ts|tsx)$
+        pass_filenames: true
+        require_serial: false
+
+  # TypeScript type checking
+  - repo: local
+    hooks:
+      - id: typescript
+        name: TypeScript Check
+        entry: bash -c 'npx tsc --noEmit --skipLibCheck'
+        language: system
+        files: \.(ts|tsx)$
+        pass_filenames: false
+        require_serial: true
+
+  # Python linting and formatting with ruff
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.8.6
+    hooks:
+      # Run the linter
+      - id: ruff
+        args: [--fix]
+        files: '(\.py$|^bin/[^/]+$)'  # Include .py files and bin scripts
+      # Run the formatter
+      - id: ruff-format
+        files: '(\.py$|^bin/[^/]+$)'  # Include .py files and bin scripts
+
+  # General file checks
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-added-large-files
+        args: ['--maxkb=1000']
+      - id: check-json
+      - id: check-merge-conflict

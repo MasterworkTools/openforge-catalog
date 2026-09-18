@@ -1,0 +1,31 @@
+# Default thing metadata for OpenForge 2.0 releases.
+# Ported from the original v1 tooling's bin/new.openforge2.json
+# (~/Dropbox/.../OpenForgeDevelopment). NOTE: the boilerplate copy is the
+# original text and predates current channels — review before first
+# production publish.
+license: "Creative Commons - Attribution - Share Alike"
+category: "Toy & Game Accessories"
+tags:
+  - dnd
+  - dnd_tiles
+  - dungeon
+  - miniatures
+  - OpenForge
+  - OpenForge2
+  - pathfinder
+  - pathfinder_tiles
+  - rpg
+  - rpg_tiles
+  - tabletop
+  - terrain
+  - tile
+description_boilerplate: |
+  For instructions on how to get started with OpenForge, we have a set of [tutorials](https://github.com/devonjones/openforge-tutorials/blob/master/README.md). Want to sell OpenForge prints? Want to use OpenForge designs in your product, check out the [license](https://github.com/devonjones/openforge-tutorials/blob/master/license.md) FAQ.
+
+  OpenForge is now a [patron](https://www.patreon.com/masterworktools) supported project. We use the resources that our patrons give us in order to get the resources to let us create more sophisticated tiles with a greater level of detail. Please, support us, and we'll deliver an ongoing stream of awesome gaming terrain. You can find more about OpenForge and Masterwork Tools at our:
+
+  * [Online catalog and backer site](http://openforge.masterwork-tools.com/)
+  * [Website](http://masterwork-tools.com)
+  * [Forums](https://reddit.com/r/OpenForge) (Mostly we use facebook now)
+  * [Twitter](https://twitter.com/MasterworkTools)
+  * [Facebook](https://facebook.com/masterworktools/)

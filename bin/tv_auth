@@ -1,0 +1,11 @@
+#!/usr/bin/env python
+"""Thingiverse v2 authentication CLI shim.
+
+All logic lives in openforge.thingiverse.cli so it's unit-testable
+via click's CliRunner.
+"""
+
+from openforge.thingiverse.cli import cli
+
+if __name__ == "__main__":
+    cli()

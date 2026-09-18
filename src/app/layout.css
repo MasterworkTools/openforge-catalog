@@ -1,22 +1,90 @@
-
 .pageContainer {
-  height: 100%;
+  height: 100vh;
   width: 100%;
   display: flex;
   flex-direction: column;
+  overflow-x: hidden;
 }
 
-
-.pageHeader {
-  flex: 0 0 auto; 
+.pageHeaderWrapper {
+  flex: 0 0 auto;
   border-bottom: 1px solid #ccc;
   padding: 8px;
 }
 
-.columnContainer {
-  flex: 0 1 auto;
-  width: 100%;
+.pageHeaderRight {
+  float: right;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tabbedInterface {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  max-height: calc(100vh - 60px); /* Account for header */
+  overflow-x: hidden;
+}
+
+.tabs {
+  display: flex;
+  border-bottom: 1px solid #ccc;
+  background-color: #f5f5f5;
+  padding: 0 8px;
+  flex: 0 0 auto;
+}
+
+.tab {
+  padding: 8px 16px;
+  border: 1px solid transparent;
+  background: none;
+  cursor: pointer;
+  font-size: 14px;
+  color: #666;
+  margin: 0 4px;
+  border-radius: 4px 4px 0 0;
+  transition: all 0.2s ease;
+}
+
+.tab:hover {
+  background-color: #e5e5e5;
+}
+
+.tab.active {
+  color: #000;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-bottom: 1px solid #fff;
+  margin-bottom: -1px;
+  font-weight: 500;
+}
+
+.tabContainer {
+  display: flex;
+  flex-direction: column;
   height: 100%;
+  width: 100%;
+}
+
+.tabButtons {
+  display: flex;
+  border-bottom: 1px solid #ccc;
+  background-color: #f5f5f5;
+  padding: 0 8px;
+  flex: 0 0 auto;
+}
+
+.tabContent {
+  flex: 1 1 auto;
+  height: calc(100vh - 120px); /* Account for header and tabs */
+  overflow: hidden;
+}
+
+.columnContainer {
+  flex: 1 1 auto;
+  width: 100%;
+  max-height: calc(100vh - 120px); /* Account for header and tabs */
   display: flex;
   flex-direction: row;
   flex-wrap: nowrap;
@@ -25,17 +93,82 @@
   align-items: stretch;
 }
 
-
-.tagContainer {
+.tagContainerWrapper {
   padding: 8px;
   background-color: #ddd;
-  flex: 0 1 200px;
+  flex: 0 0 200px;
+  user-select: none;
+  overflow-y: auto;
 }
-.modelsContainer {
+
+.modelsContainerWrapper {
   padding: 8px;
-  flex: 1 1 auto;
+  flex: 0 0 auto;
+  min-width: 600px;
+  overflow-y: auto;
+  white-space: nowrap;
+  display: table;
+  table-layout: auto;
 }
-.modelDetailsContainer {
+
+.modelDetailsContainerWrapper {
   padding: 8px;
+  flex: 5 5 auto;
+  min-width: 300px;
+  overflow-y: auto;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+.tagButton {
+  background-color: #c8c8c8;
+  color: #595959;
+  padding: 0px 5px;
+  border-radius: 3px;
+  line-height: 1.0em;
+}
+
+.tagButton:hover {
+  background-color: lightblue;
+  color: #333;
+}
+
+.blueprintDetailsTabs {
   flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  max-height: 100%;
+  overflow: hidden;
+}
+
+.blueprintDetailsTabs .tabButtons {
+  display: flex;
+  border-bottom: 1px solid #ccc;
+  background-color: #f5f5f5;
+  padding: 0 8px;
+  flex: 0 0 auto;
+}
+
+.blueprintDetailsTabs .tabContent {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 20px;
+}
+
+.visibleLink {
+  color: #0066cc;
+  text-decoration: underline;
+}
+
+.visibleLink:hover {
+  color: #003d7a;
+}
+
+button.visibleLink {
+  border: none;
+  background: none;
+  cursor: pointer;
+  padding: 0;
+  margin: 0;
 }

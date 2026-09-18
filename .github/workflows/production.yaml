@@ -5,7 +5,7 @@ on:
     branches: [main]
 concurrency:
   group: ${{ github.head_ref || github.ref_name }}
-  cancel-in-progress: true
+  cancel-in-progress: false # a cancelled tofu apply leaves a half-applied state and a held lock
 permissions:
   id-token: write
   contents: read
@@ -14,14 +14,99 @@ defaults:
     shell: bash
 
 jobs:
+  python-test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:latest
+        env:
+          POSTGRES_USER: openforge
+          POSTGRES_PASSWORD: openforge
+          POSTGRES_DB: openforge_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+    - uses: actions/checkout@v5
+
+    - name: Set up Python
+      uses: actions/setup-python@v6
+      with:
+        python-version: '3.13'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install -r requirements-dev.txt
+        pip install -e .
+
+    - name: Run tests
+      env:
+        PGHOST: localhost
+        PGUSER: openforge
+        PGPASSWORD: openforge
+        PGDATABASE: openforge_test
+        PGPORT: 5432
+      run: |
+        pytest tests/ --cov=openforge
+
+  react-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - name: Use Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+      - name: Install dependencies
+        run: npm install
+      - name: Run React tests
+        run: npm test
+
+  js-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - name: Use Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+      - name: Install dependencies
+        run: npm install
+      - name: Run linting and type checking
+        run: npm run lint:all
+
+  python-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.13'
+      - name: Install ruff
+        run: |
+          python -m pip install --upgrade pip
+          pip install ruff==0.8.6
+      - name: Run ruff linting
+        run: ruff check .
+      - name: Run ruff formatting check
+        run: ruff format --check .
   docker-build:
     name: Production Docker Build
+    needs: [python-test, react-test, js-lint, python-lint]
     runs-on: ubuntu-latest
     permissions:
       id-token: write
       contents: read
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Set up Docker Context for Buildx
         run: |
@@ -34,7 +119,7 @@ jobs:
 
 
       - name: Configure Production OIDC
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@v5
         with:
           role-to-assume: ${{ vars.ECR_IAM_PROD }}
           role-session-name: production-ecr
@@ -47,11 +132,83 @@ jobs:
           mask-password: true
 
       - name: Docker Build and Push
+        id: docker-build
         if: ${{ ! inputs.use_cache }}
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           context: ./
           file: ./Dockerfile.api.deploy
           push: true
           platforms: linux/amd64
+          provenance: false
           tags: "908027381953.dkr.ecr.us-east-1.amazonaws.com/openforge_catalog/api:${{ github.sha }}"
+
+  tofu-apply:
+    name: Production Tofu Apply
+    needs: docker-build
+    if: ${{ needs.docker-build.result == 'success' }}
+    runs-on: ubuntu-latest
+    environment: production
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Configure Production deploy role
+        uses: aws-actions/configure-aws-credentials@v5
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN_PRODUCTION }}
+          role-session-name: production-tofu
+          aws-region: us-east-1
+
+      - uses: opentofu/setup-opentofu@v1
+        with:
+          tofu_version: "1.9.0"
+          tofu_wrapper: false
+
+      # Deploys the image this run just pushed: the Lambda's image_uri is the git sha.
+      - name: tofu apply
+        working-directory: terraform/environments/production
+        run: |
+          tofu init -input=false
+          tofu plan -input=false -no-color -var image_tag=${{ github.sha }} -out=tfplan
+          tofu apply -input=false -auto-approve tfplan
+
+  frontend-deploy:
+    name: Production Frontend Deploy
+    needs: tofu-apply
+    if: ${{ needs.tofu-apply.result == 'success' }}
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+
+      # npm, not pnpm: package-lock.json is the only lockfile in this repo, so pnpm
+      # resolved newer deps than the tests run against and the build failed on React
+      # Compiler lint errors that never reach the test jobs.
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build frontend
+        run: npm run build
+
+      - name: Configure Production S3 Credentials
+        uses: aws-actions/configure-aws-credentials@v5
+        with:
+          role-to-assume: ${{ vars.ECR_IAM_PROD }}
+          role-session-name: production-s3
+          aws-region: us-east-1
+
+      - name: Deploy to S3
+        run: |
+          cd out
+          aws s3 sync . s3://production-openforge-catalog-website/${{ github.sha }}
+          echo "Deployed to production at SHA: ${{ github.sha }}"

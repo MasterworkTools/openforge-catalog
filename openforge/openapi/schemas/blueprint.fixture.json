@@ -1,0 +1,68 @@
+{
+  "type": "array",
+  "items": {
+    "type": "object",
+    "required": ["type"],
+    "properties": {
+      "type": {
+        "type": "string"
+      },
+      "name": {
+        "type": "string"
+      },
+      "config": {
+        "$ref": "config.yaml"
+      },
+      "file_metadata": {
+        "type": "object",
+        "properties": {
+          "file": {
+            "type": "string"
+          },
+          "md5": {
+            "type": "string"
+          },
+          "size": {
+            "type": "integer"
+          },
+          "full_name": {
+            "type": "string"
+          },
+          "file_modified_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "storage_address": {
+            "type": "string"
+          }
+        }
+      },
+      "tags": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "description": "Pipe-delimited tag (e.g., 'shape|floor', 'texture|stone')"
+        }
+      },
+      "images": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "image_name": {
+              "type": "string"
+            },
+            "image_url": {
+              "type": "string"
+            }
+          },
+          "required": ["image_name", "image_url"]
+        }
+      },
+      "metadata": {
+        "type": "boolean",
+        "description": "Whether this entry was created from a metadata.yaml file"
+      }
+    }
+  }
+}

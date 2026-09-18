@@ -1,0 +1,81 @@
+TagDocumentation:
+  type: object
+  properties:
+    id:
+      type: string
+      pattern: "^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$"
+    tag:
+      type: array
+      items:
+        type: string
+      description: Tag array (e.g., ["texture", "dungeon_stone"])
+    document:
+      type: string
+      description: Documentation content (markdown supported)
+    document_type:
+      type: string
+      enum: [instructions]
+      description: Type of documentation (currently only instructions supported)
+    is_live:
+      type: boolean
+      description: Whether this documentation is live and visible to users
+      default: true
+    created_at:
+      type: string
+      format: date-time
+    updated_at:
+      type: string
+      format: date-time
+  required:
+    - tag
+    - document
+    - document_type
+    - is_live
+  additionalProperties: false
+
+TagDocumentationList:
+  type: object
+  properties:
+    documentation:
+      type: array
+      items:
+        $ref: '#/components/schemas/TagDocumentation'
+  required:
+    - documentation
+  additionalProperties: false
+
+TagDocumentationCreate:
+  type: object
+  properties:
+    document:
+      type: string
+      description: Documentation content (markdown supported)
+    document_type:
+      type: string
+      enum: [instructions]
+      description: Type of documentation (currently only instructions supported)
+    is_live:
+      type: boolean
+      description: Whether this documentation is live and visible to users
+      default: true
+  required:
+    - document
+    - document_type
+  additionalProperties: false
+
+TagDocumentationUpdate:
+  type: object
+  properties:
+    document:
+      type: string
+      description: Documentation content (markdown supported)
+    document_type:
+      type: string
+      enum: [instructions]
+      description: Type of documentation (currently only instructions supported)
+    is_live:
+      type: boolean
+      description: Whether this documentation is live and visible to users
+  required:
+    - document
+  additionalProperties: false
