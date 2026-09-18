@@ -189,18 +189,16 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: '20'
+          node-version: '22'
 
-      - name: Install pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: 9
-
+      # npm, not pnpm: package-lock.json is the only lockfile in this repo, so pnpm
+      # resolved newer deps than the tests run against and the build failed on React
+      # Compiler lint errors that never reach the test jobs.
       - name: Install dependencies
-        run: pnpm install
+        run: npm ci
 
       - name: Build frontend
-        run: pnpm run build
+        run: npm run build
 
       - name: Configure Production S3 Credentials
         uses: aws-actions/configure-aws-credentials@v5
