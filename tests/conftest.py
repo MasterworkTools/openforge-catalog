@@ -72,7 +72,8 @@ def clean_tables(test_db):
                 sql.SQL(
                     "TRUNCATE blueprints, tags, images, blueprint_images, "
                     "blueprint_documentation, tag_descriptions, openscad_source, "
-                    "tag_documentation, sessions CASCADE"
+                    "tag_documentation, sessions, thingiverse_things, "
+                    "thingiverse_files CASCADE"
                 )
             )
             conn.commit()
