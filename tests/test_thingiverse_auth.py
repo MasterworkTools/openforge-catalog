@@ -210,6 +210,38 @@ class TestAccessToken:
         with pytest.raises(NotLoggedIn):
             manager.access_token()
 
+    def test_write_token_stored_at_login(self, manager, session):
+        access = make_jwt(exp=int(time.time()) + 3600)
+        session.queue(FakeResponse(200, login_body(access, "r", token="wtok")))
+        manager.login("devon", "pw")
+        assert manager.write_token() == "wtok"
+
+    def test_write_token_survives_refresh(self, manager, session, token_file):
+        # login captures the write token; a later JWT refresh (whose
+        # response has no `token`) must NOT drop it
+        expired = make_jwt(exp=int(time.time()) - 100)
+        fresh = make_jwt(exp=int(time.time()) + 3600)
+        session.queue(FakeResponse(200, login_body(expired, "r1", token="wtok")))
+        manager.login("devon", "pw")
+        session.queue(FakeResponse(200, {"access": fresh, "refresh": "r2"}))
+        manager.access_token()  # triggers refresh
+
+        assert manager.write_token() == "wtok"
+        assert json.loads(token_file.read_text())["session_token"] == "wtok"
+
+    def test_write_token_missing_raises_not_logged_in(self, manager, session):
+        # a login response without a `token` field -> no write token stored
+        access = make_jwt(exp=int(time.time()) + 3600)
+        body = {"message": "ok", "jwt": {"access": access, "refresh": "r"}}
+        session.queue(FakeResponse(200, body))
+        manager.login("devon", "pw")
+        with pytest.raises(NotLoggedIn, match="no write token"):
+            manager.write_token()
+
+    def test_write_token_no_login_raises(self, manager):
+        with pytest.raises(NotLoggedIn):
+            manager.write_token()
+
     def test_corrupt_token_file_raises_not_logged_in(self, manager, token_file):
         token_file.parent.mkdir(parents=True)
         token_file.write_text("{not json")

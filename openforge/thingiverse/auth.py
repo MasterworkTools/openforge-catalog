@@ -241,6 +241,23 @@ class TokenManager:
         """Report whether tokens are stored (not whether they're valid)."""
         return self.token_file.exists()
 
+    def write_token(self) -> str:
+        """Return the opaque token used to authorize v1 write-API calls.
+
+        This is the `token` field from login (see
+        docs/thingiverse-api-v2-private.md), distinct from the access JWT.
+
+        Raises:
+            NotLoggedIn: If no write token is stored — it is captured only
+                at login (not refresh), so a re-login is required
+        """
+        token = self._load_tokens().get("session_token")
+        if not token:
+            raise NotLoggedIn(
+                "no write token stored; log in again (captured only at login)"
+            )
+        return token
+
     def close(self):
         """Release the HTTP session's connection pool.
 
@@ -289,10 +306,16 @@ class TokenManager:
             "refresh": refresh,
             "stored_at": int(time.time()),
         }
-        # The session token accompanies the JWTs on login responses; keep
-        # it in case v1-style endpoints need it later.
-        if "token" in body:
+        # The `token` field is the opaque write token used against the v1
+        # write API (docs/thingiverse-api-v2-private.md). It's only present
+        # on login responses, NOT on refresh — carry the existing one
+        # forward on refresh so a JWT refresh doesn't drop the write token.
+        if body.get("token"):
             stored["session_token"] = body["token"]
+        else:
+            existing = self._peek_tokens()
+            if existing.get("session_token"):
+                stored["session_token"] = existing["session_token"]
         self._store_tokens(stored)
         logger.info("%s succeeded, tokens stored", action)
         return stored
@@ -316,6 +339,18 @@ class TokenManager:
             with contextlib.suppress(FileNotFoundError):
                 os.unlink(tmp_path)
             raise
+
+    def _peek_tokens(self) -> Dict:
+        """Read stored tokens, returning {} if absent or unreadable.
+
+        Used only to carry an existing session_token forward on refresh; a
+        missing-or-corrupt file just means "no prior token to carry" (the
+        caller is about to write a fresh, valid token file regardless).
+        """
+        try:
+            return self._load_tokens()
+        except NotLoggedIn:
+            return {}
 
     def _load_tokens(self) -> Dict:
         """Read stored tokens.
