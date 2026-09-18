@@ -1,5 +1,6 @@
 import json
 import logging
+from urllib.parse import quote
 
 import psycopg
 from flask import current_app
@@ -74,7 +75,9 @@ def db_url(vars, ext_logger=None):
     if "LOG_LEVEL" in vars:
         LOGGER.setLevel(vars["LOG_LEVEL"])
 
-    return f"postgresql://{args['user']}:{args['password']}@{args['host']}:{args['port']}/{args['database']}"
+    # libpq percent-decodes the URI, so a password containing '%' must be encoded.
+    password = quote(args["password"], safe="")
+    return f"postgresql://{args['user']}:{password}@{args['host']}:{args['port']}/{args['database']}"
 
 
 def _password_from_secret(arn):

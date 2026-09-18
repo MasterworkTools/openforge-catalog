@@ -49,3 +49,9 @@ def test_pgpassword_wins_over_db_secret_arn(monkeypatch):
 
 def test_without_either_the_default_password_is_used():
     assert db_url({}) == "postgresql://openforge:openforge@localhost:5432/openforge"
+
+
+def test_password_is_percent_encoded_for_libpq():
+    url = db_url({"PGPASSWORD": "a%41b@c/d"})
+
+    assert url == "postgresql://openforge:a%2541b%40c%2Fd@localhost:5432/openforge"
