@@ -5,6 +5,7 @@ import TabPartSearch from './tab-part-search';
 import TabBlueprints from './tab-blueprints';
 import TabAdmin from './tab-admin';
 import { useAdminContext } from '@/contexts/admin-context';
+import { loadAppConfig } from '@/utils/app-config';
 
 const TabbedInterface = () => {
   const [activeTab, setActiveTab] = useState<'partSearch' | 'blueprints' | 'baseGenerator' | 'admin'>('partSearch');
@@ -20,10 +21,7 @@ const TabbedInterface = () => {
       setBaseGeneratorUrl(savedUrl);
     }
 
-    fetch('/app-config.json')
-      .then(res => res.json())
-      .then(cfg => { if (cfg.BASE_GENERATOR_URL) setBaseGeneratorUrl(cfg.BASE_GENERATOR_URL); })
-      .catch(err => console.error("Failed to load or parse app-config.json", err));
+    loadAppConfig().then(cfg => { if (cfg.BASE_GENERATOR_URL) setBaseGeneratorUrl(cfg.BASE_GENERATOR_URL); });
   }, []);
 
 

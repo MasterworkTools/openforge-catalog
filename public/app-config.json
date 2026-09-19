@@ -1,3 +1,5 @@
 {
-  "BASE_GENERATOR_URL": "https://openscad.openforge.tools"
+  "BASE_GENERATOR_URL": "https://openscad.openforge.tools",
+  "ENVIRONMENT": "development",
+  "PRODUCTION_URL": "https://openforge.tools"
 }

@@ -1,12 +1,5 @@
 # Deployment Setup
 
-## NPM Commands
-
-The following npm commands are available for deployment:
-
-- `npm run deploy:staging` - Build and deploy to staging S3 bucket
-- `npm run deploy:production` - Build and deploy to production S3 bucket
-
 ## GitHub Actions Setup
 
 The GitHub Actions workflows will automatically deploy the frontend after a successful Docker build.
@@ -41,15 +34,10 @@ This allows for easy rollbacks and tracking of deployed versions.
 
 ### Local Deployment
 
-For local deployment, ensure you have AWS CLI configured with appropriate credentials:
-
-```bash
-# Deploy to staging
-npm run deploy:staging
-
-# Deploy to production
-npm run deploy:production
-```
+Deployment is CI's job: the Staging workflow deploys every push to `test`, and the
+Production workflow every push to `main`. There are no local deploy scripts. Each run
+builds, writes `out/app-config.json` for that environment, and syncs to a prefix named
+after the commit sha.
 
 ### CloudFront or Load Balancer Configuration
 

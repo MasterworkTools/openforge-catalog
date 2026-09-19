@@ -168,6 +168,17 @@ jobs:
       - name: Build frontend
         run: npm run build
 
+      # The build is environment-agnostic; this is what makes staging say so.
+      - name: Write staging runtime config
+        run: |
+          cat > out/app-config.json <<'JSON'
+          {
+            "BASE_GENERATOR_URL": "https://openscad.openforge.tools",
+            "ENVIRONMENT": "staging",
+            "PRODUCTION_URL": "https://openforge.tools"
+          }
+          JSON
+
       - name: Configure Staging S3 Credentials
         uses: aws-actions/configure-aws-credentials@v5
         with:
