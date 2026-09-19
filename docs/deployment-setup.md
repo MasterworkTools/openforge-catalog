@@ -39,6 +39,20 @@ Production workflow every push to `main`. There are no local deploy scripts. Eac
 builds, writes `out/app-config.json` for that environment, and syncs to a prefix named
 after the commit sha.
 
-### CloudFront or Load Balancer Configuration
+### How a build becomes the live site
 
-Remember to update your CloudFront distribution or load balancer to point to the new SHA path after deployment.
+Each deploy uploads to `s3://<bucket>/<commit sha>/` and then promotes that build to
+`s3://<bucket>/current/`, which is the prefix both CloudFront distributions serve. So a
+merge to `test` or `main` is live by itself: no Terraform change, no variable to bump.
+
+The per-sha copies stay, so putting an earlier build back is one command and takes effect
+immediately (the distributions serve the default behaviour with caching disabled):
+
+```bash
+aws s3 cp --recursive s3://staging-openforge-catalog-website/<old sha>/ \
+                      s3://staging-openforge-catalog-website/current/
+```
+
+`cp --recursive` rather than `sync`: `sync` skips any key whose destination is the same
+size and no older, so a rollback would copy some files and silently skip others, leaving
+`current/` holding two builds at once.

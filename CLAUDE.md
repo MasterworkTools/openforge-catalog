@@ -200,7 +200,9 @@ gh pr create --base main --title "release: deploy to production"
 The API Lambda, its ALB, and the frontend bucket are OpenTofu in this repo, layered on
 openforge-infra's state (network, Aurora, ECR, deploy role). The `Production` workflow
 runs `tofu apply -var image_tag=<sha>` after the image push and before the S3 sync, so a
-merge to `main` deploys the image it just built. Release PRs get a plan comment from the
+merge to `main` deploys the image it just built. The sync uploads the frontend to a
+per-sha prefix and then promotes it to `current/`, which is what CloudFront serves, so the
+deploy is live without touching openforge-infra-frontend. Release PRs get a plan comment from the
 `Production Plan` workflow. Runtime secrets live in Secrets Manager
 (`openforge-catalog/production/app`, created once by `scripts/create-app-secret.sh`), never
 in the repo; the database password is read at cold start from `DB_SECRET_ARN` so the
