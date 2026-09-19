@@ -1,6 +1,6 @@
 {
   "name": "next-flask",
-  "version": "0.6.8",
+  "version": "0.7.0",
   "private": true,
   "scripts": {
     "flask-dev": "pip3 install -r requirements.txt && FLASK_DEBUG=1 python3 -m flask --app openforge.app.index run -p 5328 --debug",
