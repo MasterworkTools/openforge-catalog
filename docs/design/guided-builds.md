@@ -32,9 +32,9 @@ namespaces that matter here:
 
 | Namespace | Count | Examples |
 |---|---|---|
-| `build` | 5 | `build|s2w`, `build|wall on tile`, `build|separate wall`, `build|s-system`, `build|thick wall` |
+| `build` | 5 | `build\|s2w`, `build|wall on tile`, `build|separate wall`, `build|s-system`, `build|thick wall` |
 | `shape` | 184 | `shape|wall`, `shape|floor`, `shape|base`, `shape|corner`, `shape|curved` |
-| `connection` | 20 | `connection|openlock`, `connection|dragonlock`, `connection|magnetic`, `connection|openlock|side`, `connection|openlock|topless` |
+| `connection` | 20 | `connection|openlock`, `connection|dragonlock`, `connection|magnetic`, `connection|side|openlock`, `connection|openlock|topless` |
 | `texture` | 83 | `texture|dungeon_stone`, `texture|cave`, `texture|towne` |
 | `size` | 103 | `size|width|1`, `size|depth|1`, `size|angle|45` |
 | `component`, `part`, `interface` | 375 / 25 / 67 | `part|door|arched`, `interface|archway` |
@@ -66,48 +66,77 @@ method: directories like `dungeon_stone.wall_on_tile.wall` and
 They are not in R2 yet; blueprint images are served from
 `https://objects.openforge.tools/sprites/<prefix>/<md5>.png`.
 
-## The slot problem, and the decision
+## The base slot: what is actually true, and what we do about it
 
-A wall blueprint has an optional `base` slot. In **wall on tile** that slot goes unused,
-because the wall stands on the floor tile. The slot cannot express that: it is a property
-of the part, but whether it is used is a property of the *method*.
+The first draft of this document claimed the base slot was a contradiction — that a
+wall carries a slot wall-on-tile never uses, because the parser could not know the build
+method. **That was wrong, and a reviewer caught it before the epic was built on it.**
 
-Look at where that slot comes from and the contradiction explains itself. It is not
-authored — it is synthesised by the parser in `openforge/data/metadata.py`:
-`apply_default_metadata()` calls `apply_openforge_wall`, `apply_openforge_floor` and
-`apply_thick_wall`, each of which checks for `connection|openforge` plus a shape and then
-appends a `base` part requiring `shape|base`, constrained to matching shape, width and
-texture. Feature slots are different in kind: `door`, `torch` and the rest come from
-authored folder metadata, merged by `get_all_folder_metadata`.
+The parser does know the build method. `is_openforge_wall` requires `build|separate wall`;
+`is_thick_wall` requires `build|thick wall` and keys on `component|wall`, not a shape. The
+data follows:
 
-So the `base` slot restates, per blueprint, something the connection tag already says:
-**a piece with `connection|openforge` needs a base, and what counts as a base depends on
-the build method.** Encoding that on 2,459 parts means encoding it in the one place that
-cannot know the method.
+| Build method | Walls with a base slot |
+|---|---|
+| `build|separate wall` | 1,220 of 2,912 |
+| `build|wall on tile` | **0 of 338** |
+| `build|s2w` | **0 of 268** |
+| `build|s-system` | 0 of 41 |
+| `build|thick wall` | 87 of 337 |
 
-**Decision: remove the synthesised base slot from the data, in the parser.** Then:
+Build tags are mutually exclusive: no blueprint carries two. The 312 wall-on-tile pieces
+that do carry a base slot are 295 floors and 17 corners — the base goes under the floor,
+which is exactly the model this document prescribes.
 
-- `config.parts` means one thing again — genuine feature slots the piece accepts.
-- "Does this need a base, and which one?" is answered by `connection|openforge` plus the
-  build method, which is what the guide already knows.
-- Wall on tile stops being a contradiction, because nothing claims the wall has a base.
+**So the data is already right, and removing the slot is a simplification rather than a
+fix.** Devon's reason stands on its own: `connection|openforge` already implies a base,
+and what counts as a base depends on the build method, so materialising the slot on 2,455
+blueprints restates three things the piece already says. The decision is to remove it —
+but it is cleanup, it is not urgent, and **it does not block the rest of the epic.**
 
-**Consequences to plan for**, all mechanical but not small:
+Whoever does it should know:
 
-- `apply_default_metadata` and its three helpers stop emitting the part. Their tag checks
-  still encode real knowledge about which pieces take bases; keep that knowledge where the
-  guide can use it rather than deleting it outright.
-- 2,459 blueprints in the fixtures lose a part, so the fixtures regenerate. Expect a large
-  diff and verify by count, not by eye.
-- Anything that reads the base slot changes meaning, in particular
-  `src/utils/config-processing.ts` and whatever surfaces compatible bases on a blueprint
-  page today. That UI must derive bases from the connection tag instead, or it silently
-  stops offering them.
+- The three helpers in `openforge/data/metadata.py` are *the only place in the repo that
+  knows which pieces take bases under which method*. That knowledge must move somewhere
+  the guide can read, not be deleted. Their mechanisms differ: `apply_openforge_wall`
+  constrains shape, width and texture, while `apply_openforge_floor` and
+  `apply_thick_wall` constrain shape, width and depth and add `deny: build|s2w`.
+- 2,459 base parts sit on 2,455 blueprints, because four pieces carry a duplicate. The
+  scanner runs authored metadata and then appends defaults, so **some base slots are
+  authored** and will survive a parser change. Verify by count afterwards.
+- The consumers change meaning: `src/utils/config-processing.ts`, whatever surfaces
+  compatible bases on a blueprint page, and `collectDownloadUrls` in
+  `src/utils/blueprint-utils.ts`, which walks parts to build a download set.
+- Only 1,220 of 2,912 separate-wall walls carry the slot at all, and 17 wall-on-tile
+  corners do. Whether that is deliberate or drift is an open audit
+  (`openforge_catalog-hcm`), and the guide should not assume uniformity until it is
+  answered.
 
 **Feature slots stay, and the model must not preclude them.** `door`, `torch`, `lintel`,
-`grate`, `portcullis`, `shutters`, `frame`, `treasure`, `top`, `archway`, `trapdoor` are
-real choices a person makes, out of scope for the first slice, and a later guide step
-should be able to offer them by reading the chosen part's own slots.
+`grate`, `portcullis`, `shutters`, `frame`, `treasure`, `top`, `archway`, `trapdoor` come
+from authored folder metadata, not from the parser — `apply_default_metadata` only ever
+appends `base`. They are real choices a person makes, out of scope for the first slice,
+and a later guide step should offer them by reading the chosen part's own slots.
+
+## Mechanisms that already exist and must be reconciled
+
+The instruction was to look at blueprints because most of the concepts are already there.
+Three that a first draft missed:
+
+- **`fulfills`** — defined in `openforge/openapi/schemas/config.yaml`, implemented in
+  `src/components/blueprint/config-section.tsx`, and used 21 times across two fixture
+  files. It expresses *this part satisfies that other part's slot*, which is the
+  "an option takes options away" mechanic the guide needs. Reconcile with `when:` rather
+  than inventing a parallel mechanism.
+- **`constrain`** — has **no Python implementation**. It lives in the schema and in
+  `src/utils/config-processing.ts`, and its real semantics are richer than "match the
+  parent": `parent: false`, `siblings`, and `filter` as an exclusion, with narrowing to
+  the most general match. Porting it is a real cost on the resolution engine, and the
+  alternative is to state plainly that guides do not use `constrain`.
+- **Dual-shape pieces** — 177 blueprints carry both `shape|wall` and `shape|floor`
+  (88 s2w, 59 wall on tile, 1 separate wall). These are the combined prints. A role query
+  of `require: shape|wall` will pick them up, so the guide needs a stated rule for how a
+  method's tags, a role's query and an active refinement compose.
 
 ## Shape of the data
 
@@ -155,8 +184,8 @@ refinements:                              # the "change it afterwards" list
     role: wall
     prompt: Locks on the wall ends?
     when: {selected: {method: [s2w-modular, separate-wall]}}
-    on:   {require: ['connection|openlock|side']}
-    off:  {deny:    ['connection|openlock|side']}
+    on:   {require: ['connection|side|openlock']}
+    off:  {deny:    ['connection|side|openlock']}
 ```
 
 Two mechanics are required by the ask and must survive review:
@@ -198,11 +227,9 @@ be silently stripped the way blueprint deep links are.
 
 ## Sequence
 
-0. **Drop the synthesised base slot** — parser change in `openforge/data/metadata.py`,
-   fixtures regenerated, and the blueprint UI switched to deriving bases from the
-   connection tag. Do this first: it is the change that makes the rest coherent, and
-   doing it after the guide exists means writing the guide against a model that is
-   about to move.
+0. **Drop the synthesised base slot** — cleanup, not a blocker, and it can land in
+   parallel with the rest. Parser change in `openforge/data/metadata.py`, fixtures
+   regenerated, and the blueprint UI switched to deriving bases from the connection tag.
 1. **Schema and loader** — `guides` table, fixture format with an OpenAPI schema beside
    the others, loader wired into the fixtures command, validation errors that name the
    offending step.
@@ -221,7 +248,7 @@ be silently stripped the way blueprint deep links are.
 | Bead | Work |
 |---|---|
 | `openforge_catalog-2i5` | The epic |
-| `openforge_catalog-cgi` | Stop the parser synthesising the base slot — **do this first** |
+| `openforge_catalog-cgi` | Stop the parser synthesising the base slot — cleanup, parallel |
 | `openforge_catalog-8zc` | `guides` table, fixture format and loader |
 | `openforge_catalog-7ph` | Resolution engine in Python |
 | `openforge_catalog-anc` | Guide endpoints |
@@ -231,6 +258,7 @@ be silently stripped the way blueprint deep links are.
 | `openforge_catalog-cku` | Feature slots: doors, torches and the rest |
 | `openforge_catalog-eul` | Guide imagery into R2 |
 | `openforge_catalog-kcm` | Admin editor for guides |
+| `openforge_catalog-hcm` | Audit which pieces carry a base slot and why |
 
 ## Open questions
 
