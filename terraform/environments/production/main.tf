@@ -173,8 +173,9 @@ resource "aws_lb_listener_rule" "api" {
 }
 
 # ─── Frontend bucket ──────────────────────────────────────────────────────────
-# The Production workflow syncs the static export to s3://<bucket>/<git sha>/;
-# openforge-infra-frontend's CloudFront selects the sha with its origin_path.
+# The Production workflow uploads the static export to s3://<bucket>/<git sha>/ and then
+# promotes it to s3://<bucket>/current/, which is what openforge-infra-frontend's
+# CloudFront serves.
 
 resource "aws_s3_bucket" "site" {
   bucket = "production-${local.name}-website"

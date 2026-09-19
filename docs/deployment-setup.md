@@ -49,6 +49,10 @@ The per-sha copies stay, so putting an earlier build back is one command and tak
 immediately (the distributions serve the default behaviour with caching disabled):
 
 ```bash
-aws s3 sync s3://staging-openforge-catalog-website/<old sha> \
-            s3://staging-openforge-catalog-website/current
+aws s3 cp --recursive s3://staging-openforge-catalog-website/<old sha>/ \
+                      s3://staging-openforge-catalog-website/current/
 ```
+
+`cp --recursive` rather than `sync`: `sync` skips any key whose destination is the same
+size and no older, so a rollback would copy some files and silently skip others, leaving
+`current/` holding two builds at once.

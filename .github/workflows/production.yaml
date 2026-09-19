@@ -228,6 +228,8 @@ jobs:
           # that references them second, so a visitor mid-promotion never gets a page
           # whose assets have not arrived. Nothing is deleted: old hashed assets are
           # harmless and still serve anyone who loaded the previous page.
-          aws s3 sync "s3://$BUCKET/$SHA" "s3://$BUCKET/current" --exclude "*.html"
-          aws s3 sync "s3://$BUCKET/$SHA" "s3://$BUCKET/current" --exclude "*" --include "*.html"
+          # `cp --recursive`, not `sync`: sync skips a key whose destination is the same
+          # size and not older, which silently makes putting an older build back a no-op.
+          aws s3 cp --recursive "s3://$BUCKET/$SHA" "s3://$BUCKET/current" --exclude "*.html"
+          aws s3 cp --recursive "s3://$BUCKET/$SHA" "s3://$BUCKET/current" --exclude "*" --include "*.html"
           echo "Deployed to production: current now serves $SHA"
