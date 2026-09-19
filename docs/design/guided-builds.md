@@ -126,8 +126,9 @@ data follows. Counts are of records tagged `shape|wall`, including the 177 that 
 | `build\|thick wall` | 87 of 337 | none exist |
 
 No record carries two build tags. The 295 wall-on-tile pieces that do carry a base slot
-are all floors, 17 of which are corners as well — the base goes under the floor, which
-is exactly the model this document prescribes.
+are all floors, 17 of which are corners as well — under *this* method the base goes
+under the floor. Under the others it does not, which is the subject of the two base
+roles further down.
 
 **Removing the slot is a simplification rather than a fix, but the reason has to be
 stated more narrowly than "openforge implies a base".** Across the catalog that is
@@ -157,7 +158,10 @@ Whoever does it should know:
   knows which pieces take bases under which method*. That knowledge must move somewhere
   the guide can read, not be deleted. Their mechanisms differ: `apply_openforge_wall`
   constrains shape, width and texture, while `apply_openforge_floor` and
-  `apply_thick_wall` constrain shape, width and depth and add `deny: build|s2w`.
+  `apply_thick_wall` constrain shape, width and depth and add `deny: build|s2w` —
+  and `apply_openforge_floor` alone adds two `constrain` filters excluding
+  `shape|floor` and `shape|wall`, which is what keeps a floor's base from being
+  another floor.
 - Whatever replaces the slot must read the method as well as the connection tag. A UI
   that derives "this takes a base" from `connection|openforge` alone would reintroduce
   the falsehood this section exists to correct — it would promise a base to 391
@@ -230,45 +234,46 @@ steps:
         title: Modular (s2w)
         blurb: Wall, floor and base print separately and stack.
         image: sets/dungeon_stone.s2w.wall.1.door+arched.png
-        roles:                            # what this method is made of, and
-          floor: {require: ['build|s2w']} # what each role takes under it
-          wall:  {require: ['build|s2w']}
-          wall-base: {require: ['shape|base|s2w']}   # the s2w base is the
-                                            # wall's: no s2w floor carries a slot
+        roles:                                # what this method is made of,
+          floor: {require: ['build|s2w']}     # and what each role takes
+          wall: {require: ['build|s2w']}      # under it
+          wall-base: {require: ['shape|base|s2w']}
       - key: wall-on-tile
         title: Wall on tile
         roles:
           floor: {require: ['build|wall on tile']}
-          wall:  {require: ['build|wall on tile']}
+          wall: {require: ['build|wall on tile']}
           floor-base: {deny: ['build|s2w']}   # no base carries this method's tag
       - key: separate-wall
         title: Separate wall
-        tags:  {require: ['build|separate wall']}   # true of every role below
-        roles:
-          floor: null
-          wall:  null
-          wall-base: {require: ['shape|base|wall']}
+        roles:                                # note the floor takes nothing:
+          floor: null                         # no floor tile is tagged
+          wall: {require: ['build|separate wall']}   # build|separate wall
+          wall-base: {require: ['build|separate wall', 'shape|base|wall']}
 
 roles:
-  wall:
-    title: Wall
-    query:   {require: ['shape|wall'], deny: ['shape|base']}
-    prefer:  ['connection|openforge']     # ranks candidates to pick the recommendation
   floor:
     title: Floor
-    query:   {require: ['shape|floor']}
-  floor-base:                             # two base roles, because which part
-    title: Base                           # the base goes under is the method's
-    query:   {require: ['shape|base']}    # choice, not the base's
-    prefer:  ['connection|magnetic']      # 1,874 bases match a bare shape|base,
-    under:   floor                        # so every base role wants a prefer list
+    query: {require: ['shape|floor'], deny: ['shape|base', 'shape|wall']}
+    prefer: ['connection|openforge', 'texture|dungeon_stone']
+  wall:
+    title: Wall
+    query: {require: ['shape|wall'], deny: ['shape|base', 'shape|floor']}
+    prefer: ['connection|openforge', 'texture|dungeon_stone']
+  floor-base:                                 # two base roles, because which
+    title: Base                               # part the base goes under is
+    query:                                    # the method's choice
+      require: ['shape|base']
+      deny: ['shape|base|wall', 'shape|base|s2w']
+    prefer: ['texture|plain']
+    under: floor
   wall-base:
     title: Base
-    query:   {require: ['shape|base']}
-    prefer:  ['connection|magnetic']
-    under:   wall
+    query: {require: ['shape|base']}
+    prefer: ['texture|plain']
+    under: wall
 
-refinements:                              # the "change it afterwards" list
+refinements:                                  # the "change it afterwards" list
   - key: texture
     role: '*'
     prompt: Texture
@@ -277,9 +282,25 @@ refinements:                              # the "change it afterwards" list
     role: wall
     prompt: Locks on the wall ends?
     when: {selected: {method: [s2w, separate-wall]}}
-    on_tags:  {require: ['connection|side|openlock']}
-    off_tags: {deny:    ['connection|side|openlock']}
+    on_tags: {require: ['connection|side|openlock']}
+    off_tags: {deny: ['connection|side|openlock']}
 ```
+
+Every role/method pair above resolves to a part of the right kind against the current
+fixtures, which is not something to take on faith: an earlier draft of this block gave
+wall-on-tile a base query no wall-on-tile record could satisfy, and gave separate wall
+a floor role that matched only bases. The `deny` lists are doing that work. The floor
+role denies `shape|base` and `shape|wall` because 114 of the 115 records carrying both
+`shape|floor` and `build|separate wall` are bases, and 177 records are both wall and
+floor.
+
+The separate-wall option is the clearest case for the per-role map: its wall and its
+base want `build|separate wall`, and its floor must not — **no floor tile carries that
+tag.** Of the 1,319 records that are a floor and neither a base nor a wall, 295 are
+wall on tile, 88 are s2w and 936 carry no build tag at all, so a separate wall stands
+on an ordinary floor. A single `tags` predicate for the whole option would have put
+`build|separate wall` on the floor role and recommended a base.
+
 
 The toggle fields are `on_tags` / `off_tags` rather than `on` / `off` because bare `on`
 and `off` are booleans in YAML 1.1, which is what `safe_load` parses the fixtures as.
