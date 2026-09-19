@@ -139,8 +139,12 @@ the slot and the one that does not carries `shape|floor` as well as `shape|wall`
 non-openforge separate-wall wall carries one. Under `build|thick wall` the same holds
 for the 100 openforge thick walls — `is_thick_wall` also requires `component|wall`, and
 not one of the 13 without a slot carries it; they are wooden, slope and transition
-pieces. Under the other three methods the base belongs to
-the floor, and no wall carries one.
+pieces. Under the other three methods no wall carries a synthesised base at all, and
+where the base goes differs: under `build|wall on tile` it is the floors that carry
+one (295 of them, and none of the walls), under `build|s2w` neither does — none of the
+176 s2w floors carries a slot, and the only s2w records that do are the 40 composition
+blueprints, where it is the **wall** part that declares `fulfills: base` — and under
+`build|s-system` nothing carries one.
 
 So the pair (build method, `connection|openforge`) determines whether a piece takes a
 base, and the synthesised slot restates what the piece already says. The decision is
@@ -229,7 +233,8 @@ steps:
         roles:                            # what this method is made of, and
           floor: {require: ['build|s2w']} # what each role takes under it
           wall:  {require: ['build|s2w']}
-          floor-base: {require: ['shape|base|s2w']}
+          wall-base: {require: ['shape|base|s2w']}   # the s2w base is the
+                                            # wall's: no s2w floor carries a slot
       - key: wall-on-tile
         title: Wall on tile
         roles:
@@ -255,10 +260,12 @@ roles:
   floor-base:                             # two base roles, because which part
     title: Base                           # the base goes under is the method's
     query:   {require: ['shape|base']}    # choice, not the base's
-    under:   floor
+    prefer:  ['connection|magnetic']      # 1,874 bases match a bare shape|base,
+    under:   floor                        # so every base role wants a prefer list
   wall-base:
     title: Base
     query:   {require: ['shape|base']}
+    prefer:  ['connection|magnetic']
     under:   wall
 
 refinements:                              # the "change it afterwards" list
@@ -285,15 +292,19 @@ naming a role that does not exist and a `when:` that depends on a later step.
 `roles` is a map rather than a list because the composition blueprints prove a method
 is not one tag: an option says what each role it names takes, and `tags` is the
 shorthand for the part that is true of every role it names. An option says nothing
-about a role it does not name, and an option may leave `roles` out altogether — it
-then adds no roles and narrows every role already in play, which is what a later step
-like "how wide?" wants: it answers for whatever the method turned out to be made of
-instead of naming roles that method may not have.
+about a role it does not name. Leaving `roles` out altogether is a different thing
+from naming none of them, and the schema keeps them apart: a `roles` map must have at
+least one entry, and an option without the key at all adds no roles and narrows every
+role already in play. That second form is what a later step like "how wide?" wants —
+it answers for whatever the method turned out to be made of, instead of naming roles
+that method may not have.
 
 The two base roles are the same point from the other side. **Which part a base sits
 under is the method's choice, not the base's:** of the 1,221 openforge separate-wall
 walls 1,220 carry a base slot and not one of the 115 separate-wall floors does, while
-under wall on tile it is the 295 floors that carry one and no wall does. One role
+under wall on tile it is the 295 floors that carry one and no wall does. Under s2w it
+is the wall again — no s2w floor carries a slot, and in the composition blueprints the
+`wall` part is the one that declares `fulfills: base`. One role
 called `base` with a single `under` would have to be wrong for one of them, so the
 wall guide has `floor-base` and `wall-base` and each method lists the one it uses.
 The queries differ too: 95 bases carry `shape|base|s2w`, 263 carry `shape|base|wall`
