@@ -1,12 +1,5 @@
 # Deployment Setup
 
-## NPM Commands
-
-The following npm commands are available for deployment:
-
-- `npm run deploy:staging` - Build and deploy to staging S3 bucket
-- `npm run deploy:production` - Build and deploy to production S3 bucket
-
 ## GitHub Actions Setup
 
 The GitHub Actions workflows will automatically deploy the frontend after a successful Docker build.
@@ -41,16 +34,25 @@ This allows for easy rollbacks and tracking of deployed versions.
 
 ### Local Deployment
 
-For local deployment, ensure you have AWS CLI configured with appropriate credentials:
+Deployment is CI's job: the Staging workflow deploys every push to `test`, and the
+Production workflow every push to `main`. There are no local deploy scripts. Each run
+builds, writes `out/app-config.json` for that environment, and syncs to a prefix named
+after the commit sha.
+
+### How a build becomes the live site
+
+Each deploy uploads to `s3://<bucket>/<commit sha>/` and then promotes that build to
+`s3://<bucket>/current/`, which is the prefix both CloudFront distributions serve. So a
+merge to `test` or `main` is live by itself: no Terraform change, no variable to bump.
+
+The per-sha copies stay, so putting an earlier build back is one command and takes effect
+immediately (the distributions serve the default behaviour with caching disabled):
 
 ```bash
-# Deploy to staging
-npm run deploy:staging
-
-# Deploy to production
-npm run deploy:production
+aws s3 cp --recursive s3://staging-openforge-catalog-website/<old sha>/ \
+                      s3://staging-openforge-catalog-website/current/
 ```
 
-### CloudFront or Load Balancer Configuration
-
-Remember to update your CloudFront distribution or load balancer to point to the new SHA path after deployment.
+`cp --recursive` rather than `sync`: `sync` skips any key whose destination is the same
+size and no older, so a rollback would copy some files and silently skip others, leaving
+`current/` holding two builds at once.

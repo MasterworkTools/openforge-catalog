@@ -172,3 +172,11 @@ button.visibleLink {
   padding: 0;
   margin: 0;
 }
+
+/* The environment banner is fixed to the bottom, so the panes that end at the
+   viewport bottom leave room for it rather than hiding their last rows behind it.
+   EnvironmentBanner adds this class only where it renders. */
+body.hasEnvironmentBanner .tabContent,
+body.hasEnvironmentBanner .columnContainer {
+  padding-bottom: 40px;
+}

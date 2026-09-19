@@ -32,7 +32,7 @@ jobs:
           --health-retries 5
 
     steps:
-    - uses: actions/checkout@v5
+    - uses: actions/checkout@v6
 
     - name: Set up Python
       uses: actions/setup-python@v6
@@ -59,7 +59,7 @@ jobs:
   react-test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - name: Use Node.js
         uses: actions/setup-node@v6
         with:
@@ -72,7 +72,7 @@ jobs:
   js-lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - name: Use Node.js
         uses: actions/setup-node@v6
         with:
@@ -85,7 +85,7 @@ jobs:
   python-lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - name: Set up Python
         uses: actions/setup-python@v6
         with:
@@ -106,7 +106,7 @@ jobs:
       id-token: write
       contents: read
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
 
       - name: Set up Docker Context for Buildx
         run: |
@@ -153,7 +153,7 @@ jobs:
       id-token: write
       contents: read
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
 
       - name: Configure Production deploy role
         uses: aws-actions/configure-aws-credentials@v5
@@ -184,7 +184,7 @@ jobs:
       id-token: write
       contents: read
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
 
       - name: Setup Node.js
         uses: actions/setup-node@v6
@@ -200,6 +200,15 @@ jobs:
       - name: Build frontend
         run: npm run build
 
+      - name: Write production runtime config
+        run: |
+          cat > out/app-config.json <<'JSON'
+          {
+            "BASE_GENERATOR_URL": "https://openscad.openforge.tools",
+            "ENVIRONMENT": "production"
+          }
+          JSON
+
       - name: Configure Production S3 Credentials
         uses: aws-actions/configure-aws-credentials@v5
         with:
@@ -208,7 +217,19 @@ jobs:
           aws-region: us-east-1
 
       - name: Deploy to S3
+        env:
+          BUCKET: production-openforge-catalog-website
+          SHA: ${{ github.sha }}
         run: |
           cd out
-          aws s3 sync . s3://production-openforge-catalog-website/${{ github.sha }}
-          echo "Deployed to production at SHA: ${{ github.sha }}"
+          # An immutable copy of this build, kept so any past build can be put back.
+          aws s3 sync . "s3://$BUCKET/$SHA"
+          # Promote it to the prefix CloudFront serves. Hashed assets first and the HTML
+          # that references them second, so a visitor mid-promotion never gets a page
+          # whose assets have not arrived. Nothing is deleted: old hashed assets are
+          # harmless and still serve anyone who loaded the previous page.
+          # `cp --recursive`, not `sync`: sync skips a key whose destination is the same
+          # size and not older, which silently makes putting an older build back a no-op.
+          aws s3 cp --recursive "s3://$BUCKET/$SHA" "s3://$BUCKET/current" --exclude "*.html"
+          aws s3 cp --recursive "s3://$BUCKET/$SHA" "s3://$BUCKET/current" --exclude "*" --include "*.html"
+          echo "Deployed to production: current now serves $SHA"
