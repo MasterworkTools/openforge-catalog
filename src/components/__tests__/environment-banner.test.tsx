@@ -16,6 +16,7 @@ describe('EnvironmentBanner', () => {
 
   afterEach(() => {
     global.fetch = originalFetch;
+    window.history.pushState({}, '', '/');
     jest.restoreAllMocks();
   });
 
@@ -27,7 +28,31 @@ describe('EnvironmentBanner', () => {
     const banner = await screen.findByRole('status');
     expect(banner).toHaveTextContent('This is the OpenForge staging instance');
     const link = screen.getByRole('link', { name: /live catalog at openforge\.tools/i });
-    expect(link).toHaveAttribute('href', 'https://openforge.tools');
+    expect(link).toHaveAttribute('href', 'https://openforge.tools/');
+  });
+
+  it('carries a deep link across to production so old staging links keep working', async () => {
+    window.history.pushState({}, '', '/?blueprint_id=00047386-f1cf-4e5f-976b-c19c6d8fecc9&md5=abc');
+    mockConfig({ ENVIRONMENT: 'staging', PRODUCTION_URL: 'https://openforge.tools' });
+
+    render(<EnvironmentBanner />);
+
+    const link = await screen.findByRole('link');
+    expect(link).toHaveAttribute(
+      'href',
+      'https://openforge.tools/?blueprint_id=00047386-f1cf-4e5f-976b-c19c6d8fecc9&md5=abc',
+    );
+    expect(link).toHaveTextContent('Open this page on openforge.tools');
+  });
+
+  it('carries the path as well as the query', async () => {
+    window.history.pushState({}, '', '/admin/?tab=blueprints');
+    mockConfig({ ENVIRONMENT: 'staging', PRODUCTION_URL: 'https://openforge.tools' });
+
+    render(<EnvironmentBanner />);
+
+    const link = await screen.findByRole('link');
+    expect(link).toHaveAttribute('href', 'https://openforge.tools/admin/?tab=blueprints');
   });
 
   it('renders nothing on production', async () => {

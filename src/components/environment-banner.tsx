@@ -4,12 +4,38 @@ import React, { useEffect, useState } from 'react';
 import { loadAppConfig, type AppConfig } from '@/utils/app-config';
 
 /** Hostname alone reads better in a sentence than the full URL. */
-function linkLabel(url: string): string {
+function hostname(url: string): string {
   try {
     return new URL(url).hostname;
   } catch {
     return url;
   }
+}
+
+/**
+ * The same page on production, so a deep link someone followed here keeps working.
+ * Blueprint links carry their identifier in the query string, so the query has to
+ * travel with the path.
+ */
+function productionHref(productionUrl: string): string {
+  if (typeof window === 'undefined') {
+    return productionUrl;
+  }
+  const { pathname, search, hash } = window.location;
+  try {
+    return new URL(`${pathname}${search}${hash}`, productionUrl).toString();
+  } catch {
+    return productionUrl;
+  }
+}
+
+/** A bare home page needs no "this page" phrasing. */
+function isDeepLink(): boolean {
+  if (typeof window === 'undefined') {
+    return false;
+  }
+  const { pathname, search } = window.location;
+  return search.length > 0 || pathname.replace(/\/+$/, '') !== '';
 }
 
 /**
@@ -52,9 +78,11 @@ export default function EnvironmentBanner() {
           {' '}
           <a
             className="font-semibold underline"
-            href={productionUrl}
+            href={productionHref(productionUrl)}
           >
-            Go to the live catalog at {linkLabel(productionUrl)}
+            {isDeepLink()
+              ? `Open this page on ${hostname(productionUrl)}`
+              : `Go to the live catalog at ${hostname(productionUrl)}`}
           </a>
         </>
       )}
