@@ -200,6 +200,15 @@ jobs:
       - name: Build frontend
         run: npm run build
 
+      - name: Write production runtime config
+        run: |
+          cat > out/app-config.json <<'JSON'
+          {
+            "BASE_GENERATOR_URL": "https://openscad.openforge.tools",
+            "ENVIRONMENT": "production"
+          }
+          JSON
+
       - name: Configure Production S3 Credentials
         uses: aws-actions/configure-aws-credentials@v5
         with:
