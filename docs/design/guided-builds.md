@@ -38,7 +38,7 @@ that matter here:
 
 | Namespace | Distinct tags | Examples |
 |---|---|---|
-| `build` | 7 | `build\|s2w`, `build\|wall on tile`, `build\|separate wall`, `build\|s-system`, `build\|thick wall` |
+| `build` | 7 | the five methods — `build\|s2w`, `build\|wall on tile`, `build\|separate wall`, `build\|s-system`, `build\|thick wall` — plus `build\|s2w\|modular` and `build\|s2w\|single_piece` |
 | `shape` | 186 | `shape\|wall`, `shape\|floor`, `shape\|base`, `shape\|corner`, `shape\|curved` |
 | `connection` | 20 | `connection\|openlock`, `connection\|dragonlock`, `connection\|magnetic`, `connection\|side\|openlock` |
 | `texture` | 83 | `texture\|dungeon_stone`, `texture\|cave`, `texture\|towne` |
@@ -68,16 +68,27 @@ four and four have five. By name: `base` (2,499), then `torch` (356), `door` (24
 **Composition blueprints — the closest thing to a guide that already exists.** 40 of the
 8,761 records are `type: blueprint` rather than `type: model`: hand-authored
 compositions in the 20 `blueprints.s2w.*.yaml` fixtures, named things like *S2W: Wall on
-Tile: Wall: Arrow Slit (Single Piece)*. Each one carries exactly the structure this
-document calls a role set — named `wall`, `floor` and `base` parts, each a tag predicate
-picking the right piece for that method — and 20 of them use `fulfills` to say the wall
-already satisfies the base slot. All 40 are `build|s2w`.
+Tile: Wall: Arrow Slit (Single Piece)*. Each carries exactly the structure this document
+calls a role set — named parts, each a tag predicate picking the right piece for that
+method. 32 of them are `wall` + `floor` + `base`; the other eight are corners, four with
+`column` + `floor` + `base` and four adding `left wall` and `right wall`. All 40 carry a
+`base` part, and all 40 are `build|s2w`. Eighteen of them use `fulfills` — 20 entries,
+on the `wall` part in sixteen records and on `left wall` / `right wall` in two — to say
+that part already satisfies the base slot.
 
 This is prior art, and it is the reason the guide format below has roles rather than a
-flat parts list. Two differences matter: a composition blueprint is one fixed
+flat parts list. Three differences matter. A composition blueprint is one fixed
 combination authored per variant (arrow slit, boss door, niche...), while a guide is a
-question tree that ranks candidates; and the compositions lean on `constrain` to keep
-the base the same width as the floor, which guides do not (see below).
+question tree that ranks candidates. The compositions lean on `constrain` to keep the
+base the same width as the floor, which guides do not (see below). And they are the
+evidence that **a build method is not one tag**: inside a single `build|s2w`
+composition the `floor` part requires `build|s2w` while the `wall` part requires
+`build|separate wall` and the `base` part denies `build|s2w` — which is why an option
+in the guide format carries a predicate per role rather than one predicate for the
+whole method. Their names and tags say the same thing twice over: *S2W: Wall on Tile*,
+tagged both `build|s2w` and `object|tile|wall_on_tile`. Whether a guide "method" should
+be a build tag at all, or a named combination like these, is content for
+`openforge_catalog-z76`.
 
 **Prose.** `tag_documentation` already keys documents to a *tag array* with a
 `document_type` enum that includes `instructions`. Guide prose should live there or
@@ -121,10 +132,12 @@ stated more narrowly than "openforge implies a base".** Across the catalog that 
 false: 4,368 records carry `connection|openforge` and only 2,455 of them have a base
 slot. What is true is per method, and it is exact. Under `build|separate wall`, the slot
 and the tag are the same fact: of the 1,221 openforge separate-wall walls, 1,220 carry
-the slot and the one that does not is a `shape|column|low` piece, not a wall; no
+the slot and the one that does not carries `shape|floor` as well as `shape|wall`, which
+`is_openforge_wall` denies outright (along with `shape|base` and `build|s2w`); no
 non-openforge separate-wall wall carries one. Under `build|thick wall` the same holds
-for the 100 openforge thick walls — the 13 without a slot are `component|slope` pieces,
-which is what `is_thick_wall` keys on. Under the other three methods the base belongs to
+for the 100 openforge thick walls — `is_thick_wall` also requires `component|wall`, and
+not one of the 13 without a slot carries it; they are wooden, slope and transition
+pieces. Under the other three methods the base belongs to
 the floor, and no wall carries one.
 
 So the pair (build method, `connection|openforge`) determines whether a piece takes a
@@ -143,10 +156,12 @@ Whoever does it should know:
   that derives "this takes a base" from `connection|openforge` alone would reintroduce
   the falsehood this section exists to correct — it would promise a base to 391
   wall-on-tile, 308 s2w and 34 s-system walls that have none.
-- 2,499 base parts sit on 2,495 records, four of which carry a duplicate. 40 of those
-  parts are the composition blueprints' authored slots, and the scanner runs authored
-  metadata before it appends defaults, so **some base slots are authored** and will
-  survive a parser change. Verify by count afterwards.
+- 2,499 base parts sit on 2,495 records, four of which carry a duplicate. Running the
+  three predicates over the fixtures accounts for 2,452 of those records; **the other
+  47 base parts are authored and must survive the parser change** — 40 in the
+  composition blueprints, three on `dungeon_stone` infinite-hallway pieces, and four in
+  `sewers.json` where an authored slot sits beside the synthesised one, which is
+  exactly where the four duplicates come from. 47 is the verify-by-count number.
 - The consumers change meaning: `src/utils/config-processing.ts`, whatever surfaces
   compatible bases on a blueprint page, and `collectDownloadUrls` in
   `src/utils/blueprint-utils.ts`, which walks parts to build a download set.
@@ -181,7 +196,7 @@ Three that a first draft missed:
   guide format therefore carries `require`, `deny` and `accept` only, and
   `openforge/openapi/schemas/guide.yaml` rejects `constrain`.
 - **Dual-shape pieces** — 177 records carry both `shape|wall` and `shape|floor`
-  (88 s2w, 59 wall on tile, 1 separate wall). These are the combined prints. A role query
+  (88 s2w, 59 wall on tile, 1 separate wall, and 29 carrying no build tag at all). These are the combined prints. A role query
   of `require: shape|wall` will pick them up, so the guide needs a stated rule for how a
   method's tags, a role's query and an active refinement compose. The rule, settled in
   `openforge_catalog-7ph`: the composed query is the union of the three predicates, each
@@ -203,20 +218,24 @@ steps:
   - key: method
     prompt: How do you want to build it?
     options:
-      - key: s2w-modular
+      - key: s2w
         title: Modular (s2w)
         blurb: Wall, floor and base print separately and stack.
         image: sets/dungeon_stone.s2w.wall.1.door+arched.png
-        roles: [floor, base, wall]        # what this method is made of
-        tags:  {require: ['build|s2w']}
+        roles:                            # what this method is made of, and
+          floor: {require: ['build|s2w']} # what each role takes under it
+          wall:  {require: ['build|s2w']}
+          base:  {require: ['shape|base|s2w']}
       - key: wall-on-tile
         title: Wall on tile
-        roles: [floor, base, wall]        # the base is the floor's, not the wall's
-        tags:  {require: ['build|wall on tile']}
+        roles:                            # the base is the floor's, not the wall's
+          floor: {require: ['build|wall on tile']}
+          wall:  {require: ['build|wall on tile']}
+          base:  {require: ['shape|base|wall']}
       - key: separate-wall
         title: Separate wall
-        roles: [floor, wall]              # floor and wall are independent
-        tags:  {require: ['build|separate wall']}
+        tags:  {require: ['build|separate wall']}   # true of every role below
+        roles: {floor: null, wall: null}  # floor and wall are independent
 
 roles:
   wall:
@@ -254,13 +273,22 @@ Every key in a guide lives in one namespace: a selection is `<step or refinement
 refinement may not reuse a step's key. The loader rejects that, along with an option
 naming a role that does not exist and a `when:` that depends on a later step.
 
-Two mechanics are required by the ask and must survive review:
+`roles` is a map rather than a list because the composition blueprints prove a method
+is not one tag: an option says what each role it names takes, and `tags` is the
+shorthand for the part that is true of every role it names. An option says nothing
+about a role it does not name.
+
+Three mechanics are required by the ask and must survive review:
 
 1. **Options beget options, and take them away.** A step or refinement carries `when:`, a
    predicate over earlier selections. Declarative, so the engine stays a pure function and
    the authoring stays data. Avoid imperative `enables:`/`disables:` lists, which are
    order-dependent and hard to validate.
-2. **Recommend, then allow change.** Every role resolves to a concrete part as soon as
+2. **The same selections always give the same parts.** `prefer` is required outright
+   and then dropped from the least wanted until something matches, and candidates
+   arrive ordered by `blueprint_name`, which is the final tie-break. Without that the
+   shareable URL would not reproduce what the person saw.
+3. **Recommend, then allow change.** Every role resolves to a concrete part as soon as
    the step that names the role is answered, ranked by `prefer`, so a person sees a
    buildable set after answering one question rather than a filter form. The refinements
    are how they diverge from it, not a gate before they see anything. A role whose
