@@ -2,50 +2,30 @@
 
 import React, { useEffect, useState } from 'react';
 import { loadAppConfig, type AppConfig } from '@/utils/app-config';
+import { hostname, isDeepLink, productionHref, type PageLocation } from '@/utils/environment-link';
 
-/** Hostname alone reads better in a sentence than the full URL. */
-function hostname(url: string): string {
-  try {
-    return new URL(url).hostname;
-  } catch {
-    return url;
-  }
-}
-
-/**
- * The same page on production, so a deep link someone followed here keeps working.
- * Blueprint links carry their identifier in the query string, so the query has to
- * travel with the path.
- */
-function productionHref(productionUrl: string): string {
+/** The URL the visitor arrived with, read before anything rewrites it. */
+function entryLocation(): PageLocation | null {
   if (typeof window === 'undefined') {
-    return productionUrl;
+    return null;
   }
   const { pathname, search, hash } = window.location;
-  try {
-    return new URL(`${pathname}${search}${hash}`, productionUrl).toString();
-  } catch {
-    return productionUrl;
-  }
-}
-
-/** A bare home page needs no "this page" phrasing. */
-function isDeepLink(): boolean {
-  if (typeof window === 'undefined') {
-    return false;
-  }
-  const { pathname, search } = window.location;
-  return search.length > 0 || pathname.replace(/\/+$/, '') !== '';
+  return { pathname, search, hash };
 }
 
 /**
- * Tells visitors when they are not on the live catalog.
+ * Tells visitors when they are not on the live catalog, and offers them the page
+ * they asked for on it.
  *
- * Fixed rather than in flow: the layout is full of `calc(100vh - N)` rules that
- * would each be short by the banner's height if it took up space.
+ * Fixed rather than in flow: the layout sizes its panes with `calc(100vh - N)`,
+ * which would each be short by the banner's height if it took up space. Instead the
+ * banner marks the body so those panes can leave room for it.
  */
 export default function EnvironmentBanner() {
   const [config, setConfig] = useState<AppConfig | null>(null);
+  // A lazy initializer runs during the first render, before the effects in
+  // use-url-parameters and use-blueprint-url-cleanup strip blueprint_id from the URL.
+  const [arrivedAt] = useState<PageLocation | null>(entryLocation);
 
   useEffect(() => {
     let active = true;
@@ -60,7 +40,19 @@ export default function EnvironmentBanner() {
   }, []);
 
   const environment = config?.ENVIRONMENT;
-  if (!environment || environment === 'production') {
+  const visible = Boolean(environment) && environment !== 'production';
+
+  useEffect(() => {
+    if (!visible) {
+      return;
+    }
+    document.body.classList.add('hasEnvironmentBanner');
+    return () => {
+      document.body.classList.remove('hasEnvironmentBanner');
+    };
+  }, [visible]);
+
+  if (!visible) {
     return null;
   }
 
@@ -73,14 +65,14 @@ export default function EnvironmentBanner() {
     >
       This is the OpenForge <strong>{environment}</strong> instance. Its catalog is a copy and may be
       out of date.
-      {productionUrl && (
+      {productionUrl && arrivedAt && (
         <>
           {' '}
           <a
             className="font-semibold underline"
-            href={productionHref(productionUrl)}
+            href={productionHref(productionUrl, arrivedAt)}
           >
-            {isDeepLink()
+            {isDeepLink(arrivedAt)
               ? `Open this page on ${hostname(productionUrl)}`
               : `Go to the live catalog at ${hostname(productionUrl)}`}
           </a>

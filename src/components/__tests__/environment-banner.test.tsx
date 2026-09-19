@@ -55,6 +55,38 @@ describe('EnvironmentBanner', () => {
     expect(link).toHaveAttribute('href', 'https://openforge.tools/admin/?tab=blueprints');
   });
 
+  it('keeps the deep link it arrived with even after the app strips the URL', async () => {
+    window.history.pushState({}, '', '/?blueprint_id=abc');
+    mockConfig({ ENVIRONMENT: 'staging', PRODUCTION_URL: 'https://openforge.tools' });
+
+    render(<EnvironmentBanner />);
+    // use-blueprint-url-cleanup does this once the blueprint has loaded.
+    window.history.replaceState({}, '', '/');
+
+    const link = await screen.findByRole('link');
+    expect(link).toHaveAttribute('href', 'https://openforge.tools/?blueprint_id=abc');
+  });
+
+  it('marks the body so the panes leave room, and unmarks it on unmount', async () => {
+    mockConfig({ ENVIRONMENT: 'staging', PRODUCTION_URL: 'https://openforge.tools' });
+
+    const { unmount } = render(<EnvironmentBanner />);
+
+    await screen.findByRole('status');
+    expect(document.body).toHaveClass('hasEnvironmentBanner');
+    unmount();
+    expect(document.body).not.toHaveClass('hasEnvironmentBanner');
+  });
+
+  it('leaves the body unmarked on production', async () => {
+    mockConfig({ ENVIRONMENT: 'production' });
+
+    render(<EnvironmentBanner />);
+
+    await waitFor(() => expect(global.fetch).toHaveBeenCalled());
+    expect(document.body).not.toHaveClass('hasEnvironmentBanner');
+  });
+
   it('renders nothing on production', async () => {
     mockConfig({ ENVIRONMENT: 'production', PRODUCTION_URL: 'https://openforge.tools' });
 

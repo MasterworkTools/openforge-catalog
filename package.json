@@ -14,9 +14,7 @@
     "db-update": "bin/db_update up",
     "db-fixtures": "bin/fixtures",
     "test": "jest",
-    "test:coverage": "jest --coverage",
-    "deploy:staging": "npm run build && SHA=$(git rev-parse --short HEAD) && cd out && aws s3 sync . s3://staging-openforge-catalog-website/$SHA && echo \"Deployed to staging at SHA: $SHA\"",
-    "deploy:production": "npm run build && SHA=$(git rev-parse --short HEAD) && cd out && aws s3 sync . s3://production-openforge-catalog-website/$SHA && echo \"Deployed to production at SHA: $SHA\""
+    "test:coverage": "jest --coverage"
   },
   "dependencies": {
     "@radix-ui/react-avatar": "^1.1.2",
