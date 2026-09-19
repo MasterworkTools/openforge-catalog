@@ -82,8 +82,10 @@ combination authored per variant (arrow slit, boss door, niche...), while a guid
 question tree that ranks candidates. The compositions lean on `constrain` to keep the
 base the same width as the floor, which guides do not (see below). And they are the
 evidence that **a build method is not one tag**: inside a single `build|s2w`
-composition the `floor` part requires `build|s2w` while the `wall` part requires
-`build|separate wall` and the `base` part denies `build|s2w` — which is why an option
+composition the `floor` part requires `build|s2w` (all 40) while the `wall` part
+requires `build|separate wall` (all 32 that have one), and the `base` part denies
+`build|s2w` in 20 of them and requires it in 17 — the variation is the point, and it
+is why an option
 in the guide format carries a predicate per role rather than one predicate for the
 whole method. Their names and tags say the same thing twice over: *S2W: Wall on Tile*,
 tagged both `build|s2w` and `object|tile|wall_on_tile`. Whether a guide "method" should
@@ -178,11 +180,12 @@ The instruction was to look at blueprints because most of the concepts are alrea
 Three that a first draft missed:
 
 - **`fulfills`** — defined in `openforge/openapi/schemas/config.yaml`, implemented in
-  `src/components/blueprint/config-section.tsx`, and used 41 times in two positions that
-  mean different things: 21 at the root of a blueprint (7 in `cut-stone.json`, 14 in
-  `dungeon_stone.json`), saying *this whole piece satisfies a slot of that name*, and 20
-  inside a composition blueprint's part, saying *this part satisfies that sibling part's
-  slot* — the s2w wall that is its own base. The second is the "an option takes options
+  `src/components/blueprint/config-section.tsx`, and used in two positions that mean
+  different things: 27 entries at the root of 21 blueprints (7 records in
+  `cut-stone.json`, 14 in `dungeon_stone.json`), saying *this whole piece satisfies a
+  slot of that name*, and 20 entries inside the parts of 18 composition blueprints,
+  saying *this part satisfies that sibling part's slot* — the s2w wall that is its own
+  base. 47 entries across 39 records in total. The second is the "an option takes options
   away" mechanic the guide needs. Reconcile with `when:` rather than inventing a parallel
   mechanism.
 - **`constrain`** — has **no Python implementation**. It lives in the schema and in
@@ -196,8 +199,9 @@ Three that a first draft missed:
   guide format therefore carries `require`, `deny` and `accept` only, and
   `openforge/openapi/schemas/guide.yaml` rejects `constrain`.
 - **Dual-shape pieces** — 177 records carry both `shape|wall` and `shape|floor`
-  (88 s2w, 59 wall on tile, 1 separate wall, and 29 carrying no build tag at all). These are the combined prints. A role query
-  of `require: shape|wall` will pick them up, so the guide needs a stated rule for how a
+  (88 s2w, 59 wall on tile, 1 separate wall, and 29 carrying no build tag at all).
+  These are the combined prints. A role query of `require: shape|wall` will pick them
+  up, so the guide needs a stated rule for how a
   method's tags, a role's query and an active refinement compose. The rule, settled in
   `openforge_catalog-7ph`: the composed query is the union of the three predicates, each
   list concatenated, and `deny` beats `require`. Nothing in the engine knows about
@@ -225,17 +229,20 @@ steps:
         roles:                            # what this method is made of, and
           floor: {require: ['build|s2w']} # what each role takes under it
           wall:  {require: ['build|s2w']}
-          base:  {require: ['shape|base|s2w']}
+          floor-base: {require: ['shape|base|s2w']}
       - key: wall-on-tile
         title: Wall on tile
-        roles:                            # the base is the floor's, not the wall's
+        roles:
           floor: {require: ['build|wall on tile']}
           wall:  {require: ['build|wall on tile']}
-          base:  {require: ['shape|base|wall']}
+          floor-base: {deny: ['build|s2w']}   # no base carries this method's tag
       - key: separate-wall
         title: Separate wall
         tags:  {require: ['build|separate wall']}   # true of every role below
-        roles: {floor: null, wall: null}  # floor and wall are independent
+        roles:
+          floor: null
+          wall:  null
+          wall-base: {require: ['shape|base|wall']}
 
 roles:
   wall:
@@ -245,12 +252,14 @@ roles:
   floor:
     title: Floor
     query:   {require: ['shape|floor']}
-  base:
+  floor-base:                             # two base roles, because which part
+    title: Base                           # the base goes under is the method's
+    query:   {require: ['shape|base']}    # choice, not the base's
+    under:   floor
+  wall-base:
     title: Base
     query:   {require: ['shape|base']}
-    under:   floor                        # the base always sits under the floor; the
-                                          # method decides whether there is a base at
-                                          # all, by listing the role or not
+    under:   wall
 
 refinements:                              # the "change it afterwards" list
   - key: texture
@@ -260,7 +269,7 @@ refinements:                              # the "change it afterwards" list
   - key: side-locks
     role: wall
     prompt: Locks on the wall ends?
-    when: {selected: {method: [s2w-modular, separate-wall]}}
+    when: {selected: {method: [s2w, separate-wall]}}
     on_tags:  {require: ['connection|side|openlock']}
     off_tags: {deny:    ['connection|side|openlock']}
 ```
@@ -276,7 +285,23 @@ naming a role that does not exist and a `when:` that depends on a later step.
 `roles` is a map rather than a list because the composition blueprints prove a method
 is not one tag: an option says what each role it names takes, and `tags` is the
 shorthand for the part that is true of every role it names. An option says nothing
-about a role it does not name.
+about a role it does not name, and an option may leave `roles` out altogether — it
+then adds no roles and narrows every role already in play, which is what a later step
+like "how wide?" wants: it answers for whatever the method turned out to be made of
+instead of naming roles that method may not have.
+
+The two base roles are the same point from the other side. **Which part a base sits
+under is the method's choice, not the base's:** of the 1,221 openforge separate-wall
+walls 1,220 carry a base slot and not one of the 115 separate-wall floors does, while
+under wall on tile it is the 295 floors that carry one and no wall does. One role
+called `base` with a single `under` would have to be wrong for one of them, so the
+wall guide has `floor-base` and `wall-base` and each method lists the one it uses.
+The queries differ too: 95 bases carry `shape|base|s2w`, 263 carry `shape|base|wall`
+under `build|separate wall`, and **no base at all carries `build|wall on tile`** — the
+base under a wall-on-tile floor is an untagged one, which is exactly what the
+synthesised slot asks for (`require: shape|base`, `deny: build|s2w`). Getting that
+wrong is the easiest way to author a guide that recommends nothing, so the real
+queries are `openforge_catalog-z76`'s work against the data, not guesses.
 
 Three mechanics are required by the ask and must survive review:
 
