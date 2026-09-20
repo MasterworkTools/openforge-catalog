@@ -14,12 +14,16 @@ logger = logging.getLogger(__name__)
 os.environ["API_TOKEN"] = "test_token"
 os.environ["SECRET_KEY"] = "test_secret_key_for_csrf_tokens"
 
-# Set PostgreSQL environment variables for testing
+# Set PostgreSQL environment variables for testing. The database name
+# is pinned rather than taken from the environment: these tests truncate
+# every table, so a stray PGDATABASE pointing at a development database
+# would empty it. Where that database lives is configurable, because not
+# every machine can put one on localhost:5432.
 os.environ["PGDATABASE"] = "openforge_test"
-os.environ["PGUSER"] = "openforge"
-os.environ["PGPASSWORD"] = "openforge"
-os.environ["PGHOST"] = "localhost"
-os.environ["PGPORT"] = "5432"
+os.environ.setdefault("PGUSER", "openforge")
+os.environ.setdefault("PGPASSWORD", "openforge")
+os.environ.setdefault("PGHOST", "localhost")
+os.environ.setdefault("PGPORT", "5432")
 
 
 @pytest.fixture(scope="session")
@@ -73,7 +77,7 @@ def clean_tables(test_db):
                     "TRUNCATE blueprints, tags, images, blueprint_images, "
                     "blueprint_documentation, tag_descriptions, openscad_source, "
                     "tag_documentation, sessions, thingiverse_things, "
-                    "thingiverse_files CASCADE"
+                    "thingiverse_files, guides CASCADE"
                 )
             )
             conn.commit()

@@ -7,11 +7,13 @@ from psycopg.rows import dict_row
 from yaml import safe_load
 
 import openforge.db.sql.blueprints as blueprint_sql
+import openforge.db.sql.guides as guide_sql
 import openforge.db.sql.images as image_sql
 import openforge.db.sql.tag_descriptions as tag_description_sql
 import openforge.db.sql.tags as tag_sql
 import openforge.db.sql.tags_documentation as tag_documentation_sql
 from openforge.db.sql.tag_utils import array_to_tag, process_tag, tag_to_array
+from openforge.guides.validation import validate_guide_document
 from openforge.openapi import validate_schema
 
 
@@ -47,6 +49,7 @@ def find_fixtures_package():
     _collect_fixtures_from_subdir(fixtures_path, "blueprints", ffiles)
     _collect_fixtures_from_subdir(fixtures_path, "tag_descriptions", ffiles)
     _collect_fixtures_from_subdir(fixtures_path, "tag_documentation", ffiles)
+    _collect_fixtures_from_subdir(fixtures_path, "guides", ffiles)
 
     return ffiles
 
@@ -59,6 +62,7 @@ def find_fixtures_directory(dir: str):
     _collect_fixtures_from_subdir(dir_path, "blueprints", ffiles)
     _collect_fixtures_from_subdir(dir_path, "tag_descriptions", ffiles)
     _collect_fixtures_from_subdir(dir_path, "tag_documentation", ffiles)
+    _collect_fixtures_from_subdir(dir_path, "guides", ffiles)
 
     return ffiles
 
@@ -68,6 +72,7 @@ def clear_db(curs: cursor):
     blueprint_sql.delete_all_blueprints(curs)
     image_sql.delete_all_images(curs)
     tag_description_sql.delete_all_tag_descriptions(curs)
+    guide_sql.delete_all_guides(curs)
 
 
 def is_blueprint_fixture(data):
@@ -96,7 +101,8 @@ def _get_fixture_type(file_path):
         file_path: Path to the fixture file
 
     Returns:
-        str: 'blueprint', 'tag_description', or 'tag_documentation'
+        str: 'blueprint', 'tag_description', 'tag_documentation'
+            or 'guide'
     """
     file_path_str = str(file_path)
     if "tag_documentation" in file_path_str:
@@ -105,6 +111,8 @@ def _get_fixture_type(file_path):
         return "tag_description"
     elif "blueprints" in file_path_str:
         return "blueprint"
+    elif "guides" in file_path_str:
+        return "guide"
     else:
         # Fallback: assume blueprint for backward compatibility
         return "blueprint"
@@ -193,6 +201,14 @@ def load_fixtures(
                                     )
                 except Exception as e:
                     raise e
+            elif fixture_type == "guide":
+                with conn.transaction():
+                    with conn.cursor(row_factory=dict_row) as curs:
+                        if dry_run:
+                            write_output(f"DRY RUN: Would load guide: {f}\n")
+                        else:
+                            key = load_guide_fixture(curs, data)
+                            write_output(f"{f.name}: Applied guide {key}\n")
             else:
                 raise ValueError(f"Unknown fixture type for file: {f}")
     else:
@@ -233,6 +249,9 @@ def load_fixtures(
                             )
                         except Exception as e:
                             raise e
+                    elif fixture_type == "guide":
+                        key = load_guide_fixture(curs, data)
+                        write_output(f"{f.name}: Applied guide {key}\n")
                     else:
                         raise ValueError(f"Unknown fixture type for file: {f}")
 
@@ -319,6 +338,21 @@ def load_tag_documentation_fixture(curs: cursor, data: dict):
             count += 1
 
     return count
+
+
+def load_guide_fixture(curs: cursor, data: dict) -> str:
+    """Load one guide document, validating it before it is written.
+
+    Args:
+        curs: Database cursor
+        data: A guide document (see openapi/schemas/guide.yaml)
+
+    Returns:
+        str: The key of the guide that was loaded
+    """
+    validate_guide_document(data)
+    guide = guide_sql.upsert_guide(curs, data["key"], data)
+    return guide["guide_key"]
 
 
 def _munge_image(image: dict):

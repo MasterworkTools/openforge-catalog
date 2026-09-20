@@ -1,0 +1,224 @@
+"$schema": "https://json-schema.org/draft/2020-12/schema"
+description: >
+  A guide document: the inverse of a blueprint. A blueprint says "here is
+  a part and the slots it accepts"; a guide says "here is a thing you want
+  to build and the parts that make it". Authored as a repo fixture and
+  loaded into the guides table. See docs/design/guided-builds.md.
+
+  Guides do not use the `constrain` predicate that blueprint slots carry:
+  it has no Python implementation and its real semantics (parent,
+  siblings, filter) are richer than a guide needs. A guide composes
+  require / deny / accept only.
+type: object
+required:
+  - key
+  - title
+  - steps
+  - roles
+additionalProperties: false
+properties:
+  key:
+    type: string
+    pattern: "^[a-z0-9]+(-[a-z0-9]+)*$"
+    description: Stable identifier, used in the URL (/api/guides/<key>).
+  title:
+    type: string
+    minLength: 1
+  summary:
+    type: string
+  steps:
+    type: array
+    minItems: 1
+    items:
+      $ref: "#/$defs/step"
+  roles:
+    type: object
+    minProperties: 1
+    description: >
+      The parts a built thing is made of, keyed by role name. A step
+      option names the roles that method needs; every role it names is
+      resolved to a concrete blueprint.
+    additionalProperties:
+      $ref: "#/$defs/role"
+  refinements:
+    type: array
+    description: How someone diverges from the recommendation afterwards.
+    items:
+      $ref: "#/$defs/refinement"
+
+$defs:
+  predicate:
+    type: object
+    minProperties: 1
+    additionalProperties: false
+    description: >
+      Tag predicate over blueprints, in the same vocabulary as a
+      blueprint slot and the tag_query API schema. `require` and `deny`
+      match a tag exactly; `accept` matches it or any tag below it.
+    properties:
+      require:
+        $ref: "#/$defs/tag_list"
+      deny:
+        $ref: "#/$defs/tag_list"
+      accept:
+        $ref: "#/$defs/tag_list"
+
+  tag_list:
+    type: array
+    minItems: 1
+    items:
+      type: string
+      pattern: "^[^|]+(\\|[^|]+)*$"
+      description: Pipe-delimited tag, e.g. "shape|wall".
+
+  when:
+    type: object
+    minProperties: 1
+    additionalProperties: false
+    description: >
+      Predicate over earlier selections. A step or refinement carrying a
+      `when` is reachable only once the selections satisfy it. Declarative
+      so that resolution stays a pure function of the selection map.
+    properties:
+      selected:
+        type: object
+        minProperties: 1
+        description: >
+          Step key to the option keys that satisfy it. Several steps in
+          one `selected` are ANDed; the option keys within a step are ORed.
+        additionalProperties:
+          type: array
+          minItems: 1
+          items:
+            type: string
+
+  step:
+    type: object
+    required:
+      - key
+      - prompt
+      - options
+    additionalProperties: false
+    properties:
+      key:
+        type: string
+        minLength: 1
+      prompt:
+        type: string
+        minLength: 1
+      when:
+        $ref: "#/$defs/when"
+      options:
+        type: array
+        minItems: 1
+        items:
+          $ref: "#/$defs/option"
+
+  option:
+    type: object
+    required:
+      - key
+      - title
+    additionalProperties: false
+    properties:
+      key:
+        type: string
+        minLength: 1
+      title:
+        type: string
+        minLength: 1
+      blurb:
+        type: string
+      image:
+        type: string
+        description: Path to an illustration, relative to the image host.
+      roles:
+        type: object
+        minProperties: 1
+        description: >
+          The roles this option's build is made of, each mapped to the
+          predicate that role takes under this option, or null when it
+          takes none. Per-role rather than per-option because a method
+          is not one tag. The s2w composition blueprints put
+          `build|s2w` on their floor part (all 40) and
+          `build|separate wall` on their wall part (all 32 that have
+          one), while their base part denies `build|s2w` in 20 and
+          requires it in 17. In the wall guide the same thing happens
+          the other way: a separate wall's wall and base want
+          `build|separate wall` and its floor must not have it, because
+          no floor tile carries that tag.
+
+          An option may leave `roles` out entirely. It then adds no
+          roles and its `tags` narrow every role already in play — a
+          later step like "how wide?" answers for whatever the method
+          turned out to be made of, rather than having to name roles
+          that method may not use.
+        additionalProperties:
+          oneOf:
+            - $ref: "#/$defs/predicate"
+            - type: "null"
+      tags:
+        $ref: "#/$defs/predicate"
+        description: Predicate applying to every role of this option.
+
+  role:
+    type: object
+    required:
+      - title
+      - query
+    additionalProperties: false
+    properties:
+      title:
+        type: string
+        minLength: 1
+      query:
+        $ref: "#/$defs/predicate"
+      prefer:
+        type: array
+        description: >
+          Tags that rank candidates, most wanted first. The recommended
+          part is the best-ranked candidate, so a person sees a buildable
+          set after one answer.
+        items:
+          type: string
+      under:
+        type: string
+        description: The role this one sits beneath, when it sits under one.
+
+  refinement:
+    type: object
+    required:
+      - key
+      - role
+      - prompt
+    additionalProperties: false
+    oneOf:
+      - required: [from_namespace]
+      - required: [on_tags]
+    description: >
+      Either a pick from a tag namespace (from_namespace) or a toggle
+      (on_tags / off_tags), not both. The toggle fields are spelled with
+      the _tags suffix because bare `on` and `off` are booleans in the
+      YAML the fixtures are authored in.
+    properties:
+      key:
+        type: string
+        minLength: 1
+      role:
+        type: string
+        minLength: 1
+        description: Role name this refinement applies to, or "*" for all.
+      prompt:
+        type: string
+        minLength: 1
+      when:
+        $ref: "#/$defs/when"
+      from_namespace:
+        type: string
+        description: >
+          Tag namespace to offer, e.g. "texture". The options are the
+          namespace's tags carried by the role's candidates.
+      on_tags:
+        $ref: "#/$defs/predicate"
+      off_tags:
+        $ref: "#/$defs/predicate"
