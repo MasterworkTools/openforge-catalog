@@ -12,15 +12,27 @@ nothing is written, so a POST would protect nothing.
 
 What the GET buys today is the *option*, not the saving: the app sets
 no cache headers anywhere, so a repeat of an already-resolved state
-still costs an invocation. Collecting the saving is one response
-header away rather than an API change — and closer than it looks,
-because production does sit behind CloudFront (the distribution lives
-in openforge-infra-frontend rather than this repo's terraform, which
-is why it is easy to miss). The header to reach for is a short
-`Cache-Control: public, max-age=...`, not an `ETag`: a conditional
-request still runs this function to compute the validator, so it would
-save egress, which R2 already gives away, rather than invocations,
-which are the cost here.
+still costs an invocation. Production does sit behind CloudFront — the
+distribution lives in openforge-infra-frontend rather than this repo's
+terraform, which is why it is easy to miss — but `/api/*` there runs
+the managed `CachingDisabled` policy, which pins every TTL to zero and
+ignores the origin's `Cache-Control` outright. So a header alone buys
+browser caching, which is most of this endpoint's traffic shape, and
+edge caching additionally needs a cache-policy change in that repo.
+The header to reach for is a short `Cache-Control: public,
+max-age=...`, not an `ETag`: a conditional request still runs this
+function to compute the validator, so it would save egress, which R2
+already gives away, rather than invocations, which are the cost here.
+
+A selection this API does not recognise is a 400, which makes the
+shareable URL a narrower thing than a browser URL: the guide page must
+build the query from the keys the guide document defines rather than
+forwarding `window.location.search`, or a link that has been through
+Facebook or a campaign tracker arrives carrying `fbclid` and answers
+400. Ignoring unknown keys instead would make a typo'd selection
+resolve silently against the wrong state, which is the failure this
+module refuses everywhere else. `openforge_catalog-0bz` carries the
+constraint.
 """
 
 from flask import abort, current_app, jsonify, make_response, request
@@ -51,8 +63,11 @@ def get_guide(guide_key: str):
 def _guide_or_404(curs, guide_key: str) -> dict:
     """Fetch a guide, or abort with JSON rather than werkzeug's HTML.
 
-    Every other error these endpoints answer with is a JSON body, and
-    a client that parses one has to special-case the other.
+    Every error these endpoints *raise deliberately* is a JSON body,
+    and a client that parses one has to special-case the other. An
+    unhandled exception is still werkzeug's HTML 500; no app-wide JSON
+    error handler exists, and adding one is a change to every route
+    rather than to these three.
     """
     try:
         return guide_sql.get_guide_by_key(curs, guide_key)
@@ -68,12 +83,11 @@ def resolve_guide(guide_key: str):
             # that does not exist sends them looking in the wrong
             # place.
             guide = _guide_or_404(curs, guide_key)
-            selections, error = _selections_from_request()
-            if error:
-                return error
             try:
                 resolved = resolve(
-                    guide["document"], selections, _candidate_finder(curs)
+                    guide["document"],
+                    _selections_from_request(),
+                    _candidate_finder(curs),
                 )
             except GuideSelectionError as e:
                 return jsonify({"error": str(e)}), 400
@@ -81,7 +95,7 @@ def resolve_guide(guide_key: str):
             return jsonify(resolved)
 
 
-def _selections_from_request():
+def _selections_from_request() -> dict:
     """Read the selections out of the query string.
 
     A repeated parameter is refused rather than resolved on one of its
@@ -99,14 +113,17 @@ def _selections_from_request():
     `multi_value_headers` on the target group *and* an adapter that
     reads `multiValueQueryStringParameters`, which this one does not —
     tracked rather than bodged.
+
+    Raises `GuideSelectionError` rather than returning an error to be
+    checked, because a question answered twice *is* a selection the
+    guide cannot act on, and `resolve_guide` already answers 400 to
+    that. A second error channel doing the same job is the kind of
+    thing the next endpoint copies.
     """
     repeated = sorted(key for key in request.args if len(request.args.getlist(key)) > 1)
     if repeated:
-        return None, (
-            jsonify({"error": f"answered more than once: {', '.join(repeated)}"}),
-            400,
-        )
-    return request.args.to_dict(), None
+        raise GuideSelectionError(f"answered more than once: {', '.join(repeated)}")
+    return request.args.to_dict()
 
 
 def _candidate_finder(curs):
@@ -117,13 +134,15 @@ def _candidate_finder(curs):
     deprecated / models filtering the guide wants anyway.
     """
 
-    def find_candidates(predicate: dict, limit: int) -> list[dict]:
+    def find_candidates(predicate: dict) -> list[dict]:
         # to_tag_query is the one place a guide predicate becomes the
         # shape the search takes. Passing the bare strings straight
         # through would be ignored silently rather than rejected.
-        return tag_sql.tag_search_blueprints(
-            curs, **to_tag_query(predicate), limit=limit
-        )
+        #
+        # One row, because the engine narrows and asks again rather
+        # than paging: a limit that varies would be flexibility with
+        # no second value.
+        return tag_sql.tag_search_blueprints(curs, **to_tag_query(predicate), limit=1)
 
     return find_candidates
 

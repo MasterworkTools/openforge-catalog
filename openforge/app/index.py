@@ -1,4 +1,5 @@
 import os
+import re
 from urllib.parse import unquote, unquote_plus
 
 import aws_lambda_wsgi
@@ -383,6 +384,9 @@ def tag_documentation_by_prefix(tag):
     return tags_doc_routes.get_tag_documentation_by_tag_prefix(tag)
 
 
+_ENCODED_SLASH = re.compile("%2F", re.IGNORECASE)
+
+
 def _decode_alb_query(event):
     """Undo the ALB's percent-encoding before the adapter re-applies it.
 
@@ -403,8 +407,26 @@ def _decode_alb_query(event):
 
     The query string uses `unquote_plus`, because a query string
     spells a space as `+` (which is what `URLSearchParams` produces)
-    and a literal plus arrives as `%2B`. The path uses plain
-    `unquote`: a `+` in a path segment is a plus, not a space.
+    and a literal plus arrives as `%2B`. Keys go through it too: the
+    adapter encodes both halves of a pair, so decoding only the value
+    leaves the same asymmetry this function exists to remove.
+
+    The path decodes to **latin-1**, not UTF-8, because PATH_INFO is a
+    latin-1 slot: the adapter assigns `event["path"]` to it verbatim
+    and werkzeug does `.encode("latin1")` to get the bytes back before
+    decoding them as UTF-8 itself. Hand it a real `€` and that raises
+    `UnicodeEncodeError` out of `lambda_handler` — no response body,
+    an ALB 502, and a tick on the Lambda error metric. Decoding to
+    latin-1 puts the raw bytes in the slot, which is what a real WSGI
+    server does, and werkzeug takes it from there.
+
+    A `%2F` stays encoded. Decoding it would invent a path separator
+    the ALB never routed on, so `/api/blueprints/1%2Fdownload` would
+    dispatch as a download while every path-based rule at the edge —
+    a WAF, an ALB rule, a CloudFront behaviour — read the encoded
+    form. No route wants a literal slash inside a segment: tags are
+    pipe-delimited, and the one `<path:>` route wants real separators.
+    Leaving it encoded keeps today's behaviour, which is a 404.
 
     Not idempotent, and it does not need to be — it runs once, at the
     entry point. If `openforge_catalog-i7c` swaps the ALB for a Lambda
@@ -412,12 +434,15 @@ def _decode_alb_query(event):
     rather than needing a guard.
     """
     if event.get("path"):
-        event["path"] = unquote(event["path"])
+        segments = _ENCODED_SLASH.split(event["path"])
+        event["path"] = "%2F".join(
+            unquote(segment, encoding="latin-1") for segment in segments
+        )
     params = event.get("queryStringParameters")
     if not params:
         return
     event["queryStringParameters"] = {
-        key: unquote_plus(value) for key, value in params.items()
+        unquote_plus(key): unquote_plus(value) for key, value in params.items()
     }
 
 

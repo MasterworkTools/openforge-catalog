@@ -84,8 +84,9 @@ def resolve(document: dict, selections: dict, find_candidates) -> dict:
         selections: Map of step or refinement key to the chosen option
             key (for a step) or tag (for a namespace refinement) or
             "on"/"off" (for a toggle).
-        find_candidates: Callable taking (predicate, limit) and
-            returning matching blueprints, ordered, as dicts.
+        find_candidates: Callable taking a predicate and returning
+            matching blueprints, ordered, as dicts. Only the first is
+            read — see `_recommend`.
 
     Returns:
         dict with `steps`, `parts` and `refinements`.
@@ -319,7 +320,7 @@ def _recommend(predicate: dict, prefer: list[str], find_candidates):
     """
     for kept in range(len(prefer), -1, -1):
         narrowed = _union([predicate, {"require": prefer[:kept]}])
-        candidates = find_candidates(narrowed, 1)
+        candidates = find_candidates(narrowed)
         if candidates:
             return candidates[0]
     return None

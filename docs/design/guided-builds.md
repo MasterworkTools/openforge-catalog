@@ -427,9 +427,11 @@ Proposed endpoints:
   function of the key and the selections, the selections are already a query string
   because that is what the shareable URL is, and nothing is written, so a `POST` would
   protect nothing. What the `GET` buys today is the *option* of caching rather than the
-  saving — the app sets no cache headers anywhere — but production does sit behind
-  CloudFront, so collecting it later is one `Cache-Control` header rather than an API
-  change.
+  saving — the app sets no cache headers anywhere. Production does sit behind
+  CloudFront, but `/api/*` runs the managed `CachingDisabled` policy, which pins the
+  TTLs to zero and ignores the origin's `Cache-Control`, so a header here collects
+  browser caching and edge caching additionally needs a cache-policy change in
+  openforge-infra-frontend. Still not an API change, which is the point.
 
   A question answered twice (`?method=a&method=b`) is refused rather than resolved on
   one of its values — except behind the ALB, which collapses a repeated key to its last
@@ -465,6 +467,14 @@ matches the existing `?blueprint_id=` convention and needs no accounts.
 Note for whoever builds the frontend: `use-url-parameters.ts` and
 `use-blueprint-url-cleanup.ts` rewrite the query string after load. Guide state must not
 be silently stripped the way blueprint deep links are.
+
+And the shareable URL is narrower than the browser's URL. `/resolve` refuses a query key
+it does not recognise, so the page must build the API query from the step keys the guide
+document defines rather than forwarding `window.location.search` — otherwise a link that
+has been through Facebook or a campaign tracker arrives carrying `fbclid` or `utm_source`
+and answers 400, which is to say the share link breaks on the most common way links get
+shared. The API stays strict on purpose: ignoring unknown keys would make a typo'd
+selection resolve silently against the wrong state.
 
 ## Sequence
 

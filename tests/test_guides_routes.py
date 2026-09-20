@@ -83,6 +83,10 @@ def catalog(test_db):
     rather than being satisfied by everything present.
     """
     return {
+        # Not asserted on directly, and not dead: it is what `prefer`
+        # has to beat. Delete it and the role's `prefer:
+        # connection|openforge` still picks the openforge wall, so
+        # three tests go on passing with the preference gone.
         "plain": make_blueprint(
             test_db,
             "a plain wall",
@@ -139,6 +143,10 @@ def test_listing_guides_carries_titles(client, wall_guide):
     assert response.status_code == 200
     assert response.json["guides"][0]["guide_key"] == "wall"
     assert response.json["guides"][0]["title"] == "How do I make a wall?"
+    assert response.json["guides"][0]["summary"] == "Three ways."
+    # And not the document: the list is a menu, and a guide's steps are
+    # the bulk of it.
+    assert "document" not in response.json["guides"][0]
 
 
 def test_listing_no_guides_is_a_404(client):
@@ -167,11 +175,13 @@ def test_resolving_recommends_a_part_per_role(client, wall_guide, catalog):
 def test_resolving_with_no_selections_offers_the_first_step(
     client, wall_guide, catalog
 ):
+    """The page has to render before anyone has chosen anything."""
     response = client.get("/api/guides/wall/resolve")
 
     assert response.status_code == 200
     assert response.json["parts"] == []
     assert [step["key"] for step in response.json["steps"]] == ["method"]
+    assert response.json["refinements"][0]["key"] == "texture"
 
 
 def test_a_refinement_narrows_the_recommendation(client, wall_guide, catalog):
@@ -198,9 +208,12 @@ def test_a_part_that_resolved_to_nothing_does_not_break_the_pictures(
 ):
     """One role recommended, one empty, in the same response.
 
-    `_attach_images` has to skip the empty one. Every other test in
-    this file either resolves everything or nothing, so the guard that
-    does the skipping is never reached — and without it this is a 500.
+    `_attach_images` has to skip the empty one, and this is the only
+    test that puts a real image on the recommended part while another
+    part is empty — so it pins the attaching, not just the skipping.
+    (The skipping is pinned more widely than this docstring once
+    claimed: `test_a_refinement_narrows_the_recommendation` resolves
+    to the same mixed list and fails without the guard too.)
     """
     import openforge.db.sql.images as image_sql
 
@@ -246,15 +259,14 @@ def test_a_question_answered_twice_is_a_bad_request(client, wall_guide):
     assert response.status_code == 400
     assert "answered more than once: method" in response.json["error"]
 
+    # And the plural path: every offender named, in a fixed order
+    # rather than in whatever order the client built the URL.
+    response = client.get(
+        "/api/guides/wall/resolve?texture=a&texture=b&method=x&method=y"
+    )
 
-def test_a_guide_with_no_steps_answered_still_lists_its_first_question(
-    client, wall_guide, catalog
-):
-    """The page has to render before anyone has chosen anything."""
-    response = client.get("/api/guides/wall/resolve")
-
-    assert [step["key"] for step in response.json["steps"]] == ["method"]
-    assert response.json["refinements"][0]["key"] == "texture"
+    assert response.status_code == 400
+    assert "answered more than once: method, texture" in response.json["error"]
 
 
 # Determinism is not asserted here. Two GETs of one URL against an
@@ -370,7 +382,7 @@ def test_alb_query_values_survive_the_lambda_adapter():
 
     event = {
         "httpMethod": "GET",
-        "path": "/api/tag-documentation/component%7Cmagnetic",
+        "path": "/api/tag-documentation/component%7Cmagnetic+led",
         "queryStringParameters": {
             "texture": "texture%7Ccave",
             "method": "build%7Cseparate+wall",
@@ -395,7 +407,10 @@ def test_alb_query_values_survive_the_lambda_adapter():
     # The path is encoded by the ALB too, and a pipe-delimited tag in
     # a path segment is how /api/tag-documentation/<tag> is addressed
     # — that route returns nothing in production for the encoded form.
-    assert environ["PATH_INFO"] == "/api/tag-documentation/component|magnetic"
+    # The `+` stays a plus. A query string spells a space that way;
+    # a path segment does not, so the path gets `unquote`, not
+    # `unquote_plus`, and this is the character that tells them apart.
+    assert environ["PATH_INFO"] == "/api/tag-documentation/component|magnetic+led"
 
 
 def test_a_refinement_survives_the_whole_lambda_path(client, wall_guide, catalog):
@@ -434,6 +449,84 @@ def test_a_refinement_survives_the_whole_lambda_path(client, wall_guide, catalog
     assert response["statusCode"] == 200, response["body"]
     parts = {p["role"]: p for p in _json.loads(response["body"])["parts"]}
     assert parts["wall"]["blueprint"]["blueprint_name"] == "d towne wall"
+
+
+def test_a_non_latin_1_path_does_not_crash_the_invocation():
+    """PATH_INFO is a latin-1 slot, so the path decodes to latin-1.
+
+    `aws_lambda_wsgi` assigns `event["path"]` to PATH_INFO verbatim
+    and werkzeug does `.encode("latin1")` on it to recover the bytes.
+    Decode `%E2%82%AC` as UTF-8 and the slot holds a real `\u20ac`,
+    which cannot be encoded back: `UnicodeEncodeError` escapes
+    `lambda_handler` itself, so there is no response at all — the ALB
+    serves its own 502 and the Lambda error metric ticks.
+
+    Decoding to latin-1 puts the raw bytes there instead, which is
+    what a real WSGI server does, and werkzeug decodes them as UTF-8
+    on the way in. The route then sees the character the client sent
+    rather than a replacement character.
+    """
+    import json as _json
+
+    from openforge.app.index import lambda_handler
+
+    def get(path):
+        return lambda_handler(
+            {
+                "httpMethod": "GET",
+                "path": path,
+                "queryStringParameters": {},
+                "headers": {
+                    "host": "example.com",
+                    "x-forwarded-proto": "https",
+                    "x-forwarded-port": "443",
+                    "x-forwarded-for": "203.0.113.1",
+                },
+                "body": None,
+                "isBase64Encoded": False,
+            },
+            None,
+        )
+
+    # Raises rather than answering, before this fix.
+    euro = get("/api/guides/%E2%82%AC")
+    assert euro["statusCode"] == 404
+
+    # And the quieter half: a character that does fit in latin-1 is
+    # not a crash, it is a silent corruption.
+    cafe = get("/api/guides/caf%C3%A9")
+    assert cafe["statusCode"] == 404
+    assert "café" in _json.loads(cafe["body"])["error"]
+
+
+def test_an_encoded_slash_stays_encoded():
+    """Decoding `%2F` would invent a separator the ALB never saw.
+
+    The edge routes on the encoded path. If Flask dispatched on a
+    decoded one, `/api/blueprints/1%2Fdownload` would reach the
+    download route while any path rule at the edge — a WAF, an ALB
+    rule for `/api/admin/*`, a CloudFront behaviour — matched against
+    something else. Nothing at the edge takes a path rule today, which
+    is exactly why this wants pinning now rather than after the first
+    one is added.
+    """
+    from openforge.app.index import _decode_alb_query
+
+    event = {"path": "/api/blueprints/1%2Fdownload%7Cx", "httpMethod": "GET"}
+    _decode_alb_query(event)
+
+    # The pipe decodes; the slash does not.
+    assert event["path"] == "/api/blueprints/1%2Fdownload|x"
+
+
+def test_a_query_key_is_decoded_like_its_value():
+    """The adapter encodes both halves of a pair, so both need decoding."""
+    from openforge.app.index import _decode_alb_query
+
+    event = {"queryStringParameters": {"tag%7Cnamespace": "texture%7Ccave"}}
+    _decode_alb_query(event)
+
+    assert event["queryStringParameters"] == {"tag|namespace": "texture|cave"}
 
 
 def test_decoding_survives_a_request_with_no_query_string():

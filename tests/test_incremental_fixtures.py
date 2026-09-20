@@ -180,6 +180,12 @@ class TestIncrementalFixturesLoader:
         an image reports as changed on every scan and has its images
         deleted and reinserted. That is what happened while the batch
         query that loads the existing side omitted the column.
+
+        This test hands itself both sides, so it pins the comparison
+        and nothing else — put `image_type` back into it and this
+        fails. It does not reach the query the bug was in; that seam
+        is pinned from the other side, by the projection-parity test
+        in `tests/test_images_sql.py`.
         """
         sprite = {
             "grid_rows": 2,
