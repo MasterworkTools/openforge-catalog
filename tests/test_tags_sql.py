@@ -251,7 +251,9 @@ def test_tag_search_is_stable_when_names_collide(test_db):
     depends on the plan, and at these row counts Postgres chooses one
     that happens to preserve heap order until the table is ANALYZEd.
     The lowest id among the ties is what a total order must return,
-    whatever the plan does.
+    whatever the plan does — which is also why this needs no ANALYZE:
+    an earlier version of this test only caught the regression on the
+    plan an unanalysed table happens to get.
     """
     with test_db.connection() as conn:
         with conn.cursor(row_factory=dict_row) as curs:
@@ -263,10 +265,6 @@ def test_tag_search_is_stable_when_names_collide(test_db):
                     ),
                 )
                 tag_sql.insert_tag(curs, inserted["id"], "foo|bar")
-            # Give the planner real statistics, so the test does not
-            # depend on the plan an unanalysed table happens to get.
-            curs.execute("ANALYZE blueprints")
-            curs.execute("ANALYZE tags")
             curs.execute(
                 "SELECT id FROM blueprints WHERE blueprint_name = %s "
                 "ORDER BY id LIMIT 1",
