@@ -422,8 +422,31 @@ Proposed endpoints:
 
 - `GET /api/guides` — list.
 - `GET /api/guides/<key>` — the document, for rendering steps.
-- `POST /api/guides/<key>/resolve` — selections in, resolved parts plus newly available
-  steps out.
+- `GET /api/guides/<key>/resolve` — selections in, resolved parts plus newly available
+  steps out. This was proposed as a `POST` and built as a `GET`: resolving is a pure
+  function of the key and the selections, the selections are already a query string
+  because that is what the shareable URL is, and nothing is written, so a `POST` would
+  protect nothing. What the `GET` buys today is the *option* of caching rather than the
+  saving — the app sets no cache headers anywhere. Production does sit behind
+  CloudFront, but `/api/*` runs the managed `CachingDisabled` policy, which pins the
+  TTLs to zero and ignores the origin's `Cache-Control`, so a header here collects
+  browser caching and edge caching additionally needs a cache-policy change in
+  openforge-infra-frontend. Still not an API change, which is the point.
+
+  A question answered twice (`?method=a&method=b`) is refused rather than resolved on
+  one of its values — except behind the ALB, which collapses a repeated key to its last
+  value before Lambda ever sees it, so the check cannot fire there. Flask would keep the
+  *first* if both survived, so the two would also disagree about which answer they used;
+  they never both survive, which is why that half is a counterfactual rather than a bug
+  anyone can hit. Tracked as `openforge_catalog-bji`.
+
+**One trap worth knowing before adding any endpoint here.** An ALB hands Lambda the path
+and the query values still percent-encoded — API Gateway decodes them, an ALB does not —
+and `aws_lambda_wsgi` re-encodes whatever it is given, so a value arrives encoded twice
+and Flask decodes it once. `texture%7Ccave` reaches a route as that literal string. Every
+guide refinement would have failed in production while every test passed, because the
+Flask test client hands values over already decoded. `lambda_handler` now decodes both
+before the adapter runs.
 
 `resolve` keeps payloads small, which matters: `GET /api/blueprints` already exceeds the
 ALB's 1 MB cap for Lambda targets and 502s (`openforge_catalog-i7c`). Do not build the
@@ -445,6 +468,14 @@ matches the existing `?blueprint_id=` convention and needs no accounts.
 Note for whoever builds the frontend: `use-url-parameters.ts` and
 `use-blueprint-url-cleanup.ts` rewrite the query string after load. Guide state must not
 be silently stripped the way blueprint deep links are.
+
+And the shareable URL is narrower than the browser's URL. `/resolve` refuses a query key
+it does not recognise, so the page must build the API query from the step keys the guide
+document defines rather than forwarding `window.location.search` — otherwise a link that
+has been through Facebook or a campaign tracker arrives carrying `fbclid` or `utm_source`
+and answers 400, which is to say the share link breaks on the most common way links get
+shared. The API stays strict on purpose: ignoring unknown keys would make a typo'd
+selection resolve silently against the wrong state.
 
 ## Sequence
 

@@ -1,4 +1,6 @@
 import os
+import re
+from urllib.parse import unquote_plus, unquote_to_bytes
 
 import aws_lambda_wsgi
 from flask import Flask, request
@@ -8,6 +10,7 @@ import openforge.app.routes.blueprint_documentation as blueprint_doc_routes
 import openforge.app.routes.blueprint_successor as successor_routes
 import openforge.app.routes.blueprints as blueprint_routes
 import openforge.app.routes.fixtures as fixture_routes
+import openforge.app.routes.guides as guide_routes
 import openforge.app.routes.images as image_routes
 import openforge.app.routes.sessions as session_routes
 import openforge.app.routes.tag_descriptions as tag_description_routes
@@ -275,6 +278,26 @@ def image(image_id):
 
 
 ####################
+### Guide routes
+####################
+
+
+@app.route("/api/guides", methods=["GET"])
+def guides():
+    return guide_routes.get_guides()
+
+
+@app.route("/api/guides/<guide_key>", methods=["GET"])
+def guide(guide_key):
+    return guide_routes.get_guide(guide_key)
+
+
+@app.route("/api/guides/<guide_key>/resolve", methods=["GET"])
+def guide_resolve(guide_key):
+    return guide_routes.resolve_guide(guide_key)
+
+
+####################
 ### Tag Description routes
 ####################
 
@@ -361,5 +384,89 @@ def tag_documentation_by_prefix(tag):
     return tags_doc_routes.get_tag_documentation_by_tag_prefix(tag)
 
 
+_ENCODED_SLASH = re.compile("%2F", re.IGNORECASE)
+
+
+def _decode_alb_event(event):
+    """Undo the ALB's percent-encoding before the adapter re-applies it.
+
+    An ALB hands Lambda `queryStringParameters` still encoded — API
+    Gateway decodes them, an ALB does not — and `aws_lambda_wsgi`
+    builds QUERY_STRING by encoding whatever it is given. So a value
+    arrives encoded twice and Flask decodes it once: `texture%7Ccave`
+    reaches a route as the literal string `texture%7Ccave` rather than
+    `texture|cave`.
+
+    That breaks every guide refinement, whose values are pipe-
+    delimited tags, and it already breaks `/api/images?image_type=`
+    for any client that encodes its value. The path has the same
+    problem — `/api/tag-documentation/component%7Cmagnetic` finds
+    nothing in production while the unencoded form works — so both are
+    decoded here rather than leaving each route to guess whether its
+    arguments arrived readable.
+
+    Query *values* use `unquote_plus`, because a query string spells
+    a space as `+` (which is what `URLSearchParams` produces) and a
+    literal plus arrives as `%2B`.
+
+    Keys are deliberately left alone. Decoding them looks symmetric —
+    the adapter does encode both halves — but two spellings of one key
+    then collapse into one dict entry and the loser vanishes with no
+    error: `?texture=cave&%74exture=towne` resolves to whichever came
+    last. That is a question answered twice, silently resolved on one
+    value, which `_selections_from_request` exists to refuse and
+    cannot see, because only one key survives to Flask. Left encoded,
+    `%74exture` stays an unknown key and gets a 400. Nothing needs the
+    decode either: `openapi/schemas/guide.yaml` constrains every step
+    and refinement key to `^[a-z0-9]+([-_][a-z0-9]+)*\Z`, and
+    `quote_plus` is the identity function over that character set. The
+    validator refuses a key the adapter could encode, so this is a
+    rule about every key that can exist rather than an observation
+    about today's.
+
+    The path becomes **bytes and then latin-1**, not UTF-8, because
+    PATH_INFO is a latin-1 slot: the adapter assigns `event["path"]`
+    to it verbatim and werkzeug does `.encode("latin1")` to get the
+    bytes back before decoding them as UTF-8 itself. Anything that
+    slot cannot hold raises `UnicodeEncodeError` out of
+    `lambda_handler` — no response body, an ALB 502, and a tick on the
+    Lambda error metric.
+
+    `unquote_to_bytes(...).decode("latin-1")` rather than
+    `unquote(..., encoding="latin-1")` because the escapes are not the
+    only way a non-latin-1 character arrives: `unquote` leaves
+    characters that are not escapes alone, so `%E2%82%AC` was fixed
+    and a raw `€` — which curl sends unencoded, and which the ALB
+    passes through — still crashed. Going via bytes puts the raw
+    bytes in the slot either way, which is what a real WSGI server
+    does, and werkzeug takes it from there.
+
+    A `%2F` stays encoded. Decoding it would invent a path separator
+    the ALB never routed on, so `/api/blueprints/1%2Fdownload` would
+    dispatch as a download while every path-based rule at the edge —
+    a WAF, an ALB rule, a CloudFront behaviour — read the encoded
+    form. No route wants a literal slash inside a segment: tags are
+    pipe-delimited, and the one `<path:>` route wants real separators.
+    Leaving it encoded keeps today's behaviour, which is a 404.
+
+    Not idempotent, and it does not need to be — it runs once, at the
+    entry point. If `openforge_catalog-i7c` swaps the ALB for a Lambda
+    function URL, that delivers decoded parameters and this goes away
+    rather than needing a guard.
+    """
+    if event.get("path"):
+        segments = _ENCODED_SLASH.split(event["path"])
+        event["path"] = "%2F".join(
+            unquote_to_bytes(segment).decode("latin-1") for segment in segments
+        )
+    params = event.get("queryStringParameters")
+    if not params:
+        return
+    event["queryStringParameters"] = {
+        key: unquote_plus(value) for key, value in params.items()
+    }
+
+
 def lambda_handler(event, context):
+    _decode_alb_event(event)
     return aws_lambda_wsgi.response(app.wsgi_app, event, context)

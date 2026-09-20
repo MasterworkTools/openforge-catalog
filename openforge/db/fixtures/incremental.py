@@ -681,16 +681,31 @@ class IncrementalFixturesLoader:
                 write_output(f"  New: {sorted(new_tags)}\n")
             return True
 
-        # Check images (compare as sets to handle unordered nature)
-        # Convert entire image dicts to JSON for deep comparison
-        # (includes sprite_metadata and all other fields)
-
-        # Helper to extract comparable fields (exclude timestamps)
+        # Check images (compare as sets to handle unordered nature).
+        # Whole image dicts are compared, sprite_metadata included, so
+        # a re-rendered sprite counts as a change.
+        #
+        # image_type is excluded because only one side can ever have
+        # it. The fixture format has no field for it — none of the
+        # 8,720 images in openforge/db/fixtures/blueprints/*.json
+        # carries one — and the insert path could not honour it if it
+        # did: insert_image_for_blueprint forwards name, url and
+        # sprite metadata only, so insert_image's "thumbnail" default
+        # always wins. Comparing it could therefore only ever produce
+        # a false "changed", and the repair that followed would retype
+        # a documentation row through that same default.
+        #
+        # What would invalidate this: a fixture format that states an
+        # image type, or an insert path that forwards one. Either
+        # makes the two sides comparable and this exclusion a blind
+        # spot. See openforge_catalog-q3o, which replaces it — the
+        # scanner should compare only the images it owns rather than
+        # ignore the field that says who owns them.
         def comparable_image(img):
             return {
                 k: v
                 for k, v in img.items()
-                if k not in ("created_at", "updated_at", "id")
+                if k not in ("created_at", "updated_at", "id", "image_type")
             }
 
         existing_images = set(

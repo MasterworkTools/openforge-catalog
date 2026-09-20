@@ -154,7 +154,7 @@ CATALOG = [
 ]
 
 
-def find_candidates(predicate, limit):
+def find_candidates(predicate):
     """Stand-in for tag_search_blueprints, same predicate semantics."""
 
     def matches(blueprint):
@@ -170,7 +170,7 @@ def find_candidates(predicate, limit):
 
     found = [b for b in CATALOG if matches(b)]
     found.sort(key=lambda b: b["blueprint_name"])
-    return found[:limit]
+    return found
 
 
 @pytest.fixture

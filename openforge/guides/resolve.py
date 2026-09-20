@@ -30,11 +30,16 @@ The three rules the design settled:
 
 Cost: one candidate query per role, plus one more for each preferred
 tag that has to be dropped — at most `len(prefer) + 1` per role, each
-asking for a single row. With three roles and two preferred tags that
-is nine small queries per resolve, which is the price of ranking in the
-database rather than pulling every candidate's tags into the Lambda to
-sort them there. If it ever matters, the upgrade is one query per role
-that ranks in SQL, not a cache.
+*returning* a single row. Each one still builds and sorts the whole
+matching set first, and `_query_tags_basics` emits a separate anti-join
+per denied tag, which `_compose` accumulates from the role, every
+chosen option and every active refinement — so the work grows with how
+deep someone is into a guide, not with the number of roles. With three
+roles and two preferred tags that is nine such queries per resolve,
+which is the price of ranking in the database rather than pulling every
+candidate's tags into the Lambda to sort them there. If it ever
+matters, the upgrade is one query per role that ranks in SQL, not a
+cache.
 """
 
 PREDICATES = ("require", "deny", "accept")
@@ -79,8 +84,9 @@ def resolve(document: dict, selections: dict, find_candidates) -> dict:
         selections: Map of step or refinement key to the chosen option
             key (for a step) or tag (for a namespace refinement) or
             "on"/"off" (for a toggle).
-        find_candidates: Callable taking (predicate, limit) and
-            returning matching blueprints, ordered, as dicts.
+        find_candidates: Callable taking a predicate and returning
+            matching blueprints, ordered, as dicts. Only the first is
+            read — see `_recommend`.
 
     Returns:
         dict with `steps`, `parts` and `refinements`.
@@ -314,7 +320,7 @@ def _recommend(predicate: dict, prefer: list[str], find_candidates):
     """
     for kept in range(len(prefer), -1, -1):
         narrowed = _union([predicate, {"require": prefer[:kept]}])
-        candidates = find_candidates(narrowed, 1)
+        candidates = find_candidates(narrowed)
         if candidates:
             return candidates[0]
     return None
