@@ -378,7 +378,7 @@ def test_alb_query_values_survive_the_lambda_adapter():
     """
     import aws_lambda_wsgi
 
-    from openforge.app.index import _decode_alb_query
+    from openforge.app.index import _decode_alb_event
 
     event = {
         "httpMethod": "GET",
@@ -393,7 +393,7 @@ def test_alb_query_values_survive_the_lambda_adapter():
         "isBase64Encoded": False,
     }
 
-    _decode_alb_query(event)
+    _decode_alb_event(event)
     environ = aws_lambda_wsgi.environ(event, None)
 
     from urllib.parse import parse_qs
@@ -492,6 +492,12 @@ def test_a_non_latin_1_path_does_not_crash_the_invocation():
     euro = get("/api/guides/%E2%82%AC")
     assert euro["statusCode"] == 404
 
+    # And unencoded, which is what curl sends and the ALB passes
+    # through. `unquote` leaves a non-escape character alone, so
+    # fixing the escaped form left this one still crashing.
+    raw_euro = get("/api/guides/\u20ac")
+    assert raw_euro["statusCode"] == 404
+
     # And the quieter half: a character that does fit in latin-1 is
     # not a crash, it is a silent corruption.
     cafe = get("/api/guides/caf%C3%A9")
@@ -510,31 +516,79 @@ def test_an_encoded_slash_stays_encoded():
     is exactly why this wants pinning now rather than after the first
     one is added.
     """
-    from openforge.app.index import _decode_alb_query
+    from openforge.app.index import _decode_alb_event
 
     event = {"path": "/api/blueprints/1%2Fdownload%7Cx", "httpMethod": "GET"}
-    _decode_alb_query(event)
+    _decode_alb_event(event)
 
     # The pipe decodes; the slash does not.
     assert event["path"] == "/api/blueprints/1%2Fdownload|x"
 
+    # Lower case too — a client picks the case, not us, and without
+    # the IGNORECASE flag `%2f` decodes and dispatches to the download
+    # route. It comes back upper case because the rejoin writes the
+    # separator, which is the same encoding spelled once.
+    event = {"path": "/api/blueprints/1%2fdownload", "httpMethod": "GET"}
+    _decode_alb_event(event)
 
-def test_a_query_key_is_decoded_like_its_value():
-    """The adapter encodes both halves of a pair, so both need decoding."""
-    from openforge.app.index import _decode_alb_query
+    assert event["path"] == "/api/blueprints/1%2Fdownload"
 
-    event = {"queryStringParameters": {"tag%7Cnamespace": "texture%7Ccave"}}
-    _decode_alb_query(event)
 
-    assert event["queryStringParameters"] == {"tag|namespace": "texture|cave"}
+def test_a_query_key_is_left_encoded_so_two_spellings_cannot_collide(
+    client, wall_guide, catalog
+):
+    """Decoding keys looks symmetric and silently answers a question twice.
+
+    `%74exture` is `texture`. Decode the keys and the two collapse into
+    one dict entry, the loser disappearing with no error, so the same
+    pair of selections resolves to a different parts list depending on
+    which one the client wrote last. That is exactly what
+    `_selections_from_request` refuses — and it cannot see it, because
+    only one key ever reaches Flask.
+
+    Left encoded, `%74exture` is simply an unknown key and the guide
+    says so. No key this app reads needs decoding: they are plain
+    words, which `quote_plus` returns unchanged.
+    """
+    import json as _json
+
+    from openforge.app.index import _decode_alb_event, lambda_handler
+
+    event = {"queryStringParameters": {"texture": "a", "%74exture": "b"}}
+    _decode_alb_event(event)
+
+    assert event["queryStringParameters"] == {"texture": "a", "%74exture": "b"}
+
+    response = lambda_handler(
+        {
+            "httpMethod": "GET",
+            "path": "/api/guides/wall/resolve",
+            "queryStringParameters": {
+                "method": "separate-wall",
+                "%74exture": "texture%7Ctowne",
+            },
+            "headers": {
+                "host": "example.com",
+                "x-forwarded-proto": "https",
+                "x-forwarded-port": "443",
+                "x-forwarded-for": "203.0.113.1",
+            },
+            "body": None,
+            "isBase64Encoded": False,
+        },
+        None,
+    )
+
+    assert response["statusCode"] == 400
+    assert "%74exture" in _json.loads(response["body"])["error"]
 
 
 def test_decoding_survives_a_request_with_no_query_string():
-    from openforge.app.index import _decode_alb_query
+    from openforge.app.index import _decode_alb_event
 
     for params in ({}, None):
         event = {"queryStringParameters": params}
-        _decode_alb_query(event)
+        _decode_alb_event(event)
         assert event["queryStringParameters"] == params
 
 

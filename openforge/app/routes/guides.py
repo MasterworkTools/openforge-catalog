@@ -90,6 +90,13 @@ def resolve_guide(guide_key: str):
                     _candidate_finder(curs),
                 )
             except GuideSelectionError as e:
+                # Both the query-string read and the engine raise this,
+                # and the 400 is right for both because the invariant
+                # is that GuideSelectionError means the *selections*
+                # are wrong — never that the stored document is. A
+                # guide that no longer validates must keep reaching the
+                # 500 it deserves, so nothing inside this block should
+                # start raising it for a document fault.
                 return jsonify({"error": str(e)}), 400
             _attach_images(curs, resolved["parts"])
             return jsonify(resolved)

@@ -435,9 +435,10 @@ Proposed endpoints:
 
   A question answered twice (`?method=a&method=b`) is refused rather than resolved on
   one of its values — except behind the ALB, which collapses a repeated key to its last
-  value before Lambda ever sees it. Worse, Flask keeps the *first*, so the development
-  server and production would disagree about which answer they used. Tracked as
-  `openforge_catalog-o63`.
+  value before Lambda ever sees it, so the check cannot fire there. Flask would keep the
+  *first* if both survived, so the two would also disagree about which answer they used;
+  they never both survive, which is why that half is a counterfactual rather than a bug
+  anyone can hit. Tracked as `openforge_catalog-bji`.
 
 **One trap worth knowing before adding any endpoint here.** An ALB hands Lambda the path
 and the query values still percent-encoded — API Gateway decodes them, an ALB does not —

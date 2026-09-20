@@ -1,6 +1,6 @@
 import os
 import re
-from urllib.parse import unquote, unquote_plus
+from urllib.parse import unquote_plus, unquote_to_bytes
 
 import aws_lambda_wsgi
 from flask import Flask, request
@@ -387,7 +387,7 @@ def tag_documentation_by_prefix(tag):
 _ENCODED_SLASH = re.compile("%2F", re.IGNORECASE)
 
 
-def _decode_alb_query(event):
+def _decode_alb_event(event):
     """Undo the ALB's percent-encoding before the adapter re-applies it.
 
     An ALB hands Lambda `queryStringParameters` still encoded — API
@@ -405,20 +405,37 @@ def _decode_alb_query(event):
     decoded here rather than leaving each route to guess whether its
     arguments arrived readable.
 
-    The query string uses `unquote_plus`, because a query string
-    spells a space as `+` (which is what `URLSearchParams` produces)
-    and a literal plus arrives as `%2B`. Keys go through it too: the
-    adapter encodes both halves of a pair, so decoding only the value
-    leaves the same asymmetry this function exists to remove.
+    Query *values* use `unquote_plus`, because a query string spells
+    a space as `+` (which is what `URLSearchParams` produces) and a
+    literal plus arrives as `%2B`.
 
-    The path decodes to **latin-1**, not UTF-8, because PATH_INFO is a
-    latin-1 slot: the adapter assigns `event["path"]` to it verbatim
-    and werkzeug does `.encode("latin1")` to get the bytes back before
-    decoding them as UTF-8 itself. Hand it a real `€` and that raises
-    `UnicodeEncodeError` out of `lambda_handler` — no response body,
-    an ALB 502, and a tick on the Lambda error metric. Decoding to
-    latin-1 puts the raw bytes in the slot, which is what a real WSGI
-    server does, and werkzeug takes it from there.
+    Keys are deliberately left alone. Decoding them looks symmetric —
+    the adapter does encode both halves — but two spellings of one key
+    then collapse into one dict entry and the loser vanishes with no
+    error: `?texture=cave&%74exture=towne` resolves to whichever came
+    last. That is a question answered twice, silently resolved on one
+    value, which `_selections_from_request` exists to refuse and
+    cannot see, because only one key survives to Flask. Left encoded,
+    `%74exture` stays an unknown key and gets a 400. No key this app
+    reads needs decoding anyway: they are plain words, and
+    `quote_plus` returns a plain word unchanged.
+
+    The path becomes **bytes and then latin-1**, not UTF-8, because
+    PATH_INFO is a latin-1 slot: the adapter assigns `event["path"]`
+    to it verbatim and werkzeug does `.encode("latin1")` to get the
+    bytes back before decoding them as UTF-8 itself. Anything that
+    slot cannot hold raises `UnicodeEncodeError` out of
+    `lambda_handler` — no response body, an ALB 502, and a tick on the
+    Lambda error metric.
+
+    `unquote_to_bytes(...).decode("latin-1")` rather than
+    `unquote(..., encoding="latin-1")` because the escapes are not the
+    only way a non-latin-1 character arrives: `unquote` leaves
+    characters that are not escapes alone, so `%E2%82%AC` was fixed
+    and a raw `€` — which curl sends unencoded, and which the ALB
+    passes through — still crashed. Going via bytes puts the raw
+    bytes in the slot either way, which is what a real WSGI server
+    does, and werkzeug takes it from there.
 
     A `%2F` stays encoded. Decoding it would invent a path separator
     the ALB never routed on, so `/api/blueprints/1%2Fdownload` would
@@ -436,16 +453,16 @@ def _decode_alb_query(event):
     if event.get("path"):
         segments = _ENCODED_SLASH.split(event["path"])
         event["path"] = "%2F".join(
-            unquote(segment, encoding="latin-1") for segment in segments
+            unquote_to_bytes(segment).decode("latin-1") for segment in segments
         )
     params = event.get("queryStringParameters")
     if not params:
         return
     event["queryStringParameters"] = {
-        unquote_plus(key): unquote_plus(value) for key, value in params.items()
+        key: unquote_plus(value) for key, value in params.items()
     }
 
 
 def lambda_handler(event, context):
-    _decode_alb_query(event)
+    _decode_alb_event(event)
     return aws_lambda_wsgi.response(app.wsgi_app, event, context)

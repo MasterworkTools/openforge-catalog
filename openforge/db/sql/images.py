@@ -74,6 +74,15 @@ def get_images_for_blueprints(
     every fixture image — all of which carry sprite_metadata — looked
     changed on every scan and had its images deleted and reinserted.
 
+    Parity with the single-blueprint query is asserted by a test, but
+    that is a test of agreement, not of these columns: it passes if a
+    column is dropped from both. What keeps image_type here is that
+    the single query has always projected it and five call sites in
+    blueprints.py read it, so it is already on the wire — it has no
+    reader only in this module. openforge_catalog-0bz is the second,
+    and openforge_catalog-q3o turns it into the field that says which
+    images the scanner owns.
+
     Args:
         curs: Database cursor
         blueprint_ids: List of blueprint IDs to get images for
