@@ -234,46 +234,58 @@ steps:
         title: Modular (s2w)
         blurb: Wall, floor and base print separately and stack.
         image: sets/dungeon_stone.s2w.wall.1.door+arched.png
-        roles:                                # what this method is made of,
-          floor: {require: ['build|s2w']}     # and what each role takes
-          wall: {require: ['build|s2w']}      # under it
-          wall-base: {require: ['shape|base|s2w']}
-      - key: wall-on-tile
+        roles:                                  # copied from what the s2w
+          floor: {require: ['build|s2w', 'shape|floor|wall']}   # composition
+          wall: {require: ['build|separate wall', 'component|wall']}
+          wall-base: {require: ['build|s2w', 'shape|base|wall']} # blueprints
+      - key: wall-on-tile                                       # already say
         title: Wall on tile
         roles:
-          floor: {require: ['build|wall on tile']}
+          floor: {require: ['build|wall on tile'], deny: ['shape|wall']}
           wall: {require: ['build|wall on tile']}
-          floor-base: {deny: ['build|s2w']}   # no base carries this method's tag
+          floor-base: {deny: ['build|s2w']}
       - key: separate-wall
         title: Separate wall
-        roles:                                # note the floor takes nothing:
-          floor: null                         # no floor tile is tagged
+        roles:
+          floor: {deny: ['shape|wall']}         # no floor tile carries
           wall: {require: ['build|separate wall']}   # build|separate wall
           wall-base: {require: ['build|separate wall', 'shape|base|wall']}
 
 roles:
   floor:
     title: Floor
-    query: {require: ['shape|floor'], deny: ['shape|base', 'shape|wall']}
+    query:
+      require: ['shape|floor']
+      deny: &intact                             # a YAML anchor: the wall
+        - 'shape|base'                          # role reuses this list
+        - 'component|collapsed'
+        - 'component|broken'
+        - 'component|collapsing_blocks'
+        - 'texture|dungeon_stone|ruined'
+        - 'texture|rough_stone|ruined'
+        - 'texture|cut-stone|ruined'
+        - 'texture|towne|ruined_stucco'
     prefer: ['connection|openforge', 'texture|dungeon_stone']
   wall:
     title: Wall
-    query: {require: ['shape|wall'], deny: ['shape|base', 'shape|floor']}
+    query:
+      require: ['shape|wall']
+      deny: *intact
     prefer: ['connection|openforge', 'texture|dungeon_stone']
-  floor-base:                                 # two base roles, because which
-    title: Base                               # part the base goes under is
-    query:                                    # the method's choice
-      require: ['shape|base']
+  floor-base:                                   # two base roles, because
+    title: Base                                 # which part the base goes
+    query:                                      # under is the method's
+      require: ['shape|base']                   # choice
       deny: ['shape|base|wall', 'shape|base|s2w']
     prefer: ['texture|plain']
     under: floor
   wall-base:
     title: Base
     query: {require: ['shape|base']}
-    prefer: ['texture|plain']
+    prefer: ['connection|magnetic']
     under: wall
 
-refinements:                                  # the "change it afterwards" list
+refinements:                                    # the "change it afterwards" list
   - key: texture
     role: '*'
     prompt: Texture
@@ -285,6 +297,45 @@ refinements:                                  # the "change it afterwards" list
     on_tags: {require: ['connection|side|openlock']}
     off_tags: {deny: ['connection|side|openlock']}
 ```
+
+The seven tags under the `&intact` anchor are what marks a piece as damaged: three
+`component` tags and the four ruined textures. **Devon's decision is that a guide never
+recommends a damaged piece by default** — someone who wants one asks through the
+texture refinement. They have to be listed rather than matched by prefix because
+**`deny` is an exact tag match**: `deny: component|collapsed` catches only the 265
+records carrying that exact tag, which happens to be every `component|collapsed|*`
+piece because they all carry the parent as well. `accept` is the predicate that matches
+a subtree; there is no denying one. The anchor is ordinary YAML and the loader resolves
+it before validation, so a guide can share a list like this without repeating it.
+
+With those denies every role of every method resolves to an intact piece: the s2w set
+is a `dungeon_stone` floor-and-wall tile, a straight openforge wall and an s2w wall
+base; separate wall gets a plain `dungeon_stone` floor, an arched-door wall and an
+aztlan wall base.
+
+Three things in that block are worth reading twice, because each cost a review round.
+
+**The s2w roles are copied from the composition blueprints, not guessed.** There is no
+straight s2w wall in the catalog: of the 220 records that are `shape|wall` and
+`build|s2w` and neither base nor floor, 219 are corner halves. All 32 wall composites
+take their wall from `build|separate wall` with `component|wall`, their floor from the
+88 `shape|floor|wall` s2w tiles, and their base from `shape|base|wall`. The guide says
+the same thing.
+
+**A role-level `deny` is absolute.** Composition is a union with `deny` beating
+`require`, so no option can opt back into something the role denied. The floor role
+therefore cannot deny `shape|wall` — that would remove exactly the 88 combined tiles
+the s2w method is built from — and the two methods that do want a plain floor deny it
+in their own option instead. This is the one place where the union rule constrains
+authoring, and it is worth knowing before writing a role.
+
+**The separate-wall option is the case for the per-role map.** Its wall and its base
+want `build|separate wall` and its floor must not have it, because no floor tile
+carries that tag: of the 1,319 records that are a floor and neither base nor wall, 295
+are wall on tile, 88 are s2w, and 936 carry no build tag at all. A single option-wide
+predicate would recommend a base as the floor, which an earlier draft of this document
+did.
+
 
 Every role/method pair above resolves to a part of the right kind against the current
 fixtures, which is not something to take on faith: an earlier draft of this block gave
@@ -322,7 +373,9 @@ that method may not have.
 
 The two base roles are the same point from the other side. **Which part a base sits
 under is the method's choice, not the base's:** of the 1,221 openforge separate-wall
-walls 1,220 carry a base slot and not one of the 115 separate-wall floors does, while
+walls 1,220 carry a base slot and none of the 115 records that are both a floor and a
+separate wall does — and 114 of those are bases anyway, which is the same fact from the
+other side: there is no separate-wall floor tile. Meanwhile
 under wall on tile it is the 295 floors that carry one and no wall does. Under s2w it
 is the wall again — no s2w floor carries a slot, and in the composition blueprints the
 `wall` part is the one that declares `fulfills: base`. One role
@@ -382,11 +435,6 @@ be silently stripped the way blueprint deep links are.
 
 ## Sequence
 
-0. **Drop the synthesised base slot** — cleanup, not a blocker, and it can land in
-   parallel with the rest. Parser change in `openforge/data/metadata.py`, fixtures
-   regenerated, and the blueprint UI switched to deriving bases from the build method
-   and `connection|openforge` together — never from the connection tag alone, which is
-   true of 4,368 records and wrong for 1,913 of them.
 1. **Schema and loader** — `guides` table, fixture format with an OpenAPI schema beside
    the others, loader wired into the fixtures command, validation errors that name the
    offending step.
@@ -397,7 +445,18 @@ be silently stripped the way blueprint deep links are.
    recommendations, the refinements, the prose.
 5. **Frontend** — the guide page: steps, recommended parts, change affordances, the parts
    list, the shareable URL.
-6. **Later slices** — the catalog-style landing page (Floor, Wall, Corner); feature slots
+6. **Drop the synthesised base slot** — cleanup, and Devon's decision is that it lands
+   last in this epic rather than in parallel, while the base rules are fresh. Parser
+   change in `openforge/data/metadata.py`, fixtures regenerated, and the blueprint UI
+   switched to deriving bases from the build method and `connection|openforge`
+   together — never from the connection tag alone, which is true of 4,368 records and
+   wrong for 1,913 of them. The verification number is 47 authored base parts that
+   must survive.
+7. **Retire the composition blueprints** — Devon's decision is that the guide replaces
+   the 40 `blueprints.s2w.*.yaml` compositions rather than living beside them, so that
+   s2w has one source. The guide's s2w content is copied from them first (slice 4), so
+   this is a deprecation, not a rewrite.
+8. **Later slices** — the catalog-style landing page (Floor, Wall, Corner); feature slots
    (doors, torches); an admin editor for guides; guide imagery into R2.
 
 ## Beads
@@ -415,17 +474,24 @@ be silently stripped the way blueprint deep links are.
 | `openforge_catalog-cku` | Feature slots: doors, torches and the rest |
 | `openforge_catalog-eul` | Guide imagery into R2 |
 | `openforge_catalog-kcm` | Admin editor for guides |
+| `openforge_catalog-yan` | Retire the s2w composition blueprints once the guide covers them |
 | `openforge_catalog-hcm` | Audit which pieces carry a base slot and why — **closed**, answered above |
 
 ## Open questions
 
-These are for Devon; none of them block slices 1 to 3.
+Four were open when this document was written. Devon answered three of them on
+2026-09-19, and they are recorded above rather than here:
 
-- Recommendation ranking beyond `prefer`: is "most complete texture coverage" or
-  "most printed" a better default than a hand-ordered tag list? Start hand-ordered.
-- Whether `build|s-system` (286 records) and `build|thick wall` (599) are methods a
-  person picks between, or variants inside the three. They are tags today with no guide.
-- Whether the 40 s2w composition blueprints should become guide content, stay as they
-  are, or be generated from the guide once it exists. They overlap with what the wall
-  guide will say about s2w, and two sources for one answer will drift.
-- Where guide images live. The Sets renders are the right pictures and are not yet in R2.
+- **Ranking.** Damaged pieces are denied outright in the role queries rather than
+  ranked down, so a guide never recommends a ruined or collapsed variant by default.
+- **`build|thick wall` (599 records) and `build|s-system` (286).** Not in the wall
+  guide. They can have their own guide later.
+- **The 40 s2w composition blueprints.** The guide replaces them; see slice 7.
+
+What is still open:
+
+- Recommendation ranking *within* the intact pieces: `prefer` is a hand-ordered tag
+  list and runs out before it totally orders, so the tie-break is filename. "Most
+  printed" would be better and the catalog does not know it.
+- Where guide images live. The Sets renders are the right pictures and are not yet in
+  R2, and their directory names cannot be trusted to give the build method.
