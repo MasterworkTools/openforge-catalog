@@ -187,7 +187,7 @@ def tag_search_blueprints(
             search=search,
         ),
         sql.SQL("  )"),
-        sql.SQL("  ORDER BY blueprints.blueprint_name"),
+        sql.SQL("  ORDER BY blueprints.blueprint_name, blueprints.id"),
     ]
     query = sql.Composed(parts)
     get_logger().debug(query.join("\n").as_string())
@@ -436,9 +436,16 @@ SELECT DISTINCT bp.id
                 "(SELECT blueprint_name FROM blueprints WHERE id = {previous})"
             ).format(previous=sql.Literal(previous))
         )
+    # blueprint_name is not unique — 159 names are shared by two or
+    # more records, mostly bases — so ordering by it alone is not a
+    # total order and LIMIT picks arbitrarily among the ties. Guides
+    # resolve a role with LIMIT 1, so without the id the same
+    # selections can recommend a different part after any unrelated
+    # write, and a shared guide URL stops meaning one thing.
     end_parts = [
         sql.SQL(
-            "      ORDER BY bp2.blueprint_name %s" % ("DESC" if previous else "ASC")
+            "      ORDER BY bp2.blueprint_name %s, bp2.id %s"
+            % ("DESC" if previous else "ASC", "DESC" if previous else "ASC")
         )
     ]
     if do_limit:

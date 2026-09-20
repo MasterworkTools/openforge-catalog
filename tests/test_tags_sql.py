@@ -99,10 +99,182 @@ def test_tag_search_blueprints(test_db):
             inserted_bp = blueprint_sql.insert_blueprint(curs, bp)
             tag_sql.insert_tag(curs, inserted_bp["id"], "foo|bar")
             results = tag_sql.tag_search_blueprints(
-                curs, ["foo|bar"], [], [], None, None, 20, True, False, None
+                curs, [{"tag": "foo|bar"}], [], [], None, None, 20, True, False, None
             )
             assert len(results) == 1
             assert results[0]["id"] == inserted_bp["id"]
+
+            # A bare string is silently ignored by the search, so a
+            # test that passes one asserts only that some model
+            # exists. Searching for a tag nothing carries has to come
+            # back empty — and this negative case is the half that
+            # carries the test. Reverting the call above to a bare
+            # string still passes; reverting this one does not. Do
+            # not delete it as redundant.
+            assert (
+                tag_sql.tag_search_blueprints(
+                    curs,
+                    [{"tag": "no|such"}],
+                    [],
+                    [],
+                    None,
+                    None,
+                    20,
+                    True,
+                    False,
+                    None,
+                )
+                == []
+            )
+
+
+def test_tag_search_blueprints_is_ordered_by_name(test_db):
+    """The ORDER BY is load-bearing, not cosmetic.
+
+    Guides resolve a role by asking for the single best candidate
+    (`LIMIT 1`), so this ordering is the only thing that makes a
+    recommendation reproducible — and therefore the only thing that
+    makes a shared guide URL show the same parts twice. Inserted out
+    of order on purpose.
+    """
+    with test_db.connection() as conn:
+        with conn.cursor(row_factory=dict_row) as curs:
+            for name in ["c wall", "a wall", "b wall"]:
+                inserted = blueprint_sql.insert_blueprint(
+                    curs,
+                    create_test_blueprint(blueprint_name=name, blueprint_type="model"),
+                )
+                tag_sql.insert_tag(curs, inserted["id"], "foo|bar")
+
+            results = tag_sql.tag_search_blueprints(
+                curs, [{"tag": "foo|bar"}], [], [], None, None, 20, True, False, None
+            )
+
+            assert [r["blueprint_name"] for r in results] == [
+                "a wall",
+                "b wall",
+                "c wall",
+            ]
+
+
+def test_tag_search_orders_ties_by_id(test_db):
+    """Names collide, so the listing needs a second key.
+
+    Thirteen rows share a name, with two others after them. Thirteen
+    rather than a handful because a short run of random uuids lands in
+    ascending order often enough to let the assertion pass with the
+    tiebreak removed; the two other names because a sort with nothing
+    to do can return its input untouched, and then the missing
+    tiebreak does not show.
+
+    The write in the middle is a perturbation, not the assertion — it
+    moves a row in the heap so the rows do not reach the final sort
+    already in the order being asserted. Comparing two reads and
+    calling that stability, which an earlier version of this test did,
+    proves less again: it samples one pair of executions out of a
+    space the test does not control.
+    """
+    with test_db.connection() as conn:
+        with conn.cursor(row_factory=dict_row) as curs:
+            for name in ["a wall"] * 13 + ["b wall", "c wall"]:
+                inserted = blueprint_sql.insert_blueprint(
+                    curs,
+                    create_test_blueprint(blueprint_name=name, blueprint_type="model"),
+                )
+                tag_sql.insert_tag(curs, inserted["id"], "foo|bar")
+
+            curs.execute(
+                "UPDATE blueprints SET file_size = 99 WHERE id = ("
+                "SELECT id FROM blueprints ORDER BY id LIMIT 1)"
+            )
+
+            found = tag_sql.tag_search_blueprints(
+                curs,
+                [{"tag": "foo|bar"}],
+                [],
+                [],
+                None,
+                None,
+                30,
+                True,
+                False,
+                None,
+            )
+            tied = [str(r["id"]) for r in found if r["blueprint_name"] == "a wall"]
+
+            assert [r["blueprint_name"] for r in found[-2:]] == [
+                "b wall",
+                "c wall",
+            ]
+            assert len(tied) == 13
+            assert tied == sorted(tied)
+
+
+def test_tag_search_blueprints_limit_takes_the_first_by_name(test_db):
+    """`LIMIT 1` must mean the first alphabetically, not an arbitrary row."""
+    with test_db.connection() as conn:
+        with conn.cursor(row_factory=dict_row) as curs:
+            for name in ["z wall", "a wall"]:
+                inserted = blueprint_sql.insert_blueprint(
+                    curs,
+                    create_test_blueprint(blueprint_name=name, blueprint_type="model"),
+                )
+                tag_sql.insert_tag(curs, inserted["id"], "foo|bar")
+
+            results = tag_sql.tag_search_blueprints(
+                curs, [{"tag": "foo|bar"}], [], [], None, None, 1, True, False, None
+            )
+
+            assert [r["blueprint_name"] for r in results] == ["a wall"]
+
+
+def test_tag_search_is_stable_when_names_collide(test_db):
+    """blueprint_name is not unique, so it cannot order alone.
+
+    159 names in the catalog are shared by two or more records, mostly
+    bases — the very role a guide resolves. With only the name in the
+    ORDER BY, LIMIT 1 picks arbitrarily among the ties and any
+    unrelated write can change which one comes back, so a shared guide
+    URL would show a different part later. The id makes it total.
+
+    This asserts the property rather than sampling it. Asking twice
+    with a write in between only compares two executions out of a
+    space the test does not control: whether an arbitrary pick moves
+    depends on the plan, and at these row counts Postgres chooses one
+    that happens to preserve heap order until the table is ANALYZEd.
+    The lowest ids among the ties are what a total order must return,
+    whatever the plan does — which is also why this needs no ANALYZE:
+    an earlier version only caught the regression on the plan an
+    unanalysed table happens to get.
+
+    It asks for five rather than one on purpose. Constraining a single
+    position still lets an arbitrary pick satisfy it by luck — with
+    twenty ties, one run in twenty — and a test that passes 5% of the
+    time when the bug is present is not a witness. Pinning the whole
+    five-row prefix drops that to one in 15,504.
+    """
+    with test_db.connection() as conn:
+        with conn.cursor(row_factory=dict_row) as curs:
+            for _ in range(20):
+                inserted = blueprint_sql.insert_blueprint(
+                    curs,
+                    create_test_blueprint(
+                        blueprint_name="same name", blueprint_type="model"
+                    ),
+                )
+                tag_sql.insert_tag(curs, inserted["id"], "foo|bar")
+            curs.execute(
+                "SELECT id FROM blueprints WHERE blueprint_name = %s "
+                "ORDER BY id LIMIT 5",
+                ("same name",),
+            )
+            lowest = [row["id"] for row in curs.fetchall()]
+
+            found = tag_sql.tag_search_blueprints(
+                curs, [{"tag": "foo|bar"}], [], [], None, None, 5, True, False, None
+            )
+
+            assert [row["id"] for row in found] == lowest
 
 
 def test_tag_search_tags(test_db):

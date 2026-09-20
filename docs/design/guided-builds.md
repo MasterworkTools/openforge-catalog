@@ -359,7 +359,10 @@ and `off` are booleans in YAML 1.1, which is what `safe_load` parses the fixture
 Every key in a guide lives in one namespace: a selection is `<step or refinement key> =
 <option key or tag>`, which is what lets the whole state fit in a query string, so a
 refinement may not reuse a step's key. The loader rejects that, along with an option
-naming a role that does not exist and a `when:` that depends on a later step.
+naming a role that does not exist and a `when:` that depends on a later step. The full list is longer than this document's
+sketch: it also rejects a role no option names, a cycle in `under`, a `when` naming an
+option its step does not offer, duplicate keys of any kind, and a `prefer` list over
+eight entries. The orphan-role rule is the one an author meets first.
 
 `roles` is a map rather than a list because the composition blueprints prove a method
 is not one tag: an option says what each role it names takes, and `tags` is the
@@ -395,9 +398,12 @@ Three mechanics are required by the ask and must survive review:
    the authoring stays data. Avoid imperative `enables:`/`disables:` lists, which are
    order-dependent and hard to validate.
 2. **The same selections always give the same parts.** `prefer` is required outright
-   and then dropped from the least wanted until something matches, and candidates
-   arrive ordered by `blueprint_name`, which is the final tie-break. Without that the
-   shareable URL would not reproduce what the person saw.
+   and then dropped from the least wanted until something matches, and the catalog
+   returns candidates in a *total* order. Name alone is not one — 159 blueprint names
+   are shared by two or more records, most of them bases — so `tag_search_blueprints`
+   orders by `blueprint_name` and then `id`. Without the id a role's recommendation
+   changes after any unrelated write, and the shareable URL stops reproducing what the
+   person saw.
 3. **Recommend, then allow change.** Every role resolves to a concrete part as soon as
    the step that names the role is answered, ranked by `prefer`, so a person sees a
    buildable set after answering one question rather than a filter form. The refinements
@@ -422,6 +428,13 @@ Proposed endpoints:
 `resolve` keeps payloads small, which matters: `GET /api/blueprints` already exceeds the
 ALB's 1 MB cap for Lambda targets and 502s (`openforge_catalog-i7c`). Do not build the
 guide on top of an endpoint that returns the whole catalog.
+
+**How a guide reaches a deployed environment.** Neither deploy workflow runs
+`bin/fixtures`, so a repo fixture gets to staging and production exactly one way:
+`bin/upload_fixture` posting it to `/api/admin/fixtures`, which auto-detects the type.
+That route knows about guides as of the loader slice — it did not at first, and a guide
+uploaded to it was classified as a tag description. Anyone adding a fixture type needs
+to teach both the file loader and that route, or the new type has no deploy path.
 
 ## What the user gets
 
@@ -491,7 +504,8 @@ Four were open when this document was written. Devon answered three of them on
 What is still open:
 
 - Recommendation ranking *within* the intact pieces: `prefer` is a hand-ordered tag
-  list and runs out before it totally orders, so the tie-break is filename. "Most
-  printed" would be better and the catalog does not know it.
+  list and runs out before it totally orders, so the last word goes to
+  `blueprint_name` and then `id` — stable, but arbitrary. "Most printed" would be
+  better and the catalog does not know it.
 - Where guide images live. The Sets renders are the right pictures and are not yet in
   R2, and their directory names cannot be trusted to give the build method.

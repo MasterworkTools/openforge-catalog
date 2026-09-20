@@ -419,3 +419,170 @@ class TestResponseFormat:
         assert data["success"] is False
         assert "error" in data
         assert isinstance(data["error"], str)
+
+
+# A guide document, which reaches deployed environments only through
+# this endpoint: the deploy workflows do not run bin/fixtures, so
+# bin/upload_fixture posting here is the wall guide's only path.
+SAMPLE_GUIDE_FIXTURE = {
+    "key": "wall",
+    "title": "How do I make a wall?",
+    "summary": "Three ways.",
+    "steps": [
+        {
+            "key": "method",
+            "prompt": "How do you want to build it?",
+            "options": [
+                {
+                    "key": "separate-wall",
+                    "title": "Separate wall",
+                    "roles": {"wall": {"require": ["build|separate wall"]}},
+                }
+            ],
+        }
+    ],
+    "roles": {"wall": {"title": "Wall", "query": {"require": ["shape|wall"]}}},
+}
+
+
+def test_uploading_a_guide_loads_it(client, auth_headers, test_db):
+    from psycopg.rows import dict_row
+
+    import openforge.db.sql.guides as guide_sql
+
+    response = client.post(
+        "/api/admin/fixtures",
+        data=yaml_dump(SAMPLE_GUIDE_FIXTURE),
+        content_type="application/x-yaml",
+        headers=auth_headers,
+    )
+
+    assert response.status_code == 200, response.get_data(as_text=True)
+    # The envelope every branch of this endpoint returns, and which
+    # openapi.yaml marks required on this response.
+    assert response.json["modified"] == [{"name": "wall"}]
+    assert response.json["added"] == []
+    assert response.json["errors"] == []
+    with test_db.connection() as conn:
+        with conn.cursor(row_factory=dict_row) as curs:
+            assert (
+                guide_sql.get_guide_by_key(curs, "wall")["document"]["title"]
+                == "How do I make a wall?"
+            )
+
+
+def test_uploading_a_broken_guide_is_refused(client, auth_headers, test_db):
+    from psycopg.rows import dict_row
+
+    import openforge.db.sql.guides as guide_sql
+
+    broken = json.loads(json.dumps(SAMPLE_GUIDE_FIXTURE))
+    broken["steps"][0]["options"][0]["roles"] = {"plinth": None}
+
+    response = client.post(
+        "/api/admin/fixtures",
+        data=json.dumps(broken),
+        content_type="application/json",
+        headers=auth_headers,
+    )
+
+    # 500 rather than 400 matches every other type through this
+    # endpoint, and is what openapi.yaml documents for it. The typed
+    # per-type endpoints are the ones that answer 400; guides have no
+    # typed endpoint, which is an asymmetry worth fixing across the
+    # whole route rather than for guides alone.
+    assert response.status_code == 500
+    assert "plinth" in response.json["error"]
+    with test_db.connection() as conn:
+        with conn.cursor(row_factory=dict_row) as curs:
+            assert guide_sql.get_all_guides(curs) == []
+
+
+def test_a_guide_upload_can_be_a_dry_run(client, auth_headers, test_db):
+    from psycopg.rows import dict_row
+
+    import openforge.db.sql.guides as guide_sql
+
+    response = client.post(
+        "/api/admin/fixtures?dry_run=true",
+        data=json.dumps(SAMPLE_GUIDE_FIXTURE),
+        content_type="application/json",
+        headers=auth_headers,
+    )
+
+    assert response.status_code == 200, response.get_data(as_text=True)
+    assert response.json["modified"] == [{"name": "wall"}]
+    with test_db.connection() as conn:
+        with conn.cursor(row_factory=dict_row) as curs:
+            assert guide_sql.get_all_guides(curs) == []
+
+
+def test_a_guide_missing_a_required_key_is_still_diagnosed_as_a_guide(
+    client, auth_headers, test_db
+):
+    """Detection claims it, so the guide validator gets to explain.
+
+    Requiring every marker key meant a guide with one of them missing
+    fell through to the tag-description branch: a schema dump that
+    never says "guide", and for a short enough document, a clean 200
+    that wrote junk tag descriptions named after its own field names.
+    """
+    from psycopg.rows import dict_row
+
+    import openforge.db.sql.tag_descriptions as tag_description_sql
+
+    keyless = json.loads(json.dumps(SAMPLE_GUIDE_FIXTURE))
+    del keyless["key"]
+
+    response = client.post(
+        "/api/admin/fixtures",
+        data=json.dumps(keyless),
+        content_type="application/json",
+        headers=auth_headers,
+    )
+
+    assert response.status_code == 500
+    assert "'key' is a required property" in response.json["error"]
+    with test_db.connection() as conn:
+        with conn.cursor(row_factory=dict_row) as curs:
+            assert tag_description_sql.get_all_tag_descriptions(curs) == []
+
+
+def test_a_truncated_guide_does_not_become_tag_descriptions(
+    client, auth_headers, test_db
+):
+    """The worst version of the same bug: a silent, successful write."""
+    from psycopg.rows import dict_row
+
+    import openforge.db.sql.tag_descriptions as tag_description_sql
+
+    response = client.post(
+        "/api/admin/fixtures",
+        data=json.dumps({"key": "wall", "title": "t", "summary": "s"}),
+        content_type="application/json",
+        headers=auth_headers,
+    )
+
+    assert response.status_code == 500
+    with test_db.connection() as conn:
+        with conn.cursor(row_factory=dict_row) as curs:
+            assert tag_description_sql.get_all_tag_descriptions(curs) == []
+
+
+def test_a_dry_run_upload_still_rejects_a_broken_guide(client, auth_headers, test_db):
+    """A dry run that skipped validation would call it loadable.
+
+    This is the whole point of asking for one before a deploy.
+    """
+    broken = json.loads(json.dumps(SAMPLE_GUIDE_FIXTURE))
+    broken["steps"][0]["options"][0]["roles"] = {"plinth": None}
+
+    response = client.post(
+        "/api/admin/fixtures?dry_run=true",
+        data=json.dumps(broken),
+        content_type="application/json",
+        headers=auth_headers,
+    )
+
+    assert response.status_code == 500
+    assert "plinth" in response.json["error"]

@@ -9,9 +9,11 @@ from psycopg.rows import dict_row
 from yaml import YAMLError, safe_load
 
 from openforge.db.fixtures import (
+    check_guide_fixture,
     is_blueprint_fixture,
     is_tag_description_fixture,
     is_tag_documentation_fixture,
+    load_guide_fixture,
     print_comparison_results,
 )
 from openforge.db.fixtures import (
@@ -149,6 +151,8 @@ def _process_fixture(data: Any, fixture_type: str, dry_run: bool, verbose: bool)
                         result = _process_tag_documentation_fixture(
                             data, curs, dry_run, verbose
                         )
+                    elif fixture_type == "guide":
+                        result = _process_guide_fixture(data, curs, dry_run, verbose)
                     else:
                         raise ValueError(f"Unknown fixture type: {fixture_type}")
 
@@ -248,7 +252,7 @@ def _get_fixture_type_from_data(data: Any) -> str:
         data: Parsed fixture data
 
     Returns:
-        'blueprint', 'tag_description', or 'tag_documentation'
+        'blueprint', 'tag_description', 'tag_documentation' or 'guide'
 
     Raises:
         ValueError: If the fixture type cannot be determined.
@@ -258,6 +262,22 @@ def _get_fixture_type_from_data(data: Any) -> str:
         return "blueprint"
 
     if isinstance(data, dict):
+        # A guide is a single document rather than a mapping of many.
+        # Any of these three marks one: they are required by
+        # guide.yaml, and no tag key is a bare word like these — real
+        # ones are pipe-delimited paths or namespace roots.
+        #
+        # Matching on *any* rather than all is deliberate. Requiring
+        # all three means a guide with a typo in one of them is not
+        # recognised as a guide at all: it falls through to the tag
+        # description branch and is reported with a schema dump that
+        # never mentions guides, and a truncated one can even validate
+        # there and write junk tag descriptions under the names "key"
+        # and "title". Better to claim it and let the guide validator
+        # say which key is missing.
+        if {"key", "title", "steps"} & set(data):
+            return "guide"
+
         # Dictionaries can be tag_description or tag_documentation.
         # We can distinguish them by checking the type of their values.
         first_value = next(iter(data.values()), None)
@@ -306,6 +326,44 @@ def _process_blueprint_fixture(
         "deprecated": [_format_item(item) for item in changes.deprecated],
         "consolidated": [_format_item(item) for item in changes.consolidated],
         "errors": changes.errors,
+    }
+
+
+def _process_guide_fixture(data: Dict, curs, dry_run: bool, verbose: bool) -> Dict:
+    """Process a guide fixture.
+
+    This is how a guide reaches staging and production: the deploy
+    workflows do not run bin/fixtures, so bin/upload_fixture posting
+    here is the only path a repo fixture has.
+
+    Args:
+        data: A guide document (see openapi/schemas/guide.yaml)
+        curs: Database cursor
+        dry_run: If True, don't apply changes
+        verbose: If True, output debug information
+
+    Returns:
+        Dictionary with results
+    """
+    # The detector only returns "guide" for a dict, so data is one.
+    key = data.get("key", "<no key>")
+    source = "uploaded guide"
+
+    if dry_run:
+        check_guide_fixture(data, source)
+        write_output(f"DRY RUN: Would load guide {key}\n")
+    else:
+        # load_guide_fixture validates before it writes; checking
+        # again here would only duplicate the error.
+        key = load_guide_fixture(curs, data, source)
+        write_output(f"Applied guide {key}\n")
+
+    return {
+        "added": [],
+        "modified": [{"name": key}],
+        "deprecated": [],
+        "consolidated": [],
+        "errors": [],
     }
 
 
