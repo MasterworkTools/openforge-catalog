@@ -416,9 +416,13 @@ def _decode_alb_event(event):
     last. That is a question answered twice, silently resolved on one
     value, which `_selections_from_request` exists to refuse and
     cannot see, because only one key survives to Flask. Left encoded,
-    `%74exture` stays an unknown key and gets a 400. No key this app
-    reads needs decoding anyway: they are plain words, and
-    `quote_plus` returns a plain word unchanged.
+    `%74exture` stays an unknown key and gets a 400. Nothing needs the
+    decode either: `openapi/schemas/guide.yaml` constrains every step
+    and refinement key to `^[a-z0-9]+([-_][a-z0-9]+)*\Z`, and
+    `quote_plus` is the identity function over that character set. The
+    validator refuses a key the adapter could encode, so this is a
+    rule about every key that can exist rather than an observation
+    about today's.
 
     The path becomes **bytes and then latin-1**, not UTF-8, because
     PATH_INFO is a latin-1 slot: the adapter assigns `event["path"]`
