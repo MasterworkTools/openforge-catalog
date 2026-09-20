@@ -20,14 +20,28 @@ export function GuideSteps({
     <div className="guide-steps">
       {steps.map((step) => (
         <section key={step.key} className="mb-8">
-          <h2 className="text-xl font-bold mb-3">{step.prompt}</h2>
-          <div className="flex flex-wrap gap-3">
+          <h2 id={`step-${step.key}`} className="text-xl font-bold mb-3">
+            {step.prompt}
+          </h2>
+          {/* Tied to the heading so a screen reader announces which
+              question these buttons answer. */}
+          <div
+            role="group"
+            aria-labelledby={`step-${step.key}`}
+            className="flex flex-wrap gap-3"
+          >
             {step.options.map((option) => (
               <button
                 key={option.key}
                 type="button"
                 aria-pressed={step.selected === option.key}
-                onClick={() => onSelect(step.key, option.key)}
+                // Re-picking the current answer would rewrite the same
+                // URL and re-resolve it for no change.
+                onClick={() =>
+                  step.selected === option.key
+                    ? undefined
+                    : onSelect(step.key, option.key)
+                }
                 className={`border rounded p-3 text-left max-w-xs ${
                   step.selected === option.key
                     ? 'border-blue-600 bg-blue-50'

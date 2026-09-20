@@ -18,32 +18,36 @@ import {
  * Holds a guide's selections, keeps them in the query string, and asks
  * the backend to resolve them into parts.
  *
- * The query string is the whole state: `?guide=wall&method=s2w` is a
- * shareable link to a specific wall. The main page's URL hooks strip
- * parameters after load; this page deliberately does not.
+ * The query string is not a copy of the state, it *is* the state:
+ * `?guide=wall&method=s2w` is a shareable link to a specific wall, and
+ * everything here derives from it. Keeping a second copy in React state
+ * is what made the first version of this hook leak one guide's answers
+ * into the next: the selections were never keyed to the guide, so
+ * moving from `?guide=wall&method=s2w` to `?guide=floor` asked the
+ * floor guide about a method it has never heard of, got the 400 the
+ * strict API owes it, and no further input could clear it.
+ *
+ * The main page's URL hooks strip parameters after load; this page
+ * deliberately does not.
  *
  * The document is fetched first because the API refuses a query key it
  * does not recognise, so the page has to know the guide's vocabulary
  * before it can ask anything — see `selectionKeys`.
  */
-export function useGuideState(guideKey: string | null) {
-  const document = useGuideDocument(guideKey);
-  // The arrival URL, captured once. The same trick the environment
-  // banner uses: reading `window.location` during a later render would
-  // see a URL this page has since rewritten.
-  const [arrived] = useState(readUrlParams);
-  const [chosen, setChosen] = useState<Selections | null>(null);
+export function useGuideState(guideKey: string | null | undefined) {
+  const { guide, guideError } = useGuideDocument(guideKey);
+  const search = useSearch();
   const [resolved, setResolved] = useState<ResolvedGuide | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  // Derived rather than seeded in an effect: until the document says
-  // which keys are ours, there is no answer, and once it does the
-  // answer is a function of what arrived.
-  const selections = useMemo(() => {
-    if (chosen) return chosen;
-    if (!document) return null;
-    return ownedBy(document, arrived);
-  }, [chosen, document, arrived]);
+  // Only the parameters this guide defines. Everything else in the URL
+  // — `fbclid`, `utm_source`, another guide's leftover answers — is
+  // dropped rather than forwarded, because the API answers 400 to a key
+  // it does not know.
+  const selections = useMemo(
+    () => (guide ? ownedBy(guide, search) : null),
+    [guide, search]
+  );
 
   useEffect(() => {
     if (!guideKey || selections === null) return;
@@ -72,48 +76,73 @@ export function useGuideState(guideKey: string | null) {
       } else {
         next[key] = value;
       }
-      writeUrl(guideKey, next);
-      setChosen(next);
+      writeUrl(guideKey ?? null, next);
     },
     [guideKey, selections]
   );
 
-  return { document, selections: selections ?? {}, resolved, error, select };
+  return { guide, resolved, error: error ?? guideError, select };
 }
 
-function useGuideDocument(guideKey: string | null) {
-  const [document, setDocument] = useState<GuideDocument | null>(null);
+function useGuideDocument(guideKey: string | null | undefined) {
+  const [guide, setGuide] = useState<GuideDocument | null>(null);
+  const [guideError, setGuideError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!guideKey) return;
     let current = true;
     fetchGuide(guideKey)
       .then((result) => {
-        if (current) setDocument(result);
+        if (!current) return;
+        setGuide(result);
+        setGuideError(null);
       })
-      .catch((e) => console.error('Error fetching guide:', e));
+      .catch((e: Error) => {
+        if (!current) return;
+        // Without this the page renders its heading and nothing else,
+        // so a dead `?guide=` link looks like a page that failed rather
+        // than a guide that is not there.
+        console.error('Error fetching guide:', e);
+        setGuideError(`No guide called '${guideKey}'.`);
+      });
     return () => {
       current = false;
     };
   }, [guideKey]);
 
-  return document;
+  return { guide, guideError };
 }
 
 /**
- * Which guide the URL is asking for.
+ * The query string, as a value that changes when it changes.
  *
  * Read through useSyncExternalStore rather than an effect: the page is
  * statically exported, so the prerendered HTML cannot know the query
- * string, and this is the hook React provides for exactly that — server
- * snapshot first, client snapshot on hydration, with `popstate` for the
- * back button.
+ * string, and this is the hook React provides for exactly that. The
+ * snapshot is the raw string, so `Object.is` compares it cheaply and
+ * parsing happens above.
+ *
+ * `undefined` before hydration means "not known yet", which is a
+ * different thing from a URL with no guide in it. Without that
+ * distinction the first client render shows the guide list, and every
+ * view of a guide fetches `/api/guides` it will never display.
  */
-export function useGuideKey(): string | null {
+function useSearch(): string | undefined {
   return useSyncExternalStore(
     subscribeToUrl,
-    () => new URLSearchParams(window.location.search).get('guide'),
-    () => null
+    () => window.location.search,
+    () => undefined
+  );
+}
+
+export function useGuideKey(): string | null | undefined {
+  const search = useSearch();
+  return useMemo(
+    () =>
+      search === undefined
+        ? undefined
+        : new URLSearchParams(search).get('guide'),
+    [search]
   );
 }
 
@@ -122,30 +151,33 @@ function subscribeToUrl(onChange: () => void) {
   return () => window.removeEventListener('popstate', onChange);
 }
 
-function readUrlParams(): Selections {
-  if (typeof window === 'undefined') return {};
-  const params: Selections = {};
-  new URLSearchParams(window.location.search).forEach((value, key) => {
-    params[key] = value;
+/**
+ * The query parameters this guide actually defines.
+ *
+ * A link shared through Facebook or a mail campaign carries `fbclid` or
+ * `utm_source`, and someone moving between guides carries the previous
+ * guide's answers. Neither belongs in the request.
+ */
+function ownedBy(guide: GuideDocument, search: string | undefined): Selections {
+  const known = selectionKeys(guide);
+  const selections: Selections = {};
+  new URLSearchParams(search ?? '').forEach((value, key) => {
+    if (known.has(key)) {
+      selections[key] = value;
+    }
   });
-  return params;
+  return selections;
 }
 
 /**
- * The arrived parameters this guide actually defines.
+ * Write the selections to the URL, and tell the store we did.
  *
- * Anything else is dropped rather than forwarded: a link that has been
- * shared through Facebook or a mail campaign carries `fbclid` or
- * `utm_source`, and the API answers 400 to a key it does not know.
- * Dropping them here is what keeps a shared link working.
+ * `replaceState` does not fire `popstate` — that event is for someone
+ * moving through history, not for us writing to it — so a store reading
+ * `window.location.search` would not see our own write. Dispatching it
+ * here is what lets the URL be the single source of truth rather than
+ * one of two copies that can disagree.
  */
-function ownedBy(document: GuideDocument, params: Selections): Selections {
-  const known = selectionKeys(document);
-  return Object.fromEntries(
-    Object.entries(params).filter(([key]) => known.has(key))
-  );
-}
-
 function writeUrl(guideKey: string | null, selections: Selections) {
   if (typeof window === 'undefined' || !guideKey) return;
   const params = new URLSearchParams({ guide: guideKey, ...selections });
@@ -154,4 +186,5 @@ function writeUrl(guideKey: string | null, selections: Selections) {
     '',
     `${window.location.pathname}?${params.toString()}`
   );
+  window.dispatchEvent(new PopStateEvent('popstate'));
 }

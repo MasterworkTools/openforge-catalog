@@ -71,6 +71,17 @@ const RESOLVED_WITH_PARTS = {
       from_namespace: 'texture',
       selected: null,
     },
+    // A toggle rather than a namespace pick: the two arms of the
+    // `on_tags` branch render different controls, and both prompts are
+    // plain text, so asserting on the text alone cannot tell them
+    // apart.
+    {
+      key: 'side-locks',
+      role: 'wall',
+      prompt: 'Side locks',
+      on_tags: ['connection|openlock'],
+      selected: null,
+    },
   ],
 };
 
@@ -86,7 +97,7 @@ const GUIDE_DOCUMENT = {
     key: 'wall',
     title: 'How do I make a wall?',
     steps: [{ key: 'method', prompt: 'How?', options: [] }],
-    refinements: [{ key: 'texture' }],
+    refinements: [{ key: 'texture' }, { key: 'side-locks' }],
     roles: {},
   },
 };
@@ -180,9 +191,14 @@ describe('GuidePage', () => {
           '/api/guides/wall/resolve?method=separate-wall'
         )
       );
-      // A GET, so nothing carries a body or a method.
-      const init = (global.fetch as jest.Mock).mock.calls[0][1];
-      expect(init).toBeUndefined();
+      // A GET, so nothing carries a body or a method — and it has to
+      // be the *resolve* call that is checked. calls[0] is the guide
+      // document, which was always a bare GET, so asserting on it
+      // passes whatever the resolve does.
+      const resolveCall = (global.fetch as jest.Mock).mock.calls.find(
+        ([url]: [string]) => url.includes('/resolve')
+      );
+      expect(resolveCall).toHaveLength(1);
       expect(window.location.search).toContain('method=separate-wall');
     });
 
@@ -250,6 +266,80 @@ describe('GuidePage', () => {
       expect(resolves[0]).not.toContain('utm_source');
     });
 
+    it('answers a toggle refinement, and un-answers it', async () => {
+      visit('?guide=wall&method=separate-wall');
+      const urls: string[] = [];
+      mockFetch((url) => {
+        urls.push(url);
+        return url.includes('/resolve') ? RESOLVED_WITH_PARTS : GUIDE_DOCUMENT;
+      });
+
+      render(<GuidePage />);
+      const toggle = await screen.findByLabelText('Side locks');
+
+      fireEvent.click(toggle);
+      await waitFor(() =>
+        expect(urls).toContain(
+          '/api/guides/wall/resolve?method=separate-wall&side-locks=on'
+        )
+      );
+      expect(window.location.search).toContain('side-locks=on');
+    });
+
+    it('answers a namespace refinement with the tag typed into it', async () => {
+      visit('?guide=wall&method=separate-wall');
+      const urls: string[] = [];
+      mockFetch((url) => {
+        urls.push(url);
+        return url.includes('/resolve') ? RESOLVED_WITH_PARTS : GUIDE_DOCUMENT;
+      });
+
+      render(<GuidePage />);
+      const picker = await screen.findByLabelText('Texture');
+
+      fireEvent.blur(picker, { target: { value: 'texture|towne' } });
+
+      await waitFor(() =>
+        expect(urls).toContain(
+          '/api/guides/wall/resolve?method=separate-wall&texture=texture%7Ctowne'
+        )
+      );
+    });
+
+    it('drops a refinement from the URL when it is cleared', async () => {
+      // The null branch of `select`: writing the empty string instead
+      // would send `?texture=` and the API would refuse it.
+      visit('?guide=wall&method=separate-wall&texture=texture%7Ctowne');
+      const urls: string[] = [];
+      mockFetch((url) => {
+        urls.push(url);
+        return url.includes('/resolve') ? RESOLVED_WITH_PARTS : GUIDE_DOCUMENT;
+      });
+
+      render(<GuidePage />);
+      const picker = await screen.findByLabelText('Texture');
+
+      fireEvent.blur(picker, { target: { value: '  ' } });
+
+      await waitFor(() =>
+        expect(urls).toContain('/api/guides/wall/resolve?method=separate-wall')
+      );
+      expect(window.location.search).not.toContain('texture');
+    });
+
+    it('says so when the guide in the URL does not exist', async () => {
+      visit('?guide=nonesuch');
+      global.fetch = jest.fn(() =>
+        Promise.resolve({ ok: false, status: 404, statusText: 'Not Found' })
+      ) as unknown as typeof fetch;
+
+      render(<GuidePage />);
+
+      expect(
+        await screen.findByText("No guide called 'nonesuch'.")
+      ).toBeInTheDocument();
+    });
+
     it('shows the error when the selections do not describe a state', async () => {
       visit('?guide=wall&method=nonesuch');
       global.fetch = jest.fn((url: string) =>
@@ -278,5 +368,51 @@ describe('GuidePage', () => {
         await screen.findByText("step 'method' has no option 'nonesuch'")
       ).toBeInTheDocument();
     });
+  });
+});
+
+describe('moving between guides', () => {
+  /**
+   * The previous version kept the selections in React state that was
+   * never keyed to the guide, so answering one guide and then opening
+   * another sent the first guide's answers to the second. The strict
+   * API answered 400 and nothing the person did afterwards could clear
+   * it, because the stale state always won.
+   */
+  it("does not send one guide's answers to the next", async () => {
+    visit('?guide=wall&method=separate-wall');
+    const urls: string[] = [];
+    mockFetch((url) => {
+      urls.push(url);
+      if (url.includes('/resolve')) return RESOLVED_WITH_PARTS;
+      return url.includes('/floor')
+        ? {
+            guide_key: 'floor',
+            document: {
+              key: 'floor',
+              title: 'How do I make a floor?',
+              steps: [{ key: 'style', prompt: 'Which style?', options: [] }],
+              refinements: [],
+              roles: {},
+            },
+          }
+        : GUIDE_DOCUMENT;
+    });
+
+    const { rerender } = render(<GuidePage />);
+    await screen.findByText('a dungeon stone wall');
+
+    // The back/forward case: the component stays mounted and the URL
+    // changes underneath it.
+    window.history.replaceState({}, '', '/guides/?guide=floor&style=flagstone');
+    window.dispatchEvent(new PopStateEvent('popstate'));
+    rerender(<GuidePage />);
+
+    await waitFor(() =>
+      expect(urls).toContain('/api/guides/floor/resolve?style=flagstone')
+    );
+    expect(
+      urls.filter((url) => url.includes('/floor/resolve') && url.includes('method='))
+    ).toEqual([]);
   });
 });

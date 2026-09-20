@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { GuidePart, thumbnailOf } from '@/services/guide-service';
-import { downloadFiles } from '@/utils/blueprint-utils';
+import { downloadFiles, downloadUrl } from '@/utils/blueprint-utils';
 
 /**
  * The answer: one recommended piece per role, with its picture and its
@@ -10,9 +10,9 @@ import { downloadFiles } from '@/utils/blueprint-utils';
  */
 export function GuideParts({ parts }: { parts: GuidePart[] }) {
   if (parts.length === 0) return null;
-  const urls = parts
-    .filter((part) => part.blueprint)
-    .map((part) => `/api/blueprints/${part.blueprint!.id}/download`);
+  const urls = parts.flatMap((part) =>
+    part.blueprint ? [downloadUrl(part.blueprint.id)] : []
+  );
 
   return (
     <section className="guide-parts">
@@ -30,7 +30,7 @@ export function GuideParts({ parts }: { parts: GuidePart[] }) {
           className="mt-4 border border-gray-300 rounded px-3 py-2"
           onClick={() => downloadFiles(urls)}
         >
-          Download all {urls.length} files
+          Download {urls.length === 1 ? 'the file' : `all ${urls.length} files`}
         </button>
       )}
     </section>
@@ -57,7 +57,7 @@ function Part({ part }: { part: GuidePart }) {
         </div>
         {part.blueprint ? (
           <a
-            href={`/api/blueprints/${part.blueprint.id}/download`}
+            href={downloadUrl(part.blueprint.id)}
             className="text-blue-700 underline break-all"
           >
             {part.blueprint.blueprint_name}

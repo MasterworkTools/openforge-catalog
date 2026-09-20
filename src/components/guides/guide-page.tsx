@@ -13,14 +13,18 @@ import { GuideRefinements, GuideSteps } from './guide-steps';
  */
 export default function GuidePage() {
   const guideKey = useGuideKey();
-  const { document, resolved, error, select } = useGuideState(guideKey);
+  const { guide, resolved, error, select } = useGuideState(guideKey);
 
-  if (!guideKey) return <GuideList />;
+  // Before hydration the URL is unknown, which is not the same as a URL
+  // with no guide in it. Rendering the list here would fetch every
+  // guide on every view of a single one.
+  if (guideKey === undefined) return null;
+  if (guideKey === null) return <GuideList />;
 
   return (
     <main className="p-6 max-w-3xl">
       <h1 className="text-3xl font-bold mb-6">
-        {document?.title ?? 'Guided build'}
+        {guide?.title ?? 'Guided build'}
       </h1>
       {error && <p className="mb-6 text-red-700">{error}</p>}
       {resolved && (
@@ -39,14 +43,25 @@ export default function GuidePage() {
 
 function GuideList() {
   const [guides, setGuides] = useState<GuideSummary[] | null>(null);
+  const [failed, setFailed] = useState(false);
 
   useEffect(() => {
+    let current = true;
     fetchGuides()
-      .then(setGuides)
+      .then((result) => {
+        if (current) setGuides(result);
+      })
       .catch((e) => {
+        if (!current) return;
         console.error('Error fetching guides:', e);
+        // Distinct from an empty list: "none yet" and "we could not
+        // ask" should not read the same to someone looking at it.
+        setFailed(true);
         setGuides([]);
       });
+    return () => {
+      current = false;
+    };
   }, []);
 
   if (guides === null) return null;
@@ -54,14 +69,16 @@ function GuideList() {
   return (
     <main className="p-6 max-w-3xl">
       <h1 className="text-3xl font-bold mb-6">Guided builds</h1>
-      {guides.length === 0 ? (
+      {failed ? (
+        <p>Could not load the guides.</p>
+      ) : guides.length === 0 ? (
         <p>No guides yet.</p>
       ) : (
         <ul className="flex flex-col gap-3">
           {guides.map((guide) => (
             <li key={guide.guide_key}>
               <a
-                href={`?guide=${guide.guide_key}`}
+                href={`?guide=${encodeURIComponent(guide.guide_key)}`}
                 className="text-blue-700 underline font-semibold"
               >
                 {guide.title}
