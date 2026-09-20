@@ -18,9 +18,13 @@ The three rules the design settled:
 - **Determinism.** `prefer` is a list of tags, most wanted first. The
   recommendation is the first candidate of the most specific non-empty
   query: require every preferred tag, and drop them from the least
-  wanted until something matches. Candidates arrive ordered by name, so
-  the same selections always produce the same part — which is what makes
-  the shareable URL mean anything.
+  wanted until something matches. The same selections always produce
+  the same part — which is what makes the shareable URL mean anything —
+  and that rests on the catalog returning candidates in a *total*
+  order. Name alone is not one: 159 blueprint names are shared by two
+  or more records, so `tag_search_blueprints` orders by name and id
+  together. Without the id, a role's recommendation could change after
+  any unrelated write.
 - **Silence is visible.** A role whose query matches nothing resolves to
   no part and says so, rather than dropping out of the parts list.
 

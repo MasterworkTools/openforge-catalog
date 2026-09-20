@@ -153,10 +153,12 @@ def test_tag_search_blueprints_is_ordered_by_name(test_db):
                 "c wall",
             ]
 
-            # Two more sharing a name: the full listing has to be
-            # stable among them as well, which the name alone cannot
-            # do. Ask twice with a write in between.
-            for _ in range(2):
+            # Four more sharing a name: the full listing has to order
+            # the ties by id, which the name alone cannot do. Four
+            # rather than two because random uuids fall in ascending
+            # order often enough by chance to make a smaller sample a
+            # weak assertion.
+            for _ in range(4):
                 dup = blueprint_sql.insert_blueprint(
                     curs,
                     create_test_blueprint(
@@ -189,6 +191,28 @@ def test_tag_search_blueprints_is_ordered_by_name(test_db):
             )
 
             assert listing() == before
+
+            # And the ties are in id order, which is the only thing
+            # that makes the listing stable rather than merely
+            # repeatable within one read.
+            tied = [
+                r["id"]
+                for r in tag_sql.tag_search_blueprints(
+                    curs,
+                    [{"tag": "foo|bar"}],
+                    [],
+                    [],
+                    None,
+                    None,
+                    20,
+                    True,
+                    False,
+                    None,
+                )
+                if r["blueprint_name"] == "a wall"
+            ]
+            assert len(tied) == 5
+            assert [str(i) for i in tied] == sorted(str(i) for i in tied)
 
 
 def test_tag_search_blueprints_limit_takes_the_first_by_name(test_db):
