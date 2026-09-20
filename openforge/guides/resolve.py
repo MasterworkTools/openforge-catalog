@@ -30,11 +30,16 @@ The three rules the design settled:
 
 Cost: one candidate query per role, plus one more for each preferred
 tag that has to be dropped — at most `len(prefer) + 1` per role, each
-asking for a single row. With three roles and two preferred tags that
-is nine small queries per resolve, which is the price of ranking in the
-database rather than pulling every candidate's tags into the Lambda to
-sort them there. If it ever matters, the upgrade is one query per role
-that ranks in SQL, not a cache.
+*returning* a single row. Each one still builds and sorts the whole
+matching set first, and `_query_tags_basics` emits a separate anti-join
+per denied tag, which `_compose` accumulates from the role, every
+chosen option and every active refinement — so the work grows with how
+deep someone is into a guide, not with the number of roles. With three
+roles and two preferred tags that is nine such queries per resolve,
+which is the price of ranking in the database rather than pulling every
+candidate's tags into the Lambda to sort them there. If it ever
+matters, the upgrade is one query per role that ranks in SQL, not a
+cache.
 """
 
 PREDICATES = ("require", "deny", "accept")

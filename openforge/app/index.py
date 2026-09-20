@@ -1,4 +1,5 @@
 import os
+from urllib.parse import unquote_plus
 
 import aws_lambda_wsgi
 from flask import Flask, request
@@ -382,5 +383,35 @@ def tag_documentation_by_prefix(tag):
     return tags_doc_routes.get_tag_documentation_by_tag_prefix(tag)
 
 
+def _decode_alb_query(event):
+    """Undo the ALB's percent-encoding before the adapter re-applies it.
+
+    An ALB hands Lambda `queryStringParameters` still encoded — API
+    Gateway decodes them, an ALB does not — and `aws_lambda_wsgi`
+    builds QUERY_STRING by encoding whatever it is given. So a value
+    arrives encoded twice and Flask decodes it once: `texture%7Ccave`
+    reaches a route as the literal string `texture%7Ccave` rather than
+    `texture|cave`.
+
+    That breaks every guide refinement, whose values are pipe-
+    delimited tags, and it already breaks `/api/images?image_type=`
+    for any client that encodes its value. Decoding here fixes it for
+    every route at once rather than leaving each one to guess whether
+    its arguments arrived readable.
+
+    `unquote_plus` rather than `unquote` because a query string spells
+    a space as `+` — `URLSearchParams` in the browser does exactly
+    that — and a literal plus arrives as `%2B`, which it restores.
+    """
+    params = event.get("queryStringParameters")
+    if not params:
+        return
+    event["queryStringParameters"] = {
+        key: unquote_plus(value) if isinstance(value, str) else value
+        for key, value in params.items()
+    }
+
+
 def lambda_handler(event, context):
+    _decode_alb_query(event)
     return aws_lambda_wsgi.response(app.wsgi_app, event, context)
