@@ -1,12 +1,15 @@
 from pathlib import Path
 
+import psycopg
 import pytest
 import yaml
 from psycopg.rows import dict_row
+from psycopg.types.json import Jsonb
 from werkzeug.exceptions import NotFound
 
 import openforge.db.sql.guides as guide_sql
 from openforge.db.fixtures import (
+    _get_fixture_type,
     find_fixtures_directory,
     load_fixtures,
     load_guide_fixture,
@@ -154,8 +157,9 @@ def test_a_full_replacement_load_clears_guides_first(test_db, tmp_path):
 def test_the_key_column_comes_from_the_document(test_db):
     """The column and document->>'key' cannot drift apart.
 
-    Nothing outside the document gets to say what a guide is called,
-    so there is no way to write a row whose key disagrees with itself.
+    Not by convention: guide_key is generated from the document, so
+    the database itself refuses a row whose key disagrees with the
+    document it belongs to.
     """
     with test_db.connection() as conn:
         with conn.cursor(row_factory=dict_row) as curs:
@@ -163,6 +167,22 @@ def test_the_key_column_comes_from_the_document(test_db):
 
             assert stored["guide_key"] == "corner"
             assert stored["document"]["key"] == "corner"
+
+
+def test_the_database_refuses_a_key_that_contradicts_the_document(test_db):
+    """The invariant belongs to the table, not to one function.
+
+    A later partial update that rewrote the document and left the key
+    alone would be rejected here rather than quietly storing a guide
+    under the wrong name.
+    """
+    with test_db.connection() as conn:
+        with conn.cursor(row_factory=dict_row) as curs:
+            with pytest.raises(psycopg.errors.GeneratedAlways):
+                curs.execute(
+                    "INSERT INTO guides (document, guide_key) VALUES (%s, %s)",
+                    (Jsonb(a_guide()), "something-else"),
+                )
 
 
 def test_the_fixtures_command_finds_guides_on_its_own(test_db, tmp_path):
@@ -203,3 +223,25 @@ def test_a_rejected_guide_names_the_file_it_came_from(test_db, tmp_path):
     with test_db.connection() as conn:
         with pytest.raises(ValueError, match="wall.yaml"):
             load_fixtures(conn, "", [path])
+
+
+@pytest.mark.parametrize(
+    "path,expected",
+    [
+        ("openforge/db/fixtures/guides/wall.yaml", "guide"),
+        # The case the directory rule exists for: a guide whose
+        # filename names another fixture kind.
+        ("openforge/db/fixtures/guides/blueprints.s2w.yaml", "guide"),
+        ("openforge/db/fixtures/blueprints/dungeon_stone.json", "blueprint"),
+        ("openforge/db/fixtures/tag_descriptions/x.yaml", "tag_description"),
+        ("openforge/db/fixtures/tag_documentation/x.yaml", "tag_documentation"),
+    ],
+)
+def test_a_fixture_is_typed_by_the_directory_it_sits_in(path, expected):
+    assert _get_fixture_type(path) == expected
+
+
+def test_a_fixture_outside_the_known_directories_is_refused():
+    """Guessing would give a blueprint-shaped error for a guide."""
+    with pytest.raises(ValueError, match="Cannot tell what kind"):
+        _get_fixture_type("/tmp/loose/wall.yaml")

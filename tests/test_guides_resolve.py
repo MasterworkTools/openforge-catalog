@@ -1,7 +1,9 @@
 import copy
+import inspect
 
 import pytest
 
+from openforge.db.sql.tags import tag_search_blueprints
 from openforge.guides.resolve import (
     GuideSelectionError,
     resolve,
@@ -122,6 +124,16 @@ CATALOG = [
             "shape|wall",
             "connection|openforge",
             "texture|dungeon_stone",
+        ],
+    },
+    {
+        "id": "9",
+        "blueprint_name": "l separate wall openforge only",
+        "tags": [
+            "build|separate wall",
+            "shape|wall",
+            "connection|openforge",
+            "texture|cave",
         ],
     },
     {
@@ -246,9 +258,20 @@ def test_prefer_drops_the_least_wanted_tag_until_something_matches(guide):
     resolved = resolve(guide, {"method": "s2w-modular"}, find_candidates)
     assert parts_by_role(resolved)["wall"]["blueprint"]["id"] == "2"
 
-    # With every preferred tag dropped there is still a recommendation:
-    # the base role has no prefer list at all.
-    assert parts_by_role(resolved)["base"]["blueprint"]["id"] == "4"
+    # The whole list is required before any of it is dropped. Candidate
+    # 9 carries the first preferred tag and not the second and sorts
+    # before 5, so requiring only the first would pick it.
+    resolved = resolve(guide, {"method": "separate-wall"}, find_candidates)
+    assert parts_by_role(resolved)["wall"]["blueprint"]["id"] == "5"
+
+
+def test_a_prefer_list_that_matches_nothing_still_recommends(guide):
+    """Dropping runs all the way to the bare query, not to silence."""
+    guide["roles"]["wall"]["prefer"] = ["texture|nonesuch"]
+
+    resolved = resolve(guide, {"method": "s2w-modular"}, find_candidates)
+
+    assert parts_by_role(resolved)["wall"]["blueprint"]["id"] == "1"
 
 
 def test_equally_preferred_candidates_break_the_tie_on_name(guide):
@@ -331,17 +354,17 @@ def test_an_unreachable_refinement_is_ignored_not_an_error(guide):
 
 
 def test_a_selection_the_guide_has_no_key_for_is_a_bad_request(guide):
-    with pytest.raises(ValueError, match="colour"):
+    with pytest.raises(GuideSelectionError, match="colour"):
         resolve(guide, {"method": "s2w-modular", "colour": "red"}, find_candidates)
 
 
 def test_an_option_the_step_does_not_offer_is_a_bad_request(guide):
-    with pytest.raises(ValueError, match="wall-on-tile"):
+    with pytest.raises(GuideSelectionError, match="wall-on-tile"):
         resolve(guide, {"method": "wall-on-tile"}, find_candidates)
 
 
 def test_a_toggle_takes_on_or_off(guide):
-    with pytest.raises(ValueError, match="'on' or 'off'"):
+    with pytest.raises(GuideSelectionError, match="'on' or 'off'"):
         resolve(
             guide,
             {"method": "separate-wall", "side-locks": "yes"},
@@ -350,7 +373,7 @@ def test_a_toggle_takes_on_or_off(guide):
 
 
 def test_a_namespace_refinement_takes_a_tag_from_its_namespace(guide):
-    with pytest.raises(ValueError, match="texture"):
+    with pytest.raises(GuideSelectionError, match="texture"):
         resolve(
             guide,
             {"method": "s2w-modular", "texture": "shape|wall"},
@@ -473,23 +496,36 @@ def test_accept_matches_a_tag_or_anything_below_it(guide):
     """`accept` is the predicate that reaches into a subtree.
 
     The corner wall carries `shape|wall|corner` and not `shape|wall`,
-    so a role that requires the bare tag cannot see it.
+    so only an `accept` can see it. Nothing else in the role narrows
+    the query, so if `accept` were dropped from the composition the
+    role would match every separate wall and pick another part.
     """
-    guide["roles"]["wall"]["query"] = {"accept": ["shape|wall"]}
-    guide["roles"]["wall"]["prefer"] = ["shape|wall|corner"]
+    guide["roles"]["wall"]["query"] = {"accept": ["shape|wall|corner"]}
+    guide["roles"]["wall"]["prefer"] = []
 
     resolved = resolve(guide, {"method": "separate-wall"}, find_candidates)
 
-    assert parts_by_role(resolved)["wall"]["blueprint"]["id"] == "8"
+    wall = parts_by_role(resolved)["wall"]
+    assert wall["query"]["accept"] == ["shape|wall|corner"]
+    assert wall["blueprint"]["id"] == "8"
 
 
 def test_a_selection_that_is_not_a_string_is_a_bad_request(guide):
-    with pytest.raises(GuideSelectionError):
+    """A repeated query parameter arrives as a list.
+
+    Both halves matter: the refinement path and the step path each do
+    a lookup that raises TypeError on an unhashable value, which would
+    be a 500 where the honest answer is 400.
+    """
+    with pytest.raises(GuideSelectionError, match="takes a string"):
         resolve(
             guide,
             {"method": "s2w-modular", "texture": ["texture|cave"]},
             find_candidates,
         )
+
+    with pytest.raises(GuideSelectionError, match="takes a string"):
+        resolve(guide, {"method": ["s2w-modular"]}, find_candidates)
 
 
 def test_the_catalog_gets_predicates_in_the_shape_it_understands():
@@ -500,10 +536,16 @@ def test_the_catalog_gets_predicates_in_the_shape_it_understands():
     every term: a lost `require` matches everything, a lost `deny`
     matches nothing. This is the one conversion point.
     """
-    assert to_tag_query(
-        {"require": ["shape|wall"], "deny": ["shape|base"], "accept": []}
-    ) == {
+    assert to_tag_query({"require": ["shape|wall"], "deny": ["shape|base"]}) == {
+        "accept": [],
         "require": [{"tag": "shape|wall"}],
         "deny": [{"tag": "shape|base"}],
     }
-    assert to_tag_query({}) == {}
+
+    # All three keys are always present, because the search takes them
+    # as required positional arguments and a predicate need not use
+    # every one.
+    assert set(to_tag_query({})) == {"accept", "require", "deny"}
+    assert set(to_tag_query({})) == set(
+        inspect.signature(tag_search_blueprints).parameters
+    ) & {"accept", "require", "deny"}

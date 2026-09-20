@@ -51,12 +51,17 @@ properties:
 $defs:
   url_key:
     type: string
-    pattern: "^[a-z0-9]+(-[a-z0-9]+)*$"
+    pattern: "^[a-z0-9]+([-_][a-z0-9]+)*$"
     description: >
-      A key that ends up in a query string. Selections are one flat map
-      of step-or-refinement key to answer, which is what lets a guide's
-      whole state fit in a URL, so every key that can appear there is
-      restricted to the same shape.
+      A key that is safe in a URL and readable in one. Step and
+      refinement keys become query-string keys, because selections are
+      one flat map of key to answer; a guide's own key is a path
+      segment. Role names never appear in a URL and are held to the
+      same shape for consistency with the keys beside them.
+
+      Underscores are allowed because the catalog's own vocabulary is
+      full of them — an author naming an option after `wall_on_tile`
+      or `dungeon_stone` should not have to respell it.
 
   predicate:
     type: object

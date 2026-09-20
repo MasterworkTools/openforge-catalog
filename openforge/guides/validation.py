@@ -133,22 +133,35 @@ def _role_reference_errors(data: dict) -> list[str]:
 def _under_cycle_errors(roles: dict) -> list[str]:
     """`under` must describe a stack, not a loop.
 
-    A role sitting under itself, or two roles sitting under each other,
-    loads happily and then hangs whatever walks the chain to lay the
-    parts out.
+    Nothing walks the chain yet — the parts list that lays a build out
+    is the obvious future caller — but a role sitting under itself, or
+    two roles sitting under each other, would loop forever when
+    something does, and it is not a thing an author can mean.
+
+    One error per cycle, naming its members: reporting it once for
+    every role that happens to reach the cycle would accuse roles that
+    are merely downstream of it.
     """
     errors = []
+    reported = set()
     for name in roles:
         seen = [name]
         below = roles[name].get("under")
         while below in roles and below not in seen:
             seen.append(below)
             below = roles[below].get("under")
-        if below in seen:
-            errors.append(
-                f"role {name!r}: `under` runs in a circle "
-                f"({' -> '.join(seen + [below])})"
-            )
+        if below not in seen:
+            continue
+        cycle = seen[seen.index(below) :]
+        if frozenset(cycle) in reported:
+            continue
+        reported.add(frozenset(cycle))
+        errors.append(
+            "roles "
+            + ", ".join(repr(r) for r in cycle)
+            + ": `under` runs in a circle "
+            + f"({' -> '.join(cycle + [below])})"
+        )
     return errors
 
 

@@ -74,7 +74,12 @@ def guide():
 
 
 def test_a_sound_guide_validates_and_comes_back_unchanged(guide):
-    """The loader writes what this returns, so identity matters."""
+    """Callers use the document they passed in, so it must survive.
+
+    The loader validates and then writes its own `data`, which is the
+    same object; anything this function did to the document on the way
+    through would land in the database unnoticed.
+    """
     before = copy.deepcopy(guide)
 
     result = validate_guide_document(guide)
@@ -322,13 +327,37 @@ def test_a_role_no_option_names_is_rejected(guide):
     assert "role 'plinth': no option names it" in str(excinfo.value)
 
 
-def test_keys_that_go_in_a_url_are_restricted(guide):
-    guide["steps"][0]["key"] = "a=b&c"
+@pytest.mark.parametrize(
+    "break_it",
+    [
+        pytest.param(lambda g: g["steps"][0].__setitem__("key", "a=b&c"), id="step"),
+        pytest.param(
+            lambda g: g["steps"][0]["options"][0].__setitem__("key", "a b"),
+            id="option",
+        ),
+        pytest.param(
+            lambda g: g["refinements"][0].__setitem__("key", "Texture!"),
+            id="refinement",
+        ),
+        pytest.param(
+            lambda g: g["roles"].__setitem__("Wall Role", g["roles"]["wall"]),
+            id="role",
+        ),
+    ],
+)
+def test_keys_that_go_in_a_url_are_restricted(guide, break_it):
+    break_it(guide)
 
-    with pytest.raises(ValueError) as excinfo:
+    with pytest.raises(ValueError):
         validate_guide_document(guide)
 
-    assert "a=b&c" in str(excinfo.value) or "pattern" in str(excinfo.value)
+
+def test_a_key_may_use_the_underscores_the_catalog_is_full_of(guide):
+    """An author names options after tags, and tags are snake_case."""
+    guide["steps"][0]["options"][0]["key"] = "wall_on_tile"
+    guide["refinements"][1]["when"]["selected"]["method"] = ["wall_on_tile"]
+
+    assert validate_guide_document(guide) is guide
 
 
 def test_a_namespace_refinement_may_not_also_carry_a_toggle(guide):

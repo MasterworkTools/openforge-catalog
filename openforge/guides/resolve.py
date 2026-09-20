@@ -55,11 +55,15 @@ def to_tag_query(predicate: dict) -> dict:
     dropped `require` matches everything while a dropped `deny` matches
     nothing — a wrong answer rather than an error. Every caller
     converts here, so there is one place to get it right.
+
+    All three keys are always present, so the result can be splatted
+    straight into `tag_search_blueprints(curs, **to_tag_query(p))` —
+    that function takes `accept`, `require` and `deny` as required
+    positional arguments, and omitting the empty ones would make the
+    call fail on any predicate that happens not to use one.
     """
     return {
-        name: [{"tag": tag} for tag in predicate[name]]
-        for name in PREDICATES
-        if predicate.get(name)
+        name: [{"tag": tag} for tag in predicate.get(name, [])] for name in PREDICATES
     }
 
 
@@ -143,6 +147,13 @@ def _chosen_options(steps: list[dict], selections: dict) -> list[dict]:
         if selected is None:
             continue
         options = {option["key"]: option for option in step["options"]}
+        if not isinstance(selected, str):
+            # A repeated query parameter arrives as a list, and an
+            # unhashable value would raise TypeError from the lookup
+            # below — a 500 where the answer is "bad request".
+            raise GuideSelectionError(
+                f"step {step['key']!r} takes a string, not {selected!r}"
+            )
         if selected not in options:
             raise GuideSelectionError(
                 f"step {step['key']!r} has no option {selected!r}"

@@ -103,11 +103,15 @@ def _get_fixture_type(file_path):
     Returns:
         str: 'blueprint', 'tag_description', 'tag_documentation'
             or 'guide'
+
+    Raises:
+        ValueError: if the file is not in a fixture directory.
     """
-    # The directory a fixture lives in is what decides its type. The
-    # substring fallback below is the older behaviour, kept for paths
-    # that are not one of the known directories; on its own it would
-    # read guides/blueprints.s2w.yaml as a blueprint fixture.
+    # The directory a fixture lives in is what decides its type. An
+    # earlier version matched substrings of the whole path, which read
+    # guides/blueprints.s2w.yaml as a blueprint fixture; nothing now
+    # reaches this function with a path outside these four directories,
+    # and a path that did would be guesswork rather than a fixture.
     known = {
         "guides": "guide",
         "tag_documentation": "tag_documentation",
@@ -115,21 +119,12 @@ def _get_fixture_type(file_path):
         "blueprints": "blueprint",
     }
     directory = Path(file_path).parent.name
-    if directory in known:
-        return known[directory]
-
-    file_path_str = str(file_path)
-    if "tag_documentation" in file_path_str:
-        return "tag_documentation"
-    elif "tag_descriptions" in file_path_str:
-        return "tag_description"
-    elif "blueprints" in file_path_str:
-        return "blueprint"
-    elif "guides" in file_path_str:
-        return "guide"
-    else:
-        # Fallback: assume blueprint for backward compatibility
-        return "blueprint"
+    if directory not in known:
+        raise ValueError(
+            f"Cannot tell what kind of fixture {file_path} is: it is not "
+            f"in one of {', '.join(sorted(known))}"
+        )
+    return known[directory]
 
 
 def load_fixtures(

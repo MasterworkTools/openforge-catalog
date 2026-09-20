@@ -49,23 +49,20 @@ SELECT id, guide_key, document, created_at, updated_at
 def upsert_guide(curs: cursor, document: dict) -> dict:
     """Write a guide, keyed by the key inside it.
 
-    The column and `document->>'key'` cannot drift apart because the
-    caller never gets to say what the key is.
+    Nothing supplies `guide_key`: the column is generated from
+    `document->>'key'`, so the two cannot disagree no matter what a
+    caller does.
     """
-    guide_key = document["key"]
     query = sql.SQL(
         """
-INSERT INTO guides (guide_key, document)
-  VALUES ({guide_key}, {document})
+INSERT INTO guides (document)
+  VALUES ({document})
   ON CONFLICT (guide_key) DO UPDATE SET
     document = EXCLUDED.document,
     updated_at = CURRENT_TIMESTAMP
   RETURNING id, guide_key, document, created_at, updated_at
 """
-    ).format(
-        guide_key=sql.Literal(guide_key),
-        document=sql.Literal(Jsonb(document)),
-    )
+    ).format(document=sql.Literal(Jsonb(document)))
     curs.execute(query)
     return dict(curs.fetchone())
 

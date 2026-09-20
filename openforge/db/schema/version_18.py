@@ -11,6 +11,12 @@ openforge/openapi/schemas/guide.yaml before they land, and the only
 thing the application looks a guide up by is its key. Columns per field
 would buy nothing and would mean a migration every time the guide format
 grows a key.
+
+guide_key is generated from the document rather than supplied beside
+it, so the column and document->>'key' cannot disagree: Postgres
+rejects any attempt to write one, and a document with no key fails the
+NOT NULL rather than landing under an empty name. A later partial
+update that rewrites the document cannot leave a stale key behind.
 """
 
 from psycopg import cursor, sql
@@ -31,8 +37,8 @@ class SchemaVersion18(SchemaBase):
             """
 CREATE TABLE guides (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  guide_key TEXT NOT NULL,
   document JSONB NOT NULL,
+  guide_key TEXT GENERATED ALWAYS AS (document->>'key') STORED NOT NULL,
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   UNIQUE (guide_key)
