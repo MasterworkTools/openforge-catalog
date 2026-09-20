@@ -600,3 +600,49 @@ def test_an_unknown_guide_answers_json(client, wall_guide):
         assert response.status_code == 404, url
         assert response.is_json, url
         assert "nonesuch" in response.json["error"], url
+
+
+def test_a_stored_guide_that_no_longer_validates_is_a_500_not_a_400(
+    client, test_db, catalog
+):
+    """The `except` around `resolve` must stay narrow.
+
+    `GuideSelectionError` means the selections are wrong. A stored
+    document that no longer validates is *our* fault, and fail-fast
+    (openforge/CLAUDE.md) says it should surface as a 500 with a
+    traceback rather than be reported to the person as a bad request
+    they cannot fix by choosing differently.
+
+    Nothing enforced that: `upsert_guide` writes whatever it is given,
+    so a document can reach the route malformed, and widening the
+    `except` to `Exception` passed the whole suite. This is the test
+    that makes the invariant in that comment a rule.
+    """
+    # An option naming a role the document does not define. This is
+    # one of the things validation.py refuses, so it can only be here
+    # if the document was written before a rule existed, or around the
+    # validator — and `_parts` reads `document["roles"][name]`.
+    broken = {
+        "key": "broken",
+        "title": "A guide that lost a role",
+        "steps": [
+            {
+                "key": "method",
+                "prompt": "How?",
+                "options": [
+                    {
+                        "key": "separate-wall",
+                        "title": "Separate wall",
+                        "roles": {"wall": None},
+                    }
+                ],
+            }
+        ],
+        "roles": {},
+    }
+    with test_db.connection() as conn:
+        with conn.cursor(row_factory=dict_row) as curs:
+            guide_sql.upsert_guide(curs, broken)
+
+    with pytest.raises(KeyError):
+        client.get("/api/guides/broken/resolve?method=separate-wall")
