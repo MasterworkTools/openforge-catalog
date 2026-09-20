@@ -425,11 +425,25 @@ Proposed endpoints:
 - `GET /api/guides/<key>/resolve` — selections in, resolved parts plus newly available
   steps out. This was proposed as a `POST` and built as a `GET`: resolving is a pure
   function of the key and the selections, the selections are already a query string
-  because that is what the shareable URL is, and a body version of the same state only
-  costs cacheability — every repeat of an already-resolved state becomes another Lambda
-  invocation and another round of catalog queries. Nothing is written, so a `POST`
-  protects nothing. A question answered twice (`?method=a&method=b`) is refused rather
-  than resolved on one of its values.
+  because that is what the shareable URL is, and nothing is written, so a `POST` would
+  protect nothing. What the `GET` buys today is the *option* of caching rather than the
+  saving — the app sets no cache headers anywhere — but production does sit behind
+  CloudFront, so collecting it later is one `Cache-Control` header rather than an API
+  change.
+
+  A question answered twice (`?method=a&method=b`) is refused rather than resolved on
+  one of its values — except behind the ALB, which collapses a repeated key to its last
+  value before Lambda ever sees it. Worse, Flask keeps the *first*, so the development
+  server and production would disagree about which answer they used. Tracked as
+  `openforge_catalog-o63`.
+
+**One trap worth knowing before adding any endpoint here.** An ALB hands Lambda the path
+and the query values still percent-encoded — API Gateway decodes them, an ALB does not —
+and `aws_lambda_wsgi` re-encodes whatever it is given, so a value arrives encoded twice
+and Flask decodes it once. `texture%7Ccave` reaches a route as that literal string. Every
+guide refinement would have failed in production while every test passed, because the
+Flask test client hands values over already decoded. `lambda_handler` now decodes both
+before the adapter runs.
 
 `resolve` keeps payloads small, which matters: `GET /api/blueprints` already exceeds the
 ALB's 1 MB cap for Lambda targets and 502s (`openforge_catalog-i7c`). Do not build the

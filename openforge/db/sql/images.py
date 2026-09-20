@@ -67,6 +67,13 @@ def get_images_for_blueprints(
 ) -> list[dict]:
     """Get all images for multiple blueprints in a single query.
 
+    Projects the same columns as the single-blueprint version. It used
+    to omit image_type and sprite_metadata, which mattered in two
+    places: a caller could not tell a thumbnail from a documentation
+    image, and the incremental loader compares whole image dicts, so
+    every fixture image — all of which carry sprite_metadata — looked
+    changed on every scan and had its images deleted and reinserted.
+
     Args:
         curs: Database cursor
         blueprint_ids: List of blueprint IDs to get images for
@@ -80,6 +87,7 @@ def get_images_for_blueprints(
     query = sql.SQL(
         """
 SELECT i.id AS id, i.image_name AS image_name, i.image_url AS image_url,
+    i.image_type AS image_type, i.sprite_metadata AS sprite_metadata,
     i.created_at AS created_at, i.updated_at AS updated_at,
     bi.blueprint_id AS blueprint_id
   FROM images i

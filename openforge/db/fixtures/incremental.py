@@ -681,16 +681,21 @@ class IncrementalFixturesLoader:
                 write_output(f"  New: {sorted(new_tags)}\n")
             return True
 
-        # Check images (compare as sets to handle unordered nature)
-        # Convert entire image dicts to JSON for deep comparison
-        # (includes sprite_metadata and all other fields)
-
-        # Helper to extract comparable fields (exclude timestamps)
+        # Check images (compare as sets to handle unordered nature).
+        # Whole image dicts are compared, sprite_metadata included, so
+        # a re-rendered sprite counts as a change.
+        #
+        # image_type is excluded because only one side has it: the
+        # database assigns a default the fixture never states, so
+        # comparing it would report every blueprint as changed, and
+        # the repair path reinserts through insert_image — whose own
+        # default is "thumbnail" — which would retype documentation
+        # images.
         def comparable_image(img):
             return {
                 k: v
                 for k, v in img.items()
-                if k not in ("created_at", "updated_at", "id")
+                if k not in ("created_at", "updated_at", "id", "image_type")
             }
 
         existing_images = set(

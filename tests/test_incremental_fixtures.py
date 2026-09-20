@@ -172,6 +172,37 @@ class TestIncrementalFixturesLoader:
         result = mock_loader._has_significant_changes(fixture, existing)
         assert result, "Expected changes when sprite_metadata is added to image"
 
+    def test_has_significant_changes_sprite_metadata_unchanged(self, mock_loader):
+        """The same sprite on both sides is not a change.
+
+        Every fixture image carries sprite_metadata — all 8,720 of
+        them — so if the database side lacks it, every blueprint with
+        an image reports as changed on every scan and has its images
+        deleted and reinserted. That is what happened while the batch
+        query that loads the existing side omitted the column.
+        """
+        sprite = {
+            "grid_rows": 2,
+            "grid_cols": 5,
+            "tile_size": 512,
+            "angles": [{"index": 0, "name": "front", "camera_pos": [0, -4, 2]}],
+            "default_angle": 0,
+        }
+        image = {
+            "image_name": "thumbnail",
+            "image_url": "test.png",
+            "sprite_metadata": sprite,
+        }
+        # The database side also carries the type it assigned, which
+        # the fixture never states.
+        existing = create_mock_blueprint(
+            "test.stl", "abc123", images=[{**image, "image_type": "thumbnail"}]
+        )
+        fixture = create_mock_fixture_item("test.stl", "abc123")
+        fixture["images"] = [image]
+
+        assert not mock_loader._has_significant_changes(fixture, existing)
+
     def test_has_significant_changes_config_change(self, mock_loader):
         """Test _has_significant_changes with config change."""
         existing = create_mock_blueprint("test.stl", "abc123")

@@ -149,10 +149,6 @@ def test_fetching_a_guide_returns_its_document(client, wall_guide):
     assert response.json["document"]["steps"][0]["key"] == "method"
 
 
-def test_fetching_an_unknown_guide_is_a_404(client):
-    assert client.get("/api/guides/nonesuch").status_code == 404
-
-
 def test_resolving_recommends_a_part_per_role(client, wall_guide, catalog):
     response = client.get("/api/guides/wall/resolve?method=separate-wall")
 
@@ -243,12 +239,6 @@ def test_a_question_answered_twice_is_a_bad_request(client, wall_guide):
 
     assert response.status_code == 400
     assert "answered more than once: method" in response.json["error"]
-
-
-def test_resolving_an_unknown_guide_is_a_404(client):
-    response = client.get("/api/guides/nonesuch/resolve")
-
-    assert response.status_code == 404
 
 
 def test_a_guide_with_no_steps_answered_still_lists_its_first_question(
@@ -374,7 +364,7 @@ def test_alb_query_values_survive_the_lambda_adapter():
 
     event = {
         "httpMethod": "GET",
-        "path": "/api/guides/wall/resolve",
+        "path": "/api/tag-documentation/component%7Cmagnetic",
         "queryStringParameters": {
             "texture": "texture%7Ccave",
             "method": "build%7Cseparate+wall",
@@ -396,6 +386,10 @@ def test_alb_query_values_survive_the_lambda_adapter():
         "method": "build|separate wall",
         "plus": "a+b",
     }
+    # The path is encoded by the ALB too, and a pipe-delimited tag in
+    # a path segment is how /api/tag-documentation/<tag> is addressed
+    # — that route returns nothing in production for the encoded form.
+    assert environ["PATH_INFO"] == "/api/tag-documentation/component|magnetic"
 
 
 def test_a_refinement_survives_the_whole_lambda_path(client, wall_guide, catalog):

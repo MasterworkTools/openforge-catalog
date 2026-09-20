@@ -1,5 +1,5 @@
 import os
-from urllib.parse import unquote_plus
+from urllib.parse import unquote, unquote_plus
 
 import aws_lambda_wsgi
 from flask import Flask, request
@@ -395,20 +395,29 @@ def _decode_alb_query(event):
 
     That breaks every guide refinement, whose values are pipe-
     delimited tags, and it already breaks `/api/images?image_type=`
-    for any client that encodes its value. Decoding here fixes it for
-    every route at once rather than leaving each one to guess whether
-    its arguments arrived readable.
+    for any client that encodes its value. The path has the same
+    problem — `/api/tag-documentation/component%7Cmagnetic` finds
+    nothing in production while the unencoded form works — so both are
+    decoded here rather than leaving each route to guess whether its
+    arguments arrived readable.
 
-    `unquote_plus` rather than `unquote` because a query string spells
-    a space as `+` — `URLSearchParams` in the browser does exactly
-    that — and a literal plus arrives as `%2B`, which it restores.
+    The query string uses `unquote_plus`, because a query string
+    spells a space as `+` (which is what `URLSearchParams` produces)
+    and a literal plus arrives as `%2B`. The path uses plain
+    `unquote`: a `+` in a path segment is a plus, not a space.
+
+    Not idempotent, and it does not need to be — it runs once, at the
+    entry point. If `openforge_catalog-i7c` swaps the ALB for a Lambda
+    function URL, that delivers decoded parameters and this goes away
+    rather than needing a guard.
     """
+    if event.get("path"):
+        event["path"] = unquote(event["path"])
     params = event.get("queryStringParameters")
     if not params:
         return
     event["queryStringParameters"] = {
-        key: unquote_plus(value) if isinstance(value, str) else value
-        for key, value in params.items()
+        key: unquote_plus(value) for key, value in params.items()
     }
 
 

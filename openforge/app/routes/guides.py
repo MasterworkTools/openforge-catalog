@@ -10,15 +10,17 @@ pure function of the guide key and the selections, the selections are
 already a query string (that is what the shareable URL is), and
 nothing is written, so a POST would protect nothing.
 
-What the GET buys today is the *option*, not the saving. `/api` is an
-ALB target with no CloudFront in front of it and the app sets no cache
-headers anywhere, so a repeat of an already-resolved state still costs
-an invocation. The point is that collecting that saving later is a
-response header rather than an API change — and the header to reach
-for is a short `Cache-Control: public, max-age=...`, not an `ETag`: a
-conditional request still runs this function to compute the validator,
-so it would save egress, which R2 already gives away, rather than
-invocations, which are the cost here.
+What the GET buys today is the *option*, not the saving: the app sets
+no cache headers anywhere, so a repeat of an already-resolved state
+still costs an invocation. Collecting the saving is one response
+header away rather than an API change — and closer than it looks,
+because production does sit behind CloudFront (the distribution lives
+in openforge-infra-frontend rather than this repo's terraform, which
+is why it is easy to miss). The header to reach for is a short
+`Cache-Control: public, max-age=...`, not an `ETag`: a conditional
+request still runs this function to compute the validator, so it would
+save egress, which R2 already gives away, rather than invocations,
+which are the cost here.
 """
 
 from flask import abort, current_app, jsonify, make_response, request
@@ -129,8 +131,6 @@ def _candidate_finder(curs):
 def _attach_images(curs, parts: list[dict]) -> None:
     """Give each recommended part its images, in one query."""
     blueprint_ids = [part["blueprint"]["id"] for part in parts if part["blueprint"]]
-    if not blueprint_ids:
-        return
     images = image_sql.get_images_for_blueprints(curs, blueprint_ids)
     for part in parts:
         if not part["blueprint"]:
