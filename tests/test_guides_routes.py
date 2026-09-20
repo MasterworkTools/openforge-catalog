@@ -119,6 +119,12 @@ def catalog(test_db):
         # An s2w wall, which the method option must exclude. Without
         # it every blueprint present satisfies the option's predicate
         # and the predicate could be dropped unnoticed.
+        #
+        # The leading "a" is load-bearing: candidates come back in
+        # blueprint_name order, so this sorts ahead of "b openforge
+        # wall" and wins the moment the predicate stops excluding it.
+        # Rename it to anything after "b" and dropping the predicate
+        # goes unnoticed again.
         "s2w": make_blueprint(
             test_db,
             "a s2w wall",
