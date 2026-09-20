@@ -348,9 +348,7 @@ def test_an_unknown_guide_is_a_404_even_with_a_bad_query(client, wall_guide):
     assert response.status_code == 404
 
 
-def test_a_refinement_value_outside_its_namespace_is_a_bad_request(
-    client, wall_guide, catalog
-):
+def test_a_refinement_value_outside_its_namespace_is_a_bad_request(client, wall_guide):
     """The other road to a 400: the refinement, not the step.
 
     Both existing 400 tests go through the step path, so the
@@ -408,7 +406,7 @@ def test_alb_query_values_survive_the_lambda_adapter():
     # a path segment is how /api/tag-documentation/<tag> is addressed
     # — that route returns nothing in production for the encoded form.
     # The `+` stays a plus. A query string spells a space that way;
-    # a path segment does not, so the path gets `unquote`, not
+    # a path segment does not, so the path never goes through
     # `unquote_plus`, and this is the character that tells them apart.
     assert environ["PATH_INFO"] == "/api/tag-documentation/component|magnetic+led"
 
@@ -493,8 +491,9 @@ def test_a_non_latin_1_path_does_not_crash_the_invocation():
     assert euro["statusCode"] == 404
 
     # And unencoded, which is what curl sends and the ALB passes
-    # through. `unquote` leaves a non-escape character alone, so
-    # fixing the escaped form left this one still crashing.
+    # through. `unquote` left a non-escape character alone, which is
+    # why fixing the escaped form left this one still crashing and
+    # why the decode goes via `unquote_to_bytes` instead.
     raw_euro = get("/api/guides/\u20ac")
     assert raw_euro["statusCode"] == 404
 
@@ -510,11 +509,16 @@ def test_an_encoded_slash_stays_encoded():
 
     The edge routes on the encoded path. If Flask dispatched on a
     decoded one, `/api/blueprints/1%2Fdownload` would reach the
-    download route while any path rule at the edge — a WAF, an ALB
-    rule for `/api/admin/*`, a CloudFront behaviour — matched against
-    something else. Nothing at the edge takes a path rule today, which
-    is exactly why this wants pinning now rather than after the first
-    one is added.
+    download route while the path rule at the edge matched against
+    something else.
+
+    There is already one: `terraform/environments/production/main.tf`
+    puts an ALB listener rule on `/api/*`. That one is broad enough
+    that a decoded slash cannot escape it — every path this could
+    affect is still under `/api/`. The rule that would break is a
+    narrower one, `/api/admin/*` or a WAF pattern or a CloudFront
+    behaviour, and this wants pinning before someone adds it rather
+    than after.
     """
     from openforge.app.index import _decode_alb_event
 
@@ -535,7 +539,7 @@ def test_an_encoded_slash_stays_encoded():
 
 
 def test_a_query_key_is_left_encoded_so_two_spellings_cannot_collide(
-    client, wall_guide, catalog
+    client, wall_guide
 ):
     """Decoding keys looks symmetric and silently answers a question twice.
 
@@ -602,9 +606,7 @@ def test_an_unknown_guide_answers_json(client, wall_guide):
         assert "nonesuch" in response.json["error"], url
 
 
-def test_a_stored_guide_that_no_longer_validates_is_a_500_not_a_400(
-    client, test_db, catalog
-):
+def test_a_stored_guide_that_no_longer_validates_is_a_500_not_a_400(client, test_db):
     """The `except` around `resolve` must stay narrow.
 
     `GuideSelectionError` means the selections are wrong. A stored
@@ -638,7 +640,12 @@ def test_a_stored_guide_that_no_longer_validates_is_a_500_not_a_400(
                 ],
             }
         ],
-        "roles": {},
+        # Non-empty, and without "wall". An empty `roles` is refused
+        # by a schema rule that fires first, so this is what makes the
+        # comment above true of the document beneath it: the check
+        # that would catch this one is the unknown-role
+        # cross-reference in validation.py.
+        "roles": {"floor": {"title": "Floor", "query": {"require": ["shape|floor"]}}},
     }
     with test_db.connection() as conn:
         with conn.cursor(row_factory=dict_row) as curs:

@@ -76,12 +76,20 @@ def get_images_for_blueprints(
 
     Parity with the single-blueprint query is asserted by a test, but
     that is a test of agreement, not of these columns: it passes if a
-    column is dropped from both. What keeps image_type here is that
-    the single query has always projected it and five call sites in
-    blueprints.py read it, so it is already on the wire — it has no
-    reader only in this module. openforge_catalog-0bz is the second,
-    and openforge_catalog-q3o turns it into the field that says which
-    images the scanner owns.
+    column is dropped from both.
+
+    What keeps image_type here is that the single-blueprint query has
+    always projected it and four call sites in blueprints.py return it
+    to clients unread, so it is already part of the published shape of
+    a blueprint's image object. Dropping it is an unannounced API
+    change, and that is true whether or not any Python reads it —
+    which is why no test here can see the constraint.
+    `_get_blueprint_thumbnail` is the one place that does read it, and
+    its `.get` means nothing notices if it stops matching: remove the
+    column from both queries and the whole suite stays at baseline.
+    openforge_catalog-0bz is the next reader and carries the
+    instruction to make it observable; openforge_catalog-q3o turns it
+    into the field that says which images the scanner owns.
 
     Args:
         curs: Database cursor

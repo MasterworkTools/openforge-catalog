@@ -97,6 +97,14 @@ def resolve_guide(guide_key: str):
                 # guide that no longer validates must keep reaching the
                 # 500 it deserves, so nothing inside this block should
                 # start raising it for a document fault.
+                #
+                # Narrower than it looks today: GuideSelectionError is
+                # a ValueError, and nothing reachable here raises a
+                # bare one, so `except ValueError` would behave
+                # identically and no test could tell. It stops being
+                # identical the moment anything in this block
+                # validates the document — which is the edit this
+                # comment exists to warn off.
                 return jsonify({"error": str(e)}), 400
             _attach_images(curs, resolved["parts"])
             return jsonify(resolved)
@@ -116,10 +124,18 @@ def _selections_from_request() -> dict:
     the adapter reads `queryStringParameters` as a plain map. So the
     guarantee holds for the development server and for anything else
     that speaks WSGI directly, and in production the last value wins
-    silently. Making it hold everywhere needs
-    `multi_value_headers` on the target group *and* an adapter that
-    reads `multiValueQueryStringParameters`, which this one does not —
-    tracked rather than bodged.
+    silently.
+
+    Making it hold everywhere needs `multi_value_headers` on the
+    target group *and* an adapter that reads
+    `multiValueQueryStringParameters`, which this one does not —
+    tracked as `openforge_catalog-bji` rather than bodged. Do not do
+    half of it: the target-group setting *replaces*
+    `queryStringParameters` rather than adding a sibling, and
+    `aws_lambda_wsgi` subscripts that key unconditionally, so flipping
+    the checkbox alone raises `KeyError` out of `lambda_handler` for
+    every request to the API — a 502 with no body, on every route,
+    not just these.
 
     Raises `GuideSelectionError` rather than returning an error to be
     checked, because a question answered twice *is* a selection the
