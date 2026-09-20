@@ -107,7 +107,10 @@ def test_tag_search_blueprints(test_db):
             # A bare string is silently ignored by the search, so a
             # test that passes one asserts only that some model
             # exists. Searching for a tag nothing carries has to come
-            # back empty.
+            # back empty — and this negative case is the half that
+            # carries the test. Reverting the call above to a bare
+            # string still passes; reverting this one does not. Do
+            # not delete it as redundant.
             assert (
                 tag_sql.tag_search_blueprints(
                     curs,
@@ -241,10 +244,18 @@ def test_tag_search_is_stable_when_names_collide(test_db):
     ORDER BY, LIMIT 1 picks arbitrarily among the ties and any
     unrelated write can change which one comes back, so a shared guide
     URL would show a different part later. The id makes it total.
+
+    This asserts the property rather than sampling it. Asking twice
+    with a write in between only compares two executions out of a
+    space the test does not control: whether an arbitrary pick moves
+    depends on the plan, and at these row counts Postgres chooses one
+    that happens to preserve heap order until the table is ANALYZEd.
+    The lowest id among the ties is what a total order must return,
+    whatever the plan does.
     """
     with test_db.connection() as conn:
         with conn.cursor(row_factory=dict_row) as curs:
-            for _ in range(2):
+            for _ in range(20):
                 inserted = blueprint_sql.insert_blueprint(
                     curs,
                     create_test_blueprint(
@@ -252,19 +263,22 @@ def test_tag_search_is_stable_when_names_collide(test_db):
                     ),
                 )
                 tag_sql.insert_tag(curs, inserted["id"], "foo|bar")
+            # Give the planner real statistics, so the test does not
+            # depend on the plan an unanalysed table happens to get.
+            curs.execute("ANALYZE blueprints")
+            curs.execute("ANALYZE tags")
+            curs.execute(
+                "SELECT id FROM blueprints WHERE blueprint_name = %s "
+                "ORDER BY id LIMIT 1",
+                ("same name",),
+            )
+            lowest = curs.fetchone()["id"]
 
-            def pick():
-                found = tag_sql.tag_search_blueprints(
-                    curs, [{"tag": "foo|bar"}], [], [], None, None, 1, True, False, None
-                )
-                return found[0]["id"]
+            found = tag_sql.tag_search_blueprints(
+                curs, [{"tag": "foo|bar"}], [], [], None, None, 1, True, False, None
+            )
 
-            first = pick()
-            # An unrelated write moves the row to the end of the heap,
-            # which is enough to flip an arbitrary pick.
-            curs.execute("UPDATE blueprints SET file_size = 99 WHERE id = %s", (first,))
-
-            assert pick() == first
+            assert found[0]["id"] == lowest
 
 
 def test_tag_search_tags(test_db):
