@@ -345,8 +345,9 @@ def _process_guide_fixture(data: Dict, curs, dry_run: bool, verbose: bool) -> Di
     Returns:
         Dictionary with results
     """
-    key = data.get("key", "<no key>") if isinstance(data, dict) else "<no key>"
-    source = f"guide {key}"
+    # The detector only returns "guide" for a dict, so data is one.
+    key = data.get("key", "<no key>")
+    source = "uploaded guide"
 
     if dry_run:
         check_guide_fixture(data, source)

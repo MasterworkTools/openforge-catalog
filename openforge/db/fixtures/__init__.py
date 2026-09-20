@@ -353,10 +353,12 @@ def load_tag_documentation_fixture(curs: cursor, data: dict):
 
 
 def check_guide_fixture(data: dict, source: str):
-    """Validate a guide document, naming the file it came from.
+    """Validate a guide document, naming where it came from.
 
     The validator's messages locate a fault inside the document; the
-    author also needs to know which of their fixtures it is.
+    author also needs to know which of their guides it is. `source` is
+    whatever identifies it to them — a filename from the fixtures
+    command, or the upload itself over HTTP.
     """
     try:
         validate_guide_document(data)

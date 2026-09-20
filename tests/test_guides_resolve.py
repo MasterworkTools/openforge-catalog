@@ -260,7 +260,10 @@ def test_prefer_drops_the_least_wanted_tag_until_something_matches(guide):
 
     # The whole list is required before any of it is dropped. Candidate
     # 9 carries the first preferred tag and not the second and sorts
-    # before 5, so requiring only the first would pick it.
+    # before 5, so requiring only the first would pick it. 5 and 6 then
+    # tie on both preferred tags and the name decides — a guarantee the
+    # engine cannot make, so it is tested where it lives, against the
+    # ORDER BY in tests/test_tags_sql.py.
     resolved = resolve(guide, {"method": "separate-wall"}, find_candidates)
     assert parts_by_role(resolved)["wall"]["blueprint"]["id"] == "5"
 
@@ -272,25 +275,6 @@ def test_a_prefer_list_that_matches_nothing_still_recommends(guide):
     resolved = resolve(guide, {"method": "s2w-modular"}, find_candidates)
 
     assert parts_by_role(resolved)["wall"]["blueprint"]["id"] == "1"
-
-
-def test_equally_preferred_candidates_break_the_tie_on_name(guide):
-    """`prefer` narrows to two, and the name decides between them.
-
-    Candidate 9 carries only the first preferred tag and drops out;
-    5 and 6 carry both, so ranking cannot separate them and the order
-    the catalog returns decides. That order is `ORDER BY
-    blueprint_name` in `tag_search_blueprints`, which is what makes a
-    recommendation reproducible from a shared URL — and it has its own
-    test in `tests/test_guides_sql.py`, since nothing the engine does
-    can pin it.
-    """
-    resolved = resolve(guide, {"method": "separate-wall"}, find_candidates)
-
-    assert (
-        parts_by_role(resolved)["wall"]["blueprint"]["blueprint_name"]
-        == "m separate wall openlock"
-    )
 
 
 def test_a_role_that_matches_nothing_says_so(guide):
@@ -508,9 +492,6 @@ def test_accept_matches_a_tag_or_anything_below_it(guide):
         "deny": ["shape|wall"],
     }
     guide["roles"]["wall"]["prefer"] = []
-
-    resolved = resolve(guide, {"method": "separate-wall"}, find_candidates)
-
     # The floor role accepts a tag its candidates carry exactly, so
     # both halves of `accept` — the exact match and the subtree — are
     # exercised rather than only whichever one the wall needs.

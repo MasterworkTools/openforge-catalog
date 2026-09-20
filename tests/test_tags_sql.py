@@ -99,10 +99,30 @@ def test_tag_search_blueprints(test_db):
             inserted_bp = blueprint_sql.insert_blueprint(curs, bp)
             tag_sql.insert_tag(curs, inserted_bp["id"], "foo|bar")
             results = tag_sql.tag_search_blueprints(
-                curs, ["foo|bar"], [], [], None, None, 20, True, False, None
+                curs, [{"tag": "foo|bar"}], [], [], None, None, 20, True, False, None
             )
             assert len(results) == 1
             assert results[0]["id"] == inserted_bp["id"]
+
+            # A bare string is silently ignored by the search, so a
+            # test that passes one asserts only that some model
+            # exists. Searching for a tag nothing carries has to come
+            # back empty.
+            assert (
+                tag_sql.tag_search_blueprints(
+                    curs,
+                    [{"tag": "no|such"}],
+                    [],
+                    [],
+                    None,
+                    None,
+                    20,
+                    True,
+                    False,
+                    None,
+                )
+                == []
+            )
 
 
 def test_tag_search_blueprints_is_ordered_by_name(test_db):
@@ -133,6 +153,43 @@ def test_tag_search_blueprints_is_ordered_by_name(test_db):
                 "c wall",
             ]
 
+            # Two more sharing a name: the full listing has to be
+            # stable among them as well, which the name alone cannot
+            # do. Ask twice with a write in between.
+            for _ in range(2):
+                dup = blueprint_sql.insert_blueprint(
+                    curs,
+                    create_test_blueprint(
+                        blueprint_name="a wall", blueprint_type="model"
+                    ),
+                )
+                tag_sql.insert_tag(curs, dup["id"], "foo|bar")
+
+            def listing():
+                return [
+                    r["id"]
+                    for r in tag_sql.tag_search_blueprints(
+                        curs,
+                        [{"tag": "foo|bar"}],
+                        [],
+                        [],
+                        None,
+                        None,
+                        20,
+                        True,
+                        False,
+                        None,
+                    )
+                ]
+
+            before = listing()
+            curs.execute(
+                "UPDATE blueprints SET file_size = 99 WHERE id = %s",
+                (before[0],),
+            )
+
+            assert listing() == before
+
 
 def test_tag_search_blueprints_limit_takes_the_first_by_name(test_db):
     """`LIMIT 1` must mean the first alphabetically, not an arbitrary row."""
@@ -150,6 +207,40 @@ def test_tag_search_blueprints_limit_takes_the_first_by_name(test_db):
             )
 
             assert [r["blueprint_name"] for r in results] == ["a wall"]
+
+
+def test_tag_search_is_stable_when_names_collide(test_db):
+    """blueprint_name is not unique, so it cannot order alone.
+
+    159 names in the catalog are shared by two or more records, mostly
+    bases — the very role a guide resolves. With only the name in the
+    ORDER BY, LIMIT 1 picks arbitrarily among the ties and any
+    unrelated write can change which one comes back, so a shared guide
+    URL would show a different part later. The id makes it total.
+    """
+    with test_db.connection() as conn:
+        with conn.cursor(row_factory=dict_row) as curs:
+            for _ in range(2):
+                inserted = blueprint_sql.insert_blueprint(
+                    curs,
+                    create_test_blueprint(
+                        blueprint_name="same name", blueprint_type="model"
+                    ),
+                )
+                tag_sql.insert_tag(curs, inserted["id"], "foo|bar")
+
+            def pick():
+                found = tag_sql.tag_search_blueprints(
+                    curs, [{"tag": "foo|bar"}], [], [], None, None, 1, True, False, None
+                )
+                return found[0]["id"]
+
+            first = pick()
+            # An unrelated write moves the row to the end of the heap,
+            # which is enough to flip an arbitrary pick.
+            curs.execute("UPDATE blueprints SET file_size = 99 WHERE id = %s", (first,))
+
+            assert pick() == first
 
 
 def test_tag_search_tags(test_db):
