@@ -156,66 +156,58 @@ def test_tag_search_blueprints_is_ordered_by_name(test_db):
                 "c wall",
             ]
 
-            # Four more sharing a name: the full listing has to order
-            # the ties by id, which the name alone cannot do. Four
-            # rather than two because random uuids fall in ascending
-            # order often enough by chance to make a smaller sample a
-            # weak assertion.
-            for _ in range(4):
-                dup = blueprint_sql.insert_blueprint(
+
+def test_tag_search_orders_ties_by_id(test_db):
+    """Names collide, so the listing needs a second key.
+
+    Thirteen rows share a name, with two others after them. Thirteen
+    rather than a handful because a short run of random uuids lands in
+    ascending order often enough to let the assertion pass with the
+    tiebreak removed; the two other names because a sort with nothing
+    to do can return its input untouched, and then the missing
+    tiebreak does not show.
+
+    The write in the middle is a perturbation, not the assertion — it
+    moves a row in the heap so the rows do not reach the final sort
+    already in the order being asserted. Comparing two reads and
+    calling that stability, which an earlier version of this test did,
+    proves less again: it samples one pair of executions out of a
+    space the test does not control.
+    """
+    with test_db.connection() as conn:
+        with conn.cursor(row_factory=dict_row) as curs:
+            for name in ["a wall"] * 13 + ["b wall", "c wall"]:
+                inserted = blueprint_sql.insert_blueprint(
                     curs,
-                    create_test_blueprint(
-                        blueprint_name="a wall", blueprint_type="model"
-                    ),
+                    create_test_blueprint(blueprint_name=name, blueprint_type="model"),
                 )
-                tag_sql.insert_tag(curs, dup["id"], "foo|bar")
+                tag_sql.insert_tag(curs, inserted["id"], "foo|bar")
 
-            def listing():
-                return [
-                    r["id"]
-                    for r in tag_sql.tag_search_blueprints(
-                        curs,
-                        [{"tag": "foo|bar"}],
-                        [],
-                        [],
-                        None,
-                        None,
-                        20,
-                        True,
-                        False,
-                        None,
-                    )
-                ]
-
-            before = listing()
             curs.execute(
-                "UPDATE blueprints SET file_size = 99 WHERE id = %s",
-                (before[0],),
+                "UPDATE blueprints SET file_size = 99 WHERE id = ("
+                "SELECT id FROM blueprints ORDER BY id LIMIT 1)"
             )
 
-            assert listing() == before
+            found = tag_sql.tag_search_blueprints(
+                curs,
+                [{"tag": "foo|bar"}],
+                [],
+                [],
+                None,
+                None,
+                30,
+                True,
+                False,
+                None,
+            )
+            tied = [str(r["id"]) for r in found if r["blueprint_name"] == "a wall"]
 
-            # And the ties are in id order, which is the only thing
-            # that makes the listing stable rather than merely
-            # repeatable within one read.
-            tied = [
-                r["id"]
-                for r in tag_sql.tag_search_blueprints(
-                    curs,
-                    [{"tag": "foo|bar"}],
-                    [],
-                    [],
-                    None,
-                    None,
-                    20,
-                    True,
-                    False,
-                    None,
-                )
-                if r["blueprint_name"] == "a wall"
+            assert [r["blueprint_name"] for r in found[-2:]] == [
+                "b wall",
+                "c wall",
             ]
-            assert len(tied) == 5
-            assert [str(i) for i in tied] == sorted(str(i) for i in tied)
+            assert len(tied) == 13
+            assert tied == sorted(tied)
 
 
 def test_tag_search_blueprints_limit_takes_the_first_by_name(test_db):
@@ -250,10 +242,16 @@ def test_tag_search_is_stable_when_names_collide(test_db):
     space the test does not control: whether an arbitrary pick moves
     depends on the plan, and at these row counts Postgres chooses one
     that happens to preserve heap order until the table is ANALYZEd.
-    The lowest id among the ties is what a total order must return,
+    The lowest ids among the ties are what a total order must return,
     whatever the plan does — which is also why this needs no ANALYZE:
-    an earlier version of this test only caught the regression on the
-    plan an unanalysed table happens to get.
+    an earlier version only caught the regression on the plan an
+    unanalysed table happens to get.
+
+    It asks for five rather than one on purpose. Constraining a single
+    position still lets an arbitrary pick satisfy it by luck — with
+    twenty ties, one run in twenty — and a test that passes 5% of the
+    time when the bug is present is not a witness. Pinning the whole
+    five-row prefix drops that to one in 15,504.
     """
     with test_db.connection() as conn:
         with conn.cursor(row_factory=dict_row) as curs:
@@ -267,16 +265,16 @@ def test_tag_search_is_stable_when_names_collide(test_db):
                 tag_sql.insert_tag(curs, inserted["id"], "foo|bar")
             curs.execute(
                 "SELECT id FROM blueprints WHERE blueprint_name = %s "
-                "ORDER BY id LIMIT 1",
+                "ORDER BY id LIMIT 5",
                 ("same name",),
             )
-            lowest = curs.fetchone()["id"]
+            lowest = [row["id"] for row in curs.fetchall()]
 
             found = tag_sql.tag_search_blueprints(
-                curs, [{"tag": "foo|bar"}], [], [], None, None, 1, True, False, None
+                curs, [{"tag": "foo|bar"}], [], [], None, None, 5, True, False, None
             )
 
-            assert found[0]["id"] == lowest
+            assert [row["id"] for row in found] == lowest
 
 
 def test_tag_search_tags(test_db):
