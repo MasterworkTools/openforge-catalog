@@ -105,6 +105,53 @@ def test_tag_search_blueprints(test_db):
             assert results[0]["id"] == inserted_bp["id"]
 
 
+def test_tag_search_blueprints_is_ordered_by_name(test_db):
+    """The ORDER BY is load-bearing, not cosmetic.
+
+    Guides resolve a role by asking for the single best candidate
+    (`LIMIT 1`), so this ordering is the only thing that makes a
+    recommendation reproducible — and therefore the only thing that
+    makes a shared guide URL show the same parts twice. Inserted out
+    of order on purpose.
+    """
+    with test_db.connection() as conn:
+        with conn.cursor(row_factory=dict_row) as curs:
+            for name in ["c wall", "a wall", "b wall"]:
+                inserted = blueprint_sql.insert_blueprint(
+                    curs,
+                    create_test_blueprint(blueprint_name=name, blueprint_type="model"),
+                )
+                tag_sql.insert_tag(curs, inserted["id"], "foo|bar")
+
+            results = tag_sql.tag_search_blueprints(
+                curs, [{"tag": "foo|bar"}], [], [], None, None, 20, True, False, None
+            )
+
+            assert [r["blueprint_name"] for r in results] == [
+                "a wall",
+                "b wall",
+                "c wall",
+            ]
+
+
+def test_tag_search_blueprints_limit_takes_the_first_by_name(test_db):
+    """`LIMIT 1` must mean the first alphabetically, not an arbitrary row."""
+    with test_db.connection() as conn:
+        with conn.cursor(row_factory=dict_row) as curs:
+            for name in ["z wall", "a wall"]:
+                inserted = blueprint_sql.insert_blueprint(
+                    curs,
+                    create_test_blueprint(blueprint_name=name, blueprint_type="model"),
+                )
+                tag_sql.insert_tag(curs, inserted["id"], "foo|bar")
+
+            results = tag_sql.tag_search_blueprints(
+                curs, [{"tag": "foo|bar"}], [], [], None, None, 1, True, False, None
+            )
+
+            assert [r["blueprint_name"] for r in results] == ["a wall"]
+
+
 def test_tag_search_tags(test_db):
     with test_db.connection() as conn:
         with conn.cursor(row_factory=dict_row) as curs:

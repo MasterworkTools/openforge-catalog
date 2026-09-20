@@ -275,20 +275,21 @@ def test_a_prefer_list_that_matches_nothing_still_recommends(guide):
 
 
 def test_equally_preferred_candidates_break_the_tie_on_name(guide):
-    """Three separate walls carry the one preferred tag.
+    """`prefer` narrows to two, and the name decides between them.
 
-    With a single-tag `prefer` that all of them satisfy, ranking can
-    separate none of them, so the order the catalog returns decides —
-    and it is by name, which is what makes the result reproducible
-    from the URL.
+    Candidate 9 carries only the first preferred tag and drops out;
+    5 and 6 carry both, so ranking cannot separate them and the order
+    the catalog returns decides. That order is `ORDER BY
+    blueprint_name` in `tag_search_blueprints`, which is what makes a
+    recommendation reproducible from a shared URL — and it has its own
+    test in `tests/test_guides_sql.py`, since nothing the engine does
+    can pin it.
     """
-    guide["roles"]["wall"]["prefer"] = ["connection|openforge"]
-
     resolved = resolve(guide, {"method": "separate-wall"}, find_candidates)
 
     assert (
         parts_by_role(resolved)["wall"]["blueprint"]["blueprint_name"]
-        == "l separate wall openforge only"
+        == "m separate wall openlock"
     )
 
 
@@ -510,6 +511,14 @@ def test_accept_matches_a_tag_or_anything_below_it(guide):
 
     resolved = resolve(guide, {"method": "separate-wall"}, find_candidates)
 
+    # The floor role accepts a tag its candidates carry exactly, so
+    # both halves of `accept` — the exact match and the subtree — are
+    # exercised rather than only whichever one the wall needs.
+    guide["roles"]["floor"]["query"] = {"accept": ["shape|floor"]}
+
+    resolved = resolve(guide, {"method": "separate-wall"}, find_candidates)
+
+    assert parts_by_role(resolved)["floor"]["blueprint"]["id"] == "7"
     wall = parts_by_role(resolved)["wall"]
     assert wall["query"]["accept"] == ["shape|wall"]
     # Only the corner wall survives: `deny` removes everything carrying
