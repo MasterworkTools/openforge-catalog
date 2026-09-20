@@ -221,22 +221,31 @@ def _parts(
     selections: dict,
     find_candidates,
 ) -> list[dict]:
-    parts = []
-    for name in _roles_in_play(chosen):
+    in_play = _roles_in_play(chosen)
+    parts = {}
+    for name in _resolution_order(in_play, document["roles"]):
         role = document["roles"][name]
         predicate = _compose(role["query"], chosen, refinements, selections, name)
-        parts.append(
-            {
-                "role": name,
-                "title": role["title"],
-                "under": role.get("under"),
-                "query": predicate,
-                "blueprint": _recommend(
-                    predicate, role.get("prefer", []), find_candidates
-                ),
-            }
-        )
-    return parts
+        inherited = _matched(role, parts)
+        if inherited is not None:
+            predicate = _union([predicate, inherited])
+        parts[name] = {
+            "role": name,
+            "title": role["title"],
+            "under": role.get("under"),
+            "query": predicate,
+            # A role matching against a part that resolved to nothing
+            # resolves to nothing too. Recommending here would mean
+            # sizing a base to fit a piece nobody has: the size it fell
+            # back on would be arbitrary, and a 1x1 base under an absent
+            # 3x1 floor reads as an answer rather than as the gap it is.
+            "blueprint": None
+            if inherited is None
+            else _recommend(predicate, role.get("prefer", []), find_candidates),
+        }
+    # Reported in the order the options called for them, not the order
+    # they had to be resolved in: a parts list reads floor, wall, base.
+    return [parts[name] for name in in_play]
 
 
 def _roles_in_play(chosen: list[dict]) -> list[str]:
@@ -247,6 +256,69 @@ def _roles_in_play(chosen: list[dict]) -> list[str]:
             if name not in names:
                 names.append(name)
     return names
+
+
+def _resolution_order(in_play: list[str], roles: dict) -> list[str]:
+    """In-play roles, each after the role it matches against.
+
+    Only `match` creates a dependency. `under` alone is a statement
+    about where a piece sits, which the frontend uses for layout and
+    which does not affect what is chosen.
+
+    The validator refuses `under` cycles, so following the chain
+    terminates. A role that matches against one not in play is simply
+    unblocked — `_matched` has nothing to copy.
+    """
+    ordered = []
+
+    def visit(name, seen):
+        if name in ordered or name in seen:
+            return
+        role = roles.get(name)
+        above = role.get("under") if role else None
+        if role and role.get("match") and above in in_play:
+            visit(above, seen | {name})
+        if name not in ordered:
+            ordered.append(name)
+
+    for name in in_play:
+        visit(name, frozenset())
+    return ordered
+
+
+def _matched(role: dict, resolved: dict) -> dict | None:
+    """What this role has to copy from the part it sits under.
+
+    A base has to match the footprint of the piece standing on it, and
+    that piece's size is not known until it is chosen. So the namespaces
+    named in `match` become `require` tags taken from the resolved part.
+
+    `None` means this role cannot be resolved at all, because the part
+    it matches against resolved to nothing. An empty dict means it can,
+    with nothing extra required — either the role does not match, or the
+    part above carries no tag in any named namespace, which is the
+    ordinary case for a base matching `size|depth` against a wall, since
+    a wall is a line along an edge and has a width and no depth.
+    """
+    namespaces = role.get("match")
+    if not namespaces:
+        return {}
+    above = resolved.get(role.get("under"))
+    if above is None:
+        # Matching against a role that is not in play constrains
+        # nothing, the same as not matching at all.
+        return {}
+    if not above["blueprint"]:
+        return None
+    tags = above["blueprint"].get("tags") or []
+    wanted = [tag for tag in tags if _in_namespace(tag, namespaces)]
+    return {"require": wanted} if wanted else {}
+
+
+def _in_namespace(tag: str, namespaces: list[str]) -> bool:
+    return any(
+        tag == namespace or tag.startswith(f"{namespace}|") for namespace in namespaces
+    )
 
 
 def _option_predicates(option: dict, role_name: str) -> list[dict]:

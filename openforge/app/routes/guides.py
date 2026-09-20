@@ -165,9 +165,36 @@ def _candidate_finder(curs):
         # One row, because the engine narrows and asks again rather
         # than paging: a limit that varies would be flexibility with
         # no second value.
-        return tag_sql.tag_search_blueprints(curs, **to_tag_query(predicate), limit=1)
+        found = tag_sql.tag_search_blueprints(curs, **to_tag_query(predicate), limit=1)
+        _attach_tags(curs, found)
+        return found
 
     return find_candidates
+
+
+def _attach_tags(curs, blueprints: list[dict]) -> None:
+    """Put each blueprint's tags on it, as plain strings.
+
+    Two callers need these and neither can get them from the search.
+    A role with `match` has to read the size of the part it sits under,
+    which is not known until that part is chosen; and the page shows
+    the tags beside each piece, because the fastest way to see that a
+    guide is recommending the wrong thing is to read what it actually
+    asked for.
+
+    One query per successful search rather than one batch at the end:
+    the engine needs them mid-resolution, and a search that found
+    nothing does not ask.
+    """
+    if not blueprints:
+        return
+    by_blueprint = {}
+    for tag in tag_sql.get_tags_for_blueprints(
+        curs, [blueprint["id"] for blueprint in blueprints]
+    ):
+        by_blueprint.setdefault(tag["blueprint_id"], []).append(tag["tag"])
+    for blueprint in blueprints:
+        blueprint["tags"] = by_blueprint.get(blueprint["id"], [])
 
 
 def _attach_images(curs, parts: list[dict]) -> None:

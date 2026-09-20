@@ -36,11 +36,25 @@ export interface GuideRefinement {
   selected: string | null;
 }
 
+export interface SpriteAngle {
+  index: number;
+  name: string;
+}
+
+export interface GuideSpriteMetadata {
+  grid_rows: number;
+  grid_cols: number;
+  tile_size: number;
+  angles?: SpriteAngle[];
+  default_angle?: number;
+}
+
 export interface GuideImage {
   id: string;
   image_name: string;
   image_url: string;
   image_type: 'thumbnail' | 'documentation';
+  sprite_metadata?: GuideSpriteMetadata | null;
 }
 
 export interface GuideBlueprint {
@@ -49,6 +63,8 @@ export interface GuideBlueprint {
   file_md5: string | null;
   storage_address: string | null;
   images?: GuideImage[];
+  /** Plain pipe-delimited strings, attached by the resolve endpoint. */
+  tags?: string[];
 }
 
 export interface GuidePart {

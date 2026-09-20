@@ -37,6 +37,7 @@ const RESOLVED_WITH_PARTS = {
         blueprint_name: 'a dungeon stone wall',
         file_md5: 'abc',
         storage_address: null,
+        tags: ['shape|wall', 'texture|dungeon_stone', 'size|width|2'],
         // Documentation first, deliberately: the batch query orders by
         // image_name, so the thumbnail is not reliably images[0].
         images: [
@@ -51,13 +52,37 @@ const RESOLVED_WITH_PARTS = {
             image_name: 'b render',
             image_url: 'https://objects.openforge.tools/thumb.png',
             image_type: 'thumbnail',
+            sprite_metadata: {
+              grid_rows: 2,
+              grid_cols: 5,
+              tile_size: 512,
+              default_angle: 0,
+              angles: [
+                { index: 0, name: 'back' },
+                { index: 3, name: 'front' },
+              ],
+            },
           },
         ],
       },
     },
     {
-      role: 'base',
-      title: 'Base',
+      role: 'wall-base',
+      title: 'Base for the wall',
+      under: 'wall',
+      query: { require: ['shape|base'] },
+      blueprint: {
+        id: 'bp-2',
+        blueprint_name: 'a dungeon stone base',
+        file_md5: 'def',
+        storage_address: null,
+        images: [],
+        tags: ['shape|base', 'size|width|2'],
+      },
+    },
+    {
+      role: 'floor-base',
+      title: 'Base for the floor',
       under: 'floor',
       query: { require: ['shape|base'] },
       blueprint: null,
@@ -213,13 +238,33 @@ describe('GuidePage', () => {
       expect(
         await screen.findByText('a dungeon stone wall')
       ).toBeInTheDocument();
-      expect(screen.getByText('(under the floor)')).toBeInTheDocument();
       expect(
         screen.getByText('Nothing in the catalog matches this combination yet.')
       ).toBeInTheDocument();
     });
 
-    it('shows the thumbnail rather than whichever image came first', async () => {
+    it('draws a base beneath the piece it sits under', async () => {
+      visit('?guide=wall&method=separate-wall');
+      mockFetch((url) =>
+        url.includes('/resolve') ? RESOLVED_WITH_PARTS : GUIDE_DOCUMENT
+      );
+
+      render(<GuidePage />);
+      await screen.findByText('a dungeon stone wall');
+
+      // The wall and its base are one pile; the floor base, whose
+      // `under` names a role not in this list, stands on its own.
+      const wall = screen.getByText('Wall').closest('div')!.parentElement!;
+      const pile = wall.parentElement!;
+      const titles = [...pile.querySelectorAll('div')]
+        .map((node) => node.textContent)
+        .filter((text) => text === 'Wall' || text === 'Base for the wall');
+      expect(titles).toEqual(['Wall', 'Base for the wall']);
+    });
+
+    it('shows each piece its tags', async () => {
+      // While the guides are being written, the tags are how you see
+      // that a recommendation is wrong — the filename does not say.
       visit('?guide=wall&method=separate-wall');
       mockFetch((url) =>
         url.includes('/resolve') ? RESOLVED_WITH_PARTS : GUIDE_DOCUMENT
@@ -227,11 +272,100 @@ describe('GuidePage', () => {
 
       render(<GuidePage />);
 
+      expect(await screen.findByText('texture|dungeon_stone')).toBeInTheDocument();
+      expect(screen.getByText('shape|wall')).toBeInTheDocument();
+      expect(screen.getAllByText('size|width|2')).toHaveLength(2);
+    });
+
+    it('draws the sprite frame named front, not frame zero', async () => {
+      // Every piece has to be seen from the same direction for the
+      // parts list to show whether they go together, and the index of
+      // 'front' is not the same in every sheet.
+      visit('?guide=wall&method=separate-wall');
+      mockFetch((url) =>
+        url.includes('/resolve') ? RESOLVED_WITH_PARTS : GUIDE_DOCUMENT
+      );
+
+      render(<GuidePage />);
+      const sprite = await screen.findByLabelText(
+        'a dungeon stone wall, seen from the front'
+      );
+
+      // Frame 3 of a 5-wide, 2-tall sheet: row 0, column 3. Asserted
+      // relative to the rendered tile so that changing how large the
+      // pieces are drawn does not break this — what it pins is which
+      // frame, not how big.
+      const tile = parseInt(sprite.style.width, 10);
+      expect(tile).toBeGreaterThan(0);
+      expect(sprite).toHaveStyle({
+        backgroundImage: 'url(https://objects.openforge.tools/thumb.png)',
+        backgroundPosition: `-${3 * tile}px -0px`,
+        backgroundSize: `${5 * tile}px ${2 * tile}px`,
+      });
+    });
+
+    it('draws the thumbnail rather than whichever image came first', async () => {
+      visit('?guide=wall&method=separate-wall');
+      mockFetch((url) =>
+        url.includes('/resolve') ? RESOLVED_WITH_PARTS : GUIDE_DOCUMENT
+      );
+
+      render(<GuidePage />);
+      const sprite = await screen.findByLabelText(
+        'a dungeon stone wall, seen from the front'
+      );
+
+      expect(sprite).toHaveStyle({
+        backgroundImage: 'url(https://objects.openforge.tools/thumb.png)',
+      });
+      // The documentation image sorts first and must not be drawn.
+      expect(document.body.innerHTML).not.toContain('diagram.png');
+    });
+
+    it('falls back to a plain picture when a thumbnail is not a sprite', async () => {
+      visit('?guide=wall&method=separate-wall');
+      const flat = {
+        ...RESOLVED_WITH_PARTS,
+        parts: [
+          {
+            ...RESOLVED_WITH_PARTS.parts[0],
+            blueprint: {
+              ...RESOLVED_WITH_PARTS.parts[0].blueprint,
+              images: [
+                {
+                  id: 'img-flat',
+                  image_name: 'a render',
+                  image_url: 'https://objects.openforge.tools/flat.png',
+                  image_type: 'thumbnail',
+                },
+              ],
+            },
+          },
+        ],
+      };
+      mockFetch((url) => (url.includes('/resolve') ? flat : GUIDE_DOCUMENT));
+
+      render(<GuidePage />);
+
       const picture = await screen.findByAltText('a dungeon stone wall');
       expect(picture).toHaveAttribute(
         'src',
-        'https://objects.openforge.tools/thumb.png'
+        'https://objects.openforge.tools/flat.png'
       );
+    });
+
+    it('says so when a part has no picture at all', async () => {
+      visit('?guide=wall&method=separate-wall');
+      mockFetch((url) =>
+        url.includes('/resolve') ? RESOLVED_WITH_PARTS : GUIDE_DOCUMENT
+      );
+
+      render(<GuidePage />);
+      await screen.findByText('a dungeon stone wall');
+
+      // Two of them: the wall base carries no images, and the floor
+      // base resolved to no blueprint at all.
+      expect(screen.getAllByText('no picture')).toHaveLength(2);
     });
 
     it('offers the refinements the backend says are available', async () => {

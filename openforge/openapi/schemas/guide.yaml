@@ -203,6 +203,23 @@ $defs:
       under:
         type: string
         description: The role this one sits beneath, when it sits under one.
+      match:
+        type: array
+        minItems: 1
+        maxItems: 4
+        description: >
+          Tag namespaces this role copies from the role it sits `under`,
+          once that role has resolved. A base has to match the footprint
+          of the piece standing on it, and the size of that piece is not
+          known until it is chosen — so `match: ['size|width',
+          'size|depth']` on a base means "whatever width and depth the
+          part above turned out to be". Requires `under`; the role above
+          resolves first. If the part above resolves to nothing, or
+          carries no tag in a namespace, that namespace adds no
+          constraint rather than matching nothing.
+        items:
+          type: string
+          pattern: "^[^|]+(\\|[^|]+)*$"
 
   refinement:
     type: object

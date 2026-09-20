@@ -556,3 +556,165 @@ def test_the_catalog_gets_predicates_in_the_shape_it_understands():
     }
     assert required == {"accept", "require", "deny"}
     assert required <= set(to_tag_query({}))
+
+
+MATCHING_GUIDE = {
+    "key": "matching",
+    "title": "A guide whose bases match what they carry",
+    "steps": [
+        {
+            "key": "method",
+            "prompt": "How?",
+            "options": [
+                {
+                    "key": "separate",
+                    "title": "Separate",
+                    # Bases named before the parts they sit under, so
+                    # that resolving in the order they are mentioned
+                    # would ask a base for a size nobody has chosen
+                    # yet. The dependency has to drive the order.
+                    "roles": {
+                        "floor-base": None,
+                        "floor": {"require": ["shape|floor"]},
+                        "wall-base": None,
+                        "wall": {"require": ["shape|wall"]},
+                    },
+                }
+            ],
+        }
+    ],
+    "roles": {
+        # Declared base-first on purpose: a base has to resolve after
+        # the part it copies from, whatever order the document lists
+        # them in.
+        "floor-base": {
+            "title": "Base for the floor",
+            "query": {"require": ["shape|base"]},
+            "under": "floor",
+            "match": ["size|width", "size|depth"],
+        },
+        "wall-base": {
+            "title": "Base for the wall",
+            "query": {"require": ["shape|base"]},
+            "under": "wall",
+            "match": ["size|width"],
+        },
+        "floor": {"title": "Floor", "query": {"require": ["shape|floor"]}},
+        "wall": {"title": "Wall", "query": {"require": ["shape|wall"]}},
+    },
+}
+
+MATCHING_CATALOG = [
+    {
+        "id": "f1",
+        "blueprint_name": "a floor",
+        "tags": ["shape|floor", "size|width|2", "size|depth|2"],
+    },
+    {
+        "id": "w1",
+        "blueprint_name": "a wall",
+        "tags": ["shape|wall", "size|width|2"],
+    },
+    {
+        "id": "b1",
+        "blueprint_name": "a 2x2 base",
+        "tags": ["shape|base", "size|width|2", "size|depth|2"],
+    },
+    {
+        "id": "b2",
+        "blueprint_name": "b 1x1 base",
+        "tags": ["shape|base", "size|width|1", "size|depth|1"],
+    },
+]
+
+
+def matching_finder(catalog):
+    def find_candidates(predicate):
+        def matches(blueprint):
+            tags = blueprint["tags"]
+            if any(tag not in tags for tag in predicate.get("require", [])):
+                return False
+            return all(tag not in tags for tag in predicate.get("deny", []))
+
+        found = [b for b in catalog if matches(b)]
+        found.sort(key=lambda b: b["blueprint_name"])
+        return found
+
+    return find_candidates
+
+
+def test_a_base_takes_the_size_of_the_part_it_sits_under():
+    """A base has to fit the footprint of the piece standing on it.
+
+    The size is not knowable when the guide is written — it depends on
+    what the floor turned out to be — so the role copies it from the
+    resolved part rather than naming it.
+    """
+    resolved = resolve(
+        MATCHING_GUIDE, {"method": "separate"}, matching_finder(MATCHING_CATALOG)
+    )
+    parts = {p["role"]: p for p in resolved["parts"]}
+
+    # "b 1x1 base" sorts first, so without matching it would win.
+    assert parts["floor-base"]["blueprint"]["blueprint_name"] == "a 2x2 base"
+    assert "size|width|2" in parts["floor-base"]["query"]["require"]
+    assert "size|depth|2" in parts["floor-base"]["query"]["require"]
+
+
+def test_a_wall_base_matches_the_width_and_asks_for_no_depth():
+    """A wall is a line along an edge: it has a width and no depth.
+
+    Matching `size|depth` against it must add nothing rather than
+    requiring a depth no wall carries, which would match no base.
+    """
+    resolved = resolve(
+        MATCHING_GUIDE, {"method": "separate"}, matching_finder(MATCHING_CATALOG)
+    )
+    parts = {p["role"]: p for p in resolved["parts"]}
+
+    required = parts["wall-base"]["query"]["require"]
+    assert "size|width|2" in required
+    assert not [tag for tag in required if tag.startswith("size|depth")]
+    assert parts["wall-base"]["blueprint"]["blueprint_name"] == "a 2x2 base"
+
+
+def test_a_base_for_a_part_that_resolved_to_nothing_resolves_to_nothing():
+    """Otherwise the size it falls back on is arbitrary.
+
+    A 1x1 base sitting under an absent 3x1 floor reads as an answer
+    rather than as the gap it is, and it is the wrong base for the
+    floor the person actually asked for.
+    """
+    without_floor = [b for b in MATCHING_CATALOG if b["id"] != "f1"]
+
+    resolved = resolve(
+        MATCHING_GUIDE, {"method": "separate"}, matching_finder(without_floor)
+    )
+    parts = {p["role"]: p for p in resolved["parts"]}
+
+    assert parts["floor"]["blueprint"] is None
+    assert parts["floor-base"]["blueprint"] is None
+    # The wall is unaffected: only the base that matches against the
+    # missing part goes with it.
+    assert parts["wall"]["blueprint"]["blueprint_name"] == "a wall"
+    assert parts["wall-base"]["blueprint"] is not None
+
+
+def test_parts_are_listed_in_the_order_the_options_asked_for_them():
+    """Resolution order is a dependency, not a reading order.
+
+    This option names the bases first, so they have to resolve last
+    and still be reported first. Getting this wrong is invisible in a
+    document that happens to name parts before their bases, which is
+    why this one deliberately does not.
+    """
+    resolved = resolve(
+        MATCHING_GUIDE, {"method": "separate"}, matching_finder(MATCHING_CATALOG)
+    )
+
+    assert [p["role"] for p in resolved["parts"]] == [
+        "floor-base",
+        "floor",
+        "wall-base",
+        "wall",
+    ]

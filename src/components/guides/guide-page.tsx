@@ -22,20 +22,28 @@ export default function GuidePage() {
   if (guideKey === null) return <GuideList />;
 
   return (
-    <main className="p-6 max-w-3xl">
+    <main className="p-6 max-w-7xl">
       <h1 className="text-3xl font-bold mb-6">
         {guide?.title ?? 'Guided build'}
       </h1>
       {error && <p className="mb-6 text-red-700">{error}</p>}
       {resolved && (
-        <>
-          <GuideSteps steps={resolved.steps} onSelect={select} />
-          <GuideParts parts={resolved.parts} />
-          <GuideRefinements
-            refinements={resolved.refinements}
-            onSelect={select}
-          />
-        </>
+        // Questions on the left, pieces on the right: you read the
+        // questions, and the answer appears beside them. One column
+        // below `lg`, where side by side would make both too narrow,
+        // and there the questions come first for the same reason.
+        <div className="flex flex-col lg:flex-row gap-10 items-start">
+          <div className="lg:w-80 lg:shrink-0">
+            <GuideSteps steps={resolved.steps} onSelect={select} />
+            <GuideRefinements
+              refinements={resolved.refinements}
+              onSelect={select}
+            />
+          </div>
+          <div className="lg:flex-1">
+            <GuideParts parts={resolved.parts} />
+          </div>
+        </div>
       )}
     </main>
   );
