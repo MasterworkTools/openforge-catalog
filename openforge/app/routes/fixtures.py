@@ -9,9 +9,11 @@ from psycopg.rows import dict_row
 from yaml import YAMLError, safe_load
 
 from openforge.db.fixtures import (
+    check_guide_fixture,
     is_blueprint_fixture,
     is_tag_description_fixture,
     is_tag_documentation_fixture,
+    load_guide_fixture,
     print_comparison_results,
 )
 from openforge.db.fixtures import (
@@ -149,6 +151,8 @@ def _process_fixture(data: Any, fixture_type: str, dry_run: bool, verbose: bool)
                         result = _process_tag_documentation_fixture(
                             data, curs, dry_run, verbose
                         )
+                    elif fixture_type == "guide":
+                        result = _process_guide_fixture(data, curs, dry_run, verbose)
                     else:
                         raise ValueError(f"Unknown fixture type: {fixture_type}")
 
@@ -248,7 +252,7 @@ def _get_fixture_type_from_data(data: Any) -> str:
         data: Parsed fixture data
 
     Returns:
-        'blueprint', 'tag_description', or 'tag_documentation'
+        'blueprint', 'tag_description', 'tag_documentation' or 'guide'
 
     Raises:
         ValueError: If the fixture type cannot be determined.
@@ -258,6 +262,12 @@ def _get_fixture_type_from_data(data: Any) -> str:
         return "blueprint"
 
     if isinstance(data, dict):
+        # A guide is a single document rather than a mapping of many,
+        # and says so: these three keys are required by guide.yaml and
+        # no other fixture type has them.
+        if {"key", "title", "steps"} <= set(data):
+            return "guide"
+
         # Dictionaries can be tag_description or tag_documentation.
         # We can distinguish them by checking the type of their values.
         first_value = next(iter(data.values()), None)
@@ -307,6 +317,36 @@ def _process_blueprint_fixture(
         "consolidated": [_format_item(item) for item in changes.consolidated],
         "errors": changes.errors,
     }
+
+
+def _process_guide_fixture(data: Dict, curs, dry_run: bool, verbose: bool) -> Dict:
+    """Process a guide fixture.
+
+    This is how a guide reaches staging and production: the deploy
+    workflows do not run bin/fixtures, so bin/upload_fixture posting
+    here is the only path a repo fixture has.
+
+    Args:
+        data: A guide document (see openapi/schemas/guide.yaml)
+        curs: Database cursor
+        dry_run: If True, don't apply changes
+        verbose: If True, output debug information
+
+    Returns:
+        Dictionary with results
+    """
+    key = data.get("key", "<no key>")
+    check_guide_fixture(data, f"guide {key}")
+
+    if dry_run:
+        write_output(f"DRY RUN: Would load guide {key}\n")
+        return {"guides": [key], "dry_run": True}
+
+    loaded = load_guide_fixture(curs, data, f"guide {key}")
+    write_output(f"Applied guide {loaded}\n")
+    if verbose:
+        write_output(f"Loaded guide fixture: {loaded}\n")
+    return {"guides": [loaded]}
 
 
 def _process_tag_description_fixture(

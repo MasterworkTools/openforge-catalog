@@ -51,7 +51,7 @@ properties:
 $defs:
   url_key:
     type: string
-    pattern: "^[a-z0-9]+([-_][a-z0-9]+)*$"
+    pattern: "^[a-z0-9]+([-_][a-z0-9]+)*\\Z"
     description: >
       A key that is safe in a URL and readable in one. Step and
       refinement keys become query-string keys, because selections are

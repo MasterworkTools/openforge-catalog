@@ -419,3 +419,90 @@ class TestResponseFormat:
         assert data["success"] is False
         assert "error" in data
         assert isinstance(data["error"], str)
+
+
+# A guide document, which reaches deployed environments only through
+# this endpoint: the deploy workflows do not run bin/fixtures, so
+# bin/upload_fixture posting here is the wall guide's only path.
+SAMPLE_GUIDE_FIXTURE = {
+    "key": "wall",
+    "title": "How do I make a wall?",
+    "summary": "Three ways.",
+    "steps": [
+        {
+            "key": "method",
+            "prompt": "How do you want to build it?",
+            "options": [
+                {
+                    "key": "separate-wall",
+                    "title": "Separate wall",
+                    "roles": {"wall": {"require": ["build|separate wall"]}},
+                }
+            ],
+        }
+    ],
+    "roles": {"wall": {"title": "Wall", "query": {"require": ["shape|wall"]}}},
+}
+
+
+def test_uploading_a_guide_loads_it(client, auth_headers, test_db):
+    from psycopg.rows import dict_row
+
+    import openforge.db.sql.guides as guide_sql
+
+    response = client.post(
+        "/api/admin/fixtures",
+        data=yaml_dump(SAMPLE_GUIDE_FIXTURE),
+        content_type="application/x-yaml",
+        headers=auth_headers,
+    )
+
+    assert response.status_code == 200, response.get_data(as_text=True)
+    assert response.json["guides"] == ["wall"]
+    with test_db.connection() as conn:
+        with conn.cursor(row_factory=dict_row) as curs:
+            assert (
+                guide_sql.get_guide_by_key(curs, "wall")["document"]["title"]
+                == "How do I make a wall?"
+            )
+
+
+def test_uploading_a_broken_guide_is_refused(client, auth_headers, test_db):
+    from psycopg.rows import dict_row
+
+    import openforge.db.sql.guides as guide_sql
+
+    broken = json.loads(json.dumps(SAMPLE_GUIDE_FIXTURE))
+    broken["steps"][0]["options"][0]["roles"] = {"plinth": None}
+
+    response = client.post(
+        "/api/admin/fixtures",
+        data=json.dumps(broken),
+        content_type="application/json",
+        headers=auth_headers,
+    )
+
+    assert response.status_code == 500
+    assert "plinth" in response.json["error"]
+    with test_db.connection() as conn:
+        with conn.cursor(row_factory=dict_row) as curs:
+            assert guide_sql.get_all_guides(curs) == []
+
+
+def test_a_guide_upload_can_be_a_dry_run(client, auth_headers, test_db):
+    from psycopg.rows import dict_row
+
+    import openforge.db.sql.guides as guide_sql
+
+    response = client.post(
+        "/api/admin/fixtures?dry_run=true",
+        data=json.dumps(SAMPLE_GUIDE_FIXTURE),
+        content_type="application/json",
+        headers=auth_headers,
+    )
+
+    assert response.status_code == 200, response.get_data(as_text=True)
+    assert response.json["dry_run"] is True
+    with test_db.connection() as conn:
+        with conn.cursor(row_factory=dict_row) as curs:
+            assert guide_sql.get_all_guides(curs) == []

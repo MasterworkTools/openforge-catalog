@@ -311,7 +311,30 @@ def test_two_roles_may_not_sit_under_each_other(guide):
     with pytest.raises(ValueError) as excinfo:
         validate_guide_document(guide)
 
-    assert "runs in a circle" in str(excinfo.value)
+    message = str(excinfo.value)
+    assert "runs in a circle" in message
+    # Once, naming both members — not once per role in the document.
+    assert message.count("runs in a circle") == 1
+    assert "'wall'" in message and "'base'" in message
+
+
+def test_a_role_downstream_of_a_cycle_is_not_accused(guide):
+    """`floor` sits above a cycle; it is not part of one.
+
+    Reporting per role that *reaches* a cycle would name it, which
+    sends the author looking at the wrong role.
+    """
+    guide["roles"]["floor"]["under"] = "wall"
+    guide["roles"]["wall"]["under"] = "base"
+    guide["roles"]["base"]["under"] = "wall"
+
+    with pytest.raises(ValueError) as excinfo:
+        validate_guide_document(guide)
+
+    message = str(excinfo.value)
+    assert message.count("runs in a circle") == 1
+    assert "'wall'" in message and "'base'" in message
+    assert "'floor'" not in message
 
 
 def test_a_role_no_option_names_is_rejected(guide):
@@ -346,9 +369,28 @@ def test_a_role_no_option_names_is_rejected(guide):
     ],
 )
 def test_keys_that_go_in_a_url_are_restricted(guide, break_it):
+    """Each case must fail on the pattern, not on something else.
+
+    Without the match= this passed for three of the four keys on an
+    unrelated cross-reference error — renaming a role, for instance,
+    also orphans it. Schema errors short-circuit the cross-reference
+    pass, so the pattern error is what every case should produce.
+    """
     break_it(guide)
 
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="does not match"):
+        validate_guide_document(guide)
+
+
+def test_a_key_may_not_carry_a_trailing_newline(guide):
+    """`key: |` in YAML is a block scalar, and yields "wall\n".
+
+    Python's `$` matches before a trailing newline, so the pattern has
+    to end with \\Z or a key can arrive with one attached.
+    """
+    guide["steps"][0]["key"] = "method\n"
+
+    with pytest.raises(ValueError, match="does not match"):
         validate_guide_document(guide)
 
 

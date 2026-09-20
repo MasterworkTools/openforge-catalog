@@ -169,6 +169,40 @@ def test_the_key_column_comes_from_the_document(test_db):
             assert stored["document"]["key"] == "corner"
 
 
+def test_a_document_with_no_key_is_refused(test_db):
+    """NOT NULL on the generated column is doing work.
+
+    Without it a keyless document would land under an empty name
+    rather than failing, and `upsert_guide` no longer reads
+    document["key"], so nothing in Python would catch it either.
+    """
+    keyless = a_guide()
+    del keyless["key"]
+
+    with test_db.connection() as conn:
+        with conn.cursor(row_factory=dict_row) as curs:
+            with pytest.raises(psycopg.errors.NotNullViolation):
+                guide_sql.upsert_guide(curs, keyless)
+
+
+def test_rewriting_a_document_moves_the_key_with_it(test_db):
+    """The stale-key case the generated column exists to prevent.
+
+    An update that rewrites the document cannot leave the old name
+    behind, because the column is recomputed rather than stored
+    alongside.
+    """
+    with test_db.connection() as conn:
+        with conn.cursor(row_factory=dict_row) as curs:
+            stored = guide_sql.upsert_guide(curs, a_guide(key="wall"))
+            curs.execute(
+                "UPDATE guides SET document = %s WHERE id = %s RETURNING guide_key",
+                (Jsonb(a_guide(key="renamed")), stored["id"]),
+            )
+
+            assert curs.fetchone()["guide_key"] == "renamed"
+
+
 def test_the_database_refuses_a_key_that_contradicts_the_document(test_db):
     """The invariant belongs to the table, not to one function.
 

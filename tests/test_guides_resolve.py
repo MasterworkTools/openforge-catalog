@@ -275,18 +275,20 @@ def test_a_prefer_list_that_matches_nothing_still_recommends(guide):
 
 
 def test_equally_preferred_candidates_break_the_tie_on_name(guide):
-    """Both separate walls carry both preferred tags.
+    """Three separate walls carry the one preferred tag.
 
-    `prefer` cannot separate them, so the order the catalog returns
-    decides — and it is by name, which is what makes the result
-    reproducible from the URL.
+    With a single-tag `prefer` that all of them satisfy, ranking can
+    separate none of them, so the order the catalog returns decides —
+    and it is by name, which is what makes the result reproducible
+    from the URL.
     """
+    guide["roles"]["wall"]["prefer"] = ["connection|openforge"]
+
     resolved = resolve(guide, {"method": "separate-wall"}, find_candidates)
 
-    assert parts_by_role(resolved)["wall"]["blueprint"]["id"] == "5"
     assert (
         parts_by_role(resolved)["wall"]["blueprint"]["blueprint_name"]
-        == "m separate wall openlock"
+        == "l separate wall openforge only"
     )
 
 
@@ -500,13 +502,21 @@ def test_accept_matches_a_tag_or_anything_below_it(guide):
     the query, so if `accept` were dropped from the composition the
     role would match every separate wall and pick another part.
     """
-    guide["roles"]["wall"]["query"] = {"accept": ["shape|wall|corner"]}
+    guide["roles"]["wall"]["query"] = {
+        "accept": ["shape|wall"],
+        "deny": ["shape|wall"],
+    }
     guide["roles"]["wall"]["prefer"] = []
 
     resolved = resolve(guide, {"method": "separate-wall"}, find_candidates)
 
     wall = parts_by_role(resolved)["wall"]
-    assert wall["query"]["accept"] == ["shape|wall|corner"]
+    assert wall["query"]["accept"] == ["shape|wall"]
+    # Only the corner wall survives: `deny` removes everything carrying
+    # `shape|wall` exactly, and `accept` still reaches the one that
+    # carries `shape|wall|corner` beneath it. That difference between
+    # the two predicates is the whole point, and an exact-tag accept
+    # would not have exercised it.
     assert wall["blueprint"]["id"] == "8"
 
 
@@ -545,7 +555,14 @@ def test_the_catalog_gets_predicates_in_the_shape_it_understands():
     # All three keys are always present, because the search takes them
     # as required positional arguments and a predicate need not use
     # every one.
-    assert set(to_tag_query({})) == {"accept", "require", "deny"}
-    assert set(to_tag_query({})) == set(
-        inspect.signature(tag_search_blueprints).parameters
-    ) & {"accept", "require", "deny"}
+    # Every argument the search has no default for, other than the
+    # cursor, has to come from here — that is the property that makes
+    # the result splattable, and it would not survive `accept` being
+    # given a default.
+    required = {
+        name
+        for name, p in inspect.signature(tag_search_blueprints).parameters.items()
+        if p.default is inspect.Parameter.empty and name != "curs"
+    }
+    assert required == {"accept", "require", "deny"}
+    assert required <= set(to_tag_query({}))
