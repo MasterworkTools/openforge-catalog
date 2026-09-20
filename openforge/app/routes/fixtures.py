@@ -262,10 +262,20 @@ def _get_fixture_type_from_data(data: Any) -> str:
         return "blueprint"
 
     if isinstance(data, dict):
-        # A guide is a single document rather than a mapping of many,
-        # and says so: these three keys are required by guide.yaml and
-        # no other fixture type has them.
-        if {"key", "title", "steps"} <= set(data):
+        # A guide is a single document rather than a mapping of many.
+        # Any of these three marks one: they are required by
+        # guide.yaml, and no tag key is a bare word like these — real
+        # ones are pipe-delimited paths or namespace roots.
+        #
+        # Matching on *any* rather than all is deliberate. Requiring
+        # all three means a guide with a typo in one of them is not
+        # recognised as a guide at all: it falls through to the tag
+        # description branch and is reported with a schema dump that
+        # never mentions guides, and a truncated one can even validate
+        # there and write junk tag descriptions under the names "key"
+        # and "title". Better to claim it and let the guide validator
+        # say which key is missing.
+        if {"key", "title", "steps"} & set(data):
             return "guide"
 
         # Dictionaries can be tag_description or tag_documentation.
@@ -335,18 +345,25 @@ def _process_guide_fixture(data: Dict, curs, dry_run: bool, verbose: bool) -> Di
     Returns:
         Dictionary with results
     """
-    key = data.get("key", "<no key>")
-    check_guide_fixture(data, f"guide {key}")
+    key = data.get("key", "<no key>") if isinstance(data, dict) else "<no key>"
+    source = f"guide {key}"
 
     if dry_run:
+        check_guide_fixture(data, source)
         write_output(f"DRY RUN: Would load guide {key}\n")
-        return {"guides": [key], "dry_run": True}
+    else:
+        # load_guide_fixture validates before it writes; checking
+        # again here would only duplicate the error.
+        key = load_guide_fixture(curs, data, source)
+        write_output(f"Applied guide {key}\n")
 
-    loaded = load_guide_fixture(curs, data, f"guide {key}")
-    write_output(f"Applied guide {loaded}\n")
-    if verbose:
-        write_output(f"Loaded guide fixture: {loaded}\n")
-    return {"guides": [loaded]}
+    return {
+        "added": [],
+        "modified": [{"name": key}],
+        "deprecated": [],
+        "consolidated": [],
+        "errors": [],
+    }
 
 
 def _process_tag_description_fixture(
