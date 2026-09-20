@@ -126,14 +126,28 @@ data follows. Counts are of records tagged `shape|wall`, including the 177 that 
 | `build\|thick wall` | 87 of 337 | none exist |
 
 No record carries two build tags. The 295 wall-on-tile pieces that do carry a base slot
-are all floors, 17 of which are corners as well — under *this* method the base goes
-under the floor. Under the others it does not, which is the subject of the two base
-roles further down.
+are all floors, 17 of which are corners as well — which is consistent with the rule
+above rather than an exception to it: wall-on-tile's wall *is* its floor, so the one
+base the tile stands on is recorded against the floor.
 
-**Removing the slot is a simplification rather than a fix, but the reason has to be
-stated more narrowly than "openforge implies a base".** Across the catalog that is
-false: 4,368 records carry `connection|openforge` and only 2,455 of them have a base
-slot. What is true is per method, and it is exact. Under `build|separate wall`, the slot
+**Removing the slot is a simplification rather than a fix.**
+
+First, a correction that came from Devon after the endpoints were built, and that this
+section previously got backwards. *Anything `connection|openforge` needs a base* — that
+is the rule the system is designed around, full stop. Under `build|wall on tile` the
+wall and the floor are one piece, so they **share** one base; under every other method
+they are separate pieces and each needs its own.
+
+This document previously read the slot counts as evidence against that rule: 4,368
+records carry `connection|openforge` and only 2,455 carry a base slot, so "openforge
+implies a base" looked false. It is not false — the *slot* is an incomplete synthesis of
+it. The counts below describe what the parser emits, not what the system requires, and
+reading one as the other is what produced a wall guide whose s2w option printed a wall,
+a floor and one base.
+
+That makes the case for removing the slot stronger rather than weaker: it is an
+unreliable proxy for a rule simpler than itself. What the slot data does show exactly is
+per method: Under `build|separate wall`, the slot
 and the tag are the same fact: of the 1,221 openforge separate-wall walls, 1,220 carry
 the slot and the one that does not carries `shape|floor` as well as `shape|wall`, which
 `is_openforge_wall` denies outright (along with `shape|base` and `build|s2w`); no
@@ -147,8 +161,9 @@ one (295 of them, and none of the walls), under `build|s2w` neither does — non
 blueprints, where it is the **wall** part that declares `fulfills: base` — and under
 `build|s-system` nothing carries one.
 
-So the pair (build method, `connection|openforge`) determines whether a piece takes a
-base, and the synthesised slot restates what the piece already says. The decision is
+So `connection|openforge` determines whether a piece takes a base, the build method
+determines whether two pieces share one, and the synthesised slot is a partial
+restatement of both. The decision is
 still to remove it — but it is cleanup, it is not urgent, and **it does not block the
 rest of the epic.**
 
@@ -234,22 +249,24 @@ steps:
         title: Modular (s2w)
         blurb: Wall, floor and base print separately and stack.
         image: sets/dungeon_stone.s2w.wall.1.door+arched.png
-        roles:                                  # copied from what the s2w
-          floor: {require: ['build|s2w', 'shape|floor|wall']}   # composition
+        roles:                                  # two openforge pieces,
+          floor: {require: ['build|s2w', 'shape|floor|wall']}   # so two bases
           wall: {require: ['build|separate wall', 'component|wall']}
-          wall-base: {require: ['build|s2w', 'shape|base|wall']} # blueprints
-      - key: wall-on-tile                                       # already say
+          wall-base: {require: ['build|s2w', 'shape|base|wall']}
+          floor-base:                           # null: an ordinary base
+      - key: wall-on-tile
         title: Wall on tile
-        roles:
+        roles:                                  # one piece, one base
           floor: {require: ['build|wall on tile'], deny: ['shape|wall']}
           wall: {require: ['build|wall on tile']}
           floor-base: {deny: ['build|s2w']}
       - key: separate-wall
         title: Separate wall
-        roles:
+        roles:                                  # two pieces again
           floor: {deny: ['shape|wall']}         # no floor tile carries
           wall: {require: ['build|separate wall']}   # build|separate wall
           wall-base: {require: ['build|separate wall', 'shape|base|wall']}
+          floor-base:
 
 roles:
   floor:
@@ -273,14 +290,14 @@ roles:
       deny: *intact
     prefer: ['connection|openforge', 'texture|dungeon_stone']
   floor-base:                                   # two base roles, because
-    title: Base                                 # which part the base goes
-    query:                                      # under is the method's
-      require: ['shape|base']                   # choice
+    title: Base for the floor                   # a method can need two
+    query:                                      # bases at once, of
+      require: ['shape|base']                   # different shapes
       deny: ['shape|base|wall', 'shape|base|s2w']
     prefer: ['texture|plain']
     under: floor
   wall-base:
-    title: Base
+    title: Base for the wall
     query: {require: ['shape|base']}
     prefer: ['connection|magnetic']
     under: wall
@@ -374,14 +391,18 @@ role already in play. That second form is what a later step like "how wide?" wan
 it answers for whatever the method turned out to be made of, instead of naming roles
 that method may not have.
 
-The two base roles are the same point from the other side. **Which part a base sits
-under is the method's choice, not the base's:** of the 1,221 openforge separate-wall
-walls 1,220 carry a base slot and none of the 115 records that are both a floor and a
-separate wall does — and 114 of those are bases anyway, which is the same fact from the
-other side: there is no separate-wall floor tile. Meanwhile
-under wall on tile it is the 295 floors that carry one and no wall does. Under s2w it
-is the wall again — no s2w floor carries a slot, and in the composition blueprints the
-`wall` part is the one that declares `fulfills: base`. One role
+The two base roles are the same point from the other side. **A method can need two
+bases at once, and they are not the same shape:** anything `connection|openforge` needs
+a base, so a separate wall and the floor it stands beside each need one, and so do the
+wall and floor of an s2w set — where the wall's is a special `shape|base|wall` piece and
+the floor's is an ordinary base. Only `build|wall on tile` needs one, because there the
+wall *is* the floor and the single tile stands on a single base.
+
+The slot data is consistent with this but does not state it: the 295 wall-on-tile
+records with a slot are the shared bases, and under s2w only the composition
+blueprints carry one, on the `wall` part, because that is the base with a distinctive
+shape rather than the only base involved. Reading the slot as the rule is what made the
+first draft of the wall guide give an s2w set one base instead of two. One role
 called `base` with a single `under` would have to be wrong for one of them, so the
 wall guide has `floor-base` and `wall-base` and each method lists the one it uses.
 The queries differ too: 95 bases carry `shape|base|s2w`, 263 carry `shape|base|wall`

@@ -25,12 +25,14 @@ steps:
           flexible, and the most pieces.
         image: sets/dungeon_stone.s2w.wall.1.png
         roles:
-          # The s2w base goes with the wall, not under the floor: no s2w
-          # floor carries a base slot, and the composition blueprints put
-          # fulfills: base on the wall part.
+          # Two bases, because this is two openforge pieces. The wall
+          # takes the s2w base — that is the one the composition
+          # blueprints model, and the only one with a special shape —
+          # and the floor takes an ordinary base like any other tile.
           floor: {require: ['build|s2w', 'shape|floor|wall']}
           wall: {require: ['build|separate wall', 'component|wall']}
           wall-base: {require: ['build|s2w', 'shape|base|wall']}
+          floor-base:
 
       - key: wall-on-tile
         title: Wall on tile
@@ -39,9 +41,10 @@ steps:
           rearranging.
         image: sets/dungeon_stone.wall_on_tile.wall.1.png
         roles:
-          # No base carries build|wall on tile: the base under one of
-          # these floors is an ordinary one, which is what the
-          # synthesised slot asks for.
+          # One base, shared. The wall is part of the tile, so there is
+          # one openforge piece here rather than two — this is the only
+          # method where a single base serves both. No base carries
+          # build|wall on tile either: it is an ordinary base.
           floor: {require: ['build|wall on tile'], deny: ['shape|wall']}
           wall: {require: ['build|wall on tile']}
           floor-base: {deny: ['build|s2w']}
@@ -57,9 +60,12 @@ steps:
           # build|separate wall — 114 of the 115 records that carry both
           # shape|floor and that tag are bases — so a separate wall stands
           # on an ordinary floor.
+          # Two bases again: the floor and the wall are separate
+          # openforge pieces, so each stands on its own.
           floor: {deny: ['shape|wall']}
           wall: {require: ['build|separate wall']}
           wall-base: {require: ['build|separate wall', 'shape|base|wall']}
+          floor-base:
 
   - key: width
     prompt: How wide?
@@ -102,14 +108,14 @@ roles:
       deny: *intact
     prefer: ['connection|openforge', 'texture|dungeon_stone']
   floor-base:
-    title: Base
+    title: Base for the floor
     query:
       require: ['shape|base']
       deny: ['shape|base|wall', 'shape|base|s2w']
     prefer: ['texture|plain']
     under: floor
   wall-base:
-    title: Base
+    title: Base for the wall
     query: {require: ['shape|base']}
     prefer: ['connection|magnetic']
     under: wall
