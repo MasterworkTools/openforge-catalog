@@ -3,10 +3,14 @@
 Two passes: the JSON schema (openforge/openapi/schemas/guide.yaml) for
 shape, then the cross-references the schema cannot express — an option
 naming a role that does not exist, a `when` pointing at a step that
-comes later, a duplicate key. Both raise ValueError naming the step,
-role or refinement at fault, because guides are hand-authored fixtures
-and "does not match schema" at the document root is useless to whoever
-is writing one.
+comes later, a duplicate key, a cycle in `under`. Both raise ValueError
+locating the fault, because guides are hand-authored fixtures and a
+bare "does not match schema" is useless to whoever is writing one.
+
+"Locating" means the step, role or refinement wherever the error is
+inside one. A fault in the document itself — a missing `roles`, say —
+reports "document root" plus the schema's own message, which names the
+missing property, and that is as specific as the location gets.
 """
 
 from jsonschema.exceptions import ValidationError
@@ -121,7 +125,47 @@ def _role_reference_errors(data: dict) -> list[str]:
         for r in data.get("refinements", [])
         if r["role"] != "*" and r["role"] not in roles
     ]
+    errors += _under_cycle_errors(roles)
+    errors += _orphan_role_errors(data, roles)
     return errors
+
+
+def _under_cycle_errors(roles: dict) -> list[str]:
+    """`under` must describe a stack, not a loop.
+
+    A role sitting under itself, or two roles sitting under each other,
+    loads happily and then hangs whatever walks the chain to lay the
+    parts out.
+    """
+    errors = []
+    for name in roles:
+        seen = [name]
+        below = roles[name].get("under")
+        while below in roles and below not in seen:
+            seen.append(below)
+            below = roles[below].get("under")
+        if below in seen:
+            errors.append(
+                f"role {name!r}: `under` runs in a circle "
+                f"({' -> '.join(seen + [below])})"
+            )
+    return errors
+
+
+def _orphan_role_errors(data: dict, roles: dict) -> list[str]:
+    """A role no option ever names can never be resolved.
+
+    The engine only builds the roles the chosen options call for, so an
+    orphan is not a part that says "nothing matches" — it is a part
+    nobody ever sees. That is an authoring mistake, not a choice.
+    """
+    named = {
+        role
+        for step in data["steps"]
+        for option in step["options"]
+        for role in option.get("roles") or {}
+    }
+    return [f"role {name!r}: no option names it" for name in roles if name not in named]
 
 
 def _when_errors(data: dict) -> list[str]:

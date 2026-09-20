@@ -2,14 +2,17 @@
 
 Pure. The only way this module reaches the catalog is `find_candidates`,
 a callable the caller injects, so the whole engine is testable against a
-dictionary of fake blueprints. See docs/design/guided-builds.md.
+list of fake blueprints. See docs/design/guided-builds.md.
 
 The three rules the design settled:
 
 - **Composition.** A role's query is the union of the role's own
-  predicate, the tags of every selected option, and every active
-  refinement. Lists concatenate; `deny` beats `require`, which the tag
-  search already enforces. Nothing here knows about combined
+  predicate, what each chosen option asks of *that* role, and every
+  active refinement that applies to it. An option reaches a role only
+  when it names that role, or when it names no roles at all. Lists
+  concatenate; `deny` beats `require`, which the tag search already
+  enforces, so a role-level deny is absolute — no option can opt back
+  in. Nothing here knows about combined
   wall-and-floor prints — a guide that does not want one denies the
   other shape in that role's query.
 - **Determinism.** `prefer` is a list of tags, most wanted first. The
@@ -33,6 +36,33 @@ that ranks in SQL, not a cache.
 PREDICATES = ("require", "deny", "accept")
 
 
+class GuideSelectionError(ValueError):
+    """A selection this guide cannot act on.
+
+    Selections arrive from a query string someone can edit or share, so
+    this is a bad request rather than a bug, and callers catch it to
+    answer 400. It subclasses ValueError so a caller catching that
+    still works.
+    """
+
+
+def to_tag_query(predicate: dict) -> dict:
+    """Convert a guide predicate into the shape the catalog speaks.
+
+    A guide writes tags as plain strings; `tag_search_blueprints` wants
+    the `tag_query` shape, `[{"tag": "shape|wall"}]`, and **silently
+    ignores an item that is not a dict**. Hand it bare strings and a
+    dropped `require` matches everything while a dropped `deny` matches
+    nothing — a wrong answer rather than an error. Every caller
+    converts here, so there is one place to get it right.
+    """
+    return {
+        name: [{"tag": tag} for tag in predicate[name]]
+        for name in PREDICATES
+        if predicate.get(name)
+    }
+
+
 def resolve(document: dict, selections: dict, find_candidates) -> dict:
     """Resolve a guide against a person's selections.
 
@@ -48,16 +78,16 @@ def resolve(document: dict, selections: dict, find_candidates) -> dict:
         dict with `steps`, `parts` and `refinements`.
 
     Raises:
-        ValueError: if a selection names something the guide does not
-            offer. Selections come from a query string, so a bad one is
+        GuideSelectionError: if a selection names something the guide
+            does not offer. Selections come from a query string, so a bad one is
             a bad request rather than something to quietly ignore.
     """
-    steps = _available_steps(document, selections)
-    chosen = _chosen_options(steps, selections)
-    refinements = _available_refinements(document, selections)
+    steps, answered = _available_steps(document, selections)
+    chosen = _chosen_options(steps, answered)
+    refinements = _available_refinements(document, answered)
     _reject_unknown_selections(document, steps, refinements, selections)
     return {
-        "steps": [{**step, "selected": selections.get(step["key"])} for step in steps],
+        "steps": [{**step, "selected": answered.get(step["key"])} for step in steps],
         "parts": _parts(document, chosen, refinements, selections, find_candidates),
         "refinements": [
             {**refinement, "selected": selections.get(refinement["key"])}
@@ -66,23 +96,34 @@ def resolve(document: dict, selections: dict, find_candidates) -> dict:
     }
 
 
-def _available_steps(document: dict, selections: dict) -> list[dict]:
-    """Steps whose `when` the selections so far satisfy.
+def _available_steps(document: dict, selections: dict):
+    """The reachable steps, and the answers that actually count.
 
-    A step is walked in document order and only becomes available once
-    the steps it depends on have been answered, which is how one option
-    begets another.
+    Steps are walked in document order, and a step's `when` is tested
+    against the answers to *reachable* steps only, not against the raw
+    selection map. Otherwise a chain does not compose: with `c` waiting
+    on `b` and `b` waiting on `a`, changing the answer to `a` drops `b`
+    but would leave a stale answer to `c` alive — offering a question
+    nobody can see, and narrowing the parts off a branch nobody is on.
+
+    Returns the reachable steps and the selections belonging to them.
     """
-    return [
-        step for step in document["steps"] if _when_holds(step.get("when"), selections)
-    ]
+    available = []
+    answered = {}
+    for step in document["steps"]:
+        if not _when_holds(step.get("when"), answered):
+            continue
+        available.append(step)
+        if step["key"] in selections:
+            answered[step["key"]] = selections[step["key"]]
+    return available, answered
 
 
-def _available_refinements(document: dict, selections: dict) -> list[dict]:
+def _available_refinements(document: dict, answered: dict) -> list[dict]:
     return [
         refinement
         for refinement in document.get("refinements", [])
-        if _when_holds(refinement.get("when"), selections)
+        if _when_holds(refinement.get("when"), answered)
     ]
 
 
@@ -103,7 +144,9 @@ def _chosen_options(steps: list[dict], selections: dict) -> list[dict]:
             continue
         options = {option["key"]: option for option in step["options"]}
         if selected not in options:
-            raise ValueError(f"step {step['key']!r} has no option {selected!r}")
+            raise GuideSelectionError(
+                f"step {step['key']!r} has no option {selected!r}"
+            )
         chosen.append(options[selected])
     return chosen
 
@@ -124,7 +167,9 @@ def _reject_unknown_selections(
     known |= {r["key"] for r in document.get("refinements", [])}
     unknown = sorted(set(selections) - known)
     if unknown:
-        raise ValueError(f"guide {document['key']!r} has no {', '.join(unknown)}")
+        raise GuideSelectionError(
+            f"guide {document['key']!r} has no {', '.join(unknown)}"
+        )
     for refinement in refinements:
         _reject_bad_refinement_value(refinement, selections)
 
@@ -133,13 +178,17 @@ def _reject_bad_refinement_value(refinement: dict, selections: dict) -> None:
     value = selections.get(refinement["key"])
     if value is None:
         return
+    if not isinstance(value, str):
+        raise GuideSelectionError(
+            f"refinement {refinement['key']!r} takes a string, not {value!r}"
+        )
     if "on_tags" in refinement and value not in ("on", "off"):
-        raise ValueError(
+        raise GuideSelectionError(
             f"refinement {refinement['key']!r} takes 'on' or 'off', not {value!r}"
         )
     namespace = refinement.get("from_namespace")
     if namespace and not value.startswith(f"{namespace}|"):
-        raise ValueError(
+        raise GuideSelectionError(
             f"refinement {refinement['key']!r} takes a {namespace!r} tag, not {value!r}"
         )
 

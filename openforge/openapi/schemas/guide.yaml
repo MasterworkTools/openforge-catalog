@@ -19,7 +19,7 @@ additionalProperties: false
 properties:
   key:
     type: string
-    pattern: "^[a-z0-9]+(-[a-z0-9]+)*$"
+    $ref: "#/$defs/url_key"
     description: Stable identifier, used in the URL (/api/guides/<key>).
   title:
     type: string
@@ -38,6 +38,8 @@ properties:
       The parts a built thing is made of, keyed by role name. A step
       option names the roles that method needs; every role it names is
       resolved to a concrete blueprint.
+    propertyNames:
+      $ref: "#/$defs/url_key"
     additionalProperties:
       $ref: "#/$defs/role"
   refinements:
@@ -47,6 +49,15 @@ properties:
       $ref: "#/$defs/refinement"
 
 $defs:
+  url_key:
+    type: string
+    pattern: "^[a-z0-9]+(-[a-z0-9]+)*$"
+    description: >
+      A key that ends up in a query string. Selections are one flat map
+      of step-or-refinement key to answer, which is what lets a guide's
+      whole state fit in a URL, so every key that can appear there is
+      restricted to the same shape.
+
   predicate:
     type: object
     minProperties: 1
@@ -101,8 +112,7 @@ $defs:
     additionalProperties: false
     properties:
       key:
-        type: string
-        minLength: 1
+        $ref: "#/$defs/url_key"
       prompt:
         type: string
         minLength: 1
@@ -122,8 +132,7 @@ $defs:
     additionalProperties: false
     properties:
       key:
-        type: string
-        minLength: 1
+        $ref: "#/$defs/url_key"
       title:
         type: string
         minLength: 1
@@ -175,12 +184,17 @@ $defs:
         $ref: "#/$defs/predicate"
       prefer:
         type: array
+        minItems: 1
+        maxItems: 8
         description: >
           Tags that rank candidates, most wanted first. The recommended
           part is the best-ranked candidate, so a person sees a buildable
-          set after one answer.
+          set after one answer. Same tag shape as the predicates, and
+          capped because resolution costs one query per preferred tag it
+          has to drop: a role asks for at most `len(prefer) + 1`.
         items:
           type: string
+          pattern: "^[^|]+(\\|[^|]+)*$"
       under:
         type: string
         description: The role this one sits beneath, when it sits under one.
@@ -194,7 +208,9 @@ $defs:
     additionalProperties: false
     oneOf:
       - required: [from_namespace]
+        not: {anyOf: [{required: [on_tags]}, {required: [off_tags]}]}
       - required: [on_tags]
+        not: {required: [from_namespace]}
     description: >
       Either a pick from a tag namespace (from_namespace) or a toggle
       (on_tags / off_tags), not both. The toggle fields are spelled with
@@ -202,8 +218,7 @@ $defs:
       YAML the fixtures are authored in.
     properties:
       key:
-        type: string
-        minLength: 1
+        $ref: "#/$defs/url_key"
       role:
         type: string
         minLength: 1

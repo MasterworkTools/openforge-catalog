@@ -19,6 +19,11 @@ os.environ["SECRET_KEY"] = "test_secret_key_for_csrf_tokens"
 # every table, so a stray PGDATABASE pointing at a development database
 # would empty it. Where that database lives is configurable, because not
 # every machine can put one on localhost:5432.
+#
+# One database, one session: the teardown below drops and recreates the
+# public schema, so two pytest runs pointed at the same database will
+# destroy each other's tables mid-test. The failures look like random
+# UndefinedTable errors. Give each concurrent run its own database.
 os.environ["PGDATABASE"] = "openforge_test"
 os.environ.setdefault("PGUSER", "openforge")
 os.environ.setdefault("PGPASSWORD", "openforge")

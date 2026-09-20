@@ -73,8 +73,14 @@ def guide():
     return copy.deepcopy(WALL_GUIDE)
 
 
-def test_a_sound_guide_validates(guide):
-    assert validate_guide_document(guide) is not None
+def test_a_sound_guide_validates_and_comes_back_unchanged(guide):
+    """The loader writes what this returns, so identity matters."""
+    before = copy.deepcopy(guide)
+
+    result = validate_guide_document(guide)
+
+    assert result is guide
+    assert result == before
 
 
 def test_schema_error_names_the_offending_step(guide):
@@ -138,7 +144,7 @@ def test_a_refinement_may_not_name_a_role_that_does_not_exist(guide):
 def test_a_refinement_role_may_be_the_wildcard(guide):
     guide["refinements"][1]["role"] = "*"
 
-    assert validate_guide_document(guide) is not None
+    assert validate_guide_document(guide) is guide
 
 
 def test_when_may_not_name_a_step_that_does_not_exist(guide):
@@ -257,4 +263,88 @@ def test_an_option_need_not_name_any_role(guide):
         }
     )
 
-    assert validate_guide_document(guide) is not None
+    assert validate_guide_document(guide) is guide
+
+
+def test_duplicate_refinement_keys_are_rejected(guide):
+    guide["refinements"].append(copy.deepcopy(guide["refinements"][0]))
+
+    with pytest.raises(ValueError) as excinfo:
+        validate_guide_document(guide)
+
+    assert "duplicate refinement key 'texture'" in str(excinfo.value)
+
+
+def test_a_refinement_may_not_reuse_a_step_key(guide):
+    """One flat namespace: a selection is <key> = <answer>.
+
+    That is what lets the whole state fit in a query string, so a
+    refinement sharing a step's key would collide there — and the
+    engine would not know which of the two an answer belongs to.
+    """
+    guide["refinements"][0]["key"] = "method"
+
+    with pytest.raises(ValueError) as excinfo:
+        validate_guide_document(guide)
+
+    assert "a step already uses that key" in str(excinfo.value)
+
+
+def test_a_role_may_not_sit_under_itself(guide):
+    guide["roles"]["base"]["under"] = "base"
+
+    with pytest.raises(ValueError) as excinfo:
+        validate_guide_document(guide)
+
+    assert "runs in a circle" in str(excinfo.value)
+
+
+def test_two_roles_may_not_sit_under_each_other(guide):
+    guide["roles"]["base"]["under"] = "wall"
+    guide["roles"]["wall"]["under"] = "base"
+
+    with pytest.raises(ValueError) as excinfo:
+        validate_guide_document(guide)
+
+    assert "runs in a circle" in str(excinfo.value)
+
+
+def test_a_role_no_option_names_is_rejected(guide):
+    """An orphan role is not "nothing matches" — it is never asked."""
+    guide["roles"]["plinth"] = {
+        "title": "Plinth",
+        "query": {"require": ["shape|base"]},
+    }
+
+    with pytest.raises(ValueError) as excinfo:
+        validate_guide_document(guide)
+
+    assert "role 'plinth': no option names it" in str(excinfo.value)
+
+
+def test_keys_that_go_in_a_url_are_restricted(guide):
+    guide["steps"][0]["key"] = "a=b&c"
+
+    with pytest.raises(ValueError) as excinfo:
+        validate_guide_document(guide)
+
+    assert "a=b&c" in str(excinfo.value) or "pattern" in str(excinfo.value)
+
+
+def test_a_namespace_refinement_may_not_also_carry_a_toggle(guide):
+    """The schema's oneOf has to forbid the mixture it describes."""
+    guide["refinements"][0]["off_tags"] = {"deny": ["texture|cave"]}
+
+    with pytest.raises(ValueError) as excinfo:
+        validate_guide_document(guide)
+
+    assert "refinement 'texture'" in str(excinfo.value)
+
+
+def test_prefer_holds_tags_like_every_other_list(guide):
+    guide["roles"]["wall"]["prefer"] = ["not a tag|"]
+
+    with pytest.raises(ValueError) as excinfo:
+        validate_guide_document(guide)
+
+    assert "role 'wall'" in str(excinfo.value)

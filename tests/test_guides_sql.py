@@ -6,7 +6,11 @@ from psycopg.rows import dict_row
 from werkzeug.exceptions import NotFound
 
 import openforge.db.sql.guides as guide_sql
-from openforge.db.fixtures import load_fixtures, load_guide_fixture
+from openforge.db.fixtures import (
+    find_fixtures_directory,
+    load_fixtures,
+    load_guide_fixture,
+)
 
 
 def a_guide(key="wall", title="How do I make a wall?", summary="Three ways."):
@@ -34,7 +38,7 @@ def a_guide(key="wall", title="How do I make a wall?", summary="Three ways."):
 def test_upsert_stores_the_whole_document(test_db):
     with test_db.connection() as conn:
         with conn.cursor(row_factory=dict_row) as curs:
-            result = guide_sql.upsert_guide(curs, "wall", a_guide())
+            result = guide_sql.upsert_guide(curs, a_guide())
 
             assert result["guide_key"] == "wall"
             assert result["document"]["steps"][0]["key"] == "method"
@@ -43,10 +47,8 @@ def test_upsert_stores_the_whole_document(test_db):
 def test_upsert_replaces_an_existing_guide(test_db):
     with test_db.connection() as conn:
         with conn.cursor(row_factory=dict_row) as curs:
-            guide_sql.upsert_guide(curs, "wall", a_guide())
-            guide_sql.upsert_guide(
-                curs, "wall", a_guide(title="How do I make a better wall?")
-            )
+            guide_sql.upsert_guide(curs, a_guide())
+            guide_sql.upsert_guide(curs, a_guide(title="How do I make a better wall?"))
 
             guides = guide_sql.get_all_guides(curs)
             assert len(guides) == 1
@@ -56,7 +58,7 @@ def test_upsert_replaces_an_existing_guide(test_db):
 def test_get_guide_by_key_returns_the_document(test_db):
     with test_db.connection() as conn:
         with conn.cursor(row_factory=dict_row) as curs:
-            guide_sql.upsert_guide(curs, "wall", a_guide())
+            guide_sql.upsert_guide(curs, a_guide())
 
             result = guide_sql.get_guide_by_key(curs, "wall")
             assert result["document"]["title"] == "How do I make a wall?"
@@ -72,10 +74,8 @@ def test_get_guide_by_key_raises_for_an_unknown_key(test_db):
 def test_the_list_carries_titles_but_not_documents(test_db):
     with test_db.connection() as conn:
         with conn.cursor(row_factory=dict_row) as curs:
-            guide_sql.upsert_guide(curs, "wall", a_guide())
-            guide_sql.upsert_guide(
-                curs, "corner", a_guide(key="corner", title="Corners")
-            )
+            guide_sql.upsert_guide(curs, a_guide())
+            guide_sql.upsert_guide(curs, a_guide(key="corner", title="Corners"))
 
             guides = guide_sql.get_all_guides(curs)
 
@@ -88,7 +88,7 @@ def test_the_list_carries_titles_but_not_documents(test_db):
 def test_delete_all_guides_empties_the_table(test_db):
     with test_db.connection() as conn:
         with conn.cursor(row_factory=dict_row) as curs:
-            guide_sql.upsert_guide(curs, "wall", a_guide())
+            guide_sql.upsert_guide(curs, a_guide())
 
             guide_sql.delete_all_guides(curs)
 
@@ -138,7 +138,7 @@ def test_the_fixtures_command_loads_a_guide_file(test_db, tmp_path):
 def test_a_full_replacement_load_clears_guides_first(test_db, tmp_path):
     with test_db.connection() as conn:
         with conn.cursor(row_factory=dict_row) as curs:
-            guide_sql.upsert_guide(curs, "gone", a_guide(key="gone"))
+            guide_sql.upsert_guide(curs, a_guide(key="gone"))
         conn.commit()
 
         load_fixtures(
@@ -149,3 +149,57 @@ def test_a_full_replacement_load_clears_guides_first(test_db, tmp_path):
         )
         with conn.cursor(row_factory=dict_row) as curs:
             assert [g["guide_key"] for g in guide_sql.get_all_guides(curs)] == ["wall"]
+
+
+def test_the_key_column_comes_from_the_document(test_db):
+    """The column and document->>'key' cannot drift apart.
+
+    Nothing outside the document gets to say what a guide is called,
+    so there is no way to write a row whose key disagrees with itself.
+    """
+    with test_db.connection() as conn:
+        with conn.cursor(row_factory=dict_row) as curs:
+            stored = guide_sql.upsert_guide(curs, a_guide(key="corner"))
+
+            assert stored["guide_key"] == "corner"
+            assert stored["document"]["key"] == "corner"
+
+
+def test_the_fixtures_command_finds_guides_on_its_own(test_db, tmp_path):
+    """Discovery is the only part bin/fixtures actually uses.
+
+    Every other test here hands load_fixtures an explicit path, which
+    skips the directory walk entirely — so this one points it at a
+    directory instead.
+    """
+    write_guide_fixture(tmp_path, a_guide())
+
+    found = find_fixtures_directory(str(tmp_path))
+
+    assert [p.name for p in found] == ["wall.yaml"]
+
+    with test_db.connection() as conn:
+        load_fixtures(conn, str(tmp_path))
+        with conn.cursor(row_factory=dict_row) as curs:
+            assert [g["guide_key"] for g in guide_sql.get_all_guides(curs)] == ["wall"]
+
+
+def test_a_dry_run_still_rejects_a_broken_guide(test_db, tmp_path):
+    """A dry run that skipped validation would call it loadable."""
+    broken = a_guide()
+    broken["steps"][0]["options"][0]["roles"] = {"plinth": None}
+    path = write_guide_fixture(tmp_path, broken)
+
+    with test_db.connection() as conn:
+        with pytest.raises(ValueError, match="plinth"):
+            load_fixtures(conn, "", [path], dry_run=True)
+
+
+def test_a_rejected_guide_names_the_file_it_came_from(test_db, tmp_path):
+    broken = a_guide()
+    broken["steps"][0]["options"][0]["roles"] = {"plinth": None}
+    path = write_guide_fixture(tmp_path, broken)
+
+    with test_db.connection() as conn:
+        with pytest.raises(ValueError, match="wall.yaml"):
+            load_fixtures(conn, "", [path])

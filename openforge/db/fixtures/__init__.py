@@ -104,6 +104,20 @@ def _get_fixture_type(file_path):
         str: 'blueprint', 'tag_description', 'tag_documentation'
             or 'guide'
     """
+    # The directory a fixture lives in is what decides its type. The
+    # substring fallback below is the older behaviour, kept for paths
+    # that are not one of the known directories; on its own it would
+    # read guides/blueprints.s2w.yaml as a blueprint fixture.
+    known = {
+        "guides": "guide",
+        "tag_documentation": "tag_documentation",
+        "tag_descriptions": "tag_description",
+        "blueprints": "blueprint",
+    }
+    directory = Path(file_path).parent.name
+    if directory in known:
+        return known[directory]
+
     file_path_str = str(file_path)
     if "tag_documentation" in file_path_str:
         return "tag_documentation"
@@ -205,9 +219,12 @@ def load_fixtures(
                 with conn.transaction():
                     with conn.cursor(row_factory=dict_row) as curs:
                         if dry_run:
+                            # A dry run that skipped validation would
+                            # report a malformed guide as loadable.
+                            check_guide_fixture(data, f.name)
                             write_output(f"DRY RUN: Would load guide: {f}\n")
                         else:
-                            key = load_guide_fixture(curs, data)
+                            key = load_guide_fixture(curs, data, f.name)
                             write_output(f"{f.name}: Applied guide {key}\n")
             else:
                 raise ValueError(f"Unknown fixture type for file: {f}")
@@ -250,7 +267,7 @@ def load_fixtures(
                         except Exception as e:
                             raise e
                     elif fixture_type == "guide":
-                        key = load_guide_fixture(curs, data)
+                        key = load_guide_fixture(curs, data, f.name)
                         write_output(f"{f.name}: Applied guide {key}\n")
                     else:
                         raise ValueError(f"Unknown fixture type for file: {f}")
@@ -340,18 +357,31 @@ def load_tag_documentation_fixture(curs: cursor, data: dict):
     return count
 
 
-def load_guide_fixture(curs: cursor, data: dict) -> str:
+def check_guide_fixture(data: dict, source: str):
+    """Validate a guide document, naming the file it came from.
+
+    The validator's messages locate a fault inside the document; the
+    author also needs to know which of their fixtures it is.
+    """
+    try:
+        validate_guide_document(data)
+    except ValueError as e:
+        raise ValueError(f"{source}: {e}") from e
+
+
+def load_guide_fixture(curs: cursor, data: dict, source: str = "guide") -> str:
     """Load one guide document, validating it before it is written.
 
     Args:
         curs: Database cursor
         data: A guide document (see openapi/schemas/guide.yaml)
+        source: Name of the fixture file, for error messages
 
     Returns:
         str: The key of the guide that was loaded
     """
-    validate_guide_document(data)
-    guide = guide_sql.upsert_guide(curs, data["key"], data)
+    check_guide_fixture(data, source)
+    guide = guide_sql.upsert_guide(curs, data)
     return guide["guide_key"]
 
 

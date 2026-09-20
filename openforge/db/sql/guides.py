@@ -46,7 +46,13 @@ SELECT id, guide_key, document, created_at, updated_at
     return dict(result)
 
 
-def upsert_guide(curs: cursor, guide_key: str, document: dict) -> dict:
+def upsert_guide(curs: cursor, document: dict) -> dict:
+    """Write a guide, keyed by the key inside it.
+
+    The column and `document->>'key'` cannot drift apart because the
+    caller never gets to say what the key is.
+    """
+    guide_key = document["key"]
     query = sql.SQL(
         """
 INSERT INTO guides (guide_key, document)

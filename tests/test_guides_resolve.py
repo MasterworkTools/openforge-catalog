@@ -2,7 +2,11 @@ import copy
 
 import pytest
 
-from openforge.guides.resolve import resolve
+from openforge.guides.resolve import (
+    GuideSelectionError,
+    resolve,
+    to_tag_query,
+)
 
 GUIDE = {
     "key": "wall",
@@ -76,12 +80,12 @@ GUIDE = {
 CATALOG = [
     {
         "id": "1",
-        "blueprint_name": "s2w wall plain",
+        "blueprint_name": "a s2w wall plain",
         "tags": ["build|s2w", "shape|wall", "texture|cave"],
     },
     {
         "id": "2",
-        "blueprint_name": "s2w wall openforge",
+        "blueprint_name": "z s2w wall openforge",
         "tags": [
             "build|s2w",
             "shape|wall",
@@ -91,7 +95,7 @@ CATALOG = [
     },
     {
         "id": "3",
-        "blueprint_name": "s2w floor",
+        "blueprint_name": "a s2w floor",
         "tags": ["build|s2w", "shape|floor", "texture|cave"],
     },
     {
@@ -101,7 +105,7 @@ CATALOG = [
     },
     {
         "id": "5",
-        "blueprint_name": "separate wall openlock",
+        "blueprint_name": "m separate wall openlock",
         "tags": [
             "build|separate wall",
             "shape|wall",
@@ -112,10 +116,20 @@ CATALOG = [
     },
     {
         "id": "6",
-        "blueprint_name": "separate wall plain",
+        "blueprint_name": "n separate wall plain",
         "tags": [
             "build|separate wall",
             "shape|wall",
+            "connection|openforge",
+            "texture|dungeon_stone",
+        ],
+    },
+    {
+        "id": "8",
+        "blueprint_name": "z corner wall",
+        "tags": [
+            "build|separate wall",
+            "shape|wall|corner",
             "connection|openforge",
             "texture|dungeon_stone",
         ],
@@ -212,24 +226,45 @@ def test_a_wildcard_refinement_reaches_every_role(guide):
         assert "texture|cave" in part["query"]["require"]
 
 
-def test_prefer_picks_the_preferred_candidate(guide):
+def test_prefer_beats_the_name_order(guide):
+    """The preferred part wins even though it sorts last.
+
+    Both s2w walls match the query and 'a s2w wall plain' sorts first,
+    so a resolver that ignored `prefer` would return it. Ranking is the
+    whole reason a shared URL means anything, so this has to be the
+    thing under test rather than an accident of the fixture order.
+    """
     resolved = resolve(guide, {"method": "s2w-modular"}, find_candidates)
 
-    # Both s2w walls match; the openforge one wins on prefer even though
-    # the plain one sorts first by name.
     assert parts_by_role(resolved)["wall"]["blueprint"]["id"] == "2"
 
 
 def test_prefer_drops_the_least_wanted_tag_until_something_matches(guide):
-    # No s2w wall carries texture|dungeon_stone, so the second preferred
-    # tag is dropped and the openforge one is still chosen.
+    # No s2w wall carries texture|dungeon_stone, the second preferred
+    # tag, so requiring both matches nothing and the second is dropped.
+    # Requiring only connection|openforge then finds one.
     resolved = resolve(guide, {"method": "s2w-modular"}, find_candidates)
     assert parts_by_role(resolved)["wall"]["blueprint"]["id"] == "2"
 
-    # Every separate wall carries both preferred tags, so the tie breaks
-    # on name and is therefore stable.
+    # With every preferred tag dropped there is still a recommendation:
+    # the base role has no prefer list at all.
+    assert parts_by_role(resolved)["base"]["blueprint"]["id"] == "4"
+
+
+def test_equally_preferred_candidates_break_the_tie_on_name(guide):
+    """Both separate walls carry both preferred tags.
+
+    `prefer` cannot separate them, so the order the catalog returns
+    decides — and it is by name, which is what makes the result
+    reproducible from the URL.
+    """
     resolved = resolve(guide, {"method": "separate-wall"}, find_candidates)
+
     assert parts_by_role(resolved)["wall"]["blueprint"]["id"] == "5"
+    assert (
+        parts_by_role(resolved)["wall"]["blueprint"]["blueprint_name"]
+        == "m separate wall openlock"
+    )
 
 
 def test_a_role_that_matches_nothing_says_so(guide):
@@ -330,3 +365,145 @@ def test_the_same_selections_always_resolve_the_same_way(guide):
     second = resolve(copy.deepcopy(GUIDE), dict(selections), find_candidates)
 
     assert first == second
+
+
+def test_a_chain_of_whens_composes(guide):
+    """Answering the first question again drops everything below it.
+
+    The engine tests each `when` against the answers to steps that are
+    themselves reachable. Without that, a stale answer from a shared
+    URL keeps a grandchild step alive after its parent has fallen away,
+    and its tags go on narrowing the recommendation off a branch nobody
+    is on any more.
+    """
+    guide["steps"] = [
+        {
+            "key": "a",
+            "prompt": "a?",
+            "options": [
+                {"key": "a1", "title": "A1", "roles": {"wall": None}},
+                {"key": "a2", "title": "A2", "roles": {"wall": None}},
+            ],
+        },
+        {
+            "key": "b",
+            "prompt": "b?",
+            "when": {"selected": {"a": ["a1"]}},
+            "options": [{"key": "b1", "title": "B1", "roles": {"wall": None}}],
+        },
+        {
+            "key": "c",
+            "prompt": "c?",
+            "when": {"selected": {"b": ["b1"]}},
+            "options": [
+                {
+                    "key": "c1",
+                    "title": "C1",
+                    "roles": {"wall": {"require": ["texture|cave"]}},
+                }
+            ],
+        },
+    ]
+    guide["refinements"] = [
+        {
+            "key": "side-locks",
+            "role": "wall",
+            "prompt": "Locks?",
+            "when": {"selected": {"b": ["b1"]}},
+            "on_tags": {"require": ["connection|side|openlock"]},
+        }
+    ]
+    stale = {"a": "a2", "b": "b1", "c": "c1", "side-locks": "on"}
+
+    resolved = resolve(guide, stale, find_candidates)
+
+    assert [step["key"] for step in resolved["steps"]] == ["a"]
+    assert resolved["refinements"] == []
+    assert parts_by_role(resolved)["wall"]["query"] == {
+        "require": ["shape|wall"],
+        "deny": ["shape|base"],
+    }
+
+
+def test_the_answers_come_back_with_the_questions(guide):
+    """The page renders from this, and the URL is restored through it."""
+    resolved = resolve(
+        guide,
+        {"method": "s2w-modular", "texture": "texture|cave"},
+        find_candidates,
+    )
+
+    steps = {step["key"]: step for step in resolved["steps"]}
+    assert steps["method"]["selected"] == "s2w-modular"
+    assert steps["size"]["selected"] is None
+    refinements = {r["key"]: r for r in resolved["refinements"]}
+    assert refinements["texture"]["selected"] == "texture|cave"
+
+
+def test_every_part_carries_the_role_title(guide):
+    resolved = resolve(guide, {"method": "s2w-modular"}, find_candidates)
+
+    assert parts_by_role(resolved)["wall"]["title"] == "Wall"
+    assert parts_by_role(resolved)["base"]["title"] == "Base"
+
+
+def test_a_tag_asked_for_twice_appears_once(guide):
+    """The role and the option can want the same tag."""
+    guide["steps"][0]["options"][0]["roles"]["wall"] = {
+        "require": ["shape|wall", "build|s2w"]
+    }
+
+    resolved = resolve(guide, {"method": "s2w-modular"}, find_candidates)
+
+    assert parts_by_role(resolved)["wall"]["query"]["require"] == [
+        "shape|wall",
+        "build|s2w",
+    ]
+
+
+def test_a_role_two_options_both_name_is_resolved_once(guide):
+    guide["steps"][1]["options"][0]["roles"] = {"wall": None}
+
+    resolved = resolve(guide, {"method": "s2w-modular", "size": "two"}, find_candidates)
+
+    assert [part["role"] for part in resolved["parts"]].count("wall") == 1
+
+
+def test_accept_matches_a_tag_or_anything_below_it(guide):
+    """`accept` is the predicate that reaches into a subtree.
+
+    The corner wall carries `shape|wall|corner` and not `shape|wall`,
+    so a role that requires the bare tag cannot see it.
+    """
+    guide["roles"]["wall"]["query"] = {"accept": ["shape|wall"]}
+    guide["roles"]["wall"]["prefer"] = ["shape|wall|corner"]
+
+    resolved = resolve(guide, {"method": "separate-wall"}, find_candidates)
+
+    assert parts_by_role(resolved)["wall"]["blueprint"]["id"] == "8"
+
+
+def test_a_selection_that_is_not_a_string_is_a_bad_request(guide):
+    with pytest.raises(GuideSelectionError):
+        resolve(
+            guide,
+            {"method": "s2w-modular", "texture": ["texture|cave"]},
+            find_candidates,
+        )
+
+
+def test_the_catalog_gets_predicates_in_the_shape_it_understands():
+    """Bare strings are silently ignored by the tag search.
+
+    `tag_search_blueprints` looks for `{"tag": ...}` dicts and skips
+    anything else, so handing it a guide predicate unconverted drops
+    every term: a lost `require` matches everything, a lost `deny`
+    matches nothing. This is the one conversion point.
+    """
+    assert to_tag_query(
+        {"require": ["shape|wall"], "deny": ["shape|base"], "accept": []}
+    ) == {
+        "require": [{"tag": "shape|wall"}],
+        "deny": [{"tag": "shape|base"}],
+    }
+    assert to_tag_query({}) == {}
