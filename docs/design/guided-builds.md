@@ -422,8 +422,14 @@ Proposed endpoints:
 
 - `GET /api/guides` — list.
 - `GET /api/guides/<key>` — the document, for rendering steps.
-- `POST /api/guides/<key>/resolve` — selections in, resolved parts plus newly available
-  steps out.
+- `GET /api/guides/<key>/resolve` — selections in, resolved parts plus newly available
+  steps out. This was proposed as a `POST` and built as a `GET`: resolving is a pure
+  function of the key and the selections, the selections are already a query string
+  because that is what the shareable URL is, and a body version of the same state only
+  costs cacheability — every repeat of an already-resolved state becomes another Lambda
+  invocation and another round of catalog queries. Nothing is written, so a `POST`
+  protects nothing. A question answered twice (`?method=a&method=b`) is refused rather
+  than resolved on one of its values.
 
 `resolve` keeps payloads small, which matters: `GET /api/blueprints` already exceeds the
 ALB's 1 MB cap for Lambda targets and 502s (`openforge_catalog-i7c`). Do not build the
