@@ -8,6 +8,7 @@ import openforge.app.routes.blueprint_documentation as blueprint_doc_routes
 import openforge.app.routes.blueprint_successor as successor_routes
 import openforge.app.routes.blueprints as blueprint_routes
 import openforge.app.routes.fixtures as fixture_routes
+import openforge.app.routes.guides as guide_routes
 import openforge.app.routes.images as image_routes
 import openforge.app.routes.sessions as session_routes
 import openforge.app.routes.tag_descriptions as tag_description_routes
@@ -272,6 +273,26 @@ def image(image_id):
         return image_routes.update_image(image_id)
     elif request.method == "DELETE":
         return image_routes.delete_image(image_id)
+
+
+####################
+### Guide routes
+####################
+
+
+@app.route("/api/guides", methods=["GET"])
+def guides():
+    return guide_routes.get_guides()
+
+
+@app.route("/api/guides/<guide_key>", methods=["GET"])
+def guide(guide_key):
+    return guide_routes.get_guide(guide_key)
+
+
+@app.route("/api/guides/<guide_key>/resolve", methods=["GET"])
+def guide_resolve(guide_key):
+    return guide_routes.resolve_guide(guide_key)
 
 
 ####################
