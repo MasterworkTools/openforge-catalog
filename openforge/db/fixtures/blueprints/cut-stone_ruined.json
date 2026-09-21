@@ -6406,9 +6406,9 @@
     },
     {
         "file_metadata": {
-            "file": "cut-stone+ruined#floor+s2w+corner,collapsing_blocks+a.2x2.openforge.stl",
+            "file": "cut-stone+ruined#floor+s2w+corner,collapsed_blocks+a.2x2.openforge.stl",
             "file_modified_at": "2025-08-31T09:59:57.510439",
-            "full_name": "tiles/cut-stone+ruined/s2w/corner/floor+collapsing_blocks/cut-stone+ruined#floor+s2w+corner,collapsing_blocks+a.2x2.openforge.stl",
+            "full_name": "tiles/cut-stone+ruined/s2w/corner/floor+collapsed_blocks/cut-stone+ruined#floor+s2w+corner,collapsed_blocks+a.2x2.openforge.stl",
             "md5": "4e4da86022d7251b69b18480066dd076",
             "size": 7883884,
             "storage_address": "https://objects.openforge.tools/models/4e4da8/4e4da86022d7251b69b18480066dd076.stl"
@@ -6520,8 +6520,8 @@
         "metadata": false,
         "tags": [
             "build|s2w",
-            "component|collapsing_blocks",
-            "component|collapsing_blocks|a",
+            "component|collapsed_blocks",
+            "component|collapsed_blocks|a",
             "connection|openforge",
             "shape|floor",
             "shape|floor|corner",
@@ -6535,9 +6535,9 @@
     },
     {
         "file_metadata": {
-            "file": "cut-stone+ruined#floor+s2w+corner,collapsing_blocks+b.2x2.openforge.stl",
+            "file": "cut-stone+ruined#floor+s2w+corner,collapsed_blocks+b.2x2.openforge.stl",
             "file_modified_at": "2025-08-31T10:04:27.760050",
-            "full_name": "tiles/cut-stone+ruined/s2w/corner/floor+collapsing_blocks/cut-stone+ruined#floor+s2w+corner,collapsing_blocks+b.2x2.openforge.stl",
+            "full_name": "tiles/cut-stone+ruined/s2w/corner/floor+collapsed_blocks/cut-stone+ruined#floor+s2w+corner,collapsed_blocks+b.2x2.openforge.stl",
             "md5": "193e3c89ffe47d5d1ea44e08bd7b6779",
             "size": 7297484,
             "storage_address": "https://objects.openforge.tools/models/193e3c/193e3c89ffe47d5d1ea44e08bd7b6779.stl"
@@ -6649,8 +6649,8 @@
         "metadata": false,
         "tags": [
             "build|s2w",
-            "component|collapsing_blocks",
-            "component|collapsing_blocks|b",
+            "component|collapsed_blocks",
+            "component|collapsed_blocks|b",
             "connection|openforge",
             "shape|floor",
             "shape|floor|corner",
@@ -6664,9 +6664,9 @@
     },
     {
         "file_metadata": {
-            "file": "cut-stone+ruined#floor+s2w+corner,collapsing_blocks+c.2x2.openforge.stl",
+            "file": "cut-stone+ruined#floor+s2w+corner,collapsed_blocks+c.2x2.openforge.stl",
             "file_modified_at": "2025-08-31T10:06:56.685022",
-            "full_name": "tiles/cut-stone+ruined/s2w/corner/floor+collapsing_blocks/cut-stone+ruined#floor+s2w+corner,collapsing_blocks+c.2x2.openforge.stl",
+            "full_name": "tiles/cut-stone+ruined/s2w/corner/floor+collapsed_blocks/cut-stone+ruined#floor+s2w+corner,collapsed_blocks+c.2x2.openforge.stl",
             "md5": "3ee5c2da6aac581cbb58dcde8bcbb6cf",
             "size": 6824484,
             "storage_address": "https://objects.openforge.tools/models/3ee5c2/3ee5c2da6aac581cbb58dcde8bcbb6cf.stl"
@@ -6778,8 +6778,8 @@
         "metadata": false,
         "tags": [
             "build|s2w",
-            "component|collapsing_blocks",
-            "component|collapsing_blocks|c",
+            "component|collapsed_blocks",
+            "component|collapsed_blocks|c",
             "connection|openforge",
             "shape|floor",
             "shape|floor|corner",
@@ -6793,9 +6793,9 @@
     },
     {
         "file_metadata": {
-            "file": "cut-stone+ruined#floor+s2w+corner,collapsing_blocks+d.2x2.openforge.stl",
+            "file": "cut-stone+ruined#floor+s2w+corner,collapsed_blocks+d.2x2.openforge.stl",
             "file_modified_at": "2025-08-31T10:09:10.120096",
-            "full_name": "tiles/cut-stone+ruined/s2w/corner/floor+collapsing_blocks/cut-stone+ruined#floor+s2w+corner,collapsing_blocks+d.2x2.openforge.stl",
+            "full_name": "tiles/cut-stone+ruined/s2w/corner/floor+collapsed_blocks/cut-stone+ruined#floor+s2w+corner,collapsed_blocks+d.2x2.openforge.stl",
             "md5": "d8a05d88c9b81843c2ca7685f7318252",
             "size": 6685184,
             "storage_address": "https://objects.openforge.tools/models/d8a05d/d8a05d88c9b81843c2ca7685f7318252.stl"
@@ -6907,8 +6907,8 @@
         "metadata": false,
         "tags": [
             "build|s2w",
-            "component|collapsing_blocks",
-            "component|collapsing_blocks|d",
+            "component|collapsed_blocks",
+            "component|collapsed_blocks|d",
             "connection|openforge",
             "shape|floor",
             "shape|floor|corner",
@@ -7561,9 +7561,9 @@
     },
     {
         "file_metadata": {
-            "file": "cut-stone+ruined#floor+s2w+wall,collapsing_blocks+a.2x2.openforge.stl",
+            "file": "cut-stone+ruined#floor+s2w+wall,collapsed_blocks+a.2x2.openforge.stl",
             "file_modified_at": "2025-04-29T17:00:09.423874",
-            "full_name": "tiles/cut-stone+ruined/s2w/wall/floor+collapsing_blocks/cut-stone+ruined#floor+s2w+wall,collapsing_blocks+a.2x2.openforge.stl",
+            "full_name": "tiles/cut-stone+ruined/s2w/wall/floor+collapsed_blocks/cut-stone+ruined#floor+s2w+wall,collapsed_blocks+a.2x2.openforge.stl",
             "md5": "37559ae88677cd3914a8d2e059c022a1",
             "size": 8704684,
             "storage_address": "https://objects.openforge.tools/models/37559a/37559ae88677cd3914a8d2e059c022a1.stl"
@@ -7675,13 +7675,12 @@
         "metadata": false,
         "tags": [
             "build|s2w",
-            "component|collapsing_blocks",
-            "component|collapsing_blocks|a",
+            "component|collapsed_blocks",
+            "component|collapsed_blocks|a",
             "connection|openforge",
             "shape|floor",
             "shape|floor|s2w",
             "shape|floor|wall",
-            "shape|wall",
             "size|depth|2",
             "size|width|2",
             "texture|cut-stone",
@@ -7691,9 +7690,9 @@
     },
     {
         "file_metadata": {
-            "file": "cut-stone+ruined#floor+s2w+wall,collapsing_blocks+b.2x2.openforge.stl",
+            "file": "cut-stone+ruined#floor+s2w+wall,collapsed_blocks+b.2x2.openforge.stl",
             "file_modified_at": "2025-04-29T17:00:25.148792",
-            "full_name": "tiles/cut-stone+ruined/s2w/wall/floor+collapsing_blocks/cut-stone+ruined#floor+s2w+wall,collapsing_blocks+b.2x2.openforge.stl",
+            "full_name": "tiles/cut-stone+ruined/s2w/wall/floor+collapsed_blocks/cut-stone+ruined#floor+s2w+wall,collapsed_blocks+b.2x2.openforge.stl",
             "md5": "cbea0b4b41e85abfdac7f28c95dc96a2",
             "size": 8250284,
             "storage_address": "https://objects.openforge.tools/models/cbea0b/cbea0b4b41e85abfdac7f28c95dc96a2.stl"
@@ -7805,13 +7804,12 @@
         "metadata": false,
         "tags": [
             "build|s2w",
-            "component|collapsing_blocks",
-            "component|collapsing_blocks|b",
+            "component|collapsed_blocks",
+            "component|collapsed_blocks|b",
             "connection|openforge",
             "shape|floor",
             "shape|floor|s2w",
             "shape|floor|wall",
-            "shape|wall",
             "size|depth|2",
             "size|width|2",
             "texture|cut-stone",
@@ -7821,9 +7819,9 @@
     },
     {
         "file_metadata": {
-            "file": "cut-stone+ruined#floor+s2w+wall,collapsing_blocks+c.2x2.openforge.stl",
+            "file": "cut-stone+ruined#floor+s2w+wall,collapsed_blocks+c.2x2.openforge.stl",
             "file_modified_at": "2025-04-29T17:00:39.832794",
-            "full_name": "tiles/cut-stone+ruined/s2w/wall/floor+collapsing_blocks/cut-stone+ruined#floor+s2w+wall,collapsing_blocks+c.2x2.openforge.stl",
+            "full_name": "tiles/cut-stone+ruined/s2w/wall/floor+collapsed_blocks/cut-stone+ruined#floor+s2w+wall,collapsed_blocks+c.2x2.openforge.stl",
             "md5": "37dc06c0eeb8d57d64356fe74522c789",
             "size": 8250884,
             "storage_address": "https://objects.openforge.tools/models/37dc06/37dc06c0eeb8d57d64356fe74522c789.stl"
@@ -7935,13 +7933,12 @@
         "metadata": false,
         "tags": [
             "build|s2w",
-            "component|collapsing_blocks",
-            "component|collapsing_blocks|c",
+            "component|collapsed_blocks",
+            "component|collapsed_blocks|c",
             "connection|openforge",
             "shape|floor",
             "shape|floor|s2w",
             "shape|floor|wall",
-            "shape|wall",
             "size|depth|2",
             "size|width|2",
             "texture|cut-stone",
@@ -7951,9 +7948,9 @@
     },
     {
         "file_metadata": {
-            "file": "cut-stone+ruined#floor+s2w+wall,collapsing_blocks+d.2x2.openforge.stl",
+            "file": "cut-stone+ruined#floor+s2w+wall,collapsed_blocks+d.2x2.openforge.stl",
             "file_modified_at": "2025-04-29T17:00:57.482795",
-            "full_name": "tiles/cut-stone+ruined/s2w/wall/floor+collapsing_blocks/cut-stone+ruined#floor+s2w+wall,collapsing_blocks+d.2x2.openforge.stl",
+            "full_name": "tiles/cut-stone+ruined/s2w/wall/floor+collapsed_blocks/cut-stone+ruined#floor+s2w+wall,collapsed_blocks+d.2x2.openforge.stl",
             "md5": "65b0f94b02bdc23775d41f9b4b99a304",
             "size": 8084084,
             "storage_address": "https://objects.openforge.tools/models/65b0f9/65b0f94b02bdc23775d41f9b4b99a304.stl"
@@ -8065,13 +8062,12 @@
         "metadata": false,
         "tags": [
             "build|s2w",
-            "component|collapsing_blocks",
-            "component|collapsing_blocks|d",
+            "component|collapsed_blocks",
+            "component|collapsed_blocks|d",
             "connection|openforge",
             "shape|floor",
             "shape|floor|s2w",
             "shape|floor|wall",
-            "shape|wall",
             "size|depth|2",
             "size|width|2",
             "texture|cut-stone",
@@ -8199,7 +8195,6 @@
             "shape|floor",
             "shape|floor|s2w",
             "shape|floor|wall",
-            "shape|wall",
             "size|depth|1",
             "size|width|1",
             "texture|cut-stone",
@@ -8327,7 +8322,6 @@
             "shape|floor",
             "shape|floor|s2w",
             "shape|floor|wall",
-            "shape|wall",
             "size|depth|1",
             "size|width|2",
             "texture|cut-stone",
@@ -8455,7 +8449,6 @@
             "shape|floor",
             "shape|floor|s2w",
             "shape|floor|wall",
-            "shape|wall",
             "size|depth|2",
             "size|width|2",
             "texture|cut-stone",
@@ -8583,7 +8576,6 @@
             "shape|floor",
             "shape|floor|s2w",
             "shape|floor|wall",
-            "shape|wall",
             "size|depth|1",
             "size|width|3",
             "texture|cut-stone",
@@ -8711,7 +8703,6 @@
             "shape|floor",
             "shape|floor|s2w",
             "shape|floor|wall",
-            "shape|wall",
             "size|depth|3",
             "size|width|3",
             "texture|cut-stone",
@@ -8839,7 +8830,6 @@
             "shape|floor",
             "shape|floor|s2w",
             "shape|floor|wall",
-            "shape|wall",
             "size|depth|1",
             "size|width|4",
             "texture|cut-stone",
@@ -8967,7 +8957,6 @@
             "shape|floor",
             "shape|floor|s2w",
             "shape|floor|wall",
-            "shape|wall",
             "size|depth|2",
             "size|width|4",
             "texture|cut-stone",
@@ -9095,7 +9084,6 @@
             "shape|floor",
             "shape|floor|s2w",
             "shape|floor|wall",
-            "shape|wall",
             "size|depth|4",
             "size|width|4",
             "texture|cut-stone",

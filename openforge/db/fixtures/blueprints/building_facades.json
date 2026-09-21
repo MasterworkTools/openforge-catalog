@@ -19520,6 +19520,43 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "base",
+                    "optional": true,
+                    "tags": {
+                        "constrain": [
+                            {
+                                "filter": "shape|floor"
+                            },
+                            {
+                                "filter": "shape|wall"
+                            },
+                            {
+                                "tag": "shape"
+                            },
+                            {
+                                "tag": "size|depth"
+                            },
+                            {
+                                "tag": "size|width"
+                            }
+                        ],
+                        "deny": [
+                            {
+                                "tag": "build|s2w"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "shape|base"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "large_brick#floor.AS.openforge.stl",
             "file_modified_at": "2021-04-19T23:20:47.189609",
@@ -19637,7 +19674,7 @@
             "connection|dual",
             "connection|openforge",
             "shape|floor",
-            "shape|wall",
+            "shape|floor|wall",
             "size|openlock|AS",
             "size|width|2",
             "texture|large_brick"
@@ -20754,7 +20791,7 @@
             "connection|dual",
             "connection|openlock",
             "shape|floor",
-            "shape|wall",
+            "shape|floor|wall",
             "size|openlock|AS",
             "size|width|2",
             "texture|large_brick"
@@ -20903,10 +20940,11 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
-            "component|wall|corbels",
+            "component|wall",
             "connection|openforge",
             "connection|side",
             "connection|side|openlock",
+            "decoration|corbels",
             "shape|wall",
             "size|openlock|A",
             "size|width|2",
@@ -21056,10 +21094,11 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
-            "component|wall|corbels",
+            "component|wall",
             "connection|openforge",
             "connection|side",
             "connection|side|openlock",
+            "decoration|corbels",
             "shape|wall",
             "size|openlock|BA",
             "size|width|1.5",
@@ -21209,10 +21248,11 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
-            "component|wall|corbels",
+            "component|wall",
             "connection|openforge",
             "connection|side",
             "connection|side|openlock",
+            "decoration|corbels",
             "shape|wall",
             "size|openlock|D",
             "size|width|3",
@@ -21362,10 +21402,11 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
-            "component|wall|corbels",
+            "component|wall",
             "connection|openforge",
             "connection|side",
             "connection|side|openlock",
+            "decoration|corbels",
             "shape|wall",
             "size|openlock|IA",
             "size|width|1",
@@ -21515,10 +21556,11 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
-            "component|wall|corbels",
+            "component|wall",
             "connection|openforge",
             "connection|side",
             "connection|side|openlock",
+            "decoration|corbels",
             "shape|wall",
             "size|openlock|Q",
             "size|width|4",
@@ -21668,11 +21710,11 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
-            "component|corbels",
             "component|wall|stone_supports",
             "connection|openforge",
             "connection|side",
             "connection|side|openlock",
+            "decoration|corbels",
             "shape|wall",
             "size|openlock|A",
             "size|width|2",
@@ -21822,11 +21864,11 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
-            "component|corbels",
             "component|wall|stone_supports",
             "connection|openforge",
             "connection|side",
             "connection|side|openlock",
+            "decoration|corbels",
             "shape|wall",
             "size|openlock|BA",
             "size|width|1.5",
@@ -21976,11 +22018,11 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
-            "component|corbels",
             "component|wall|stone_supports",
             "connection|openforge",
             "connection|side",
             "connection|side|openlock",
+            "decoration|corbels",
             "shape|wall",
             "size|openlock|D",
             "size|width|3",
@@ -22130,11 +22172,11 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
-            "component|corbels",
             "component|wall|stone_supports",
             "connection|openforge",
             "connection|side",
             "connection|side|openlock",
+            "decoration|corbels",
             "shape|wall",
             "size|openlock|IA",
             "size|width|1",
@@ -22284,11 +22326,11 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
-            "component|corbels",
             "component|wall|stone_supports",
             "connection|openforge",
             "connection|side",
             "connection|side|openlock",
+            "decoration|corbels",
             "shape|wall",
             "size|openlock|Q",
             "size|width|4",
@@ -23942,8 +23984,9 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
-            "component|wall|corbels",
+            "component|wall",
             "connection|openlock",
+            "decoration|corbels",
             "shape|wall",
             "size|openlock|A",
             "size|width|2",
@@ -24067,8 +24110,9 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
-            "component|wall|corbels",
+            "component|wall",
             "connection|openlock",
+            "decoration|corbels",
             "shape|wall",
             "size|openlock|BA",
             "size|width|1.5",
@@ -24192,8 +24236,9 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
-            "component|wall|corbels",
+            "component|wall",
             "connection|openlock",
+            "decoration|corbels",
             "shape|wall",
             "size|openlock|D",
             "size|width|3",
@@ -24317,8 +24362,9 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
-            "component|wall|corbels",
+            "component|wall",
             "connection|openlock",
+            "decoration|corbels",
             "shape|wall",
             "size|openlock|IA",
             "size|width|1",
@@ -24442,8 +24488,9 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
-            "component|wall|corbels",
+            "component|wall",
             "connection|openlock",
+            "decoration|corbels",
             "shape|wall",
             "size|openlock|Q",
             "size|width|4",
@@ -24567,9 +24614,9 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
-            "component|corbels",
             "component|wall|stone_supports",
             "connection|openlock",
+            "decoration|corbels",
             "shape|wall",
             "size|openlock|A",
             "size|width|2",
@@ -24693,9 +24740,9 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
-            "component|corbels",
             "component|wall|stone_supports",
             "connection|openlock",
+            "decoration|corbels",
             "shape|wall",
             "size|openlock|BA",
             "size|width|1.5",
@@ -24819,9 +24866,9 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
-            "component|corbels",
             "component|wall|stone_supports",
             "connection|openlock",
+            "decoration|corbels",
             "shape|wall",
             "size|openlock|D",
             "size|width|3",
@@ -24945,9 +24992,9 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
-            "component|corbels",
             "component|wall|stone_supports",
             "connection|openlock",
+            "decoration|corbels",
             "shape|wall",
             "size|openlock|IA",
             "size|width|1",
@@ -25071,9 +25118,9 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
-            "component|corbels",
             "component|wall|stone_supports",
             "connection|openlock",
+            "decoration|corbels",
             "shape|wall",
             "size|openlock|Q",
             "size|width|4",
@@ -39935,9 +39982,9 @@
             ]
         },
         "file_metadata": {
-            "file": "stone_brick#wall+ground,fireplace.A+S.openforge,side.stl",
+            "file": "stone_brick%ground#wall,fireplace.A+S.openforge,side.stl",
             "file_modified_at": "2025-04-20T13:19:50.203517",
-            "full_name": "tiles/building_facades/stone_brick/separate_wall/chimney/stone_brick#wall+ground,fireplace.A+S.openforge,side.stl",
+            "full_name": "tiles/building_facades/stone_brick/separate_wall/chimney/stone_brick%ground#wall,fireplace.A+S.openforge,side.stl",
             "md5": "41be1cb80cb36fdb5a583fc94bbc1469",
             "size": 30326584,
             "storage_address": "https://objects.openforge.tools/models/41be1c/41be1cb80cb36fdb5a583fc94bbc1469.stl"
@@ -40050,7 +40097,6 @@
         "tags": [
             "build|separate wall",
             "component|fireplace",
-            "component|wall|ground",
             "connection|openforge",
             "connection|side",
             "connection|side|openlock",
@@ -40059,15 +40105,16 @@
             "size|depth|1.5",
             "size|openlock|A+S",
             "size|width|2",
-            "texture|stone_brick"
+            "texture|stone_brick",
+            "texture|stone_brick|ground"
         ],
         "type": "model"
     },
     {
         "file_metadata": {
-            "file": "stone_brick#wall+ground,fireplace.A+S.openlock,side.stl",
+            "file": "stone_brick%ground#wall,fireplace.A+S.openlock,side.stl",
             "file_modified_at": "2025-04-20T13:19:40.363631",
-            "full_name": "tiles/building_facades/stone_brick/separate_wall/chimney/stone_brick#wall+ground,fireplace.A+S.openlock,side.stl",
+            "full_name": "tiles/building_facades/stone_brick/separate_wall/chimney/stone_brick%ground#wall,fireplace.A+S.openlock,side.stl",
             "md5": "066e3bdd35620f58ffbcf155878f9fe8",
             "size": 33481784,
             "storage_address": "https://objects.openforge.tools/models/066e3b/066e3bdd35620f58ffbcf155878f9fe8.stl"
@@ -40180,7 +40227,6 @@
         "tags": [
             "build|separate wall",
             "component|fireplace",
-            "component|wall|ground",
             "connection|openlock",
             "connection|side",
             "connection|side|openlock",
@@ -40189,7 +40235,8 @@
             "size|depth|1.5",
             "size|openlock|A+S",
             "size|width|2",
-            "texture|stone_brick"
+            "texture|stone_brick",
+            "texture|stone_brick|ground"
         ],
         "type": "model"
     },
@@ -40221,9 +40268,9 @@
             ]
         },
         "file_metadata": {
-            "file": "stone_brick#wall+ground,fireplace.D+SA.openforge,side.stl",
+            "file": "stone_brick%ground#wall,fireplace.D+SA.openforge,side.stl",
             "file_modified_at": "2020-10-25T17:41:45.399769",
-            "full_name": "tiles/building_facades/stone_brick/separate_wall/chimney/stone_brick#wall+ground,fireplace.D+SA.openforge,side.stl",
+            "full_name": "tiles/building_facades/stone_brick/separate_wall/chimney/stone_brick%ground#wall,fireplace.D+SA.openforge,side.stl",
             "md5": "ec89cf6f9ed20438749305c944d74f50",
             "size": 58401184,
             "storage_address": "https://objects.openforge.tools/models/ec89cf/ec89cf6f9ed20438749305c944d74f50.stl"
@@ -40336,7 +40383,6 @@
         "tags": [
             "build|separate wall",
             "component|fireplace",
-            "component|wall|ground",
             "connection|openforge",
             "connection|side",
             "connection|side|openlock",
@@ -40345,15 +40391,16 @@
             "size|depth|1.5",
             "size|openlock|D+SA",
             "size|width|3",
-            "texture|stone_brick"
+            "texture|stone_brick",
+            "texture|stone_brick|ground"
         ],
         "type": "model"
     },
     {
         "file_metadata": {
-            "file": "stone_brick#wall+ground,fireplace.D+SA.openlock,side.stl",
+            "file": "stone_brick%ground#wall,fireplace.D+SA.openlock,side.stl",
             "file_modified_at": "2020-10-26T11:33:03.505754",
-            "full_name": "tiles/building_facades/stone_brick/separate_wall/chimney/stone_brick#wall+ground,fireplace.D+SA.openlock,side.stl",
+            "full_name": "tiles/building_facades/stone_brick/separate_wall/chimney/stone_brick%ground#wall,fireplace.D+SA.openlock,side.stl",
             "md5": "84a1cd083c56523e4edf6cfb24a27352",
             "size": 71342684,
             "storage_address": "https://objects.openforge.tools/models/84a1cd/84a1cd083c56523e4edf6cfb24a27352.stl"
@@ -40466,7 +40513,6 @@
         "tags": [
             "build|separate wall",
             "component|fireplace",
-            "component|wall|ground",
             "connection|openlock",
             "connection|side",
             "connection|side|openlock",
@@ -40475,7 +40521,8 @@
             "size|depth|1.5",
             "size|openlock|D+SA",
             "size|width|3",
-            "texture|stone_brick"
+            "texture|stone_brick",
+            "texture|stone_brick|ground"
         ],
         "type": "model"
     },
@@ -40507,9 +40554,9 @@
             ]
         },
         "file_metadata": {
-            "file": "stone_brick#wall+upper,chimney.A.openforge,side.stl",
+            "file": "stone_brick%upper#wall,chimney.A.openforge,side.stl",
             "file_modified_at": "2020-10-27T12:56:02.823281",
-            "full_name": "tiles/building_facades/stone_brick/separate_wall/chimney/stone_brick#wall+upper,chimney.A.openforge,side.stl",
+            "full_name": "tiles/building_facades/stone_brick/separate_wall/chimney/stone_brick%upper#wall,chimney.A.openforge,side.stl",
             "md5": "e32598d668e4729d2417cc9297f3b0f8",
             "size": 26088984,
             "storage_address": "https://objects.openforge.tools/models/e32598/e32598d668e4729d2417cc9297f3b0f8.stl"
@@ -40622,22 +40669,22 @@
         "tags": [
             "build|separate wall",
             "component|chimney",
-            "component|wall|upper",
             "connection|openforge",
             "connection|side",
             "connection|side|openlock",
             "shape|wall",
             "size|openlock|A",
             "size|width|2",
-            "texture|stone_brick"
+            "texture|stone_brick",
+            "texture|stone_brick|upper"
         ],
         "type": "model"
     },
     {
         "file_metadata": {
-            "file": "stone_brick#wall+upper,chimney.A.openlock,side.stl",
+            "file": "stone_brick%upper#wall,chimney.A.openlock,side.stl",
             "file_modified_at": "2020-10-27T12:56:14.848471",
-            "full_name": "tiles/building_facades/stone_brick/separate_wall/chimney/stone_brick#wall+upper,chimney.A.openlock,side.stl",
+            "full_name": "tiles/building_facades/stone_brick/separate_wall/chimney/stone_brick%upper#wall,chimney.A.openlock,side.stl",
             "md5": "61612fb0c340f489893658424a13a566",
             "size": 27935984,
             "storage_address": "https://objects.openforge.tools/models/61612f/61612fb0c340f489893658424a13a566.stl"
@@ -40750,14 +40797,14 @@
         "tags": [
             "build|separate wall",
             "component|chimney",
-            "component|wall|upper",
             "connection|openlock",
             "connection|side",
             "connection|side|openlock",
             "shape|wall",
             "size|openlock|A",
             "size|width|2",
-            "texture|stone_brick"
+            "texture|stone_brick",
+            "texture|stone_brick|upper"
         ],
         "type": "model"
     },
@@ -40789,9 +40836,9 @@
             ]
         },
         "file_metadata": {
-            "file": "stone_brick#wall+upper,chimney.D.openforge,side.stl",
+            "file": "stone_brick%upper#wall,chimney.D.openforge,side.stl",
             "file_modified_at": "2025-04-21T14:21:07.191199",
-            "full_name": "tiles/building_facades/stone_brick/separate_wall/chimney/stone_brick#wall+upper,chimney.D.openforge,side.stl",
+            "full_name": "tiles/building_facades/stone_brick/separate_wall/chimney/stone_brick%upper#wall,chimney.D.openforge,side.stl",
             "md5": "531935ba708468da5689533b48a325c8",
             "size": 42751984,
             "storage_address": "https://objects.openforge.tools/models/531935/531935ba708468da5689533b48a325c8.stl"
@@ -40904,22 +40951,22 @@
         "tags": [
             "build|separate wall",
             "component|chimney",
-            "component|wall|upper",
             "connection|openforge",
             "connection|side",
             "connection|side|openlock",
             "shape|wall",
             "size|openlock|D",
             "size|width|3",
-            "texture|stone_brick"
+            "texture|stone_brick",
+            "texture|stone_brick|upper"
         ],
         "type": "model"
     },
     {
         "file_metadata": {
-            "file": "stone_brick#wall+upper,chimney.D.openlock,side.stl",
+            "file": "stone_brick%upper#wall,chimney.D.openlock,side.stl",
             "file_modified_at": "2025-04-21T14:14:30.992487",
-            "full_name": "tiles/building_facades/stone_brick/separate_wall/chimney/stone_brick#wall+upper,chimney.D.openlock,side.stl",
+            "full_name": "tiles/building_facades/stone_brick/separate_wall/chimney/stone_brick%upper#wall,chimney.D.openlock,side.stl",
             "md5": "3c02afef0038ca141745580b43bd75b1",
             "size": 47452684,
             "storage_address": "https://objects.openforge.tools/models/3c02af/3c02afef0038ca141745580b43bd75b1.stl"
@@ -41032,14 +41079,14 @@
         "tags": [
             "build|separate wall",
             "component|chimney",
-            "component|wall|upper",
             "connection|openlock",
             "connection|side",
             "connection|side|openlock",
             "shape|wall",
             "size|openlock|D",
             "size|width|3",
-            "texture|stone_brick"
+            "texture|stone_brick",
+            "texture|stone_brick|upper"
         ],
         "type": "model"
     },
@@ -41071,9 +41118,9 @@
             ]
         },
         "file_metadata": {
-            "file": "stone_brick#door+ground,corbels.A.openforge,side.stl",
+            "file": "stone_brick%ground#door,corbels.A.openforge,side.stl",
             "file_modified_at": "2020-10-27T12:53:34.566912",
-            "full_name": "tiles/building_facades/stone_brick/separate_wall/door/openforge/stone_brick#door+ground,corbels.A.openforge,side.stl",
+            "full_name": "tiles/building_facades/stone_brick/separate_wall/door/openforge/stone_brick%ground#door,corbels.A.openforge,side.stl",
             "md5": "192b8d6c62d3365aec7b1eea245342f7",
             "size": 30251684,
             "storage_address": "https://objects.openforge.tools/models/192b8d/192b8d6c62d3365aec7b1eea245342f7.stl"
@@ -41185,16 +41232,16 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
-            "component|corbels",
             "component|door",
-            "component|door|ground",
             "connection|openforge",
             "connection|side",
             "connection|side|openlock",
+            "decoration|corbels",
             "shape|wall",
             "size|openlock|A",
             "size|width|2",
-            "texture|stone_brick"
+            "texture|stone_brick",
+            "texture|stone_brick|ground"
         ],
         "type": "model"
     },
@@ -41226,165 +41273,9 @@
             ]
         },
         "file_metadata": {
-            "file": "stone_brick#door+ground,timber_a,.BA.openforge,side.stl",
-            "file_modified_at": "2025-04-20T13:24:51.631034",
-            "full_name": "tiles/building_facades/stone_brick/separate_wall/door/openforge/stone_brick#door+ground,timber_a,.BA.openforge,side.stl",
-            "md5": "dfce1ecd51d5458899626613159eb88c",
-            "size": 23661584,
-            "storage_address": "https://objects.openforge.tools/models/dfce1e/dfce1ecd51d5458899626613159eb88c.stl"
-        },
-        "images": [
-            {
-                "image_name": "thumbnail",
-                "image_url": "https://objects.openforge.tools/sprites/dfce1e/dfce1ecd51d5458899626613159eb88c.png",
-                "sprite_metadata": {
-                    "angles": [
-                        {
-                            "camera_pos": [
-                                -4,
-                                0,
-                                2
-                            ],
-                            "index": 0,
-                            "name": "front"
-                        },
-                        {
-                            "camera_pos": [
-                                -3,
-                                2,
-                                3
-                            ],
-                            "index": 1,
-                            "name": "front-right"
-                        },
-                        {
-                            "camera_pos": [
-                                0,
-                                2,
-                                4
-                            ],
-                            "index": 2,
-                            "name": "right"
-                        },
-                        {
-                            "camera_pos": [
-                                2,
-                                3,
-                                3
-                            ],
-                            "index": 3,
-                            "name": "back-right"
-                        },
-                        {
-                            "camera_pos": [
-                                0,
-                                2,
-                                4
-                            ],
-                            "index": 4,
-                            "name": "back"
-                        },
-                        {
-                            "camera_pos": [
-                                -3,
-                                2,
-                                3
-                            ],
-                            "index": 5,
-                            "name": "back-left"
-                        },
-                        {
-                            "camera_pos": [
-                                -4,
-                                0,
-                                2
-                            ],
-                            "index": 6,
-                            "name": "left"
-                        },
-                        {
-                            "camera_pos": [
-                                -3,
-                                -3,
-                                2
-                            ],
-                            "index": 7,
-                            "name": "front-left"
-                        },
-                        {
-                            "camera_pos": [
-                                -2,
-                                0,
-                                5
-                            ],
-                            "index": 8,
-                            "name": "top"
-                        },
-                        {
-                            "camera_pos": [
-                                -2,
-                                -3,
-                                0
-                            ],
-                            "index": 9,
-                            "name": "bottom"
-                        }
-                    ],
-                    "default_angle": 0,
-                    "grid_cols": 5,
-                    "grid_rows": 2,
-                    "tile_size": 512
-                }
-            }
-        ],
-        "metadata": false,
-        "tags": [
-            "build|separate wall",
-            "component|",
-            "component|door",
-            "component|door|ground",
-            "component|timber_a",
-            "connection|openforge",
-            "connection|side",
-            "connection|side|openlock",
-            "shape|wall",
-            "size|openlock|BA",
-            "size|width|1.5",
-            "texture|stone_brick"
-        ],
-        "type": "model"
-    },
-    {
-        "config": {
-            "parts": [
-                {
-                    "name": "base",
-                    "optional": true,
-                    "tags": {
-                        "constrain": [
-                            {
-                                "tag": "shape"
-                            },
-                            {
-                                "tag": "size|width"
-                            },
-                            {
-                                "tag": "texture"
-                            }
-                        ],
-                        "require": [
-                            {
-                                "tag": "shape|base"
-                            }
-                        ]
-                    }
-                }
-            ]
-        },
-        "file_metadata": {
-            "file": "stone_brick#door+ground,timber_a,corbels.BA.openforge,side.stl",
+            "file": "stone_brick%ground#door,timber_a,corbels.BA.openforge,side.stl",
             "file_modified_at": "2025-04-20T13:24:47.467822",
-            "full_name": "tiles/building_facades/stone_brick/separate_wall/door/openforge/stone_brick#door+ground,timber_a,corbels.BA.openforge,side.stl",
+            "full_name": "tiles/building_facades/stone_brick/separate_wall/door/openforge/stone_brick%ground#door,timber_a,corbels.BA.openforge,side.stl",
             "md5": "a8f5813217959ad65149c6fd619479af",
             "size": 24623584,
             "storage_address": "https://objects.openforge.tools/models/a8f581/a8f5813217959ad65149c6fd619479af.stl"
@@ -41496,17 +41387,17 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
-            "component|corbels",
             "component|door",
-            "component|door|ground",
-            "component|timber_a",
             "connection|openforge",
             "connection|side",
             "connection|side|openlock",
+            "decoration|corbels",
+            "decoration|timber|a",
             "shape|wall",
             "size|openlock|BA",
             "size|width|1.5",
-            "texture|stone_brick"
+            "texture|stone_brick",
+            "texture|stone_brick|ground"
         ],
         "type": "model"
     },
@@ -41538,9 +41429,164 @@
             ]
         },
         "file_metadata": {
-            "file": "stone_brick#door+ground.A.openforge,side.stl",
+            "file": "stone_brick%ground#door,timber_a.BA.openforge,side.stl",
+            "file_modified_at": "2025-04-20T13:24:51.631034",
+            "full_name": "tiles/building_facades/stone_brick/separate_wall/door/openforge/stone_brick%ground#door,timber_a.BA.openforge,side.stl",
+            "md5": "dfce1ecd51d5458899626613159eb88c",
+            "size": 23661584,
+            "storage_address": "https://objects.openforge.tools/models/dfce1e/dfce1ecd51d5458899626613159eb88c.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/dfce1e/dfce1ecd51d5458899626613159eb88c.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "build|separate wall",
+            "component|door",
+            "connection|openforge",
+            "connection|side",
+            "connection|side|openlock",
+            "decoration|timber|a",
+            "shape|wall",
+            "size|openlock|BA",
+            "size|width|1.5",
+            "texture|stone_brick",
+            "texture|stone_brick|ground"
+        ],
+        "type": "model"
+    },
+    {
+        "config": {
+            "parts": [
+                {
+                    "name": "base",
+                    "optional": true,
+                    "tags": {
+                        "constrain": [
+                            {
+                                "tag": "shape"
+                            },
+                            {
+                                "tag": "size|width"
+                            },
+                            {
+                                "tag": "texture"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "shape|base"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        "file_metadata": {
+            "file": "stone_brick%ground#door.A.openforge,side.stl",
             "file_modified_at": "2020-10-27T12:54:22.872193",
-            "full_name": "tiles/building_facades/stone_brick/separate_wall/door/openforge/stone_brick#door+ground.A.openforge,side.stl",
+            "full_name": "tiles/building_facades/stone_brick/separate_wall/door/openforge/stone_brick%ground#door.A.openforge,side.stl",
             "md5": "3fdf206405b865e7da3f383dca51fec7",
             "size": 28420584,
             "storage_address": "https://objects.openforge.tools/models/3fdf20/3fdf206405b865e7da3f383dca51fec7.stl"
@@ -41653,22 +41699,22 @@
         "tags": [
             "build|separate wall",
             "component|door",
-            "component|door|ground",
             "connection|openforge",
             "connection|side",
             "connection|side|openlock",
             "shape|wall",
             "size|openlock|A",
             "size|width|2",
-            "texture|stone_brick"
+            "texture|stone_brick",
+            "texture|stone_brick|ground"
         ],
         "type": "model"
     },
     {
         "file_metadata": {
-            "file": "stone_brick#door+ground,corbels.A.openlock,side.stl",
+            "file": "stone_brick%ground#door,corbels.A.openlock,side.stl",
             "file_modified_at": "2020-10-27T12:53:51.172440",
-            "full_name": "tiles/building_facades/stone_brick/separate_wall/door/openlock/stone_brick#door+ground,corbels.A.openlock,side.stl",
+            "full_name": "tiles/building_facades/stone_brick/separate_wall/door/openlock/stone_brick%ground#door,corbels.A.openlock,side.stl",
             "md5": "afa33300cedcb5d0250c595d30c969bc",
             "size": 32839784,
             "storage_address": "https://objects.openforge.tools/models/afa333/afa33300cedcb5d0250c595d30c969bc.stl"
@@ -41780,154 +41826,24 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
-            "component|corbels",
             "component|door",
-            "component|door|ground",
             "connection|openlock",
             "connection|side",
             "connection|side|openlock",
+            "decoration|corbels",
             "shape|wall",
             "size|openlock|A",
             "size|width|2",
-            "texture|stone_brick"
+            "texture|stone_brick",
+            "texture|stone_brick|ground"
         ],
         "type": "model"
     },
     {
         "file_metadata": {
-            "file": "stone_brick#door+ground,timber_a,.BA.openlock,side.stl",
-            "file_modified_at": "2025-04-20T19:38:07.211329",
-            "full_name": "tiles/building_facades/stone_brick/separate_wall/door/openlock/stone_brick#door+ground,timber_a,.BA.openlock,side.stl",
-            "md5": "994399e6918f81f6a4f51828c1e12627",
-            "size": 25169884,
-            "storage_address": "https://objects.openforge.tools/models/994399/994399e6918f81f6a4f51828c1e12627.stl"
-        },
-        "images": [
-            {
-                "image_name": "thumbnail",
-                "image_url": "https://objects.openforge.tools/sprites/994399/994399e6918f81f6a4f51828c1e12627.png",
-                "sprite_metadata": {
-                    "angles": [
-                        {
-                            "camera_pos": [
-                                -4,
-                                0,
-                                2
-                            ],
-                            "index": 0,
-                            "name": "front"
-                        },
-                        {
-                            "camera_pos": [
-                                -3,
-                                2,
-                                3
-                            ],
-                            "index": 1,
-                            "name": "front-right"
-                        },
-                        {
-                            "camera_pos": [
-                                0,
-                                2,
-                                4
-                            ],
-                            "index": 2,
-                            "name": "right"
-                        },
-                        {
-                            "camera_pos": [
-                                2,
-                                3,
-                                3
-                            ],
-                            "index": 3,
-                            "name": "back-right"
-                        },
-                        {
-                            "camera_pos": [
-                                0,
-                                2,
-                                4
-                            ],
-                            "index": 4,
-                            "name": "back"
-                        },
-                        {
-                            "camera_pos": [
-                                -3,
-                                2,
-                                3
-                            ],
-                            "index": 5,
-                            "name": "back-left"
-                        },
-                        {
-                            "camera_pos": [
-                                -4,
-                                0,
-                                2
-                            ],
-                            "index": 6,
-                            "name": "left"
-                        },
-                        {
-                            "camera_pos": [
-                                -3,
-                                -3,
-                                2
-                            ],
-                            "index": 7,
-                            "name": "front-left"
-                        },
-                        {
-                            "camera_pos": [
-                                -2,
-                                0,
-                                5
-                            ],
-                            "index": 8,
-                            "name": "top"
-                        },
-                        {
-                            "camera_pos": [
-                                -2,
-                                -3,
-                                0
-                            ],
-                            "index": 9,
-                            "name": "bottom"
-                        }
-                    ],
-                    "default_angle": 0,
-                    "grid_cols": 5,
-                    "grid_rows": 2,
-                    "tile_size": 512
-                }
-            }
-        ],
-        "metadata": false,
-        "tags": [
-            "build|separate wall",
-            "component|",
-            "component|door",
-            "component|door|ground",
-            "component|timber_a",
-            "connection|openlock",
-            "connection|side",
-            "connection|side|openlock",
-            "shape|wall",
-            "size|openlock|BA",
-            "size|width|1.5",
-            "texture|stone_brick"
-        ],
-        "type": "model"
-    },
-    {
-        "file_metadata": {
-            "file": "stone_brick#door+ground,timber_a,corbels.BA.openlock,side.stl",
+            "file": "stone_brick%ground#door,timber_a,corbels.BA.openlock,side.stl",
             "file_modified_at": "2025-04-20T13:24:58.641812",
-            "full_name": "tiles/building_facades/stone_brick/separate_wall/door/openlock/stone_brick#door+ground,timber_a,corbels.BA.openlock,side.stl",
+            "full_name": "tiles/building_facades/stone_brick/separate_wall/door/openlock/stone_brick%ground#door,timber_a,corbels.BA.openlock,side.stl",
             "md5": "b2b9f44bb6183d6332452547ef1c793d",
             "size": 26203484,
             "storage_address": "https://objects.openforge.tools/models/b2b9f4/b2b9f44bb6183d6332452547ef1c793d.stl"
@@ -42039,25 +41955,154 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
-            "component|corbels",
             "component|door",
-            "component|door|ground",
-            "component|timber_a",
             "connection|openlock",
             "connection|side",
             "connection|side|openlock",
+            "decoration|corbels",
+            "decoration|timber|a",
             "shape|wall",
             "size|openlock|BA",
             "size|width|1.5",
-            "texture|stone_brick"
+            "texture|stone_brick",
+            "texture|stone_brick|ground"
         ],
         "type": "model"
     },
     {
         "file_metadata": {
-            "file": "stone_brick#door+ground.A.openlock,side.stl",
+            "file": "stone_brick%ground#door,timber_a.BA.openlock,side.stl",
+            "file_modified_at": "2025-04-20T19:38:07.211329",
+            "full_name": "tiles/building_facades/stone_brick/separate_wall/door/openlock/stone_brick%ground#door,timber_a.BA.openlock,side.stl",
+            "md5": "994399e6918f81f6a4f51828c1e12627",
+            "size": 25169884,
+            "storage_address": "https://objects.openforge.tools/models/994399/994399e6918f81f6a4f51828c1e12627.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/994399/994399e6918f81f6a4f51828c1e12627.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "build|separate wall",
+            "component|door",
+            "connection|openlock",
+            "connection|side",
+            "connection|side|openlock",
+            "decoration|timber|a",
+            "shape|wall",
+            "size|openlock|BA",
+            "size|width|1.5",
+            "texture|stone_brick",
+            "texture|stone_brick|ground"
+        ],
+        "type": "model"
+    },
+    {
+        "file_metadata": {
+            "file": "stone_brick%ground#door.A.openlock,side.stl",
             "file_modified_at": "2020-10-27T12:54:37.049011",
-            "full_name": "tiles/building_facades/stone_brick/separate_wall/door/openlock/stone_brick#door+ground.A.openlock,side.stl",
+            "full_name": "tiles/building_facades/stone_brick/separate_wall/door/openlock/stone_brick%ground#door.A.openlock,side.stl",
             "md5": "f07fd88ecf10f2529650dbc1239394ea",
             "size": 30943284,
             "storage_address": "https://objects.openforge.tools/models/f07fd8/f07fd88ecf10f2529650dbc1239394ea.stl"
@@ -42170,14 +42215,14 @@
         "tags": [
             "build|separate wall",
             "component|door",
-            "component|door|ground",
             "connection|openlock",
             "connection|side",
             "connection|side|openlock",
             "shape|wall",
             "size|openlock|A",
             "size|width|2",
-            "texture|stone_brick"
+            "texture|stone_brick",
+            "texture|stone_brick|ground"
         ],
         "type": "model"
     },
@@ -42209,9 +42254,9 @@
             ]
         },
         "file_metadata": {
-            "file": "stone_brick#wall+ground,corbels,timber_a.A.openforge,side.stl",
+            "file": "stone_brick%ground#wall,corbels,timber_a.A.openforge,side.stl",
             "file_modified_at": "2020-10-27T13:21:03.838746",
-            "full_name": "tiles/building_facades/stone_brick/separate_wall/wall/openforge/stone_brick#wall+ground,corbels,timber_a.A.openforge,side.stl",
+            "full_name": "tiles/building_facades/stone_brick/separate_wall/wall/openforge/stone_brick%ground#wall,corbels,timber_a.A.openforge,side.stl",
             "md5": "608f1735c6e8ee6d5ded0e9da37da324",
             "size": 31249484,
             "storage_address": "https://objects.openforge.tools/models/608f17/608f1735c6e8ee6d5ded0e9da37da324.stl"
@@ -42323,16 +42368,17 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
-            "component|corbels",
-            "component|timber_a",
-            "component|wall|ground",
+            "component|wall",
             "connection|openforge",
             "connection|side",
             "connection|side|openlock",
+            "decoration|corbels",
+            "decoration|timber|a",
             "shape|wall",
             "size|openlock|A",
             "size|width|2",
-            "texture|stone_brick"
+            "texture|stone_brick",
+            "texture|stone_brick|ground"
         ],
         "type": "model"
     },
@@ -42364,9 +42410,9 @@
             ]
         },
         "file_metadata": {
-            "file": "stone_brick#wall+ground,corbels,timber_a.D.openforge,side.stl",
+            "file": "stone_brick%ground#wall,corbels,timber_a.D.openforge,side.stl",
             "file_modified_at": "2020-10-27T13:21:57.384287",
-            "full_name": "tiles/building_facades/stone_brick/separate_wall/wall/openforge/stone_brick#wall+ground,corbels,timber_a.D.openforge,side.stl",
+            "full_name": "tiles/building_facades/stone_brick/separate_wall/wall/openforge/stone_brick%ground#wall,corbels,timber_a.D.openforge,side.stl",
             "md5": "db9613cca87e555707edcda98ad69691",
             "size": 40051084,
             "storage_address": "https://objects.openforge.tools/models/db9613/db9613cca87e555707edcda98ad69691.stl"
@@ -42478,16 +42524,17 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
-            "component|corbels",
-            "component|timber_a",
-            "component|wall|ground",
+            "component|wall",
             "connection|openforge",
             "connection|side",
             "connection|side|openlock",
+            "decoration|corbels",
+            "decoration|timber|a",
             "shape|wall",
             "size|openlock|D",
             "size|width|3",
-            "texture|stone_brick"
+            "texture|stone_brick",
+            "texture|stone_brick|ground"
         ],
         "type": "model"
     },
@@ -42519,9 +42566,9 @@
             ]
         },
         "file_metadata": {
-            "file": "stone_brick#wall+ground,corbels,timber_b.IA.openforge,side.stl",
+            "file": "stone_brick%ground#wall,corbels,timber_b.IA.openforge,side.stl",
             "file_modified_at": "2020-10-27T13:28:39.065952",
-            "full_name": "tiles/building_facades/stone_brick/separate_wall/wall/openforge/stone_brick#wall+ground,corbels,timber_b.IA.openforge,side.stl",
+            "full_name": "tiles/building_facades/stone_brick/separate_wall/wall/openforge/stone_brick%ground#wall,corbels,timber_b.IA.openforge,side.stl",
             "md5": "90243d6826f15102e580c2d86bc1a08f",
             "size": 16731484,
             "storage_address": "https://objects.openforge.tools/models/90243d/90243d6826f15102e580c2d86bc1a08f.stl"
@@ -42633,16 +42680,17 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
-            "component|corbels",
-            "component|timber_b",
-            "component|wall|ground",
+            "component|wall",
             "connection|openforge",
             "connection|side",
             "connection|side|openlock",
+            "decoration|corbels",
+            "decoration|timber|b",
             "shape|wall",
             "size|openlock|IA",
             "size|width|1",
-            "texture|stone_brick"
+            "texture|stone_brick",
+            "texture|stone_brick|ground"
         ],
         "type": "model"
     },
@@ -42674,9 +42722,9 @@
             ]
         },
         "file_metadata": {
-            "file": "stone_brick#wall+ground,timber_a,corbels.BA.openforge,side.stl",
+            "file": "stone_brick%ground#wall,timber_a,corbels.BA.openforge,side.stl",
             "file_modified_at": "2025-04-20T13:25:34.529496",
-            "full_name": "tiles/building_facades/stone_brick/separate_wall/wall/openforge/stone_brick#wall+ground,timber_a,corbels.BA.openforge,side.stl",
+            "full_name": "tiles/building_facades/stone_brick/separate_wall/wall/openforge/stone_brick%ground#wall,timber_a,corbels.BA.openforge,side.stl",
             "md5": "266c61d3ba7274c3b79e8e3fca4378ec",
             "size": 21062584,
             "storage_address": "https://objects.openforge.tools/models/266c61/266c61d3ba7274c3b79e8e3fca4378ec.stl"
@@ -42788,16 +42836,17 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
-            "component|corbels",
-            "component|timber_a",
-            "component|wall|ground",
+            "component|wall",
             "connection|openforge",
             "connection|side",
             "connection|side|openlock",
+            "decoration|corbels",
+            "decoration|timber|a",
             "shape|wall",
             "size|openlock|BA",
             "size|width|1.5",
-            "texture|stone_brick"
+            "texture|stone_brick",
+            "texture|stone_brick|ground"
         ],
         "type": "model"
     },
@@ -42829,9 +42878,9 @@
             ]
         },
         "file_metadata": {
-            "file": "stone_brick#wall+ground,timber_a,corbels.IA.openforge,side.stl",
+            "file": "stone_brick%ground#wall,timber_a,corbels.IA.openforge,side.stl",
             "file_modified_at": "2020-10-27T13:29:00.716859",
-            "full_name": "tiles/building_facades/stone_brick/separate_wall/wall/openforge/stone_brick#wall+ground,timber_a,corbels.IA.openforge,side.stl",
+            "full_name": "tiles/building_facades/stone_brick/separate_wall/wall/openforge/stone_brick%ground#wall,timber_a,corbels.IA.openforge,side.stl",
             "md5": "3c1ca78e8a47744bb64485ab8ab2aab0",
             "size": 16386784,
             "storage_address": "https://objects.openforge.tools/models/3c1ca7/3c1ca78e8a47744bb64485ab8ab2aab0.stl"
@@ -42943,16 +42992,17 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
-            "component|corbels",
-            "component|timber_a",
-            "component|wall|ground",
+            "component|wall",
             "connection|openforge",
             "connection|side",
             "connection|side|openlock",
+            "decoration|corbels",
+            "decoration|timber|a",
             "shape|wall",
             "size|openlock|IA",
             "size|width|1",
-            "texture|stone_brick"
+            "texture|stone_brick",
+            "texture|stone_brick|ground"
         ],
         "type": "model"
     },
@@ -42984,9 +43034,9 @@
             ]
         },
         "file_metadata": {
-            "file": "stone_brick#wall+ground,timber_a.A.openforge,side.stl",
+            "file": "stone_brick%ground#wall,timber_a.A.openforge,side.stl",
             "file_modified_at": "2020-10-27T13:21:21.913824",
-            "full_name": "tiles/building_facades/stone_brick/separate_wall/wall/openforge/stone_brick#wall+ground,timber_a.A.openforge,side.stl",
+            "full_name": "tiles/building_facades/stone_brick/separate_wall/wall/openforge/stone_brick%ground#wall,timber_a.A.openforge,side.stl",
             "md5": "c52573c7507b44e85e6de08e766d05fd",
             "size": 29603584,
             "storage_address": "https://objects.openforge.tools/models/c52573/c52573c7507b44e85e6de08e766d05fd.stl"
@@ -43098,15 +43148,16 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
-            "component|timber_a",
-            "component|wall|ground",
+            "component|wall",
             "connection|openforge",
             "connection|side",
             "connection|side|openlock",
+            "decoration|timber|a",
             "shape|wall",
             "size|openlock|A",
             "size|width|2",
-            "texture|stone_brick"
+            "texture|stone_brick",
+            "texture|stone_brick|ground"
         ],
         "type": "model"
     },
@@ -43138,9 +43189,9 @@
             ]
         },
         "file_metadata": {
-            "file": "stone_brick#wall+ground,timber_a.BA.openforge,side.stl",
+            "file": "stone_brick%ground#wall,timber_a.BA.openforge,side.stl",
             "file_modified_at": "2020-10-27T19:42:23.457430",
-            "full_name": "tiles/building_facades/stone_brick/separate_wall/wall/openforge/stone_brick#wall+ground,timber_a.BA.openforge,side.stl",
+            "full_name": "tiles/building_facades/stone_brick/separate_wall/wall/openforge/stone_brick%ground#wall,timber_a.BA.openforge,side.stl",
             "md5": "22c505d8ccc5c390414468bdce904b51",
             "size": 20148784,
             "storage_address": "https://objects.openforge.tools/models/22c505/22c505d8ccc5c390414468bdce904b51.stl"
@@ -43252,15 +43303,16 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
-            "component|timber_a",
-            "component|wall|ground",
+            "component|wall",
             "connection|openforge",
             "connection|side",
             "connection|side|openlock",
+            "decoration|timber|a",
             "shape|wall",
             "size|openlock|BA",
             "size|width|1.5",
-            "texture|stone_brick"
+            "texture|stone_brick",
+            "texture|stone_brick|ground"
         ],
         "type": "model"
     },
@@ -43292,9 +43344,9 @@
             ]
         },
         "file_metadata": {
-            "file": "stone_brick#wall+ground,timber_a.D.openforge,side.stl",
+            "file": "stone_brick%ground#wall,timber_a.D.openforge,side.stl",
             "file_modified_at": "2020-10-27T13:22:04.403278",
-            "full_name": "tiles/building_facades/stone_brick/separate_wall/wall/openforge/stone_brick#wall+ground,timber_a.D.openforge,side.stl",
+            "full_name": "tiles/building_facades/stone_brick/separate_wall/wall/openforge/stone_brick%ground#wall,timber_a.D.openforge,side.stl",
             "md5": "1562364af06531295e0a3c53df766027",
             "size": 37616084,
             "storage_address": "https://objects.openforge.tools/models/156236/1562364af06531295e0a3c53df766027.stl"
@@ -43406,15 +43458,16 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
-            "component|timber_a",
-            "component|wall|ground",
+            "component|wall",
             "connection|openforge",
             "connection|side",
             "connection|side|openlock",
+            "decoration|timber|a",
             "shape|wall",
             "size|openlock|D",
             "size|width|3",
-            "texture|stone_brick"
+            "texture|stone_brick",
+            "texture|stone_brick|ground"
         ],
         "type": "model"
     },
@@ -43446,9 +43499,9 @@
             ]
         },
         "file_metadata": {
-            "file": "stone_brick#wall+ground,timber_c.IA.openforge,side.stl",
+            "file": "stone_brick%ground#wall,timber_c.IA.openforge,side.stl",
             "file_modified_at": "2020-10-27T13:28:45.830047",
-            "full_name": "tiles/building_facades/stone_brick/separate_wall/wall/openforge/stone_brick#wall+ground,timber_c.IA.openforge,side.stl",
+            "full_name": "tiles/building_facades/stone_brick/separate_wall/wall/openforge/stone_brick%ground#wall,timber_c.IA.openforge,side.stl",
             "md5": "cccaad20509dbb952e7ed2e8e91ce05a",
             "size": 14731884,
             "storage_address": "https://objects.openforge.tools/models/cccaad/cccaad20509dbb952e7ed2e8e91ce05a.stl"
@@ -43560,15 +43613,16 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
-            "component|timber_c",
-            "component|wall|ground",
+            "component|wall",
             "connection|openforge",
             "connection|side",
             "connection|side|openlock",
+            "decoration|timber|c",
             "shape|wall",
             "size|openlock|IA",
             "size|width|1",
-            "texture|stone_brick"
+            "texture|stone_brick",
+            "texture|stone_brick|ground"
         ],
         "type": "model"
     },
@@ -43600,9 +43654,9 @@
             ]
         },
         "file_metadata": {
-            "file": "stone_brick#wall+ground,timber_d.IA.openforge,side.stl",
+            "file": "stone_brick%ground#wall,timber_d.IA.openforge,side.stl",
             "file_modified_at": "2020-10-27T13:28:51.960285",
-            "full_name": "tiles/building_facades/stone_brick/separate_wall/wall/openforge/stone_brick#wall+ground,timber_d.IA.openforge,side.stl",
+            "full_name": "tiles/building_facades/stone_brick/separate_wall/wall/openforge/stone_brick%ground#wall,timber_d.IA.openforge,side.stl",
             "md5": "d174d524f49f0f384c419c5787f0c80f",
             "size": 15178484,
             "storage_address": "https://objects.openforge.tools/models/d174d5/d174d524f49f0f384c419c5787f0c80f.stl"
@@ -43714,15 +43768,16 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
-            "component|timber_d",
-            "component|wall|ground",
+            "component|wall",
             "connection|openforge",
             "connection|side",
             "connection|side|openlock",
+            "decoration|timber|d",
             "shape|wall",
             "size|openlock|IA",
             "size|width|1",
-            "texture|stone_brick"
+            "texture|stone_brick",
+            "texture|stone_brick|ground"
         ],
         "type": "model"
     },
@@ -43754,9 +43809,9 @@
             ]
         },
         "file_metadata": {
-            "file": "stone_brick#wall+upper,corbels,timber_a.A.openforge,side.stl",
+            "file": "stone_brick%upper#wall,corbels,timber_a.A.openforge,side.stl",
             "file_modified_at": "2020-10-27T13:33:11.825019",
-            "full_name": "tiles/building_facades/stone_brick/separate_wall/wall/openforge/stone_brick#wall+upper,corbels,timber_a.A.openforge,side.stl",
+            "full_name": "tiles/building_facades/stone_brick/separate_wall/wall/openforge/stone_brick%upper#wall,corbels,timber_a.A.openforge,side.stl",
             "md5": "669a583dbb243913a9880b72ff9b19f4",
             "size": 34220084,
             "storage_address": "https://objects.openforge.tools/models/669a58/669a583dbb243913a9880b72ff9b19f4.stl"
@@ -43868,16 +43923,17 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
-            "component|corbels",
-            "component|timber_a",
-            "component|wall|upper",
+            "component|wall",
             "connection|openforge",
             "connection|side",
             "connection|side|openlock",
+            "decoration|corbels",
+            "decoration|timber|a",
             "shape|wall",
             "size|openlock|A",
             "size|width|2",
-            "texture|stone_brick"
+            "texture|stone_brick",
+            "texture|stone_brick|upper"
         ],
         "type": "model"
     },
@@ -43909,9 +43965,9 @@
             ]
         },
         "file_metadata": {
-            "file": "stone_brick#wall+upper,corbels,timber_a.D.openforge,side.stl",
+            "file": "stone_brick%upper#wall,corbels,timber_a.D.openforge,side.stl",
             "file_modified_at": "2025-04-20T13:28:24.709109",
-            "full_name": "tiles/building_facades/stone_brick/separate_wall/wall/openforge/stone_brick#wall+upper,corbels,timber_a.D.openforge,side.stl",
+            "full_name": "tiles/building_facades/stone_brick/separate_wall/wall/openforge/stone_brick%upper#wall,corbels,timber_a.D.openforge,side.stl",
             "md5": "9c81fdf304ecc6391fe12377bc1564ac",
             "size": 40676984,
             "storage_address": "https://objects.openforge.tools/models/9c81fd/9c81fdf304ecc6391fe12377bc1564ac.stl"
@@ -44023,16 +44079,17 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
-            "component|corbels",
-            "component|timber_a",
-            "component|wall|upper",
+            "component|wall",
             "connection|openforge",
             "connection|side",
             "connection|side|openlock",
+            "decoration|corbels",
+            "decoration|timber|a",
             "shape|wall",
             "size|openlock|D",
             "size|width|3",
-            "texture|stone_brick"
+            "texture|stone_brick",
+            "texture|stone_brick|upper"
         ],
         "type": "model"
     },
@@ -44064,9 +44121,9 @@
             ]
         },
         "file_metadata": {
-            "file": "stone_brick#wall+upper,corbels,timber_b.IA.openforge,side.stl",
+            "file": "stone_brick%upper#wall,corbels,timber_b.IA.openforge,side.stl",
             "file_modified_at": "2020-10-27T13:33:33.779113",
-            "full_name": "tiles/building_facades/stone_brick/separate_wall/wall/openforge/stone_brick#wall+upper,corbels,timber_b.IA.openforge,side.stl",
+            "full_name": "tiles/building_facades/stone_brick/separate_wall/wall/openforge/stone_brick%upper#wall,corbels,timber_b.IA.openforge,side.stl",
             "md5": "f83c68f40cf0f2c93fdec5d931853c95",
             "size": 19246484,
             "storage_address": "https://objects.openforge.tools/models/f83c68/f83c68f40cf0f2c93fdec5d931853c95.stl"
@@ -44178,16 +44235,17 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
-            "component|corbels",
-            "component|timber_b",
-            "component|wall|upper",
+            "component|wall",
             "connection|openforge",
             "connection|side",
             "connection|side|openlock",
+            "decoration|corbels",
+            "decoration|timber|b",
             "shape|wall",
             "size|openlock|IA",
             "size|width|1",
-            "texture|stone_brick"
+            "texture|stone_brick",
+            "texture|stone_brick|upper"
         ],
         "type": "model"
     },
@@ -44219,9 +44277,9 @@
             ]
         },
         "file_metadata": {
-            "file": "stone_brick#wall+upper,timber_a,corbels.BA.openforge,side.stl",
+            "file": "stone_brick%upper#wall,timber_a,corbels.BA.openforge,side.stl",
             "file_modified_at": "2025-04-20T13:28:40.284131",
-            "full_name": "tiles/building_facades/stone_brick/separate_wall/wall/openforge/stone_brick#wall+upper,timber_a,corbels.BA.openforge,side.stl",
+            "full_name": "tiles/building_facades/stone_brick/separate_wall/wall/openforge/stone_brick%upper#wall,timber_a,corbels.BA.openforge,side.stl",
             "md5": "508ff63583bc2b45d049e74e8c0f98da",
             "size": 21036184,
             "storage_address": "https://objects.openforge.tools/models/508ff6/508ff63583bc2b45d049e74e8c0f98da.stl"
@@ -44333,16 +44391,17 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
-            "component|corbels",
-            "component|timber_a",
-            "component|wall|upper",
+            "component|wall",
             "connection|openforge",
             "connection|side",
             "connection|side|openlock",
+            "decoration|corbels",
+            "decoration|timber|a",
             "shape|wall",
             "size|openlock|BA",
             "size|width|1.5",
-            "texture|stone_brick"
+            "texture|stone_brick",
+            "texture|stone_brick|upper"
         ],
         "type": "model"
     },
@@ -44374,9 +44433,9 @@
             ]
         },
         "file_metadata": {
-            "file": "stone_brick#wall+upper,timber_a,corbels.IA.openforge,side.stl",
+            "file": "stone_brick%upper#wall,timber_a,corbels.IA.openforge,side.stl",
             "file_modified_at": "2020-10-27T13:35:48.998303",
-            "full_name": "tiles/building_facades/stone_brick/separate_wall/wall/openforge/stone_brick#wall+upper,timber_a,corbels.IA.openforge,side.stl",
+            "full_name": "tiles/building_facades/stone_brick/separate_wall/wall/openforge/stone_brick%upper#wall,timber_a,corbels.IA.openforge,side.stl",
             "md5": "512323d3d3243464e45231bc45065fa6",
             "size": 24694684,
             "storage_address": "https://objects.openforge.tools/models/512323/512323d3d3243464e45231bc45065fa6.stl"
@@ -44488,16 +44547,17 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
-            "component|corbels",
-            "component|timber_a",
-            "component|wall|upper",
+            "component|wall",
             "connection|openforge",
             "connection|side",
             "connection|side|openlock",
+            "decoration|corbels",
+            "decoration|timber|a",
             "shape|wall",
             "size|openlock|IA",
             "size|width|1",
-            "texture|stone_brick"
+            "texture|stone_brick",
+            "texture|stone_brick|upper"
         ],
         "type": "model"
     },
@@ -44529,9 +44589,9 @@
             ]
         },
         "file_metadata": {
-            "file": "stone_brick#wall+upper,timber_a.A.openforge,side.stl",
+            "file": "stone_brick%upper#wall,timber_a.A.openforge,side.stl",
             "file_modified_at": "2020-10-26T16:04:32.154583",
-            "full_name": "tiles/building_facades/stone_brick/separate_wall/wall/openforge/stone_brick#wall+upper,timber_a.A.openforge,side.stl",
+            "full_name": "tiles/building_facades/stone_brick/separate_wall/wall/openforge/stone_brick%upper#wall,timber_a.A.openforge,side.stl",
             "md5": "414164221ca896c47c99b8c6e4a865eb",
             "size": 26858684,
             "storage_address": "https://objects.openforge.tools/models/414164/414164221ca896c47c99b8c6e4a865eb.stl"
@@ -44643,15 +44703,16 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
-            "component|timber_a",
-            "component|wall|upper",
+            "component|wall",
             "connection|openforge",
             "connection|side",
             "connection|side|openlock",
+            "decoration|timber|a",
             "shape|wall",
             "size|openlock|A",
             "size|width|2",
-            "texture|stone_brick"
+            "texture|stone_brick",
+            "texture|stone_brick|upper"
         ],
         "type": "model"
     },
@@ -44683,9 +44744,9 @@
             ]
         },
         "file_metadata": {
-            "file": "stone_brick#wall+upper,timber_a.BA.openforge,side.stl",
+            "file": "stone_brick%upper#wall,timber_a.BA.openforge,side.stl",
             "file_modified_at": "2025-04-20T13:28:35.941238",
-            "full_name": "tiles/building_facades/stone_brick/separate_wall/wall/openforge/stone_brick#wall+upper,timber_a.BA.openforge,side.stl",
+            "full_name": "tiles/building_facades/stone_brick/separate_wall/wall/openforge/stone_brick%upper#wall,timber_a.BA.openforge,side.stl",
             "md5": "8a8dad4a6a2e159c15e7a1c55d69e77c",
             "size": 20295784,
             "storage_address": "https://objects.openforge.tools/models/8a8dad/8a8dad4a6a2e159c15e7a1c55d69e77c.stl"
@@ -44797,15 +44858,16 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
-            "component|timber_a",
-            "component|wall|upper",
+            "component|wall",
             "connection|openforge",
             "connection|side",
             "connection|side|openlock",
+            "decoration|timber|a",
             "shape|wall",
             "size|openlock|BA",
             "size|width|1.5",
-            "texture|stone_brick"
+            "texture|stone_brick",
+            "texture|stone_brick|upper"
         ],
         "type": "model"
     },
@@ -44837,9 +44899,9 @@
             ]
         },
         "file_metadata": {
-            "file": "stone_brick#wall+upper,timber_a.D.openforge,side.stl",
+            "file": "stone_brick%upper#wall,timber_a.D.openforge,side.stl",
             "file_modified_at": "2025-04-20T13:29:28.300595",
-            "full_name": "tiles/building_facades/stone_brick/separate_wall/wall/openforge/stone_brick#wall+upper,timber_a.D.openforge,side.stl",
+            "full_name": "tiles/building_facades/stone_brick/separate_wall/wall/openforge/stone_brick%upper#wall,timber_a.D.openforge,side.stl",
             "md5": "d8fa022f3a7e32fcc7785f632186c7e0",
             "size": 35791584,
             "storage_address": "https://objects.openforge.tools/models/d8fa02/d8fa022f3a7e32fcc7785f632186c7e0.stl"
@@ -44951,15 +45013,16 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
-            "component|timber_a",
-            "component|wall|upper",
+            "component|wall",
             "connection|openforge",
             "connection|side",
             "connection|side|openlock",
+            "decoration|timber|a",
             "shape|wall",
             "size|openlock|D",
             "size|width|3",
-            "texture|stone_brick"
+            "texture|stone_brick",
+            "texture|stone_brick|upper"
         ],
         "type": "model"
     },
@@ -44991,9 +45054,9 @@
             ]
         },
         "file_metadata": {
-            "file": "stone_brick#wall+upper,timber_c.IA.openforge,side.stl",
+            "file": "stone_brick%upper#wall,timber_c.IA.openforge,side.stl",
             "file_modified_at": "2020-10-27T13:32:39.813159",
-            "full_name": "tiles/building_facades/stone_brick/separate_wall/wall/openforge/stone_brick#wall+upper,timber_c.IA.openforge,side.stl",
+            "full_name": "tiles/building_facades/stone_brick/separate_wall/wall/openforge/stone_brick%upper#wall,timber_c.IA.openforge,side.stl",
             "md5": "f436a2f0dc79ed17a07da6ec2b0c8f7f",
             "size": 14832484,
             "storage_address": "https://objects.openforge.tools/models/f436a2/f436a2f0dc79ed17a07da6ec2b0c8f7f.stl"
@@ -45105,15 +45168,16 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
-            "component|timber_c",
-            "component|wall|upper",
+            "component|wall",
             "connection|openforge",
             "connection|side",
             "connection|side|openlock",
+            "decoration|timber|c",
             "shape|wall",
             "size|openlock|IA",
             "size|width|1",
-            "texture|stone_brick"
+            "texture|stone_brick",
+            "texture|stone_brick|upper"
         ],
         "type": "model"
     },
@@ -45145,9 +45209,9 @@
             ]
         },
         "file_metadata": {
-            "file": "stone_brick#wall+upper,timber_d.IA.openforge,side.stl",
+            "file": "stone_brick%upper#wall,timber_d.IA.openforge,side.stl",
             "file_modified_at": "2020-10-27T13:32:44.698192",
-            "full_name": "tiles/building_facades/stone_brick/separate_wall/wall/openforge/stone_brick#wall+upper,timber_d.IA.openforge,side.stl",
+            "full_name": "tiles/building_facades/stone_brick/separate_wall/wall/openforge/stone_brick%upper#wall,timber_d.IA.openforge,side.stl",
             "md5": "3e5e652c392752025e7eb5422a075de3",
             "size": 13609684,
             "storage_address": "https://objects.openforge.tools/models/3e5e65/3e5e652c392752025e7eb5422a075de3.stl"
@@ -45259,23 +45323,24 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
-            "component|timber_d",
-            "component|wall|upper",
+            "component|wall",
             "connection|openforge",
             "connection|side",
             "connection|side|openlock",
+            "decoration|timber|d",
             "shape|wall",
             "size|openlock|IA",
             "size|width|1",
-            "texture|stone_brick"
+            "texture|stone_brick",
+            "texture|stone_brick|upper"
         ],
         "type": "model"
     },
     {
         "file_metadata": {
-            "file": "stone_brick#wall+ground,corbels,timber_a.A.openlock,side.stl",
+            "file": "stone_brick%ground#wall,corbels,timber_a.A.openlock,side.stl",
             "file_modified_at": "2020-10-27T13:23:51.182261",
-            "full_name": "tiles/building_facades/stone_brick/separate_wall/wall/openlock/stone_brick#wall+ground,corbels,timber_a.A.openlock,side.stl",
+            "full_name": "tiles/building_facades/stone_brick/separate_wall/wall/openlock/stone_brick%ground#wall,corbels,timber_a.A.openlock,side.stl",
             "md5": "3c63ce54ccd697945ec5f89af085f662",
             "size": 35465584,
             "storage_address": "https://objects.openforge.tools/models/3c63ce/3c63ce54ccd697945ec5f89af085f662.stl"
@@ -45387,24 +45452,25 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
-            "component|corbels",
-            "component|timber_a",
-            "component|wall|ground",
+            "component|wall",
             "connection|openlock",
             "connection|side",
             "connection|side|openlock",
+            "decoration|corbels",
+            "decoration|timber|a",
             "shape|wall",
             "size|openlock|A",
             "size|width|2",
-            "texture|stone_brick"
+            "texture|stone_brick",
+            "texture|stone_brick|ground"
         ],
         "type": "model"
     },
     {
         "file_metadata": {
-            "file": "stone_brick#wall+ground,corbels,timber_a.D.openlock,side.stl",
+            "file": "stone_brick%ground#wall,corbels,timber_a.D.openlock,side.stl",
             "file_modified_at": "2020-10-27T13:23:22.604051",
-            "full_name": "tiles/building_facades/stone_brick/separate_wall/wall/openlock/stone_brick#wall+ground,corbels,timber_a.D.openlock,side.stl",
+            "full_name": "tiles/building_facades/stone_brick/separate_wall/wall/openlock/stone_brick%ground#wall,corbels,timber_a.D.openlock,side.stl",
             "md5": "1745d3db4768b9372dc75010c14a001f",
             "size": 43854984,
             "storage_address": "https://objects.openforge.tools/models/1745d3/1745d3db4768b9372dc75010c14a001f.stl"
@@ -45516,24 +45582,25 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
-            "component|corbels",
-            "component|timber_a",
-            "component|wall|ground",
+            "component|wall",
             "connection|openlock",
             "connection|side",
             "connection|side|openlock",
+            "decoration|corbels",
+            "decoration|timber|a",
             "shape|wall",
             "size|openlock|D",
             "size|width|3",
-            "texture|stone_brick"
+            "texture|stone_brick",
+            "texture|stone_brick|ground"
         ],
         "type": "model"
     },
     {
         "file_metadata": {
-            "file": "stone_brick#wall+ground,corbels,timber_b.IA.openlock,side.stl",
+            "file": "stone_brick%ground#wall,corbels,timber_b.IA.openlock,side.stl",
             "file_modified_at": "2020-10-27T13:28:35.169755",
-            "full_name": "tiles/building_facades/stone_brick/separate_wall/wall/openlock/stone_brick#wall+ground,corbels,timber_b.IA.openlock,side.stl",
+            "full_name": "tiles/building_facades/stone_brick/separate_wall/wall/openlock/stone_brick%ground#wall,corbels,timber_b.IA.openlock,side.stl",
             "md5": "0c25928bf9c5b41910be6419b019c99a",
             "size": 17692484,
             "storage_address": "https://objects.openforge.tools/models/0c2592/0c25928bf9c5b41910be6419b019c99a.stl"
@@ -45645,24 +45712,25 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
-            "component|corbels",
-            "component|timber_b",
-            "component|wall|ground",
+            "component|wall",
             "connection|openlock",
             "connection|side",
             "connection|side|openlock",
+            "decoration|corbels",
+            "decoration|timber|b",
             "shape|wall",
             "size|openlock|IA",
             "size|width|1",
-            "texture|stone_brick"
+            "texture|stone_brick",
+            "texture|stone_brick|ground"
         ],
         "type": "model"
     },
     {
         "file_metadata": {
-            "file": "stone_brick#wall+ground,timber_a,corbels.BA.openlock,side.stl",
+            "file": "stone_brick%ground#wall,timber_a,corbels.BA.openlock,side.stl",
             "file_modified_at": "2025-04-20T13:31:52.801615",
-            "full_name": "tiles/building_facades/stone_brick/separate_wall/wall/openlock/stone_brick#wall+ground,timber_a,corbels.BA.openlock,side.stl",
+            "full_name": "tiles/building_facades/stone_brick/separate_wall/wall/openlock/stone_brick%ground#wall,timber_a,corbels.BA.openlock,side.stl",
             "md5": "36a88483f539446d2241b7e3dc47d48f",
             "size": 22496484,
             "storage_address": "https://objects.openforge.tools/models/36a884/36a88483f539446d2241b7e3dc47d48f.stl"
@@ -45774,24 +45842,25 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
-            "component|corbels",
-            "component|timber_a",
-            "component|wall|ground",
+            "component|wall",
             "connection|openlock",
             "connection|side",
             "connection|side|openlock",
+            "decoration|corbels",
+            "decoration|timber|a",
             "shape|wall",
             "size|openlock|BA",
             "size|width|1.5",
-            "texture|stone_brick"
+            "texture|stone_brick",
+            "texture|stone_brick|ground"
         ],
         "type": "model"
     },
     {
         "file_metadata": {
-            "file": "stone_brick#wall+ground,timber_a,corbels.IA.openlock,side.stl",
+            "file": "stone_brick%ground#wall,timber_a,corbels.IA.openlock,side.stl",
             "file_modified_at": "2020-10-27T13:29:09.472377",
-            "full_name": "tiles/building_facades/stone_brick/separate_wall/wall/openlock/stone_brick#wall+ground,timber_a,corbels.IA.openlock,side.stl",
+            "full_name": "tiles/building_facades/stone_brick/separate_wall/wall/openlock/stone_brick%ground#wall,timber_a,corbels.IA.openlock,side.stl",
             "md5": "d82941b5c0a803cf16ae430820517c9c",
             "size": 17387784,
             "storage_address": "https://objects.openforge.tools/models/d82941/d82941b5c0a803cf16ae430820517c9c.stl"
@@ -45903,24 +45972,25 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
-            "component|corbels",
-            "component|timber_a",
-            "component|wall|ground",
+            "component|wall",
             "connection|openlock",
             "connection|side",
             "connection|side|openlock",
+            "decoration|corbels",
+            "decoration|timber|a",
             "shape|wall",
             "size|openlock|IA",
             "size|width|1",
-            "texture|stone_brick"
+            "texture|stone_brick",
+            "texture|stone_brick|ground"
         ],
         "type": "model"
     },
     {
         "file_metadata": {
-            "file": "stone_brick#wall+ground,timber_a.A.openlock,side.stl",
+            "file": "stone_brick%ground#wall,timber_a.A.openlock,side.stl",
             "file_modified_at": "2020-10-27T13:21:24.290875",
-            "full_name": "tiles/building_facades/stone_brick/separate_wall/wall/openlock/stone_brick#wall+ground,timber_a.A.openlock,side.stl",
+            "full_name": "tiles/building_facades/stone_brick/separate_wall/wall/openlock/stone_brick%ground#wall,timber_a.A.openlock,side.stl",
             "md5": "331859a84dbfe2fd836cedc10bad67d2",
             "size": 32168384,
             "storage_address": "https://objects.openforge.tools/models/331859/331859a84dbfe2fd836cedc10bad67d2.stl"
@@ -46032,23 +46102,24 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
-            "component|timber_a",
-            "component|wall|ground",
+            "component|wall",
             "connection|openlock",
             "connection|side",
             "connection|side|openlock",
+            "decoration|timber|a",
             "shape|wall",
             "size|openlock|A",
             "size|width|2",
-            "texture|stone_brick"
+            "texture|stone_brick",
+            "texture|stone_brick|ground"
         ],
         "type": "model"
     },
     {
         "file_metadata": {
-            "file": "stone_brick#wall+ground,timber_a.BA.openlock,side.stl",
+            "file": "stone_brick%ground#wall,timber_a.BA.openlock,side.stl",
             "file_modified_at": "2025-04-20T13:31:44.375742",
-            "full_name": "tiles/building_facades/stone_brick/separate_wall/wall/openlock/stone_brick#wall+ground,timber_a.BA.openlock,side.stl",
+            "full_name": "tiles/building_facades/stone_brick/separate_wall/wall/openlock/stone_brick%ground#wall,timber_a.BA.openlock,side.stl",
             "md5": "9569d4abbcde86cb51389b53ee3735d0",
             "size": 21515884,
             "storage_address": "https://objects.openforge.tools/models/9569d4/9569d4abbcde86cb51389b53ee3735d0.stl"
@@ -46160,23 +46231,24 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
-            "component|timber_a",
-            "component|wall|ground",
+            "component|wall",
             "connection|openlock",
             "connection|side",
             "connection|side|openlock",
+            "decoration|timber|a",
             "shape|wall",
             "size|openlock|BA",
             "size|width|1.5",
-            "texture|stone_brick"
+            "texture|stone_brick",
+            "texture|stone_brick|ground"
         ],
         "type": "model"
     },
     {
         "file_metadata": {
-            "file": "stone_brick#wall+ground,timber_a.D.openlock,side.stl",
+            "file": "stone_brick%ground#wall,timber_a.D.openlock,side.stl",
             "file_modified_at": "2020-10-27T13:23:47.138126",
-            "full_name": "tiles/building_facades/stone_brick/separate_wall/wall/openlock/stone_brick#wall+ground,timber_a.D.openlock,side.stl",
+            "full_name": "tiles/building_facades/stone_brick/separate_wall/wall/openlock/stone_brick%ground#wall,timber_a.D.openlock,side.stl",
             "md5": "7be053a29e36b097845c60e050828b07",
             "size": 41100784,
             "storage_address": "https://objects.openforge.tools/models/7be053/7be053a29e36b097845c60e050828b07.stl"
@@ -46288,23 +46360,24 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
-            "component|timber_a",
-            "component|wall|ground",
+            "component|wall",
             "connection|openlock",
             "connection|side",
             "connection|side|openlock",
+            "decoration|timber|a",
             "shape|wall",
             "size|openlock|D",
             "size|width|3",
-            "texture|stone_brick"
+            "texture|stone_brick",
+            "texture|stone_brick|ground"
         ],
         "type": "model"
     },
     {
         "file_metadata": {
-            "file": "stone_brick#wall+ground,timber_c.IA.openlock,side.stl",
+            "file": "stone_brick%ground#wall,timber_c.IA.openlock,side.stl",
             "file_modified_at": "2020-10-27T13:29:15.835107",
-            "full_name": "tiles/building_facades/stone_brick/separate_wall/wall/openlock/stone_brick#wall+ground,timber_c.IA.openlock,side.stl",
+            "full_name": "tiles/building_facades/stone_brick/separate_wall/wall/openlock/stone_brick%ground#wall,timber_c.IA.openlock,side.stl",
             "md5": "1c355122ed0fed50a48ee566638efecf",
             "size": 15508884,
             "storage_address": "https://objects.openforge.tools/models/1c3551/1c355122ed0fed50a48ee566638efecf.stl"
@@ -46416,23 +46489,24 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
-            "component|timber_c",
-            "component|wall|ground",
+            "component|wall",
             "connection|openlock",
             "connection|side",
             "connection|side|openlock",
+            "decoration|timber|c",
             "shape|wall",
             "size|openlock|IA",
             "size|width|1",
-            "texture|stone_brick"
+            "texture|stone_brick",
+            "texture|stone_brick|ground"
         ],
         "type": "model"
     },
     {
         "file_metadata": {
-            "file": "stone_brick#wall+ground,timber_d.IA.openlock,side.stl",
+            "file": "stone_brick%ground#wall,timber_d.IA.openlock,side.stl",
             "file_modified_at": "2020-10-27T13:29:19.764138",
-            "full_name": "tiles/building_facades/stone_brick/separate_wall/wall/openlock/stone_brick#wall+ground,timber_d.IA.openlock,side.stl",
+            "full_name": "tiles/building_facades/stone_brick/separate_wall/wall/openlock/stone_brick%ground#wall,timber_d.IA.openlock,side.stl",
             "md5": "6249cbfbfd7f5b9ed1b929c4ca7ab083",
             "size": 15944284,
             "storage_address": "https://objects.openforge.tools/models/6249cb/6249cbfbfd7f5b9ed1b929c4ca7ab083.stl"
@@ -46544,23 +46618,24 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
-            "component|timber_d",
-            "component|wall|ground",
+            "component|wall",
             "connection|openlock",
             "connection|side",
             "connection|side|openlock",
+            "decoration|timber|d",
             "shape|wall",
             "size|openlock|IA",
             "size|width|1",
-            "texture|stone_brick"
+            "texture|stone_brick",
+            "texture|stone_brick|ground"
         ],
         "type": "model"
     },
     {
         "file_metadata": {
-            "file": "stone_brick#wall+upper,corbels,timber_a.A.openlock,side.stl",
+            "file": "stone_brick%upper#wall,corbels,timber_a.A.openlock,side.stl",
             "file_modified_at": "2020-10-27T13:33:08.134281",
-            "full_name": "tiles/building_facades/stone_brick/separate_wall/wall/openlock/stone_brick#wall+upper,corbels,timber_a.A.openlock,side.stl",
+            "full_name": "tiles/building_facades/stone_brick/separate_wall/wall/openlock/stone_brick%upper#wall,corbels,timber_a.A.openlock,side.stl",
             "md5": "5287ddedd07afb872e1d815b522f3495",
             "size": 35027984,
             "storage_address": "https://objects.openforge.tools/models/5287dd/5287ddedd07afb872e1d815b522f3495.stl"
@@ -46672,24 +46747,25 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
-            "component|corbels",
-            "component|timber_a",
-            "component|wall|upper",
+            "component|wall",
             "connection|openlock",
             "connection|side",
             "connection|side|openlock",
+            "decoration|corbels",
+            "decoration|timber|a",
             "shape|wall",
             "size|openlock|A",
             "size|width|2",
-            "texture|stone_brick"
+            "texture|stone_brick",
+            "texture|stone_brick|upper"
         ],
         "type": "model"
     },
     {
         "file_metadata": {
-            "file": "stone_brick#wall+upper,corbels,timber_a.D.openlock,side.stl",
+            "file": "stone_brick%upper#wall,corbels,timber_a.D.openlock,side.stl",
             "file_modified_at": "2025-04-21T13:50:42.045322",
-            "full_name": "tiles/building_facades/stone_brick/separate_wall/wall/openlock/stone_brick#wall+upper,corbels,timber_a.D.openlock,side.stl",
+            "full_name": "tiles/building_facades/stone_brick/separate_wall/wall/openlock/stone_brick%upper#wall,corbels,timber_a.D.openlock,side.stl",
             "md5": "43bee7106746a9f699193576db90acad",
             "size": 41951184,
             "storage_address": "https://objects.openforge.tools/models/43bee7/43bee7106746a9f699193576db90acad.stl"
@@ -46801,24 +46877,25 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
-            "component|corbels",
-            "component|timber_a",
-            "component|wall|upper",
+            "component|wall",
             "connection|openlock",
             "connection|side",
             "connection|side|openlock",
+            "decoration|corbels",
+            "decoration|timber|a",
             "shape|wall",
             "size|openlock|D",
             "size|width|3",
-            "texture|stone_brick"
+            "texture|stone_brick",
+            "texture|stone_brick|upper"
         ],
         "type": "model"
     },
     {
         "file_metadata": {
-            "file": "stone_brick#wall+upper,corbels,timber_b.IA.openlock,side.stl",
+            "file": "stone_brick%upper#wall,corbels,timber_b.IA.openlock,side.stl",
             "file_modified_at": "2020-10-27T13:34:35.851481",
-            "full_name": "tiles/building_facades/stone_brick/separate_wall/wall/openlock/stone_brick#wall+upper,corbels,timber_b.IA.openlock,side.stl",
+            "full_name": "tiles/building_facades/stone_brick/separate_wall/wall/openlock/stone_brick%upper#wall,corbels,timber_b.IA.openlock,side.stl",
             "md5": "857f21ead028aac3bdfd6d7e5adc2817",
             "size": 20709484,
             "storage_address": "https://objects.openforge.tools/models/857f21/857f21ead028aac3bdfd6d7e5adc2817.stl"
@@ -46930,24 +47007,25 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
-            "component|corbels",
-            "component|timber_b",
-            "component|wall|upper",
+            "component|wall",
             "connection|openlock",
             "connection|side",
             "connection|side|openlock",
+            "decoration|corbels",
+            "decoration|timber|b",
             "shape|wall",
             "size|openlock|IA",
             "size|width|1",
-            "texture|stone_brick"
+            "texture|stone_brick",
+            "texture|stone_brick|upper"
         ],
         "type": "model"
     },
     {
         "file_metadata": {
-            "file": "stone_brick#wall+upper,timber_a,corbels.BA.openlock,side.stl",
+            "file": "stone_brick%upper#wall,timber_a,corbels.BA.openlock,side.stl",
             "file_modified_at": "2025-04-21T13:28:44.190019",
-            "full_name": "tiles/building_facades/stone_brick/separate_wall/wall/openlock/stone_brick#wall+upper,timber_a,corbels.BA.openlock,side.stl",
+            "full_name": "tiles/building_facades/stone_brick/separate_wall/wall/openlock/stone_brick%upper#wall,timber_a,corbels.BA.openlock,side.stl",
             "md5": "37b265747f7eb3ce880a17d2ae7696b8",
             "size": 21697384,
             "storage_address": "https://objects.openforge.tools/models/37b265/37b265747f7eb3ce880a17d2ae7696b8.stl"
@@ -47059,24 +47137,25 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
-            "component|corbels",
-            "component|timber_a",
-            "component|wall|upper",
+            "component|wall",
             "connection|openlock",
             "connection|side",
             "connection|side|openlock",
+            "decoration|corbels",
+            "decoration|timber|a",
             "shape|wall",
             "size|openlock|BA",
             "size|width|1.5",
-            "texture|stone_brick"
+            "texture|stone_brick",
+            "texture|stone_brick|upper"
         ],
         "type": "model"
     },
     {
         "file_metadata": {
-            "file": "stone_brick#wall+upper,timber_a,corbels.IA.openlock,side.stl",
+            "file": "stone_brick%upper#wall,timber_a,corbels.IA.openlock,side.stl",
             "file_modified_at": "2020-10-27T13:35:40.587707",
-            "full_name": "tiles/building_facades/stone_brick/separate_wall/wall/openlock/stone_brick#wall+upper,timber_a,corbels.IA.openlock,side.stl",
+            "full_name": "tiles/building_facades/stone_brick/separate_wall/wall/openlock/stone_brick%upper#wall,timber_a,corbels.IA.openlock,side.stl",
             "md5": "c1763d3d92b840d8ee4c49eb3581dfa4",
             "size": 23070384,
             "storage_address": "https://objects.openforge.tools/models/c1763d/c1763d3d92b840d8ee4c49eb3581dfa4.stl"
@@ -47188,24 +47267,25 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
-            "component|corbels",
-            "component|timber_a",
-            "component|wall|upper",
+            "component|wall",
             "connection|openlock",
             "connection|side",
             "connection|side|openlock",
+            "decoration|corbels",
+            "decoration|timber|a",
             "shape|wall",
             "size|openlock|IA",
             "size|width|1",
-            "texture|stone_brick"
+            "texture|stone_brick",
+            "texture|stone_brick|upper"
         ],
         "type": "model"
     },
     {
         "file_metadata": {
-            "file": "stone_brick#wall+upper,timber_a.A.openlock,side.stl",
+            "file": "stone_brick%upper#wall,timber_a.A.openlock,side.stl",
             "file_modified_at": "2020-10-26T16:06:52.269272",
-            "full_name": "tiles/building_facades/stone_brick/separate_wall/wall/openlock/stone_brick#wall+upper,timber_a.A.openlock,side.stl",
+            "full_name": "tiles/building_facades/stone_brick/separate_wall/wall/openlock/stone_brick%upper#wall,timber_a.A.openlock,side.stl",
             "md5": "bfb0f7b1803d566233d560732bf067d7",
             "size": 27339184,
             "storage_address": "https://objects.openforge.tools/models/bfb0f7/bfb0f7b1803d566233d560732bf067d7.stl"
@@ -47317,23 +47397,24 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
-            "component|timber_a",
-            "component|wall|upper",
+            "component|wall",
             "connection|openlock",
             "connection|side",
             "connection|side|openlock",
+            "decoration|timber|a",
             "shape|wall",
             "size|openlock|A",
             "size|width|2",
-            "texture|stone_brick"
+            "texture|stone_brick",
+            "texture|stone_brick|upper"
         ],
         "type": "model"
     },
     {
         "file_metadata": {
-            "file": "stone_brick#wall+upper,timber_a.BA.openlock,side.stl",
+            "file": "stone_brick%upper#wall,timber_a.BA.openlock,side.stl",
             "file_modified_at": "2025-04-21T13:28:52.189667",
-            "full_name": "tiles/building_facades/stone_brick/separate_wall/wall/openlock/stone_brick#wall+upper,timber_a.BA.openlock,side.stl",
+            "full_name": "tiles/building_facades/stone_brick/separate_wall/wall/openlock/stone_brick%upper#wall,timber_a.BA.openlock,side.stl",
             "md5": "d978f54d2aeeec30f6ab7257a2edcf89",
             "size": 20974684,
             "storage_address": "https://objects.openforge.tools/models/d978f5/d978f54d2aeeec30f6ab7257a2edcf89.stl"
@@ -47445,23 +47526,24 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
-            "component|timber_a",
-            "component|wall|upper",
+            "component|wall",
             "connection|openlock",
             "connection|side",
             "connection|side|openlock",
+            "decoration|timber|a",
             "shape|wall",
             "size|openlock|BA",
             "size|width|1.5",
-            "texture|stone_brick"
+            "texture|stone_brick",
+            "texture|stone_brick|upper"
         ],
         "type": "model"
     },
     {
         "file_metadata": {
-            "file": "stone_brick#wall+upper,timber_a.D.openlock,side.stl",
+            "file": "stone_brick%upper#wall,timber_a.D.openlock,side.stl",
             "file_modified_at": "2025-04-21T13:50:58.091561",
-            "full_name": "tiles/building_facades/stone_brick/separate_wall/wall/openlock/stone_brick#wall+upper,timber_a.D.openlock,side.stl",
+            "full_name": "tiles/building_facades/stone_brick/separate_wall/wall/openlock/stone_brick%upper#wall,timber_a.D.openlock,side.stl",
             "md5": "8c6738d794113eee5b64e683e57a9f64",
             "size": 36571284,
             "storage_address": "https://objects.openforge.tools/models/8c6738/8c6738d794113eee5b64e683e57a9f64.stl"
@@ -47573,23 +47655,24 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
-            "component|timber_a",
-            "component|wall|upper",
+            "component|wall",
             "connection|openlock",
             "connection|side",
             "connection|side|openlock",
+            "decoration|timber|a",
             "shape|wall",
             "size|openlock|D",
             "size|width|3",
-            "texture|stone_brick"
+            "texture|stone_brick",
+            "texture|stone_brick|upper"
         ],
         "type": "model"
     },
     {
         "file_metadata": {
-            "file": "stone_brick#wall+upper,timber_c.IA.openlock,side.stl",
+            "file": "stone_brick%upper#wall,timber_c.IA.openlock,side.stl",
             "file_modified_at": "2020-10-27T13:32:32.127959",
-            "full_name": "tiles/building_facades/stone_brick/separate_wall/wall/openlock/stone_brick#wall+upper,timber_c.IA.openlock,side.stl",
+            "full_name": "tiles/building_facades/stone_brick/separate_wall/wall/openlock/stone_brick%upper#wall,timber_c.IA.openlock,side.stl",
             "md5": "faf25ba029db360d0d10cce936cb20ee",
             "size": 15324184,
             "storage_address": "https://objects.openforge.tools/models/faf25b/faf25ba029db360d0d10cce936cb20ee.stl"
@@ -47701,23 +47784,24 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
-            "component|timber_c",
-            "component|wall|upper",
+            "component|wall",
             "connection|openlock",
             "connection|side",
             "connection|side|openlock",
+            "decoration|timber|c",
             "shape|wall",
             "size|openlock|IA",
             "size|width|1",
-            "texture|stone_brick"
+            "texture|stone_brick",
+            "texture|stone_brick|upper"
         ],
         "type": "model"
     },
     {
         "file_metadata": {
-            "file": "stone_brick#wall+upper,timber_d.IA.openlock,side.stl",
+            "file": "stone_brick%upper#wall,timber_d.IA.openlock,side.stl",
             "file_modified_at": "2020-10-27T13:32:51.689192",
-            "full_name": "tiles/building_facades/stone_brick/separate_wall/wall/openlock/stone_brick#wall+upper,timber_d.IA.openlock,side.stl",
+            "full_name": "tiles/building_facades/stone_brick/separate_wall/wall/openlock/stone_brick%upper#wall,timber_d.IA.openlock,side.stl",
             "md5": "b8d2cdd79b994d0286af065ab421a3de",
             "size": 14013084,
             "storage_address": "https://objects.openforge.tools/models/b8d2cd/b8d2cdd79b994d0286af065ab421a3de.stl"
@@ -47829,46 +47913,22 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
-            "component|timber_d",
-            "component|wall|upper",
+            "component|wall",
             "connection|openlock",
             "connection|side",
             "connection|side|openlock",
+            "decoration|timber|d",
             "shape|wall",
             "size|openlock|IA",
             "size|width|1",
-            "texture|stone_brick"
+            "texture|stone_brick",
+            "texture|stone_brick|upper"
         ],
         "type": "model"
     },
     {
         "config": {
             "parts": [
-                {
-                    "name": "frame",
-                    "optional": true,
-                    "tags": {
-                        "require": [
-                            {
-                                "tag": "interface|window_frame"
-                            },
-                            {
-                                "tag": "size|interior"
-                            }
-                        ]
-                    }
-                },
-                {
-                    "name": "shutters",
-                    "optional": true,
-                    "tags": {
-                        "require": [
-                            {
-                                "tag": "interface|window_shutter"
-                            }
-                        ]
-                    }
-                },
                 {
                     "name": "base",
                     "optional": true,
@@ -47894,9 +47954,9 @@
             ]
         },
         "file_metadata": {
-            "file": "stone_brick#window+ground,corbels.A.openforge,side.stl",
+            "file": "stone_brick%ground#window,corbels.A.openforge,side.stl",
             "file_modified_at": "2020-10-27T13:17:18.068990",
-            "full_name": "tiles/building_facades/stone_brick/separate_wall/window/openforge/stone_brick#window+ground,corbels.A.openforge,side.stl",
+            "full_name": "tiles/building_facades/stone_brick/separate_wall/window/openforge/stone_brick%ground#window,corbels.A.openforge,side.stl",
             "md5": "ce1796b390038b880fbbeb3e00bfd495",
             "size": 30742484,
             "storage_address": "https://objects.openforge.tools/models/ce1796/ce1796b390038b880fbbeb3e00bfd495.stl"
@@ -48005,50 +48065,25 @@
                 }
             }
         ],
-        "metadata": true,
+        "metadata": false,
         "tags": [
             "build|separate wall",
-            "component|corbels",
             "component|window",
-            "component|window|ground",
             "connection|openforge",
             "connection|side",
             "connection|side|openlock",
+            "decoration|corbels",
             "shape|wall",
             "size|openlock|A",
             "size|width|2",
-            "texture|stone_brick"
+            "texture|stone_brick",
+            "texture|stone_brick|ground"
         ],
         "type": "model"
     },
     {
         "config": {
             "parts": [
-                {
-                    "name": "frame",
-                    "optional": true,
-                    "tags": {
-                        "require": [
-                            {
-                                "tag": "interface|window_frame"
-                            },
-                            {
-                                "tag": "size|interior"
-                            }
-                        ]
-                    }
-                },
-                {
-                    "name": "shutters",
-                    "optional": true,
-                    "tags": {
-                        "require": [
-                            {
-                                "tag": "interface|window_shutter"
-                            }
-                        ]
-                    }
-                },
                 {
                     "name": "base",
                     "optional": true,
@@ -48074,9 +48109,9 @@
             ]
         },
         "file_metadata": {
-            "file": "stone_brick#window+ground,corbels.BA.openforge,side.stl",
+            "file": "stone_brick%ground#window,corbels.BA.openforge,side.stl",
             "file_modified_at": "2025-04-17T12:00:35.745656",
-            "full_name": "tiles/building_facades/stone_brick/separate_wall/window/openforge/stone_brick#window+ground,corbels.BA.openforge,side.stl",
+            "full_name": "tiles/building_facades/stone_brick/separate_wall/window/openforge/stone_brick%ground#window,corbels.BA.openforge,side.stl",
             "md5": "80d2ebebc6360ea23f2c6b82c028d49b",
             "size": 22597084,
             "storage_address": "https://objects.openforge.tools/models/80d2eb/80d2ebebc6360ea23f2c6b82c028d49b.stl"
@@ -48185,50 +48220,25 @@
                 }
             }
         ],
-        "metadata": true,
+        "metadata": false,
         "tags": [
             "build|separate wall",
-            "component|corbels",
             "component|window",
-            "component|window|ground",
             "connection|openforge",
             "connection|side",
             "connection|side|openlock",
+            "decoration|corbels",
             "shape|wall",
             "size|openlock|BA",
             "size|width|1.5",
-            "texture|stone_brick"
+            "texture|stone_brick",
+            "texture|stone_brick|ground"
         ],
         "type": "model"
     },
     {
         "config": {
             "parts": [
-                {
-                    "name": "frame",
-                    "optional": true,
-                    "tags": {
-                        "require": [
-                            {
-                                "tag": "interface|window_frame"
-                            },
-                            {
-                                "tag": "size|interior"
-                            }
-                        ]
-                    }
-                },
-                {
-                    "name": "shutters",
-                    "optional": true,
-                    "tags": {
-                        "require": [
-                            {
-                                "tag": "interface|window_shutter"
-                            }
-                        ]
-                    }
-                },
                 {
                     "name": "base",
                     "optional": true,
@@ -48254,9 +48264,9 @@
             ]
         },
         "file_metadata": {
-            "file": "stone_brick#window+ground.A.openforge,side.stl",
+            "file": "stone_brick%ground#window.A.openforge,side.stl",
             "file_modified_at": "2020-10-27T13:17:09.553463",
-            "full_name": "tiles/building_facades/stone_brick/separate_wall/window/openforge/stone_brick#window+ground.A.openforge,side.stl",
+            "full_name": "tiles/building_facades/stone_brick/separate_wall/window/openforge/stone_brick%ground#window.A.openforge,side.stl",
             "md5": "ac10793a3b0c3a4fd71d91c427e9aa60",
             "size": 28077884,
             "storage_address": "https://objects.openforge.tools/models/ac1079/ac10793a3b0c3a4fd71d91c427e9aa60.stl"
@@ -48365,49 +48375,24 @@
                 }
             }
         ],
-        "metadata": true,
+        "metadata": false,
         "tags": [
             "build|separate wall",
             "component|window",
-            "component|window|ground",
             "connection|openforge",
             "connection|side",
             "connection|side|openlock",
             "shape|wall",
             "size|openlock|A",
             "size|width|2",
-            "texture|stone_brick"
+            "texture|stone_brick",
+            "texture|stone_brick|ground"
         ],
         "type": "model"
     },
     {
         "config": {
             "parts": [
-                {
-                    "name": "frame",
-                    "optional": true,
-                    "tags": {
-                        "require": [
-                            {
-                                "tag": "interface|window_frame"
-                            },
-                            {
-                                "tag": "size|interior"
-                            }
-                        ]
-                    }
-                },
-                {
-                    "name": "shutters",
-                    "optional": true,
-                    "tags": {
-                        "require": [
-                            {
-                                "tag": "interface|window_shutter"
-                            }
-                        ]
-                    }
-                },
                 {
                     "name": "base",
                     "optional": true,
@@ -48433,9 +48418,9 @@
             ]
         },
         "file_metadata": {
-            "file": "stone_brick#window+ground.BA.openforge,side.stl",
+            "file": "stone_brick%ground#window.BA.openforge,side.stl",
             "file_modified_at": "2025-04-17T12:00:40.187389",
-            "full_name": "tiles/building_facades/stone_brick/separate_wall/window/openforge/stone_brick#window+ground.BA.openforge,side.stl",
+            "full_name": "tiles/building_facades/stone_brick/separate_wall/window/openforge/stone_brick%ground#window.BA.openforge,side.stl",
             "md5": "083829b33e79e1cf545e01cbd46f13ab",
             "size": 21492484,
             "storage_address": "https://objects.openforge.tools/models/083829/083829b33e79e1cf545e01cbd46f13ab.stl"
@@ -48544,49 +48529,24 @@
                 }
             }
         ],
-        "metadata": true,
+        "metadata": false,
         "tags": [
             "build|separate wall",
             "component|window",
-            "component|window|ground",
             "connection|openforge",
             "connection|side",
             "connection|side|openlock",
             "shape|wall",
             "size|openlock|BA",
             "size|width|1.5",
-            "texture|stone_brick"
+            "texture|stone_brick",
+            "texture|stone_brick|ground"
         ],
         "type": "model"
     },
     {
         "config": {
             "parts": [
-                {
-                    "name": "frame",
-                    "optional": true,
-                    "tags": {
-                        "require": [
-                            {
-                                "tag": "interface|window_frame"
-                            },
-                            {
-                                "tag": "size|interior"
-                            }
-                        ]
-                    }
-                },
-                {
-                    "name": "shutters",
-                    "optional": true,
-                    "tags": {
-                        "require": [
-                            {
-                                "tag": "interface|window_shutter"
-                            }
-                        ]
-                    }
-                },
                 {
                     "name": "base",
                     "optional": true,
@@ -48612,9 +48572,9 @@
             ]
         },
         "file_metadata": {
-            "file": "stone_brick#window+ground.D.openforge,side.stl",
+            "file": "stone_brick%ground#window.D.openforge,side.stl",
             "file_modified_at": "2020-10-27T13:17:13.929978",
-            "full_name": "tiles/building_facades/stone_brick/separate_wall/window/openforge/stone_brick#window+ground.D.openforge,side.stl",
+            "full_name": "tiles/building_facades/stone_brick/separate_wall/window/openforge/stone_brick%ground#window.D.openforge,side.stl",
             "md5": "5fdeda1fa04cdfc120c91d7ab6450d2e",
             "size": 37345184,
             "storage_address": "https://objects.openforge.tools/models/5fdeda/5fdeda1fa04cdfc120c91d7ab6450d2e.stl"
@@ -48723,49 +48683,24 @@
                 }
             }
         ],
-        "metadata": true,
+        "metadata": false,
         "tags": [
             "build|separate wall",
             "component|window",
-            "component|window|ground",
             "connection|openforge",
             "connection|side",
             "connection|side|openlock",
             "shape|wall",
             "size|openlock|D",
             "size|width|3",
-            "texture|stone_brick"
+            "texture|stone_brick",
+            "texture|stone_brick|ground"
         ],
         "type": "model"
     },
     {
         "config": {
             "parts": [
-                {
-                    "name": "frame",
-                    "optional": true,
-                    "tags": {
-                        "require": [
-                            {
-                                "tag": "interface|window_frame"
-                            },
-                            {
-                                "tag": "size|interior"
-                            }
-                        ]
-                    }
-                },
-                {
-                    "name": "shutters",
-                    "optional": true,
-                    "tags": {
-                        "require": [
-                            {
-                                "tag": "interface|window_shutter"
-                            }
-                        ]
-                    }
-                },
                 {
                     "name": "base",
                     "optional": true,
@@ -48791,9 +48726,9 @@
             ]
         },
         "file_metadata": {
-            "file": "stone_brick#window+upper,corbels.A.openforge,side.stl",
+            "file": "stone_brick%upper#window,corbels.A.openforge,side.stl",
             "file_modified_at": "2020-10-27T13:17:19.819980",
-            "full_name": "tiles/building_facades/stone_brick/separate_wall/window/openforge/stone_brick#window+upper,corbels.A.openforge,side.stl",
+            "full_name": "tiles/building_facades/stone_brick/separate_wall/window/openforge/stone_brick%upper#window,corbels.A.openforge,side.stl",
             "md5": "d093976c9dc5332d19cb478da7004c17",
             "size": 30444584,
             "storage_address": "https://objects.openforge.tools/models/d09397/d093976c9dc5332d19cb478da7004c17.stl"
@@ -48902,50 +48837,25 @@
                 }
             }
         ],
-        "metadata": true,
+        "metadata": false,
         "tags": [
             "build|separate wall",
-            "component|corbels",
             "component|window",
-            "component|window|upper",
             "connection|openforge",
             "connection|side",
             "connection|side|openlock",
+            "decoration|corbels",
             "shape|wall",
             "size|openlock|A",
             "size|width|2",
-            "texture|stone_brick"
+            "texture|stone_brick",
+            "texture|stone_brick|upper"
         ],
         "type": "model"
     },
     {
         "config": {
             "parts": [
-                {
-                    "name": "frame",
-                    "optional": true,
-                    "tags": {
-                        "require": [
-                            {
-                                "tag": "interface|window_frame"
-                            },
-                            {
-                                "tag": "size|interior"
-                            }
-                        ]
-                    }
-                },
-                {
-                    "name": "shutters",
-                    "optional": true,
-                    "tags": {
-                        "require": [
-                            {
-                                "tag": "interface|window_shutter"
-                            }
-                        ]
-                    }
-                },
                 {
                     "name": "base",
                     "optional": true,
@@ -48971,9 +48881,9 @@
             ]
         },
         "file_metadata": {
-            "file": "stone_brick#window+upper,corbels.BA.openforge,side.stl",
+            "file": "stone_brick%upper#window,corbels.BA.openforge,side.stl",
             "file_modified_at": "2025-04-17T12:00:48.690163",
-            "full_name": "tiles/building_facades/stone_brick/separate_wall/window/openforge/stone_brick#window+upper,corbels.BA.openforge,side.stl",
+            "full_name": "tiles/building_facades/stone_brick/separate_wall/window/openforge/stone_brick%upper#window,corbels.BA.openforge,side.stl",
             "md5": "bb2a8e2b442ddc13236e41b2aeae2cf7",
             "size": 22769084,
             "storage_address": "https://objects.openforge.tools/models/bb2a8e/bb2a8e2b442ddc13236e41b2aeae2cf7.stl"
@@ -49082,50 +48992,25 @@
                 }
             }
         ],
-        "metadata": true,
+        "metadata": false,
         "tags": [
             "build|separate wall",
-            "component|corbels",
             "component|window",
-            "component|window|upper",
             "connection|openforge",
             "connection|side",
             "connection|side|openlock",
+            "decoration|corbels",
             "shape|wall",
             "size|openlock|BA",
             "size|width|1.5",
-            "texture|stone_brick"
+            "texture|stone_brick",
+            "texture|stone_brick|upper"
         ],
         "type": "model"
     },
     {
         "config": {
             "parts": [
-                {
-                    "name": "frame",
-                    "optional": true,
-                    "tags": {
-                        "require": [
-                            {
-                                "tag": "interface|window_frame"
-                            },
-                            {
-                                "tag": "size|interior"
-                            }
-                        ]
-                    }
-                },
-                {
-                    "name": "shutters",
-                    "optional": true,
-                    "tags": {
-                        "require": [
-                            {
-                                "tag": "interface|window_shutter"
-                            }
-                        ]
-                    }
-                },
                 {
                     "name": "base",
                     "optional": true,
@@ -49151,9 +49036,9 @@
             ]
         },
         "file_metadata": {
-            "file": "stone_brick#window+upper.A.openforge,side.stl",
+            "file": "stone_brick%upper#window.A.openforge,side.stl",
             "file_modified_at": "2020-10-27T13:14:59.323927",
-            "full_name": "tiles/building_facades/stone_brick/separate_wall/window/openforge/stone_brick#window+upper.A.openforge,side.stl",
+            "full_name": "tiles/building_facades/stone_brick/separate_wall/window/openforge/stone_brick%upper#window.A.openforge,side.stl",
             "md5": "e57a9de951ed88ccfb7081583fccec72",
             "size": 24606284,
             "storage_address": "https://objects.openforge.tools/models/e57a9d/e57a9de951ed88ccfb7081583fccec72.stl"
@@ -49262,49 +49147,24 @@
                 }
             }
         ],
-        "metadata": true,
+        "metadata": false,
         "tags": [
             "build|separate wall",
             "component|window",
-            "component|window|upper",
             "connection|openforge",
             "connection|side",
             "connection|side|openlock",
             "shape|wall",
             "size|openlock|A",
             "size|width|2",
-            "texture|stone_brick"
+            "texture|stone_brick",
+            "texture|stone_brick|upper"
         ],
         "type": "model"
     },
     {
         "config": {
             "parts": [
-                {
-                    "name": "frame",
-                    "optional": true,
-                    "tags": {
-                        "require": [
-                            {
-                                "tag": "interface|window_frame"
-                            },
-                            {
-                                "tag": "size|interior"
-                            }
-                        ]
-                    }
-                },
-                {
-                    "name": "shutters",
-                    "optional": true,
-                    "tags": {
-                        "require": [
-                            {
-                                "tag": "interface|window_shutter"
-                            }
-                        ]
-                    }
-                },
                 {
                     "name": "base",
                     "optional": true,
@@ -49330,9 +49190,9 @@
             ]
         },
         "file_metadata": {
-            "file": "stone_brick#window+upper.BA.openforge,side.stl",
+            "file": "stone_brick%upper#window.BA.openforge,side.stl",
             "file_modified_at": "2025-04-17T12:00:51.656631",
-            "full_name": "tiles/building_facades/stone_brick/separate_wall/window/openforge/stone_brick#window+upper.BA.openforge,side.stl",
+            "full_name": "tiles/building_facades/stone_brick/separate_wall/window/openforge/stone_brick%upper#window.BA.openforge,side.stl",
             "md5": "d06a8bfd000751fa27715c7b615364f2",
             "size": 21237684,
             "storage_address": "https://objects.openforge.tools/models/d06a8b/d06a8bfd000751fa27715c7b615364f2.stl"
@@ -49441,49 +49301,24 @@
                 }
             }
         ],
-        "metadata": true,
+        "metadata": false,
         "tags": [
             "build|separate wall",
             "component|window",
-            "component|window|upper",
             "connection|openforge",
             "connection|side",
             "connection|side|openlock",
             "shape|wall",
             "size|openlock|BA",
             "size|width|1.5",
-            "texture|stone_brick"
+            "texture|stone_brick",
+            "texture|stone_brick|upper"
         ],
         "type": "model"
     },
     {
         "config": {
             "parts": [
-                {
-                    "name": "frame",
-                    "optional": true,
-                    "tags": {
-                        "require": [
-                            {
-                                "tag": "interface|window_frame"
-                            },
-                            {
-                                "tag": "size|interior"
-                            }
-                        ]
-                    }
-                },
-                {
-                    "name": "shutters",
-                    "optional": true,
-                    "tags": {
-                        "require": [
-                            {
-                                "tag": "interface|window_shutter"
-                            }
-                        ]
-                    }
-                },
                 {
                     "name": "base",
                     "optional": true,
@@ -49509,9 +49344,9 @@
             ]
         },
         "file_metadata": {
-            "file": "stone_brick#window+upper.D.openforge,side.stl",
+            "file": "stone_brick%upper#window.D.openforge,side.stl",
             "file_modified_at": "2025-04-17T12:01:05.958164",
-            "full_name": "tiles/building_facades/stone_brick/separate_wall/window/openforge/stone_brick#window+upper.D.openforge,side.stl",
+            "full_name": "tiles/building_facades/stone_brick/separate_wall/window/openforge/stone_brick%upper#window.D.openforge,side.stl",
             "md5": "17d6dd16d1b4a3112910e5d5c84681ae",
             "size": 36357084,
             "storage_address": "https://objects.openforge.tools/models/17d6dd/17d6dd16d1b4a3112910e5d5c84681ae.stl"
@@ -49620,55 +49455,26 @@
                 }
             }
         ],
-        "metadata": true,
+        "metadata": false,
         "tags": [
             "build|separate wall",
             "component|window",
-            "component|window|upper",
             "connection|openforge",
             "connection|side",
             "connection|side|openlock",
             "shape|wall",
             "size|openlock|D",
             "size|width|3",
-            "texture|stone_brick"
+            "texture|stone_brick",
+            "texture|stone_brick|upper"
         ],
         "type": "model"
     },
     {
-        "config": {
-            "parts": [
-                {
-                    "name": "frame",
-                    "optional": true,
-                    "tags": {
-                        "require": [
-                            {
-                                "tag": "interface|window_frame"
-                            },
-                            {
-                                "tag": "size|interior"
-                            }
-                        ]
-                    }
-                },
-                {
-                    "name": "shutters",
-                    "optional": true,
-                    "tags": {
-                        "require": [
-                            {
-                                "tag": "interface|window_shutter"
-                            }
-                        ]
-                    }
-                }
-            ]
-        },
         "file_metadata": {
-            "file": "stone_brick#window+ground,corbels.A.openlock,side.stl",
+            "file": "stone_brick%ground#window,corbels.A.openlock,side.stl",
             "file_modified_at": "2020-10-27T13:18:01.552650",
-            "full_name": "tiles/building_facades/stone_brick/separate_wall/window/openlock/stone_brick#window+ground,corbels.A.openlock,side.stl",
+            "full_name": "tiles/building_facades/stone_brick/separate_wall/window/openlock/stone_brick%ground#window,corbels.A.openlock,side.stl",
             "md5": "e0e4c676a27940c6163be73fe67f01a6",
             "size": 33162284,
             "storage_address": "https://objects.openforge.tools/models/e0e4c6/e0e4c676a27940c6163be73fe67f01a6.stl"
@@ -49777,56 +49583,27 @@
                 }
             }
         ],
-        "metadata": true,
+        "metadata": false,
         "tags": [
             "build|separate wall",
-            "component|corbels",
             "component|window",
-            "component|window|ground",
             "connection|openlock",
             "connection|side",
             "connection|side|openlock",
+            "decoration|corbels",
             "shape|wall",
             "size|openlock|A",
             "size|width|2",
-            "texture|stone_brick"
+            "texture|stone_brick",
+            "texture|stone_brick|ground"
         ],
         "type": "model"
     },
     {
-        "config": {
-            "parts": [
-                {
-                    "name": "frame",
-                    "optional": true,
-                    "tags": {
-                        "require": [
-                            {
-                                "tag": "interface|window_frame"
-                            },
-                            {
-                                "tag": "size|interior"
-                            }
-                        ]
-                    }
-                },
-                {
-                    "name": "shutters",
-                    "optional": true,
-                    "tags": {
-                        "require": [
-                            {
-                                "tag": "interface|window_shutter"
-                            }
-                        ]
-                    }
-                }
-            ]
-        },
         "file_metadata": {
-            "file": "stone_brick#window+ground,corbels.BA.openlock,side.stl",
+            "file": "stone_brick%ground#window,corbels.BA.openlock,side.stl",
             "file_modified_at": "2025-04-17T12:00:05.749936",
-            "full_name": "tiles/building_facades/stone_brick/separate_wall/window/openlock/stone_brick#window+ground,corbels.BA.openlock,side.stl",
+            "full_name": "tiles/building_facades/stone_brick/separate_wall/window/openlock/stone_brick%ground#window,corbels.BA.openlock,side.stl",
             "md5": "166d781806c149bdebd77d91c03d3df2",
             "size": 23882984,
             "storage_address": "https://objects.openforge.tools/models/166d78/166d781806c149bdebd77d91c03d3df2.stl"
@@ -49935,56 +49712,27 @@
                 }
             }
         ],
-        "metadata": true,
+        "metadata": false,
         "tags": [
             "build|separate wall",
-            "component|corbels",
             "component|window",
-            "component|window|ground",
             "connection|openlock",
             "connection|side",
             "connection|side|openlock",
+            "decoration|corbels",
             "shape|wall",
             "size|openlock|BA",
             "size|width|1.5",
-            "texture|stone_brick"
+            "texture|stone_brick",
+            "texture|stone_brick|ground"
         ],
         "type": "model"
     },
     {
-        "config": {
-            "parts": [
-                {
-                    "name": "frame",
-                    "optional": true,
-                    "tags": {
-                        "require": [
-                            {
-                                "tag": "interface|window_frame"
-                            },
-                            {
-                                "tag": "size|interior"
-                            }
-                        ]
-                    }
-                },
-                {
-                    "name": "shutters",
-                    "optional": true,
-                    "tags": {
-                        "require": [
-                            {
-                                "tag": "interface|window_shutter"
-                            }
-                        ]
-                    }
-                }
-            ]
-        },
         "file_metadata": {
-            "file": "stone_brick#window+ground.A.openlock,side.stl",
+            "file": "stone_brick%ground#window.A.openlock,side.stl",
             "file_modified_at": "2020-10-27T13:17:29.780013",
-            "full_name": "tiles/building_facades/stone_brick/separate_wall/window/openlock/stone_brick#window+ground.A.openlock,side.stl",
+            "full_name": "tiles/building_facades/stone_brick/separate_wall/window/openlock/stone_brick%ground#window.A.openlock,side.stl",
             "md5": "f89e2c2726d8dc10029836f5f46136ba",
             "size": 30451884,
             "storage_address": "https://objects.openforge.tools/models/f89e2c/f89e2c2726d8dc10029836f5f46136ba.stl"
@@ -50093,55 +49841,26 @@
                 }
             }
         ],
-        "metadata": true,
+        "metadata": false,
         "tags": [
             "build|separate wall",
             "component|window",
-            "component|window|ground",
             "connection|openlock",
             "connection|side",
             "connection|side|openlock",
             "shape|wall",
             "size|openlock|A",
             "size|width|2",
-            "texture|stone_brick"
+            "texture|stone_brick",
+            "texture|stone_brick|ground"
         ],
         "type": "model"
     },
     {
-        "config": {
-            "parts": [
-                {
-                    "name": "frame",
-                    "optional": true,
-                    "tags": {
-                        "require": [
-                            {
-                                "tag": "interface|window_frame"
-                            },
-                            {
-                                "tag": "size|interior"
-                            }
-                        ]
-                    }
-                },
-                {
-                    "name": "shutters",
-                    "optional": true,
-                    "tags": {
-                        "require": [
-                            {
-                                "tag": "interface|window_shutter"
-                            }
-                        ]
-                    }
-                }
-            ]
-        },
         "file_metadata": {
-            "file": "stone_brick#window+ground.BA.openlock,side.stl",
+            "file": "stone_brick%ground#window.BA.openlock,side.stl",
             "file_modified_at": "2025-04-17T12:00:12.379006",
-            "full_name": "tiles/building_facades/stone_brick/separate_wall/window/openlock/stone_brick#window+ground.BA.openlock,side.stl",
+            "full_name": "tiles/building_facades/stone_brick/separate_wall/window/openlock/stone_brick%ground#window.BA.openlock,side.stl",
             "md5": "1b54d414881adb2111bbf63753334d8b",
             "size": 22773284,
             "storage_address": "https://objects.openforge.tools/models/1b54d4/1b54d414881adb2111bbf63753334d8b.stl"
@@ -50250,55 +49969,26 @@
                 }
             }
         ],
-        "metadata": true,
+        "metadata": false,
         "tags": [
             "build|separate wall",
             "component|window",
-            "component|window|ground",
             "connection|openlock",
             "connection|side",
             "connection|side|openlock",
             "shape|wall",
             "size|openlock|BA",
             "size|width|1.5",
-            "texture|stone_brick"
+            "texture|stone_brick",
+            "texture|stone_brick|ground"
         ],
         "type": "model"
     },
     {
-        "config": {
-            "parts": [
-                {
-                    "name": "frame",
-                    "optional": true,
-                    "tags": {
-                        "require": [
-                            {
-                                "tag": "interface|window_frame"
-                            },
-                            {
-                                "tag": "size|interior"
-                            }
-                        ]
-                    }
-                },
-                {
-                    "name": "shutters",
-                    "optional": true,
-                    "tags": {
-                        "require": [
-                            {
-                                "tag": "interface|window_shutter"
-                            }
-                        ]
-                    }
-                }
-            ]
-        },
         "file_metadata": {
-            "file": "stone_brick#window+ground.D.openlock,side.stl",
+            "file": "stone_brick%ground#window.D.openlock,side.stl",
             "file_modified_at": "2020-10-27T13:17:59.522654",
-            "full_name": "tiles/building_facades/stone_brick/separate_wall/window/openlock/stone_brick#window+ground.D.openlock,side.stl",
+            "full_name": "tiles/building_facades/stone_brick/separate_wall/window/openlock/stone_brick%ground#window.D.openlock,side.stl",
             "md5": "53e78102a4ff867964e5a6691186170e",
             "size": 41328484,
             "storage_address": "https://objects.openforge.tools/models/53e781/53e78102a4ff867964e5a6691186170e.stl"
@@ -50407,55 +50097,26 @@
                 }
             }
         ],
-        "metadata": true,
+        "metadata": false,
         "tags": [
             "build|separate wall",
             "component|window",
-            "component|window|ground",
             "connection|openlock",
             "connection|side",
             "connection|side|openlock",
             "shape|wall",
             "size|openlock|D",
             "size|width|3",
-            "texture|stone_brick"
+            "texture|stone_brick",
+            "texture|stone_brick|ground"
         ],
         "type": "model"
     },
     {
-        "config": {
-            "parts": [
-                {
-                    "name": "frame",
-                    "optional": true,
-                    "tags": {
-                        "require": [
-                            {
-                                "tag": "interface|window_frame"
-                            },
-                            {
-                                "tag": "size|interior"
-                            }
-                        ]
-                    }
-                },
-                {
-                    "name": "shutters",
-                    "optional": true,
-                    "tags": {
-                        "require": [
-                            {
-                                "tag": "interface|window_shutter"
-                            }
-                        ]
-                    }
-                }
-            ]
-        },
         "file_metadata": {
-            "file": "stone_brick#window+upper,corbels.A.openlock,side.stl",
+            "file": "stone_brick%upper#window,corbels.A.openlock,side.stl",
             "file_modified_at": "2020-10-27T13:16:37.380999",
-            "full_name": "tiles/building_facades/stone_brick/separate_wall/window/openlock/stone_brick#window+upper,corbels.A.openlock,side.stl",
+            "full_name": "tiles/building_facades/stone_brick/separate_wall/window/openlock/stone_brick%upper#window,corbels.A.openlock,side.stl",
             "md5": "9f8ebf6b2306a0b3f4fdac0a9514f2fc",
             "size": 31615084,
             "storage_address": "https://objects.openforge.tools/models/9f8ebf/9f8ebf6b2306a0b3f4fdac0a9514f2fc.stl"
@@ -50564,56 +50225,27 @@
                 }
             }
         ],
-        "metadata": true,
+        "metadata": false,
         "tags": [
             "build|separate wall",
-            "component|corbels",
             "component|window",
-            "component|window|upper",
             "connection|openlock",
             "connection|side",
             "connection|side|openlock",
+            "decoration|corbels",
             "shape|wall",
             "size|openlock|A",
             "size|width|2",
-            "texture|stone_brick"
+            "texture|stone_brick",
+            "texture|stone_brick|upper"
         ],
         "type": "model"
     },
     {
-        "config": {
-            "parts": [
-                {
-                    "name": "frame",
-                    "optional": true,
-                    "tags": {
-                        "require": [
-                            {
-                                "tag": "interface|window_frame"
-                            },
-                            {
-                                "tag": "size|interior"
-                            }
-                        ]
-                    }
-                },
-                {
-                    "name": "shutters",
-                    "optional": true,
-                    "tags": {
-                        "require": [
-                            {
-                                "tag": "interface|window_shutter"
-                            }
-                        ]
-                    }
-                }
-            ]
-        },
         "file_metadata": {
-            "file": "stone_brick#window+upper,corbels.BA.openlock,side.stl",
+            "file": "stone_brick%upper#window,corbels.BA.openlock,side.stl",
             "file_modified_at": "2025-04-17T12:00:19.821865",
-            "full_name": "tiles/building_facades/stone_brick/separate_wall/window/openlock/stone_brick#window+upper,corbels.BA.openlock,side.stl",
+            "full_name": "tiles/building_facades/stone_brick/separate_wall/window/openlock/stone_brick%upper#window,corbels.BA.openlock,side.stl",
             "md5": "ce7077e25577779cf0d734cf3bef9d10",
             "size": 23468084,
             "storage_address": "https://objects.openforge.tools/models/ce7077/ce7077e25577779cf0d734cf3bef9d10.stl"
@@ -50722,56 +50354,27 @@
                 }
             }
         ],
-        "metadata": true,
+        "metadata": false,
         "tags": [
             "build|separate wall",
-            "component|corbels",
             "component|window",
-            "component|window|upper",
             "connection|openlock",
             "connection|side",
             "connection|side|openlock",
+            "decoration|corbels",
             "shape|wall",
             "size|openlock|BA",
             "size|width|1.5",
-            "texture|stone_brick"
+            "texture|stone_brick",
+            "texture|stone_brick|upper"
         ],
         "type": "model"
     },
     {
-        "config": {
-            "parts": [
-                {
-                    "name": "frame",
-                    "optional": true,
-                    "tags": {
-                        "require": [
-                            {
-                                "tag": "interface|window_frame"
-                            },
-                            {
-                                "tag": "size|interior"
-                            }
-                        ]
-                    }
-                },
-                {
-                    "name": "shutters",
-                    "optional": true,
-                    "tags": {
-                        "require": [
-                            {
-                                "tag": "interface|window_shutter"
-                            }
-                        ]
-                    }
-                }
-            ]
-        },
         "file_metadata": {
-            "file": "stone_brick#window+upper.A.openlock,side.stl",
+            "file": "stone_brick%upper#window.A.openlock,side.stl",
             "file_modified_at": "2020-10-27T13:15:14.894111",
-            "full_name": "tiles/building_facades/stone_brick/separate_wall/window/openlock/stone_brick#window+upper.A.openlock,side.stl",
+            "full_name": "tiles/building_facades/stone_brick/separate_wall/window/openlock/stone_brick%upper#window.A.openlock,side.stl",
             "md5": "f8205a1c9da840c0b437f2efe6855ff4",
             "size": 25107584,
             "storage_address": "https://objects.openforge.tools/models/f8205a/f8205a1c9da840c0b437f2efe6855ff4.stl"
@@ -50880,55 +50483,26 @@
                 }
             }
         ],
-        "metadata": true,
+        "metadata": false,
         "tags": [
             "build|separate wall",
             "component|window",
-            "component|window|upper",
             "connection|openlock",
             "connection|side",
             "connection|side|openlock",
             "shape|wall",
             "size|openlock|A",
             "size|width|2",
-            "texture|stone_brick"
+            "texture|stone_brick",
+            "texture|stone_brick|upper"
         ],
         "type": "model"
     },
     {
-        "config": {
-            "parts": [
-                {
-                    "name": "frame",
-                    "optional": true,
-                    "tags": {
-                        "require": [
-                            {
-                                "tag": "interface|window_frame"
-                            },
-                            {
-                                "tag": "size|interior"
-                            }
-                        ]
-                    }
-                },
-                {
-                    "name": "shutters",
-                    "optional": true,
-                    "tags": {
-                        "require": [
-                            {
-                                "tag": "interface|window_shutter"
-                            }
-                        ]
-                    }
-                }
-            ]
-        },
         "file_metadata": {
-            "file": "stone_brick#window+upper.BA.openlock,side.stl",
+            "file": "stone_brick%upper#window.BA.openlock,side.stl",
             "file_modified_at": "2025-04-17T12:00:24.787663",
-            "full_name": "tiles/building_facades/stone_brick/separate_wall/window/openlock/stone_brick#window+upper.BA.openlock,side.stl",
+            "full_name": "tiles/building_facades/stone_brick/separate_wall/window/openlock/stone_brick%upper#window.BA.openlock,side.stl",
             "md5": "6de5c40c849f01ec1accd4226ed3b4b8",
             "size": 21909984,
             "storage_address": "https://objects.openforge.tools/models/6de5c4/6de5c40c849f01ec1accd4226ed3b4b8.stl"
@@ -51037,55 +50611,26 @@
                 }
             }
         ],
-        "metadata": true,
+        "metadata": false,
         "tags": [
             "build|separate wall",
             "component|window",
-            "component|window|upper",
             "connection|openlock",
             "connection|side",
             "connection|side|openlock",
             "shape|wall",
             "size|openlock|BA",
             "size|width|1.5",
-            "texture|stone_brick"
+            "texture|stone_brick",
+            "texture|stone_brick|upper"
         ],
         "type": "model"
     },
     {
-        "config": {
-            "parts": [
-                {
-                    "name": "frame",
-                    "optional": true,
-                    "tags": {
-                        "require": [
-                            {
-                                "tag": "interface|window_frame"
-                            },
-                            {
-                                "tag": "size|interior"
-                            }
-                        ]
-                    }
-                },
-                {
-                    "name": "shutters",
-                    "optional": true,
-                    "tags": {
-                        "require": [
-                            {
-                                "tag": "interface|window_shutter"
-                            }
-                        ]
-                    }
-                }
-            ]
-        },
         "file_metadata": {
-            "file": "stone_brick#window+upper.D.openlock,side.stl",
+            "file": "stone_brick%upper#window.D.openlock,side.stl",
             "file_modified_at": "2025-04-17T12:00:33.410659",
-            "full_name": "tiles/building_facades/stone_brick/separate_wall/window/openlock/stone_brick#window+upper.D.openlock,side.stl",
+            "full_name": "tiles/building_facades/stone_brick/separate_wall/window/openlock/stone_brick%upper#window.D.openlock,side.stl",
             "md5": "c64afce1483c5e78015ebafe33f2fb5c",
             "size": 38006684,
             "storage_address": "https://objects.openforge.tools/models/c64afc/c64afce1483c5e78015ebafe33f2fb5c.stl"
@@ -51194,18 +50739,18 @@
                 }
             }
         ],
-        "metadata": true,
+        "metadata": false,
         "tags": [
             "build|separate wall",
             "component|window",
-            "component|window|upper",
             "connection|openlock",
             "connection|side",
             "connection|side|openlock",
             "shape|wall",
             "size|openlock|D",
             "size|width|3",
-            "texture|stone_brick"
+            "texture|stone_brick",
+            "texture|stone_brick|upper"
         ],
         "type": "model"
     },

@@ -1259,6 +1259,43 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "base",
+                    "optional": true,
+                    "tags": {
+                        "constrain": [
+                            {
+                                "filter": "shape|floor"
+                            },
+                            {
+                                "filter": "shape|wall"
+                            },
+                            {
+                                "tag": "shape"
+                            },
+                            {
+                                "tag": "size|depth"
+                            },
+                            {
+                                "tag": "size|width"
+                            }
+                        ],
+                        "deny": [
+                            {
+                                "tag": "build|s2w"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "shape|base"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "towne%long_planks+a#floor.AS.openforge.stl",
             "file_modified_at": "2025-02-21T14:04:38.762725",
@@ -1376,7 +1413,7 @@
             "connection|dual",
             "connection|openforge",
             "shape|floor",
-            "shape|wall",
+            "shape|floor|wall",
             "size|openlock|AS",
             "size|width|2",
             "texture|towne",
@@ -1386,6 +1423,43 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "base",
+                    "optional": true,
+                    "tags": {
+                        "constrain": [
+                            {
+                                "filter": "shape|floor"
+                            },
+                            {
+                                "filter": "shape|wall"
+                            },
+                            {
+                                "tag": "shape"
+                            },
+                            {
+                                "tag": "size|depth"
+                            },
+                            {
+                                "tag": "size|width"
+                            }
+                        ],
+                        "deny": [
+                            {
+                                "tag": "build|s2w"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "shape|base"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "towne%long_planks+b#floor.AS.openforge.stl",
             "file_modified_at": "2025-02-21T14:04:54.421323",
@@ -1503,7 +1577,7 @@
             "connection|dual",
             "connection|openforge",
             "shape|floor",
-            "shape|wall",
+            "shape|floor|wall",
             "size|openlock|AS",
             "size|width|2",
             "texture|towne",
@@ -2387,7 +2461,7 @@
             "connection|openlock",
             "connection|openlock|unsupported",
             "shape|floor",
-            "shape|wall",
+            "shape|floor|wall",
             "size|openlock|AS",
             "size|width|2",
             "texture|towne",
@@ -2515,7 +2589,7 @@
             "connection|openlock",
             "connection|openlock|unsupported",
             "shape|floor",
-            "shape|wall",
+            "shape|floor|wall",
             "size|openlock|AS",
             "size|width|2",
             "texture|towne",
@@ -3392,7 +3466,7 @@
             "connection|dual",
             "connection|openlock",
             "shape|floor",
-            "shape|wall",
+            "shape|floor|wall",
             "size|openlock|AS",
             "size|width|2",
             "texture|towne",
@@ -3519,7 +3593,7 @@
             "connection|dual",
             "connection|openlock",
             "shape|floor",
-            "shape|wall",
+            "shape|floor|wall",
             "size|openlock|AS",
             "size|width|2",
             "texture|towne",
@@ -5311,6 +5385,43 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "base",
+                    "optional": true,
+                    "tags": {
+                        "constrain": [
+                            {
+                                "filter": "shape|floor"
+                            },
+                            {
+                                "filter": "shape|wall"
+                            },
+                            {
+                                "tag": "shape"
+                            },
+                            {
+                                "tag": "size|depth"
+                            },
+                            {
+                                "tag": "size|width"
+                            }
+                        ],
+                        "deny": [
+                            {
+                                "tag": "build|s2w"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "shape|base"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "towne%wood#floor.AS.openforge.stl",
             "file_modified_at": "2025-07-06T15:54:05.675474",
@@ -5428,7 +5539,7 @@
             "connection|dual",
             "connection|openforge",
             "shape|floor",
-            "shape|wall",
+            "shape|floor|wall",
             "size|openlock|AS",
             "size|width|2",
             "texture|towne",
@@ -6941,7 +7052,7 @@
             "connection|openlock",
             "connection|openlock|unsupported",
             "shape|floor",
-            "shape|wall",
+            "shape|floor|wall",
             "size|openlock|AS",
             "size|width|2",
             "texture|towne",
@@ -8442,7 +8553,7 @@
             "connection|dual",
             "connection|openlock",
             "shape|floor",
-            "shape|wall",
+            "shape|floor|wall",
             "size|openlock|AS",
             "size|width|2",
             "texture|towne",
@@ -8700,9 +8811,9 @@
     },
     {
         "file_metadata": {
-            "file": "towne+ruined_stucco#riser+high.2x1.openforge.stl",
+            "file": "towne+broken_stucco#riser+high.2x1.openforge.stl",
             "file_modified_at": "2019-05-28T10:40:08",
-            "full_name": "tiles/towne/misc/riser/riser/towne+ruined_stucco#riser+high.2x1.openforge.stl",
+            "full_name": "tiles/towne/misc/riser/riser/towne+broken_stucco#riser+high.2x1.openforge.stl",
             "md5": "75965847155d5d3478e50da76ea4b6c6",
             "size": 35769384,
             "storage_address": "https://objects.openforge.tools/models/759658/75965847155d5d3478e50da76ea4b6c6.stl"
@@ -8819,15 +8930,15 @@
             "size|depth|1",
             "size|width|2",
             "texture|towne",
-            "texture|towne|ruined_stucco"
+            "texture|towne|broken_stucco"
         ],
         "type": "model"
     },
     {
         "file_metadata": {
-            "file": "towne+ruined_stucco#riser+high.2x2.openforge.stl",
+            "file": "towne+broken_stucco#riser+high.2x2.openforge.stl",
             "file_modified_at": "2019-05-28T10:49:42",
-            "full_name": "tiles/towne/misc/riser/riser/towne+ruined_stucco#riser+high.2x2.openforge.stl",
+            "full_name": "tiles/towne/misc/riser/riser/towne+broken_stucco#riser+high.2x2.openforge.stl",
             "md5": "6530e4bb749519e2430611193aae71e9",
             "size": 26887684,
             "storage_address": "https://objects.openforge.tools/models/6530e4/6530e4bb749519e2430611193aae71e9.stl"
@@ -8944,15 +9055,15 @@
             "size|depth|2",
             "size|width|2",
             "texture|towne",
-            "texture|towne|ruined_stucco"
+            "texture|towne|broken_stucco"
         ],
         "type": "model"
     },
     {
         "file_metadata": {
-            "file": "towne+ruined_stucco#riser+low.2x1.openforge.stl",
+            "file": "towne+broken_stucco#riser+low.2x1.openforge.stl",
             "file_modified_at": "2019-05-28T10:43:53",
-            "full_name": "tiles/towne/misc/riser/riser/towne+ruined_stucco#riser+low.2x1.openforge.stl",
+            "full_name": "tiles/towne/misc/riser/riser/towne+broken_stucco#riser+low.2x1.openforge.stl",
             "md5": "1356032620941b12d6ff77d14fe3909f",
             "size": 16178584,
             "storage_address": "https://objects.openforge.tools/models/135603/1356032620941b12d6ff77d14fe3909f.stl"
@@ -9069,15 +9180,15 @@
             "size|depth|1",
             "size|width|2",
             "texture|towne",
-            "texture|towne|ruined_stucco"
+            "texture|towne|broken_stucco"
         ],
         "type": "model"
     },
     {
         "file_metadata": {
-            "file": "towne+ruined_stucco#riser+low.2x2.openforge.stl",
+            "file": "towne+broken_stucco#riser+low.2x2.openforge.stl",
             "file_modified_at": "2019-05-28T10:51:11",
-            "full_name": "tiles/towne/misc/riser/riser/towne+ruined_stucco#riser+low.2x2.openforge.stl",
+            "full_name": "tiles/towne/misc/riser/riser/towne+broken_stucco#riser+low.2x2.openforge.stl",
             "md5": "cd61f6193e10514140ad0997e53cded8",
             "size": 25790384,
             "storage_address": "https://objects.openforge.tools/models/cd61f6/cd61f6193e10514140ad0997e53cded8.stl"
@@ -9194,15 +9305,15 @@
             "size|depth|2",
             "size|width|2",
             "texture|towne",
-            "texture|towne|ruined_stucco"
+            "texture|towne|broken_stucco"
         ],
         "type": "model"
     },
     {
         "file_metadata": {
-            "file": "towne+ruined_stucco#riser+medium.2x1.openforge.stl",
+            "file": "towne+broken_stucco#riser+medium.2x1.openforge.stl",
             "file_modified_at": "2019-05-28T10:45:44",
-            "full_name": "tiles/towne/misc/riser/riser/towne+ruined_stucco#riser+medium.2x1.openforge.stl",
+            "full_name": "tiles/towne/misc/riser/riser/towne+broken_stucco#riser+medium.2x1.openforge.stl",
             "md5": "be66d251cfa0948b15d5fd2cc648f269",
             "size": 29483684,
             "storage_address": "https://objects.openforge.tools/models/be66d2/be66d251cfa0948b15d5fd2cc648f269.stl"
@@ -9319,15 +9430,15 @@
             "size|depth|1",
             "size|width|2",
             "texture|towne",
-            "texture|towne|ruined_stucco"
+            "texture|towne|broken_stucco"
         ],
         "type": "model"
     },
     {
         "file_metadata": {
-            "file": "towne+ruined_stucco#riser+medium.2x2.openforge.stl",
+            "file": "towne+broken_stucco#riser+medium.2x2.openforge.stl",
             "file_modified_at": "2019-05-28T10:52:25",
-            "full_name": "tiles/towne/misc/riser/riser/towne+ruined_stucco#riser+medium.2x2.openforge.stl",
+            "full_name": "tiles/towne/misc/riser/riser/towne+broken_stucco#riser+medium.2x2.openforge.stl",
             "md5": "445e2122db65801bf5c935248634b8fd",
             "size": 28103284,
             "storage_address": "https://objects.openforge.tools/models/445e21/445e2122db65801bf5c935248634b8fd.stl"
@@ -9444,7 +9555,7 @@
             "size|depth|2",
             "size|width|2",
             "texture|towne",
-            "texture|towne|ruined_stucco"
+            "texture|towne|broken_stucco"
         ],
         "type": "model"
     },
@@ -11950,9 +12061,9 @@
     },
     {
         "file_metadata": {
-            "file": "towne+ruined_stucco#stairs+high+corner.2x2.openforge.stl",
+            "file": "towne+broken_stucco#stairs+high+corner.2x2.openforge.stl",
             "file_modified_at": "2019-05-28T10:49:19",
-            "full_name": "tiles/towne/misc/stairs/stairs/towne+ruined_stucco#stairs+high+corner.2x2.openforge.stl",
+            "full_name": "tiles/towne/misc/stairs/stairs/towne+broken_stucco#stairs+high+corner.2x2.openforge.stl",
             "md5": "4a28e94cec3cf092d09cd61a62530827",
             "size": 24073184,
             "storage_address": "https://objects.openforge.tools/models/4a28e9/4a28e94cec3cf092d09cd61a62530827.stl"
@@ -12070,15 +12181,15 @@
             "size|depth|2",
             "size|width|2",
             "texture|towne",
-            "texture|towne|ruined_stucco"
+            "texture|towne|broken_stucco"
         ],
         "type": "model"
     },
     {
         "file_metadata": {
-            "file": "towne+ruined_stucco#stairs+high.2x1.openforge.stl",
+            "file": "towne+broken_stucco#stairs+high.2x1.openforge.stl",
             "file_modified_at": "2019-05-28T10:41:30",
-            "full_name": "tiles/towne/misc/stairs/stairs/towne+ruined_stucco#stairs+high.2x1.openforge.stl",
+            "full_name": "tiles/towne/misc/stairs/stairs/towne+broken_stucco#stairs+high.2x1.openforge.stl",
             "md5": "018b447944c791e613921b1c20828381",
             "size": 34316584,
             "storage_address": "https://objects.openforge.tools/models/018b44/018b447944c791e613921b1c20828381.stl"
@@ -12195,15 +12306,15 @@
             "size|depth|1",
             "size|width|2",
             "texture|towne",
-            "texture|towne|ruined_stucco"
+            "texture|towne|broken_stucco"
         ],
         "type": "model"
     },
     {
         "file_metadata": {
-            "file": "towne+ruined_stucco#stairs+high.2x2.openforge.stl",
+            "file": "towne+broken_stucco#stairs+high.2x2.openforge.stl",
             "file_modified_at": "2019-05-28T10:50:04",
-            "full_name": "tiles/towne/misc/stairs/stairs/towne+ruined_stucco#stairs+high.2x2.openforge.stl",
+            "full_name": "tiles/towne/misc/stairs/stairs/towne+broken_stucco#stairs+high.2x2.openforge.stl",
             "md5": "1ab768156b4b9cd54fc4ec787b23738b",
             "size": 25632184,
             "storage_address": "https://objects.openforge.tools/models/1ab768/1ab768156b4b9cd54fc4ec787b23738b.stl"
@@ -12320,15 +12431,15 @@
             "size|depth|2",
             "size|width|2",
             "texture|towne",
-            "texture|towne|ruined_stucco"
+            "texture|towne|broken_stucco"
         ],
         "type": "model"
     },
     {
         "file_metadata": {
-            "file": "towne+ruined_stucco#stairs+low+corner.2x2.openforge.stl",
+            "file": "towne+broken_stucco#stairs+low+corner.2x2.openforge.stl",
             "file_modified_at": "2019-05-28T10:50:31",
-            "full_name": "tiles/towne/misc/stairs/stairs/towne+ruined_stucco#stairs+low+corner.2x2.openforge.stl",
+            "full_name": "tiles/towne/misc/stairs/stairs/towne+broken_stucco#stairs+low+corner.2x2.openforge.stl",
             "md5": "77029091edabdd68d5e5cce70b5edd3f",
             "size": 26183984,
             "storage_address": "https://objects.openforge.tools/models/770290/77029091edabdd68d5e5cce70b5edd3f.stl"
@@ -12446,15 +12557,15 @@
             "size|depth|2",
             "size|width|2",
             "texture|towne",
-            "texture|towne|ruined_stucco"
+            "texture|towne|broken_stucco"
         ],
         "type": "model"
     },
     {
         "file_metadata": {
-            "file": "towne+ruined_stucco#stairs+low.2x1.openforge.stl",
+            "file": "towne+broken_stucco#stairs+low.2x1.openforge.stl",
             "file_modified_at": "2019-05-28T10:44:51",
-            "full_name": "tiles/towne/misc/stairs/stairs/towne+ruined_stucco#stairs+low.2x1.openforge.stl",
+            "full_name": "tiles/towne/misc/stairs/stairs/towne+broken_stucco#stairs+low.2x1.openforge.stl",
             "md5": "47d8b3358aadb16938e7a0739bc675bf",
             "size": 14772584,
             "storage_address": "https://objects.openforge.tools/models/47d8b3/47d8b3358aadb16938e7a0739bc675bf.stl"
@@ -12571,15 +12682,15 @@
             "size|depth|1",
             "size|width|2",
             "texture|towne",
-            "texture|towne|ruined_stucco"
+            "texture|towne|broken_stucco"
         ],
         "type": "model"
     },
     {
         "file_metadata": {
-            "file": "towne+ruined_stucco#stairs+low.2x2.openforge.stl",
+            "file": "towne+broken_stucco#stairs+low.2x2.openforge.stl",
             "file_modified_at": "2019-05-28T10:51:34",
-            "full_name": "tiles/towne/misc/stairs/stairs/towne+ruined_stucco#stairs+low.2x2.openforge.stl",
+            "full_name": "tiles/towne/misc/stairs/stairs/towne+broken_stucco#stairs+low.2x2.openforge.stl",
             "md5": "0ca01b7e6baa483186e3c18c9a13f1e9",
             "size": 25000584,
             "storage_address": "https://objects.openforge.tools/models/0ca01b/0ca01b7e6baa483186e3c18c9a13f1e9.stl"
@@ -12696,15 +12807,15 @@
             "size|depth|2",
             "size|width|2",
             "texture|towne",
-            "texture|towne|ruined_stucco"
+            "texture|towne|broken_stucco"
         ],
         "type": "model"
     },
     {
         "file_metadata": {
-            "file": "towne+ruined_stucco#stairs+medium+corner.2x2.openforge.stl",
+            "file": "towne+broken_stucco#stairs+medium+corner.2x2.openforge.stl",
             "file_modified_at": "2019-05-28T10:51:58",
-            "full_name": "tiles/towne/misc/stairs/stairs/towne+ruined_stucco#stairs+medium+corner.2x2.openforge.stl",
+            "full_name": "tiles/towne/misc/stairs/stairs/towne+broken_stucco#stairs+medium+corner.2x2.openforge.stl",
             "md5": "977b30b993a6eb3cf57bdc3de6c0db9c",
             "size": 24193484,
             "storage_address": "https://objects.openforge.tools/models/977b30/977b30b993a6eb3cf57bdc3de6c0db9c.stl"
@@ -12822,15 +12933,15 @@
             "size|depth|2",
             "size|width|2",
             "texture|towne",
-            "texture|towne|ruined_stucco"
+            "texture|towne|broken_stucco"
         ],
         "type": "model"
     },
     {
         "file_metadata": {
-            "file": "towne+ruined_stucco#stairs+medium.2x1.openforge.stl",
+            "file": "towne+broken_stucco#stairs+medium.2x1.openforge.stl",
             "file_modified_at": "2019-05-28T10:47:40",
-            "full_name": "tiles/towne/misc/stairs/stairs/towne+ruined_stucco#stairs+medium.2x1.openforge.stl",
+            "full_name": "tiles/towne/misc/stairs/stairs/towne+broken_stucco#stairs+medium.2x1.openforge.stl",
             "md5": "1b0a7209f5e85f4fd6d84e481d026f26",
             "size": 24202684,
             "storage_address": "https://objects.openforge.tools/models/1b0a72/1b0a7209f5e85f4fd6d84e481d026f26.stl"
@@ -12947,15 +13058,15 @@
             "size|depth|1",
             "size|width|2",
             "texture|towne",
-            "texture|towne|ruined_stucco"
+            "texture|towne|broken_stucco"
         ],
         "type": "model"
     },
     {
         "file_metadata": {
-            "file": "towne+ruined_stucco#stairs+medium.2x2.openforge.stl",
+            "file": "towne+broken_stucco#stairs+medium.2x2.openforge.stl",
             "file_modified_at": "2019-05-28T10:52:48",
-            "full_name": "tiles/towne/misc/stairs/stairs/towne+ruined_stucco#stairs+medium.2x2.openforge.stl",
+            "full_name": "tiles/towne/misc/stairs/stairs/towne+broken_stucco#stairs+medium.2x2.openforge.stl",
             "md5": "45af8fae9e77b0c2adeaefaca2f944d3",
             "size": 26163984,
             "storage_address": "https://objects.openforge.tools/models/45af8f/45af8fae9e77b0c2adeaefaca2f944d3.stl"
@@ -13072,7 +13183,7 @@
             "size|depth|2",
             "size|width|2",
             "texture|towne",
-            "texture|towne|ruined_stucco"
+            "texture|towne|broken_stucco"
         ],
         "type": "model"
     },
@@ -24346,7 +24457,6 @@
             "shape|floor",
             "shape|floor|s2w",
             "shape|floor|wall",
-            "shape|wall",
             "size|depth|1",
             "size|width|1",
             "texture|towne"
@@ -24473,7 +24583,6 @@
             "shape|floor",
             "shape|floor|s2w",
             "shape|floor|wall",
-            "shape|wall",
             "size|depth|1",
             "size|width|2",
             "texture|towne"
@@ -24600,7 +24709,6 @@
             "shape|floor",
             "shape|floor|s2w",
             "shape|floor|wall",
-            "shape|wall",
             "size|depth|2",
             "size|width|2",
             "texture|towne"
@@ -24727,7 +24835,6 @@
             "shape|floor",
             "shape|floor|s2w",
             "shape|floor|wall",
-            "shape|wall",
             "size|depth|1",
             "size|width|3",
             "texture|towne"
@@ -24854,7 +24961,6 @@
             "shape|floor",
             "shape|floor|s2w",
             "shape|floor|wall",
-            "shape|wall",
             "size|depth|3",
             "size|width|3",
             "texture|towne"
@@ -24981,7 +25087,6 @@
             "shape|floor",
             "shape|floor|s2w",
             "shape|floor|wall",
-            "shape|wall",
             "size|depth|1",
             "size|width|4",
             "texture|towne"
@@ -25108,7 +25213,6 @@
             "shape|floor",
             "shape|floor|s2w",
             "shape|floor|wall",
-            "shape|wall",
             "size|depth|2",
             "size|width|4",
             "texture|towne"
@@ -25235,7 +25339,6 @@
             "shape|floor",
             "shape|floor|s2w",
             "shape|floor|wall",
-            "shape|wall",
             "size|depth|4",
             "size|width|4",
             "texture|towne"
@@ -25362,7 +25465,6 @@
             "shape|floor",
             "shape|floor|s2w",
             "shape|floor|wall",
-            "shape|wall",
             "size|depth|2",
             "size|width|2",
             "texture|towne",
@@ -25491,7 +25593,6 @@
             "shape|floor",
             "shape|floor|s2w",
             "shape|floor|wall",
-            "shape|wall",
             "size|depth|2",
             "size|width|4",
             "texture|towne",
@@ -25620,7 +25721,6 @@
             "shape|floor",
             "shape|floor|s2w",
             "shape|floor|wall",
-            "shape|wall",
             "size|depth|4",
             "size|width|4",
             "texture|towne",
@@ -25749,7 +25849,6 @@
             "shape|floor",
             "shape|floor|s2w",
             "shape|floor|wall",
-            "shape|wall",
             "size|depth|2",
             "size|width|2",
             "texture|towne",
@@ -25878,7 +25977,6 @@
             "shape|floor",
             "shape|floor|s2w",
             "shape|floor|wall",
-            "shape|wall",
             "size|depth|2",
             "size|width|4",
             "texture|towne",
@@ -26007,7 +26105,6 @@
             "shape|floor",
             "shape|floor|s2w",
             "shape|floor|wall",
-            "shape|wall",
             "size|depth|4",
             "size|width|4",
             "texture|towne",
@@ -89343,9 +89440,9 @@
     },
     {
         "file_metadata": {
-            "file": "towne+ruined_stucco-a#window+square.A.openlock.stl",
+            "file": "towne+broken_stucco-a#window+square.A.openlock.stl",
             "file_modified_at": "2021-10-29T00:02:41.411768",
-            "full_name": "tiles/towne/separate_wall/primary_walls/window+square/openlock/towne+ruined_stucco-a#window+square.A.openlock.stl",
+            "full_name": "tiles/towne/separate_wall/primary_walls/window+square/openlock/towne+broken_stucco-a#window+square.A.openlock.stl",
             "md5": "2fbd55586b47865353e93ba88d49477d",
             "size": 21546184,
             "storage_address": "https://objects.openforge.tools/models/2fbd55/2fbd55586b47865353e93ba88d49477d.stl"
@@ -89465,15 +89562,15 @@
             "size|openlock|A",
             "size|width|2",
             "texture|towne",
-            "texture|towne|ruined_stucco-a"
+            "texture|towne|broken_stucco-a"
         ],
         "type": "model"
     },
     {
         "file_metadata": {
-            "file": "towne+ruined_stucco-b#window+square.A.openlock.stl",
+            "file": "towne+broken_stucco-b#window+square.A.openlock.stl",
             "file_modified_at": "2021-10-29T00:03:00.843692",
-            "full_name": "tiles/towne/separate_wall/primary_walls/window+square/openlock/towne+ruined_stucco-b#window+square.A.openlock.stl",
+            "full_name": "tiles/towne/separate_wall/primary_walls/window+square/openlock/towne+broken_stucco-b#window+square.A.openlock.stl",
             "md5": "183dd8b77e93b4a5ff4d3cdee627619a",
             "size": 20439134,
             "storage_address": "https://objects.openforge.tools/models/183dd8/183dd8b77e93b4a5ff4d3cdee627619a.stl"
@@ -89593,7 +89690,7 @@
             "size|openlock|A",
             "size|width|2",
             "texture|towne",
-            "texture|towne|ruined_stucco-b"
+            "texture|towne|broken_stucco-b"
         ],
         "type": "model"
     },
@@ -95493,9 +95590,9 @@
     },
     {
         "file_metadata": {
-            "file": "towne%ruined_stucco+a#wall.2x2.openforge.stl",
+            "file": "towne%broken_stucco+a#wall.2x2.openforge.stl",
             "file_modified_at": "2020-06-19T12:31:50",
-            "full_name": "tiles/towne/wall_on_tile/curved/wall/towne%ruined_stucco+a#wall.2x2.openforge.stl",
+            "full_name": "tiles/towne/wall_on_tile/curved/wall/towne%broken_stucco+a#wall.2x2.openforge.stl",
             "md5": "d24a9b3038c97feae9d4c734684f7828",
             "size": 18144384,
             "storage_address": "https://objects.openforge.tools/models/d24a9b/d24a9b3038c97feae9d4c734684f7828.stl"
@@ -95613,16 +95710,16 @@
             "size|depth|2",
             "size|width|2",
             "texture|towne",
-            "texture|towne|ruined_stucco",
-            "texture|towne|ruined_stucco|a"
+            "texture|towne|broken_stucco",
+            "texture|towne|broken_stucco|a"
         ],
         "type": "model"
     },
     {
         "file_metadata": {
-            "file": "towne%ruined_stucco+b#wall.2x2.openforge.stl",
+            "file": "towne%broken_stucco+b#wall.2x2.openforge.stl",
             "file_modified_at": "2020-06-19T12:32:55",
-            "full_name": "tiles/towne/wall_on_tile/curved/wall/towne%ruined_stucco+b#wall.2x2.openforge.stl",
+            "full_name": "tiles/towne/wall_on_tile/curved/wall/towne%broken_stucco+b#wall.2x2.openforge.stl",
             "md5": "20c1d5e7a1cbafe7435715fee278a280",
             "size": 14361884,
             "storage_address": "https://objects.openforge.tools/models/20c1d5/20c1d5e7a1cbafe7435715fee278a280.stl"
@@ -95740,16 +95837,16 @@
             "size|depth|2",
             "size|width|2",
             "texture|towne",
-            "texture|towne|ruined_stucco",
-            "texture|towne|ruined_stucco|b"
+            "texture|towne|broken_stucco",
+            "texture|towne|broken_stucco|b"
         ],
         "type": "model"
     },
     {
         "file_metadata": {
-            "file": "towne%ruined_stucco+c#wall.2x2.openforge.stl",
+            "file": "towne%broken_stucco+c#wall.2x2.openforge.stl",
             "file_modified_at": "2020-06-19T12:34:32",
-            "full_name": "tiles/towne/wall_on_tile/curved/wall/towne%ruined_stucco+c#wall.2x2.openforge.stl",
+            "full_name": "tiles/towne/wall_on_tile/curved/wall/towne%broken_stucco+c#wall.2x2.openforge.stl",
             "md5": "c3903f8d0fafb8b9fa0c0d44afe233c1",
             "size": 17885334,
             "storage_address": "https://objects.openforge.tools/models/c3903f/c3903f8d0fafb8b9fa0c0d44afe233c1.stl"
@@ -95867,16 +95964,16 @@
             "size|depth|2",
             "size|width|2",
             "texture|towne",
-            "texture|towne|ruined_stucco",
-            "texture|towne|ruined_stucco|c"
+            "texture|towne|broken_stucco",
+            "texture|towne|broken_stucco|c"
         ],
         "type": "model"
     },
     {
         "file_metadata": {
-            "file": "towne%ruined_stucco+d#wall.2x2.openforge.stl",
+            "file": "towne%broken_stucco+d#wall.2x2.openforge.stl",
             "file_modified_at": "2020-06-19T12:35:34",
-            "full_name": "tiles/towne/wall_on_tile/curved/wall/towne%ruined_stucco+d#wall.2x2.openforge.stl",
+            "full_name": "tiles/towne/wall_on_tile/curved/wall/towne%broken_stucco+d#wall.2x2.openforge.stl",
             "md5": "a9cc02f81a27a82d6787624cb708b8cc",
             "size": 14436084,
             "storage_address": "https://objects.openforge.tools/models/a9cc02/a9cc02f81a27a82d6787624cb708b8cc.stl"
@@ -95994,8 +96091,8 @@
             "size|depth|2",
             "size|width|2",
             "texture|towne",
-            "texture|towne|ruined_stucco",
-            "texture|towne|ruined_stucco|d"
+            "texture|towne|broken_stucco",
+            "texture|towne|broken_stucco|d"
         ],
         "type": "model"
     },
@@ -100560,9 +100657,9 @@
     },
     {
         "file_metadata": {
-            "file": "towne%ruined_stucco+a#wall,window.2x.openforge.stl",
+            "file": "towne%broken_stucco+a#wall,window.2x.openforge.stl",
             "file_modified_at": "2020-06-23T19:26:23",
-            "full_name": "tiles/towne/wall_on_tile/window/towne%ruined_stucco+a#wall,window.2x.openforge.stl",
+            "full_name": "tiles/towne/wall_on_tile/window/towne%broken_stucco+a#wall,window.2x.openforge.stl",
             "md5": "90d8884776c8a9024a7dc8457c239ad0",
             "size": 13521684,
             "storage_address": "https://objects.openforge.tools/models/90d888/90d8884776c8a9024a7dc8457c239ad0.stl"
@@ -100680,16 +100777,16 @@
             "size|openlock|A",
             "size|width|2",
             "texture|towne",
-            "texture|towne|ruined_stucco",
-            "texture|towne|ruined_stucco|a"
+            "texture|towne|broken_stucco",
+            "texture|towne|broken_stucco|a"
         ],
         "type": "model"
     },
     {
         "file_metadata": {
-            "file": "towne%ruined_stucco+b#wall,window.2x.openforge.stl",
+            "file": "towne%broken_stucco+b#wall,window.2x.openforge.stl",
             "file_modified_at": "2020-06-23T19:26:54",
-            "full_name": "tiles/towne/wall_on_tile/window/towne%ruined_stucco+b#wall,window.2x.openforge.stl",
+            "full_name": "tiles/towne/wall_on_tile/window/towne%broken_stucco+b#wall,window.2x.openforge.stl",
             "md5": "1f0fb0423be6b64cc1296d4956d9f1f2",
             "size": 12414684,
             "storage_address": "https://objects.openforge.tools/models/1f0fb0/1f0fb0423be6b64cc1296d4956d9f1f2.stl"
@@ -100807,8 +100904,8 @@
             "size|openlock|A",
             "size|width|2",
             "texture|towne",
-            "texture|towne|ruined_stucco",
-            "texture|towne|ruined_stucco|b"
+            "texture|towne|broken_stucco",
+            "texture|towne|broken_stucco|b"
         ],
         "type": "model"
     },

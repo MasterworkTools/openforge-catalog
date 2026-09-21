@@ -6651,9 +6651,8 @@
         "metadata": false,
         "tags": [
             "connection|openforge",
-            "decoration|symbol|air",
             "shape|floor",
-            "shape|square",
+            "shape|floor|air_symbol",
             "size|depth|2",
             "size|width|2",
             "texture|cut-stone"
@@ -6813,9 +6812,8 @@
         "metadata": false,
         "tags": [
             "connection|openforge",
-            "decoration|symbol|air",
             "shape|floor",
-            "shape|square",
+            "shape|floor|air_symbol",
             "size|depth|4",
             "size|width|4",
             "texture|cut-stone"
@@ -6975,9 +6973,8 @@
         "metadata": false,
         "tags": [
             "connection|openforge",
-            "decoration|symbol|beezlebub",
             "shape|floor",
-            "shape|square",
+            "shape|floor|beezlebub_symbol",
             "size|depth|2",
             "size|width|2",
             "texture|cut-stone"
@@ -7137,9 +7134,8 @@
         "metadata": false,
         "tags": [
             "connection|openforge",
-            "decoration|symbol|earth",
             "shape|floor",
-            "shape|square",
+            "shape|floor|earth_symbol",
             "size|depth|2",
             "size|width|2",
             "texture|cut-stone"
@@ -7299,9 +7295,8 @@
         "metadata": false,
         "tags": [
             "connection|openforge",
-            "decoration|symbol|earth",
             "shape|floor",
-            "shape|square",
+            "shape|floor|earth_symbol",
             "size|depth|4",
             "size|width|4",
             "texture|cut-stone"
@@ -7461,9 +7456,8 @@
         "metadata": false,
         "tags": [
             "connection|openforge",
-            "decoration|symbol|fire",
             "shape|floor",
-            "shape|square",
+            "shape|floor|fire_symbol",
             "size|depth|2",
             "size|width|2",
             "texture|cut-stone"
@@ -7623,9 +7617,8 @@
         "metadata": false,
         "tags": [
             "connection|openforge",
-            "decoration|symbol|fire",
             "shape|floor",
-            "shape|square",
+            "shape|floor|fire_symbol",
             "size|depth|4",
             "size|width|4",
             "texture|cut-stone"
@@ -7785,9 +7778,8 @@
         "metadata": false,
         "tags": [
             "connection|openforge",
-            "decoration|symbol|lamashtu",
             "shape|floor",
-            "shape|square",
+            "shape|floor|lamashtu_symbol",
             "size|depth|2",
             "size|width|2",
             "texture|cut-stone"
@@ -7947,9 +7939,8 @@
         "metadata": false,
         "tags": [
             "connection|openforge",
-            "decoration|symbol|spirit",
             "shape|floor",
-            "shape|square",
+            "shape|floor|spirit_symbol",
             "size|depth|2",
             "size|width|2",
             "texture|cut-stone"
@@ -8109,9 +8100,8 @@
         "metadata": false,
         "tags": [
             "connection|openforge",
-            "decoration|symbol|water",
             "shape|floor",
-            "shape|square",
+            "shape|floor|water_symbol",
             "size|depth|2",
             "size|width|2",
             "texture|cut-stone"
@@ -8271,9 +8261,8 @@
         "metadata": false,
         "tags": [
             "connection|openforge",
-            "decoration|symbol|water",
             "shape|floor",
-            "shape|square",
+            "shape|floor|water_symbol",
             "size|depth|4",
             "size|width|4",
             "texture|cut-stone"
@@ -12300,6 +12289,43 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "base",
+                    "optional": true,
+                    "tags": {
+                        "constrain": [
+                            {
+                                "filter": "shape|floor"
+                            },
+                            {
+                                "filter": "shape|wall"
+                            },
+                            {
+                                "tag": "shape"
+                            },
+                            {
+                                "tag": "size|depth"
+                            },
+                            {
+                                "tag": "size|width"
+                            }
+                        ],
+                        "deny": [
+                            {
+                                "tag": "build|s2w"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "shape|base"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "cut-stone#floor.AS.openforge.stl",
             "file_modified_at": "2024-05-12T17:10:01.965855",
@@ -12417,7 +12443,7 @@
             "connection|dual",
             "connection|openforge",
             "shape|floor",
-            "shape|wall",
+            "shape|floor|wall",
             "size|openlock|AS",
             "size|width|2",
             "texture|cut-stone"
@@ -13918,7 +13944,7 @@
             "connection|openlock",
             "connection|openlock|unsupported",
             "shape|floor",
-            "shape|wall",
+            "shape|floor|wall",
             "size|openlock|AS",
             "size|width|2",
             "texture|cut-stone"
@@ -15407,7 +15433,7 @@
             "connection|dual",
             "connection|openlock",
             "shape|floor",
-            "shape|wall",
+            "shape|floor|wall",
             "size|openlock|AS",
             "size|width|2",
             "texture|cut-stone"
@@ -37610,7 +37636,6 @@
             "shape|floor",
             "shape|floor|s2w",
             "shape|floor|wall",
-            "shape|wall",
             "size|depth|1",
             "size|width|1",
             "texture|cut-stone"
@@ -37737,7 +37762,6 @@
             "shape|floor",
             "shape|floor|s2w",
             "shape|floor|wall",
-            "shape|wall",
             "size|depth|1",
             "size|width|2",
             "texture|cut-stone"
@@ -37864,7 +37888,6 @@
             "shape|floor",
             "shape|floor|s2w",
             "shape|floor|wall",
-            "shape|wall",
             "size|depth|2",
             "size|width|2",
             "texture|cut-stone"
@@ -37991,7 +38014,6 @@
             "shape|floor",
             "shape|floor|s2w",
             "shape|floor|wall",
-            "shape|wall",
             "size|depth|1",
             "size|width|3",
             "texture|cut-stone"
@@ -38118,7 +38140,6 @@
             "shape|floor",
             "shape|floor|s2w",
             "shape|floor|wall",
-            "shape|wall",
             "size|depth|3",
             "size|width|3",
             "texture|cut-stone"
@@ -38245,7 +38266,6 @@
             "shape|floor",
             "shape|floor|s2w",
             "shape|floor|wall",
-            "shape|wall",
             "size|depth|1",
             "size|width|4",
             "texture|cut-stone"
@@ -38372,7 +38392,6 @@
             "shape|floor",
             "shape|floor|s2w",
             "shape|floor|wall",
-            "shape|wall",
             "size|depth|2",
             "size|width|4",
             "texture|cut-stone"
@@ -38499,7 +38518,6 @@
             "shape|floor",
             "shape|floor|s2w",
             "shape|floor|wall",
-            "shape|wall",
             "size|depth|4",
             "size|width|4",
             "texture|cut-stone"
@@ -92998,6 +93016,181 @@
         },
         "file_metadata": {
             "file": "cut-stone#wall.D.openforge.stl",
+            "file_modified_at": "2026-08-29T09:38:02.934366",
+            "full_name": "tiles/cut-stone/separate_wall/primary_walls/wall/openforge/cut-stone#wall.D.openforge.stl",
+            "md5": "e70875028c7d374fc0e5650c9c2195cd",
+            "size": 13426584,
+            "storage_address": "https://objects.openforge.tools/models/e70875/e70875028c7d374fc0e5650c9c2195cd.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/e70875/e70875028c7d374fc0e5650c9c2195cd.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "build|separate wall",
+            "component|wall",
+            "connection|openforge",
+            "shape|square",
+            "shape|wall",
+            "size|openlock|D",
+            "size|width|3",
+            "texture|cut-stone"
+        ],
+        "type": "model"
+    },
+    {
+        "config": {
+            "parts": [
+                {
+                    "name": "base",
+                    "optional": true,
+                    "tags": {
+                        "constrain": [
+                            {
+                                "tag": "shape"
+                            },
+                            {
+                                "tag": "size|width"
+                            },
+                            {
+                                "tag": "texture"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "shape|base"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "name": "base",
+                    "optional": true,
+                    "tags": {
+                        "constrain": [
+                            {
+                                "tag": "shape"
+                            },
+                            {
+                                "tag": "size|width"
+                            },
+                            {
+                                "tag": "texture"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "shape|base"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        "deprecated": true,
+        "file_metadata": {
+            "file": "cut-stone#wall.D.openforge.stl",
             "file_modified_at": "2024-05-12T19:54:04.679671",
             "full_name": "tiles/cut-stone/separate_wall/primary_walls/wall/openforge/cut-stone#wall.D.openforge.stl",
             "md5": "535eb1fbcc87472c0a84ba2a17e3c2ac",
@@ -116661,6 +116854,43 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "base",
+                    "optional": true,
+                    "tags": {
+                        "constrain": [
+                            {
+                                "filter": "shape|floor"
+                            },
+                            {
+                                "filter": "shape|wall"
+                            },
+                            {
+                                "tag": "shape"
+                            },
+                            {
+                                "tag": "size|depth"
+                            },
+                            {
+                                "tag": "size|width"
+                            }
+                        ],
+                        "deny": [
+                            {
+                                "tag": "build|s2w"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "shape|base"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "cut-stone#wall+archway,floor.2x2.openforge.stl",
             "file_modified_at": "2019-01-25T10:22:28",
@@ -116779,7 +117009,7 @@
             "component|wall|archway",
             "connection|openforge",
             "shape|floor",
-            "shape|wall",
+            "shape|floor|wall",
             "size|depth|2",
             "size|width|2",
             "texture|cut-stone"
@@ -119043,6 +119273,7 @@
         "metadata": false,
         "tags": [
             "build|wall on tile",
+            "component|wall",
             "connection|openforge",
             "decoration|symbol|air",
             "shape|wall",
@@ -119168,6 +119399,7 @@
         "metadata": false,
         "tags": [
             "build|wall on tile",
+            "component|wall",
             "connection|openforge",
             "decoration|symbol|beezlebub",
             "shape|wall",
@@ -119293,6 +119525,7 @@
         "metadata": false,
         "tags": [
             "build|wall on tile",
+            "component|wall",
             "connection|openforge",
             "decoration|symbol|earth",
             "shape|wall",
@@ -119418,6 +119651,7 @@
         "metadata": false,
         "tags": [
             "build|wall on tile",
+            "component|wall",
             "connection|openforge",
             "decoration|symbol|fire",
             "shape|wall",
@@ -119543,6 +119777,7 @@
         "metadata": false,
         "tags": [
             "build|wall on tile",
+            "component|wall",
             "connection|openforge",
             "decoration|symbol|lamashtu",
             "shape|wall",
@@ -119793,6 +120028,7 @@
         "metadata": false,
         "tags": [
             "build|wall on tile",
+            "component|wall",
             "connection|openforge",
             "decoration|symbol|water",
             "shape|wall",
@@ -120178,6 +120414,43 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "base",
+                    "optional": true,
+                    "tags": {
+                        "constrain": [
+                            {
+                                "filter": "shape|floor"
+                            },
+                            {
+                                "filter": "shape|wall"
+                            },
+                            {
+                                "tag": "shape"
+                            },
+                            {
+                                "tag": "size|depth"
+                            },
+                            {
+                                "tag": "size|width"
+                            }
+                        ],
+                        "deny": [
+                            {
+                                "tag": "build|s2w"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "shape|base"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "cut-stone#wall,floor.1x1.openforge.stl",
             "file_modified_at": "2019-03-18T21:59:04",
@@ -120295,7 +120568,7 @@
             "build|wall on tile",
             "connection|openforge",
             "shape|floor",
-            "shape|wall",
+            "shape|floor|wall",
             "size|depth|1",
             "size|width|1",
             "texture|cut-stone"
@@ -120303,6 +120576,43 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "base",
+                    "optional": true,
+                    "tags": {
+                        "constrain": [
+                            {
+                                "filter": "shape|floor"
+                            },
+                            {
+                                "filter": "shape|wall"
+                            },
+                            {
+                                "tag": "shape"
+                            },
+                            {
+                                "tag": "size|depth"
+                            },
+                            {
+                                "tag": "size|width"
+                            }
+                        ],
+                        "deny": [
+                            {
+                                "tag": "build|s2w"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "shape|base"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "cut-stone#wall,floor.2x1.openforge.stl",
             "file_modified_at": "2019-03-18T21:59:09",
@@ -120420,7 +120730,7 @@
             "build|wall on tile",
             "connection|openforge",
             "shape|floor",
-            "shape|wall",
+            "shape|floor|wall",
             "size|depth|1",
             "size|width|2",
             "texture|cut-stone"
@@ -120428,6 +120738,43 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "base",
+                    "optional": true,
+                    "tags": {
+                        "constrain": [
+                            {
+                                "filter": "shape|floor"
+                            },
+                            {
+                                "filter": "shape|wall"
+                            },
+                            {
+                                "tag": "shape"
+                            },
+                            {
+                                "tag": "size|depth"
+                            },
+                            {
+                                "tag": "size|width"
+                            }
+                        ],
+                        "deny": [
+                            {
+                                "tag": "build|s2w"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "shape|base"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "cut-stone#wall,floor.2x2.openforge.stl",
             "file_modified_at": "2019-03-18T21:59:10",
@@ -120545,7 +120892,7 @@
             "build|wall on tile",
             "connection|openforge",
             "shape|floor",
-            "shape|wall",
+            "shape|floor|wall",
             "size|depth|2",
             "size|width|2",
             "texture|cut-stone"
@@ -120553,6 +120900,43 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "base",
+                    "optional": true,
+                    "tags": {
+                        "constrain": [
+                            {
+                                "filter": "shape|floor"
+                            },
+                            {
+                                "filter": "shape|wall"
+                            },
+                            {
+                                "tag": "shape"
+                            },
+                            {
+                                "tag": "size|depth"
+                            },
+                            {
+                                "tag": "size|width"
+                            }
+                        ],
+                        "deny": [
+                            {
+                                "tag": "build|s2w"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "shape|base"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "cut-stone#wall,floor.3x1.openforge.stl",
             "file_modified_at": "2019-03-18T21:59:16",
@@ -120670,7 +121054,7 @@
             "build|wall on tile",
             "connection|openforge",
             "shape|floor",
-            "shape|wall",
+            "shape|floor|wall",
             "size|depth|1",
             "size|width|3",
             "texture|cut-stone"
@@ -120678,6 +121062,43 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "base",
+                    "optional": true,
+                    "tags": {
+                        "constrain": [
+                            {
+                                "filter": "shape|floor"
+                            },
+                            {
+                                "filter": "shape|wall"
+                            },
+                            {
+                                "tag": "shape"
+                            },
+                            {
+                                "tag": "size|depth"
+                            },
+                            {
+                                "tag": "size|width"
+                            }
+                        ],
+                        "deny": [
+                            {
+                                "tag": "build|s2w"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "shape|base"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "cut-stone#wall,floor.3x3.openforge.stl",
             "file_modified_at": "2019-03-18T21:59:21",
@@ -120795,7 +121216,7 @@
             "build|wall on tile",
             "connection|openforge",
             "shape|floor",
-            "shape|wall",
+            "shape|floor|wall",
             "size|depth|3",
             "size|width|3",
             "texture|cut-stone"
@@ -120803,6 +121224,43 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "base",
+                    "optional": true,
+                    "tags": {
+                        "constrain": [
+                            {
+                                "filter": "shape|floor"
+                            },
+                            {
+                                "filter": "shape|wall"
+                            },
+                            {
+                                "tag": "shape"
+                            },
+                            {
+                                "tag": "size|depth"
+                            },
+                            {
+                                "tag": "size|width"
+                            }
+                        ],
+                        "deny": [
+                            {
+                                "tag": "build|s2w"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "shape|base"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "cut-stone#wall,floor.4x1.openforge.stl",
             "file_modified_at": "2019-03-18T21:59:28",
@@ -120920,7 +121378,7 @@
             "build|wall on tile",
             "connection|openforge",
             "shape|floor",
-            "shape|wall",
+            "shape|floor|wall",
             "size|depth|1",
             "size|width|4",
             "texture|cut-stone"
@@ -120928,6 +121386,43 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "base",
+                    "optional": true,
+                    "tags": {
+                        "constrain": [
+                            {
+                                "filter": "shape|floor"
+                            },
+                            {
+                                "filter": "shape|wall"
+                            },
+                            {
+                                "tag": "shape"
+                            },
+                            {
+                                "tag": "size|depth"
+                            },
+                            {
+                                "tag": "size|width"
+                            }
+                        ],
+                        "deny": [
+                            {
+                                "tag": "build|s2w"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "shape|base"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "cut-stone#wall,floor.4x2.openforge.stl",
             "file_modified_at": "2019-03-18T21:59:33",
@@ -121045,7 +121540,7 @@
             "build|wall on tile",
             "connection|openforge",
             "shape|floor",
-            "shape|wall",
+            "shape|floor|wall",
             "size|depth|2",
             "size|width|4",
             "texture|cut-stone"
@@ -121053,6 +121548,43 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "base",
+                    "optional": true,
+                    "tags": {
+                        "constrain": [
+                            {
+                                "filter": "shape|floor"
+                            },
+                            {
+                                "filter": "shape|wall"
+                            },
+                            {
+                                "tag": "shape"
+                            },
+                            {
+                                "tag": "size|depth"
+                            },
+                            {
+                                "tag": "size|width"
+                            }
+                        ],
+                        "deny": [
+                            {
+                                "tag": "build|s2w"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "shape|base"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "cut-stone#wall,floor.4x4.openforge.stl",
             "file_modified_at": "2019-03-18T21:59:48",
@@ -121170,7 +121702,7 @@
             "build|wall on tile",
             "connection|openforge",
             "shape|floor",
-            "shape|wall",
+            "shape|floor|wall",
             "size|depth|4",
             "size|width|4",
             "texture|cut-stone"
