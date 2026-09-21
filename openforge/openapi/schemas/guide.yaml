@@ -70,13 +70,36 @@ $defs:
     description: >
       Tag predicate over blueprints, in the same vocabulary as a
       blueprint slot and the tag_query API schema. `require` and `deny`
-      match a tag exactly; `accept` matches it or any tag below it.
+      match a tag exactly; `accept` matches it or any tag below it;
+      `deny_children` refuses everything *below* a tag while leaving the
+      tag itself, and `allow` names the children that survive that
+      sweep.
     properties:
       require:
         $ref: "#/$defs/tag_list"
       deny:
         $ref: "#/$defs/tag_list"
       accept:
+        $ref: "#/$defs/tag_list"
+      deny_children:
+        description: >
+          Refuse every tag strictly beneath these, keeping the tag
+          itself. `require: [component|wall]` with
+          `deny_children: [component|wall]` is "a plain wall": the
+          arrow slits and curved variants carry a child tag and are
+          refused, and listing them by hand would mean revisiting every
+          guide whenever a new variant is designed.
+
+          The sweep runs *after* the includes, so anything named in
+          `require` or `allow` survives it. That is what makes
+          "shape|floor|wall and nothing else under shape|floor"
+          expressible in one predicate.
+        $ref: "#/$defs/tag_list"
+      allow:
+        description: >
+          Tags permitted but not required, which exist to survive a
+          `deny_children` sweep. Unlike `accept` this asks for nothing:
+          a piece without the tag still matches.
         $ref: "#/$defs/tag_list"
 
   tag_list:
@@ -146,6 +169,19 @@ $defs:
       image:
         type: string
         description: Path to an illustration, relative to the image host.
+      when:
+        $ref: "#/$defs/when"
+        description: >
+          Offer this option only when earlier steps were answered this
+          way. Reads exactly like a step's `when`, and exists because
+          gating a whole step is too blunt when it is some of its
+          options that do not apply — s2w builds have no tile
+          shallower than they are wide, so the depth-1 sizes are not
+          offered once s2w is chosen.
+
+          An answer naming an option that this branch does not offer
+          counts as unanswered, and the step is asked again. That is
+          not a bad request: the key is one the step really has.
       roles:
         type: object
         minProperties: 1

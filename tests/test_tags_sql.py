@@ -6,6 +6,21 @@ import openforge.db.sql.tags as tag_sql
 from .test_helpers import create_test_blueprint
 
 
+def _tagged(curs, name, tags):
+    """A searchable model with these tags, named for sort order.
+
+    The search orders by blueprint_name, so the names here are chosen
+    to make the expected order readable in the assertion.
+    """
+    data = create_test_blueprint(blueprint_name=name, blueprint_type="model")
+    data.pop("tags", None)
+    data.pop("images", None)
+    blueprint = blueprint_sql.insert_blueprint(curs, data)
+    for tag in tags:
+        tag_sql.insert_tag(curs, blueprint["id"], tag)
+    return blueprint
+
+
 def test_insert_and_get_tag(test_db):
     with test_db.connection() as conn:
         with conn.cursor(row_factory=dict_row) as curs:
@@ -325,3 +340,100 @@ def test_tag_search_tag_count(test_db):
             )
             assert count[0]["tag"] == ["foo", "bar"]
             assert count[0]["tag_count"] == 1
+
+
+def test_deny_children_keeps_the_tag_and_refuses_what_is_below_it(test_db):
+    """ "A plain wall" without listing every variant that is not one.
+
+    Denying `component|wall|*` by hand would mean editing every guide
+    each time a new variant is designed, which is the opposite of
+    tagging being the thing that keeps the catalog current.
+    """
+    with test_db.connection() as conn:
+        with conn.cursor(row_factory=dict_row) as curs:
+            plain = _tagged(curs, "a plain wall", ["shape|wall", "component|wall"])
+            _tagged(
+                curs,
+                "b arrow slit",
+                ["shape|wall", "component|wall", "component|wall|arrow_slit"],
+            )
+            _tagged(
+                curs,
+                "c curved",
+                ["shape|wall", "component|wall", "component|wall|curved"],
+            )
+
+            # `component|wall` is deliberately *not* required here, so
+            # that it is not exempt: what keeps the plain wall in is
+            # that the sweep takes what is strictly below the tag, not
+            # the tag itself.
+            found = tag_sql.tag_search_blueprints(
+                curs,
+                accept=[],
+                require=[{"tag": "shape|wall"}],
+                deny=[],
+                deny_children=[{"tag": "component|wall"}],
+            )
+
+            assert [b["id"] for b in found] == [plain["id"]]
+
+
+def test_a_required_child_survives_the_sweep_that_removes_its_siblings(test_db):
+    """The sweep runs after the includes, which is the whole point.
+
+    "shape|floor|wall and nothing else under shape|floor" is one
+    predicate rather than a contradiction: the required child is exempt
+    from the deny by construction, so the two terms do not have to know
+    about each other.
+    """
+    with test_db.connection() as conn:
+        with conn.cursor(row_factory=dict_row) as curs:
+            wanted = _tagged(
+                curs, "a floor for a wall", ["shape|floor", "shape|floor|wall"]
+            )
+            _tagged(curs, "b curved floor", ["shape|floor", "shape|floor|curved"])
+            _tagged(
+                curs,
+                "c curved floor for a wall",
+                ["shape|floor", "shape|floor|wall", "shape|floor|curved"],
+            )
+            _tagged(curs, "d bare floor", ["shape|floor"])
+
+            found = tag_sql.tag_search_blueprints(
+                curs,
+                accept=[],
+                require=[{"tag": "shape|floor"}, {"tag": "shape|floor|wall"}],
+                deny=[],
+                deny_children=[{"tag": "shape|floor"}],
+            )
+
+            # "c" carries the required child *and* a swept one, so it
+            # goes: the sweep spares the tags that were asked for, not
+            # the blueprints that happen to carry one.
+            assert [b["id"] for b in found] == [wanted["id"]]
+
+
+def test_allow_spares_a_child_without_requiring_it(test_db):
+    """`allow` asks for nothing; it only survives the sweep.
+
+    That is what makes it different from `accept`, which is a
+    requirement that some tag exists below a prefix.
+    """
+    with test_db.connection() as conn:
+        with conn.cursor(row_factory=dict_row) as curs:
+            bare = _tagged(curs, "a bare base", ["shape|base"])
+            square = _tagged(curs, "b square base", ["shape|base", "shape|base|square"])
+            _tagged(curs, "c wall base", ["shape|base", "shape|base|wall"])
+
+            found = tag_sql.tag_search_blueprints(
+                curs,
+                accept=[],
+                require=[{"tag": "shape|base"}],
+                deny=[],
+                deny_children=[{"tag": "shape|base"}],
+                allow=[{"tag": "shape|base|square"}],
+            )
+
+            # The bare one has nothing to sweep; the square one is
+            # spared; the wall one is not.
+            assert [b["id"] for b in found] == [bare["id"], square["id"]]

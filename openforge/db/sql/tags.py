@@ -170,6 +170,8 @@ def tag_search_blueprints(
     models: bool = True,
     blueprints: bool = False,
     search: str | None = None,
+    deny_children: list[dict] | None = None,
+    allow: list[dict] | None = None,
 ) -> list[uuid.UUID]:
     parts = [
         sql.SQL("SELECT *"),
@@ -185,6 +187,8 @@ def tag_search_blueprints(
             models=models,
             blueprints=blueprints,
             search=search,
+            deny_children=deny_children,
+            allow=allow,
         ),
         sql.SQL("  )"),
         sql.SQL("  ORDER BY blueprints.blueprint_name, blueprints.id"),
@@ -378,6 +382,8 @@ def _query_tags_basics(
     models: bool = True,
     blueprints: bool = False,
     search: str | None = None,
+    deny_children: list[dict] | None = None,
+    allow: list[dict] | None = None,
 ) -> sql.Composed:
     query_parts = [
         sql.SQL(
@@ -401,6 +407,18 @@ SELECT DISTINCT bp.id
             deny_parts.append(sql.SQL("    AND bp2.id NOT IN ("))
             deny_parts.append(_query_tags_deny([d]))
             deny_parts.append(sql.SQL("    )"))
+
+    # After the includes, deliberately: a child sweep means "nothing
+    # else under this tag", and what counts as "else" is whatever
+    # require and allow did not already ask for.
+    exempt = [t["tag"] for t in (require or []) if "tag" in t]
+    exempt += [t["tag"] for t in (allow or []) if "tag" in t]
+    for parent in deny_children or []:
+        if "tag" not in parent:
+            continue
+        deny_parts.append(sql.SQL("    AND bp2.id NOT IN ("))
+        deny_parts.append(_query_tags_deny_children(parent["tag"], exempt))
+        deny_parts.append(sql.SQL("    )"))
 
     # Handle blueprint type filtering
     if models and blueprints:
@@ -575,6 +593,48 @@ LIMIT {limit} OFFSET {offset}
         "total_count": total_count,
         "has_more": (offset + len(tags)) < total_count,
     }
+
+
+def _query_tags_deny_children(parent: str, exempt: list[str]) -> sql.Composed:
+    """Blueprints carrying any tag *strictly under* `parent`.
+
+    Subtracted from a result set, this is "has nothing below this tag".
+    `component|wall` survives it; `component|wall|curved` does not —
+    which is how a guide asks for a plain wall rather than listing
+    every variant it does not want.
+
+    `exempt` is the tags that survive anyway, and it is why this cannot
+    simply be a `deny`: the caller has already said which children it
+    wants (`shape|floor|wall`), and the sweep has to run after that
+    rather than contradict it.
+    """
+    depth = len(parent.split("|"))
+    tags_name = f"tags_child_{depth}_neg"
+    parts = [
+        sql.SQL("      SELECT DISTINCT bp_neg.id"),
+        sql.SQL("  FROM blueprints AS bp_neg"),
+        sql.SQL("    JOIN tags AS {table} ON bp_neg.id = {table}.blueprint_id").format(
+            table=sql.Identifier(tags_name)
+        ),
+        sql.SQL("  WHERE bp_neg.deprecated = false"),
+        sql.SQL("    AND {table}.tag[1:{depth}] = {parent}").format(
+            table=sql.Identifier(tags_name),
+            depth=sql.Literal(depth),
+            parent=sql.Literal(parent.split("|")),
+        ),
+        sql.SQL("    AND array_length({table}.tag, 1) > {depth}").format(
+            table=sql.Identifier(tags_name),
+            depth=sql.Literal(depth),
+        ),
+    ]
+    for tag in exempt:
+        parts.append(
+            sql.SQL("    AND {table}.tag <> {tag}").format(
+                table=sql.Identifier(tags_name),
+                tag=sql.Literal(tag.split("|")),
+            )
+        )
+    return sql.Composed(parts).join("\n      ")
 
 
 def _query_tags_deny(deny: list[str]) -> sql.Composed:

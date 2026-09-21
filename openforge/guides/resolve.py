@@ -42,7 +42,7 @@ matters, the upgrade is one query per role that ranks in SQL, not a
 cache.
 """
 
-PREDICATES = ("require", "deny", "accept")
+PREDICATES = ("require", "deny", "accept", "allow", "deny_children")
 
 
 class GuideSelectionError(ValueError):
@@ -65,11 +65,19 @@ def to_tag_query(predicate: dict) -> dict:
     nothing — a wrong answer rather than an error. Every caller
     converts here, so there is one place to get it right.
 
-    All three keys are always present, so the result can be splatted
-    straight into `tag_search_blueprints(curs, **to_tag_query(p))` —
-    that function takes `accept`, `require` and `deny` as required
+    Every key is always present, so the result can be splatted straight
+    into `tag_search_blueprints(curs, **to_tag_query(p))` — that
+    function takes `accept`, `require` and `deny` as required
     positional arguments, and omitting the empty ones would make the
     call fail on any predicate that happens not to use one.
+
+    `deny_children` and `allow` are the pair that says "this tag and
+    nothing else beneath it". `deny_children: ['component|wall']`
+    refuses every tag under `component|wall` — the arrow slits and the
+    curved variants — and `allow` names the children that survive it,
+    for the cases where one particular child is wanted and the rest are
+    not. The sweep runs after the includes, so anything in `require` or
+    `allow` is exempt from it by construction.
     """
     return {
         name: [{"tag": tag} for tag in predicate.get(name, [])] for name in PREDICATES
@@ -127,10 +135,55 @@ def _available_steps(document: dict, selections: dict):
     for step in document["steps"]:
         if not _when_holds(step.get("when"), answered):
             continue
-        available.append(step)
-        if step["key"] in selections:
+        offered = _with_available_options(step, answered)
+        available.append(offered)
+        if step["key"] not in selections:
+            continue
+        # An answer naming an option this branch does not offer counts
+        # as no answer, and the step is asked again. It is not a bad
+        # request: the key is one this step really has, it is just not
+        # on offer here — s2w has no tile shallower than it is wide, so
+        # choosing 4x1 and then choosing s2w leaves the size unanswered
+        # rather than 400ing a URL the person reached by clicking.
+        #
+        # Anything else stays in `answered` so that `_chosen_options`
+        # can refuse it: a key no option has is still a bad request,
+        # and so is a repeated parameter, which arrives as a list.
+        if not _gated_off(selections[step["key"]], step, offered):
             answered[step["key"]] = selections[step["key"]]
     return available, answered
+
+
+def _gated_off(chosen, step: dict, offered: dict) -> bool:
+    """Is this a real answer to this step that this branch withholds?
+
+    Deliberately narrow. A value that is not a string, or that names no
+    option this step has at all, is not gated off — it is wrong, and
+    has to reach the check that says so.
+    """
+    if not isinstance(chosen, str):
+        return False
+    if chosen not in {option["key"] for option in step["options"]}:
+        return False
+    return chosen not in {option["key"] for option in offered["options"]}
+
+
+def _with_available_options(step: dict, answered: dict) -> dict:
+    """The step, carrying only the options this branch offers.
+
+    An option's `when` reads exactly like a step's, and for the same
+    reason: some answers rule out some of the next answers. Gating the
+    whole step is too blunt when it is three of its eight options that
+    do not apply.
+    """
+    offered = [
+        option
+        for option in step["options"]
+        if _when_holds(option.get("when"), answered)
+    ]
+    if len(offered) == len(step["options"]):
+        return step
+    return {**step, "options": offered}
 
 
 def _available_refinements(document: dict, answered: dict) -> list[dict]:

@@ -31,10 +31,13 @@ steps:
           # the 35 dungeon stone wall bases in the catalog, none carries
           # build|s2w. The wall takes an ordinary wall base and the
           # floor takes an ordinary base.
-          floor: {require: ['build|s2w', 'shape|floor|wall']}
-          wall: {require: ['build|separate wall', 'component|wall']}
+          floor:
+          wall: {require: ['build|separate wall']}
           wall-base: {require: ['shape|base|wall']}
+          # The s2w floor base carries the wall's own base as well:
+          # shape|base, s2w, wall and square, all four.
           floor-base:
+            require: ['shape|base|s2w', 'shape|base|wall', 'shape|base|square']
 
       - key: wall-on-tile
         title: Wall on tile
@@ -47,9 +50,9 @@ steps:
           # one openforge piece here rather than two — this is the only
           # method where a single base serves both. No base carries
           # build|wall on tile either: it is an ordinary base.
-          floor: {require: ['build|wall on tile'], deny: ['shape|wall']}
+          floor:
           wall: {require: ['build|wall on tile']}
-          floor-base: {deny: ['build|s2w']}
+          floor-base: {require: ['shape|base|square'], deny: ['build|s2w']}
 
       - key: separate-wall
         title: Separate wall
@@ -64,10 +67,10 @@ steps:
           # on an ordinary floor.
           # Two bases again: the floor and the wall are separate
           # openforge pieces, so each stands on its own.
-          floor: {deny: ['shape|wall']}
+          floor:
           wall: {require: ['build|separate wall']}
           wall-base: {require: ['build|separate wall', 'shape|base|wall']}
-          floor-base:
+          floor-base: {require: ['shape|base|square']}
 
   - key: size
     prompt: What size tiles?
@@ -75,6 +78,9 @@ steps:
     options:
       - key: 1x1
         title: 1×1
+        # s2w has no tile shallower than it is wide: every
+        # s2w base in the catalog is 2x2, 3x3, 4x2 or 4x4.
+        when: {selected: {method: [wall-on-tile, separate-wall]}}
         roles:
           # Depth only on the floor: a wall is a line along an edge and
           # carries a width but no depth, so asking it for one matches
@@ -85,6 +91,9 @@ steps:
 
       - key: 2x1
         title: 2×1
+        # s2w has no tile shallower than it is wide: every
+        # s2w base in the catalog is 2x2, 3x3, 4x2 or 4x4.
+        when: {selected: {method: [wall-on-tile, separate-wall]}}
         roles:
           # Depth only on the floor: a wall is a line along an edge and
           # carries a width but no depth, so asking it for one matches
@@ -105,6 +114,9 @@ steps:
 
       - key: 3x1
         title: 3×1
+        # s2w has no tile shallower than it is wide: every
+        # s2w base in the catalog is 2x2, 3x3, 4x2 or 4x4.
+        when: {selected: {method: [wall-on-tile, separate-wall]}}
         roles:
           # Depth only on the floor: a wall is a line along an edge and
           # carries a width but no depth, so asking it for one matches
@@ -122,6 +134,19 @@ steps:
           # them — see `match` on the roles — so they are not named.
           floor: {require: ['size|width|3', 'size|depth|3']}
           wall: {require: ['size|width|3']}
+
+      - key: 4x1
+        title: 4×1
+        # s2w has no tile shallower than it is wide: every
+        # s2w base in the catalog is 2x2, 3x3, 4x2 or 4x4.
+        when: {selected: {method: [wall-on-tile, separate-wall]}}
+        roles:
+          # Depth only on the floor: a wall is a line along an edge and
+          # carries a width but no depth, so asking it for one matches
+          # nothing. The bases take their size from the piece above
+          # them — see `match` on the roles — so they are not named.
+          floor: {require: ['size|width|4', 'size|depth|1']}
+          wall: {require: ['size|width|4']}
 
       - key: 4x2
         title: 4×2
@@ -147,7 +172,14 @@ roles:
   floor:
     title: Floor
     query:
-      require: ['shape|floor']
+      # Both methods stand their wall on an s2w floor. shape|floor|wall
+      # says it takes a wall; shape|floor|s2w is permitted but not
+      # required, and everything else under shape|floor — curved,
+      # concave, diagonal, corner — is swept, which is what keeps the
+      # answer a plain tile.
+      require: ['shape|floor', 'shape|floor|wall', 'build|s2w']
+      allow: ['shape|floor|s2w']
+      deny_children: ['shape|floor']
       # A guide never recommends a damaged piece by default; the texture
       # refinement is how someone asks for one. `deny` is an exact match,
       # so each tag is listed — every component|collapsed|* piece carries
@@ -173,15 +205,32 @@ roles:
   wall:
     title: Wall
     query:
-      require: ['shape|wall']
+      # component|wall is what makes it a wall rather than a wall-shaped
+      # feature, and denying everything below it is what makes it a
+      # plain one: the arrow slits and windows carry a child tag. Same
+      # shape of rule for the connection system — openforge and nothing
+      # else, so the side locks and pegs variants stay out until a
+      # refinement asks for them.
+      require: ['shape|wall', 'component|wall', 'connection|openforge']
+      deny_children: ['component|wall', 'connection']
       deny: *intact
-    prefer: ['connection|openforge', 'texture|dungeon_stone', 'size|width|2']
+    prefer: ['texture|dungeon_stone', 'size|width|2']
   floor-base:
     title: Base for the floor
     query:
-      require: ['shape|base']
-      deny: ['shape|base|wall', 'shape|base|s2w']
-    prefer: ['texture|plain']
+      # Square, and nothing else under shape|base. Which children are
+      # wanted is the method's business — s2w asks for the s2w base as
+      # well — so the options add to this and the sweep spares whatever
+      # they required.
+      require: ['shape|base', 'shape|base|square']
+      deny_children: ['shape|base']
+    # The same connections as the wall base: a set whose two bases
+    # clip together differently is not a set.
+    prefer:
+      - 'texture|plain'
+      - 'connection|openlock|topless'
+      - 'connection|magnetic|flex'
+
     under: floor
     # A base has to match the footprint of the tile standing on it, and
     # the tile is not chosen until the person answers. These copy
@@ -192,7 +241,10 @@ roles:
     query: {require: ['shape|base']}
     # Dungeon stone like the wall it sits under: a parts list that mixes
     # textures looks like a mistake even when every piece fits.
-    prefer: ['texture|dungeon_stone', 'connection|magnetic']
+    prefer:
+      - 'texture|dungeon_stone'
+      - 'connection|openlock|topless'
+      - 'connection|magnetic|flex'
     under: wall
     # Width only. A wall is a line along an edge: it has a width and no
     # depth, and its base is the same shape.

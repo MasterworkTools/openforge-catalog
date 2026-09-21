@@ -536,10 +536,19 @@ def test_the_catalog_gets_predicates_in_the_shape_it_understands():
     every term: a lost `require` matches everything, a lost `deny`
     matches nothing. This is the one conversion point.
     """
-    assert to_tag_query({"require": ["shape|wall"], "deny": ["shape|base"]}) == {
+    assert to_tag_query(
+        {
+            "require": ["shape|wall"],
+            "deny": ["shape|base"],
+            "deny_children": ["component|wall"],
+            "allow": ["component|wall|arch"],
+        }
+    ) == {
         "accept": [],
         "require": [{"tag": "shape|wall"}],
         "deny": [{"tag": "shape|base"}],
+        "deny_children": [{"tag": "component|wall"}],
+        "allow": [{"tag": "component|wall|arch"}],
     }
 
     # All three keys are always present, because the search takes them
@@ -718,3 +727,89 @@ def test_parts_are_listed_in_the_order_the_options_asked_for_them():
         "wall-base",
         "wall",
     ]
+
+
+GATED_GUIDE = {
+    "key": "gated",
+    "title": "A guide where one answer rules out some of the next",
+    "steps": [
+        {
+            "key": "method",
+            "prompt": "How?",
+            "options": [
+                {"key": "deep", "title": "Deep", "roles": {"floor": None}},
+                {"key": "flat", "title": "Flat", "roles": {"floor": None}},
+            ],
+        },
+        {
+            "key": "size",
+            "prompt": "What size?",
+            "options": [
+                {
+                    "key": "2x1",
+                    "title": "2x1",
+                    "when": {"selected": {"method": ["flat"]}},
+                    "tags": {"require": ["size|2x1"]},
+                },
+                {"key": "2x2", "title": "2x2", "tags": {"require": ["size|2x2"]}},
+            ],
+        },
+    ],
+    "roles": {"floor": {"title": "Floor", "query": {"require": ["shape|floor"]}}},
+}
+
+GATED_CATALOG = [
+    {"id": "a", "blueprint_name": "a 2x1", "tags": ["shape|floor", "size|2x1"]},
+    {"id": "b", "blueprint_name": "b 2x2", "tags": ["shape|floor", "size|2x2"]},
+]
+
+
+def test_an_option_can_be_ruled_out_by_an_earlier_answer():
+    """Gating a whole step is too blunt when it is some of its options.
+
+    The catalog has no s2w tile shallower than it is wide, so the
+    depth-1 sizes are not offered once s2w is chosen — but the other
+    sizes still are, and the question still needs asking.
+    """
+    finder = matching_finder(GATED_CATALOG)
+
+    flat = resolve(GATED_GUIDE, {"method": "flat"}, finder)
+    deep = resolve(GATED_GUIDE, {"method": "deep"}, finder)
+
+    offered = {
+        step["key"]: [o["key"] for o in step["options"]] for step in flat["steps"]
+    }
+    assert offered["size"] == ["2x1", "2x2"]
+
+    offered = {
+        step["key"]: [o["key"] for o in step["options"]] for step in deep["steps"]
+    }
+    assert offered["size"] == ["2x2"]
+
+
+def test_an_answer_this_branch_does_not_offer_counts_as_unanswered():
+    """Rather than 400ing a URL someone reached by clicking.
+
+    Answer the size, then change the method to one that does not offer
+    that size: the question is asked again, and the parts resolve
+    without it. A bad *key* is still a bad request — this is a real
+    key that this branch does not have.
+    """
+    finder = matching_finder(GATED_CATALOG)
+
+    resolved = resolve(GATED_GUIDE, {"method": "deep", "size": "2x1"}, finder)
+
+    size = [step for step in resolved["steps"] if step["key"] == "size"][0]
+    assert size["selected"] is None
+    # ...and the narrowing that option would have applied is not in
+    # force: the floor is whatever the catalog offers first.
+    parts = {p["role"]: p for p in resolved["parts"]}
+    assert "size|2x1" not in parts["floor"]["query"].get("require", [])
+
+
+def test_a_key_no_step_has_is_still_a_bad_request():
+    """The leniency above is narrow, and this is the boundary."""
+    finder = matching_finder(GATED_CATALOG)
+
+    with pytest.raises(GuideSelectionError, match="nonesuch"):
+        resolve(GATED_GUIDE, {"method": "deep", "size": "nonesuch"}, finder)
