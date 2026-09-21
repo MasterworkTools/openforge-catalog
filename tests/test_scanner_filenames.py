@@ -1663,22 +1663,24 @@ def test_a_directory_that_merely_starts_the_same_is_not_a_build():
     assert not [tag for tag in tags if tag[0] == "build"]
 
 
-def test_where_a_wall_sits_does_not_stop_it_being_a_wall():
-    """`ground` and `upper` are positions, not kinds of wall.
+def test_where_a_wall_sits_is_a_texture_not_a_component():
+    """A storey is how a wall looks, so it rides on the texture.
 
-    `component|wall` is what the wall guide asks for to mean "a plain
-    wall rather than a wall-shaped feature", and the check that assigns
-    it counted *any* other component tag against the piece — including
-    the wall's own children. So a ground-floor wall lost the tag that
-    says it is a wall.
+    These were named `stone_brick#wall+upper...`, which made the storey
+    a child of `component|wall` and cost the piece the bare
+    `component|wall` that says it is a wall at all — 50 walls lost it
+    that way. They are `stone_brick%upper#wall...` now, the same shape
+    as `dungeon_stone%block`: the ground floor is brick on a
+    foundation, the upper storey is timber-framed and stands on
+    timber, and that is a difference in appearance.
 
-    A chimney or an arrow slit still does disqualify it: those are the
-    special walls the guide is trying to keep out.
+    A chimney or an arrow slit still disqualifies a wall, because
+    those change what it is for rather than how it looks.
     """
     cases = {
-        "stone_brick#wall+upper.D.openlock,side.stl": True,
-        "stone_brick#wall+ground.D.openlock,side.stl": True,
-        "stone_brick#wall+upper,chimney.D.openlock,side.stl": False,
+        "stone_brick%upper#wall.D.openlock,side.stl": True,
+        "stone_brick%ground#wall.D.openlock,side.stl": True,
+        "stone_brick%upper#wall,chimney.D.openlock,side.stl": False,
         "dungeon_stone#arrow_slit.A.openforge.stl": False,
     }
     for filename, expected in cases.items():
@@ -1742,13 +1744,13 @@ def test_timber_and_corbels_are_how_a_wall_looks_not_what_it_does():
     `wall+corbels` — so both have to land in the decoration namespace.
     """
     keeps_it = [
-        "stone_brick#wall+ground,timber_a.D.openlock,side.stl",
-        "stone_brick#wall+upper,corbels,timber_a.D.openlock,side.stl",
-        "stone_brick#wall+corbels.D.openlock,side.stl",
+        "stone_brick%ground#wall,timber_a.D.openlock,side.stl",
+        "stone_brick%upper#wall,corbels,timber_a.D.openlock,side.stl",
+        "stone_brick#wall,corbels.D.openlock,side.stl",
     ]
     loses_it = [
-        "stone_brick#wall+upper,chimney.D.openlock,side.stl",
-        "stone_brick#wall+ground,fireplace.A.openforge,side.stl",
+        "stone_brick%upper#wall,chimney.D.openlock,side.stl",
+        "stone_brick%ground#wall,fireplace.A.openforge,side.stl",
     ]
     for filename, expected in [(f, True) for f in keeps_it] + [
         (f, False) for f in loses_it

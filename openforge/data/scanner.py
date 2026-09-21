@@ -250,16 +250,11 @@ def filter_s_system(tags):
 
 
 def filter_shape(tags):
-    # Where on the building a wall sits, not what kind of wall it is.
-    # A ground-floor wall is still a plain wall, so these must not
-    # count against it the way a chimney or an arrow slit does.
-    WALL_POSITIONS = {("component", "wall", "ground"), ("component", "wall", "upper")}
-
     def _check_wall_alone(tags):
         count = 0
         for tag in tags:
             if tag[0] == "component":
-                if tag != ("component", "wall") and tag not in WALL_POSITIONS:
+                if tag != ("component", "wall"):
                     count += 1
         if count == 0:
             return True

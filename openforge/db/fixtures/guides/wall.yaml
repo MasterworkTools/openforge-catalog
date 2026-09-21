@@ -69,6 +69,10 @@ steps:
           # openforge pieces, so each stands on its own.
           floor:
           wall:
+          # build|separate wall is load-bearing, not redundant. The
+          # 48 wall bases that lack it are the s2w ones — every one
+          # plain, every one shape|base|s2w — and without this a
+          # separate wall gets recommended an s2w base.
           wall-base: {require: ['build|separate wall', 'shape|base|wall']}
           floor-base: {require: ['shape|base|square']}
 
@@ -191,12 +195,6 @@ roles:
       # ordinary walls with weathered render on them.
       deny: &intact
         - 'shape|base'
-        - 'component|collapsed'
-        - 'component|broken'
-        - 'component|collapsing_blocks'
-        - 'texture|dungeon_stone|ruined'
-        - 'texture|rough_stone|ruined'
-        - 'texture|cut-stone|ruined'
     # 2x2 is the default tile, and by a distance the most common: 450
     # floors carry it against 88 at 1x1. Size is listed last because it
     # is dropped first — a dungeon stone floor of another size is a
@@ -230,15 +228,7 @@ roles:
       # shape|square is the straight one, and the sweep would take it
       # along with shape|angled. Permitted, not required: plenty of
       # plain walls carry no shape|? at all.
-      #
-      # ground and upper say where on a building the wall sits, not
-      # what kind of wall it is — a ground-floor wall is still a plain
-      # wall — so they survive the component|wall sweep that removes
-      # the arrow slits and the chimneys.
-      allow:
-        - 'shape|square'
-        - 'component|wall|ground'
-        - 'component|wall|upper'
+      allow: ['shape|square']
       deny: *intact
     prefer: ['texture|dungeon_stone', 'size|width|2']
   floor-base:
@@ -301,8 +291,15 @@ refinements:
     substitute:
       'texture|towne':
         wall-base: 'texture|wood'
+      # A stone brick facade's storey is a texture, not a component:
+      # the ground floor is brick on a foundation, the upper storey is
+      # timber-framed and stands on timber.
       'texture|stone_brick':
         wall-base: 'texture|foundation'
+      'texture|stone_brick|ground':
+        wall-base: 'texture|foundation'
+      'texture|stone_brick|upper':
+        wall-base: 'texture|timber'
       'texture|mortar_and_stone':
         wall-base: 'texture|foundation'
 
