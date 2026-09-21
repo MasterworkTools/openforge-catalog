@@ -1652,3 +1652,111 @@ def test_a_directory_that_merely_starts_the_same_is_not_a_build():
     )
 
     assert not [tag for tag in tags if tag[0] == "build"]
+
+
+def test_where_a_wall_sits_does_not_stop_it_being_a_wall():
+    """`ground` and `upper` are positions, not kinds of wall.
+
+    `component|wall` is what the wall guide asks for to mean "a plain
+    wall rather than a wall-shaped feature", and the check that assigns
+    it counted *any* other component tag against the piece — including
+    the wall's own children. So a ground-floor wall lost the tag that
+    says it is a wall.
+
+    A chimney or an arrow slit still does disqualify it: those are the
+    special walls the guide is trying to keep out.
+    """
+    cases = {
+        "stone_brick#wall+upper.D.openlock,side.stl": True,
+        "stone_brick#wall+ground.D.openlock,side.stl": True,
+        "stone_brick#wall+upper,chimney.D.openlock,side.stl": False,
+        "dungeon_stone#arrow_slit.A.openforge.stl": False,
+    }
+    for filename, expected in cases.items():
+        full_name = f"tiles/building_facades/stone_brick/separate_wall/x/{filename}"
+        tags = set()
+        parse_file_tags(
+            {
+                "file": filename,
+                "full_name": full_name,
+                "path": full_name.split("/")[:-1],
+            },
+            tags,
+            None,
+        )
+        assert (("component", "wall") in tags) is expected, filename
+
+
+def test_a_carving_does_not_stop_a_wall_being_a_wall():
+    """A dragon skull is not a second component, it is the same wall.
+
+    The parser already separates appearance from function: 15 component
+    names move into the `decoration` namespace. But that ran *after*
+    the check that asks "is this only a wall?", so all 33 decorated
+    walls in the collection lost `component|wall` — the tag that says a
+    piece is a wall at all — and dropped out of the wall guide.
+
+    An archway is still a special: it changes what the wall does.
+    """
+    cases = {
+        "dungeon_stone#wall,fire.2x.openforge.stl": True,
+        "cut-stone#wall,beezlebub.2x.openforge.stl": True,
+        "cut-stone#wall,archway,fire.2x.openforge.stl": False,
+    }
+    for filename, expected in cases.items():
+        full_name = f"tiles/dungeon_stone/separate_wall/primary_walls/{filename}"
+        tags = set()
+        parse_file_tags(
+            {
+                "file": filename,
+                "full_name": full_name,
+                "path": full_name.split("/")[:-1],
+            },
+            tags,
+            None,
+        )
+        assert (("component", "wall") in tags) is expected, filename
+        # The decoration itself survives either way, in its own
+        # namespace rather than as a component.
+        assert [tag for tag in tags if tag[0] == "decoration"], filename
+
+
+def test_timber_and_corbels_are_how_a_wall_looks_not_what_it_does():
+    """Half-timbering does not stop a wall being a plain wall.
+
+    A chimney or a fireplace does: those change what the wall is for,
+    and the wall guide is trying to keep them out. Timber framing and
+    stone corbels are appearance, the same call as a celtic knot.
+
+    Corbels arrive two ways depending on the filename — as a sibling in
+    `wall+ground,corbels` and as the wall's own child in
+    `wall+corbels` — so both have to land in the decoration namespace.
+    """
+    keeps_it = [
+        "stone_brick#wall+ground,timber_a.D.openlock,side.stl",
+        "stone_brick#wall+upper,corbels,timber_a.D.openlock,side.stl",
+        "stone_brick#wall+corbels.D.openlock,side.stl",
+    ]
+    loses_it = [
+        "stone_brick#wall+upper,chimney.D.openlock,side.stl",
+        "stone_brick#wall+ground,fireplace.A.openforge,side.stl",
+    ]
+    for filename, expected in [(f, True) for f in keeps_it] + [
+        (f, False) for f in loses_it
+    ]:
+        full_name = f"tiles/building_facades/stone_brick/separate_wall/x/{filename}"
+        tags = set()
+        parse_file_tags(
+            {
+                "file": filename,
+                "full_name": full_name,
+                "path": full_name.split("/")[:-1],
+            },
+            tags,
+            None,
+        )
+        assert (("component", "wall") in tags) is expected, filename
+        # Nothing is lost: the decoration is recorded, just not as a
+        # component that argues about what the piece is.
+        if expected:
+            assert [tag for tag in tags if tag[0] == "decoration"], filename

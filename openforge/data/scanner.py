@@ -250,11 +250,16 @@ def filter_s_system(tags):
 
 
 def filter_shape(tags):
+    # Where on the building a wall sits, not what kind of wall it is.
+    # A ground-floor wall is still a plain wall, so these must not
+    # count against it the way a chimney or an arrow slit does.
+    WALL_POSITIONS = {("component", "wall", "ground"), ("component", "wall", "upper")}
+
     def _check_wall_alone(tags):
         count = 0
         for tag in tags:
             if tag[0] == "component":
-                if tag != ("component", "wall"):
+                if tag != ("component", "wall") and tag not in WALL_POSITIONS:
                     count += 1
         if count == 0:
             return True
@@ -335,6 +340,22 @@ def filter_shape(tags):
         return tags
 
     def _handle_decorations(tags):
+        # Timber framing and corbels are how a wall looks, not what it
+        # does — the same call as a celtic knot. A chimney or a
+        # fireplace stays a component, because those change what the
+        # wall is for. Corbels arrive both as a sibling and as the
+        # wall's own child, depending on whether the filename says
+        # `wall+corbels` or `wall+ground,corbels`.
+        for letter in ("a", "b", "c", "d"):
+            _move_tag_chain(
+                tags,
+                ["component", f"timber_{letter}"],
+                ["decoration", "timber", letter],
+            )
+        _move_tag_chain(tags, ["component", "corbels"], ["decoration", "corbels"])
+        _move_tag_chain(
+            tags, ["component", "wall", "corbels"], ["decoration", "corbels"]
+        )
         _move_tag_chain(tags, ["component", "air"], ["decoration", "symbol", "air"])
         _move_tag_chain(
             tags, ["component", "air_symbol"], ["decoration", "symbol", "air"]
@@ -404,6 +425,14 @@ def filter_shape(tags):
         )
 
     _move_tag_chain(tags, ["component", "corner"], ["shape", "corner"])
+    # Before the wall and floor checks, not after. Those checks ask
+    # "is this only a wall?" by counting component tags, and a carving
+    # is not a second component — it is the same wall with a dragon
+    # skull on it. Running afterwards meant all 33 decorated walls lost
+    # `component|wall`, which is the tag that says a piece is a wall at
+    # all. None of these 15 sources collides with the shape moves
+    # below, so this is only a question of when.
+    _handle_decorations(tags)
     if ("shape", "wall") in tags:
         if not _check_wall_alone(tags):
             tags.discard(("component", "wall"))
@@ -421,7 +450,6 @@ def filter_shape(tags):
     _move_tag_chain(tags, ["component", "riser"], ["shape", "riser"])
     _move_tag_chain(tags, ["component", "stairs"], ["shape", "stairs"])
     _move_tag_chain(tags, ["component", "column"], ["shape", "column"])
-    _handle_decorations(tags)
     if ("shape", "column") in tags:
         _check_columns(tags)
     _check_wall_low(tags)
