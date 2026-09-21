@@ -1259,6 +1259,43 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "base",
+                    "optional": true,
+                    "tags": {
+                        "constrain": [
+                            {
+                                "filter": "shape|floor"
+                            },
+                            {
+                                "filter": "shape|wall"
+                            },
+                            {
+                                "tag": "shape"
+                            },
+                            {
+                                "tag": "size|depth"
+                            },
+                            {
+                                "tag": "size|width"
+                            }
+                        ],
+                        "deny": [
+                            {
+                                "tag": "build|s2w"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "shape|base"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "towne%long_planks+a#floor.AS.openforge.stl",
             "file_modified_at": "2025-02-21T14:04:38.762725",
@@ -1376,7 +1413,7 @@
             "connection|dual",
             "connection|openforge",
             "shape|floor",
-            "shape|wall",
+            "shape|floor|wall",
             "size|openlock|AS",
             "size|width|2",
             "texture|towne",
@@ -1386,6 +1423,43 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "base",
+                    "optional": true,
+                    "tags": {
+                        "constrain": [
+                            {
+                                "filter": "shape|floor"
+                            },
+                            {
+                                "filter": "shape|wall"
+                            },
+                            {
+                                "tag": "shape"
+                            },
+                            {
+                                "tag": "size|depth"
+                            },
+                            {
+                                "tag": "size|width"
+                            }
+                        ],
+                        "deny": [
+                            {
+                                "tag": "build|s2w"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "shape|base"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "towne%long_planks+b#floor.AS.openforge.stl",
             "file_modified_at": "2025-02-21T14:04:54.421323",
@@ -1503,7 +1577,7 @@
             "connection|dual",
             "connection|openforge",
             "shape|floor",
-            "shape|wall",
+            "shape|floor|wall",
             "size|openlock|AS",
             "size|width|2",
             "texture|towne",
@@ -2387,7 +2461,7 @@
             "connection|openlock",
             "connection|openlock|unsupported",
             "shape|floor",
-            "shape|wall",
+            "shape|floor|wall",
             "size|openlock|AS",
             "size|width|2",
             "texture|towne",
@@ -2515,7 +2589,7 @@
             "connection|openlock",
             "connection|openlock|unsupported",
             "shape|floor",
-            "shape|wall",
+            "shape|floor|wall",
             "size|openlock|AS",
             "size|width|2",
             "texture|towne",
@@ -3392,7 +3466,7 @@
             "connection|dual",
             "connection|openlock",
             "shape|floor",
-            "shape|wall",
+            "shape|floor|wall",
             "size|openlock|AS",
             "size|width|2",
             "texture|towne",
@@ -3519,7 +3593,7 @@
             "connection|dual",
             "connection|openlock",
             "shape|floor",
-            "shape|wall",
+            "shape|floor|wall",
             "size|openlock|AS",
             "size|width|2",
             "texture|towne",
@@ -5311,6 +5385,43 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "base",
+                    "optional": true,
+                    "tags": {
+                        "constrain": [
+                            {
+                                "filter": "shape|floor"
+                            },
+                            {
+                                "filter": "shape|wall"
+                            },
+                            {
+                                "tag": "shape"
+                            },
+                            {
+                                "tag": "size|depth"
+                            },
+                            {
+                                "tag": "size|width"
+                            }
+                        ],
+                        "deny": [
+                            {
+                                "tag": "build|s2w"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "shape|base"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "towne%wood#floor.AS.openforge.stl",
             "file_modified_at": "2025-07-06T15:54:05.675474",
@@ -5428,7 +5539,7 @@
             "connection|dual",
             "connection|openforge",
             "shape|floor",
-            "shape|wall",
+            "shape|floor|wall",
             "size|openlock|AS",
             "size|width|2",
             "texture|towne",
@@ -6941,7 +7052,7 @@
             "connection|openlock",
             "connection|openlock|unsupported",
             "shape|floor",
-            "shape|wall",
+            "shape|floor|wall",
             "size|openlock|AS",
             "size|width|2",
             "texture|towne",
@@ -8442,7 +8553,7 @@
             "connection|dual",
             "connection|openlock",
             "shape|floor",
-            "shape|wall",
+            "shape|floor|wall",
             "size|openlock|AS",
             "size|width|2",
             "texture|towne",
@@ -24346,7 +24457,6 @@
             "shape|floor",
             "shape|floor|s2w",
             "shape|floor|wall",
-            "shape|wall",
             "size|depth|1",
             "size|width|1",
             "texture|towne"
@@ -24473,7 +24583,6 @@
             "shape|floor",
             "shape|floor|s2w",
             "shape|floor|wall",
-            "shape|wall",
             "size|depth|1",
             "size|width|2",
             "texture|towne"
@@ -24600,7 +24709,6 @@
             "shape|floor",
             "shape|floor|s2w",
             "shape|floor|wall",
-            "shape|wall",
             "size|depth|2",
             "size|width|2",
             "texture|towne"
@@ -24727,7 +24835,6 @@
             "shape|floor",
             "shape|floor|s2w",
             "shape|floor|wall",
-            "shape|wall",
             "size|depth|1",
             "size|width|3",
             "texture|towne"
@@ -24854,7 +24961,6 @@
             "shape|floor",
             "shape|floor|s2w",
             "shape|floor|wall",
-            "shape|wall",
             "size|depth|3",
             "size|width|3",
             "texture|towne"
@@ -24981,7 +25087,6 @@
             "shape|floor",
             "shape|floor|s2w",
             "shape|floor|wall",
-            "shape|wall",
             "size|depth|1",
             "size|width|4",
             "texture|towne"
@@ -25108,7 +25213,6 @@
             "shape|floor",
             "shape|floor|s2w",
             "shape|floor|wall",
-            "shape|wall",
             "size|depth|2",
             "size|width|4",
             "texture|towne"
@@ -25235,7 +25339,6 @@
             "shape|floor",
             "shape|floor|s2w",
             "shape|floor|wall",
-            "shape|wall",
             "size|depth|4",
             "size|width|4",
             "texture|towne"
@@ -25362,7 +25465,6 @@
             "shape|floor",
             "shape|floor|s2w",
             "shape|floor|wall",
-            "shape|wall",
             "size|depth|2",
             "size|width|2",
             "texture|towne",
@@ -25491,7 +25593,6 @@
             "shape|floor",
             "shape|floor|s2w",
             "shape|floor|wall",
-            "shape|wall",
             "size|depth|2",
             "size|width|4",
             "texture|towne",
@@ -25620,7 +25721,6 @@
             "shape|floor",
             "shape|floor|s2w",
             "shape|floor|wall",
-            "shape|wall",
             "size|depth|4",
             "size|width|4",
             "texture|towne",
@@ -25749,7 +25849,6 @@
             "shape|floor",
             "shape|floor|s2w",
             "shape|floor|wall",
-            "shape|wall",
             "size|depth|2",
             "size|width|2",
             "texture|towne",
@@ -25878,7 +25977,6 @@
             "shape|floor",
             "shape|floor|s2w",
             "shape|floor|wall",
-            "shape|wall",
             "size|depth|2",
             "size|width|4",
             "texture|towne",
@@ -26007,7 +26105,6 @@
             "shape|floor",
             "shape|floor|s2w",
             "shape|floor|wall",
-            "shape|wall",
             "size|depth|4",
             "size|width|4",
             "texture|towne",

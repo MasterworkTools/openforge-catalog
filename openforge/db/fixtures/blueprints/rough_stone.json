@@ -1771,6 +1771,43 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "base",
+                    "optional": true,
+                    "tags": {
+                        "constrain": [
+                            {
+                                "filter": "shape|floor"
+                            },
+                            {
+                                "filter": "shape|wall"
+                            },
+                            {
+                                "tag": "shape"
+                            },
+                            {
+                                "tag": "size|depth"
+                            },
+                            {
+                                "tag": "size|width"
+                            }
+                        ],
+                        "deny": [
+                            {
+                                "tag": "build|s2w"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "shape|base"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "rough_stone#floor.AS.openforge.stl",
             "file_modified_at": "2020-07-31T11:24:35.162534",
@@ -1888,7 +1925,7 @@
             "connection|dual",
             "connection|openforge",
             "shape|floor",
-            "shape|wall",
+            "shape|floor|wall",
             "size|openlock|AS",
             "size|width|2",
             "texture|rough_stone"
@@ -3377,7 +3414,7 @@
             "connection|dual",
             "connection|openlock",
             "shape|floor",
-            "shape|wall",
+            "shape|floor|wall",
             "size|openlock|AS",
             "size|width|2",
             "texture|rough_stone"
@@ -3539,6 +3576,43 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "base",
+                    "optional": true,
+                    "tags": {
+                        "constrain": [
+                            {
+                                "filter": "shape|floor"
+                            },
+                            {
+                                "filter": "shape|wall"
+                            },
+                            {
+                                "tag": "shape"
+                            },
+                            {
+                                "tag": "size|depth"
+                            },
+                            {
+                                "tag": "size|width"
+                            }
+                        ],
+                        "deny": [
+                            {
+                                "tag": "build|s2w"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "shape|base"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "rough_stone#column+low.O.openforge.stl",
             "file_modified_at": "2020-07-19T13:04:09.366624",
@@ -3660,8 +3734,8 @@
             "shape|column",
             "shape|column|low",
             "shape|floor",
+            "shape|floor|wall",
             "shape|square",
-            "shape|wall",
             "size|angle|45",
             "size|depth|2",
             "size|openlock|O",
@@ -19821,6 +19895,43 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "base",
+                    "optional": true,
+                    "tags": {
+                        "constrain": [
+                            {
+                                "filter": "shape|floor"
+                            },
+                            {
+                                "filter": "shape|wall"
+                            },
+                            {
+                                "tag": "shape"
+                            },
+                            {
+                                "tag": "size|depth"
+                            },
+                            {
+                                "tag": "size|width"
+                            }
+                        ],
+                        "deny": [
+                            {
+                                "tag": "build|s2w"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "shape|base"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "rough_stone#wall+floor.1x1.openforge.stl",
             "file_modified_at": "2020-11-30T17:03:49.603042",
@@ -19939,7 +20050,7 @@
             "component|wall|floor",
             "connection|openforge",
             "shape|floor",
-            "shape|wall",
+            "shape|floor|wall",
             "size|depth|1",
             "size|width|1",
             "texture|rough_stone"
@@ -19947,6 +20058,43 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "base",
+                    "optional": true,
+                    "tags": {
+                        "constrain": [
+                            {
+                                "filter": "shape|floor"
+                            },
+                            {
+                                "filter": "shape|wall"
+                            },
+                            {
+                                "tag": "shape"
+                            },
+                            {
+                                "tag": "size|depth"
+                            },
+                            {
+                                "tag": "size|width"
+                            }
+                        ],
+                        "deny": [
+                            {
+                                "tag": "build|s2w"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "shape|base"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "rough_stone#wall+floor.2x1.openforge.stl",
             "file_modified_at": "2020-11-30T17:03:59.449013",
@@ -20065,7 +20213,7 @@
             "component|wall|floor",
             "connection|openforge",
             "shape|floor",
-            "shape|wall",
+            "shape|floor|wall",
             "size|depth|1",
             "size|width|2",
             "texture|rough_stone"
@@ -20073,6 +20221,43 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "base",
+                    "optional": true,
+                    "tags": {
+                        "constrain": [
+                            {
+                                "filter": "shape|floor"
+                            },
+                            {
+                                "filter": "shape|wall"
+                            },
+                            {
+                                "tag": "shape"
+                            },
+                            {
+                                "tag": "size|depth"
+                            },
+                            {
+                                "tag": "size|width"
+                            }
+                        ],
+                        "deny": [
+                            {
+                                "tag": "build|s2w"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "shape|base"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "rough_stone#wall+floor.2x2.openforge.stl",
             "file_modified_at": "2020-11-30T17:04:09.422052",
@@ -20191,7 +20376,7 @@
             "component|wall|floor",
             "connection|openforge",
             "shape|floor",
-            "shape|wall",
+            "shape|floor|wall",
             "size|depth|2",
             "size|width|2",
             "texture|rough_stone"
@@ -20199,6 +20384,43 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "base",
+                    "optional": true,
+                    "tags": {
+                        "constrain": [
+                            {
+                                "filter": "shape|floor"
+                            },
+                            {
+                                "filter": "shape|wall"
+                            },
+                            {
+                                "tag": "shape"
+                            },
+                            {
+                                "tag": "size|depth"
+                            },
+                            {
+                                "tag": "size|width"
+                            }
+                        ],
+                        "deny": [
+                            {
+                                "tag": "build|s2w"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "shape|base"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "rough_stone#wall+floor.2x4.openforge.stl",
             "file_modified_at": "2020-11-30T17:04:20.782167",
@@ -20317,7 +20539,7 @@
             "component|wall|floor",
             "connection|openforge",
             "shape|floor",
-            "shape|wall",
+            "shape|floor|wall",
             "size|depth|4",
             "size|width|2",
             "texture|rough_stone"
@@ -20325,6 +20547,43 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "base",
+                    "optional": true,
+                    "tags": {
+                        "constrain": [
+                            {
+                                "filter": "shape|floor"
+                            },
+                            {
+                                "filter": "shape|wall"
+                            },
+                            {
+                                "tag": "shape"
+                            },
+                            {
+                                "tag": "size|depth"
+                            },
+                            {
+                                "tag": "size|width"
+                            }
+                        ],
+                        "deny": [
+                            {
+                                "tag": "build|s2w"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "shape|base"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "rough_stone#wall+floor.3x1.openforge.stl",
             "file_modified_at": "2020-11-30T17:04:32.131166",
@@ -20443,7 +20702,7 @@
             "component|wall|floor",
             "connection|openforge",
             "shape|floor",
-            "shape|wall",
+            "shape|floor|wall",
             "size|depth|1",
             "size|width|3",
             "texture|rough_stone"
@@ -20451,6 +20710,43 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "base",
+                    "optional": true,
+                    "tags": {
+                        "constrain": [
+                            {
+                                "filter": "shape|floor"
+                            },
+                            {
+                                "filter": "shape|wall"
+                            },
+                            {
+                                "tag": "shape"
+                            },
+                            {
+                                "tag": "size|depth"
+                            },
+                            {
+                                "tag": "size|width"
+                            }
+                        ],
+                        "deny": [
+                            {
+                                "tag": "build|s2w"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "shape|base"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "rough_stone#wall+floor.3x3.openforge.stl",
             "file_modified_at": "2020-11-30T17:04:49.742202",
@@ -20569,7 +20865,7 @@
             "component|wall|floor",
             "connection|openforge",
             "shape|floor",
-            "shape|wall",
+            "shape|floor|wall",
             "size|depth|3",
             "size|width|3",
             "texture|rough_stone"
@@ -20577,6 +20873,43 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "base",
+                    "optional": true,
+                    "tags": {
+                        "constrain": [
+                            {
+                                "filter": "shape|floor"
+                            },
+                            {
+                                "filter": "shape|wall"
+                            },
+                            {
+                                "tag": "shape"
+                            },
+                            {
+                                "tag": "size|depth"
+                            },
+                            {
+                                "tag": "size|width"
+                            }
+                        ],
+                        "deny": [
+                            {
+                                "tag": "build|s2w"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "shape|base"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "rough_stone#wall+floor.4x1.openforge.stl",
             "file_modified_at": "2020-11-30T17:05:01.390016",
@@ -20695,7 +21028,7 @@
             "component|wall|floor",
             "connection|openforge",
             "shape|floor",
-            "shape|wall",
+            "shape|floor|wall",
             "size|depth|1",
             "size|width|4",
             "texture|rough_stone"
@@ -20703,6 +21036,43 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "base",
+                    "optional": true,
+                    "tags": {
+                        "constrain": [
+                            {
+                                "filter": "shape|floor"
+                            },
+                            {
+                                "filter": "shape|wall"
+                            },
+                            {
+                                "tag": "shape"
+                            },
+                            {
+                                "tag": "size|depth"
+                            },
+                            {
+                                "tag": "size|width"
+                            }
+                        ],
+                        "deny": [
+                            {
+                                "tag": "build|s2w"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "shape|base"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "rough_stone#wall+floor.4x2.openforge.stl",
             "file_modified_at": "2020-11-30T17:05:13.691092",
@@ -20821,7 +21191,7 @@
             "component|wall|floor",
             "connection|openforge",
             "shape|floor",
-            "shape|wall",
+            "shape|floor|wall",
             "size|depth|2",
             "size|width|4",
             "texture|rough_stone"
@@ -20829,6 +21199,43 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "base",
+                    "optional": true,
+                    "tags": {
+                        "constrain": [
+                            {
+                                "filter": "shape|floor"
+                            },
+                            {
+                                "filter": "shape|wall"
+                            },
+                            {
+                                "tag": "shape"
+                            },
+                            {
+                                "tag": "size|depth"
+                            },
+                            {
+                                "tag": "size|width"
+                            }
+                        ],
+                        "deny": [
+                            {
+                                "tag": "build|s2w"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "shape|base"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "rough_stone#wall+floor.4x4.openforge.stl",
             "file_modified_at": "2020-11-30T17:05:28.465347",
@@ -20947,7 +21354,7 @@
             "component|wall|floor",
             "connection|openforge",
             "shape|floor",
-            "shape|wall",
+            "shape|floor|wall",
             "size|depth|4",
             "size|width|4",
             "texture|rough_stone"

@@ -5428,9 +5428,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone+ruined%block#floor,collapsed_block+a.2x2.openforge.stl",
+            "file": "dungeon_stone+ruined%block#floor,collapsed_blocks+a.2x2.openforge.stl",
             "file_modified_at": "2025-08-20T10:38:55.322628",
-            "full_name": "tiles/dungeon_stone+ruined/floors/floor%block+collapsed_blocks/openforge/dungeon_stone+ruined%block#floor,collapsed_block+a.2x2.openforge.stl",
+            "full_name": "tiles/dungeon_stone+ruined/floors/floor%block+collapsed_blocks/openforge/dungeon_stone+ruined%block#floor,collapsed_blocks+a.2x2.openforge.stl",
             "md5": "286f15672e0464cfa6d9b48b10cea8ef",
             "size": 11553784,
             "storage_address": "https://objects.openforge.tools/models/286f15/286f15672e0464cfa6d9b48b10cea8ef.stl"
@@ -5541,8 +5541,8 @@
         ],
         "metadata": false,
         "tags": [
-            "component|collapsed_block",
-            "component|collapsed_block|a",
+            "component|collapsed_blocks",
+            "component|collapsed_blocks|a",
             "connection|openforge",
             "shape|floor",
             "shape|square",
@@ -5593,9 +5593,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone+ruined%block#floor,collapsed_block+b.2x2.openforge.stl",
+            "file": "dungeon_stone+ruined%block#floor,collapsed_blocks+b.2x2.openforge.stl",
             "file_modified_at": "2025-08-20T10:38:47.027482",
-            "full_name": "tiles/dungeon_stone+ruined/floors/floor%block+collapsed_blocks/openforge/dungeon_stone+ruined%block#floor,collapsed_block+b.2x2.openforge.stl",
+            "full_name": "tiles/dungeon_stone+ruined/floors/floor%block+collapsed_blocks/openforge/dungeon_stone+ruined%block#floor,collapsed_blocks+b.2x2.openforge.stl",
             "md5": "fa9071ed1e9cbab7777c0c539338b738",
             "size": 11249084,
             "storage_address": "https://objects.openforge.tools/models/fa9071/fa9071ed1e9cbab7777c0c539338b738.stl"
@@ -5706,8 +5706,8 @@
         ],
         "metadata": false,
         "tags": [
-            "component|collapsed_block",
-            "component|collapsed_block|b",
+            "component|collapsed_blocks",
+            "component|collapsed_blocks|b",
             "connection|openforge",
             "shape|floor",
             "shape|square",
@@ -5758,9 +5758,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone+ruined%block#floor,collapsed_block+c.2x2.openforge.stl",
+            "file": "dungeon_stone+ruined%block#floor,collapsed_blocks+c.2x2.openforge.stl",
             "file_modified_at": "2025-08-20T10:38:41.590246",
-            "full_name": "tiles/dungeon_stone+ruined/floors/floor%block+collapsed_blocks/openforge/dungeon_stone+ruined%block#floor,collapsed_block+c.2x2.openforge.stl",
+            "full_name": "tiles/dungeon_stone+ruined/floors/floor%block+collapsed_blocks/openforge/dungeon_stone+ruined%block#floor,collapsed_blocks+c.2x2.openforge.stl",
             "md5": "c77ad5e327643069d74af7b8f3812342",
             "size": 9839484,
             "storage_address": "https://objects.openforge.tools/models/c77ad5/c77ad5e327643069d74af7b8f3812342.stl"
@@ -5871,8 +5871,8 @@
         ],
         "metadata": false,
         "tags": [
-            "component|collapsed_block",
-            "component|collapsed_block|c",
+            "component|collapsed_blocks",
+            "component|collapsed_blocks|c",
             "connection|openforge",
             "shape|floor",
             "shape|square",
@@ -5923,9 +5923,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone+ruined%block#floor,collapsed_block+d.2x2.openforge.stl",
+            "file": "dungeon_stone+ruined%block#floor,collapsed_blocks+d.2x2.openforge.stl",
             "file_modified_at": "2025-08-20T10:09:47.483714",
-            "full_name": "tiles/dungeon_stone+ruined/floors/floor%block+collapsed_blocks/openforge/dungeon_stone+ruined%block#floor,collapsed_block+d.2x2.openforge.stl",
+            "full_name": "tiles/dungeon_stone+ruined/floors/floor%block+collapsed_blocks/openforge/dungeon_stone+ruined%block#floor,collapsed_blocks+d.2x2.openforge.stl",
             "md5": "f26b3748673812595a529a94200870e4",
             "size": 10499484,
             "storage_address": "https://objects.openforge.tools/models/f26b37/f26b3748673812595a529a94200870e4.stl"
@@ -6036,8 +6036,8 @@
         ],
         "metadata": false,
         "tags": [
-            "component|collapsed_block",
-            "component|collapsed_block|d",
+            "component|collapsed_blocks",
+            "component|collapsed_blocks|d",
             "connection|openforge",
             "shape|floor",
             "shape|square",
@@ -10808,6 +10808,43 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "base",
+                    "optional": true,
+                    "tags": {
+                        "constrain": [
+                            {
+                                "filter": "shape|floor"
+                            },
+                            {
+                                "filter": "shape|wall"
+                            },
+                            {
+                                "tag": "shape"
+                            },
+                            {
+                                "tag": "size|depth"
+                            },
+                            {
+                                "tag": "size|width"
+                            }
+                        ],
+                        "deny": [
+                            {
+                                "tag": "build|s2w"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "shape|base"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "dungeon_stone+ruined%eroded#floor.AS.openforge.stl",
             "file_modified_at": "2021-01-29T09:55:26.157525",
@@ -10925,7 +10962,7 @@
             "connection|dual",
             "connection|openforge",
             "shape|floor",
-            "shape|wall",
+            "shape|floor|wall",
             "size|openlock|AS",
             "size|width|2",
             "texture|dungeon_stone",
@@ -12438,7 +12475,7 @@
             "connection|dual",
             "connection|openlock",
             "shape|floor",
-            "shape|wall",
+            "shape|floor|wall",
             "size|openlock|AS",
             "size|width|2",
             "texture|dungeon_stone",
@@ -16029,9 +16066,9 @@
     },
     {
         "file_metadata": {
-            "file": "dungeon_stone+ruined%block#floor+s2w+corner,collapsing_blocks+a.2x2.openforge.stl",
+            "file": "dungeon_stone+ruined%block#floor+s2w+corner,collapsed_blocks+a.2x2.openforge.stl",
             "file_modified_at": "2025-08-25T13:22:23.441216",
-            "full_name": "tiles/dungeon_stone+ruined/s2w/corner/floor%block+collapsing_blocks/dungeon_stone+ruined%block#floor+s2w+corner,collapsing_blocks+a.2x2.openforge.stl",
+            "full_name": "tiles/dungeon_stone+ruined/s2w/corner/floor%block+collapsed_blocks/dungeon_stone+ruined%block#floor+s2w+corner,collapsed_blocks+a.2x2.openforge.stl",
             "md5": "c16541d2a554ebd0f0779604d14d268b",
             "size": 8926184,
             "storage_address": "https://objects.openforge.tools/models/c16541/c16541d2a554ebd0f0779604d14d268b.stl"
@@ -16143,8 +16180,8 @@
         "metadata": false,
         "tags": [
             "build|s2w",
-            "component|collapsing_blocks",
-            "component|collapsing_blocks|a",
+            "component|collapsed_blocks",
+            "component|collapsed_blocks|a",
             "connection|openforge",
             "shape|floor",
             "shape|floor|corner",
@@ -16159,9 +16196,9 @@
     },
     {
         "file_metadata": {
-            "file": "dungeon_stone+ruined%block#floor+s2w+corner,collapsing_blocks+b.2x2.openforge.stl",
+            "file": "dungeon_stone+ruined%block#floor+s2w+corner,collapsed_blocks+b.2x2.openforge.stl",
             "file_modified_at": "2025-08-25T13:22:07.431869",
-            "full_name": "tiles/dungeon_stone+ruined/s2w/corner/floor%block+collapsing_blocks/dungeon_stone+ruined%block#floor+s2w+corner,collapsing_blocks+b.2x2.openforge.stl",
+            "full_name": "tiles/dungeon_stone+ruined/s2w/corner/floor%block+collapsed_blocks/dungeon_stone+ruined%block#floor+s2w+corner,collapsed_blocks+b.2x2.openforge.stl",
             "md5": "5cde58ea683ede44aa2bfc478d2127a6",
             "size": 53671884,
             "storage_address": "https://objects.openforge.tools/models/5cde58/5cde58ea683ede44aa2bfc478d2127a6.stl"
@@ -16273,8 +16310,8 @@
         "metadata": false,
         "tags": [
             "build|s2w",
-            "component|collapsing_blocks",
-            "component|collapsing_blocks|b",
+            "component|collapsed_blocks",
+            "component|collapsed_blocks|b",
             "connection|openforge",
             "shape|floor",
             "shape|floor|corner",
@@ -16289,9 +16326,9 @@
     },
     {
         "file_metadata": {
-            "file": "dungeon_stone+ruined%block#floor+s2w+corner,collapsing_blocks+c.2x2.openforge.stl",
+            "file": "dungeon_stone+ruined%block#floor+s2w+corner,collapsed_blocks+c.2x2.openforge.stl",
             "file_modified_at": "2025-08-25T13:21:44.076174",
-            "full_name": "tiles/dungeon_stone+ruined/s2w/corner/floor%block+collapsing_blocks/dungeon_stone+ruined%block#floor+s2w+corner,collapsing_blocks+c.2x2.openforge.stl",
+            "full_name": "tiles/dungeon_stone+ruined/s2w/corner/floor%block+collapsed_blocks/dungeon_stone+ruined%block#floor+s2w+corner,collapsed_blocks+c.2x2.openforge.stl",
             "md5": "a67335dfe84a307951c2ec014c3c9ff5",
             "size": 10953484,
             "storage_address": "https://objects.openforge.tools/models/a67335/a67335dfe84a307951c2ec014c3c9ff5.stl"
@@ -16403,8 +16440,8 @@
         "metadata": false,
         "tags": [
             "build|s2w",
-            "component|collapsing_blocks",
-            "component|collapsing_blocks|c",
+            "component|collapsed_blocks",
+            "component|collapsed_blocks|c",
             "connection|openforge",
             "shape|floor",
             "shape|floor|corner",
@@ -16419,9 +16456,9 @@
     },
     {
         "file_metadata": {
-            "file": "dungeon_stone+ruined%block#floor+s2w+corner,collapsing_blocks+d.2x2.openforge.stl",
+            "file": "dungeon_stone+ruined%block#floor+s2w+corner,collapsed_blocks+d.2x2.openforge.stl",
             "file_modified_at": "2025-08-25T13:21:24.898547",
-            "full_name": "tiles/dungeon_stone+ruined/s2w/corner/floor%block+collapsing_blocks/dungeon_stone+ruined%block#floor+s2w+corner,collapsing_blocks+d.2x2.openforge.stl",
+            "full_name": "tiles/dungeon_stone+ruined/s2w/corner/floor%block+collapsed_blocks/dungeon_stone+ruined%block#floor+s2w+corner,collapsed_blocks+d.2x2.openforge.stl",
             "md5": "99436631abc38273d75a77abd5236fa4",
             "size": 7640484,
             "storage_address": "https://objects.openforge.tools/models/994366/99436631abc38273d75a77abd5236fa4.stl"
@@ -16533,8 +16570,8 @@
         "metadata": false,
         "tags": [
             "build|s2w",
-            "component|collapsing_blocks",
-            "component|collapsing_blocks|d",
+            "component|collapsed_blocks",
+            "component|collapsed_blocks|d",
             "connection|openforge",
             "shape|floor",
             "shape|floor|corner",
@@ -17065,9 +17102,9 @@
     },
     {
         "file_metadata": {
-            "file": "dungeon_stone+ruined%eroded#floor+s2w+corner,collapsing_blocks+a.2x2.openforge.stl",
+            "file": "dungeon_stone+ruined%eroded#floor+s2w+corner,collapsed_blocks+a.2x2.openforge.stl",
             "file_modified_at": "2025-08-25T13:22:55.208504",
-            "full_name": "tiles/dungeon_stone+ruined/s2w/corner/floor%eroded+collapsing_blocks/dungeon_stone+ruined%eroded#floor+s2w+corner,collapsing_blocks+a.2x2.openforge.stl",
+            "full_name": "tiles/dungeon_stone+ruined/s2w/corner/floor%eroded+collapsed_blocks/dungeon_stone+ruined%eroded#floor+s2w+corner,collapsed_blocks+a.2x2.openforge.stl",
             "md5": "9015f827021d925de3b5d91898e72812",
             "size": 8425184,
             "storage_address": "https://objects.openforge.tools/models/9015f8/9015f827021d925de3b5d91898e72812.stl"
@@ -17179,8 +17216,8 @@
         "metadata": false,
         "tags": [
             "build|s2w",
-            "component|collapsing_blocks",
-            "component|collapsing_blocks|a",
+            "component|collapsed_blocks",
+            "component|collapsed_blocks|a",
             "connection|openforge",
             "shape|floor",
             "shape|floor|corner",
@@ -17195,9 +17232,9 @@
     },
     {
         "file_metadata": {
-            "file": "dungeon_stone+ruined%eroded#floor+s2w+corner,collapsing_blocks+b.2x2.openforge.stl",
+            "file": "dungeon_stone+ruined%eroded#floor+s2w+corner,collapsed_blocks+b.2x2.openforge.stl",
             "file_modified_at": "2025-08-25T13:23:07.670464",
-            "full_name": "tiles/dungeon_stone+ruined/s2w/corner/floor%eroded+collapsing_blocks/dungeon_stone+ruined%eroded#floor+s2w+corner,collapsing_blocks+b.2x2.openforge.stl",
+            "full_name": "tiles/dungeon_stone+ruined/s2w/corner/floor%eroded+collapsed_blocks/dungeon_stone+ruined%eroded#floor+s2w+corner,collapsed_blocks+b.2x2.openforge.stl",
             "md5": "a3be4e38684c7865caded1dd8c9e9bf0",
             "size": 10665484,
             "storage_address": "https://objects.openforge.tools/models/a3be4e/a3be4e38684c7865caded1dd8c9e9bf0.stl"
@@ -17309,8 +17346,8 @@
         "metadata": false,
         "tags": [
             "build|s2w",
-            "component|collapsing_blocks",
-            "component|collapsing_blocks|b",
+            "component|collapsed_blocks",
+            "component|collapsed_blocks|b",
             "connection|openforge",
             "shape|floor",
             "shape|floor|corner",
@@ -17325,9 +17362,9 @@
     },
     {
         "file_metadata": {
-            "file": "dungeon_stone+ruined%eroded#floor+s2w+corner,collapsing_blocks+c.2x2.openforge.stl",
+            "file": "dungeon_stone+ruined%eroded#floor+s2w+corner,collapsed_blocks+c.2x2.openforge.stl",
             "file_modified_at": "2025-08-25T13:23:18.197974",
-            "full_name": "tiles/dungeon_stone+ruined/s2w/corner/floor%eroded+collapsing_blocks/dungeon_stone+ruined%eroded#floor+s2w+corner,collapsing_blocks+c.2x2.openforge.stl",
+            "full_name": "tiles/dungeon_stone+ruined/s2w/corner/floor%eroded+collapsed_blocks/dungeon_stone+ruined%eroded#floor+s2w+corner,collapsed_blocks+c.2x2.openforge.stl",
             "md5": "376ea3cf835942983aa77dda4a0e59e2",
             "size": 10011184,
             "storage_address": "https://objects.openforge.tools/models/376ea3/376ea3cf835942983aa77dda4a0e59e2.stl"
@@ -17439,8 +17476,8 @@
         "metadata": false,
         "tags": [
             "build|s2w",
-            "component|collapsing_blocks",
-            "component|collapsing_blocks|c",
+            "component|collapsed_blocks",
+            "component|collapsed_blocks|c",
             "connection|openforge",
             "shape|floor",
             "shape|floor|corner",
@@ -17455,9 +17492,9 @@
     },
     {
         "file_metadata": {
-            "file": "dungeon_stone+ruined%eroded#floor+s2w+corner,collapsing_blocks+d.2x2.openforge.stl",
+            "file": "dungeon_stone+ruined%eroded#floor+s2w+corner,collapsed_blocks+d.2x2.openforge.stl",
             "file_modified_at": "2025-08-25T13:23:28.238119",
-            "full_name": "tiles/dungeon_stone+ruined/s2w/corner/floor%eroded+collapsing_blocks/dungeon_stone+ruined%eroded#floor+s2w+corner,collapsing_blocks+d.2x2.openforge.stl",
+            "full_name": "tiles/dungeon_stone+ruined/s2w/corner/floor%eroded+collapsed_blocks/dungeon_stone+ruined%eroded#floor+s2w+corner,collapsed_blocks+d.2x2.openforge.stl",
             "md5": "2c31a4be886d051304a36e3a50edc0c5",
             "size": 6931084,
             "storage_address": "https://objects.openforge.tools/models/2c31a4/2c31a4be886d051304a36e3a50edc0c5.stl"
@@ -17569,8 +17606,8 @@
         "metadata": false,
         "tags": [
             "build|s2w",
-            "component|collapsing_blocks",
-            "component|collapsing_blocks|d",
+            "component|collapsed_blocks",
+            "component|collapsed_blocks|d",
             "connection|openforge",
             "shape|floor",
             "shape|floor|corner",
@@ -21860,9 +21897,9 @@
     },
     {
         "file_metadata": {
-            "file": "dungeon_stone+ruined%block#floor+s2w+wall,collapsing_blocks+a.2x2.openforge.stl",
+            "file": "dungeon_stone+ruined%block#floor+s2w+wall,collapsed_blocks+a.2x2.openforge.stl",
             "file_modified_at": "2025-08-20T10:40:30.524071",
-            "full_name": "tiles/dungeon_stone+ruined/s2w/wall/floor%block+collapsing_blocks/dungeon_stone+ruined%block#floor+s2w+wall,collapsing_blocks+a.2x2.openforge.stl",
+            "full_name": "tiles/dungeon_stone+ruined/s2w/wall/floor%block+collapsed_blocks/dungeon_stone+ruined%block#floor+s2w+wall,collapsed_blocks+a.2x2.openforge.stl",
             "md5": "6520ff0ad19e007e0f298068a6d5a264",
             "size": 7333984,
             "storage_address": "https://objects.openforge.tools/models/6520ff/6520ff0ad19e007e0f298068a6d5a264.stl"
@@ -21974,13 +22011,12 @@
         "metadata": false,
         "tags": [
             "build|s2w",
-            "component|collapsing_blocks",
-            "component|collapsing_blocks|a",
+            "component|collapsed_blocks",
+            "component|collapsed_blocks|a",
             "connection|openforge",
             "shape|floor",
             "shape|floor|s2w",
             "shape|floor|wall",
-            "shape|wall",
             "size|depth|2",
             "size|width|2",
             "texture|dungeon_stone",
@@ -21991,9 +22027,9 @@
     },
     {
         "file_metadata": {
-            "file": "dungeon_stone+ruined%block#floor+s2w+wall,collapsing_blocks+b.2x2.openforge.stl",
+            "file": "dungeon_stone+ruined%block#floor+s2w+wall,collapsed_blocks+b.2x2.openforge.stl",
             "file_modified_at": "2025-08-20T10:40:26.019681",
-            "full_name": "tiles/dungeon_stone+ruined/s2w/wall/floor%block+collapsing_blocks/dungeon_stone+ruined%block#floor+s2w+wall,collapsing_blocks+b.2x2.openforge.stl",
+            "full_name": "tiles/dungeon_stone+ruined/s2w/wall/floor%block+collapsed_blocks/dungeon_stone+ruined%block#floor+s2w+wall,collapsed_blocks+b.2x2.openforge.stl",
             "md5": "f1cdbde4fd8a12e8bf25186f50e68aa9",
             "size": 7299784,
             "storage_address": "https://objects.openforge.tools/models/f1cdbd/f1cdbde4fd8a12e8bf25186f50e68aa9.stl"
@@ -22105,13 +22141,12 @@
         "metadata": false,
         "tags": [
             "build|s2w",
-            "component|collapsing_blocks",
-            "component|collapsing_blocks|b",
+            "component|collapsed_blocks",
+            "component|collapsed_blocks|b",
             "connection|openforge",
             "shape|floor",
             "shape|floor|s2w",
             "shape|floor|wall",
-            "shape|wall",
             "size|depth|2",
             "size|width|2",
             "texture|dungeon_stone",
@@ -22122,9 +22157,9 @@
     },
     {
         "file_metadata": {
-            "file": "dungeon_stone+ruined%block#floor+s2w+wall,collapsing_blocks+c.2x2.openforge.stl",
+            "file": "dungeon_stone+ruined%block#floor+s2w+wall,collapsed_blocks+c.2x2.openforge.stl",
             "file_modified_at": "2025-08-20T10:40:19.018632",
-            "full_name": "tiles/dungeon_stone+ruined/s2w/wall/floor%block+collapsing_blocks/dungeon_stone+ruined%block#floor+s2w+wall,collapsing_blocks+c.2x2.openforge.stl",
+            "full_name": "tiles/dungeon_stone+ruined/s2w/wall/floor%block+collapsed_blocks/dungeon_stone+ruined%block#floor+s2w+wall,collapsed_blocks+c.2x2.openforge.stl",
             "md5": "6b13779bc2d54b34adda308237b02c3b",
             "size": 7728484,
             "storage_address": "https://objects.openforge.tools/models/6b1377/6b13779bc2d54b34adda308237b02c3b.stl"
@@ -22236,13 +22271,12 @@
         "metadata": false,
         "tags": [
             "build|s2w",
-            "component|collapsing_blocks",
-            "component|collapsing_blocks|c",
+            "component|collapsed_blocks",
+            "component|collapsed_blocks|c",
             "connection|openforge",
             "shape|floor",
             "shape|floor|s2w",
             "shape|floor|wall",
-            "shape|wall",
             "size|depth|2",
             "size|width|2",
             "texture|dungeon_stone",
@@ -22253,9 +22287,9 @@
     },
     {
         "file_metadata": {
-            "file": "dungeon_stone+ruined%block#floor+s2w+wall,collapsing_blocks+d.2x2.openforge.stl",
+            "file": "dungeon_stone+ruined%block#floor+s2w+wall,collapsed_blocks+d.2x2.openforge.stl",
             "file_modified_at": "2025-08-20T10:40:11.082734",
-            "full_name": "tiles/dungeon_stone+ruined/s2w/wall/floor%block+collapsing_blocks/dungeon_stone+ruined%block#floor+s2w+wall,collapsing_blocks+d.2x2.openforge.stl",
+            "full_name": "tiles/dungeon_stone+ruined/s2w/wall/floor%block+collapsed_blocks/dungeon_stone+ruined%block#floor+s2w+wall,collapsed_blocks+d.2x2.openforge.stl",
             "md5": "914faa83430645be8c9cf8122ea16f20",
             "size": 7098184,
             "storage_address": "https://objects.openforge.tools/models/914faa/914faa83430645be8c9cf8122ea16f20.stl"
@@ -22367,13 +22401,12 @@
         "metadata": false,
         "tags": [
             "build|s2w",
-            "component|collapsing_blocks",
-            "component|collapsing_blocks|d",
+            "component|collapsed_blocks",
+            "component|collapsed_blocks|d",
             "connection|openforge",
             "shape|floor",
             "shape|floor|s2w",
             "shape|floor|wall",
-            "shape|wall",
             "size|depth|2",
             "size|width|2",
             "texture|dungeon_stone",
@@ -22503,7 +22536,6 @@
             "shape|floor|a",
             "shape|floor|s2w",
             "shape|floor|wall",
-            "shape|wall",
             "size|depth|2",
             "size|width|2",
             "texture|dungeon_stone",
@@ -22633,7 +22665,6 @@
             "shape|floor|b",
             "shape|floor|s2w",
             "shape|floor|wall",
-            "shape|wall",
             "size|depth|2",
             "size|width|2",
             "texture|dungeon_stone",
@@ -22763,7 +22794,6 @@
             "shape|floor|c",
             "shape|floor|s2w",
             "shape|floor|wall",
-            "shape|wall",
             "size|depth|2",
             "size|width|2",
             "texture|dungeon_stone",
@@ -22893,7 +22923,6 @@
             "shape|floor|d",
             "shape|floor|s2w",
             "shape|floor|wall",
-            "shape|wall",
             "size|depth|2",
             "size|width|2",
             "texture|dungeon_stone",
@@ -23022,7 +23051,6 @@
             "shape|floor",
             "shape|floor|s2w",
             "shape|floor|wall",
-            "shape|wall",
             "size|depth|1",
             "size|width|1",
             "texture|dungeon_stone",
@@ -23151,7 +23179,6 @@
             "shape|floor",
             "shape|floor|s2w",
             "shape|floor|wall",
-            "shape|wall",
             "size|depth|1",
             "size|width|2",
             "texture|dungeon_stone",
@@ -23280,7 +23307,6 @@
             "shape|floor",
             "shape|floor|s2w",
             "shape|floor|wall",
-            "shape|wall",
             "size|depth|1",
             "size|width|3",
             "texture|dungeon_stone",
@@ -23409,7 +23435,6 @@
             "shape|floor",
             "shape|floor|s2w",
             "shape|floor|wall",
-            "shape|wall",
             "size|depth|3",
             "size|width|3",
             "texture|dungeon_stone",
@@ -23538,7 +23563,6 @@
             "shape|floor",
             "shape|floor|s2w",
             "shape|floor|wall",
-            "shape|wall",
             "size|depth|1",
             "size|width|4",
             "texture|dungeon_stone",
@@ -23667,7 +23691,6 @@
             "shape|floor",
             "shape|floor|s2w",
             "shape|floor|wall",
-            "shape|wall",
             "size|depth|2",
             "size|width|4",
             "texture|dungeon_stone",
@@ -23796,7 +23819,6 @@
             "shape|floor",
             "shape|floor|s2w",
             "shape|floor|wall",
-            "shape|wall",
             "size|depth|4",
             "size|width|4",
             "texture|dungeon_stone",
@@ -23807,9 +23829,9 @@
     },
     {
         "file_metadata": {
-            "file": "dungeon_stone+ruined%eroded#floor+s2w+wall,collapsing_blocks+a.2x2.openforge.stl",
+            "file": "dungeon_stone+ruined%eroded#floor+s2w+wall,collapsed_blocks+a.2x2.openforge.stl",
             "file_modified_at": "2025-04-29T18:24:36.254053",
-            "full_name": "tiles/dungeon_stone+ruined/s2w/wall/floor%eroded+collapsing_blocks/dungeon_stone+ruined%eroded#floor+s2w+wall,collapsing_blocks+a.2x2.openforge.stl",
+            "full_name": "tiles/dungeon_stone+ruined/s2w/wall/floor%eroded+collapsed_blocks/dungeon_stone+ruined%eroded#floor+s2w+wall,collapsed_blocks+a.2x2.openforge.stl",
             "md5": "6feddaabe4dd14ca1a1571f7855c42bf",
             "size": 6512684,
             "storage_address": "https://objects.openforge.tools/models/6fedda/6feddaabe4dd14ca1a1571f7855c42bf.stl"
@@ -23921,13 +23943,12 @@
         "metadata": false,
         "tags": [
             "build|s2w",
-            "component|collapsing_blocks",
-            "component|collapsing_blocks|a",
+            "component|collapsed_blocks",
+            "component|collapsed_blocks|a",
             "connection|openforge",
             "shape|floor",
             "shape|floor|s2w",
             "shape|floor|wall",
-            "shape|wall",
             "size|depth|2",
             "size|width|2",
             "texture|dungeon_stone",
@@ -23938,9 +23959,9 @@
     },
     {
         "file_metadata": {
-            "file": "dungeon_stone+ruined%eroded#floor+s2w+wall,collapsing_blocks+b.2x2.openforge.stl",
+            "file": "dungeon_stone+ruined%eroded#floor+s2w+wall,collapsed_blocks+b.2x2.openforge.stl",
             "file_modified_at": "2025-04-29T18:28:49.982141",
-            "full_name": "tiles/dungeon_stone+ruined/s2w/wall/floor%eroded+collapsing_blocks/dungeon_stone+ruined%eroded#floor+s2w+wall,collapsing_blocks+b.2x2.openforge.stl",
+            "full_name": "tiles/dungeon_stone+ruined/s2w/wall/floor%eroded+collapsed_blocks/dungeon_stone+ruined%eroded#floor+s2w+wall,collapsed_blocks+b.2x2.openforge.stl",
             "md5": "ff9ae98cdb50594fb94c6b411a4ff4dc",
             "size": 6562884,
             "storage_address": "https://objects.openforge.tools/models/ff9ae9/ff9ae98cdb50594fb94c6b411a4ff4dc.stl"
@@ -24052,13 +24073,12 @@
         "metadata": false,
         "tags": [
             "build|s2w",
-            "component|collapsing_blocks",
-            "component|collapsing_blocks|b",
+            "component|collapsed_blocks",
+            "component|collapsed_blocks|b",
             "connection|openforge",
             "shape|floor",
             "shape|floor|s2w",
             "shape|floor|wall",
-            "shape|wall",
             "size|depth|2",
             "size|width|2",
             "texture|dungeon_stone",
@@ -24069,9 +24089,9 @@
     },
     {
         "file_metadata": {
-            "file": "dungeon_stone+ruined%eroded#floor+s2w+wall,collapsing_blocks+c.2x2.openforge.stl",
+            "file": "dungeon_stone+ruined%eroded#floor+s2w+wall,collapsed_blocks+c.2x2.openforge.stl",
             "file_modified_at": "2025-04-29T18:31:38.830581",
-            "full_name": "tiles/dungeon_stone+ruined/s2w/wall/floor%eroded+collapsing_blocks/dungeon_stone+ruined%eroded#floor+s2w+wall,collapsing_blocks+c.2x2.openforge.stl",
+            "full_name": "tiles/dungeon_stone+ruined/s2w/wall/floor%eroded+collapsed_blocks/dungeon_stone+ruined%eroded#floor+s2w+wall,collapsed_blocks+c.2x2.openforge.stl",
             "md5": "c40216635c54060fd5dbe107748880d9",
             "size": 6876984,
             "storage_address": "https://objects.openforge.tools/models/c40216/c40216635c54060fd5dbe107748880d9.stl"
@@ -24183,13 +24203,12 @@
         "metadata": false,
         "tags": [
             "build|s2w",
-            "component|collapsing_blocks",
-            "component|collapsing_blocks|c",
+            "component|collapsed_blocks",
+            "component|collapsed_blocks|c",
             "connection|openforge",
             "shape|floor",
             "shape|floor|s2w",
             "shape|floor|wall",
-            "shape|wall",
             "size|depth|2",
             "size|width|2",
             "texture|dungeon_stone",
@@ -24200,9 +24219,9 @@
     },
     {
         "file_metadata": {
-            "file": "dungeon_stone+ruined%eroded#floor+s2w+wall,collapsing_blocks+d.2x2.openforge.stl",
+            "file": "dungeon_stone+ruined%eroded#floor+s2w+wall,collapsed_blocks+d.2x2.openforge.stl",
             "file_modified_at": "2025-04-29T18:31:14.376069",
-            "full_name": "tiles/dungeon_stone+ruined/s2w/wall/floor%eroded+collapsing_blocks/dungeon_stone+ruined%eroded#floor+s2w+wall,collapsing_blocks+d.2x2.openforge.stl",
+            "full_name": "tiles/dungeon_stone+ruined/s2w/wall/floor%eroded+collapsed_blocks/dungeon_stone+ruined%eroded#floor+s2w+wall,collapsed_blocks+d.2x2.openforge.stl",
             "md5": "a57c92925e8f6955abf41b8f6f8962eb",
             "size": 6392584,
             "storage_address": "https://objects.openforge.tools/models/a57c92/a57c92925e8f6955abf41b8f6f8962eb.stl"
@@ -24314,13 +24333,12 @@
         "metadata": false,
         "tags": [
             "build|s2w",
-            "component|collapsing_blocks",
-            "component|collapsing_blocks|d",
+            "component|collapsed_blocks",
+            "component|collapsed_blocks|d",
             "connection|openforge",
             "shape|floor",
             "shape|floor|s2w",
             "shape|floor|wall",
-            "shape|wall",
             "size|depth|2",
             "size|width|2",
             "texture|dungeon_stone",
@@ -24450,7 +24468,6 @@
             "shape|floor|a",
             "shape|floor|s2w",
             "shape|floor|wall",
-            "shape|wall",
             "size|depth|2",
             "size|width|2",
             "texture|dungeon_stone",
@@ -24580,7 +24597,6 @@
             "shape|floor|b",
             "shape|floor|s2w",
             "shape|floor|wall",
-            "shape|wall",
             "size|depth|2",
             "size|width|2",
             "texture|dungeon_stone",
@@ -24710,7 +24726,6 @@
             "shape|floor|c",
             "shape|floor|s2w",
             "shape|floor|wall",
-            "shape|wall",
             "size|depth|2",
             "size|width|2",
             "texture|dungeon_stone",
@@ -24840,7 +24855,6 @@
             "shape|floor|d",
             "shape|floor|s2w",
             "shape|floor|wall",
-            "shape|wall",
             "size|depth|2",
             "size|width|2",
             "texture|dungeon_stone",
@@ -24969,7 +24983,6 @@
             "shape|floor",
             "shape|floor|s2w",
             "shape|floor|wall",
-            "shape|wall",
             "size|depth|1",
             "size|width|1",
             "texture|dungeon_stone",
@@ -25098,7 +25111,6 @@
             "shape|floor",
             "shape|floor|s2w",
             "shape|floor|wall",
-            "shape|wall",
             "size|depth|1",
             "size|width|2",
             "texture|dungeon_stone",
@@ -25227,7 +25239,6 @@
             "shape|floor",
             "shape|floor|s2w",
             "shape|floor|wall",
-            "shape|wall",
             "size|depth|1",
             "size|width|3",
             "texture|dungeon_stone",
@@ -25356,7 +25367,6 @@
             "shape|floor",
             "shape|floor|s2w",
             "shape|floor|wall",
-            "shape|wall",
             "size|depth|3",
             "size|width|3",
             "texture|dungeon_stone",
@@ -25485,7 +25495,6 @@
             "shape|floor",
             "shape|floor|s2w",
             "shape|floor|wall",
-            "shape|wall",
             "size|depth|1",
             "size|width|4",
             "texture|dungeon_stone",
@@ -25614,7 +25623,6 @@
             "shape|floor",
             "shape|floor|s2w",
             "shape|floor|wall",
-            "shape|wall",
             "size|depth|2",
             "size|width|4",
             "texture|dungeon_stone",
@@ -25743,7 +25751,6 @@
             "shape|floor",
             "shape|floor|s2w",
             "shape|floor|wall",
-            "shape|wall",
             "size|depth|4",
             "size|width|4",
             "texture|dungeon_stone",

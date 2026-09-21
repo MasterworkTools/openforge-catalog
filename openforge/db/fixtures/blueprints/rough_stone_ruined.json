@@ -1171,9 +1171,8 @@
         "metadata": false,
         "tags": [
             "connection|openforge",
-            "decoration|symbol|air",
             "shape|floor",
-            "shape|square",
+            "shape|floor|air_symbol",
             "size|depth|2",
             "size|width|2",
             "texture|rough_stone",
@@ -1334,9 +1333,8 @@
         "metadata": false,
         "tags": [
             "connection|openforge",
-            "decoration|symbol|air",
             "shape|floor",
-            "shape|square",
+            "shape|floor|air_symbol",
             "size|depth|4",
             "size|width|4",
             "texture|rough_stone",
@@ -1497,9 +1495,8 @@
         "metadata": false,
         "tags": [
             "connection|openforge",
-            "decoration|symbol|beezlebub",
             "shape|floor",
-            "shape|square",
+            "shape|floor|beezlebub_symbol",
             "size|depth|2",
             "size|width|2",
             "texture|rough_stone",
@@ -1660,9 +1657,8 @@
         "metadata": false,
         "tags": [
             "connection|openforge",
-            "decoration|symbol|earth",
             "shape|floor",
-            "shape|square",
+            "shape|floor|earth_symbol",
             "size|depth|2",
             "size|width|2",
             "texture|rough_stone",
@@ -1823,9 +1819,8 @@
         "metadata": false,
         "tags": [
             "connection|openforge",
-            "decoration|symbol|earth",
             "shape|floor",
-            "shape|square",
+            "shape|floor|earth_symbol",
             "size|depth|4",
             "size|width|4",
             "texture|rough_stone",
@@ -1986,9 +1981,8 @@
         "metadata": false,
         "tags": [
             "connection|openforge",
-            "decoration|symbol|fire",
             "shape|floor",
-            "shape|square",
+            "shape|floor|fire_symbol",
             "size|depth|2",
             "size|width|2",
             "texture|rough_stone",
@@ -2149,9 +2143,8 @@
         "metadata": false,
         "tags": [
             "connection|openforge",
-            "decoration|symbol|fire",
             "shape|floor",
-            "shape|square",
+            "shape|floor|fire_symbol",
             "size|depth|4",
             "size|width|4",
             "texture|rough_stone",
@@ -2312,9 +2305,8 @@
         "metadata": false,
         "tags": [
             "connection|openforge",
-            "decoration|symbol|lamashtu",
             "shape|floor",
-            "shape|square",
+            "shape|floor|lamashtu_symbol",
             "size|depth|2",
             "size|width|2",
             "texture|rough_stone",
@@ -2475,9 +2467,8 @@
         "metadata": false,
         "tags": [
             "connection|openforge",
-            "decoration|symbol|spirit",
             "shape|floor",
-            "shape|square",
+            "shape|floor|spirit_symbol",
             "size|depth|2",
             "size|width|2",
             "texture|rough_stone",
@@ -2638,9 +2629,8 @@
         "metadata": false,
         "tags": [
             "connection|openforge",
-            "decoration|symbol|water",
             "shape|floor",
-            "shape|square",
+            "shape|floor|water_symbol",
             "size|depth|2",
             "size|width|2",
             "texture|rough_stone",
@@ -2801,9 +2791,8 @@
         "metadata": false,
         "tags": [
             "connection|openforge",
-            "decoration|symbol|water",
             "shape|floor",
-            "shape|square",
+            "shape|floor|water_symbol",
             "size|depth|4",
             "size|width|4",
             "texture|rough_stone",
@@ -5404,6 +5393,43 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "base",
+                    "optional": true,
+                    "tags": {
+                        "constrain": [
+                            {
+                                "filter": "shape|floor"
+                            },
+                            {
+                                "filter": "shape|wall"
+                            },
+                            {
+                                "tag": "shape"
+                            },
+                            {
+                                "tag": "size|depth"
+                            },
+                            {
+                                "tag": "size|width"
+                            }
+                        ],
+                        "deny": [
+                            {
+                                "tag": "build|s2w"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "shape|base"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "rough_stone+ruined#floor.AS.openforge.stl",
             "file_modified_at": "2020-07-23T13:54:23.433677",
@@ -5521,7 +5547,7 @@
             "connection|dual",
             "connection|openforge",
             "shape|floor",
-            "shape|wall",
+            "shape|floor|wall",
             "size|openlock|AS",
             "size|width|2",
             "texture|rough_stone",
@@ -7647,7 +7673,7 @@
             "connection|dual",
             "connection|openlock",
             "shape|floor",
-            "shape|wall",
+            "shape|floor|wall",
             "size|openlock|AS",
             "size|width|2",
             "texture|rough_stone",
@@ -42827,6 +42853,43 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "base",
+                    "optional": true,
+                    "tags": {
+                        "constrain": [
+                            {
+                                "filter": "shape|floor"
+                            },
+                            {
+                                "filter": "shape|wall"
+                            },
+                            {
+                                "tag": "shape"
+                            },
+                            {
+                                "tag": "size|depth"
+                            },
+                            {
+                                "tag": "size|width"
+                            }
+                        ],
+                        "deny": [
+                            {
+                                "tag": "build|s2w"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "shape|base"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "rough_stone+ruined#wall+floor+a.2x2.openforge.stl",
             "file_modified_at": "2019-09-26T15:47:10",
@@ -42946,7 +43009,7 @@
             "component|wall|floor",
             "connection|openforge",
             "shape|floor",
-            "shape|wall",
+            "shape|floor|wall",
             "size|depth|2",
             "size|width|2",
             "texture|rough_stone",
@@ -42955,6 +43018,43 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "base",
+                    "optional": true,
+                    "tags": {
+                        "constrain": [
+                            {
+                                "filter": "shape|floor"
+                            },
+                            {
+                                "filter": "shape|wall"
+                            },
+                            {
+                                "tag": "shape"
+                            },
+                            {
+                                "tag": "size|depth"
+                            },
+                            {
+                                "tag": "size|width"
+                            }
+                        ],
+                        "deny": [
+                            {
+                                "tag": "build|s2w"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "shape|base"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "rough_stone+ruined#wall+floor+b.2x2.openforge.stl",
             "file_modified_at": "2019-09-26T15:47:17",
@@ -43074,7 +43174,7 @@
             "component|wall|floor",
             "connection|openforge",
             "shape|floor",
-            "shape|wall",
+            "shape|floor|wall",
             "size|depth|2",
             "size|width|2",
             "texture|rough_stone",
@@ -43083,6 +43183,43 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "base",
+                    "optional": true,
+                    "tags": {
+                        "constrain": [
+                            {
+                                "filter": "shape|floor"
+                            },
+                            {
+                                "filter": "shape|wall"
+                            },
+                            {
+                                "tag": "shape"
+                            },
+                            {
+                                "tag": "size|depth"
+                            },
+                            {
+                                "tag": "size|width"
+                            }
+                        ],
+                        "deny": [
+                            {
+                                "tag": "build|s2w"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "shape|base"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "rough_stone+ruined#wall+floor+c.2x2.openforge.stl",
             "file_modified_at": "2019-09-26T15:47:25",
@@ -43202,7 +43339,7 @@
             "component|wall|floor",
             "connection|openforge",
             "shape|floor",
-            "shape|wall",
+            "shape|floor|wall",
             "size|depth|2",
             "size|width|2",
             "texture|rough_stone",
@@ -43211,6 +43348,43 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "base",
+                    "optional": true,
+                    "tags": {
+                        "constrain": [
+                            {
+                                "filter": "shape|floor"
+                            },
+                            {
+                                "filter": "shape|wall"
+                            },
+                            {
+                                "tag": "shape"
+                            },
+                            {
+                                "tag": "size|depth"
+                            },
+                            {
+                                "tag": "size|width"
+                            }
+                        ],
+                        "deny": [
+                            {
+                                "tag": "build|s2w"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "shape|base"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "rough_stone+ruined#wall+floor+d.2x2.openforge.stl",
             "file_modified_at": "2019-09-26T15:47:34",
@@ -43330,7 +43504,7 @@
             "component|wall|floor",
             "connection|openforge",
             "shape|floor",
-            "shape|wall",
+            "shape|floor|wall",
             "size|depth|2",
             "size|width|2",
             "texture|rough_stone",
@@ -43339,6 +43513,43 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "base",
+                    "optional": true,
+                    "tags": {
+                        "constrain": [
+                            {
+                                "filter": "shape|floor"
+                            },
+                            {
+                                "filter": "shape|wall"
+                            },
+                            {
+                                "tag": "shape"
+                            },
+                            {
+                                "tag": "size|depth"
+                            },
+                            {
+                                "tag": "size|width"
+                            }
+                        ],
+                        "deny": [
+                            {
+                                "tag": "build|s2w"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "shape|base"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "rough_stone+ruined#wall+floor+e.2x2.openforge.stl",
             "file_modified_at": "2019-09-26T15:47:43",
@@ -43458,7 +43669,7 @@
             "component|wall|floor",
             "connection|openforge",
             "shape|floor",
-            "shape|wall",
+            "shape|floor|wall",
             "size|depth|2",
             "size|width|2",
             "texture|rough_stone",
@@ -43467,6 +43678,43 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "base",
+                    "optional": true,
+                    "tags": {
+                        "constrain": [
+                            {
+                                "filter": "shape|floor"
+                            },
+                            {
+                                "filter": "shape|wall"
+                            },
+                            {
+                                "tag": "shape"
+                            },
+                            {
+                                "tag": "size|depth"
+                            },
+                            {
+                                "tag": "size|width"
+                            }
+                        ],
+                        "deny": [
+                            {
+                                "tag": "build|s2w"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "shape|base"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "rough_stone+ruined#wall+floor+f.2x2.openforge.stl",
             "file_modified_at": "2019-09-26T15:47:51",
@@ -43586,7 +43834,7 @@
             "component|wall|floor",
             "connection|openforge",
             "shape|floor",
-            "shape|wall",
+            "shape|floor|wall",
             "size|depth|2",
             "size|width|2",
             "texture|rough_stone",
@@ -43595,6 +43843,43 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "base",
+                    "optional": true,
+                    "tags": {
+                        "constrain": [
+                            {
+                                "filter": "shape|floor"
+                            },
+                            {
+                                "filter": "shape|wall"
+                            },
+                            {
+                                "tag": "shape"
+                            },
+                            {
+                                "tag": "size|depth"
+                            },
+                            {
+                                "tag": "size|width"
+                            }
+                        ],
+                        "deny": [
+                            {
+                                "tag": "build|s2w"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "shape|base"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "rough_stone+ruined#wall+floor+g.2x2.openforge.stl",
             "file_modified_at": "2019-09-26T15:47:58",
@@ -43714,7 +43999,7 @@
             "component|wall|g",
             "connection|openforge",
             "shape|floor",
-            "shape|wall",
+            "shape|floor|wall",
             "size|depth|2",
             "size|width|2",
             "texture|rough_stone",
@@ -43723,6 +44008,43 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "base",
+                    "optional": true,
+                    "tags": {
+                        "constrain": [
+                            {
+                                "filter": "shape|floor"
+                            },
+                            {
+                                "filter": "shape|wall"
+                            },
+                            {
+                                "tag": "shape"
+                            },
+                            {
+                                "tag": "size|depth"
+                            },
+                            {
+                                "tag": "size|width"
+                            }
+                        ],
+                        "deny": [
+                            {
+                                "tag": "build|s2w"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "shape|base"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "rough_stone+ruined#wall+floor+h.2x2.openforge.stl",
             "file_modified_at": "2019-09-26T15:48:06",
@@ -43842,7 +44164,7 @@
             "component|wall|h",
             "connection|openforge",
             "shape|floor",
-            "shape|wall",
+            "shape|floor|wall",
             "size|depth|2",
             "size|width|2",
             "texture|rough_stone",
@@ -43851,6 +44173,43 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "base",
+                    "optional": true,
+                    "tags": {
+                        "constrain": [
+                            {
+                                "filter": "shape|floor"
+                            },
+                            {
+                                "filter": "shape|wall"
+                            },
+                            {
+                                "tag": "shape"
+                            },
+                            {
+                                "tag": "size|depth"
+                            },
+                            {
+                                "tag": "size|width"
+                            }
+                        ],
+                        "deny": [
+                            {
+                                "tag": "build|s2w"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "shape|base"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "rough_stone+ruined#wall+floor+i.2x2.openforge.stl",
             "file_modified_at": "2019-09-26T15:48:13",
@@ -43970,7 +44329,7 @@
             "component|wall|i",
             "connection|openforge",
             "shape|floor",
-            "shape|wall",
+            "shape|floor|wall",
             "size|depth|2",
             "size|width|2",
             "texture|rough_stone",
@@ -43979,6 +44338,43 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "base",
+                    "optional": true,
+                    "tags": {
+                        "constrain": [
+                            {
+                                "filter": "shape|floor"
+                            },
+                            {
+                                "filter": "shape|wall"
+                            },
+                            {
+                                "tag": "shape"
+                            },
+                            {
+                                "tag": "size|depth"
+                            },
+                            {
+                                "tag": "size|width"
+                            }
+                        ],
+                        "deny": [
+                            {
+                                "tag": "build|s2w"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "shape|base"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "rough_stone+ruined#wall+floor.1x1.openforge.stl",
             "file_modified_at": "2019-09-26T15:46:33",
@@ -44097,7 +44493,7 @@
             "component|wall|floor",
             "connection|openforge",
             "shape|floor",
-            "shape|wall",
+            "shape|floor|wall",
             "size|depth|1",
             "size|width|1",
             "texture|rough_stone",
@@ -44106,6 +44502,43 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "base",
+                    "optional": true,
+                    "tags": {
+                        "constrain": [
+                            {
+                                "filter": "shape|floor"
+                            },
+                            {
+                                "filter": "shape|wall"
+                            },
+                            {
+                                "tag": "shape"
+                            },
+                            {
+                                "tag": "size|depth"
+                            },
+                            {
+                                "tag": "size|width"
+                            }
+                        ],
+                        "deny": [
+                            {
+                                "tag": "build|s2w"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "shape|base"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "rough_stone+ruined#wall+floor.1x2.openforge.stl",
             "file_modified_at": "2019-09-26T15:46:38",
@@ -44224,7 +44657,7 @@
             "component|wall|floor",
             "connection|openforge",
             "shape|floor",
-            "shape|wall",
+            "shape|floor|wall",
             "size|depth|2",
             "size|width|1",
             "texture|rough_stone",
@@ -44233,6 +44666,43 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "base",
+                    "optional": true,
+                    "tags": {
+                        "constrain": [
+                            {
+                                "filter": "shape|floor"
+                            },
+                            {
+                                "filter": "shape|wall"
+                            },
+                            {
+                                "tag": "shape"
+                            },
+                            {
+                                "tag": "size|depth"
+                            },
+                            {
+                                "tag": "size|width"
+                            }
+                        ],
+                        "deny": [
+                            {
+                                "tag": "build|s2w"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "shape|base"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "rough_stone+ruined#wall+floor.1x3.openforge.stl",
             "file_modified_at": "2019-09-26T15:46:48",
@@ -44351,7 +44821,7 @@
             "component|wall|floor",
             "connection|openforge",
             "shape|floor",
-            "shape|wall",
+            "shape|floor|wall",
             "size|depth|3",
             "size|width|1",
             "texture|rough_stone",
@@ -44360,6 +44830,43 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "base",
+                    "optional": true,
+                    "tags": {
+                        "constrain": [
+                            {
+                                "filter": "shape|floor"
+                            },
+                            {
+                                "filter": "shape|wall"
+                            },
+                            {
+                                "tag": "shape"
+                            },
+                            {
+                                "tag": "size|depth"
+                            },
+                            {
+                                "tag": "size|width"
+                            }
+                        ],
+                        "deny": [
+                            {
+                                "tag": "build|s2w"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "shape|base"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "rough_stone+ruined#wall+floor.1x4.openforge.stl",
             "file_modified_at": "2019-09-26T15:46:56",
@@ -44478,7 +44985,7 @@
             "component|wall|floor",
             "connection|openforge",
             "shape|floor",
-            "shape|wall",
+            "shape|floor|wall",
             "size|depth|4",
             "size|width|1",
             "texture|rough_stone",
@@ -44487,6 +44994,43 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "base",
+                    "optional": true,
+                    "tags": {
+                        "constrain": [
+                            {
+                                "filter": "shape|floor"
+                            },
+                            {
+                                "filter": "shape|wall"
+                            },
+                            {
+                                "tag": "shape"
+                            },
+                            {
+                                "tag": "size|depth"
+                            },
+                            {
+                                "tag": "size|width"
+                            }
+                        ],
+                        "deny": [
+                            {
+                                "tag": "build|s2w"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "shape|base"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "rough_stone+ruined#wall+floor.2x1.openforge.stl",
             "file_modified_at": "2019-09-26T15:47:02",
@@ -44605,7 +45149,7 @@
             "component|wall|floor",
             "connection|openforge",
             "shape|floor",
-            "shape|wall",
+            "shape|floor|wall",
             "size|depth|1",
             "size|width|2",
             "texture|rough_stone",
@@ -44614,6 +45158,43 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "base",
+                    "optional": true,
+                    "tags": {
+                        "constrain": [
+                            {
+                                "filter": "shape|floor"
+                            },
+                            {
+                                "filter": "shape|wall"
+                            },
+                            {
+                                "tag": "shape"
+                            },
+                            {
+                                "tag": "size|depth"
+                            },
+                            {
+                                "tag": "size|width"
+                            }
+                        ],
+                        "deny": [
+                            {
+                                "tag": "build|s2w"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "shape|base"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "rough_stone+ruined#wall+floor.2x3.openforge.stl",
             "file_modified_at": "2019-09-26T15:48:25",
@@ -44732,7 +45313,7 @@
             "component|wall|floor",
             "connection|openforge",
             "shape|floor",
-            "shape|wall",
+            "shape|floor|wall",
             "size|depth|3",
             "size|width|2",
             "texture|rough_stone",
@@ -44741,6 +45322,43 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "base",
+                    "optional": true,
+                    "tags": {
+                        "constrain": [
+                            {
+                                "filter": "shape|floor"
+                            },
+                            {
+                                "filter": "shape|wall"
+                            },
+                            {
+                                "tag": "shape"
+                            },
+                            {
+                                "tag": "size|depth"
+                            },
+                            {
+                                "tag": "size|width"
+                            }
+                        ],
+                        "deny": [
+                            {
+                                "tag": "build|s2w"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "shape|base"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "rough_stone+ruined#wall+floor.2x4.openforge.stl",
             "file_modified_at": "2019-09-26T15:48:41",
@@ -44859,7 +45477,7 @@
             "component|wall|floor",
             "connection|openforge",
             "shape|floor",
-            "shape|wall",
+            "shape|floor|wall",
             "size|depth|4",
             "size|width|2",
             "texture|rough_stone",
@@ -44868,6 +45486,43 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "base",
+                    "optional": true,
+                    "tags": {
+                        "constrain": [
+                            {
+                                "filter": "shape|floor"
+                            },
+                            {
+                                "filter": "shape|wall"
+                            },
+                            {
+                                "tag": "shape"
+                            },
+                            {
+                                "tag": "size|depth"
+                            },
+                            {
+                                "tag": "size|width"
+                            }
+                        ],
+                        "deny": [
+                            {
+                                "tag": "build|s2w"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "shape|base"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "rough_stone+ruined#wall+floor.3x1.openforge.stl",
             "file_modified_at": "2019-09-26T15:48:51",
@@ -44986,7 +45641,7 @@
             "component|wall|floor",
             "connection|openforge",
             "shape|floor",
-            "shape|wall",
+            "shape|floor|wall",
             "size|depth|1",
             "size|width|3",
             "texture|rough_stone",
@@ -44995,6 +45650,43 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "base",
+                    "optional": true,
+                    "tags": {
+                        "constrain": [
+                            {
+                                "filter": "shape|floor"
+                            },
+                            {
+                                "filter": "shape|wall"
+                            },
+                            {
+                                "tag": "shape"
+                            },
+                            {
+                                "tag": "size|depth"
+                            },
+                            {
+                                "tag": "size|width"
+                            }
+                        ],
+                        "deny": [
+                            {
+                                "tag": "build|s2w"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "shape|base"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "rough_stone+ruined#wall+floor.3x2.openforge.stl",
             "file_modified_at": "2019-09-26T15:49:07",
@@ -45113,7 +45805,7 @@
             "component|wall|floor",
             "connection|openforge",
             "shape|floor",
-            "shape|wall",
+            "shape|floor|wall",
             "size|depth|2",
             "size|width|3",
             "texture|rough_stone",
@@ -45122,6 +45814,43 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "base",
+                    "optional": true,
+                    "tags": {
+                        "constrain": [
+                            {
+                                "filter": "shape|floor"
+                            },
+                            {
+                                "filter": "shape|wall"
+                            },
+                            {
+                                "tag": "shape"
+                            },
+                            {
+                                "tag": "size|depth"
+                            },
+                            {
+                                "tag": "size|width"
+                            }
+                        ],
+                        "deny": [
+                            {
+                                "tag": "build|s2w"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "shape|base"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "rough_stone+ruined#wall+floor.3x3.openforge.stl",
             "file_modified_at": "2019-09-26T15:49:28",
@@ -45240,7 +45969,7 @@
             "component|wall|floor",
             "connection|openforge",
             "shape|floor",
-            "shape|wall",
+            "shape|floor|wall",
             "size|depth|3",
             "size|width|3",
             "texture|rough_stone",
@@ -45249,6 +45978,43 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "base",
+                    "optional": true,
+                    "tags": {
+                        "constrain": [
+                            {
+                                "filter": "shape|floor"
+                            },
+                            {
+                                "filter": "shape|wall"
+                            },
+                            {
+                                "tag": "shape"
+                            },
+                            {
+                                "tag": "size|depth"
+                            },
+                            {
+                                "tag": "size|width"
+                            }
+                        ],
+                        "deny": [
+                            {
+                                "tag": "build|s2w"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "shape|base"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "rough_stone+ruined#wall+floor.3x4.openforge.stl",
             "file_modified_at": "2019-09-26T15:49:55",
@@ -45367,7 +46133,7 @@
             "component|wall|floor",
             "connection|openforge",
             "shape|floor",
-            "shape|wall",
+            "shape|floor|wall",
             "size|depth|4",
             "size|width|3",
             "texture|rough_stone",
@@ -45376,6 +46142,43 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "base",
+                    "optional": true,
+                    "tags": {
+                        "constrain": [
+                            {
+                                "filter": "shape|floor"
+                            },
+                            {
+                                "filter": "shape|wall"
+                            },
+                            {
+                                "tag": "shape"
+                            },
+                            {
+                                "tag": "size|depth"
+                            },
+                            {
+                                "tag": "size|width"
+                            }
+                        ],
+                        "deny": [
+                            {
+                                "tag": "build|s2w"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "shape|base"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "rough_stone+ruined#wall+floor.4x1.openforge.stl",
             "file_modified_at": "2019-09-26T15:50:07",
@@ -45494,7 +46297,7 @@
             "component|wall|floor",
             "connection|openforge",
             "shape|floor",
-            "shape|wall",
+            "shape|floor|wall",
             "size|depth|1",
             "size|width|4",
             "texture|rough_stone",
@@ -45503,6 +46306,43 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "base",
+                    "optional": true,
+                    "tags": {
+                        "constrain": [
+                            {
+                                "filter": "shape|floor"
+                            },
+                            {
+                                "filter": "shape|wall"
+                            },
+                            {
+                                "tag": "shape"
+                            },
+                            {
+                                "tag": "size|depth"
+                            },
+                            {
+                                "tag": "size|width"
+                            }
+                        ],
+                        "deny": [
+                            {
+                                "tag": "build|s2w"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "shape|base"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "rough_stone+ruined#wall+floor.4x2.openforge.stl",
             "file_modified_at": "2019-09-26T15:50:26",
@@ -45621,7 +46461,7 @@
             "component|wall|floor",
             "connection|openforge",
             "shape|floor",
-            "shape|wall",
+            "shape|floor|wall",
             "size|depth|2",
             "size|width|4",
             "texture|rough_stone",
@@ -45630,6 +46470,43 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "base",
+                    "optional": true,
+                    "tags": {
+                        "constrain": [
+                            {
+                                "filter": "shape|floor"
+                            },
+                            {
+                                "filter": "shape|wall"
+                            },
+                            {
+                                "tag": "shape"
+                            },
+                            {
+                                "tag": "size|depth"
+                            },
+                            {
+                                "tag": "size|width"
+                            }
+                        ],
+                        "deny": [
+                            {
+                                "tag": "build|s2w"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "shape|base"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "rough_stone+ruined#wall+floor.4x3.openforge.stl",
             "file_modified_at": "2019-09-26T15:50:53",
@@ -45748,7 +46625,7 @@
             "component|wall|floor",
             "connection|openforge",
             "shape|floor",
-            "shape|wall",
+            "shape|floor|wall",
             "size|depth|3",
             "size|width|4",
             "texture|rough_stone",
@@ -45757,6 +46634,43 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "base",
+                    "optional": true,
+                    "tags": {
+                        "constrain": [
+                            {
+                                "filter": "shape|floor"
+                            },
+                            {
+                                "filter": "shape|wall"
+                            },
+                            {
+                                "tag": "shape"
+                            },
+                            {
+                                "tag": "size|depth"
+                            },
+                            {
+                                "tag": "size|width"
+                            }
+                        ],
+                        "deny": [
+                            {
+                                "tag": "build|s2w"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "shape|base"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "rough_stone+ruined#wall+floor.4x4.openforge.stl",
             "file_modified_at": "2019-09-26T15:51:33",
@@ -45875,7 +46789,7 @@
             "component|wall|floor",
             "connection|openforge",
             "shape|floor",
-            "shape|wall",
+            "shape|floor|wall",
             "size|depth|4",
             "size|width|4",
             "texture|rough_stone",

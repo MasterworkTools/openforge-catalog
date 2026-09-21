@@ -24031,6 +24031,43 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "base",
+                    "optional": true,
+                    "tags": {
+                        "constrain": [
+                            {
+                                "filter": "shape|floor"
+                            },
+                            {
+                                "filter": "shape|wall"
+                            },
+                            {
+                                "tag": "shape"
+                            },
+                            {
+                                "tag": "size|depth"
+                            },
+                            {
+                                "tag": "size|width"
+                            }
+                        ],
+                        "deny": [
+                            {
+                                "tag": "build|s2w"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "shape|base"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "dungeon_stone%block#floor.AS.openforge.stl",
             "file_modified_at": "2022-05-09T21:19:10.203469",
@@ -24148,7 +24185,7 @@
             "connection|dual",
             "connection|openforge",
             "shape|floor",
-            "shape|wall",
+            "shape|floor|wall",
             "size|openlock|AS",
             "size|width|2",
             "texture|dungeon_stone",
@@ -25939,6 +25976,43 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "base",
+                    "optional": true,
+                    "tags": {
+                        "constrain": [
+                            {
+                                "filter": "shape|floor"
+                            },
+                            {
+                                "filter": "shape|wall"
+                            },
+                            {
+                                "tag": "shape"
+                            },
+                            {
+                                "tag": "size|depth"
+                            },
+                            {
+                                "tag": "size|width"
+                            }
+                        ],
+                        "deny": [
+                            {
+                                "tag": "build|s2w"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "shape|base"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "dungeon_stone%eroded#floor.AS.openforge.stl",
             "file_modified_at": "2018-02-27T14:57:17",
@@ -26056,7 +26130,7 @@
             "connection|dual",
             "connection|openforge",
             "shape|floor",
-            "shape|wall",
+            "shape|floor|wall",
             "size|openlock|AS",
             "size|width|2",
             "texture|dungeon_stone",
@@ -27569,7 +27643,7 @@
             "connection|openlock",
             "connection|openlock|unsupported",
             "shape|floor",
-            "shape|wall",
+            "shape|floor|wall",
             "size|openlock|AS",
             "size|width|2",
             "texture|dungeon_stone",
@@ -29082,7 +29156,7 @@
             "connection|openlock",
             "connection|openlock|unsupported",
             "shape|floor",
-            "shape|wall",
+            "shape|floor|wall",
             "size|openlock|AS",
             "size|width|2",
             "texture|dungeon_stone",
@@ -30583,7 +30657,7 @@
             "connection|dual",
             "connection|openlock",
             "shape|floor",
-            "shape|wall",
+            "shape|floor|wall",
             "size|openlock|AS",
             "size|width|2",
             "texture|dungeon_stone",
@@ -32084,7 +32158,7 @@
             "connection|dual",
             "connection|openlock",
             "shape|floor",
-            "shape|wall",
+            "shape|floor|wall",
             "size|openlock|AS",
             "size|width|2",
             "texture|dungeon_stone",
@@ -62286,6 +62360,130 @@
             "shape|riser|low",
             "size|depth|2",
             "size|width|2",
+            "texture|dungeon_stone"
+        ],
+        "type": "model"
+    },
+    {
+        "file_metadata": {
+            "file": "dungeon_stone#riser+mid.1x0.5.openforge.stl",
+            "file_modified_at": "2026-08-29T09:32:51.002769",
+            "full_name": "tiles/dungeon_stone/misc/risers/risers/dungeon_stone#riser+mid.1x0.5.openforge.stl",
+            "md5": "9ebd843cfbe846da3660ceaa715d8e86",
+            "size": 3753284,
+            "storage_address": "https://objects.openforge.tools/models/9ebd84/9ebd843cfbe846da3660ceaa715d8e86.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/9ebd84/9ebd843cfbe846da3660ceaa715d8e86.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "connection|openforge",
+            "shape|riser",
+            "shape|riser|mid",
+            "size|depth|0.5",
+            "size|width|1",
             "texture|dungeon_stone"
         ],
         "type": "model"
@@ -101629,7 +101827,6 @@
             "shape|floor",
             "shape|floor|s2w",
             "shape|floor|wall",
-            "shape|wall",
             "size|depth|1",
             "size|width|1",
             "texture|dungeon_stone",
@@ -101757,7 +101954,6 @@
             "shape|floor",
             "shape|floor|s2w",
             "shape|floor|wall",
-            "shape|wall",
             "size|depth|1",
             "size|width|2",
             "texture|dungeon_stone",
@@ -101885,7 +102081,6 @@
             "shape|floor",
             "shape|floor|s2w",
             "shape|floor|wall",
-            "shape|wall",
             "size|depth|2",
             "size|width|2",
             "texture|dungeon_stone",
@@ -102013,7 +102208,6 @@
             "shape|floor",
             "shape|floor|s2w",
             "shape|floor|wall",
-            "shape|wall",
             "size|depth|1",
             "size|width|3",
             "texture|dungeon_stone",
@@ -102141,7 +102335,6 @@
             "shape|floor",
             "shape|floor|s2w",
             "shape|floor|wall",
-            "shape|wall",
             "size|depth|3",
             "size|width|3",
             "texture|dungeon_stone",
@@ -102269,7 +102462,6 @@
             "shape|floor",
             "shape|floor|s2w",
             "shape|floor|wall",
-            "shape|wall",
             "size|depth|1",
             "size|width|4",
             "texture|dungeon_stone",
@@ -102397,7 +102589,6 @@
             "shape|floor",
             "shape|floor|s2w",
             "shape|floor|wall",
-            "shape|wall",
             "size|depth|2",
             "size|width|4",
             "texture|dungeon_stone",
@@ -102525,7 +102716,6 @@
             "shape|floor",
             "shape|floor|s2w",
             "shape|floor|wall",
-            "shape|wall",
             "size|depth|4",
             "size|width|4",
             "texture|dungeon_stone",
@@ -102653,7 +102843,6 @@
             "shape|floor",
             "shape|floor|s2w",
             "shape|floor|wall",
-            "shape|wall",
             "size|depth|1",
             "size|width|1",
             "texture|dungeon_stone",
@@ -102781,7 +102970,6 @@
             "shape|floor",
             "shape|floor|s2w",
             "shape|floor|wall",
-            "shape|wall",
             "size|depth|1",
             "size|width|2",
             "texture|dungeon_stone",
@@ -102909,7 +103097,6 @@
             "shape|floor",
             "shape|floor|s2w",
             "shape|floor|wall",
-            "shape|wall",
             "size|depth|2",
             "size|width|2",
             "texture|dungeon_stone",
@@ -103037,7 +103224,6 @@
             "shape|floor",
             "shape|floor|s2w",
             "shape|floor|wall",
-            "shape|wall",
             "size|depth|1",
             "size|width|3",
             "texture|dungeon_stone",
@@ -103165,7 +103351,6 @@
             "shape|floor",
             "shape|floor|s2w",
             "shape|floor|wall",
-            "shape|wall",
             "size|depth|3",
             "size|width|3",
             "texture|dungeon_stone",
@@ -103293,7 +103478,6 @@
             "shape|floor",
             "shape|floor|s2w",
             "shape|floor|wall",
-            "shape|wall",
             "size|depth|1",
             "size|width|4",
             "texture|dungeon_stone",
@@ -103421,7 +103605,6 @@
             "shape|floor",
             "shape|floor|s2w",
             "shape|floor|wall",
-            "shape|wall",
             "size|depth|2",
             "size|width|4",
             "texture|dungeon_stone",
@@ -103549,7 +103732,6 @@
             "shape|floor",
             "shape|floor|s2w",
             "shape|floor|wall",
-            "shape|wall",
             "size|depth|4",
             "size|width|4",
             "texture|dungeon_stone",
@@ -395482,6 +395664,39 @@
                             }
                         ]
                     }
+                },
+                {
+                    "name": "base",
+                    "optional": true,
+                    "tags": {
+                        "constrain": [
+                            {
+                                "filter": "shape|floor"
+                            },
+                            {
+                                "filter": "shape|wall"
+                            },
+                            {
+                                "tag": "shape"
+                            },
+                            {
+                                "tag": "size|depth"
+                            },
+                            {
+                                "tag": "size|width"
+                            }
+                        ],
+                        "deny": [
+                            {
+                                "tag": "build|s2w"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "shape|base"
+                            }
+                        ]
+                    }
                 }
             ]
         },
@@ -395603,7 +395818,7 @@
             "component|archway",
             "connection|openforge",
             "shape|floor",
-            "shape|wall",
+            "shape|floor|wall",
             "size|depth|2",
             "size|width|2",
             "texture|dungeon_stone",
@@ -400695,9 +400910,9 @@
     },
     {
         "file_metadata": {
-            "file": "dungeon_stone#wall,trap+top+axe.2x.stl",
+            "file": "dungeon_stone#wall,trap+top+axe.2x.openforge.stl",
             "file_modified_at": "2019-12-19T09:47:40",
-            "full_name": "tiles/dungeon_stone/wall_on_tile/wall+special/traps/dungeon_stone#wall,trap+top+axe.2x.stl",
+            "full_name": "tiles/dungeon_stone/wall_on_tile/wall+special/traps/dungeon_stone#wall,trap+top+axe.2x.openforge.stl",
             "md5": "202b75384b4693c047cb8ebe36658249",
             "size": 11941384,
             "storage_address": "https://objects.openforge.tools/models/202b75/202b75384b4693c047cb8ebe36658249.stl"
@@ -400806,13 +401021,13 @@
                 }
             }
         ],
-        "metadata": true,
+        "metadata": false,
         "tags": [
-            "build|separate wall",
+            "build|wall on tile",
+            "component|trap",
+            "component|trap|axe",
             "component|trap|top",
-            "component|trap|top|axe",
-            "component|wall|standard",
-            "interface|trap|mechanical",
+            "connection|openforge",
             "shape|wall",
             "size|openlock|A",
             "size|width|2",
@@ -401080,9 +401295,9 @@
     },
     {
         "file_metadata": {
-            "file": "dungeon_stone#wall,trap+top+dart_holes.2x.stl",
+            "file": "dungeon_stone#wall,trap+top+dart_holes.2x.openforge.stl",
             "file_modified_at": "2019-12-19T09:37:26",
-            "full_name": "tiles/dungeon_stone/wall_on_tile/wall+special/traps/dungeon_stone#wall,trap+top+dart_holes.2x.stl",
+            "full_name": "tiles/dungeon_stone/wall_on_tile/wall+special/traps/dungeon_stone#wall,trap+top+dart_holes.2x.openforge.stl",
             "md5": "d0729d7560bb8e7a4e7185d4d5c8e073",
             "size": 12388784,
             "storage_address": "https://objects.openforge.tools/models/d0729d/d0729d7560bb8e7a4e7185d4d5c8e073.stl"
@@ -401191,13 +401406,13 @@
                 }
             }
         ],
-        "metadata": true,
+        "metadata": false,
         "tags": [
-            "build|separate wall",
+            "build|wall on tile",
+            "component|trap",
+            "component|trap|dart_holes",
             "component|trap|top",
-            "component|trap|top|dart_holes",
-            "component|wall|standard",
-            "interface|trap|mechanical",
+            "connection|openforge",
             "shape|wall",
             "size|openlock|A",
             "size|width|2",
@@ -401465,9 +401680,9 @@
     },
     {
         "file_metadata": {
-            "file": "dungeon_stone#wall,trap+top+magnetic_hole.2x.stl",
+            "file": "dungeon_stone#wall,trap+top+magnetic_hole.2x.openforge.stl",
             "file_modified_at": "2019-12-19T09:39:18",
-            "full_name": "tiles/dungeon_stone/wall_on_tile/wall+special/traps/dungeon_stone#wall,trap+top+magnetic_hole.2x.stl",
+            "full_name": "tiles/dungeon_stone/wall_on_tile/wall+special/traps/dungeon_stone#wall,trap+top+magnetic_hole.2x.openforge.stl",
             "md5": "cce0e1fe507e105bce32608ca6e4c675",
             "size": 11989584,
             "storage_address": "https://objects.openforge.tools/models/cce0e1/cce0e1fe507e105bce32608ca6e4c675.stl"
@@ -401576,13 +401791,13 @@
                 }
             }
         ],
-        "metadata": true,
+        "metadata": false,
         "tags": [
-            "build|separate wall",
+            "build|wall on tile",
+            "component|trap",
+            "component|trap|magnetic_hole",
             "component|trap|top",
-            "component|trap|top|magnetic_hole",
-            "component|wall|standard",
-            "interface|trap|mechanical",
+            "connection|openforge",
             "shape|wall",
             "size|openlock|A",
             "size|width|2",
@@ -401706,6 +401921,7 @@
         "metadata": false,
         "tags": [
             "build|wall on tile",
+            "component|wall",
             "connection|openforge",
             "decoration|symbol|air",
             "shape|wall",
@@ -401831,6 +402047,7 @@
         "metadata": false,
         "tags": [
             "build|wall on tile",
+            "component|wall",
             "connection|openforge",
             "decoration|symbol|beezlebub",
             "shape|wall",
@@ -401956,6 +402173,7 @@
         "metadata": false,
         "tags": [
             "build|wall on tile",
+            "component|wall",
             "connection|openforge",
             "decoration|symbol|earth",
             "shape|wall",
@@ -402081,6 +402299,7 @@
         "metadata": false,
         "tags": [
             "build|wall on tile",
+            "component|wall",
             "connection|openforge",
             "decoration|symbol|fire",
             "shape|wall",
@@ -402206,6 +402425,7 @@
         "metadata": false,
         "tags": [
             "build|wall on tile",
+            "component|wall",
             "connection|openforge",
             "decoration|symbol|lamashtu",
             "shape|wall",
@@ -402456,6 +402676,7 @@
         "metadata": false,
         "tags": [
             "build|wall on tile",
+            "component|wall",
             "connection|openforge",
             "decoration|symbol|water",
             "shape|wall",
@@ -402466,6 +402687,43 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "base",
+                    "optional": true,
+                    "tags": {
+                        "constrain": [
+                            {
+                                "filter": "shape|floor"
+                            },
+                            {
+                                "filter": "shape|wall"
+                            },
+                            {
+                                "tag": "shape"
+                            },
+                            {
+                                "tag": "size|depth"
+                            },
+                            {
+                                "tag": "size|width"
+                            }
+                        ],
+                        "deny": [
+                            {
+                                "tag": "build|s2w"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "shape|base"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "dungeon_stone%block#wall,floor.1x1.openforge.stl",
             "file_modified_at": "2022-04-30T09:10:37.607704",
@@ -402583,7 +402841,7 @@
             "build|wall on tile",
             "connection|openforge",
             "shape|floor",
-            "shape|wall",
+            "shape|floor|wall",
             "size|depth|1",
             "size|width|1",
             "texture|dungeon_stone",
@@ -402592,6 +402850,43 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "base",
+                    "optional": true,
+                    "tags": {
+                        "constrain": [
+                            {
+                                "filter": "shape|floor"
+                            },
+                            {
+                                "filter": "shape|wall"
+                            },
+                            {
+                                "tag": "shape"
+                            },
+                            {
+                                "tag": "size|depth"
+                            },
+                            {
+                                "tag": "size|width"
+                            }
+                        ],
+                        "deny": [
+                            {
+                                "tag": "build|s2w"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "shape|base"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "dungeon_stone%block#wall,floor.2x1.openforge.stl",
             "file_modified_at": "2022-04-30T09:10:23.082767",
@@ -402709,7 +403004,7 @@
             "build|wall on tile",
             "connection|openforge",
             "shape|floor",
-            "shape|wall",
+            "shape|floor|wall",
             "size|depth|1",
             "size|width|2",
             "texture|dungeon_stone",
@@ -402718,6 +403013,43 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "base",
+                    "optional": true,
+                    "tags": {
+                        "constrain": [
+                            {
+                                "filter": "shape|floor"
+                            },
+                            {
+                                "filter": "shape|wall"
+                            },
+                            {
+                                "tag": "shape"
+                            },
+                            {
+                                "tag": "size|depth"
+                            },
+                            {
+                                "tag": "size|width"
+                            }
+                        ],
+                        "deny": [
+                            {
+                                "tag": "build|s2w"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "shape|base"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "dungeon_stone%block#wall,floor.2x2.openforge.stl",
             "file_modified_at": "2022-04-30T09:10:07.989045",
@@ -402835,7 +403167,7 @@
             "build|wall on tile",
             "connection|openforge",
             "shape|floor",
-            "shape|wall",
+            "shape|floor|wall",
             "size|depth|2",
             "size|width|2",
             "texture|dungeon_stone",
@@ -402844,6 +403176,43 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "base",
+                    "optional": true,
+                    "tags": {
+                        "constrain": [
+                            {
+                                "filter": "shape|floor"
+                            },
+                            {
+                                "filter": "shape|wall"
+                            },
+                            {
+                                "tag": "shape"
+                            },
+                            {
+                                "tag": "size|depth"
+                            },
+                            {
+                                "tag": "size|width"
+                            }
+                        ],
+                        "deny": [
+                            {
+                                "tag": "build|s2w"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "shape|base"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "dungeon_stone%block#wall,floor.3x1.openforge.stl",
             "file_modified_at": "2022-04-30T09:09:52.431189",
@@ -402961,7 +403330,7 @@
             "build|wall on tile",
             "connection|openforge",
             "shape|floor",
-            "shape|wall",
+            "shape|floor|wall",
             "size|depth|1",
             "size|width|3",
             "texture|dungeon_stone",
@@ -402970,6 +403339,43 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "base",
+                    "optional": true,
+                    "tags": {
+                        "constrain": [
+                            {
+                                "filter": "shape|floor"
+                            },
+                            {
+                                "filter": "shape|wall"
+                            },
+                            {
+                                "tag": "shape"
+                            },
+                            {
+                                "tag": "size|depth"
+                            },
+                            {
+                                "tag": "size|width"
+                            }
+                        ],
+                        "deny": [
+                            {
+                                "tag": "build|s2w"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "shape|base"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "dungeon_stone%block#wall,floor.3x3.openforge.stl",
             "file_modified_at": "2022-04-30T09:09:40.366219",
@@ -403087,7 +403493,7 @@
             "build|wall on tile",
             "connection|openforge",
             "shape|floor",
-            "shape|wall",
+            "shape|floor|wall",
             "size|depth|3",
             "size|width|3",
             "texture|dungeon_stone",
@@ -403096,6 +403502,43 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "base",
+                    "optional": true,
+                    "tags": {
+                        "constrain": [
+                            {
+                                "filter": "shape|floor"
+                            },
+                            {
+                                "filter": "shape|wall"
+                            },
+                            {
+                                "tag": "shape"
+                            },
+                            {
+                                "tag": "size|depth"
+                            },
+                            {
+                                "tag": "size|width"
+                            }
+                        ],
+                        "deny": [
+                            {
+                                "tag": "build|s2w"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "shape|base"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "dungeon_stone%block#wall,floor.4x1.openforge.stl",
             "file_modified_at": "2022-04-30T09:09:25.004026",
@@ -403213,7 +403656,7 @@
             "build|wall on tile",
             "connection|openforge",
             "shape|floor",
-            "shape|wall",
+            "shape|floor|wall",
             "size|depth|1",
             "size|width|4",
             "texture|dungeon_stone",
@@ -403222,6 +403665,43 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "base",
+                    "optional": true,
+                    "tags": {
+                        "constrain": [
+                            {
+                                "filter": "shape|floor"
+                            },
+                            {
+                                "filter": "shape|wall"
+                            },
+                            {
+                                "tag": "shape"
+                            },
+                            {
+                                "tag": "size|depth"
+                            },
+                            {
+                                "tag": "size|width"
+                            }
+                        ],
+                        "deny": [
+                            {
+                                "tag": "build|s2w"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "shape|base"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "dungeon_stone%block#wall,floor.4x2.openforge.stl",
             "file_modified_at": "2022-04-30T09:09:05.282937",
@@ -403339,7 +403819,7 @@
             "build|wall on tile",
             "connection|openforge",
             "shape|floor",
-            "shape|wall",
+            "shape|floor|wall",
             "size|depth|2",
             "size|width|4",
             "texture|dungeon_stone",
@@ -403348,6 +403828,43 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "base",
+                    "optional": true,
+                    "tags": {
+                        "constrain": [
+                            {
+                                "filter": "shape|floor"
+                            },
+                            {
+                                "filter": "shape|wall"
+                            },
+                            {
+                                "tag": "shape"
+                            },
+                            {
+                                "tag": "size|depth"
+                            },
+                            {
+                                "tag": "size|width"
+                            }
+                        ],
+                        "deny": [
+                            {
+                                "tag": "build|s2w"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "shape|base"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "dungeon_stone%block#wall,floor.4x4.openforge.stl",
             "file_modified_at": "2022-04-30T09:08:51.409790",
@@ -403465,7 +403982,7 @@
             "build|wall on tile",
             "connection|openforge",
             "shape|floor",
-            "shape|wall",
+            "shape|floor|wall",
             "size|depth|4",
             "size|width|4",
             "texture|dungeon_stone",
@@ -403474,6 +403991,43 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "base",
+                    "optional": true,
+                    "tags": {
+                        "constrain": [
+                            {
+                                "filter": "shape|floor"
+                            },
+                            {
+                                "filter": "shape|wall"
+                            },
+                            {
+                                "tag": "shape"
+                            },
+                            {
+                                "tag": "size|depth"
+                            },
+                            {
+                                "tag": "size|width"
+                            }
+                        ],
+                        "deny": [
+                            {
+                                "tag": "build|s2w"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "shape|base"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "dungeon_stone%eroded#wall,floor.1x1.openforge.stl",
             "file_modified_at": "2018-09-23T10:03:22",
@@ -403591,7 +404145,7 @@
             "build|wall on tile",
             "connection|openforge",
             "shape|floor",
-            "shape|wall",
+            "shape|floor|wall",
             "size|depth|1",
             "size|width|1",
             "texture|dungeon_stone",
@@ -403600,6 +404154,43 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "base",
+                    "optional": true,
+                    "tags": {
+                        "constrain": [
+                            {
+                                "filter": "shape|floor"
+                            },
+                            {
+                                "filter": "shape|wall"
+                            },
+                            {
+                                "tag": "shape"
+                            },
+                            {
+                                "tag": "size|depth"
+                            },
+                            {
+                                "tag": "size|width"
+                            }
+                        ],
+                        "deny": [
+                            {
+                                "tag": "build|s2w"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "shape|base"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "dungeon_stone%eroded#wall,floor.2x1.openforge.stl",
             "file_modified_at": "2018-09-23T10:03:25",
@@ -403717,7 +404308,7 @@
             "build|wall on tile",
             "connection|openforge",
             "shape|floor",
-            "shape|wall",
+            "shape|floor|wall",
             "size|depth|1",
             "size|width|2",
             "texture|dungeon_stone",
@@ -403726,6 +404317,43 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "base",
+                    "optional": true,
+                    "tags": {
+                        "constrain": [
+                            {
+                                "filter": "shape|floor"
+                            },
+                            {
+                                "filter": "shape|wall"
+                            },
+                            {
+                                "tag": "shape"
+                            },
+                            {
+                                "tag": "size|depth"
+                            },
+                            {
+                                "tag": "size|width"
+                            }
+                        ],
+                        "deny": [
+                            {
+                                "tag": "build|s2w"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "shape|base"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "dungeon_stone%eroded#wall,floor.2x2.openforge.stl",
             "file_modified_at": "2018-09-23T10:03:27",
@@ -403843,7 +404471,7 @@
             "build|wall on tile",
             "connection|openforge",
             "shape|floor",
-            "shape|wall",
+            "shape|floor|wall",
             "size|depth|2",
             "size|width|2",
             "texture|dungeon_stone",
@@ -403852,6 +404480,43 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "base",
+                    "optional": true,
+                    "tags": {
+                        "constrain": [
+                            {
+                                "filter": "shape|floor"
+                            },
+                            {
+                                "filter": "shape|wall"
+                            },
+                            {
+                                "tag": "shape"
+                            },
+                            {
+                                "tag": "size|depth"
+                            },
+                            {
+                                "tag": "size|width"
+                            }
+                        ],
+                        "deny": [
+                            {
+                                "tag": "build|s2w"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "shape|base"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "dungeon_stone%eroded#wall,floor.3x1.openforge.stl",
             "file_modified_at": "2018-09-23T10:03:32",
@@ -403969,7 +404634,7 @@
             "build|wall on tile",
             "connection|openforge",
             "shape|floor",
-            "shape|wall",
+            "shape|floor|wall",
             "size|depth|1",
             "size|width|3",
             "texture|dungeon_stone",
@@ -403978,6 +404643,43 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "base",
+                    "optional": true,
+                    "tags": {
+                        "constrain": [
+                            {
+                                "filter": "shape|floor"
+                            },
+                            {
+                                "filter": "shape|wall"
+                            },
+                            {
+                                "tag": "shape"
+                            },
+                            {
+                                "tag": "size|depth"
+                            },
+                            {
+                                "tag": "size|width"
+                            }
+                        ],
+                        "deny": [
+                            {
+                                "tag": "build|s2w"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "shape|base"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "dungeon_stone%eroded#wall,floor.3x3.openforge.stl",
             "file_modified_at": "2018-09-23T10:03:37",
@@ -404095,7 +404797,7 @@
             "build|wall on tile",
             "connection|openforge",
             "shape|floor",
-            "shape|wall",
+            "shape|floor|wall",
             "size|depth|3",
             "size|width|3",
             "texture|dungeon_stone",
@@ -404104,6 +404806,43 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "base",
+                    "optional": true,
+                    "tags": {
+                        "constrain": [
+                            {
+                                "filter": "shape|floor"
+                            },
+                            {
+                                "filter": "shape|wall"
+                            },
+                            {
+                                "tag": "shape"
+                            },
+                            {
+                                "tag": "size|depth"
+                            },
+                            {
+                                "tag": "size|width"
+                            }
+                        ],
+                        "deny": [
+                            {
+                                "tag": "build|s2w"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "shape|base"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "dungeon_stone%eroded#wall,floor.4x1.openforge.stl",
             "file_modified_at": "2018-09-23T10:03:43",
@@ -404221,7 +404960,7 @@
             "build|wall on tile",
             "connection|openforge",
             "shape|floor",
-            "shape|wall",
+            "shape|floor|wall",
             "size|depth|1",
             "size|width|4",
             "texture|dungeon_stone",
@@ -404230,6 +404969,43 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "base",
+                    "optional": true,
+                    "tags": {
+                        "constrain": [
+                            {
+                                "filter": "shape|floor"
+                            },
+                            {
+                                "filter": "shape|wall"
+                            },
+                            {
+                                "tag": "shape"
+                            },
+                            {
+                                "tag": "size|depth"
+                            },
+                            {
+                                "tag": "size|width"
+                            }
+                        ],
+                        "deny": [
+                            {
+                                "tag": "build|s2w"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "shape|base"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "dungeon_stone%eroded#wall,floor.4x2.openforge.stl",
             "file_modified_at": "2018-09-23T10:03:47",
@@ -404347,7 +405123,7 @@
             "build|wall on tile",
             "connection|openforge",
             "shape|floor",
-            "shape|wall",
+            "shape|floor|wall",
             "size|depth|2",
             "size|width|4",
             "texture|dungeon_stone",
@@ -404356,6 +405132,43 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "base",
+                    "optional": true,
+                    "tags": {
+                        "constrain": [
+                            {
+                                "filter": "shape|floor"
+                            },
+                            {
+                                "filter": "shape|wall"
+                            },
+                            {
+                                "tag": "shape"
+                            },
+                            {
+                                "tag": "size|depth"
+                            },
+                            {
+                                "tag": "size|width"
+                            }
+                        ],
+                        "deny": [
+                            {
+                                "tag": "build|s2w"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "shape|base"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "dungeon_stone%eroded#wall,floor.4x4.openforge.stl",
             "file_modified_at": "2018-09-23T10:04:01",
@@ -404473,7 +405286,7 @@
             "build|wall on tile",
             "connection|openforge",
             "shape|floor",
-            "shape|wall",
+            "shape|floor|wall",
             "size|depth|4",
             "size|width|4",
             "texture|dungeon_stone",
