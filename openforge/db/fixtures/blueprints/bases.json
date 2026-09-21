@@ -188936,9 +188936,9 @@
     },
     {
         "file_metadata": {
-            "file": "plain#base.A.dragonlock,magnetic+flex.stl",
+            "file": "plain#base+wall.A.dragonlock,magnetic+flex.stl",
             "file_modified_at": "2023-03-30T13:48:55.974204",
-            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/dragonlock,magnetic+flex/plain#base.A.dragonlock,magnetic+flex.stl",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/dragonlock,magnetic+flex/plain#base+wall.A.dragonlock,magnetic+flex.stl",
             "md5": "3c2fc4db24827857df10f6239e34d30e",
             "size": 120684,
             "storage_address": "https://objects.openforge.tools/models/3c2fc4/3c2fc4db24827857df10f6239e34d30e.stl"
@@ -189054,6 +189054,7 @@
             "connection|magnetic",
             "connection|magnetic|flex",
             "shape|base",
+            "shape|base|wall",
             "shape|square",
             "shape|wall",
             "size|openlock|A",
@@ -189064,9 +189065,9 @@
     },
     {
         "file_metadata": {
-            "file": "plain#base.AS.dragonlock,magnetic+flex.stl",
+            "file": "plain#base+wall.AS.dragonlock,magnetic+flex.stl",
             "file_modified_at": "2024-03-16T16:02:22.405844",
-            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/dragonlock,magnetic+flex/plain#base.AS.dragonlock,magnetic+flex.stl",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/dragonlock,magnetic+flex/plain#base+wall.AS.dragonlock,magnetic+flex.stl",
             "md5": "001213cbca3cd61fff21ce3f66dff589",
             "size": 80184,
             "storage_address": "https://objects.openforge.tools/models/001213/001213cbca3cd61fff21ce3f66dff589.stl"
@@ -189183,6 +189184,7 @@
             "connection|magnetic",
             "connection|magnetic|flex",
             "shape|base",
+            "shape|base|wall",
             "shape|square",
             "shape|wall",
             "size|openlock|AS",
@@ -189193,9 +189195,9 @@
     },
     {
         "file_metadata": {
-            "file": "plain#base.BA+mirror.dragonlock,magnetic+flex.stl",
+            "file": "plain#base+wall.BA+mirror.dragonlock,magnetic+flex.stl",
             "file_modified_at": "2023-03-30T13:55:35.132013",
-            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/dragonlock,magnetic+flex/plain#base.BA+mirror.dragonlock,magnetic+flex.stl",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/dragonlock,magnetic+flex/plain#base+wall.BA+mirror.dragonlock,magnetic+flex.stl",
             "md5": "56fcc5eddf30dbbc264df2d44ff6e261",
             "size": 95584,
             "storage_address": "https://objects.openforge.tools/models/56fcc5/56fcc5eddf30dbbc264df2d44ff6e261.stl"
@@ -189311,6 +189313,7 @@
             "connection|magnetic",
             "connection|magnetic|flex",
             "shape|base",
+            "shape|base|wall",
             "shape|option|mirror",
             "shape|square",
             "shape|wall",
@@ -189322,9 +189325,9 @@
     },
     {
         "file_metadata": {
-            "file": "plain#base.BA.dragonlock,magnetic+flex.stl",
+            "file": "plain#base+wall.BA.dragonlock,magnetic+flex.stl",
             "file_modified_at": "2023-03-30T13:55:57.661016",
-            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/dragonlock,magnetic+flex/plain#base.BA.dragonlock,magnetic+flex.stl",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/dragonlock,magnetic+flex/plain#base+wall.BA.dragonlock,magnetic+flex.stl",
             "md5": "e025691b9a52f539ec795c7b1b388931",
             "size": 95684,
             "storage_address": "https://objects.openforge.tools/models/e02569/e025691b9a52f539ec795c7b1b388931.stl"
@@ -189440,6 +189443,7 @@
             "connection|magnetic",
             "connection|magnetic|flex",
             "shape|base",
+            "shape|base|wall",
             "shape|square",
             "shape|wall",
             "size|openlock|BA",
@@ -189450,9 +189454,9 @@
     },
     {
         "file_metadata": {
-            "file": "plain#base.D.dragonlock,magnetic+flex.stl",
+            "file": "plain#base+wall.D.dragonlock,magnetic+flex.stl",
             "file_modified_at": "2023-03-30T13:40:04.691668",
-            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/dragonlock,magnetic+flex/plain#base.D.dragonlock,magnetic+flex.stl",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/dragonlock,magnetic+flex/plain#base+wall.D.dragonlock,magnetic+flex.stl",
             "md5": "1c5e113284cfa7f6578299da1221a1e8",
             "size": 217284,
             "storage_address": "https://objects.openforge.tools/models/1c5e11/1c5e113284cfa7f6578299da1221a1e8.stl"
@@ -189568,6 +189572,7 @@
             "connection|magnetic",
             "connection|magnetic|flex",
             "shape|base",
+            "shape|base|wall",
             "shape|square",
             "shape|wall",
             "size|openlock|D",
@@ -189578,9 +189583,9 @@
     },
     {
         "file_metadata": {
-            "file": "plain#base.IA.magnetic+flex.stl",
+            "file": "plain#base+wall.IA.magnetic+flex.stl",
             "file_modified_at": "2023-03-30T13:37:08.146623",
-            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/dragonlock,magnetic+flex/plain#base.IA.magnetic+flex.stl",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/dragonlock,magnetic+flex/plain#base+wall.IA.magnetic+flex.stl",
             "md5": "ff2b8654a41b82360f9be4e01f735697",
             "size": 26284,
             "storage_address": "https://objects.openforge.tools/models/ff2b86/ff2b8654a41b82360f9be4e01f735697.stl"
@@ -189695,6 +189700,7 @@
             "connection|magnetic",
             "connection|magnetic|flex",
             "shape|base",
+            "shape|base|wall",
             "shape|square",
             "shape|wall",
             "size|openlock|IA",
@@ -189705,9 +189711,9 @@
     },
     {
         "file_metadata": {
-            "file": "plain#base.Q.dragonlock,magnetic+flex.stl",
+            "file": "plain#base+wall.Q.dragonlock,magnetic+flex.stl",
             "file_modified_at": "2023-03-30T13:32:58.336906",
-            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/dragonlock,magnetic+flex/plain#base.Q.dragonlock,magnetic+flex.stl",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/dragonlock,magnetic+flex/plain#base+wall.Q.dragonlock,magnetic+flex.stl",
             "md5": "d544307086e7387d522a9b4a4532f0c3",
             "size": 309384,
             "storage_address": "https://objects.openforge.tools/models/d54430/d544307086e7387d522a9b4a4532f0c3.stl"
@@ -189823,6 +189829,7 @@
             "connection|magnetic",
             "connection|magnetic|flex",
             "shape|base",
+            "shape|base|wall",
             "shape|square",
             "shape|wall",
             "size|openlock|Q",
@@ -189833,9 +189840,9 @@
     },
     {
         "file_metadata": {
-            "file": "plain#base.A.dragonlock.stl",
+            "file": "plain#base+wall.A.dragonlock.stl",
             "file_modified_at": "2019-06-19T21:01:38",
-            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/dragonlock/plain#base.A.dragonlock.stl",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/dragonlock/plain#base+wall.A.dragonlock.stl",
             "md5": "5dca9484d33570dc18e6877d2a517515",
             "size": 989284,
             "storage_address": "https://objects.openforge.tools/models/5dca94/5dca9484d33570dc18e6877d2a517515.stl"
@@ -189949,6 +189956,7 @@
             "build|separate wall",
             "connection|dragonlock",
             "shape|base",
+            "shape|base|wall",
             "shape|square",
             "shape|wall",
             "size|openlock|A",
@@ -189959,9 +189967,9 @@
     },
     {
         "file_metadata": {
-            "file": "plain#base.AS.dragonlock.stl",
+            "file": "plain#base+wall.AS.dragonlock.stl",
             "file_modified_at": "2020-02-07T11:45:16",
-            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/dragonlock/plain#base.AS.dragonlock.stl",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/dragonlock/plain#base+wall.AS.dragonlock.stl",
             "md5": "32e0efe217892d33eb68afbb1d5255fc",
             "size": 224184,
             "storage_address": "https://objects.openforge.tools/models/32e0ef/32e0efe217892d33eb68afbb1d5255fc.stl"
@@ -190076,6 +190084,7 @@
             "connection|dragonlock",
             "connection|dual",
             "shape|base",
+            "shape|base|wall",
             "shape|square",
             "shape|wall",
             "size|openlock|AS",
@@ -190086,9 +190095,9 @@
     },
     {
         "file_metadata": {
-            "file": "plain#base.BA.dragonlock.stl",
+            "file": "plain#base+wall.BA.dragonlock.stl",
             "file_modified_at": "2020-01-31T16:09:09",
-            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/dragonlock/plain#base.BA.dragonlock.stl",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/dragonlock/plain#base+wall.BA.dragonlock.stl",
             "md5": "c1a12ee7749aee799fab97db8392033d",
             "size": 146384,
             "storage_address": "https://objects.openforge.tools/models/c1a12e/c1a12ee7749aee799fab97db8392033d.stl"
@@ -190202,6 +190211,7 @@
             "build|separate wall",
             "connection|dragonlock",
             "shape|base",
+            "shape|base|wall",
             "shape|square",
             "shape|wall",
             "size|openlock|BA",
@@ -190212,9 +190222,9 @@
     },
     {
         "file_metadata": {
-            "file": "plain#base.D.dragonlock.stl",
+            "file": "plain#base+wall.D.dragonlock.stl",
             "file_modified_at": "2023-03-30T13:39:23.953514",
-            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/dragonlock/plain#base.D.dragonlock.stl",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/dragonlock/plain#base+wall.D.dragonlock.stl",
             "md5": "c06cc0187617a04cec3deb75a05b7612",
             "size": 363484,
             "storage_address": "https://objects.openforge.tools/models/c06cc0/c06cc0187617a04cec3deb75a05b7612.stl"
@@ -190328,6 +190338,7 @@
             "build|separate wall",
             "connection|dragonlock",
             "shape|base",
+            "shape|base|wall",
             "shape|square",
             "shape|wall",
             "size|openlock|D",
@@ -190338,9 +190349,9 @@
     },
     {
         "file_metadata": {
-            "file": "plain#base.IA.dragonlock.stl",
+            "file": "plain#base+wall.IA.dragonlock.stl",
             "file_modified_at": "2020-01-31T22:32:00",
-            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/dragonlock/plain#base.IA.dragonlock.stl",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/dragonlock/plain#base+wall.IA.dragonlock.stl",
             "md5": "f7954f7c98b621b2718593d55d1a03c9",
             "size": 70134,
             "storage_address": "https://objects.openforge.tools/models/f7954f/f7954f7c98b621b2718593d55d1a03c9.stl"
@@ -190454,6 +190465,7 @@
             "build|separate wall",
             "connection|dragonlock",
             "shape|base",
+            "shape|base|wall",
             "shape|square",
             "shape|wall",
             "size|openlock|IA",
@@ -190464,9 +190476,9 @@
     },
     {
         "file_metadata": {
-            "file": "plain#base.Q.dragonlock.stl",
+            "file": "plain#base+wall.Q.dragonlock.stl",
             "file_modified_at": "2020-01-31T23:03:57",
-            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/dragonlock/plain#base.Q.dragonlock.stl",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/dragonlock/plain#base+wall.Q.dragonlock.stl",
             "md5": "c0d581183acb01998dced2b7cc2e6735",
             "size": 521234,
             "storage_address": "https://objects.openforge.tools/models/c0d581/c0d581183acb01998dced2b7cc2e6735.stl"
@@ -190580,6 +190592,7 @@
             "build|separate wall",
             "connection|dragonlock",
             "shape|base",
+            "shape|base|wall",
             "shape|square",
             "shape|wall",
             "size|openlock|Q",
@@ -190590,9 +190603,9 @@
     },
     {
         "file_metadata": {
-            "file": "plain#base.A+dual.magnetic+flex.stl",
+            "file": "plain#base+wall.A+dual.magnetic+flex.stl",
             "file_modified_at": "2025-10-29T14:42:16.619157",
-            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/magnetic+flex/plain#base.A+dual.magnetic+flex.stl",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/magnetic+flex/plain#base+wall.A+dual.magnetic+flex.stl",
             "md5": "6652c337848e91186c42bf498706cf77",
             "size": 39284,
             "storage_address": "https://objects.openforge.tools/models/6652c3/6652c337848e91186c42bf498706cf77.stl"
@@ -190708,6 +190721,7 @@
             "connection|magnetic",
             "connection|magnetic|flex",
             "shape|base",
+            "shape|base|wall",
             "shape|square",
             "shape|wall",
             "size|openlock|A",
@@ -190718,9 +190732,9 @@
     },
     {
         "file_metadata": {
-            "file": "plain#base.A.magnetic+flex.stl",
+            "file": "plain#base+wall.A.magnetic+flex.stl",
             "file_modified_at": "2023-03-30T13:49:51.168131",
-            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/magnetic+flex/plain#base.A.magnetic+flex.stl",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/magnetic+flex/plain#base+wall.A.magnetic+flex.stl",
             "md5": "24be608f95b491d0b13a2caacc2f84a5",
             "size": 51884,
             "storage_address": "https://objects.openforge.tools/models/24be60/24be608f95b491d0b13a2caacc2f84a5.stl"
@@ -190835,6 +190849,7 @@
             "connection|magnetic",
             "connection|magnetic|flex",
             "shape|base",
+            "shape|base|wall",
             "shape|square",
             "shape|wall",
             "size|openlock|A",
@@ -190845,9 +190860,9 @@
     },
     {
         "file_metadata": {
-            "file": "plain#base.AS.magnetic+flex.stl",
+            "file": "plain#base+wall.AS.magnetic+flex.stl",
             "file_modified_at": "2024-03-16T16:01:18.822402",
-            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/magnetic+flex/plain#base.AS.magnetic+flex.stl",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/magnetic+flex/plain#base+wall.AS.magnetic+flex.stl",
             "md5": "1bbf34386a128d3fd3efb25794cd1525",
             "size": 11684,
             "storage_address": "https://objects.openforge.tools/models/1bbf34/1bbf34386a128d3fd3efb25794cd1525.stl"
@@ -190963,6 +190978,7 @@
             "connection|magnetic",
             "connection|magnetic|flex",
             "shape|base",
+            "shape|base|wall",
             "shape|square",
             "shape|wall",
             "size|openlock|AS",
@@ -190973,9 +190989,9 @@
     },
     {
         "file_metadata": {
-            "file": "plain#base.BA+dual.magnetic+flex.stl",
+            "file": "plain#base+wall.BA+dual.magnetic+flex.stl",
             "file_modified_at": "2025-10-29T14:55:59.205968",
-            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/magnetic+flex/plain#base.BA+dual.magnetic+flex.stl",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/magnetic+flex/plain#base+wall.BA+dual.magnetic+flex.stl",
             "md5": "ec6af87ec818a6757a53606059a8a5e8",
             "size": 18781,
             "storage_address": "https://objects.openforge.tools/models/ec6af8/ec6af87ec818a6757a53606059a8a5e8.stl"
@@ -191091,6 +191107,7 @@
             "connection|magnetic",
             "connection|magnetic|flex",
             "shape|base",
+            "shape|base|wall",
             "shape|square",
             "shape|wall",
             "size|openlock|BA",
@@ -191101,9 +191118,9 @@
     },
     {
         "file_metadata": {
-            "file": "plain#base.BA.magnetic+flex.stl",
+            "file": "plain#base+wall.BA.magnetic+flex.stl",
             "file_modified_at": "2023-03-30T13:55:06.439618",
-            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/magnetic+flex/plain#base.BA.magnetic+flex.stl",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/magnetic+flex/plain#base+wall.BA.magnetic+flex.stl",
             "md5": "cebd6c19152e27ab1418ad340dba05b1",
             "size": 51884,
             "storage_address": "https://objects.openforge.tools/models/cebd6c/cebd6c19152e27ab1418ad340dba05b1.stl"
@@ -191218,6 +191235,7 @@
             "connection|magnetic",
             "connection|magnetic|flex",
             "shape|base",
+            "shape|base|wall",
             "shape|square",
             "shape|wall",
             "size|openlock|BA",
@@ -191228,9 +191246,9 @@
     },
     {
         "file_metadata": {
-            "file": "plain#base.D+dual.magnetic+flex.stl",
+            "file": "plain#base+wall.D+dual.magnetic+flex.stl",
             "file_modified_at": "2025-10-29T14:42:53.717615",
-            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/magnetic+flex/plain#base.D+dual.magnetic+flex.stl",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/magnetic+flex/plain#base+wall.D+dual.magnetic+flex.stl",
             "md5": "6205f1fe603cdc6c36e4cd1591d05e48",
             "size": 56158,
             "storage_address": "https://objects.openforge.tools/models/6205f1/6205f1fe603cdc6c36e4cd1591d05e48.stl"
@@ -191346,6 +191364,7 @@
             "connection|magnetic",
             "connection|magnetic|flex",
             "shape|base",
+            "shape|base|wall",
             "shape|square",
             "shape|wall",
             "size|openlock|D",
@@ -191356,9 +191375,9 @@
     },
     {
         "file_metadata": {
-            "file": "plain#base.D.magnetic+flex.stl",
+            "file": "plain#base+wall.D.magnetic+flex.stl",
             "file_modified_at": "2023-03-30T13:46:02.399617",
-            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/magnetic+flex/plain#base.D.magnetic+flex.stl",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/magnetic+flex/plain#base+wall.D.magnetic+flex.stl",
             "md5": "fc1e78e56cc39b091051971cb45b5cb0",
             "size": 77484,
             "storage_address": "https://objects.openforge.tools/models/fc1e78/fc1e78e56cc39b091051971cb45b5cb0.stl"
@@ -191473,6 +191492,7 @@
             "connection|magnetic",
             "connection|magnetic|flex",
             "shape|base",
+            "shape|base|wall",
             "shape|square",
             "shape|wall",
             "size|openlock|D",
@@ -191483,9 +191503,9 @@
     },
     {
         "file_metadata": {
-            "file": "plain#base.IA+dual.magnetic+flex.stl",
+            "file": "plain#base+wall.IA+dual.magnetic+flex.stl",
             "file_modified_at": "2025-10-29T14:26:44.899759",
-            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/magnetic+flex/plain#base.IA+dual.magnetic+flex.stl",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/magnetic+flex/plain#base+wall.IA+dual.magnetic+flex.stl",
             "md5": "1363ff67eaa383b80d52e13b33754d00",
             "size": 10073,
             "storage_address": "https://objects.openforge.tools/models/1363ff/1363ff67eaa383b80d52e13b33754d00.stl"
@@ -191601,6 +191621,7 @@
             "connection|magnetic",
             "connection|magnetic|flex",
             "shape|base",
+            "shape|base|wall",
             "shape|square",
             "shape|wall",
             "size|openlock|IA",
@@ -191611,9 +191632,9 @@
     },
     {
         "file_metadata": {
-            "file": "plain#base.IA.magnetic+flex.stl",
+            "file": "plain#base+wall.IA.magnetic+flex.stl",
             "file_modified_at": "2023-03-30T13:37:08.146623",
-            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/magnetic+flex/plain#base.IA.magnetic+flex.stl",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/magnetic+flex/plain#base+wall.IA.magnetic+flex.stl",
             "md5": "ff2b8654a41b82360f9be4e01f735697",
             "size": 26284,
             "storage_address": "https://objects.openforge.tools/models/ff2b86/ff2b8654a41b82360f9be4e01f735697.stl"
@@ -191728,6 +191749,7 @@
             "connection|magnetic",
             "connection|magnetic|flex",
             "shape|base",
+            "shape|base|wall",
             "shape|square",
             "shape|wall",
             "size|openlock|IA",
@@ -191738,9 +191760,9 @@
     },
     {
         "file_metadata": {
-            "file": "plain#base.Q+dual.magnetic+flex.stl",
+            "file": "plain#base+wall.Q+dual.magnetic+flex.stl",
             "file_modified_at": "2025-10-29T14:43:12.673692",
-            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/magnetic+flex/plain#base.Q+dual.magnetic+flex.stl",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/magnetic+flex/plain#base+wall.Q+dual.magnetic+flex.stl",
             "md5": "7d02ad968eb807ed323123747053545c",
             "size": 75083,
             "storage_address": "https://objects.openforge.tools/models/7d02ad/7d02ad968eb807ed323123747053545c.stl"
@@ -191856,6 +191878,7 @@
             "connection|magnetic",
             "connection|magnetic|flex",
             "shape|base",
+            "shape|base|wall",
             "shape|square",
             "shape|wall",
             "size|openlock|Q",
@@ -191866,9 +191889,9 @@
     },
     {
         "file_metadata": {
-            "file": "plain#base.Q.magnetic+flex.stl",
+            "file": "plain#base+wall.Q.magnetic+flex.stl",
             "file_modified_at": "2023-03-30T13:45:22.358636",
-            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/magnetic+flex/plain#base.Q.magnetic+flex.stl",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/magnetic+flex/plain#base+wall.Q.magnetic+flex.stl",
             "md5": "93f3e372186d0d883c46277f4214a466",
             "size": 103084,
             "storage_address": "https://objects.openforge.tools/models/93f3e3/93f3e372186d0d883c46277f4214a466.stl"
@@ -191983,6 +192006,7 @@
             "connection|magnetic",
             "connection|magnetic|flex",
             "shape|base",
+            "shape|base|wall",
             "shape|square",
             "shape|wall",
             "size|openlock|Q",
@@ -191993,9 +192017,9 @@
     },
     {
         "file_metadata": {
-            "file": "plain#base.A+dual.openlock+topless,magnetic+flex.stl",
+            "file": "plain#base+wall.A+dual.openlock+topless,magnetic+flex.stl",
             "file_modified_at": "2025-10-29T14:40:44.642417",
-            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock+topless,magnetic+flex/plain#base.A+dual.openlock+topless,magnetic+flex.stl",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock+topless,magnetic+flex/plain#base+wall.A+dual.openlock+topless,magnetic+flex.stl",
             "md5": "7c61ed27c9aa807a2fc47a1d0f40b1a9",
             "size": 49063,
             "storage_address": "https://objects.openforge.tools/models/7c61ed/7c61ed27c9aa807a2fc47a1d0f40b1a9.stl"
@@ -192113,6 +192137,7 @@
             "connection|openlock",
             "connection|openlock|topless",
             "shape|base",
+            "shape|base|wall",
             "shape|square",
             "shape|wall",
             "size|openlock|A",
@@ -192123,9 +192148,9 @@
     },
     {
         "file_metadata": {
-            "file": "plain#base.A.openlock+topless,magnetic+flex.stl",
+            "file": "plain#base+wall.A.openlock+topless,magnetic+flex.stl",
             "file_modified_at": "2023-03-30T13:51:48.943419",
-            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock+topless,magnetic+flex/plain#base.A.openlock+topless,magnetic+flex.stl",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock+topless,magnetic+flex/plain#base+wall.A.openlock+topless,magnetic+flex.stl",
             "md5": "26166a2ebc45356d729544d15830f307",
             "size": 57184,
             "storage_address": "https://objects.openforge.tools/models/26166a/26166a2ebc45356d729544d15830f307.stl"
@@ -192242,6 +192267,7 @@
             "connection|openlock",
             "connection|openlock|topless",
             "shape|base",
+            "shape|base|wall",
             "shape|square",
             "shape|wall",
             "size|openlock|A",
@@ -192252,9 +192278,9 @@
     },
     {
         "file_metadata": {
-            "file": "plain#base.AS.openlock+topless,magnetic+flex.stl",
+            "file": "plain#base+wall.AS.openlock+topless,magnetic+flex.stl",
             "file_modified_at": "2024-03-16T16:12:07.884604",
-            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock+topless,magnetic+flex/plain#base.AS.openlock+topless,magnetic+flex.stl",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock+topless,magnetic+flex/plain#base+wall.AS.openlock+topless,magnetic+flex.stl",
             "md5": "ab73c53040b78d32d7caf920806f7204",
             "size": 17884,
             "storage_address": "https://objects.openforge.tools/models/ab73c5/ab73c53040b78d32d7caf920806f7204.stl"
@@ -192372,6 +192398,7 @@
             "connection|openlock",
             "connection|openlock|topless",
             "shape|base",
+            "shape|base|wall",
             "shape|square",
             "shape|wall",
             "size|openlock|AS",
@@ -192382,9 +192409,9 @@
     },
     {
         "file_metadata": {
-            "file": "plain#base.BA+dual.openlock+topless,magnetic+flex.stl",
+            "file": "plain#base+wall.BA+dual.openlock+topless,magnetic+flex.stl",
             "file_modified_at": "2025-10-29T14:35:39.906076",
-            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock+topless,magnetic+flex/plain#base.BA+dual.openlock+topless,magnetic+flex.stl",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock+topless,magnetic+flex/plain#base+wall.BA+dual.openlock+topless,magnetic+flex.stl",
             "md5": "618e0d9b6dd56a06997612cb028e1ff5",
             "size": 38962,
             "storage_address": "https://objects.openforge.tools/models/618e0d/618e0d9b6dd56a06997612cb028e1ff5.stl"
@@ -192502,6 +192529,7 @@
             "connection|openlock",
             "connection|openlock|topless",
             "shape|base",
+            "shape|base|wall",
             "shape|square",
             "shape|wall",
             "size|openlock|BA",
@@ -192512,9 +192540,9 @@
     },
     {
         "file_metadata": {
-            "file": "plain#base.BA+mirror+dual.openlock+topless,magnetic+flex.stl",
+            "file": "plain#base+wall.BA+mirror+dual.openlock+topless,magnetic+flex.stl",
             "file_modified_at": "2025-10-29T14:36:01.645599",
-            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock+topless,magnetic+flex/plain#base.BA+mirror+dual.openlock+topless,magnetic+flex.stl",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock+topless,magnetic+flex/plain#base+wall.BA+mirror+dual.openlock+topless,magnetic+flex.stl",
             "md5": "536f7ccb85f6be48d1dfee93277c6932",
             "size": 30750,
             "storage_address": "https://objects.openforge.tools/models/536f7c/536f7ccb85f6be48d1dfee93277c6932.stl"
@@ -192632,6 +192660,7 @@
             "connection|openlock",
             "connection|openlock|topless",
             "shape|base",
+            "shape|base|wall",
             "shape|option|mirror",
             "shape|square",
             "shape|wall",
@@ -192643,9 +192672,9 @@
     },
     {
         "file_metadata": {
-            "file": "plain#base.BA+mirror.openlock+topless,magnetic+flex.stl",
+            "file": "plain#base+wall.BA+mirror.openlock+topless,magnetic+flex.stl",
             "file_modified_at": "2023-03-30T13:57:50.007654",
-            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock+topless,magnetic+flex/plain#base.BA+mirror.openlock+topless,magnetic+flex.stl",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock+topless,magnetic+flex/plain#base+wall.BA+mirror.openlock+topless,magnetic+flex.stl",
             "md5": "c13b7b96b0ebd1fce86b001e87003300",
             "size": 31584,
             "storage_address": "https://objects.openforge.tools/models/c13b7b/c13b7b96b0ebd1fce86b001e87003300.stl"
@@ -192762,6 +192791,7 @@
             "connection|openlock",
             "connection|openlock|topless",
             "shape|base",
+            "shape|base|wall",
             "shape|option|mirror",
             "shape|square",
             "shape|wall",
@@ -192773,9 +192803,9 @@
     },
     {
         "file_metadata": {
-            "file": "plain#base.BA.openlock+topless,magnetic+flex.stl",
+            "file": "plain#base+wall.BA.openlock+topless,magnetic+flex.stl",
             "file_modified_at": "2023-03-30T13:58:07.569543",
-            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock+topless,magnetic+flex/plain#base.BA.openlock+topless,magnetic+flex.stl",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock+topless,magnetic+flex/plain#base+wall.BA.openlock+topless,magnetic+flex.stl",
             "md5": "9c20f9956c394fd881c64e82e1474db0",
             "size": 31684,
             "storage_address": "https://objects.openforge.tools/models/9c20f9/9c20f9956c394fd881c64e82e1474db0.stl"
@@ -192892,6 +192922,7 @@
             "connection|openlock",
             "connection|openlock|topless",
             "shape|base",
+            "shape|base|wall",
             "shape|square",
             "shape|wall",
             "size|openlock|BA",
@@ -192902,9 +192933,9 @@
     },
     {
         "file_metadata": {
-            "file": "plain#base.D+dual.openlock+topless,magnetic+flex.stl",
+            "file": "plain#base+wall.D+dual.openlock+topless,magnetic+flex.stl",
             "file_modified_at": "2025-10-29T14:49:42.767885",
-            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock+topless,magnetic+flex/plain#base.D+dual.openlock+topless,magnetic+flex.stl",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock+topless,magnetic+flex/plain#base+wall.D+dual.openlock+topless,magnetic+flex.stl",
             "md5": "172a4fb1f13fd9307116b67a29a2b285",
             "size": 81863,
             "storage_address": "https://objects.openforge.tools/models/172a4f/172a4fb1f13fd9307116b67a29a2b285.stl"
@@ -193022,6 +193053,7 @@
             "connection|openlock",
             "connection|openlock|topless",
             "shape|base",
+            "shape|base|wall",
             "shape|square",
             "shape|wall",
             "size|openlock|D",
@@ -193032,9 +193064,9 @@
     },
     {
         "file_metadata": {
-            "file": "plain#base.D.openlock+topless,magnetic+flex.stl",
+            "file": "plain#base+wall.D.openlock+topless,magnetic+flex.stl",
             "file_modified_at": "2023-03-30T13:42:40.934220",
-            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock+topless,magnetic+flex/plain#base.D.openlock+topless,magnetic+flex.stl",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock+topless,magnetic+flex/plain#base+wall.D.openlock+topless,magnetic+flex.stl",
             "md5": "fbf6c2bad810462b40512174a40b277a",
             "size": 88184,
             "storage_address": "https://objects.openforge.tools/models/fbf6c2/fbf6c2bad810462b40512174a40b277a.stl"
@@ -193151,6 +193183,7 @@
             "connection|openlock",
             "connection|openlock|topless",
             "shape|base",
+            "shape|base|wall",
             "shape|square",
             "shape|wall",
             "size|openlock|D",
@@ -193161,9 +193194,9 @@
     },
     {
         "file_metadata": {
-            "file": "plain#base.IA+dual.openlock+topless.stl",
+            "file": "plain#base+wall.IA+dual.openlock+topless.stl",
             "file_modified_at": "2025-10-29T14:23:09.719046",
-            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock+topless,magnetic+flex/plain#base.IA+dual.openlock+topless.stl",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock+topless,magnetic+flex/plain#base+wall.IA+dual.openlock+topless.stl",
             "md5": "2b182b285fda43dad24f8abb62957d49",
             "size": 27134,
             "storage_address": "https://objects.openforge.tools/models/2b182b/2b182b285fda43dad24f8abb62957d49.stl"
@@ -193279,6 +193312,7 @@
             "connection|openlock",
             "connection|openlock|topless",
             "shape|base",
+            "shape|base|wall",
             "shape|square",
             "shape|wall",
             "size|openlock|IA",
@@ -193289,9 +193323,9 @@
     },
     {
         "file_metadata": {
-            "file": "plain#base.IA.magnetic+flex.stl",
+            "file": "plain#base+wall.IA.magnetic+flex.stl",
             "file_modified_at": "2023-03-30T13:37:08.146623",
-            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock+topless,magnetic+flex/plain#base.IA.magnetic+flex.stl",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock+topless,magnetic+flex/plain#base+wall.IA.magnetic+flex.stl",
             "md5": "ff2b8654a41b82360f9be4e01f735697",
             "size": 26284,
             "storage_address": "https://objects.openforge.tools/models/ff2b86/ff2b8654a41b82360f9be4e01f735697.stl"
@@ -193406,6 +193440,7 @@
             "connection|magnetic",
             "connection|magnetic|flex",
             "shape|base",
+            "shape|base|wall",
             "shape|square",
             "shape|wall",
             "size|openlock|IA",
@@ -193416,9 +193451,9 @@
     },
     {
         "file_metadata": {
-            "file": "plain#base.IA.openlock+topless.stl",
+            "file": "plain#base+wall.IA.openlock+topless.stl",
             "file_modified_at": "2020-01-31T22:46:54",
-            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock+topless,magnetic+flex/plain#base.IA.openlock+topless.stl",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock+topless,magnetic+flex/plain#base+wall.IA.openlock+topless.stl",
             "md5": "8180da93549154744c37f8370a82738f",
             "size": 5984,
             "storage_address": "https://objects.openforge.tools/models/8180da/8180da93549154744c37f8370a82738f.stl"
@@ -193533,6 +193568,7 @@
             "connection|openlock",
             "connection|openlock|topless",
             "shape|base",
+            "shape|base|wall",
             "shape|square",
             "shape|wall",
             "size|openlock|IA",
@@ -193543,9 +193579,9 @@
     },
     {
         "file_metadata": {
-            "file": "plain#base.Q+dual.openlock+topless,magnetic+flex.stl",
+            "file": "plain#base+wall.Q+dual.openlock+topless,magnetic+flex.stl",
             "file_modified_at": "2025-10-29T14:49:22.039313",
-            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock+topless,magnetic+flex/plain#base.Q+dual.openlock+topless,magnetic+flex.stl",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock+topless,magnetic+flex/plain#base+wall.Q+dual.openlock+topless,magnetic+flex.stl",
             "md5": "b6332d6815cedde5ecf2f724dd55b884",
             "size": 113163,
             "storage_address": "https://objects.openforge.tools/models/b6332d/b6332d6815cedde5ecf2f724dd55b884.stl"
@@ -193663,6 +193699,7 @@
             "connection|openlock",
             "connection|openlock|topless",
             "shape|base",
+            "shape|base|wall",
             "shape|square",
             "shape|wall",
             "size|openlock|Q",
@@ -193673,9 +193710,9 @@
     },
     {
         "file_metadata": {
-            "file": "plain#base.Q.openlock+topless,magnetic+flex.stl",
+            "file": "plain#base+wall.Q.openlock+topless,magnetic+flex.stl",
             "file_modified_at": "2023-03-30T13:35:21.000212",
-            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock+topless,magnetic+flex/plain#base.Q.openlock+topless,magnetic+flex.stl",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock+topless,magnetic+flex/plain#base+wall.Q.openlock+topless,magnetic+flex.stl",
             "md5": "7b06a7ca666d1ac0d1be9bd3008e1a22",
             "size": 119084,
             "storage_address": "https://objects.openforge.tools/models/7b06a7/7b06a7ca666d1ac0d1be9bd3008e1a22.stl"
@@ -193792,6 +193829,7 @@
             "connection|openlock",
             "connection|openlock|topless",
             "shape|base",
+            "shape|base|wall",
             "shape|square",
             "shape|wall",
             "size|openlock|Q",
@@ -193802,9 +193840,9 @@
     },
     {
         "file_metadata": {
-            "file": "plain#base.A+dual.openlock+topless.stl",
+            "file": "plain#base+wall.A+dual.openlock+topless.stl",
             "file_modified_at": "2025-10-29T14:41:22.381611",
-            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock+topless/plain#base.A+dual.openlock+topless.stl",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock+topless/plain#base+wall.A+dual.openlock+topless.stl",
             "md5": "177f255ab679f6fde3238648a444542c",
             "size": 51505,
             "storage_address": "https://objects.openforge.tools/models/177f25/177f255ab679f6fde3238648a444542c.stl"
@@ -193920,6 +193958,7 @@
             "connection|openlock",
             "connection|openlock|topless",
             "shape|base",
+            "shape|base|wall",
             "shape|square",
             "shape|wall",
             "size|openlock|A",
@@ -193930,9 +193969,9 @@
     },
     {
         "file_metadata": {
-            "file": "plain#base.A.openlock+topless.stl",
+            "file": "plain#base+wall.A.openlock+topless.stl",
             "file_modified_at": "2023-03-30T13:52:11.419217",
-            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock+topless/plain#base.A.openlock+topless.stl",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock+topless/plain#base+wall.A.openlock+topless.stl",
             "md5": "9107fb400be0fe43a6755d1336c561db",
             "size": 11584,
             "storage_address": "https://objects.openforge.tools/models/9107fb/9107fb400be0fe43a6755d1336c561db.stl"
@@ -194047,6 +194086,7 @@
             "connection|openlock",
             "connection|openlock|topless",
             "shape|base",
+            "shape|base|wall",
             "shape|square",
             "shape|wall",
             "size|openlock|A",
@@ -194057,9 +194097,9 @@
     },
     {
         "file_metadata": {
-            "file": "plain#base.BA+dual.openlock+topless.stl",
+            "file": "plain#base+wall.BA+dual.openlock+topless.stl",
             "file_modified_at": "2025-10-29T14:36:27.825650",
-            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock+topless/plain#base.BA+dual.openlock+topless.stl",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock+topless/plain#base+wall.BA+dual.openlock+topless.stl",
             "md5": "c507cb29d4b435d05d19724b416e147a",
             "size": 39071,
             "storage_address": "https://objects.openforge.tools/models/c507cb/c507cb29d4b435d05d19724b416e147a.stl"
@@ -194175,6 +194215,7 @@
             "connection|openlock",
             "connection|openlock|topless",
             "shape|base",
+            "shape|base|wall",
             "shape|square",
             "shape|wall",
             "size|openlock|BA",
@@ -194185,9 +194226,9 @@
     },
     {
         "file_metadata": {
-            "file": "plain#base.BA.openlock+topless.stl",
+            "file": "plain#base+wall.BA.openlock+topless.stl",
             "file_modified_at": "2023-03-30T13:58:26.969839",
-            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock+topless/plain#base.BA.openlock+topless.stl",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock+topless/plain#base+wall.BA.openlock+topless.stl",
             "md5": "56e423a72c90577f3201d64192fda6e1",
             "size": 8984,
             "storage_address": "https://objects.openforge.tools/models/56e423/56e423a72c90577f3201d64192fda6e1.stl"
@@ -194302,6 +194343,7 @@
             "connection|openlock",
             "connection|openlock|topless",
             "shape|base",
+            "shape|base|wall",
             "shape|square",
             "shape|wall",
             "size|openlock|BA",
@@ -194312,9 +194354,9 @@
     },
     {
         "file_metadata": {
-            "file": "plain#base.D+dual.openlock+topless.stl",
+            "file": "plain#base+wall.D+dual.openlock+topless.stl",
             "file_modified_at": "2025-10-29T14:48:34.134948",
-            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock+topless/plain#base.D+dual.openlock+topless.stl",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock+topless/plain#base+wall.D+dual.openlock+topless.stl",
             "md5": "3eb9b514b3d39f59ab01822a0bef3219",
             "size": 71975,
             "storage_address": "https://objects.openforge.tools/models/3eb9b5/3eb9b514b3d39f59ab01822a0bef3219.stl"
@@ -194430,6 +194472,7 @@
             "connection|openlock",
             "connection|openlock|topless",
             "shape|base",
+            "shape|base|wall",
             "shape|square",
             "shape|wall",
             "size|openlock|D",
@@ -194440,9 +194483,9 @@
     },
     {
         "file_metadata": {
-            "file": "plain#base.D.openlock+topless.stl",
+            "file": "plain#base+wall.D.openlock+topless.stl",
             "file_modified_at": "2023-03-30T13:43:23.326046",
-            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock+topless/plain#base.D.openlock+topless.stl",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock+topless/plain#base+wall.D.openlock+topless.stl",
             "md5": "b1f55a2b9fa1c9b97472a14bdf3d1ff3",
             "size": 17384,
             "storage_address": "https://objects.openforge.tools/models/b1f55a/b1f55a2b9fa1c9b97472a14bdf3d1ff3.stl"
@@ -194557,6 +194600,7 @@
             "connection|openlock",
             "connection|openlock|topless",
             "shape|base",
+            "shape|base|wall",
             "shape|square",
             "shape|wall",
             "size|openlock|D",
@@ -194567,9 +194611,9 @@
     },
     {
         "file_metadata": {
-            "file": "plain#base.IA+dual.openlock+topless.stl",
+            "file": "plain#base+wall.IA+dual.openlock+topless.stl",
             "file_modified_at": "2025-10-29T14:23:09.719046",
-            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock+topless/plain#base.IA+dual.openlock+topless.stl",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock+topless/plain#base+wall.IA+dual.openlock+topless.stl",
             "md5": "2b182b285fda43dad24f8abb62957d49",
             "size": 27134,
             "storage_address": "https://objects.openforge.tools/models/2b182b/2b182b285fda43dad24f8abb62957d49.stl"
@@ -194685,6 +194729,7 @@
             "connection|openlock",
             "connection|openlock|topless",
             "shape|base",
+            "shape|base|wall",
             "shape|square",
             "shape|wall",
             "size|openlock|IA",
@@ -194695,9 +194740,9 @@
     },
     {
         "file_metadata": {
-            "file": "plain#base.IA.openlock+topless.stl",
+            "file": "plain#base+wall.IA.openlock+topless.stl",
             "file_modified_at": "2020-01-31T22:46:54",
-            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock+topless/plain#base.IA.openlock+topless.stl",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock+topless/plain#base+wall.IA.openlock+topless.stl",
             "md5": "8180da93549154744c37f8370a82738f",
             "size": 5984,
             "storage_address": "https://objects.openforge.tools/models/8180da/8180da93549154744c37f8370a82738f.stl"
@@ -194812,6 +194857,7 @@
             "connection|openlock",
             "connection|openlock|topless",
             "shape|base",
+            "shape|base|wall",
             "shape|square",
             "shape|wall",
             "size|openlock|IA",
@@ -194822,9 +194868,9 @@
     },
     {
         "file_metadata": {
-            "file": "plain#base.Q+dual.openlock+topless.stl",
+            "file": "plain#base+wall.Q+dual.openlock+topless.stl",
             "file_modified_at": "2025-10-29T14:48:59.080721",
-            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock+topless/plain#base.Q+dual.openlock+topless.stl",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock+topless/plain#base+wall.Q+dual.openlock+topless.stl",
             "md5": "dccee6862a4161b73d0b7c5852d225e7",
             "size": 93192,
             "storage_address": "https://objects.openforge.tools/models/dccee6/dccee6862a4161b73d0b7c5852d225e7.stl"
@@ -194940,6 +194986,7 @@
             "connection|openlock",
             "connection|openlock|topless",
             "shape|base",
+            "shape|base|wall",
             "shape|square",
             "shape|wall",
             "size|openlock|Q",
@@ -194950,9 +194997,9 @@
     },
     {
         "file_metadata": {
-            "file": "plain#base.Q.openlock+topless.stl",
+            "file": "plain#base+wall.Q.openlock+topless.stl",
             "file_modified_at": "2023-03-30T13:44:38.217351",
-            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock+topless/plain#base.Q.openlock+topless.stl",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock+topless/plain#base+wall.Q.openlock+topless.stl",
             "md5": "7c32616a6a65b6c495e23c5bdecc761a",
             "size": 28384,
             "storage_address": "https://objects.openforge.tools/models/7c3261/7c32616a6a65b6c495e23c5bdecc761a.stl"
@@ -195067,6 +195114,7 @@
             "connection|openlock",
             "connection|openlock|topless",
             "shape|base",
+            "shape|base|wall",
             "shape|square",
             "shape|wall",
             "size|openlock|Q",
@@ -195077,9 +195125,9 @@
     },
     {
         "file_metadata": {
-            "file": "plain#base.A+dual.openlock+unsupported,magnetic+flex.stl",
+            "file": "plain#base+wall.A+dual.openlock+unsupported,magnetic+flex.stl",
             "file_modified_at": "2025-10-29T14:39:09.651734",
-            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock+unsupported,magnetic+flex/plain#base.A+dual.openlock+unsupported,magnetic+flex.stl",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock+unsupported,magnetic+flex/plain#base+wall.A+dual.openlock+unsupported,magnetic+flex.stl",
             "md5": "9c4ff986b7c48a13bc0dbe3cdd33c856",
             "size": 63370,
             "storage_address": "https://objects.openforge.tools/models/9c4ff9/9c4ff986b7c48a13bc0dbe3cdd33c856.stl"
@@ -195197,6 +195245,7 @@
             "connection|openlock",
             "connection|openlock|unsupported",
             "shape|base",
+            "shape|base|wall",
             "shape|square",
             "shape|wall",
             "size|openlock|A",
@@ -195207,9 +195256,9 @@
     },
     {
         "file_metadata": {
-            "file": "plain#base.A.openlock+unsupported,magnetic+flex.stl",
+            "file": "plain#base+wall.A.openlock+unsupported,magnetic+flex.stl",
             "file_modified_at": "2025-10-29T14:39:31.403800",
-            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock+unsupported,magnetic+flex/plain#base.A.openlock+unsupported,magnetic+flex.stl",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock+unsupported,magnetic+flex/plain#base+wall.A.openlock+unsupported,magnetic+flex.stl",
             "md5": "4e1bb4d2830a592473c926366841568a",
             "size": 197875,
             "storage_address": "https://objects.openforge.tools/models/4e1bb4/4e1bb4d2830a592473c926366841568a.stl"
@@ -195326,6 +195375,7 @@
             "connection|openlock",
             "connection|openlock|unsupported",
             "shape|base",
+            "shape|base|wall",
             "shape|square",
             "shape|wall",
             "size|openlock|A",
@@ -195336,9 +195386,9 @@
     },
     {
         "file_metadata": {
-            "file": "plain#base.BA+dual.openlock+unsupported,magnetic+flex.stl",
+            "file": "plain#base+wall.BA+dual.openlock+unsupported,magnetic+flex.stl",
             "file_modified_at": "2025-10-29T14:31:26.870538",
-            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock+unsupported,magnetic+flex/plain#base.BA+dual.openlock+unsupported,magnetic+flex.stl",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock+unsupported,magnetic+flex/plain#base+wall.BA+dual.openlock+unsupported,magnetic+flex.stl",
             "md5": "85148db18bbf446114a0d613ae9b3fd2",
             "size": 47977,
             "storage_address": "https://objects.openforge.tools/models/85148d/85148db18bbf446114a0d613ae9b3fd2.stl"
@@ -195456,6 +195506,7 @@
             "connection|openlock",
             "connection|openlock|unsupported",
             "shape|base",
+            "shape|base|wall",
             "shape|square",
             "shape|wall",
             "size|openlock|BA",
@@ -195466,9 +195517,9 @@
     },
     {
         "file_metadata": {
-            "file": "plain#base.BA+mirror+dual.openlock+unsupported,magnetic+flex.stl",
+            "file": "plain#base+wall.BA+mirror+dual.openlock+unsupported,magnetic+flex.stl",
             "file_modified_at": "2025-10-29T14:32:01.083181",
-            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock+unsupported,magnetic+flex/plain#base.BA+mirror+dual.openlock+unsupported,magnetic+flex.stl",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock+unsupported,magnetic+flex/plain#base+wall.BA+mirror+dual.openlock+unsupported,magnetic+flex.stl",
             "md5": "5a0d4084ecbd4d6c67384ce041d34b29",
             "size": 33496,
             "storage_address": "https://objects.openforge.tools/models/5a0d40/5a0d4084ecbd4d6c67384ce041d34b29.stl"
@@ -195586,6 +195637,7 @@
             "connection|openlock",
             "connection|openlock|unsupported",
             "shape|base",
+            "shape|base|wall",
             "shape|option|mirror",
             "shape|square",
             "shape|wall",
@@ -195597,9 +195649,9 @@
     },
     {
         "file_metadata": {
-            "file": "plain#base.BA+mirror.openlock+unsupported,magnetic+flex.stl",
+            "file": "plain#base+wall.BA+mirror.openlock+unsupported,magnetic+flex.stl",
             "file_modified_at": "2025-10-29T14:32:33.847570",
-            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock+unsupported,magnetic+flex/plain#base.BA+mirror.openlock+unsupported,magnetic+flex.stl",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock+unsupported,magnetic+flex/plain#base+wall.BA+mirror.openlock+unsupported,magnetic+flex.stl",
             "md5": "ce57f116dce378983b7acfdc6aa24582",
             "size": 102674,
             "storage_address": "https://objects.openforge.tools/models/ce57f1/ce57f116dce378983b7acfdc6aa24582.stl"
@@ -195716,6 +195768,7 @@
             "connection|openlock",
             "connection|openlock|unsupported",
             "shape|base",
+            "shape|base|wall",
             "shape|option|mirror",
             "shape|square",
             "shape|wall",
@@ -195727,9 +195780,9 @@
     },
     {
         "file_metadata": {
-            "file": "plain#base.BA.openlock+unsupported,magnetic+flex.stl",
+            "file": "plain#base+wall.BA.openlock+unsupported,magnetic+flex.stl",
             "file_modified_at": "2025-10-29T14:32:55.155449",
-            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock+unsupported,magnetic+flex/plain#base.BA.openlock+unsupported,magnetic+flex.stl",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock+unsupported,magnetic+flex/plain#base+wall.BA.openlock+unsupported,magnetic+flex.stl",
             "md5": "a713ba1451f71b477f6b109439439fea",
             "size": 112863,
             "storage_address": "https://objects.openforge.tools/models/a713ba/a713ba1451f71b477f6b109439439fea.stl"
@@ -195846,6 +195899,7 @@
             "connection|openlock",
             "connection|openlock|unsupported",
             "shape|base",
+            "shape|base|wall",
             "shape|square",
             "shape|wall",
             "size|openlock|BA",
@@ -195856,9 +195910,9 @@
     },
     {
         "file_metadata": {
-            "file": "plain#base.D+dual.openlock+unsupported,magnetic+flex.stl",
+            "file": "plain#base+wall.D+dual.openlock+unsupported,magnetic+flex.stl",
             "file_modified_at": "2025-10-29T14:44:58.407707",
-            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock+unsupported,magnetic+flex/plain#base.D+dual.openlock+unsupported,magnetic+flex.stl",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock+unsupported,magnetic+flex/plain#base+wall.D+dual.openlock+unsupported,magnetic+flex.stl",
             "md5": "7c8fde73aa800d399ef71dc0e8a46c55",
             "size": 110003,
             "storage_address": "https://objects.openforge.tools/models/7c8fde/7c8fde73aa800d399ef71dc0e8a46c55.stl"
@@ -195976,6 +196030,7 @@
             "connection|openlock",
             "connection|openlock|unsupported",
             "shape|base",
+            "shape|base|wall",
             "shape|square",
             "shape|wall",
             "size|openlock|D",
@@ -195986,9 +196041,9 @@
     },
     {
         "file_metadata": {
-            "file": "plain#base.D.openlock+unsupported,magnetic+flex.stl",
+            "file": "plain#base+wall.D.openlock+unsupported,magnetic+flex.stl",
             "file_modified_at": "2025-10-29T14:45:13.055101",
-            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock+unsupported,magnetic+flex/plain#base.D.openlock+unsupported,magnetic+flex.stl",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock+unsupported,magnetic+flex/plain#base+wall.D.openlock+unsupported,magnetic+flex.stl",
             "md5": "07f54c656a80a005ace97029ea875c6f",
             "size": 308438,
             "storage_address": "https://objects.openforge.tools/models/07f54c/07f54c656a80a005ace97029ea875c6f.stl"
@@ -196105,6 +196160,7 @@
             "connection|openlock",
             "connection|openlock|unsupported",
             "shape|base",
+            "shape|base|wall",
             "shape|square",
             "shape|wall",
             "size|openlock|D",
@@ -196115,9 +196171,9 @@
     },
     {
         "file_metadata": {
-            "file": "plain#base.IA+dual.openlock+unsupported.stl",
+            "file": "plain#base+wall.IA+dual.openlock+unsupported.stl",
             "file_modified_at": "2025-10-29T14:24:39.769349",
-            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock+unsupported,magnetic+flex/plain#base.IA+dual.openlock+unsupported.stl",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock+unsupported,magnetic+flex/plain#base+wall.IA+dual.openlock+unsupported.stl",
             "md5": "af049bfdd400ca8809332b98d4adc4a4",
             "size": 23159,
             "storage_address": "https://objects.openforge.tools/models/af049b/af049bfdd400ca8809332b98d4adc4a4.stl"
@@ -196233,6 +196289,7 @@
             "connection|openlock",
             "connection|openlock|unsupported",
             "shape|base",
+            "shape|base|wall",
             "shape|square",
             "shape|wall",
             "size|openlock|IA",
@@ -196243,9 +196300,9 @@
     },
     {
         "file_metadata": {
-            "file": "plain#base.IA.magnetic+flex.stl",
+            "file": "plain#base+wall.IA.magnetic+flex.stl",
             "file_modified_at": "2023-03-30T13:37:08.146623",
-            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock+unsupported,magnetic+flex/plain#base.IA.magnetic+flex.stl",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock+unsupported,magnetic+flex/plain#base+wall.IA.magnetic+flex.stl",
             "md5": "ff2b8654a41b82360f9be4e01f735697",
             "size": 26284,
             "storage_address": "https://objects.openforge.tools/models/ff2b86/ff2b8654a41b82360f9be4e01f735697.stl"
@@ -196360,6 +196417,7 @@
             "connection|magnetic",
             "connection|magnetic|flex",
             "shape|base",
+            "shape|base|wall",
             "shape|square",
             "shape|wall",
             "size|openlock|IA",
@@ -196370,9 +196428,9 @@
     },
     {
         "file_metadata": {
-            "file": "plain#base.IA.openlock+unsupported.stl",
+            "file": "plain#base+wall.IA.openlock+unsupported.stl",
             "file_modified_at": "2025-10-29T14:27:21.834110",
-            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock+unsupported,magnetic+flex/plain#base.IA.openlock+unsupported.stl",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock+unsupported,magnetic+flex/plain#base+wall.IA.openlock+unsupported.stl",
             "md5": "269ae73fed5463c1c612142e32501324",
             "size": 18737,
             "storage_address": "https://objects.openforge.tools/models/269ae7/269ae73fed5463c1c612142e32501324.stl"
@@ -196487,6 +196545,7 @@
             "connection|openlock",
             "connection|openlock|unsupported",
             "shape|base",
+            "shape|base|wall",
             "shape|square",
             "shape|wall",
             "size|openlock|IA",
@@ -196497,9 +196556,9 @@
     },
     {
         "file_metadata": {
-            "file": "plain#base.Q+dual.openlock+unsupported,magnetic+flex.stl",
+            "file": "plain#base+wall.Q+dual.openlock+unsupported,magnetic+flex.stl",
             "file_modified_at": "2025-10-29T14:45:58.524340",
-            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock+unsupported,magnetic+flex/plain#base.Q+dual.openlock+unsupported,magnetic+flex.stl",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock+unsupported,magnetic+flex/plain#base+wall.Q+dual.openlock+unsupported,magnetic+flex.stl",
             "md5": "766444871ad336ee530bca57d7377802",
             "size": 153261,
             "storage_address": "https://objects.openforge.tools/models/766444/766444871ad336ee530bca57d7377802.stl"
@@ -196617,6 +196676,7 @@
             "connection|openlock",
             "connection|openlock|unsupported",
             "shape|base",
+            "shape|base|wall",
             "shape|square",
             "shape|wall",
             "size|openlock|Q",
@@ -196627,9 +196687,9 @@
     },
     {
         "file_metadata": {
-            "file": "plain#base.Q.openlock+unsupported,magnetic+flex.stl",
+            "file": "plain#base+wall.Q.openlock+unsupported,magnetic+flex.stl",
             "file_modified_at": "2025-10-29T14:45:41.866787",
-            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock+unsupported,magnetic+flex/plain#base.Q.openlock+unsupported,magnetic+flex.stl",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock+unsupported,magnetic+flex/plain#base+wall.Q.openlock+unsupported,magnetic+flex.stl",
             "md5": "2d2e42c34ea14d0307ba5930c48afd5a",
             "size": 415547,
             "storage_address": "https://objects.openforge.tools/models/2d2e42/2d2e42c34ea14d0307ba5930c48afd5a.stl"
@@ -196746,6 +196806,7 @@
             "connection|openlock",
             "connection|openlock|unsupported",
             "shape|base",
+            "shape|base|wall",
             "shape|square",
             "shape|wall",
             "size|openlock|Q",
@@ -196756,9 +196817,9 @@
     },
     {
         "file_metadata": {
-            "file": "plain#base.A+dual.openlock+unsupported.stl",
+            "file": "plain#base+wall.A+dual.openlock+unsupported.stl",
             "file_modified_at": "2025-10-29T14:38:27.422379",
-            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock+unsupported/plain#base.A+dual.openlock+unsupported.stl",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock+unsupported/plain#base+wall.A+dual.openlock+unsupported.stl",
             "md5": "1d3e05b2362bcbb898ff22b6c9d6dafb",
             "size": 50978,
             "storage_address": "https://objects.openforge.tools/models/1d3e05/1d3e05b2362bcbb898ff22b6c9d6dafb.stl"
@@ -196874,6 +196935,7 @@
             "connection|openlock",
             "connection|openlock|unsupported",
             "shape|base",
+            "shape|base|wall",
             "shape|square",
             "shape|wall",
             "size|openlock|A",
@@ -196884,9 +196946,9 @@
     },
     {
         "file_metadata": {
-            "file": "plain#base.A.openlock+unsupported.stl",
+            "file": "plain#base+wall.A.openlock+unsupported.stl",
             "file_modified_at": "2025-10-29T14:38:07.203764",
-            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock+unsupported/plain#base.A.openlock+unsupported.stl",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock+unsupported/plain#base+wall.A.openlock+unsupported.stl",
             "md5": "f1035a38a9228d837cd611a6cfa2ded6",
             "size": 42865,
             "storage_address": "https://objects.openforge.tools/models/f1035a/f1035a38a9228d837cd611a6cfa2ded6.stl"
@@ -197001,6 +197063,7 @@
             "connection|openlock",
             "connection|openlock|unsupported",
             "shape|base",
+            "shape|base|wall",
             "shape|square",
             "shape|wall",
             "size|openlock|A",
@@ -197011,9 +197074,9 @@
     },
     {
         "file_metadata": {
-            "file": "plain#base.BA+dual.openlock+unsupported.stl",
+            "file": "plain#base+wall.BA+dual.openlock+unsupported.stl",
             "file_modified_at": "2025-10-29T14:37:20.994007",
-            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock+unsupported/plain#base.BA+dual.openlock+unsupported.stl",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock+unsupported/plain#base+wall.BA+dual.openlock+unsupported.stl",
             "md5": "4fd11be51c0585fae165dca7976b7c3e",
             "size": 40430,
             "storage_address": "https://objects.openforge.tools/models/4fd11b/4fd11be51c0585fae165dca7976b7c3e.stl"
@@ -197129,6 +197192,7 @@
             "connection|openlock",
             "connection|openlock|unsupported",
             "shape|base",
+            "shape|base|wall",
             "shape|square",
             "shape|wall",
             "size|openlock|BA",
@@ -197139,9 +197203,9 @@
     },
     {
         "file_metadata": {
-            "file": "plain#base.BA.openlock+unsupported.stl",
+            "file": "plain#base+wall.BA.openlock+unsupported.stl",
             "file_modified_at": "2025-10-29T14:37:42.595684",
-            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock+unsupported/plain#base.BA.openlock+unsupported.stl",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock+unsupported/plain#base+wall.BA.openlock+unsupported.stl",
             "md5": "c3448259a7cf381e2aa3ff43e1035210",
             "size": 34210,
             "storage_address": "https://objects.openforge.tools/models/c34482/c3448259a7cf381e2aa3ff43e1035210.stl"
@@ -197256,6 +197320,7 @@
             "connection|openlock",
             "connection|openlock|unsupported",
             "shape|base",
+            "shape|base|wall",
             "shape|square",
             "shape|wall",
             "size|openlock|BA",
@@ -197266,9 +197331,9 @@
     },
     {
         "file_metadata": {
-            "file": "plain#base.D+dual.openlock+unsupported.stl",
+            "file": "plain#base+wall.D+dual.openlock+unsupported.stl",
             "file_modified_at": "2025-10-29T14:47:32.952578",
-            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock+unsupported/plain#base.D+dual.openlock+unsupported.stl",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock+unsupported/plain#base+wall.D+dual.openlock+unsupported.stl",
             "md5": "b125fef38ea2d4a0a9972c3310f2763f",
             "size": 73394,
             "storage_address": "https://objects.openforge.tools/models/b125fe/b125fef38ea2d4a0a9972c3310f2763f.stl"
@@ -197384,6 +197449,7 @@
             "connection|openlock",
             "connection|openlock|unsupported",
             "shape|base",
+            "shape|base|wall",
             "shape|square",
             "shape|wall",
             "size|openlock|D",
@@ -197394,9 +197460,9 @@
     },
     {
         "file_metadata": {
-            "file": "plain#base.D.openlock+unsupported.stl",
+            "file": "plain#base+wall.D.openlock+unsupported.stl",
             "file_modified_at": "2025-10-29T14:47:16.907673",
-            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock+unsupported/plain#base.D.openlock+unsupported.stl",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock+unsupported/plain#base+wall.D.openlock+unsupported.stl",
             "md5": "3a80139580d095b2e2662de58d531436",
             "size": 62307,
             "storage_address": "https://objects.openforge.tools/models/3a8013/3a80139580d095b2e2662de58d531436.stl"
@@ -197511,6 +197577,7 @@
             "connection|openlock",
             "connection|openlock|unsupported",
             "shape|base",
+            "shape|base|wall",
             "shape|square",
             "shape|wall",
             "size|openlock|D",
@@ -197521,9 +197588,9 @@
     },
     {
         "file_metadata": {
-            "file": "plain#base.IA+dual.openlock+unsupported.stl",
+            "file": "plain#base+wall.IA+dual.openlock+unsupported.stl",
             "file_modified_at": "2025-10-29T14:24:39.769349",
-            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock+unsupported/plain#base.IA+dual.openlock+unsupported.stl",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock+unsupported/plain#base+wall.IA+dual.openlock+unsupported.stl",
             "md5": "af049bfdd400ca8809332b98d4adc4a4",
             "size": 23159,
             "storage_address": "https://objects.openforge.tools/models/af049b/af049bfdd400ca8809332b98d4adc4a4.stl"
@@ -197639,6 +197706,7 @@
             "connection|openlock",
             "connection|openlock|unsupported",
             "shape|base",
+            "shape|base|wall",
             "shape|square",
             "shape|wall",
             "size|openlock|IA",
@@ -197649,9 +197717,9 @@
     },
     {
         "file_metadata": {
-            "file": "plain#base.IA.openlock+unsupported.stl",
+            "file": "plain#base+wall.IA.openlock+unsupported.stl",
             "file_modified_at": "2025-10-29T14:27:21.834110",
-            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock+unsupported/plain#base.IA.openlock+unsupported.stl",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock+unsupported/plain#base+wall.IA.openlock+unsupported.stl",
             "md5": "269ae73fed5463c1c612142e32501324",
             "size": 18737,
             "storage_address": "https://objects.openforge.tools/models/269ae7/269ae73fed5463c1c612142e32501324.stl"
@@ -197766,6 +197834,7 @@
             "connection|openlock",
             "connection|openlock|unsupported",
             "shape|base",
+            "shape|base|wall",
             "shape|square",
             "shape|wall",
             "size|openlock|IA",
@@ -197776,9 +197845,9 @@
     },
     {
         "file_metadata": {
-            "file": "plain#base.Q+dual.openlock+unsupported.stl",
+            "file": "plain#base+wall.Q+dual.openlock+unsupported.stl",
             "file_modified_at": "2025-10-29T14:46:41.649107",
-            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock+unsupported/plain#base.Q+dual.openlock+unsupported.stl",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock+unsupported/plain#base+wall.Q+dual.openlock+unsupported.stl",
             "md5": "ac2f2957fe4bb099c3463e1bb101d7bf",
             "size": 94941,
             "storage_address": "https://objects.openforge.tools/models/ac2f29/ac2f2957fe4bb099c3463e1bb101d7bf.stl"
@@ -197894,6 +197963,7 @@
             "connection|openlock",
             "connection|openlock|unsupported",
             "shape|base",
+            "shape|base|wall",
             "shape|square",
             "shape|wall",
             "size|openlock|Q",
@@ -197904,9 +197974,9 @@
     },
     {
         "file_metadata": {
-            "file": "plain#base.Q.openlock+unsupported.stl",
+            "file": "plain#base+wall.Q.openlock+unsupported.stl",
             "file_modified_at": "2025-10-29T14:46:55.641270",
-            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock+unsupported/plain#base.Q.openlock+unsupported.stl",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock+unsupported/plain#base+wall.Q.openlock+unsupported.stl",
             "md5": "04794e1b46bb32d7d362c70572d257d1",
             "size": 80822,
             "storage_address": "https://objects.openforge.tools/models/04794e/04794e1b46bb32d7d362c70572d257d1.stl"
@@ -198021,6 +198091,7 @@
             "connection|openlock",
             "connection|openlock|unsupported",
             "shape|base",
+            "shape|base|wall",
             "shape|square",
             "shape|wall",
             "size|openlock|Q",
@@ -198031,9 +198102,9 @@
     },
     {
         "file_metadata": {
-            "file": "plain#base.A+dual.openlock,magnetic+flex.stl",
+            "file": "plain#base+wall.A+dual.openlock,magnetic+flex.stl",
             "file_modified_at": "2025-10-29T14:40:04.277049",
-            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock,magnetic+flex/plain#base.A+dual.openlock,magnetic+flex.stl",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock,magnetic+flex/plain#base+wall.A+dual.openlock,magnetic+flex.stl",
             "md5": "4c0f71fe56701aa1aad6b672efef47f9",
             "size": 123563,
             "storage_address": "https://objects.openforge.tools/models/4c0f71/4c0f71fe56701aa1aad6b672efef47f9.stl"
@@ -198150,6 +198221,7 @@
             "connection|magnetic|flex",
             "connection|openlock",
             "shape|base",
+            "shape|base|wall",
             "shape|square",
             "shape|wall",
             "size|openlock|A",
@@ -198160,9 +198232,9 @@
     },
     {
         "file_metadata": {
-            "file": "plain#base.A.openlock,magnetic+flex.stl",
+            "file": "plain#base+wall.A.openlock,magnetic+flex.stl",
             "file_modified_at": "2023-03-30T13:50:31.873156",
-            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock,magnetic+flex/plain#base.A.openlock,magnetic+flex.stl",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock,magnetic+flex/plain#base+wall.A.openlock,magnetic+flex.stl",
             "md5": "bd630e2ffd3917689a7b0bee54270fbc",
             "size": 69884,
             "storage_address": "https://objects.openforge.tools/models/bd630e/bd630e2ffd3917689a7b0bee54270fbc.stl"
@@ -198278,6 +198350,7 @@
             "connection|magnetic|flex",
             "connection|openlock",
             "shape|base",
+            "shape|base|wall",
             "shape|square",
             "shape|wall",
             "size|openlock|A",
@@ -198288,9 +198361,9 @@
     },
     {
         "file_metadata": {
-            "file": "plain#base.AS.openlock,magnetic+flex.stl",
+            "file": "plain#base+wall.AS.openlock,magnetic+flex.stl",
             "file_modified_at": "2024-03-16T16:12:20.484780",
-            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock,magnetic+flex/plain#base.AS.openlock,magnetic+flex.stl",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock,magnetic+flex/plain#base+wall.AS.openlock,magnetic+flex.stl",
             "md5": "5939705e47618c9bfed60c8c81510d34",
             "size": 44484,
             "storage_address": "https://objects.openforge.tools/models/593970/5939705e47618c9bfed60c8c81510d34.stl"
@@ -198407,6 +198480,7 @@
             "connection|magnetic|flex",
             "connection|openlock",
             "shape|base",
+            "shape|base|wall",
             "shape|square",
             "shape|wall",
             "size|openlock|AS",
@@ -198417,9 +198491,9 @@
     },
     {
         "file_metadata": {
-            "file": "plain#base.BA+dual.openlock,magnetic+flex.stl",
+            "file": "plain#base+wall.BA+dual.openlock,magnetic+flex.stl",
             "file_modified_at": "2025-10-29T14:33:28.648608",
-            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock,magnetic+flex/plain#base.BA+dual.openlock,magnetic+flex.stl",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock,magnetic+flex/plain#base+wall.BA+dual.openlock,magnetic+flex.stl",
             "md5": "3b2991c4d6d1fbe980dfbf49df72fb45",
             "size": 110284,
             "storage_address": "https://objects.openforge.tools/models/3b2991/3b2991c4d6d1fbe980dfbf49df72fb45.stl"
@@ -198536,6 +198610,7 @@
             "connection|magnetic|flex",
             "connection|openlock",
             "shape|base",
+            "shape|base|wall",
             "shape|square",
             "shape|wall",
             "size|openlock|BA",
@@ -198546,9 +198621,9 @@
     },
     {
         "file_metadata": {
-            "file": "plain#base.BA+mirror+dual.openlock,magnetic+flex.stl",
+            "file": "plain#base+wall.BA+mirror+dual.openlock,magnetic+flex.stl",
             "file_modified_at": "2025-10-29T14:33:45.026415",
-            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock,magnetic+flex/plain#base.BA+mirror+dual.openlock,magnetic+flex.stl",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock,magnetic+flex/plain#base+wall.BA+mirror+dual.openlock,magnetic+flex.stl",
             "md5": "dbfc929174fcd58954aba409713db286",
             "size": 96259,
             "storage_address": "https://objects.openforge.tools/models/dbfc92/dbfc929174fcd58954aba409713db286.stl"
@@ -198665,6 +198740,7 @@
             "connection|magnetic|flex",
             "connection|openlock",
             "shape|base",
+            "shape|base|wall",
             "shape|option|mirror",
             "shape|square",
             "shape|wall",
@@ -198676,9 +198752,9 @@
     },
     {
         "file_metadata": {
-            "file": "plain#base.BA+mirror.openlock,magnetic+flex.stl",
+            "file": "plain#base+wall.BA+mirror.openlock,magnetic+flex.stl",
             "file_modified_at": "2023-03-30T13:57:09.370221",
-            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock,magnetic+flex/plain#base.BA+mirror.openlock,magnetic+flex.stl",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock,magnetic+flex/plain#base+wall.BA+mirror.openlock,magnetic+flex.stl",
             "md5": "6ed06093139ff1276326bf6f7398d0fe",
             "size": 44284,
             "storage_address": "https://objects.openforge.tools/models/6ed060/6ed06093139ff1276326bf6f7398d0fe.stl"
@@ -198794,6 +198870,7 @@
             "connection|magnetic|flex",
             "connection|openlock",
             "shape|base",
+            "shape|base|wall",
             "shape|option|mirror",
             "shape|square",
             "shape|wall",
@@ -198805,9 +198882,9 @@
     },
     {
         "file_metadata": {
-            "file": "plain#base.BA.openlock,magnetic+flex.stl",
+            "file": "plain#base+wall.BA.openlock,magnetic+flex.stl",
             "file_modified_at": "2023-03-30T13:57:26.554563",
-            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock,magnetic+flex/plain#base.BA.openlock,magnetic+flex.stl",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock,magnetic+flex/plain#base+wall.BA.openlock,magnetic+flex.stl",
             "md5": "7eda054f2842d2d4acf908f2ea0024a9",
             "size": 44284,
             "storage_address": "https://objects.openforge.tools/models/7eda05/7eda054f2842d2d4acf908f2ea0024a9.stl"
@@ -198923,6 +199000,7 @@
             "connection|magnetic|flex",
             "connection|openlock",
             "shape|base",
+            "shape|base|wall",
             "shape|square",
             "shape|wall",
             "size|openlock|BA",
@@ -198933,9 +199011,9 @@
     },
     {
         "file_metadata": {
-            "file": "plain#base.D+dual.openlock,magnetic+flex.stl",
+            "file": "plain#base+wall.D+dual.openlock,magnetic+flex.stl",
             "file_modified_at": "2025-10-29T14:44:23.895474",
-            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock,magnetic+flex/plain#base.D+dual.openlock,magnetic+flex.stl",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock,magnetic+flex/plain#base+wall.D+dual.openlock,magnetic+flex.stl",
             "md5": "b1402d7f621a3d5953d8bc13a7414d99",
             "size": 235589,
             "storage_address": "https://objects.openforge.tools/models/b1402d/b1402d7f621a3d5953d8bc13a7414d99.stl"
@@ -199052,6 +199130,7 @@
             "connection|magnetic|flex",
             "connection|openlock",
             "shape|base",
+            "shape|base|wall",
             "shape|square",
             "shape|wall",
             "size|openlock|D",
@@ -199062,9 +199141,9 @@
     },
     {
         "file_metadata": {
-            "file": "plain#base.D.openlock,magnetic+flex.stl",
+            "file": "plain#base+wall.D.openlock,magnetic+flex.stl",
             "file_modified_at": "2023-03-30T13:42:11.386043",
-            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock,magnetic+flex/plain#base.D.openlock,magnetic+flex.stl",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock,magnetic+flex/plain#base+wall.D.openlock,magnetic+flex.stl",
             "md5": "2a7f79c99271b47cc203bd19bcb25a57",
             "size": 106984,
             "storage_address": "https://objects.openforge.tools/models/2a7f79/2a7f79c99271b47cc203bd19bcb25a57.stl"
@@ -199180,6 +199259,7 @@
             "connection|magnetic|flex",
             "connection|openlock",
             "shape|base",
+            "shape|base|wall",
             "shape|square",
             "shape|wall",
             "size|openlock|D",
@@ -199190,9 +199270,9 @@
     },
     {
         "file_metadata": {
-            "file": "plain#base.IA+dual.magnetic+flex.stl",
+            "file": "plain#base+wall.IA+dual.magnetic+flex.stl",
             "file_modified_at": "2025-10-29T14:26:44.899759",
-            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock,magnetic+flex/plain#base.IA+dual.magnetic+flex.stl",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock,magnetic+flex/plain#base+wall.IA+dual.magnetic+flex.stl",
             "md5": "1363ff67eaa383b80d52e13b33754d00",
             "size": 10073,
             "storage_address": "https://objects.openforge.tools/models/1363ff/1363ff67eaa383b80d52e13b33754d00.stl"
@@ -199308,6 +199388,7 @@
             "connection|magnetic",
             "connection|magnetic|flex",
             "shape|base",
+            "shape|base|wall",
             "shape|square",
             "shape|wall",
             "size|openlock|IA",
@@ -199318,9 +199399,9 @@
     },
     {
         "file_metadata": {
-            "file": "plain#base.IA+dual.openlock.stl",
+            "file": "plain#base+wall.IA+dual.openlock.stl",
             "file_modified_at": "2025-10-29T14:23:30.424378",
-            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock,magnetic+flex/plain#base.IA+dual.openlock.stl",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock,magnetic+flex/plain#base+wall.IA+dual.openlock.stl",
             "md5": "dfab6e6d93317116ffe84bc2c45120ed",
             "size": 83127,
             "storage_address": "https://objects.openforge.tools/models/dfab6e/dfab6e6d93317116ffe84bc2c45120ed.stl"
@@ -199435,6 +199516,7 @@
             "connection|dual",
             "connection|openlock",
             "shape|base",
+            "shape|base|wall",
             "shape|square",
             "shape|wall",
             "size|openlock|IA",
@@ -199445,9 +199527,9 @@
     },
     {
         "file_metadata": {
-            "file": "plain#base.IA.magnetic+flex.stl",
+            "file": "plain#base+wall.IA.magnetic+flex.stl",
             "file_modified_at": "2023-03-30T13:37:08.146623",
-            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock,magnetic+flex/plain#base.IA.magnetic+flex.stl",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock,magnetic+flex/plain#base+wall.IA.magnetic+flex.stl",
             "md5": "ff2b8654a41b82360f9be4e01f735697",
             "size": 26284,
             "storage_address": "https://objects.openforge.tools/models/ff2b86/ff2b8654a41b82360f9be4e01f735697.stl"
@@ -199562,6 +199644,7 @@
             "connection|magnetic",
             "connection|magnetic|flex",
             "shape|base",
+            "shape|base|wall",
             "shape|square",
             "shape|wall",
             "size|openlock|IA",
@@ -199572,9 +199655,9 @@
     },
     {
         "file_metadata": {
-            "file": "plain#base.IA.openlock.stl",
+            "file": "plain#base+wall.IA.openlock.stl",
             "file_modified_at": "2020-01-31T22:38:27",
-            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock,magnetic+flex/plain#base.IA.openlock.stl",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock,magnetic+flex/plain#base+wall.IA.openlock.stl",
             "md5": "14be5c9e3d399c66ab268d41dcd0e3e5",
             "size": 19384,
             "storage_address": "https://objects.openforge.tools/models/14be5c/14be5c9e3d399c66ab268d41dcd0e3e5.stl"
@@ -199688,6 +199771,7 @@
             "build|separate wall",
             "connection|openlock",
             "shape|base",
+            "shape|base|wall",
             "shape|square",
             "shape|wall",
             "size|openlock|IA",
@@ -199698,9 +199782,9 @@
     },
     {
         "file_metadata": {
-            "file": "plain#base.Q+dual.openlock,magnetic+flex.stl",
+            "file": "plain#base+wall.Q+dual.openlock,magnetic+flex.stl",
             "file_modified_at": "2025-10-29T14:43:59.259603",
-            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock,magnetic+flex/plain#base.Q+dual.openlock,magnetic+flex.stl",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock,magnetic+flex/plain#base+wall.Q+dual.openlock,magnetic+flex.stl",
             "md5": "ba3c6d3fffc463a7763953543752bced",
             "size": 336768,
             "storage_address": "https://objects.openforge.tools/models/ba3c6d/ba3c6d3fffc463a7763953543752bced.stl"
@@ -199817,6 +199901,7 @@
             "connection|magnetic|flex",
             "connection|openlock",
             "shape|base",
+            "shape|base|wall",
             "shape|square",
             "shape|wall",
             "size|openlock|Q",
@@ -199827,9 +199912,9 @@
     },
     {
         "file_metadata": {
-            "file": "plain#base.Q.openlock,magnetic+flex.stl",
+            "file": "plain#base+wall.Q.openlock,magnetic+flex.stl",
             "file_modified_at": "2023-03-30T13:34:37.772754",
-            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock,magnetic+flex/plain#base.Q.openlock,magnetic+flex.stl",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock,magnetic+flex/plain#base+wall.Q.openlock,magnetic+flex.stl",
             "md5": "ab6f9105066a5c4c7c05bf24cdd1b2e1",
             "size": 150084,
             "storage_address": "https://objects.openforge.tools/models/ab6f91/ab6f9105066a5c4c7c05bf24cdd1b2e1.stl"
@@ -199945,6 +200030,7 @@
             "connection|magnetic|flex",
             "connection|openlock",
             "shape|base",
+            "shape|base|wall",
             "shape|square",
             "shape|wall",
             "size|openlock|Q",
@@ -199955,9 +200041,9 @@
     },
     {
         "file_metadata": {
-            "file": "plain#base.A+dual.openlock.stl",
+            "file": "plain#base+wall.A+dual.openlock.stl",
             "file_modified_at": "2025-10-29T14:41:49.511081",
-            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock/plain#base.A+dual.openlock.stl",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock/plain#base+wall.A+dual.openlock.stl",
             "md5": "c4702dfc232881dcc37cc110b762ac86",
             "size": 236581,
             "storage_address": "https://objects.openforge.tools/models/c4702d/c4702dfc232881dcc37cc110b762ac86.stl"
@@ -200072,6 +200158,7 @@
             "connection|dual",
             "connection|openlock",
             "shape|base",
+            "shape|base|wall",
             "shape|square",
             "shape|wall",
             "size|openlock|A",
@@ -200082,9 +200169,9 @@
     },
     {
         "file_metadata": {
-            "file": "plain#base.A.openlock.stl",
+            "file": "plain#base+wall.A.openlock.stl",
             "file_modified_at": "2018-02-27T14:55:21",
-            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock/plain#base.A.openlock.stl",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock/plain#base+wall.A.openlock.stl",
             "md5": "e5da9875b560618c8df529f90d889ee3",
             "size": 40884,
             "storage_address": "https://objects.openforge.tools/models/e5da98/e5da9875b560618c8df529f90d889ee3.stl"
@@ -200198,6 +200285,7 @@
             "build|separate wall",
             "connection|openlock",
             "shape|base",
+            "shape|base|wall",
             "shape|square",
             "shape|wall",
             "size|openlock|A",
@@ -200208,9 +200296,9 @@
     },
     {
         "file_metadata": {
-            "file": "plain#base.AS.openlock.stl",
+            "file": "plain#base+wall.AS.openlock.stl",
             "file_modified_at": "2018-02-27T14:55:45",
-            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock/plain#base.AS.openlock.stl",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock/plain#base+wall.AS.openlock.stl",
             "md5": "a8cac0a4fb61be6ecee5dc2d0c8999f1",
             "size": 37384,
             "storage_address": "https://objects.openforge.tools/models/a8cac0/a8cac0a4fb61be6ecee5dc2d0c8999f1.stl"
@@ -200325,6 +200413,7 @@
             "connection|dual",
             "connection|openlock",
             "shape|base",
+            "shape|base|wall",
             "shape|square",
             "shape|wall",
             "size|openlock|AS",
@@ -200335,9 +200424,9 @@
     },
     {
         "file_metadata": {
-            "file": "plain#base.BA+dual.openlock.stl",
+            "file": "plain#base+wall.BA+dual.openlock.stl",
             "file_modified_at": "2025-10-29T14:36:54.585019",
-            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock/plain#base.BA+dual.openlock.stl",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock/plain#base+wall.BA+dual.openlock.stl",
             "md5": "cf998bc8c7673960c7637bbd43758bfa",
             "size": 165691,
             "storage_address": "https://objects.openforge.tools/models/cf998b/cf998bc8c7673960c7637bbd43758bfa.stl"
@@ -200452,6 +200541,7 @@
             "connection|dual",
             "connection|openlock",
             "shape|base",
+            "shape|base|wall",
             "shape|square",
             "shape|wall",
             "size|openlock|BA",
@@ -200462,9 +200552,9 @@
     },
     {
         "file_metadata": {
-            "file": "plain#base.BA.openlock.stl",
+            "file": "plain#base+wall.BA.openlock.stl",
             "file_modified_at": "2020-01-31T16:29:36",
-            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock/plain#base.BA.openlock.stl",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock/plain#base+wall.BA.openlock.stl",
             "md5": "d8283bcbd641b56f96915458a06e53e3",
             "size": 26584,
             "storage_address": "https://objects.openforge.tools/models/d8283b/d8283bcbd641b56f96915458a06e53e3.stl"
@@ -200578,6 +200668,7 @@
             "build|separate wall",
             "connection|openlock",
             "shape|base",
+            "shape|base|wall",
             "shape|square",
             "shape|wall",
             "size|openlock|BA",
@@ -200588,9 +200679,9 @@
     },
     {
         "file_metadata": {
-            "file": "plain#base.D+dual.openlock.stl",
+            "file": "plain#base+wall.D+dual.openlock.stl",
             "file_modified_at": "2025-10-29T14:50:38.486497",
-            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock/plain#base.D+dual.openlock.stl",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock/plain#base+wall.D+dual.openlock.stl",
             "md5": "d6aac9d913b7f23b9f09723839e4e15f",
             "size": 382114,
             "storage_address": "https://objects.openforge.tools/models/d6aac9/d6aac9d913b7f23b9f09723839e4e15f.stl"
@@ -200705,6 +200796,7 @@
             "connection|dual",
             "connection|openlock",
             "shape|base",
+            "shape|base|wall",
             "shape|square",
             "shape|wall",
             "size|openlock|D",
@@ -200715,9 +200807,9 @@
     },
     {
         "file_metadata": {
-            "file": "plain#base.D.openlock.stl",
+            "file": "plain#base+wall.D.openlock.stl",
             "file_modified_at": "2023-03-30T13:41:39.955007",
-            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock/plain#base.D.openlock.stl",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock/plain#base+wall.D.openlock.stl",
             "md5": "1e7d8c447bd109b53028acb26c2255d3",
             "size": 84884,
             "storage_address": "https://objects.openforge.tools/models/1e7d8c/1e7d8c447bd109b53028acb26c2255d3.stl"
@@ -200831,6 +200923,7 @@
             "build|separate wall",
             "connection|openlock",
             "shape|base",
+            "shape|base|wall",
             "shape|square",
             "shape|wall",
             "size|openlock|D",
@@ -200841,9 +200934,9 @@
     },
     {
         "file_metadata": {
-            "file": "plain#base.IA+dual.openlock.stl",
+            "file": "plain#base+wall.IA+dual.openlock.stl",
             "file_modified_at": "2025-10-29T14:23:30.424378",
-            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock/plain#base.IA+dual.openlock.stl",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock/plain#base+wall.IA+dual.openlock.stl",
             "md5": "dfab6e6d93317116ffe84bc2c45120ed",
             "size": 83127,
             "storage_address": "https://objects.openforge.tools/models/dfab6e/dfab6e6d93317116ffe84bc2c45120ed.stl"
@@ -200958,6 +201051,7 @@
             "connection|dual",
             "connection|openlock",
             "shape|base",
+            "shape|base|wall",
             "shape|square",
             "shape|wall",
             "size|openlock|IA",
@@ -200968,9 +201062,9 @@
     },
     {
         "file_metadata": {
-            "file": "plain#base.IA.openlock.stl",
+            "file": "plain#base+wall.IA.openlock.stl",
             "file_modified_at": "2020-01-31T22:38:27",
-            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock/plain#base.IA.openlock.stl",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock/plain#base+wall.IA.openlock.stl",
             "md5": "14be5c9e3d399c66ab268d41dcd0e3e5",
             "size": 19384,
             "storage_address": "https://objects.openforge.tools/models/14be5c/14be5c9e3d399c66ab268d41dcd0e3e5.stl"
@@ -201084,6 +201178,7 @@
             "build|separate wall",
             "connection|openlock",
             "shape|base",
+            "shape|base|wall",
             "shape|square",
             "shape|wall",
             "size|openlock|IA",
@@ -201094,9 +201189,9 @@
     },
     {
         "file_metadata": {
-            "file": "plain#base.Q+dual.openlock.stl",
+            "file": "plain#base+wall.Q+dual.openlock.stl",
             "file_modified_at": "2025-10-29T14:51:06.085995",
-            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock/plain#base.Q+dual.openlock.stl",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock/plain#base+wall.Q+dual.openlock.stl",
             "md5": "e0f05ed36f638133fcf3a2628b5c0b15",
             "size": 526435,
             "storage_address": "https://objects.openforge.tools/models/e0f05e/e0f05ed36f638133fcf3a2628b5c0b15.stl"
@@ -201211,6 +201306,7 @@
             "connection|dual",
             "connection|openlock",
             "shape|base",
+            "shape|base|wall",
             "shape|square",
             "shape|wall",
             "size|openlock|Q",
@@ -201221,9 +201317,9 @@
     },
     {
         "file_metadata": {
-            "file": "plain#base.Q.openlock.stl",
+            "file": "plain#base+wall.Q.openlock.stl",
             "file_modified_at": "2020-01-31T23:14:52",
-            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock/plain#base.Q.openlock.stl",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/openlock/plain#base+wall.Q.openlock.stl",
             "md5": "40f6959e2f89927de796af7f95b36a16",
             "size": 98184,
             "storage_address": "https://objects.openforge.tools/models/40f695/40f6959e2f89927de796af7f95b36a16.stl"
@@ -201337,6 +201433,7 @@
             "build|separate wall",
             "connection|openlock",
             "shape|base",
+            "shape|base|wall",
             "shape|square",
             "shape|wall",
             "size|openlock|Q",
@@ -201347,138 +201444,9 @@
     },
     {
         "file_metadata": {
-            "file": "rough_stone#base+mirror.BA.dragonlock,magnetic+flex.stl",
-            "file_modified_at": "2025-07-29T13:20:37.638394",
-            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%rough_stone/dragonlock,magnetic+flex/rough_stone#base+mirror.BA.dragonlock,magnetic+flex.stl",
-            "md5": "13c44ec6c4d008696411daecadffbead",
-            "size": 1793584,
-            "storage_address": "https://objects.openforge.tools/models/13c44e/13c44ec6c4d008696411daecadffbead.stl"
-        },
-        "images": [
-            {
-                "image_name": "thumbnail",
-                "image_url": "https://objects.openforge.tools/sprites/13c44e/13c44ec6c4d008696411daecadffbead.png",
-                "sprite_metadata": {
-                    "angles": [
-                        {
-                            "camera_pos": [
-                                -4,
-                                0,
-                                2
-                            ],
-                            "index": 0,
-                            "name": "front"
-                        },
-                        {
-                            "camera_pos": [
-                                -3,
-                                2,
-                                3
-                            ],
-                            "index": 1,
-                            "name": "front-right"
-                        },
-                        {
-                            "camera_pos": [
-                                0,
-                                2,
-                                4
-                            ],
-                            "index": 2,
-                            "name": "right"
-                        },
-                        {
-                            "camera_pos": [
-                                2,
-                                3,
-                                3
-                            ],
-                            "index": 3,
-                            "name": "back-right"
-                        },
-                        {
-                            "camera_pos": [
-                                0,
-                                2,
-                                4
-                            ],
-                            "index": 4,
-                            "name": "back"
-                        },
-                        {
-                            "camera_pos": [
-                                -3,
-                                2,
-                                3
-                            ],
-                            "index": 5,
-                            "name": "back-left"
-                        },
-                        {
-                            "camera_pos": [
-                                -4,
-                                0,
-                                2
-                            ],
-                            "index": 6,
-                            "name": "left"
-                        },
-                        {
-                            "camera_pos": [
-                                -3,
-                                -3,
-                                2
-                            ],
-                            "index": 7,
-                            "name": "front-left"
-                        },
-                        {
-                            "camera_pos": [
-                                -2,
-                                0,
-                                5
-                            ],
-                            "index": 8,
-                            "name": "top"
-                        },
-                        {
-                            "camera_pos": [
-                                -2,
-                                -3,
-                                0
-                            ],
-                            "index": 9,
-                            "name": "bottom"
-                        }
-                    ],
-                    "default_angle": 0,
-                    "grid_cols": 5,
-                    "grid_rows": 2,
-                    "tile_size": 512
-                }
-            }
-        ],
-        "metadata": false,
-        "tags": [
-            "build|separate wall",
-            "connection|dragonlock",
-            "connection|magnetic",
-            "connection|magnetic|flex",
-            "shape|base",
-            "shape|base|mirror",
-            "shape|square",
-            "shape|wall",
-            "size|openlock|BA",
-            "size|width|1.5",
-            "texture|rough_stone"
-        ],
-        "type": "model"
-    },
-    {
-        "file_metadata": {
-            "file": "rough_stone#base.A.dragonlock,magnetic+flex.stl",
+            "file": "rough_stone#base+wall.A.dragonlock,magnetic+flex.stl",
             "file_modified_at": "2025-07-29T13:16:50.493109",
-            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%rough_stone/dragonlock,magnetic+flex/rough_stone#base.A.dragonlock,magnetic+flex.stl",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%rough_stone/dragonlock,magnetic+flex/rough_stone#base+wall.A.dragonlock,magnetic+flex.stl",
             "md5": "b367853fe9292ec18c8b078be6b2e3a6",
             "size": 2282484,
             "storage_address": "https://objects.openforge.tools/models/b36785/b367853fe9292ec18c8b078be6b2e3a6.stl"
@@ -201594,6 +201562,7 @@
             "connection|magnetic",
             "connection|magnetic|flex",
             "shape|base",
+            "shape|base|wall",
             "shape|square",
             "shape|wall",
             "size|openlock|A",
@@ -201604,9 +201573,139 @@
     },
     {
         "file_metadata": {
-            "file": "rough_stone#base.BA.dragonlock,magnetic+flex.stl",
+            "file": "rough_stone#base+wall.BA+mirror.dragonlock,magnetic+flex.stl",
+            "file_modified_at": "2025-07-29T13:20:37.638394",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%rough_stone/dragonlock,magnetic+flex/rough_stone#base+wall.BA+mirror.dragonlock,magnetic+flex.stl",
+            "md5": "13c44ec6c4d008696411daecadffbead",
+            "size": 1793584,
+            "storage_address": "https://objects.openforge.tools/models/13c44e/13c44ec6c4d008696411daecadffbead.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/13c44e/13c44ec6c4d008696411daecadffbead.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "build|separate wall",
+            "connection|dragonlock",
+            "connection|magnetic",
+            "connection|magnetic|flex",
+            "shape|base",
+            "shape|base|wall",
+            "shape|option|mirror",
+            "shape|square",
+            "shape|wall",
+            "size|openlock|BA",
+            "size|width|1.5",
+            "texture|rough_stone"
+        ],
+        "type": "model"
+    },
+    {
+        "file_metadata": {
+            "file": "rough_stone#base+wall.BA.dragonlock,magnetic+flex.stl",
             "file_modified_at": "2025-07-29T13:20:23.513805",
-            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%rough_stone/dragonlock,magnetic+flex/rough_stone#base.BA.dragonlock,magnetic+flex.stl",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%rough_stone/dragonlock,magnetic+flex/rough_stone#base+wall.BA.dragonlock,magnetic+flex.stl",
             "md5": "500062dc2727e3f14afeb5e5bc2e8bbf",
             "size": 1789384,
             "storage_address": "https://objects.openforge.tools/models/500062/500062dc2727e3f14afeb5e5bc2e8bbf.stl"
@@ -201722,6 +201821,7 @@
             "connection|magnetic",
             "connection|magnetic|flex",
             "shape|base",
+            "shape|base|wall",
             "shape|square",
             "shape|wall",
             "size|openlock|BA",
@@ -201732,9 +201832,9 @@
     },
     {
         "file_metadata": {
-            "file": "rough_stone#base.D.dragonlock,magnetic+flex.stl",
+            "file": "rough_stone#base+wall.D.dragonlock,magnetic+flex.stl",
             "file_modified_at": "2025-07-29T12:50:32.097352",
-            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%rough_stone/dragonlock,magnetic+flex/rough_stone#base.D.dragonlock,magnetic+flex.stl",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%rough_stone/dragonlock,magnetic+flex/rough_stone#base+wall.D.dragonlock,magnetic+flex.stl",
             "md5": "bb4df8aa51bbd4c583c452864c1910bf",
             "size": 3449484,
             "storage_address": "https://objects.openforge.tools/models/bb4df8/bb4df8aa51bbd4c583c452864c1910bf.stl"
@@ -201850,6 +201950,7 @@
             "connection|magnetic",
             "connection|magnetic|flex",
             "shape|base",
+            "shape|base|wall",
             "shape|square",
             "shape|wall",
             "size|openlock|D",
@@ -201860,9 +201961,9 @@
     },
     {
         "file_metadata": {
-            "file": "rough_stone#base.Q.dragonlock,magnetic+flex.stl",
+            "file": "rough_stone#base+wall.Q.dragonlock,magnetic+flex.stl",
             "file_modified_at": "2025-07-29T13:03:20.963556",
-            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%rough_stone/dragonlock,magnetic+flex/rough_stone#base.Q.dragonlock,magnetic+flex.stl",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%rough_stone/dragonlock,magnetic+flex/rough_stone#base+wall.Q.dragonlock,magnetic+flex.stl",
             "md5": "c6b9ed7c6d93b7467e6788bce696dc72",
             "size": 4516884,
             "storage_address": "https://objects.openforge.tools/models/c6b9ed/c6b9ed7c6d93b7467e6788bce696dc72.stl"
@@ -201978,6 +202079,7 @@
             "connection|magnetic",
             "connection|magnetic|flex",
             "shape|base",
+            "shape|base|wall",
             "shape|square",
             "shape|wall",
             "size|openlock|Q",
@@ -201988,9 +202090,9 @@
     },
     {
         "file_metadata": {
-            "file": "rough_stone#base.A.dragonlock.stl",
+            "file": "rough_stone#base+wall.A.dragonlock.stl",
             "file_modified_at": "2025-07-29T13:16:36.214918",
-            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%rough_stone/dragonlock/rough_stone#base.A.dragonlock.stl",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%rough_stone/dragonlock/rough_stone#base+wall.A.dragonlock.stl",
             "md5": "9a3c5c5eb1d3df80f680d76c798dfbb2",
             "size": 2386584,
             "storage_address": "https://objects.openforge.tools/models/9a3c5c/9a3c5c5eb1d3df80f680d76c798dfbb2.stl"
@@ -202104,6 +202206,7 @@
             "build|separate wall",
             "connection|dragonlock",
             "shape|base",
+            "shape|base|wall",
             "shape|square",
             "shape|wall",
             "size|openlock|A",
@@ -202114,9 +202217,9 @@
     },
     {
         "file_metadata": {
-            "file": "rough_stone#base.BA.dragonlock.stl",
+            "file": "rough_stone#base+wall.BA.dragonlock.stl",
             "file_modified_at": "2025-07-29T13:20:08.643159",
-            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%rough_stone/dragonlock/rough_stone#base.BA.dragonlock.stl",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%rough_stone/dragonlock/rough_stone#base+wall.BA.dragonlock.stl",
             "md5": "3128f6ebd2b0be15a6fe97f419a1d161",
             "size": 1846484,
             "storage_address": "https://objects.openforge.tools/models/3128f6/3128f6ebd2b0be15a6fe97f419a1d161.stl"
@@ -202230,6 +202333,7 @@
             "build|separate wall",
             "connection|dragonlock",
             "shape|base",
+            "shape|base|wall",
             "shape|square",
             "shape|wall",
             "size|openlock|BA",
@@ -202240,9 +202344,9 @@
     },
     {
         "file_metadata": {
-            "file": "rough_stone#base.D.dragonlock.stl",
+            "file": "rough_stone#base+wall.D.dragonlock.stl",
             "file_modified_at": "2025-07-29T12:50:06.336923",
-            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%rough_stone/dragonlock/rough_stone#base.D.dragonlock.stl",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%rough_stone/dragonlock/rough_stone#base+wall.D.dragonlock.stl",
             "md5": "8f1e7578b917e7915f33bfdd28c4cacb",
             "size": 3520884,
             "storage_address": "https://objects.openforge.tools/models/8f1e75/8f1e7578b917e7915f33bfdd28c4cacb.stl"
@@ -202356,6 +202460,7 @@
             "build|separate wall",
             "connection|dragonlock",
             "shape|base",
+            "shape|base|wall",
             "shape|square",
             "shape|wall",
             "size|openlock|D",
@@ -202366,9 +202471,9 @@
     },
     {
         "file_metadata": {
-            "file": "rough_stone#base.IA.dragonlock.stl",
+            "file": "rough_stone#base+wall.IA.dragonlock.stl",
             "file_modified_at": "2025-07-29T11:24:36.423566",
-            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%rough_stone/dragonlock/rough_stone#base.IA.dragonlock.stl",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%rough_stone/dragonlock/rough_stone#base+wall.IA.dragonlock.stl",
             "md5": "f16c112841baa8b55831232af13f3486",
             "size": 1229884,
             "storage_address": "https://objects.openforge.tools/models/f16c11/f16c112841baa8b55831232af13f3486.stl"
@@ -202482,6 +202587,7 @@
             "build|separate wall",
             "connection|dragonlock",
             "shape|base",
+            "shape|base|wall",
             "shape|square",
             "shape|wall",
             "size|openlock|IA",
@@ -202492,9 +202598,9 @@
     },
     {
         "file_metadata": {
-            "file": "rough_stone#base.Q.dragonlock.stl",
+            "file": "rough_stone#base+wall.Q.dragonlock.stl",
             "file_modified_at": "2025-07-29T13:02:58.996436",
-            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%rough_stone/dragonlock/rough_stone#base.Q.dragonlock.stl",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%rough_stone/dragonlock/rough_stone#base+wall.Q.dragonlock.stl",
             "md5": "6d59f5e9194b849322f4197ba3b9ce6d",
             "size": 4749684,
             "storage_address": "https://objects.openforge.tools/models/6d59f5/6d59f5e9194b849322f4197ba3b9ce6d.stl"
@@ -202608,6 +202714,7 @@
             "build|separate wall",
             "connection|dragonlock",
             "shape|base",
+            "shape|base|wall",
             "shape|square",
             "shape|wall",
             "size|openlock|Q",
@@ -202618,9 +202725,9 @@
     },
     {
         "file_metadata": {
-            "file": "rough_stone#base.A.magnetic+flex.stl",
+            "file": "rough_stone#base+wall.A.magnetic+flex.stl",
             "file_modified_at": "2025-07-29T13:15:00.814144",
-            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%rough_stone/magnetic+flex/rough_stone#base.A.magnetic+flex.stl",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%rough_stone/magnetic+flex/rough_stone#base+wall.A.magnetic+flex.stl",
             "md5": "3d5af2adc2b70365b48c8631ddc84824",
             "size": 2206384,
             "storage_address": "https://objects.openforge.tools/models/3d5af2/3d5af2adc2b70365b48c8631ddc84824.stl"
@@ -202735,6 +202842,7 @@
             "connection|magnetic",
             "connection|magnetic|flex",
             "shape|base",
+            "shape|base|wall",
             "shape|square",
             "shape|wall",
             "size|openlock|A",
@@ -202745,9 +202853,9 @@
     },
     {
         "file_metadata": {
-            "file": "rough_stone#base.BA.magnetic+flex.stl",
+            "file": "rough_stone#base+wall.BA.magnetic+flex.stl",
             "file_modified_at": "2025-07-29T13:17:51.430525",
-            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%rough_stone/magnetic+flex/rough_stone#base.BA.magnetic+flex.stl",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%rough_stone/magnetic+flex/rough_stone#base+wall.BA.magnetic+flex.stl",
             "md5": "156d1d449ee5208c9bacbf3dec5a887f",
             "size": 1741384,
             "storage_address": "https://objects.openforge.tools/models/156d1d/156d1d449ee5208c9bacbf3dec5a887f.stl"
@@ -202862,6 +202970,7 @@
             "connection|magnetic",
             "connection|magnetic|flex",
             "shape|base",
+            "shape|base|wall",
             "shape|square",
             "shape|wall",
             "size|openlock|BA",
@@ -202872,9 +202981,9 @@
     },
     {
         "file_metadata": {
-            "file": "rough_stone#base.D.magnetic+flex.stl",
+            "file": "rough_stone#base+wall.D.magnetic+flex.stl",
             "file_modified_at": "2025-07-29T12:48:32.693758",
-            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%rough_stone/magnetic+flex/rough_stone#base.D.magnetic+flex.stl",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%rough_stone/magnetic+flex/rough_stone#base+wall.D.magnetic+flex.stl",
             "md5": "c4a06d9ecddb0036ed4a542b21252499",
             "size": 3325484,
             "storage_address": "https://objects.openforge.tools/models/c4a06d/c4a06d9ecddb0036ed4a542b21252499.stl"
@@ -202989,6 +203098,7 @@
             "connection|magnetic",
             "connection|magnetic|flex",
             "shape|base",
+            "shape|base|wall",
             "shape|square",
             "shape|wall",
             "size|openlock|D",
@@ -202999,9 +203109,9 @@
     },
     {
         "file_metadata": {
-            "file": "rough_stone#base.IA.magnetic+flex.stl",
+            "file": "rough_stone#base+wall.IA.magnetic+flex.stl",
             "file_modified_at": "2025-07-29T11:23:15.920726",
-            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%rough_stone/magnetic+flex/rough_stone#base.IA.magnetic+flex.stl",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%rough_stone/magnetic+flex/rough_stone#base+wall.IA.magnetic+flex.stl",
             "md5": "6fcd917590135fd2fbeb55d31c465de0",
             "size": 1182384,
             "storage_address": "https://objects.openforge.tools/models/6fcd91/6fcd917590135fd2fbeb55d31c465de0.stl"
@@ -203116,6 +203226,7 @@
             "connection|magnetic",
             "connection|magnetic|flex",
             "shape|base",
+            "shape|base|wall",
             "shape|square",
             "shape|wall",
             "size|openlock|IA",
@@ -203126,9 +203237,9 @@
     },
     {
         "file_metadata": {
-            "file": "rough_stone#base.Q.magnetic+flex.stl",
+            "file": "rough_stone#base+wall.Q.magnetic+flex.stl",
             "file_modified_at": "2025-07-29T13:01:51.793148",
-            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%rough_stone/magnetic+flex/rough_stone#base.Q.magnetic+flex.stl",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%rough_stone/magnetic+flex/rough_stone#base+wall.Q.magnetic+flex.stl",
             "md5": "4c95492bcb7cd7fae9dc0e2e3ae35b17",
             "size": 4252784,
             "storage_address": "https://objects.openforge.tools/models/4c9549/4c95492bcb7cd7fae9dc0e2e3ae35b17.stl"
@@ -203243,6 +203354,7 @@
             "connection|magnetic",
             "connection|magnetic|flex",
             "shape|base",
+            "shape|base|wall",
             "shape|square",
             "shape|wall",
             "size|openlock|Q",
@@ -203253,139 +203365,9 @@
     },
     {
         "file_metadata": {
-            "file": "rough_stone#base+mirror.BA.openlock+topless,magnetic+flex.stl",
-            "file_modified_at": "2025-07-29T13:19:37.002860",
-            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%rough_stone/openlock+topless,magnetic+flex/rough_stone#base+mirror.BA.openlock+topless,magnetic+flex.stl",
-            "md5": "7225c3a4eaa158082cc84815646d2b51",
-            "size": 1741984,
-            "storage_address": "https://objects.openforge.tools/models/7225c3/7225c3a4eaa158082cc84815646d2b51.stl"
-        },
-        "images": [
-            {
-                "image_name": "thumbnail",
-                "image_url": "https://objects.openforge.tools/sprites/7225c3/7225c3a4eaa158082cc84815646d2b51.png",
-                "sprite_metadata": {
-                    "angles": [
-                        {
-                            "camera_pos": [
-                                -4,
-                                0,
-                                2
-                            ],
-                            "index": 0,
-                            "name": "front"
-                        },
-                        {
-                            "camera_pos": [
-                                -3,
-                                2,
-                                3
-                            ],
-                            "index": 1,
-                            "name": "front-right"
-                        },
-                        {
-                            "camera_pos": [
-                                0,
-                                2,
-                                4
-                            ],
-                            "index": 2,
-                            "name": "right"
-                        },
-                        {
-                            "camera_pos": [
-                                2,
-                                3,
-                                3
-                            ],
-                            "index": 3,
-                            "name": "back-right"
-                        },
-                        {
-                            "camera_pos": [
-                                0,
-                                2,
-                                4
-                            ],
-                            "index": 4,
-                            "name": "back"
-                        },
-                        {
-                            "camera_pos": [
-                                -3,
-                                2,
-                                3
-                            ],
-                            "index": 5,
-                            "name": "back-left"
-                        },
-                        {
-                            "camera_pos": [
-                                -4,
-                                0,
-                                2
-                            ],
-                            "index": 6,
-                            "name": "left"
-                        },
-                        {
-                            "camera_pos": [
-                                -3,
-                                -3,
-                                2
-                            ],
-                            "index": 7,
-                            "name": "front-left"
-                        },
-                        {
-                            "camera_pos": [
-                                -2,
-                                0,
-                                5
-                            ],
-                            "index": 8,
-                            "name": "top"
-                        },
-                        {
-                            "camera_pos": [
-                                -2,
-                                -3,
-                                0
-                            ],
-                            "index": 9,
-                            "name": "bottom"
-                        }
-                    ],
-                    "default_angle": 0,
-                    "grid_cols": 5,
-                    "grid_rows": 2,
-                    "tile_size": 512
-                }
-            }
-        ],
-        "metadata": false,
-        "tags": [
-            "build|separate wall",
-            "connection|magnetic",
-            "connection|magnetic|flex",
-            "connection|openlock",
-            "connection|openlock|topless",
-            "shape|base",
-            "shape|base|mirror",
-            "shape|square",
-            "shape|wall",
-            "size|openlock|BA",
-            "size|width|1.5",
-            "texture|rough_stone"
-        ],
-        "type": "model"
-    },
-    {
-        "file_metadata": {
-            "file": "rough_stone#base.A.openlock+topless,magnetic+flex.stl",
+            "file": "rough_stone#base+wall.A.openlock+topless,magnetic+flex.stl",
             "file_modified_at": "2025-07-29T13:15:36.738304",
-            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%rough_stone/openlock+topless,magnetic+flex/rough_stone#base.A.openlock+topless,magnetic+flex.stl",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%rough_stone/openlock+topless,magnetic+flex/rough_stone#base+wall.A.openlock+topless,magnetic+flex.stl",
             "md5": "b1d8d04a34df81bb6d6c89819d70481e",
             "size": 2223584,
             "storage_address": "https://objects.openforge.tools/models/b1d8d0/b1d8d04a34df81bb6d6c89819d70481e.stl"
@@ -203502,6 +203484,7 @@
             "connection|openlock",
             "connection|openlock|topless",
             "shape|base",
+            "shape|base|wall",
             "shape|square",
             "shape|wall",
             "size|openlock|A",
@@ -203512,9 +203495,140 @@
     },
     {
         "file_metadata": {
-            "file": "rough_stone#base.BA.openlock+topless,magnetic+flex.stl",
+            "file": "rough_stone#base+wall.BA+mirror.openlock+topless,magnetic+flex.stl",
+            "file_modified_at": "2025-07-29T13:19:37.002860",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%rough_stone/openlock+topless,magnetic+flex/rough_stone#base+wall.BA+mirror.openlock+topless,magnetic+flex.stl",
+            "md5": "7225c3a4eaa158082cc84815646d2b51",
+            "size": 1741984,
+            "storage_address": "https://objects.openforge.tools/models/7225c3/7225c3a4eaa158082cc84815646d2b51.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/7225c3/7225c3a4eaa158082cc84815646d2b51.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "build|separate wall",
+            "connection|magnetic",
+            "connection|magnetic|flex",
+            "connection|openlock",
+            "connection|openlock|topless",
+            "shape|base",
+            "shape|base|wall",
+            "shape|option|mirror",
+            "shape|square",
+            "shape|wall",
+            "size|openlock|BA",
+            "size|width|1.5",
+            "texture|rough_stone"
+        ],
+        "type": "model"
+    },
+    {
+        "file_metadata": {
+            "file": "rough_stone#base+wall.BA.openlock+topless,magnetic+flex.stl",
             "file_modified_at": "2025-07-29T13:19:18.176815",
-            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%rough_stone/openlock+topless,magnetic+flex/rough_stone#base.BA.openlock+topless,magnetic+flex.stl",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%rough_stone/openlock+topless,magnetic+flex/rough_stone#base+wall.BA.openlock+topless,magnetic+flex.stl",
             "md5": "59481c015b792264b7a52aad425934a8",
             "size": 1739284,
             "storage_address": "https://objects.openforge.tools/models/59481c/59481c015b792264b7a52aad425934a8.stl"
@@ -203631,6 +203745,7 @@
             "connection|openlock",
             "connection|openlock|topless",
             "shape|base",
+            "shape|base|wall",
             "shape|square",
             "shape|wall",
             "size|openlock|BA",
@@ -203641,9 +203756,9 @@
     },
     {
         "file_metadata": {
-            "file": "rough_stone#base.D.openlock+topless,magnetic+flex.stl",
+            "file": "rough_stone#base+wall.D.openlock+topless,magnetic+flex.stl",
             "file_modified_at": "2025-07-29T12:49:33.038441",
-            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%rough_stone/openlock+topless,magnetic+flex/rough_stone#base.D.openlock+topless,magnetic+flex.stl",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%rough_stone/openlock+topless,magnetic+flex/rough_stone#base+wall.D.openlock+topless,magnetic+flex.stl",
             "md5": "3933dd6f3de79cb63521534715dd241f",
             "size": 3386784,
             "storage_address": "https://objects.openforge.tools/models/3933dd/3933dd6f3de79cb63521534715dd241f.stl"
@@ -203760,6 +203875,7 @@
             "connection|openlock",
             "connection|openlock|topless",
             "shape|base",
+            "shape|base|wall",
             "shape|square",
             "shape|wall",
             "size|openlock|D",
@@ -203770,9 +203886,9 @@
     },
     {
         "file_metadata": {
-            "file": "rough_stone#base.Q.openlock+topless,magnetic+flex.stl",
+            "file": "rough_stone#base+wall.Q.openlock+topless,magnetic+flex.stl",
             "file_modified_at": "2025-07-29T13:02:26.367733",
-            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%rough_stone/openlock+topless,magnetic+flex/rough_stone#base.Q.openlock+topless,magnetic+flex.stl",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%rough_stone/openlock+topless,magnetic+flex/rough_stone#base+wall.Q.openlock+topless,magnetic+flex.stl",
             "md5": "fc44efd0c07357dcaab8e6914ab81753",
             "size": 4242684,
             "storage_address": "https://objects.openforge.tools/models/fc44ef/fc44efd0c07357dcaab8e6914ab81753.stl"
@@ -203889,6 +204005,7 @@
             "connection|openlock",
             "connection|openlock|topless",
             "shape|base",
+            "shape|base|wall",
             "shape|square",
             "shape|wall",
             "size|openlock|Q",
@@ -203899,9 +204016,9 @@
     },
     {
         "file_metadata": {
-            "file": "rough_stone#base.IA.openlock+topless.stl",
+            "file": "rough_stone#base+wall.IA.openlock+topless.stl",
             "file_modified_at": "2025-07-29T11:24:25.614511",
-            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%rough_stone/openlock+topless/rough_stone#base.IA.openlock+topless.stl",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%rough_stone/openlock+topless/rough_stone#base+wall.IA.openlock+topless.stl",
             "md5": "2703b09b785d4fa50d13104d5f698e7e",
             "size": 1168584,
             "storage_address": "https://objects.openforge.tools/models/2703b0/2703b09b785d4fa50d13104d5f698e7e.stl"
@@ -204016,6 +204133,7 @@
             "connection|openlock",
             "connection|openlock|topless",
             "shape|base",
+            "shape|base|wall",
             "shape|square",
             "shape|wall",
             "size|openlock|IA",
@@ -204026,138 +204144,9 @@
     },
     {
         "file_metadata": {
-            "file": "rough_stone#base+mirror.BA.openlock,magnetic+flex.stl",
-            "file_modified_at": "2025-07-29T13:18:58.443991",
-            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%rough_stone/openlock,magnetic+flex/rough_stone#base+mirror.BA.openlock,magnetic+flex.stl",
-            "md5": "77030b0c09a78aded50a717bad099d39",
-            "size": 1737784,
-            "storage_address": "https://objects.openforge.tools/models/77030b/77030b0c09a78aded50a717bad099d39.stl"
-        },
-        "images": [
-            {
-                "image_name": "thumbnail",
-                "image_url": "https://objects.openforge.tools/sprites/77030b/77030b0c09a78aded50a717bad099d39.png",
-                "sprite_metadata": {
-                    "angles": [
-                        {
-                            "camera_pos": [
-                                -4,
-                                0,
-                                2
-                            ],
-                            "index": 0,
-                            "name": "front"
-                        },
-                        {
-                            "camera_pos": [
-                                -3,
-                                2,
-                                3
-                            ],
-                            "index": 1,
-                            "name": "front-right"
-                        },
-                        {
-                            "camera_pos": [
-                                0,
-                                2,
-                                4
-                            ],
-                            "index": 2,
-                            "name": "right"
-                        },
-                        {
-                            "camera_pos": [
-                                2,
-                                3,
-                                3
-                            ],
-                            "index": 3,
-                            "name": "back-right"
-                        },
-                        {
-                            "camera_pos": [
-                                0,
-                                2,
-                                4
-                            ],
-                            "index": 4,
-                            "name": "back"
-                        },
-                        {
-                            "camera_pos": [
-                                -3,
-                                2,
-                                3
-                            ],
-                            "index": 5,
-                            "name": "back-left"
-                        },
-                        {
-                            "camera_pos": [
-                                -4,
-                                0,
-                                2
-                            ],
-                            "index": 6,
-                            "name": "left"
-                        },
-                        {
-                            "camera_pos": [
-                                -3,
-                                -3,
-                                2
-                            ],
-                            "index": 7,
-                            "name": "front-left"
-                        },
-                        {
-                            "camera_pos": [
-                                -2,
-                                0,
-                                5
-                            ],
-                            "index": 8,
-                            "name": "top"
-                        },
-                        {
-                            "camera_pos": [
-                                -2,
-                                -3,
-                                0
-                            ],
-                            "index": 9,
-                            "name": "bottom"
-                        }
-                    ],
-                    "default_angle": 0,
-                    "grid_cols": 5,
-                    "grid_rows": 2,
-                    "tile_size": 512
-                }
-            }
-        ],
-        "metadata": false,
-        "tags": [
-            "build|separate wall",
-            "connection|magnetic",
-            "connection|magnetic|flex",
-            "connection|openlock",
-            "shape|base",
-            "shape|base|mirror",
-            "shape|square",
-            "shape|wall",
-            "size|openlock|BA",
-            "size|width|1.5",
-            "texture|rough_stone"
-        ],
-        "type": "model"
-    },
-    {
-        "file_metadata": {
-            "file": "rough_stone#base.A.openlock,magnetic+flex.stl",
+            "file": "rough_stone#base+wall.A.openlock,magnetic+flex.stl",
             "file_modified_at": "2025-07-29T13:15:16.944774",
-            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%rough_stone/openlock,magnetic+flex/rough_stone#base.A.openlock,magnetic+flex.stl",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%rough_stone/openlock,magnetic+flex/rough_stone#base+wall.A.openlock,magnetic+flex.stl",
             "md5": "a41146e6cc8fef4a7965a2bd0743d029",
             "size": 2225984,
             "storage_address": "https://objects.openforge.tools/models/a41146/a41146e6cc8fef4a7965a2bd0743d029.stl"
@@ -204273,6 +204262,7 @@
             "connection|magnetic|flex",
             "connection|openlock",
             "shape|base",
+            "shape|base|wall",
             "shape|square",
             "shape|wall",
             "size|openlock|A",
@@ -204283,9 +204273,139 @@
     },
     {
         "file_metadata": {
-            "file": "rough_stone#base.BA.openlock,magnetic+flex.stl",
+            "file": "rough_stone#base+wall.BA+mirror.openlock,magnetic+flex.stl",
+            "file_modified_at": "2025-07-29T13:18:58.443991",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%rough_stone/openlock,magnetic+flex/rough_stone#base+wall.BA+mirror.openlock,magnetic+flex.stl",
+            "md5": "77030b0c09a78aded50a717bad099d39",
+            "size": 1737784,
+            "storage_address": "https://objects.openforge.tools/models/77030b/77030b0c09a78aded50a717bad099d39.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/77030b/77030b0c09a78aded50a717bad099d39.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "build|separate wall",
+            "connection|magnetic",
+            "connection|magnetic|flex",
+            "connection|openlock",
+            "shape|base",
+            "shape|base|wall",
+            "shape|option|mirror",
+            "shape|square",
+            "shape|wall",
+            "size|openlock|BA",
+            "size|width|1.5",
+            "texture|rough_stone"
+        ],
+        "type": "model"
+    },
+    {
+        "file_metadata": {
+            "file": "rough_stone#base+wall.BA.openlock,magnetic+flex.stl",
             "file_modified_at": "2025-07-29T13:18:47.081238",
-            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%rough_stone/openlock,magnetic+flex/rough_stone#base.BA.openlock,magnetic+flex.stl",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%rough_stone/openlock,magnetic+flex/rough_stone#base+wall.BA.openlock,magnetic+flex.stl",
             "md5": "2467c44cb3aee771dfc376fdc05010c2",
             "size": 1736384,
             "storage_address": "https://objects.openforge.tools/models/2467c4/2467c44cb3aee771dfc376fdc05010c2.stl"
@@ -204401,6 +204521,7 @@
             "connection|magnetic|flex",
             "connection|openlock",
             "shape|base",
+            "shape|base|wall",
             "shape|square",
             "shape|wall",
             "size|openlock|BA",
@@ -204411,9 +204532,9 @@
     },
     {
         "file_metadata": {
-            "file": "rough_stone#base.D.openlock,magnetic+flex.stl",
+            "file": "rough_stone#base+wall.D.openlock,magnetic+flex.stl",
             "file_modified_at": "2025-07-29T12:49:04.271649",
-            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%rough_stone/openlock,magnetic+flex/rough_stone#base.D.openlock,magnetic+flex.stl",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%rough_stone/openlock,magnetic+flex/rough_stone#base+wall.D.openlock,magnetic+flex.stl",
             "md5": "b21af08b64d282bcb8920ec2a567871d",
             "size": 3380884,
             "storage_address": "https://objects.openforge.tools/models/b21af0/b21af08b64d282bcb8920ec2a567871d.stl"
@@ -204529,6 +204650,7 @@
             "connection|magnetic|flex",
             "connection|openlock",
             "shape|base",
+            "shape|base|wall",
             "shape|square",
             "shape|wall",
             "size|openlock|D",
@@ -204539,9 +204661,9 @@
     },
     {
         "file_metadata": {
-            "file": "rough_stone#base.Q.openlock,magnetic+flex.stl",
+            "file": "rough_stone#base+wall.Q.openlock,magnetic+flex.stl",
             "file_modified_at": "2025-07-29T13:02:09.558433",
-            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%rough_stone/openlock,magnetic+flex/rough_stone#base.Q.openlock,magnetic+flex.stl",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%rough_stone/openlock,magnetic+flex/rough_stone#base+wall.Q.openlock,magnetic+flex.stl",
             "md5": "edcdd7a87c5bdbfe33a271f762e2c5ce",
             "size": 4345984,
             "storage_address": "https://objects.openforge.tools/models/edcdd7/edcdd7a87c5bdbfe33a271f762e2c5ce.stl"
@@ -204657,6 +204779,7 @@
             "connection|magnetic|flex",
             "connection|openlock",
             "shape|base",
+            "shape|base|wall",
             "shape|square",
             "shape|wall",
             "size|openlock|Q",
@@ -204667,9 +204790,9 @@
     },
     {
         "file_metadata": {
-            "file": "rough_stone#base.A.openlock.stl",
+            "file": "rough_stone#base+wall.A.openlock.stl",
             "file_modified_at": "2025-07-29T13:16:19.551761",
-            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%rough_stone/openlock/rough_stone#base.A.openlock.stl",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%rough_stone/openlock/rough_stone#base+wall.A.openlock.stl",
             "md5": "1639f4f26e9bb9cabec4940925135c3b",
             "size": 2230284,
             "storage_address": "https://objects.openforge.tools/models/1639f4/1639f4f26e9bb9cabec4940925135c3b.stl"
@@ -204783,6 +204906,7 @@
             "build|separate wall",
             "connection|openlock",
             "shape|base",
+            "shape|base|wall",
             "shape|square",
             "shape|wall",
             "size|openlock|A",
@@ -204793,9 +204917,9 @@
     },
     {
         "file_metadata": {
-            "file": "rough_stone#base.BA.openlock.stl",
+            "file": "rough_stone#base+wall.BA.openlock.stl",
             "file_modified_at": "2025-07-29T13:19:56.193178",
-            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%rough_stone/openlock/rough_stone#base.BA.openlock.stl",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%rough_stone/openlock/rough_stone#base+wall.BA.openlock.stl",
             "md5": "3bb62194a4d71b09857d352e49bf3883",
             "size": 1729184,
             "storage_address": "https://objects.openforge.tools/models/3bb621/3bb62194a4d71b09857d352e49bf3883.stl"
@@ -204909,6 +205033,7 @@
             "build|separate wall",
             "connection|openlock",
             "shape|base",
+            "shape|base|wall",
             "shape|square",
             "shape|wall",
             "size|openlock|BA",
@@ -204919,9 +205044,9 @@
     },
     {
         "file_metadata": {
-            "file": "rough_stone#base.D.openlock.stl",
+            "file": "rough_stone#base+wall.D.openlock.stl",
             "file_modified_at": "2025-07-29T12:49:49.928040",
-            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%rough_stone/openlock/rough_stone#base.D.openlock.stl",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%rough_stone/openlock/rough_stone#base+wall.D.openlock.stl",
             "md5": "327f146fec036abf3eefbf3b76f66de1",
             "size": 3425684,
             "storage_address": "https://objects.openforge.tools/models/327f14/327f146fec036abf3eefbf3b76f66de1.stl"
@@ -205035,6 +205160,7 @@
             "build|separate wall",
             "connection|openlock",
             "shape|base",
+            "shape|base|wall",
             "shape|square",
             "shape|wall",
             "size|openlock|D",
@@ -205045,9 +205171,9 @@
     },
     {
         "file_metadata": {
-            "file": "rough_stone#base.IA.openlock.stl",
+            "file": "rough_stone#base+wall.IA.openlock.stl",
             "file_modified_at": "2025-07-29T11:24:04.696004",
-            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%rough_stone/openlock/rough_stone#base.IA.openlock.stl",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%rough_stone/openlock/rough_stone#base+wall.IA.openlock.stl",
             "md5": "d0f839cea60418af4cbf9a49148bff56",
             "size": 1182484,
             "storage_address": "https://objects.openforge.tools/models/d0f839/d0f839cea60418af4cbf9a49148bff56.stl"
@@ -205161,6 +205287,7 @@
             "build|separate wall",
             "connection|openlock",
             "shape|base",
+            "shape|base|wall",
             "shape|square",
             "shape|wall",
             "size|openlock|IA",
@@ -205171,9 +205298,9 @@
     },
     {
         "file_metadata": {
-            "file": "rough_stone#base.Q.openlock.stl",
+            "file": "rough_stone#base+wall.Q.openlock.stl",
             "file_modified_at": "2025-07-29T13:02:41.681715",
-            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%rough_stone/openlock/rough_stone#base.Q.openlock.stl",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%rough_stone/openlock/rough_stone#base+wall.Q.openlock.stl",
             "md5": "3b7d00a909ec30889d335b7b6aa8a446",
             "size": 4344784,
             "storage_address": "https://objects.openforge.tools/models/3b7d00/3b7d00a909ec30889d335b7b6aa8a446.stl"
@@ -205287,6 +205414,7 @@
             "build|separate wall",
             "connection|openlock",
             "shape|base",
+            "shape|base|wall",
             "shape|square",
             "shape|wall",
             "size|openlock|Q",
