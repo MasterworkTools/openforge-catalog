@@ -793,10 +793,14 @@ def test_filename_with_path_components():
 
     parse_file_tags(file_info, tags, None)
 
-    # Should add shape tags from path (components get transformed)
+    # Should add shape tags from path (components get transformed).
+    # This path names a floor directory and a wall directory, so the
+    # piece is a floor that takes a wall rather than both at once —
+    # see test_nothing_is_both_a_floor_and_a_wall.
     assert ("shape", "base") in tags
     assert ("shape", "floor") in tags
-    assert ("shape", "wall") in tags
+    assert ("shape", "floor", "wall") in tags
+    assert ("shape", "wall") not in tags
 
 
 def test_filename_with_curved_paths():
@@ -810,10 +814,13 @@ def test_filename_with_curved_paths():
 
     parse_file_tags(file_info, tags, None)
 
-    # Should add curved shape tags
+    # Should add curved shape tags. Both curved_floors and
+    # curved_walls are named, so this resolves to a floor that takes a
+    # wall rather than to both shapes.
     assert ("shape", "floor") in tags
     assert ("shape", "curved") in tags
-    assert ("shape", "wall") in tags
+    assert ("shape", "floor", "wall") in tags
+    assert ("shape", "wall") not in tags
 
 
 def test_filename_with_primary_paths():
@@ -827,10 +834,12 @@ def test_filename_with_primary_paths():
 
     parse_file_tags(file_info, tags, None)
 
-    # Should add primary shape tags
+    # Should add primary shape tags. primary_floors and primary_walls
+    # are both named, so the same rule applies.
     assert ("shape", "floor") in tags
     assert ("shape", "square") in tags
-    assert ("shape", "wall") in tags
+    assert ("shape", "floor", "wall") in tags
+    assert ("shape", "wall") not in tags
 
 
 def test_filename_with_texture_variants():
@@ -1760,3 +1769,75 @@ def test_timber_and_corbels_are_how_a_wall_looks_not_what_it_does():
         # component that argues about what the piece is.
         if expected:
             assert [tag for tag in tags if tag[0] == "decoration"], filename
+
+
+def test_nothing_is_both_a_floor_and_a_wall():
+    """A piece carrying both is a floor that *takes* a wall.
+
+    176 pieces in the collection carried `shape|floor` and `shape|wall`
+    together, which is not a thing a piece can be. The tag for a floor
+    a wall stands on is `shape|floor|wall`.
+
+    `shape|wall` reaches them from three unrelated places, which is why
+    the rule is applied at the end rather than at any one of them:
+
+    - the filename, in `#wall,floor`
+    - a `wall` directory in the path
+    - the size table, where 40 of 163 codes assert a shape. `AS` is a
+      length a wall or a floor edge can have, so on a floor it means
+      the floor takes a wall, not that the floor is one.
+    """
+    cases = {
+        # Already correct; only the spurious bare tag goes.
+        "tiles/aztlan/s2w/wall/floor/aztlan#floor+s2w+wall.2x2.openforge.stl": {
+            ("shape", "floor"),
+            ("shape", "floor", "s2w"),
+            ("shape", "floor", "wall"),
+        },
+        # The one-piece wall-on-tile tile, from the filename.
+        "tiles/dungeon_stone/wall_on_tile/wall/floor%block/"
+        "dungeon_stone%block#wall,floor.1x1.openforge.stl": {
+            ("shape", "floor"),
+            ("shape", "floor", "wall"),
+        },
+        # An ordinary floor whose *size code* claimed it was a wall.
+        "tiles/aztlan/floors/floor/openforge/aztlan#floor.AS.openforge.stl": {
+            ("shape", "floor"),
+            ("shape", "floor", "wall"),
+        },
+    }
+    for full_name, expected_shapes in cases.items():
+        tags = set()
+        parse_file_tags(
+            {
+                "file": full_name.split("/")[-1],
+                "full_name": full_name,
+                "path": full_name.split("/")[:-1],
+            },
+            tags,
+            None,
+        )
+        assert {tag for tag in tags if tag[0] == "shape"} == expected_shapes, full_name
+
+
+def test_a_wall_that_is_not_a_floor_keeps_its_shape():
+    """The rule only fires when both are present.
+
+    A plain wall must come out of this untouched, or the fix for the
+    floors would empty the wall guide.
+    """
+    full_name = "tiles/aztlan/separate_wall/primary_walls/aztlan#wall.A.openforge.stl"
+    tags = set()
+    parse_file_tags(
+        {
+            "file": full_name.split("/")[-1],
+            "full_name": full_name,
+            "path": full_name.split("/")[:-1],
+        },
+        tags,
+        None,
+    )
+
+    assert ("shape", "wall") in tags
+    assert ("shape", "floor") not in tags
+    assert ("shape", "floor", "wall") not in tags

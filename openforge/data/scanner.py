@@ -456,6 +456,19 @@ def filter_shape(tags):
     if ("shape", "base") in tags:
         _copy_base_shapes(tags)
     _check_floor_shapes(tags)
+    # Nothing is both a floor and a wall. A piece carrying both is a
+    # floor that takes a wall — an s2w tile, a wall-on-tile tile — and
+    # the tag for that is `shape|floor|wall`.
+    #
+    # Last, deliberately, because `shape|wall` arrives from three
+    # unrelated places and no earlier point sees them all: the filename
+    # (`#wall,floor`), a `wall` directory in the path, and the size
+    # table, where 40 of the 163 codes assert a shape. `AS` is a length
+    # that a wall or a floor edge can have, so on a floor it means the
+    # floor takes a wall rather than that the floor is one.
+    if ("shape", "floor") in tags and ("shape", "wall") in tags:
+        tags.discard(("shape", "wall"))
+        tags.add(("shape", "floor", "wall"))
 
 
 def parse_file_tags(file_info, tags, metadata):
