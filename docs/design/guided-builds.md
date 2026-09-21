@@ -281,7 +281,6 @@ roles:
         - 'texture|dungeon_stone|ruined'
         - 'texture|rough_stone|ruined'
         - 'texture|cut-stone|ruined'
-        - 'texture|towne|ruined_stucco'
     prefer: ['connection|openforge', 'texture|dungeon_stone']
   wall:
     title: Wall

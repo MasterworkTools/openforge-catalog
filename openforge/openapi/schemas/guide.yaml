@@ -281,6 +281,44 @@ $defs:
         type: string
         minLength: 1
         description: Role name this refinement applies to, or "*" for all.
+      except_roles:
+        type: array
+        minItems: 1
+        description: >
+          Roles this refinement does not apply to, despite `role: "*"`.
+
+          Some parts are not in the vocabulary the question is asked in.
+          A floor base is structurally plain — 324 bases carry
+          `shape|base|square` and every one of them is `texture|plain`,
+          while the textured bases are all wall bases — so asking one
+          for a texture matches nothing whatever texture is chosen. It
+          is not an exception to be substituted, it is a part the
+          question does not apply to.
+        items:
+          type: string
+          minLength: 1
+      substitute:
+        type: object
+        minProperties: 1
+        description: >
+          Per-role exceptions, keyed by the chosen tag and then by role
+          name: what that role should be asked for instead.
+
+          The answer to one question is not always the same tag for
+          every part. The catalog has 441 towne walls and no towne base
+          at all, because a towne building stands on a wood base — so
+          choosing towne has to mean wood for the base roles or it
+          empties them. A role with no entry is asked for the chosen
+          tag, as usual.
+
+          Only meaningful for a namespace refinement; a toggle already
+          names its own tags.
+        additionalProperties:
+          type: object
+          minProperties: 1
+          additionalProperties:
+            type: string
+            pattern: "^[^|]+(\\|[^|]+)*$"
       prompt:
         type: string
         minLength: 1

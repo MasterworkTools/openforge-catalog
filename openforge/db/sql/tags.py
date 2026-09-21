@@ -210,6 +210,8 @@ def tag_search_tags(
     models: bool = True,
     blueprints: bool = False,
     search: str | None = None,
+    deny_children: list[dict] | None = None,
+    allow: list[dict] | None = None,
 ) -> list[uuid.UUID]:
     parts = [
         sql.SQL("SELECT *"),
@@ -225,6 +227,8 @@ def tag_search_tags(
             models=models,
             blueprints=blueprints,
             search=search,
+            deny_children=deny_children,
+            allow=allow,
         ),
         sql.SQL("  )"),
         sql.SQL("  ORDER BY bptags.blueprint_id"),
@@ -246,6 +250,8 @@ def tag_search_blueprint_images(
     models: bool = True,
     blueprints: bool = False,
     search: str | None = None,
+    deny_children: list[dict] | None = None,
+    allow: list[dict] | None = None,
 ) -> list[dict]:
     parts = [
         sql.SQL(
@@ -265,6 +271,8 @@ def tag_search_blueprint_images(
             models=models,
             blueprints=blueprints,
             search=search,
+            deny_children=deny_children,
+            allow=allow,
         ),
         sql.SQL("  )"),
         sql.SQL("  ORDER BY bpi.blueprint_id"),
@@ -283,6 +291,8 @@ def tag_search_blueprint_count(
     models: bool = True,
     blueprints: bool = False,
     search: str | None = None,
+    deny_children: list[dict] | None = None,
+    allow: list[dict] | None = None,
 ) -> int:
     parts = [
         sql.SQL("SELECT COUNT(*)"),
@@ -296,6 +306,8 @@ def tag_search_blueprint_count(
             models=models,
             blueprints=blueprints,
             search=search,
+            deny_children=deny_children,
+            allow=allow,
         ),
         sql.SQL("  )"),
     ]
@@ -314,6 +326,8 @@ def tag_search_blueprint_start_count(
     models: bool = True,
     blueprints: bool = False,
     search: str | None = None,
+    deny_children: list[dict] | None = None,
+    allow: list[dict] | None = None,
 ) -> int:
     parts = [
         sql.SQL("SELECT COUNT(*)"),
@@ -327,6 +341,8 @@ def tag_search_blueprint_start_count(
             models=models,
             blueprints=blueprints,
             search=search,
+            deny_children=deny_children,
+            allow=allow,
         ),
         sql.SQL("  )"),
         sql.SQL(
@@ -348,6 +364,8 @@ def tag_search_tag_count(
     models: bool = True,
     blueprints: bool = False,
     search: str | None = None,
+    deny_children: list[dict] | None = None,
+    allow: list[dict] | None = None,
 ) -> list[dict]:
     parts = [
         sql.SQL("SELECT COUNT(*) AS tag_count, t.tag"),
@@ -361,6 +379,8 @@ def tag_search_tag_count(
             models=models,
             blueprints=blueprints,
             search=search,
+            deny_children=deny_children,
+            allow=allow,
         ),
         sql.SQL("  )"),
         sql.SQL("  GROUP BY t.tag"),

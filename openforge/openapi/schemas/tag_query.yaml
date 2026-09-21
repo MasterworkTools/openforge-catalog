@@ -22,3 +22,24 @@ properties:
       properties:
         tag:
           type: string
+  deny_children:
+    description: >
+      Refuse every tag strictly beneath these, keeping the tag itself.
+      Applied after accept/require/allow, so anything those asked for
+      survives it.
+    type: array
+    items:
+      type: object
+      properties:
+        tag:
+          type: string
+  allow:
+    description: >
+      Tags permitted but not required. They ask for nothing; they only
+      survive a deny_children sweep.
+    type: array
+    items:
+      type: object
+      properties:
+        tag:
+          type: string

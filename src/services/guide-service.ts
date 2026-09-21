@@ -71,7 +71,8 @@ export interface GuidePart {
   role: string;
   title: string;
   under: string | null;
-  query: Record<string, string[]>;
+  /** The resolved predicate: require, deny, accept, allow, deny_children. */
+  query: Partial<Record<string, string[]>>;
   blueprint: GuideBlueprint | null;
 }
 

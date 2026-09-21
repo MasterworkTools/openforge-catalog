@@ -2,6 +2,21 @@ import React from 'react';
 import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import GuidePage from '../guide-page';
 
+/**
+ * The part-selection modal is the catalog's own, and it drags in the
+ * tag and blueprint providers plus an ESM-only dependency. What this
+ * page is responsible for is opening it with the predicate that
+ * narrowed the part down, so that is what is asserted.
+ */
+const modalProps: Record<string, unknown>[] = [];
+jest.mock('../../part-selection-modal', () => ({
+  __esModule: true,
+  default: (props: Record<string, unknown>) => {
+    modalProps.push(props);
+    return props.isOpen ? <div data-testid="part-modal" /> : null;
+  },
+}));
+
 const RESOLVED = {
   steps: [
     {
@@ -31,7 +46,13 @@ const RESOLVED_WITH_PARTS = {
       role: 'wall',
       title: 'Wall',
       under: null,
-      query: { require: ['shape|wall'] },
+      query: {
+        require: ['shape|wall'],
+        deny: [],
+        accept: [],
+        deny_children: ['component|wall'],
+        allow: ['shape|square'],
+      },
       blueprint: {
         id: 'bp-1',
         blueprint_name: 'a dungeon stone wall',
@@ -143,6 +164,7 @@ function visit(search: string) {
 
 describe('GuidePage', () => {
   beforeEach(() => {
+    modalProps.length = 0;
     jest.clearAllMocks();
     jest.spyOn(console, 'error').mockImplementation(() => {});
   });
@@ -548,5 +570,43 @@ describe('moving between guides', () => {
     expect(
       urls.filter((url) => url.includes('/floor/resolve') && url.includes('method='))
     ).toEqual([]);
+  });
+});
+
+describe('inspecting a part', () => {
+  it('opens the tag search seeded with what narrowed that part down', async () => {
+    visit('?guide=wall&method=separate-wall');
+    mockFetch((url) =>
+      url.includes('/resolve') ? RESOLVED_WITH_PARTS : GUIDE_DOCUMENT
+    );
+
+    render(<GuidePage />);
+    fireEvent.click(await screen.findByLabelText(/a dungeon stone wall, seen/));
+
+    expect(await screen.findByTestId('part-modal')).toBeInTheDocument();
+    const opened = modalProps[modalProps.length - 1];
+    expect(opened.partName).toBe('Wall (wall)');
+    // Every term, including the two the tag tree cannot edit: the
+    // modal has to open on the set the guide resolved against, not a
+    // wider one.
+    expect(opened.configValues).toEqual({
+      require: [{ tag: 'shape|wall' }],
+      deny: [],
+      accept: [],
+      deny_children: [{ tag: 'component|wall' }],
+      allow: [{ tag: 'shape|square' }],
+    });
+  });
+
+  it('is closed until a part is clicked', async () => {
+    visit('?guide=wall&method=separate-wall');
+    mockFetch((url) =>
+      url.includes('/resolve') ? RESOLVED_WITH_PARTS : GUIDE_DOCUMENT
+    );
+
+    render(<GuidePage />);
+    await screen.findByText('a dungeon stone wall');
+
+    expect(screen.queryByTestId('part-modal')).not.toBeInTheDocument();
   });
 });

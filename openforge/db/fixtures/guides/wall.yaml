@@ -32,7 +32,7 @@ steps:
           # build|s2w. The wall takes an ordinary wall base and the
           # floor takes an ordinary base.
           floor:
-          wall: {require: ['build|separate wall']}
+          wall:
           wall-base: {require: ['shape|base|wall']}
           # The s2w floor base carries the wall's own base as well:
           # shape|base, s2w, wall and square, all four.
@@ -51,7 +51,7 @@ steps:
           # method where a single base serves both. No base carries
           # build|wall on tile either: it is an ordinary base.
           floor:
-          wall: {require: ['build|wall on tile']}
+          wall:
           floor-base: {require: ['shape|base|square'], deny: ['build|s2w']}
 
       - key: separate-wall
@@ -68,7 +68,7 @@ steps:
           # Two bases again: the floor and the wall are separate
           # openforge pieces, so each stands on its own.
           floor:
-          wall: {require: ['build|separate wall']}
+          wall:
           wall-base: {require: ['build|separate wall', 'shape|base|wall']}
           floor-base: {require: ['shape|base|square']}
 
@@ -184,6 +184,11 @@ roles:
       # refinement is how someone asks for one. `deny` is an exact match,
       # so each tag is listed — every component|collapsed|* piece carries
       # the bare parent, so that one entry covers the family.
+      #
+      # texture|towne|ruined_stucco is deliberately *not* here. It is a
+      # finish, sitting beside stucco, stone and wood, rather than a
+      # piece that has been ruined — 21 pieces carry it and they are
+      # ordinary walls with weathered render on them.
       deny: &intact
         - 'shape|base'
         - 'component|collapsed'
@@ -192,7 +197,6 @@ roles:
         - 'texture|dungeon_stone|ruined'
         - 'texture|rough_stone|ruined'
         - 'texture|cut-stone|ruined'
-        - 'texture|towne|ruined_stucco'
     # 2x2 is the default tile, and by a distance the most common: 450
     # floors carry it against 88 at 1x1. Size is listed last because it
     # is dropped first — a dungeon stone floor of another size is a
@@ -211,8 +215,22 @@ roles:
       # shape of rule for the connection system — openforge and nothing
       # else, so the side locks and pegs variants stay out until a
       # refinement asks for them.
-      require: ['shape|wall', 'component|wall', 'connection|openforge']
-      deny_children: ['component|wall', 'connection']
+      # shape too: a 60 degree angled wall carries shape|angled beside
+      # shape|wall, and every other shape|? is something this is not.
+      # shape|wall itself is required, so the sweep spares it.
+      # build|separate wall on every method, including wall on tile:
+      # the wall a tile takes is a separate wall, and build|wall on
+      # tile is not a tag this builder uses.
+      require:
+        - 'shape|wall'
+        - 'component|wall'
+        - 'connection|openforge'
+        - 'build|separate wall'
+      deny_children: ['component|wall', 'connection', 'shape']
+      # shape|square is the straight one, and the sweep would take it
+      # along with shape|angled. Permitted, not required: plenty of
+      # plain walls carry no shape|? at all.
+      allow: ['shape|square']
       deny: *intact
     prefer: ['texture|dungeon_stone', 'size|width|2']
   floor-base:
@@ -255,6 +273,30 @@ refinements:
     role: '*'
     prompt: Texture
     from_namespace: texture
+    # The base that goes under a texture is not always a base of that
+    # name. A towne building stands on a wood base: the catalog has 441
+    # towne walls and no towne base at all, so without this, asking for
+    # towne empties both base roles.
+    #
+    # Five more wall textures still have no base of their own name and
+    # no mapping: cavern (8 walls), mine (7), dwarven_halls (2),
+    # large_brick (2) and foundations (1, where the base texture is
+    # `foundation`, singular). Choosing one of those empties the wall
+    # base, which is the honest answer until someone says what it
+    # stands on — guessing would quietly recommend the wrong base
+    # instead of visibly recommending none.
+    # The floor base is not in this vocabulary at all: every base that
+    # carries shape|base|square is texture|plain, all 324 of them, and
+    # the textured bases are all wall bases. Asking it for a texture
+    # matches nothing whichever texture is chosen.
+    except_roles: ['floor-base']
+    substitute:
+      'texture|towne':
+        wall-base: 'texture|wood'
+      'texture|stone_brick':
+        wall-base: 'texture|foundation'
+      'texture|mortar_and_stone':
+        wall-base: 'texture|foundation'
 
   - key: side-locks
     role: wall

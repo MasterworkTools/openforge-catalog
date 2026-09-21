@@ -410,18 +410,31 @@ def _compose(
     for option in chosen:
         predicates += _option_predicates(option, role_name)
     predicates += [
-        _refinement_predicate(refinement, selections[refinement["key"]])
+        _refinement_predicate(refinement, selections[refinement["key"]], role_name)
         for refinement in refinements
-        if refinement["key"] in selections and refinement["role"] in ("*", role_name)
+        if refinement["key"] in selections
+        and refinement["role"] in ("*", role_name)
+        and role_name not in refinement.get("except_roles", [])
     ]
     return _union(predicates)
 
 
-def _refinement_predicate(refinement: dict, value: str) -> dict:
+def _refinement_predicate(refinement: dict, value: str, role_name: str) -> dict:
+    """What a refinement asks of one role, given the chosen value.
+
+    A namespace refinement normally asks every role it applies to for
+    the tag the person picked. `substitute` is the exception list, and
+    it exists because the answer is not always the same tag for every
+    part: the catalog has 441 towne walls and no towne base at all,
+    because a towne building stands on a wood base. Substituting is
+    what makes "towne" mean the right thing for each role rather than
+    emptying the ones that have no piece of that name.
+    """
     if "on_tags" in refinement:
         key = "on_tags" if value == "on" else "off_tags"
         return refinement.get(key, {})
-    return {"require": [value]}
+    substitute = refinement.get("substitute", {}).get(value, {})
+    return {"require": [substitute.get(role_name, value)]}
 
 
 def _union(predicates: list[dict]) -> dict:

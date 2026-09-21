@@ -1592,3 +1592,63 @@ def test_incremental_processing_with_metadata_after_fix():
     assert ("another", "tag") in result["tags"]
     assert "config" in result
     assert result["config"] == {"key": "value"}
+
+
+def test_a_plural_build_directory_is_the_same_build():
+    """`separate_walls` and `separate_wall` are one system, spelled twice.
+
+    These are hand-made directory names and both spellings reached the
+    collection: 3,312 files under the singular, 227 under the plural.
+    Matching only the singular left all 248 aztlan walls with no `build`
+    tag at all, which kept them out of the wall guide entirely — it asks
+    for `build|separate wall` because every method now takes the same
+    wall part.
+
+    The plural directory is being renamed. This is the backstop, and it
+    is worth having because the failure was silent: no file was
+    rejected, no warning was printed, the tags were simply thinner than
+    they should have been.
+    """
+    plural = (
+        "tiles/aztlan/separate_walls/primary_walls/snakehole/"
+        "openlock+unsupported/side/aztlan#snakehole.BA.openlock+unsupported,side.stl"
+    )
+    singular = (
+        "tiles/building_facades/stone_brick/separate_wall/chimney/"
+        "stone_brick#wall+upper,chimney.D.openlock,side.stl"
+    )
+
+    for full_name in (plural, singular):
+        tags = set()
+        parse_file_tags(
+            {
+                "file": full_name.split("/")[-1],
+                "full_name": full_name,
+                "path": full_name.split("/")[:-1],
+            },
+            tags,
+            None,
+        )
+        assert ("build", "separate wall") in tags, full_name
+
+
+def test_a_directory_that_merely_starts_the_same_is_not_a_build():
+    """The plural is one letter, not a prefix match.
+
+    `s2w` is a real build and `s2world` would not be; matching loosely
+    would tag files by accident, and a wrong build tag is worse than a
+    missing one because nothing looks broken.
+    """
+    full_name = "tiles/s2world/decor/plain#floor.1x1.openforge.stl"
+    tags = set()
+    parse_file_tags(
+        {
+            "file": full_name.split("/")[-1],
+            "full_name": full_name,
+            "path": full_name.split("/")[:-1],
+        },
+        tags,
+        None,
+    )
+
+    assert not [tag for tag in tags if tag[0] == "build"]

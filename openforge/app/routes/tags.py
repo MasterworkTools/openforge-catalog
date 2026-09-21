@@ -74,10 +74,17 @@ def query_tags():
             accept = []
             require = []
             deny = []
+            deny_children = []
+            allow = []
             if len(request.data) > 0:
                 accept = request.json.get("accept", [])
                 require = request.json.get("require", [])
                 deny = request.json.get("deny", [])
+                # The pair that says "this tag and nothing else beneath
+                # it". Every search below takes them, so the facets and
+                # the counts describe the same set as the results.
+                deny_children = request.json.get("deny_children", [])
+                allow = request.json.get("allow", [])
             next = request.args.get("next")
             previous = request.args.get("previous")
             limit = request.args.get("limit", 20)
@@ -97,6 +104,8 @@ def query_tags():
                 models=models,
                 blueprints=blueprints,
                 search=search,
+                deny_children=deny_children,
+                allow=allow,
             )
             tag_data = tag_sql.tag_search_tags(
                 cursor,
@@ -109,6 +118,8 @@ def query_tags():
                 models=models,
                 blueprints=blueprints,
                 search=search,
+                deny_children=deny_children,
+                allow=allow,
             )
             image_data = tag_sql.tag_search_blueprint_images(
                 cursor,
@@ -121,6 +132,8 @@ def query_tags():
                 models=models,
                 blueprints=blueprints,
                 search=search,
+                deny_children=deny_children,
+                allow=allow,
             )
             count = tag_sql.tag_search_blueprint_count(
                 cursor,
@@ -130,6 +143,8 @@ def query_tags():
                 models=models,
                 blueprints=blueprints,
                 search=search,
+                deny_children=deny_children,
+                allow=allow,
             )
             start_count = 0
             if len(bp_data) > 0:
@@ -151,6 +166,8 @@ def query_tags():
                 models=models,
                 blueprints=blueprints,
                 search=search,
+                deny_children=deny_children,
+                allow=allow,
             )
             tag_count = {
                 array_to_tag(tag["tag"]): tag["tag_count"] for tag in tag_count

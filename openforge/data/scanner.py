@@ -198,7 +198,13 @@ def parse_path(file, tags):
         ("thick_wall", "thick wall"),
     ]
     for build in builds:
-        if build[0] in path:
+        # Singular or plural. These are hand-made directory names and
+        # both spellings reached the collection: 3,312 files under
+        # `separate_wall`, 227 under `separate_walls`. The plural is
+        # being renamed, and this stays as the backstop — matching only
+        # the singular left all 227 with no build tag at all, and
+        # nothing said so.
+        if build[0] in path or f"{build[0]}s" in path:
             tags.add(("build", build[1]))
     _component_filter(builds, tags)
 

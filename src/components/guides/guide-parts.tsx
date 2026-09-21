@@ -1,8 +1,10 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { GuidePart } from '@/services/guide-service';
+import { ConfigTags } from '@/types';
 import { downloadFiles, downloadUrl } from '@/utils/blueprint-utils';
+import PartSelectionModal from '../part-selection-modal';
 import { GuideSprite } from './guide-sprite';
 
 /**
@@ -20,10 +22,11 @@ import { GuideSprite } from './guide-sprite';
  * for.
  */
 export function GuideParts({ parts }: { parts: GuidePart[] }) {
-  if (parts.length === 0) return null;
+  const [inspecting, setInspecting] = useState<GuidePart | null>(null);
   const urls = parts.flatMap((part) =>
     part.blueprint ? [downloadUrl(part.blueprint.id)] : []
   );
+  if (parts.length === 0) return null;
 
   return (
     <section className="guide-parts mb-8">
@@ -32,7 +35,7 @@ export function GuideParts({ parts }: { parts: GuidePart[] }) {
         {stacks(parts).map((stack) => (
           <div key={stack[0].role} className="flex flex-col gap-1">
             {stack.map((part) => (
-              <Part key={part.role} part={part} />
+              <Part key={part.role} part={part} onInspect={setInspecting} />
             ))}
           </div>
         ))}
@@ -46,8 +49,35 @@ export function GuideParts({ parts }: { parts: GuidePart[] }) {
           Download {urls.length === 1 ? 'the file' : `all ${urls.length} files`}
         </button>
       )}
+      <PartSelectionModal
+        isOpen={inspecting !== null}
+        onClose={() => setInspecting(null)}
+        partName={inspecting ? `${inspecting.title} (${inspecting.role})` : ''}
+        configValues={inspecting ? asConfigTags(inspecting.query) : null}
+      />
     </section>
   );
+}
+
+/**
+ * A resolved role's predicate, in the shape the part-selection modal
+ * seeds its tag search from.
+ *
+ * All five terms, so the modal opens on exactly the set the guide
+ * resolved against rather than a wider one. The tag tree can only add
+ * and remove exact tags, so the sweep stays as the guide left it while
+ * you explore around it — which is the right way round for finding a
+ * restriction that is missing.
+ */
+function asConfigTags(query: GuidePart['query']): ConfigTags {
+  const tags = (names?: string[]) => (names ?? []).map((tag) => ({ tag }));
+  return {
+    require: tags(query.require),
+    deny: tags(query.deny),
+    accept: tags(query.accept),
+    deny_children: tags(query.deny_children),
+    allow: tags(query.allow),
+  };
 }
 
 /**
@@ -71,10 +101,27 @@ function stacks(parts: GuidePart[]): GuidePart[][] {
   return [...piles.values()];
 }
 
-function Part({ part }: { part: GuidePart }) {
+function Part({
+  part,
+  onInspect,
+}: {
+  part: GuidePart;
+  onInspect: (part: GuidePart) => void;
+}) {
   return (
     <div className="border border-gray-300 rounded p-3 w-64">
-      <GuideSprite blueprint={part.blueprint} />
+      {/* The picture is the handle: clicking it opens the catalog's own
+          tag search, seeded with what narrowed this role down. While
+          the guides are being written, "why did it pick that?" is the
+          question being asked over and over. */}
+      <button
+        type="button"
+        onClick={() => onInspect(part)}
+        title="Open the tag search for this part"
+        className="block cursor-zoom-in"
+      >
+        <GuideSprite blueprint={part.blueprint} />
+      </button>
       <div className="mt-2 font-semibold">{part.title}</div>
       {part.blueprint ? (
         <>

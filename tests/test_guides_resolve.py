@@ -813,3 +813,122 @@ def test_a_key_no_step_has_is_still_a_bad_request():
 
     with pytest.raises(GuideSelectionError, match="nonesuch"):
         resolve(GATED_GUIDE, {"method": "deep", "size": "nonesuch"}, finder)
+
+
+SUBSTITUTE_GUIDE = {
+    "key": "substituting",
+    "title": "A guide where one answer means different tags per part",
+    "steps": [
+        {
+            "key": "method",
+            "prompt": "How?",
+            "options": [
+                {
+                    "key": "only",
+                    "title": "Only",
+                    "roles": {"wall": None, "wall-base": None, "floor-base": None},
+                }
+            ],
+        }
+    ],
+    "roles": {
+        "wall": {"title": "Wall", "query": {"require": ["shape|wall"]}},
+        "wall-base": {"title": "Wall base", "query": {"require": ["shape|base|wall"]}},
+        "floor-base": {
+            "title": "Floor base",
+            "query": {"require": ["shape|base|square"]},
+        },
+    },
+    "refinements": [
+        {
+            "key": "texture",
+            "role": "*",
+            "prompt": "Texture",
+            "from_namespace": "texture",
+            # The floor base is structurally plain, so the question does
+            # not apply to it; the wall base takes wood for towne,
+            # because no towne base exists.
+            "except_roles": ["floor-base"],
+            "substitute": {"texture|towne": {"wall-base": "texture|wood"}},
+        }
+    ],
+}
+
+SUBSTITUTE_CATALOG = [
+    {
+        "id": "w",
+        "blueprint_name": "a towne wall",
+        "tags": ["shape|wall", "texture|towne"],
+    },
+    {
+        "id": "wb",
+        "blueprint_name": "b wood wall base",
+        "tags": ["shape|base|wall", "texture|wood"],
+    },
+    {
+        "id": "wbt",
+        "blueprint_name": "c towne wall base",
+        "tags": ["shape|base|wall", "texture|towne"],
+    },
+    {
+        "id": "fb",
+        "blueprint_name": "d plain square base",
+        "tags": ["shape|base|square", "texture|plain"],
+    },
+]
+
+
+def test_a_refinement_can_mean_a_different_tag_for_a_different_part():
+    """Choosing towne has to mean wood for the base that carries it.
+
+    The catalog has 441 towne walls and no towne base at all, because a
+    towne building stands on a wood base. Without the substitution the
+    base role asks for a piece that does not exist.
+    """
+    resolved = resolve(
+        SUBSTITUTE_GUIDE,
+        {"method": "only", "texture": "texture|towne"},
+        matching_finder(SUBSTITUTE_CATALOG),
+    )
+    parts = {p["role"]: p for p in resolved["parts"]}
+
+    assert parts["wall"]["blueprint"]["blueprint_name"] == "a towne wall"
+    # The towne wall base sorts later but would match; the wood one is
+    # what the substitution asked for.
+    assert parts["wall-base"]["blueprint"]["blueprint_name"] == "b wood wall base"
+    assert "texture|wood" in parts["wall-base"]["query"]["require"]
+
+
+def test_a_role_can_be_outside_the_question_a_refinement_asks():
+    """A floor base is plain whatever the walls are made of.
+
+    Every base carrying `shape|base|square` is `texture|plain`, so this
+    is not an exception to substitute — it is a part the question does
+    not apply to, and asking it would empty the role.
+    """
+    resolved = resolve(
+        SUBSTITUTE_GUIDE,
+        {"method": "only", "texture": "texture|towne"},
+        matching_finder(SUBSTITUTE_CATALOG),
+    )
+    parts = {p["role"]: p for p in resolved["parts"]}
+
+    assert parts["floor-base"]["blueprint"]["blueprint_name"] == "d plain square base"
+    assert not [
+        tag
+        for tag in parts["floor-base"]["query"].get("require", [])
+        if tag.startswith("texture|")
+    ]
+
+
+def test_a_role_with_no_substitution_is_asked_for_what_was_chosen():
+    """The exception list is an exception, not the rule."""
+    resolved = resolve(
+        SUBSTITUTE_GUIDE,
+        {"method": "only", "texture": "texture|wood"},
+        matching_finder(SUBSTITUTE_CATALOG),
+    )
+    parts = {p["role"]: p for p in resolved["parts"]}
+
+    assert "texture|wood" in parts["wall-base"]["query"]["require"]
+    assert "texture|wood" in parts["wall"]["query"]["require"]
