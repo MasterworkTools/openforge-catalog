@@ -625,8 +625,13 @@ def _query_tags_deny_children(parent: str, exempt: list[str]) -> sql.Composed:
 
     `exempt` is the tags that survive anyway, and it is why this cannot
     simply be a `deny`: the caller has already said which children it
-    wants (`shape|floor|wall`), and the sweep has to run after that
-    rather than contradict it.
+    wants (`shape|floor|wall`), and those have to survive the sweep.
+
+    Not by ordering. Every term here is an AND in one WHERE clause, so
+    moving this block above the `deny` loop or above the includes
+    changes the generated SQL and not one row. What does the work is
+    `exempt` itself: the sweep is not run *after* the includes, it is
+    *told about* them.
     """
     depth = len(parent.split("|"))
     tags_name = f"tags_child_{depth}_neg"

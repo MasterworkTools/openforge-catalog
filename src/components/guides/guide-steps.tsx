@@ -9,13 +9,12 @@ import { GuideRefinement, GuideStep } from '@/services/guide-service';
  * Answering either one re-resolves the parts.
  */
 
-export function GuideSteps({
-  steps,
-  onSelect,
-}: {
+interface GuideStepsProps {
   steps: GuideStep[];
   onSelect: (key: string, value: string | null) => void;
-}) {
+}
+
+export function GuideSteps({ steps, onSelect }: GuideStepsProps) {
   return (
     <div className="guide-steps">
       {steps.map((step) => (
@@ -61,13 +60,15 @@ export function GuideSteps({
   );
 }
 
+interface GuideRefinementsProps {
+  refinements: GuideRefinement[];
+  onSelect: (key: string, value: string | null) => void;
+}
+
 export function GuideRefinements({
   refinements,
   onSelect,
-}: {
-  refinements: GuideRefinement[];
-  onSelect: (key: string, value: string | null) => void;
-}) {
+}: GuideRefinementsProps) {
   if (refinements.length === 0) return null;
   return (
     <section className="guide-refinements mb-8">

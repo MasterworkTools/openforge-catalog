@@ -21,7 +21,11 @@ import { GuideSprite } from './guide-sprite';
  * while the guides are being written that is most of what this page is
  * for.
  */
-export function GuideParts({ parts }: { parts: GuidePart[] }) {
+interface GuidePartsProps {
+  parts: GuidePart[];
+}
+
+export function GuideParts({ parts }: GuidePartsProps) {
   const [inspecting, setInspecting] = useState<GuidePart | null>(null);
   const urls = parts.flatMap((part) =>
     part.blueprint ? [downloadUrl(part.blueprint.id)] : []

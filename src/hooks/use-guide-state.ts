@@ -50,7 +50,12 @@ export function useGuideState(guideKey: string | null | undefined) {
   );
 
   useEffect(() => {
-    if (!guideKey || selections === null) return;
+    // `guide` lags `guideKey` by a fetch, so for one tick after the key
+    // changes the document in hand is still the previous guide's. Its
+    // vocabulary is what filters the selections, so resolving here
+    // would ask the new guide about the old one's answers — the exact
+    // 400 this hook exists to prevent, arriving from the other side.
+    if (!guideKey || selections === null || guide?.key !== guideKey) return;
     let current = true;
     resolveGuide(guideKey, selections)
       .then((result) => {
@@ -66,7 +71,7 @@ export function useGuideState(guideKey: string | null | undefined) {
     return () => {
       current = false;
     };
-  }, [guideKey, selections]);
+  }, [guideKey, selections, guide?.key]);
 
   const select = useCallback(
     (key: string, value: string | null) => {
@@ -146,9 +151,28 @@ export function useGuideKey(): string | null | undefined {
   );
 }
 
+/**
+ * Our own event, not `popstate`.
+ *
+ * `replaceState` fires nothing, so answering a question has to
+ * announce itself or `useSyncExternalStore` never re-reads the URL.
+ * Announcing it as `popstate` would be a lie with a consequence: the
+ * part-selection modal mounts BlueprintContainer, which listens for
+ * `popstate` and calls `location.reload()` when it fires with a
+ * blueprint selected and no blueprint_id in the URL. Every click on a
+ * guide option with that modal open would reload the page.
+ *
+ * Real back/forward still has to be heard, so both are subscribed.
+ */
+const URL_CHANGED = 'guide-url-changed';
+
 function subscribeToUrl(onChange: () => void) {
   window.addEventListener('popstate', onChange);
-  return () => window.removeEventListener('popstate', onChange);
+  window.addEventListener(URL_CHANGED, onChange);
+  return () => {
+    window.removeEventListener('popstate', onChange);
+    window.removeEventListener(URL_CHANGED, onChange);
+  };
 }
 
 /**
@@ -186,5 +210,5 @@ function writeUrl(guideKey: string | null, selections: Selections) {
     '',
     `${window.location.pathname}?${params.toString()}`
   );
-  window.dispatchEvent(new PopStateEvent('popstate'));
+  window.dispatchEvent(new Event(URL_CHANGED));
 }

@@ -437,3 +437,30 @@ def test_allow_spares_a_child_without_requiring_it(test_db):
             # The bare one has nothing to sweep; the square one is
             # spared; the wall one is not.
             assert [b["id"] for b in found] == [bare["id"], square["id"]]
+
+
+def test_deny_children_ignores_an_entry_with_no_tag(test_db):
+    """A malformed term is skipped, not a KeyError out of a route.
+
+    Nothing upstream can produce one — `to_tag_query` always writes
+    {"tag": ...} — so this pins which of the two the guard chose,
+    since the guard is the only thing that decides.
+    """
+    with test_db.connection() as conn:
+        with conn.cursor(row_factory=dict_row) as curs:
+            plain = _tagged(curs, "a plain wall", ["shape|wall", "component|wall"])
+            _tagged(
+                curs,
+                "b slit wall",
+                ["shape|wall", "component|wall", "component|wall|arrow_slit"],
+            )
+
+            found = tag_sql.tag_search_blueprints(
+                curs,
+                accept=[],
+                require=[{"tag": "shape|wall"}],
+                deny=[],
+                deny_children=[{}, {"tag": "component|wall"}],
+            )
+
+            assert [b["id"] for b in found] == [plain["id"]]

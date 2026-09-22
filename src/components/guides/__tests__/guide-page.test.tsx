@@ -334,6 +334,50 @@ describe('GuidePage', () => {
       expect(screen.getAllByText('size|width|2')).toHaveLength(2);
     });
 
+    it('answers a question without faking browser navigation', async () => {
+      // The page has to announce its own URL writes, because
+      // replaceState fires nothing. Announcing them as `popstate` is
+      // what the part-selection modal listens for: BlueprintContainer
+      // reloads the page on popstate when a blueprint is selected and
+      // the URL has no blueprint_id, so every answer clicked with that
+      // modal open would reload the page out from under it.
+      visit('?guide=wall');
+      mockFetch((url) => (url.includes('/resolve') ? RESOLVED : GUIDE_DOCUMENT));
+      const popstates: Event[] = [];
+      const record = (e: Event) => popstates.push(e);
+      window.addEventListener('popstate', record);
+
+      try {
+        render(<GuidePage />);
+        fireEvent.click(await screen.findByText('Separate wall'));
+        await waitFor(() =>
+          expect(window.location.search).toContain('method=separate-wall')
+        );
+
+        expect(popstates).toEqual([]);
+      } finally {
+        window.removeEventListener('popstate', record);
+      }
+    });
+
+    it('shows which option is the chosen one', async () => {
+      // Raised in both review rounds: forcing `aria-pressed` to false
+      // and dropping the selected styling left the suite green, so
+      // nothing held the page to showing an answer as answered.
+      visit('?guide=wall&method=separate-wall');
+      mockFetch((url) =>
+        url.includes('/resolve') ? RESOLVED_WITH_PARTS : GUIDE_DOCUMENT
+      );
+
+      render(<GuidePage />);
+
+      const chosen = await screen.findByRole('button', { name: /Separate wall/ });
+      expect(chosen).toHaveAttribute('aria-pressed', 'true');
+      expect(
+        screen.getByRole('button', { name: /Modular \(s2w\)/ })
+      ).toHaveAttribute('aria-pressed', 'false');
+    });
+
     it('offers one download per part that actually resolved', async () => {
       // Three parts, one of which matched nothing. The regression this
       // pins is the null part contributing

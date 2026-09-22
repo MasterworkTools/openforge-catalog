@@ -22,7 +22,11 @@ const VIEW = 'front';
 // different scales do not.
 const SIZE = 240;
 
-export function GuideSprite({ blueprint }: { blueprint: GuideBlueprint | null }) {
+interface GuideSpriteProps {
+  blueprint: GuideBlueprint | null;
+}
+
+export function GuideSprite({ blueprint }: GuideSpriteProps) {
   const size = SIZE;
   const image = thumbnailOf(blueprint);
   const sprite = image?.sprite_metadata;
