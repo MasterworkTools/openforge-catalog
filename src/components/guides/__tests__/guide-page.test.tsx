@@ -495,10 +495,16 @@ describe('GuidePage', () => {
 
       // The stale answer has to be given its chance to land before
       // this is asserted, or the assertion passes on timing rather
-      // than on the guard.
+      // than on the guard. A macrotask boundary rather than a count
+      // of microtask flushes: a setTimeout callback runs only once
+      // the queue is drained, whatever the promise chain's depth, so
+      // there is no tick count here to be coupled to the
+      // implementation. The two flushes this replaced did in fact
+      // still catch the regression with three extra hops added to
+      // that chain — `act` drains microtasks itself — so this is
+      // removing a dependency, not fixing a demonstrated break.
       await act(async () => {
-        await Promise.resolve();
-        await Promise.resolve();
+        await new Promise((resolve) => setTimeout(resolve, 0));
       });
 
       expect(screen.getByText('a dungeon stone wall')).toBeInTheDocument();

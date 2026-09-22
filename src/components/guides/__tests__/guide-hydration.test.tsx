@@ -53,9 +53,12 @@ describe('hydrating a guide page', () => {
     }) as unknown as typeof fetch;
 
     // The server pass has no URL at all, which is the point: it must
-    // not commit to "there is no guide here".
+    // not commit to anything. Asserting the markup is *empty* rather
+    // than that it lacks the list heading — without the sentinel the
+    // page falls through to the guide branch and renders "Guided
+    // build", singular, which a check for the plural sails past.
     const markup = renderToString(<GuidePage />);
-    expect(markup).not.toContain('Guided builds');
+    expect(markup).toBe('');
 
     const container = document.createElement('div');
     container.innerHTML = markup;
@@ -69,5 +72,29 @@ describe('hydrating a guide page', () => {
     // means the guide list rendered, however briefly.
     expect(asked.filter((url) => url.endsWith('/api/guides'))).toEqual([]);
     expect(container.textContent).not.toContain('Guided builds');
+  });
+
+  it('treats an empty ?guide= as no guide rather than a guide named ""', async () => {
+    // The other half of the same three-way split. `undefined` is "not
+    // known yet", `null` is "no guide", and `""` is a URL someone can
+    // actually produce — it has to land with `null`, not be sent to
+    // the API as a key that can only 404.
+    window.history.replaceState({}, '', '/guides/?guide=');
+    const asked: string[] = [];
+    global.fetch = jest.fn((url: string) => {
+      asked.push(url);
+      return Promise.resolve({
+        ok: true,
+        status: 200,
+        json: () => Promise.resolve({ guides: [] }),
+      });
+    }) as unknown as typeof fetch;
+
+    await act(async () => {
+      hydrateRoot(document.body.appendChild(document.createElement('div')), <GuidePage />);
+    });
+
+    expect(asked).toEqual(['/api/guides']);
+    expect(asked.filter((url) => url.includes('/resolve'))).toEqual([]);
   });
 });

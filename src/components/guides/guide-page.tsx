@@ -17,9 +17,12 @@ export default function GuidePage() {
 
   // Before hydration the URL is unknown, which is not the same as a URL
   // with no guide in it. Rendering the list here would fetch every
-  // guide on every view of a single one.
+  // guide on every view of a single one. So `undefined` is checked
+  // first and on its own — every other falsy key means "no guide".
   if (guideKey === undefined) return null;
-  if (guideKey === null) return <GuideList />;
+  // `?guide=` is a URL with no guide in it, not a guide named "".
+  // Asking the API for that one only produces a 404 to show someone.
+  if (!guideKey) return <GuideList />;
 
   return (
     <main className="p-6 max-w-7xl">
