@@ -262,15 +262,6 @@ def filter_shape(tags):
             return True
         return False
 
-    def _check_floor_alone(tags):
-        count = 0
-        for tag in tags:
-            if tag[0] == "component":
-                count += 1
-        if count == 1:
-            return True
-        return False
-
     def _check_wall_low(tags):
         if ("component", "wall", "low") in tags:
             tags.discard(("component", "wall"))
@@ -435,11 +426,13 @@ def filter_shape(tags):
             tags.discard(("component", "wall"))
         else:
             tags.add(("component", "wall"))
-    if ("shape", "floor") in tags:
-        if not _check_floor_alone(tags):
-            tags.discard(("component", "floor"))
-        else:
-            tags.add(("component", "floor"))
+    # No floor counterpart to the wall block above, and not an
+    # omission: whatever it did to `component|floor`, the move on the
+    # next line erased — it turns `component|floor` into `shape|floor`,
+    # which the guard would have already proved present. Removing it
+    # changes 0 of 8,802 parsed files. The wall block survives because
+    # `component|wall` has no such move, so what it decides sticks:
+    # deleting only its `else` loses `component|wall` on 75 files.
     _move_tag_chain(tags, ["component", "floor"], ["shape", "floor"])
     _move_tag_chain(tags, ["component", "curved"], ["shape", "curved"])
     _move_tag_chain(tags, ["component", "base"], ["shape", "base"])

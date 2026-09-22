@@ -46,6 +46,8 @@ const RESOLVED = {
   refinements: [],
 };
 
+const EMPTY_RESOLVED = { steps: [], parts: [], refinements: [] };
+
 const RESOLVED_WITH_PARTS = {
   ...RESOLVED,
   steps: [{ ...RESOLVED.steps[0], selected: 'separate-wall' }],
@@ -761,14 +763,17 @@ describe('moving between guides', () => {
         : GUIDE_DOCUMENT;
     });
 
-    const { rerender } = render(<GuidePage />);
+    render(<GuidePage />);
     await screen.findByText('a dungeon stone wall');
 
     // The back/forward case: the component stays mounted and the URL
-    // changes underneath it.
-    window.history.replaceState({}, '', '/guides/?guide=floor&style=flagstone');
-    window.dispatchEvent(new PopStateEvent('popstate'));
-    rerender(<GuidePage />);
+    // changes underneath it. No `rerender` here on purpose — the
+    // popstate subscription is the thing under test, and re-rendering
+    // by hand would drive the update whether or not it is wired.
+    await act(async () => {
+      window.history.replaceState({}, '', '/guides/?guide=floor&style=flagstone');
+      window.dispatchEvent(new PopStateEvent('popstate'));
+    });
 
     await waitFor(() =>
       expect(urls).toContain('/api/guides/floor/resolve?style=flagstone')
@@ -776,6 +781,100 @@ describe('moving between guides', () => {
     expect(
       urls.filter((url) => url.includes('/floor/resolve') && url.includes('method='))
     ).toEqual([]);
+  });
+
+  /**
+   * Both halves of the same hazard, and both need the second guide's
+   * fetch held open: the bad state is the tick between the key
+   * changing and the answer arriving, and in jsdom an unheld fetch
+   * closes that window before anything can be asserted in it.
+   */
+  function movingToFloor() {
+    const pending: ((value: unknown) => void)[] = [];
+    let holdDocument = false;
+    let holdResolve = false;
+    const floorDocument = {
+      guide_key: 'floor',
+      document: {
+        key: 'floor',
+        title: 'How do I make a floor?',
+        steps: [{ key: 'style', prompt: 'Which style?', options: [] }],
+        refinements: [],
+        roles: {},
+      },
+    };
+    global.fetch = jest.fn((url: string) => {
+      const held = () => new Promise((resolve) => pending.push(resolve));
+      let body: unknown;
+      if (url.includes('/floor/resolve')) {
+        body = holdResolve ? held() : Promise.resolve(EMPTY_RESOLVED);
+      } else if (url.includes('/api/guides/floor')) {
+        body = holdDocument ? held() : Promise.resolve(floorDocument);
+      } else if (url.includes('/resolve')) {
+        body = Promise.resolve(RESOLVED_WITH_PARTS);
+      } else {
+        body = Promise.resolve(GUIDE_DOCUMENT);
+      }
+      return Promise.resolve({ ok: true, status: 200, json: () => body });
+    }) as unknown as typeof fetch;
+    return {
+      pending,
+      floorDocument,
+      hold: (what: 'document' | 'resolve') => {
+        holdDocument = what === 'document';
+        holdResolve = what === 'resolve';
+      },
+      go: async () => {
+        await act(async () => {
+          window.history.replaceState({}, '', '/guides/?guide=floor');
+          window.dispatchEvent(new PopStateEvent('popstate'));
+        });
+      },
+    };
+  }
+
+  it("does not show one guide's parts under the next guide's title", async () => {
+    // The resolution arrives a tick after the document. Held unkeyed,
+    // that tick renders the new guide's heading over the old guide's
+    // parts, with a Download button that works and fetches the wrong
+    // pieces.
+    visit('?guide=wall&method=separate-wall');
+    const floor = movingToFloor();
+
+    render(<GuidePage />);
+    await screen.findByText('a dungeon stone wall');
+
+    floor.hold('resolve');
+    await floor.go();
+
+    // The floor document has landed; its answer has not.
+    await screen.findByRole('heading', { name: 'How do I make a floor?' });
+    expect(screen.queryByText('a dungeon stone wall')).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: /^Download/ })
+    ).not.toBeInTheDocument();
+  });
+
+  it("does not ask the next guide with the last guide's document", async () => {
+    // The document lags the key by a fetch, and the document is what
+    // decides which query parameters belong to this guide. Held
+    // unkeyed, the floor guide is asked using the wall's vocabulary.
+    visit('?guide=wall&method=separate-wall');
+    const floor = movingToFloor();
+
+    render(<GuidePage />);
+    await screen.findByText('a dungeon stone wall');
+
+    floor.hold('document');
+    await floor.go();
+
+    // The key is floor and no floor document has arrived, so there is
+    // nothing this page can honestly show yet — and above all not the
+    // wall's question still sitting there answered.
+    expect(
+      screen.queryByRole('heading', { name: 'How do I make a wall?' })
+    ).not.toBeInTheDocument();
+    expect(screen.queryByText('a dungeon stone wall')).not.toBeInTheDocument();
   });
 });
 

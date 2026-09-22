@@ -27,7 +27,6 @@ interface GuideSpriteProps {
 }
 
 export function GuideSprite({ blueprint }: GuideSpriteProps) {
-  const size = SIZE;
   const image = thumbnailOf(blueprint);
   const sprite = image?.sprite_metadata;
 
@@ -35,7 +34,7 @@ export function GuideSprite({ blueprint }: GuideSpriteProps) {
     return (
       <div
         className="flex items-center justify-center rounded bg-gray-100 text-xs text-gray-500"
-        style={{ width: size, height: size }}
+        style={{ width: SIZE, height: SIZE }}
       >
         no picture
       </div>
@@ -49,7 +48,7 @@ export function GuideSprite({ blueprint }: GuideSpriteProps) {
         src={image.image_url}
         alt={blueprint?.blueprint_name ?? ''}
         className="object-contain rounded"
-        style={{ width: size, height: size }}
+        style={{ width: SIZE, height: SIZE }}
       />
     );
   }
@@ -67,13 +66,13 @@ export function GuideSprite({ blueprint }: GuideSpriteProps) {
       aria-label={`${blueprint?.blueprint_name ?? 'part'}, seen from the ${VIEW}`}
       className="rounded"
       style={{
-        width: size,
-        height: size,
+        width: SIZE,
+        height: SIZE,
         backgroundImage: `url(${image.image_url})`,
-        // The sheet is drawn at `size` per tile rather than its native
+        // The sheet is drawn at `SIZE` per tile rather than its native
         // tile_size, so the whole sheet scales with it.
-        backgroundSize: `${sprite.grid_cols * size}px ${sprite.grid_rows * size}px`,
-        backgroundPosition: `-${col * size}px -${row * size}px`,
+        backgroundSize: `${sprite.grid_cols * SIZE}px ${sprite.grid_rows * SIZE}px`,
+        backgroundPosition: `-${col * SIZE}px -${row * SIZE}px`,
         backgroundRepeat: 'no-repeat',
       }}
     />

@@ -67,11 +67,12 @@ export function GuideParts({ parts }: GuidePartsProps) {
  * A resolved role's predicate, in the shape the part-selection modal
  * seeds its tag search from.
  *
- * All five terms, so the modal opens on exactly the set the guide
- * resolved against rather than a wider one. The tag tree can only add
- * and remove exact tags, so the sweep stays as the guide left it while
- * you explore around it — which is the right way round for finding a
- * restriction that is missing.
+ * Every term the search can act on — four of the five — so the modal
+ * opens on exactly the set the guide resolved against rather than a
+ * wider one. `accept` is the exception and the body says why. The tag
+ * tree can only add and remove exact tags, so the sweep stays as the
+ * guide left it while you explore around it — which is the right way
+ * round for finding a restriction that is missing.
  */
 function asConfigTags(query: GuidePart['query']): ConfigTags {
   const tags = (names?: string[]) => (names ?? []).map((tag) => ({ tag }));

@@ -273,20 +273,14 @@ roles:
     title: Floor
     query:
       require: ['shape|floor']
-      deny: &intact                             # a YAML anchor: the wall
-        - 'shape|base'                          # role reuses this list
-        - 'component|collapsed'
-        - 'component|broken'
-        - 'component|collapsing_blocks'
-        - 'texture|dungeon_stone|ruined'
-        - 'texture|rough_stone|ruined'
-        - 'texture|cut-stone|ruined'
+      deny: ['shape|base']                      # a base is not a floor
     prefer: ['connection|openforge', 'texture|dungeon_stone']
   wall:
     title: Wall
     query:
       require: ['shape|wall']
-      deny: *intact
+      deny_children: ['shape']                  # sweeps shape|base too,
+      allow: ['shape|square']                   # so no deny needed here
     prefer: ['connection|openforge', 'texture|dungeon_stone']
   floor-base:                                   # two base roles, because
     title: Base for the floor                   # a method can need two
@@ -314,20 +308,26 @@ refinements:                                    # the "change it afterwards" lis
     off_tags: {deny: ['connection|side|openlock']}
 ```
 
-The seven tags under the `&intact` anchor are what marks a piece as damaged: three
-`component` tags and the four ruined textures. **Devon's decision is that a guide never
-recommends a damaged piece by default** — someone who wants one asks through the
-texture refinement. They have to be listed rather than matched by prefix because
-**`deny` is an exact tag match**: `deny: component|collapsed` catches only the 265
-records carrying that exact tag, which happens to be every `component|collapsed|*`
-piece because they all carry the parent as well. `accept` is the predicate that matches
-a subtree; there is no denying one. The anchor is ordinary YAML and the loader resolves
-it before validation, so a guide can share a list like this without repeating it.
+**This is where the design changed, and the change is worth recording rather than
+editing out.** As written, both roles denied a seven-tag list behind a shared
+`&intact` anchor — three `component` tags and three ruined textures — on the decision
+that *a guide never recommends a damaged piece by default*. Devon reversed that on
+2026-09-21: ruined finishes are included, because it makes the towne filter far
+simpler. `texture|towne|ruined_stucco` turned out not to be damage at all — it is a
+finish sitting beside stucco, stone and wood, and the 21 pieces carrying it are
+ordinary walls with weathered render on them. It was folded into `broken_stucco`,
+which is the same thing under two names.
 
-With those denies every role of every method resolves to an intact piece: the s2w set
-is a `dungeon_stone` floor-and-wall tile, a straight openforge wall and an s2w wall
-base; separate wall gets a plain `dungeon_stone` floor, an arched-door wall and an
-aztlan wall base.
+What survived is the one entry that was never about damage: **a base is not a floor**.
+It stays on the floor role because that role's sweep is scoped to `shape|floor` and so
+never catches `shape|base`. The wall role needs no such line — its sweep is the whole
+`shape` namespace, which takes `shape|base` with everything else.
+
+The exact-match point still holds and is still the reason a list would have to be
+spelled out: **`deny` is an exact tag match**, so `deny: component|collapsed` catches
+only the records carrying that exact tag. `accept` matches a subtree, and
+`deny_children` — added in the same round — is the predicate that refuses one, which
+is what made the seven-tag list unnecessary rather than merely wrong.
 
 Three things in that block are worth reading twice, because each cost a review round.
 
@@ -546,15 +546,17 @@ selection resolve silently against the wrong state.
 Four were open when this document was written. Devon answered three of them on
 2026-09-19, and they are recorded above rather than here:
 
-- **Ranking.** Damaged pieces are denied outright in the role queries rather than
-  ranked down, so a guide never recommends a ruined or collapsed variant by default.
+- **Ranking.** ~~Damaged pieces are denied outright in the role queries rather than
+  ranked down, so a guide never recommends a ruined or collapsed variant by default.~~
+  **Reversed 2026-09-21**: ruined finishes are offered like any other texture, which
+  makes the towne filter much simpler. See the worked example above.
 - **`build|thick wall` (599 records) and `build|s-system` (286).** Not in the wall
   guide. They can have their own guide later.
 - **The 40 s2w composition blueprints.** The guide replaces them; see slice 7.
 
 What is still open:
 
-- Recommendation ranking *within* the intact pieces: `prefer` is a hand-ordered tag
+- Recommendation ranking *within* the matching pieces: `prefer` is a hand-ordered tag
   list and runs out before it totally orders, so the last word goes to
   `blueprint_name` and then `id` — stable, but arbitrary. "Most printed" would be
   better and the catalog does not know it.
