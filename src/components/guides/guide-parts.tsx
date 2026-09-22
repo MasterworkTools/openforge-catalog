@@ -7,6 +7,10 @@ import { downloadFiles, downloadUrl } from '@/utils/blueprint-utils';
 import PartSelectionModal from '../part-selection-modal';
 import { GuideSprite } from './guide-sprite';
 
+interface GuidePartsProps {
+  parts: GuidePart[];
+}
+
 /**
  * The answer: the pieces to print, stacked the way they stack.
  *
@@ -21,10 +25,6 @@ import { GuideSprite } from './guide-sprite';
  * while the guides are being written that is most of what this page is
  * for.
  */
-interface GuidePartsProps {
-  parts: GuidePart[];
-}
-
 export function GuideParts({ parts }: GuidePartsProps) {
   const [inspecting, setInspecting] = useState<GuidePart | null>(null);
   const urls = parts.flatMap((part) =>

@@ -184,9 +184,13 @@ roles:
       #
       # build|s2w is *not* here. Only s2w and wall-on-tile want it, and
       # they ask for it themselves; a separate wall stands on an
-      # ordinary floor, as its own comment below says. Requiring it
-      # role-wide put 954 build-less floors out of reach of the one
-      # method that should have them.
+      # ordinary floor, as its own comment below says.
+      #
+      # 176 pieces carry shape|floor|wall, which is everything this
+      # role can ever return: 88 s2w, 58 wall on tile, 29 with no build
+      # tag. Requiring build|s2w role-wide put those 29 out of reach of
+      # the one method that should have them. With every other term of
+      # this role applied, separate wall's pool goes from 80 to 168.
       require: ['shape|floor', 'shape|floor|wall']
       allow: ['shape|floor|s2w']
       deny_children: ['shape|floor']

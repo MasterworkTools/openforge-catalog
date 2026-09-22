@@ -428,9 +428,11 @@ SELECT DISTINCT bp.id
             deny_parts.append(_query_tags_deny([d]))
             deny_parts.append(sql.SQL("    )"))
 
-    # After the includes, deliberately: a child sweep means "nothing
-    # else under this tag", and what counts as "else" is whatever
-    # require and allow did not already ask for.
+    # A child sweep means "nothing else under this tag", and what
+    # counts as "else" is whatever require and allow did not already
+    # ask for. That is what `exempt` carries. It is not a matter of
+    # where this block sits — every term below is an AND in the same
+    # WHERE clause, so moving it changes the SQL and no rows.
     exempt = [t["tag"] for t in (require or []) if "tag" in t]
     exempt += [t["tag"] for t in (allow or []) if "tag" in t]
     for parent in deny_children or []:

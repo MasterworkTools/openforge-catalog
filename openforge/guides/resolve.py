@@ -76,8 +76,10 @@ def to_tag_query(predicate: dict) -> dict:
     refuses every tag under `component|wall` — the arrow slits and the
     curved variants — and `allow` names the children that survive it,
     for the cases where one particular child is wanted and the rest are
-    not. The sweep runs after the includes, so anything in `require` or
-    `allow` is exempt from it by construction.
+    not. Anything named in `require` or `allow` is exempt from the
+    sweep — by exact tag, not by ordering: every term becomes an AND in
+    one WHERE clause, so the sweep is not run *after* the includes, it
+    is told about them.
     """
     return {
         name: [{"tag": tag} for tag in predicate.get(name, [])] for name in PREDICATES

@@ -379,7 +379,7 @@ def test_deny_children_keeps_the_tag_and_refuses_what_is_below_it(test_db):
 
 
 def test_a_required_child_survives_the_sweep_that_removes_its_siblings(test_db):
-    """The sweep runs after the includes, which is the whole point.
+    """An included child is exempt from the sweep, which is the point.
 
     "shape|floor|wall and nothing else under shape|floor" is one
     predicate rather than a contradiction: the required child is exempt
