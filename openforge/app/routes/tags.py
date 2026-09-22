@@ -157,6 +157,8 @@ def query_tags():
                     models=models,
                     blueprints=blueprints,
                     search=search,
+                    deny_children=deny_children,
+                    allow=allow,
                 )
             tag_count = tag_sql.tag_search_tag_count(
                 cursor,

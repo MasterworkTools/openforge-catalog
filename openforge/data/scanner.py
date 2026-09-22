@@ -200,10 +200,10 @@ def parse_path(file, tags):
     for build in builds:
         # Singular or plural. These are hand-made directory names and
         # both spellings reached the collection: 3,312 files under
-        # `separate_wall`, 227 under `separate_walls`. The plural is
-        # being renamed, and this stays as the backstop — matching only
-        # the singular left all 227 with no build tag at all, and
-        # nothing said so.
+        # `separate_wall`, 227 under `separate_walls`. The plural
+        # directories have since been renamed, and this stays as the
+        # backstop Devon asked for — matching only the singular left all
+        # 227 with no build tag at all, and nothing said so.
         if build[0] in path or f"{build[0]}s" in path:
             tags.add(("build", build[1]))
     _component_filter(builds, tags)
@@ -215,10 +215,12 @@ def parse_path(file, tags):
 
     if "floor" in path:
         tags.add(("shape", "floor"))
-    if "floor+special" in path:
-        tags.add(("shape", "floor"))
     if "wall" in path:
         tags.add(("shape", "wall"))
+    # Only the wall has a `+special` spelling. Two directories use it
+    # (dungeon_stone and cut-stone, both under wall_on_tile); no
+    # `floor+special` has ever existed, and the symmetrical branch
+    # that used to sit above changed nothing across all 10,696 files.
     if "wall+special" in path:
         tags.add(("shape", "wall"))
     if "curved_floors" in path:
@@ -455,12 +457,19 @@ def filter_shape(tags):
     # floor that takes a wall — an s2w tile, a wall-on-tile tile — and
     # the tag for that is `shape|floor|wall`.
     #
-    # Last, deliberately, because `shape|wall` arrives from three
+    # Last, deliberately, because `shape|wall` arrives from four
     # unrelated places and no earlier point sees them all: the filename
-    # (`#wall,floor`), a `wall` directory in the path, and the size
-    # table, where 40 of the 163 codes assert a shape. `AS` is a length
-    # that a wall or a floor edge can have, so on a floor it means the
-    # floor takes a wall rather than that the floor is one.
+    # (`#wall,floor`), a `wall` directory in the path, the size table,
+    # where 40 of the 163 codes assert a shape, and `_copy_base_shapes`
+    # just above, which gives a `shape|base|wall` piece the plain
+    # `shape|wall` beside it. `AS` is a length that a wall or a floor
+    # edge can have, so on a floor it means the floor takes a wall
+    # rather than that the floor is one.
+    #
+    # The fourth is why "last" means after `_copy_base_shapes` and not
+    # merely late: run it earlier and `#base+wall,floor` comes out
+    # carrying shape|floor and shape|wall together, which is the state
+    # this rule exists to prevent.
     if ("shape", "floor") in tags and ("shape", "wall") in tags:
         tags.discard(("shape", "wall"))
         tags.add(("shape", "floor", "wall"))

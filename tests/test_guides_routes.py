@@ -288,6 +288,29 @@ def test_the_recommendation_carries_what_a_parts_list_needs(
     assert wall["title"] == "Wall"
 
 
+def test_a_recommended_part_carries_its_tags(client, wall_guide, catalog):
+    """The search does not return tags; something has to fetch them.
+
+    Two callers need them and both fail quietly without: a role with
+    `match` reads the size of the part above it from here, and the
+    page shows them beside each piece because while the guides are
+    being written the tags are how you see that a recommendation is
+    wrong. Plain strings, not arrays — the page prints them and the
+    namespace match splits them on `|`.
+    """
+    response = client.get("/api/guides/wall/resolve?method=separate-wall")
+
+    wall = next(p for p in response.json["parts"] if p["role"] == "wall")
+    tags = wall["blueprint"]["tags"]
+    assert all(isinstance(tag, str) for tag in tags)
+    assert sorted(tags) == [
+        "build|separate wall",
+        "connection|openforge",
+        "shape|wall",
+        "texture|cave",
+    ]
+
+
 def test_the_predicate_reaches_the_search_in_the_shape_it_takes(
     client, wall_guide, catalog
 ):

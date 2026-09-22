@@ -17,13 +17,13 @@ import { GuideBlueprint, thumbnailOf } from '@/services/guide-service';
 
 const VIEW = 'front';
 
-export function GuideSprite({
-  blueprint,
-  size = 240,
-}: {
-  blueprint: GuideBlueprint | null;
-  size?: number;
-}) {
+// One size, because every part is drawn at the same one: a parts list
+// answers "do these go together" at a glance, and pieces drawn at
+// different scales do not.
+const SIZE = 240;
+
+export function GuideSprite({ blueprint }: { blueprint: GuideBlueprint | null }) {
+  const size = SIZE;
   const image = thumbnailOf(blueprint);
   const sprite = image?.sprite_metadata;
 

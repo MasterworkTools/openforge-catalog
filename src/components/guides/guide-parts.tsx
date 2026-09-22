@@ -71,10 +71,16 @@ export function GuideParts({ parts }: { parts: GuidePart[] }) {
  */
 function asConfigTags(query: GuidePart['query']): ConfigTags {
   const tags = (names?: string[]) => (names ?? []).map((tag) => ({ tag }));
+  // `accept` is deliberately not passed. The tag search has no subtree
+  // predicate — `processConfigValues` reads require, deny,
+  // deny_children and allow, and drops anything else — so sending it
+  // would seed the modal with a set *wider* than the one that narrowed
+  // the part, which is the opposite of what this is for. No guide uses
+  // `accept` yet; the day one does, the search needs the predicate
+  // before this line changes.
   return {
     require: tags(query.require),
     deny: tags(query.deny),
-    accept: tags(query.accept),
     deny_children: tags(query.deny_children),
     allow: tags(query.allow),
   };

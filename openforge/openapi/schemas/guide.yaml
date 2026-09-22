@@ -90,10 +90,13 @@ $defs:
           refused, and listing them by hand would mean revisiting every
           guide whenever a new variant is designed.
 
-          The sweep runs *after* the includes, so anything named in
-          `require` or `allow` survives it. That is what makes
-          "shape|floor|wall and nothing else under shape|floor"
-          expressible in one predicate.
+          Every tag named in `require` or `allow` is exempt from the
+          sweep, which is what makes "shape|floor|wall and nothing else
+          under shape|floor" expressible in one predicate. The
+          exemption is by exact tag, not by ordering, so `accept` — a
+          subtree match with no single tag to spare — does not confer
+          it. Combining `accept` with a `deny_children` over the same
+          namespace matches nothing.
         $ref: "#/$defs/tag_list"
       allow:
         description: >

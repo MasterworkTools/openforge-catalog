@@ -588,7 +588,16 @@ MATCHING_GUIDE = {
                         "wall-base": None,
                         "wall": {"require": ["shape|wall"]},
                     },
-                }
+                },
+                {
+                    # A base with nothing above it in this branch. Not
+                    # a mistake: an option chooses which parts a build
+                    # has, and "just the bases" is a build the engine
+                    # has to answer rather than refuse.
+                    "key": "bases-only",
+                    "title": "Bases only",
+                    "roles": {"wall-base": None},
+                },
             ],
         }
     ],
@@ -932,3 +941,59 @@ def test_a_role_with_no_substitution_is_asked_for_what_was_chosen():
 
     assert "texture|wood" in parts["wall-base"]["query"]["require"]
     assert "texture|wood" in parts["wall"]["query"]["require"]
+
+
+def test_a_base_whose_part_is_not_in_play_still_resolves():
+    """Not in play and resolved-to-nothing are different answers.
+
+    A role the chosen option never named is not a part that failed —
+    it is a part this build does not have. Matching against it can add
+    no constraint, so the base resolves on its own query. Conflating
+    the two empties every base in an option that names bases alone.
+    """
+    resolved = resolve(
+        MATCHING_GUIDE, {"method": "bases-only"}, matching_finder(MATCHING_CATALOG)
+    )
+    parts = {p["role"]: p for p in resolved["parts"]}
+
+    assert list(parts) == ["wall-base"]
+    # No size came from anywhere, so the first base by name wins.
+    assert parts["wall-base"]["blueprint"]["blueprint_name"] == "a 2x2 base"
+    assert not [
+        tag for tag in parts["wall-base"]["query"]["require"] if tag.startswith("size|")
+    ]
+
+
+def test_matching_a_namespace_stops_at_the_separator():
+    """`size|width` is not a prefix of `size|widthwise`.
+
+    Without the separator the match would copy a neighbouring
+    namespace's tag into `require`, and since no base carries it the
+    base would come back empty — a wrong answer that looks like an
+    honest "nothing matches".
+    """
+    catalog = copy.deepcopy(MATCHING_CATALOG)
+    wall = next(b for b in catalog if b["id"] == "w1")
+    wall["tags"] = wall["tags"] + ["size|widthwise|9"]
+
+    resolved = resolve(MATCHING_GUIDE, {"method": "separate"}, matching_finder(catalog))
+    parts = {p["role"]: p for p in resolved["parts"]}
+
+    assert parts["wall-base"]["query"]["require"] == ["shape|base", "size|width|2"]
+    assert parts["wall-base"]["blueprint"] is not None
+
+
+def test_matching_copies_a_tag_that_is_the_namespace_itself():
+    """The other half of the same test: an exact tag is in its own
+    namespace, and a match that only looked for children would drop it.
+    """
+    catalog = copy.deepcopy(MATCHING_CATALOG)
+    wall = next(b for b in catalog if b["id"] == "w1")
+    wall["tags"] = ["shape|wall", "size|width"]
+    base = next(b for b in catalog if b["id"] == "b1")
+    base["tags"] = base["tags"] + ["size|width"]
+
+    resolved = resolve(MATCHING_GUIDE, {"method": "separate"}, matching_finder(catalog))
+    parts = {p["role"]: p for p in resolved["parts"]}
+
+    assert parts["wall-base"]["query"]["require"] == ["shape|base", "size|width"]

@@ -1780,7 +1780,7 @@ def test_nothing_is_both_a_floor_and_a_wall():
     together, which is not a thing a piece can be. The tag for a floor
     a wall stands on is `shape|floor|wall`.
 
-    `shape|wall` reaches them from three unrelated places, which is why
+    `shape|wall` reaches them from four unrelated places, which is why
     the rule is applied at the end rather than at any one of them:
 
     - the filename, in `#wall,floor`
@@ -1788,6 +1788,11 @@ def test_nothing_is_both_a_floor_and_a_wall():
     - the size table, where 40 of 163 codes assert a shape. `AS` is a
       length a wall or a floor edge can have, so on a floor it means
       the floor takes a wall, not that the floor is one.
+    - `_copy_base_shapes`, which gives a `shape|base|wall` piece the
+      plain `shape|wall` beside it — and which runs inside
+      `filter_shape` rather than before it. That fourth source is what
+      makes "at the end" mean *after that copy* and not merely late:
+      the last case below comes out right only in that order.
     """
     cases = {
         # Already correct; only the spurious bare tag goes.
@@ -1804,6 +1809,20 @@ def test_nothing_is_both_a_floor_and_a_wall():
         },
         # An ordinary floor whose *size code* claimed it was a wall.
         "tiles/aztlan/floors/floor/openforge/aztlan#floor.AS.openforge.stl": {
+            ("shape", "floor"),
+            ("shape", "floor", "wall"),
+        },
+        # The fourth source, and the one that pins the ordering: no
+        # `wall` appears in the path and no size code asserts one, so
+        # the bare `shape|wall` here can only have come from
+        # `_copy_base_shapes` a few lines above the rule. Run the rule
+        # before that copy and this comes out carrying `shape|floor`
+        # and `shape|wall` together — exactly the state the rule
+        # exists to prevent.
+        "tiles/dungeon_stone/s2w/bases/"
+        "dungeon_stone#base+wall,floor.2x2.openforge.stl": {
+            ("shape", "base"),
+            ("shape", "base", "wall"),
             ("shape", "floor"),
             ("shape", "floor", "wall"),
         },
@@ -1843,3 +1862,31 @@ def test_a_wall_that_is_not_a_floor_keeps_its_shape():
     assert ("shape", "wall") in tags
     assert ("shape", "floor") not in tags
     assert ("shape", "floor", "wall") not in tags
+
+
+def test_a_wall_with_no_other_component_keeps_component_wall():
+    """The arm that *grants* the tag, which reads dead and is not.
+
+    `component|wall` is what the wall guide requires, so a piece that
+    loses it here becomes unreachable. Deleting the `else` strips it
+    from 75 files across five texture families — these cave thick-wall
+    corners among them, which carry a corner component and no wall
+    component of their own until this puts one there.
+    """
+    full_name = (
+        "tiles/cave/thick_wall/wall/corner/openforge/"
+        "cave%aggregate+2#corner.IL+corner,270.openforge.stl"
+    )
+    tags = set()
+    parse_file_tags(
+        {
+            "file": full_name.split("/")[-1],
+            "full_name": full_name,
+            "path": full_name.split("/")[:-1],
+        },
+        tags,
+        None,
+    )
+
+    assert ("shape", "wall") in tags
+    assert ("component", "wall") in tags

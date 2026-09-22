@@ -31,7 +31,7 @@ steps:
           # the 35 dungeon stone wall bases in the catalog, none carries
           # build|s2w. The wall takes an ordinary wall base and the
           # floor takes an ordinary base.
-          floor:
+          floor: {require: ['build|s2w']}
           wall:
           wall-base: {require: ['shape|base|wall']}
           # The s2w floor base carries the wall's own base as well:
@@ -50,7 +50,7 @@ steps:
           # one openforge piece here rather than two — this is the only
           # method where a single base serves both. No base carries
           # build|wall on tile either: it is an ordinary base.
-          floor:
+          floor: {require: ['build|s2w']}
           wall:
           floor-base: {require: ['shape|base|square'], deny: ['build|s2w']}
 
@@ -176,24 +176,26 @@ roles:
   floor:
     title: Floor
     query:
-      # Both methods stand their wall on an s2w floor. shape|floor|wall
-      # says it takes a wall; shape|floor|s2w is permitted but not
-      # required, and everything else under shape|floor — curved,
-      # concave, diagonal, corner — is swept, which is what keeps the
-      # answer a plain tile.
-      require: ['shape|floor', 'shape|floor|wall', 'build|s2w']
+      # What every method's floor has in common, and no more.
+      # shape|floor|wall says it takes a wall; shape|floor|s2w is
+      # permitted but not required, and everything else under
+      # shape|floor — curved, concave, diagonal, corner — is swept,
+      # which is what keeps the answer a plain tile.
+      #
+      # build|s2w is *not* here. Only s2w and wall-on-tile want it, and
+      # they ask for it themselves; a separate wall stands on an
+      # ordinary floor, as its own comment below says. Requiring it
+      # role-wide put 954 build-less floors out of reach of the one
+      # method that should have them.
+      require: ['shape|floor', 'shape|floor|wall']
       allow: ['shape|floor|s2w']
       deny_children: ['shape|floor']
-      # A guide never recommends a damaged piece by default; the texture
-      # refinement is how someone asks for one. `deny` is an exact match,
-      # so each tag is listed — every component|collapsed|* piece carries
-      # the bare parent, so that one entry covers the family.
-      #
-      # texture|towne|ruined_stucco is deliberately *not* here. It is a
-      # finish, sitting beside stucco, stone and wood, rather than a
-      # piece that has been ruined — 21 pieces carry it and they are
-      # ordinary walls with weathered render on them.
-      deny: &intact
+      # A base is not a floor. Bases reach this role because
+      # `_copy_base_shapes` gives a shape|base piece the plain shape
+      # beside it, and the sweep above is scoped to shape|floor, so it
+      # does not catch shape|base. The wall role needs no such line —
+      # its sweep is the whole shape namespace.
+      deny:
         - 'shape|base'
     # 2x2 is the default tile, and by a distance the most common: 450
     # floors carry it against 88 at 1x1. Size is listed last because it
@@ -229,7 +231,6 @@ roles:
       # along with shape|angled. Permitted, not required: plenty of
       # plain walls carry no shape|? at all.
       allow: ['shape|square']
-      deny: *intact
     prefer: ['texture|dungeon_stone', 'size|width|2']
   floor-base:
     title: Base for the floor

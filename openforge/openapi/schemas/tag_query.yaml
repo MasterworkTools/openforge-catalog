@@ -25,8 +25,10 @@ properties:
   deny_children:
     description: >
       Refuse every tag strictly beneath these, keeping the tag itself.
-      Applied after accept/require/allow, so anything those asked for
-      survives it.
+      Every tag named in `require` or `allow` is exempt, so anything
+      those asked for survives the sweep. `accept` is not exempt: it
+      matches a whole subtree rather than a tag, and there is nothing
+      exact to spare.
     type: array
     items:
       type: object

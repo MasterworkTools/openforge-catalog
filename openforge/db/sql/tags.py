@@ -637,6 +637,18 @@ def _query_tags_deny_children(parent: str, exempt: list[str]) -> sql.Composed:
             table=sql.Identifier(tags_name)
         ),
         sql.SQL("  WHERE bp_neg.deprecated = false"),
+        # Redundant with the slice below, and there to be indexable.
+        # `tag[1:n] = ...` cannot use the GIN index, so the sweep was
+        # a sequential scan of all 81,931 tag rows; `@>` is a
+        # containment test the index answers, and ANDing it in front
+        # turns the scan into a bitmap index scan — 26.3ms to 3.3ms
+        # for `deny_children: [component|wall]`, same 954 rows.
+        # Containment is positionless, so it is a superset of the
+        # slice and narrows nothing on its own.
+        sql.SQL("    AND {table}.tag @> {parent}").format(
+            table=sql.Identifier(tags_name),
+            parent=sql.Literal(parent.split("|")),
+        ),
         sql.SQL("    AND {table}.tag[1:{depth}] = {parent}").format(
             table=sql.Identifier(tags_name),
             depth=sql.Literal(depth),

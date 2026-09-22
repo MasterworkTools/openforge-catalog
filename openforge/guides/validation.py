@@ -70,7 +70,13 @@ def _describe_path(data: dict, path) -> str:
 
 
 def _cross_reference_errors(data: dict) -> list[str]:
-    return _duplicate_errors(data) + _role_reference_errors(data) + _when_errors(data)
+    return (
+        _duplicate_errors(data)
+        + _role_reference_errors(data)
+        + _refinement_role_errors(data)
+        + _match_errors(data)
+        + _when_errors(data)
+    )
 
 
 def _duplicate_errors(data: dict) -> list[str]:
@@ -128,6 +134,48 @@ def _role_reference_errors(data: dict) -> list[str]:
     errors += _under_cycle_errors(roles)
     errors += _orphan_role_errors(data, roles)
     return errors
+
+
+def _refinement_role_errors(data: dict) -> list[str]:
+    """`except_roles` and `substitute` name roles too.
+
+    `role` was already checked; these two were not, and both fail
+    silently rather than loudly. A misspelled `except_roles` entry
+    excepts nothing, so the refinement is asked of a part that cannot
+    answer it and the part comes back empty. A misspelled `substitute`
+    role gets the chosen tag instead of its exception — which is the
+    bug the substitution exists to prevent, reappearing under a typo.
+    """
+    roles = data["roles"]
+    errors = []
+    for refinement in data.get("refinements", []):
+        where = f"refinement {refinement['key']!r}"
+        errors += [
+            f"{where}: `except_roles` names unknown role {name!r}"
+            for name in refinement.get("except_roles", [])
+            if name not in roles
+        ]
+        for tag, by_role in (refinement.get("substitute") or {}).items():
+            errors += [
+                f"{where}: `substitute` for {tag!r} names unknown role {name!r}"
+                for name in by_role
+                if name not in roles
+            ]
+    return errors
+
+
+def _match_errors(data: dict) -> list[str]:
+    """`match` copies from the role above, so there has to be one.
+
+    Without `under` there is nothing to copy from and the role silently
+    takes no constraint at all — a base that was meant to match the
+    footprint above it matches every footprint instead.
+    """
+    return [
+        f"role {name!r}: `match` requires `under`, which it does not have"
+        for name, role in data["roles"].items()
+        if role.get("match") and "under" not in role
+    ]
 
 
 def _under_cycle_errors(roles: dict) -> list[str]:
@@ -198,6 +246,17 @@ def _when_errors(data: dict) -> list[str]:
             options_by_step,
             earlier=[s["key"] for s in steps[:position]],
         )
+        # An option carries a `when` of its own, read by the same
+        # helper the step's is, and gating one option of eight rather
+        # than the whole step. It answers to the same rule: the step it
+        # reads has to come before the step the option belongs to.
+        for option in step["options"]:
+            errors += _when_clause_errors(
+                f"step {step['key']!r} option {option['key']!r}",
+                option.get("when"),
+                options_by_step,
+                earlier=[s["key"] for s in steps[:position]],
+            )
     for refinement in data.get("refinements", []):
         errors += _when_clause_errors(
             f"refinement {refinement['key']!r}",

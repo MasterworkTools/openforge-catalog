@@ -170,3 +170,104 @@ def test_invalid_and_unauthorized_requests(client, auth_client, test_db):
         f"/api/blueprints/{blueprint['id']}/tags", json=["invalid|tag|format"]
     )
     assert resp.status_code == 200
+
+
+def named_blueprint_with_tags(test_db, name, tags):
+    """A model with a chosen name, because these tests turn on sort order."""
+    data = create_test_blueprint(blueprint_type="model")
+    data["blueprint_name"] = name
+    blueprint = setup_test_data(test_db, data, blueprint_sql.insert_blueprint)
+    with test_db.connection() as conn:
+        with conn.cursor(row_factory=dict_row) as curs:
+            for tag in tags:
+                tag_sql.insert_tag(curs, blueprint["id"], tag)
+            conn.commit()
+    return blueprint
+
+
+@pytest.fixture
+def wall_variants(test_db):
+    """Two plain walls and two that carry a child tag.
+
+    The variants sort first, so dropping the sweep changes what is on
+    a page and how many rows precede it — which is what makes the
+    paging counts able to disagree with the results.
+    """
+    return {
+        "slit": named_blueprint_with_tags(
+            test_db,
+            "a slit wall",
+            ["component|wall", "component|wall|arrow_slit"],
+        ),
+        "door": named_blueprint_with_tags(
+            test_db, "b door wall", ["component|wall", "component|wall|door"]
+        ),
+        "plain": named_blueprint_with_tags(test_db, "c plain wall", ["component|wall"]),
+        "plain2": named_blueprint_with_tags(
+            test_db, "d plain wall two", ["component|wall"]
+        ),
+    }
+
+
+def test_query_tags_reads_deny_children_from_the_body(auth_client, wall_variants):
+    """The route has to pass the term on, and the SQL tests cannot see that.
+
+    `deny_children` is covered at the SQL layer, so the route can
+    ignore the key entirely and every one of those tests still passes.
+    """
+    query = {
+        "require": [{"tag": "component|wall"}],
+        "deny_children": [{"tag": "component|wall"}],
+    }
+    resp = auth_client.post("/api/blueprints/tags", json=query)
+
+    assert resp.status_code == 200
+    names = [b["blueprint_name"] for b in resp.json["blueprints"]]
+    assert names == ["c plain wall", "d plain wall two"]
+    assert resp.json["paging"]["total_count"] == 2
+    # The facets describe the same set as the results, so the swept
+    # children must not be offered as things to narrow by.
+    assert "component|wall|arrow_slit" not in resp.json["tag_counts"]
+    assert "component|wall|door" not in resp.json["tag_counts"]
+
+
+def test_query_tags_reads_allow_from_the_body(auth_client, wall_variants):
+    """`allow` is the exemption, and it only exists to survive a sweep."""
+    query = {
+        "require": [{"tag": "component|wall"}],
+        "deny_children": [{"tag": "component|wall"}],
+        "allow": [{"tag": "component|wall|door"}],
+    }
+    resp = auth_client.post("/api/blueprints/tags", json=query)
+
+    assert resp.status_code == 200
+    names = [b["blueprint_name"] for b in resp.json["blueprints"]]
+    assert names == ["b door wall", "c plain wall", "d plain wall two"]
+    assert resp.json["paging"]["total_count"] == 3
+
+
+def test_query_tags_start_count_describes_the_same_set(auth_client, wall_variants):
+    """The offset a page reports has to count the rows it is offset from.
+
+    This is the one call of the six that a first page cannot catch:
+    with the sweep dropped only here, page one still starts at row 0
+    and looks right. Page two is where it shows — three refused rows
+    sort ahead of the second plain wall, so an unswept count reports
+    the page starting at 3 and the person sees "4-4 of 2".
+    """
+    query = {
+        "require": [{"tag": "component|wall"}],
+        "deny_children": [{"tag": "component|wall"}],
+    }
+    first = auth_client.post("/api/blueprints/tags?limit=1", json=query)
+    assert [b["blueprint_name"] for b in first.json["blueprints"]] == ["c plain wall"]
+    assert first.json["paging"]["start_count"] == 0
+
+    token = first.json["paging"]["next_token"]
+    second = auth_client.post(f"/api/blueprints/tags?limit=1&next={token}", json=query)
+
+    assert [b["blueprint_name"] for b in second.json["blueprints"]] == [
+        "d plain wall two"
+    ]
+    assert second.json["paging"]["start_count"] == 1
+    assert second.json["paging"]["total_count"] == 2

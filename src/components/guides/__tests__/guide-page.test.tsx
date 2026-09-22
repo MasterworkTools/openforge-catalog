@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, waitFor, fireEvent } from '@testing-library/react';
+import { render, screen, waitFor, fireEvent, act } from '@testing-library/react';
 import GuidePage from '../guide-page';
 
 /**
@@ -8,6 +8,14 @@ import GuidePage from '../guide-page';
  * page is responsible for is opening it with the predicate that
  * narrowed the part down, so that is what is asserted.
  */
+const downloaded: string[][] = [];
+jest.mock('@/utils/blueprint-utils', () => ({
+  ...jest.requireActual('@/utils/blueprint-utils'),
+  downloadFiles: (urls: string[]) => {
+    downloaded.push(urls);
+  },
+}));
+
 const modalProps: Record<string, unknown>[] = [];
 jest.mock('../../part-selection-modal', () => ({
   __esModule: true,
@@ -165,6 +173,7 @@ function visit(search: string) {
 describe('GuidePage', () => {
   beforeEach(() => {
     modalProps.length = 0;
+    downloaded.length = 0;
     jest.clearAllMocks();
     jest.spyOn(console, 'error').mockImplementation(() => {});
   });
@@ -195,6 +204,32 @@ describe('GuidePage', () => {
       render(<GuidePage />);
 
       expect(await screen.findByText('No guides yet.')).toBeInTheDocument();
+      // The other half of the distinction: an empty collection is a
+      // 404 by house convention, so it must not read as a failure.
+      expect(
+        screen.queryByText('Could not load the guides.')
+      ).not.toBeInTheDocument();
+    });
+
+    it('distinguishes "could not ask" from "none yet"', async () => {
+      // Both arms render an empty list, so without this the `failed`
+      // flag can be deleted and every other test still passes.
+      visit('');
+      global.fetch = jest.fn(() =>
+        Promise.resolve({
+          ok: false,
+          status: 500,
+          statusText: 'Internal Server Error',
+          json: () => Promise.resolve({}),
+        })
+      ) as unknown as typeof fetch;
+
+      render(<GuidePage />);
+
+      expect(
+        await screen.findByText('Could not load the guides.')
+      ).toBeInTheDocument();
+      expect(screen.queryByText('No guides yet.')).not.toBeInTheDocument();
     });
   });
 
@@ -297,6 +332,133 @@ describe('GuidePage', () => {
       expect(await screen.findByText('texture|dungeon_stone')).toBeInTheDocument();
       expect(screen.getByText('shape|wall')).toBeInTheDocument();
       expect(screen.getAllByText('size|width|2')).toHaveLength(2);
+    });
+
+    it('offers one download per part that actually resolved', async () => {
+      // Three parts, one of which matched nothing. The regression this
+      // pins is the null part contributing
+      // `/api/blueprints/undefined/download` to the list — which is a
+      // 404 the person only discovers after clicking.
+      visit('?guide=wall&method=separate-wall');
+      mockFetch((url) =>
+        url.includes('/resolve') ? RESOLVED_WITH_PARTS : GUIDE_DOCUMENT
+      );
+
+      render(<GuidePage />);
+      fireEvent.click(await screen.findByText('Download all 2 files'));
+
+      expect(downloaded).toEqual([
+        ['/api/blueprints/bp-1/download', '/api/blueprints/bp-2/download'],
+      ]);
+    });
+
+    it('offers no download button when nothing resolved', async () => {
+      visit('?guide=wall&method=separate-wall');
+      const nothing = {
+        ...RESOLVED_WITH_PARTS,
+        parts: RESOLVED_WITH_PARTS.parts.map((part) => ({
+          ...part,
+          blueprint: null,
+        })),
+      };
+      mockFetch((url) => (url.includes('/resolve') ? nothing : GUIDE_DOCUMENT));
+
+      render(<GuidePage />);
+      await screen.findByText('Wall');
+
+      expect(
+        screen.queryByRole('button', { name: /^Download/ })
+      ).not.toBeInTheDocument();
+    });
+
+    it('shows a refinement its current answer', async () => {
+      // The answer lives in the URL, so a shared link has to arrive
+      // with the box filled in. `defaultValue` is what does that, and
+      // an uncontrolled input reads empty without it whatever the
+      // refinement says.
+      visit('?guide=wall&method=separate-wall&texture=texture|dungeon_stone');
+      mockFetch((url) =>
+        url.includes('/resolve')
+          ? {
+              ...RESOLVED_WITH_PARTS,
+              refinements: RESOLVED_WITH_PARTS.refinements.map((r) =>
+                r.key === 'texture'
+                  ? { ...r, selected: 'texture|dungeon_stone' }
+                  : r
+              ),
+            }
+          : GUIDE_DOCUMENT
+      );
+
+      render(<GuidePage />);
+
+      const box = (await screen.findByPlaceholderText(
+        'texture|...'
+      )) as HTMLInputElement;
+      expect(box.value).toBe('texture|dungeon_stone');
+    });
+
+    it('lets the newest answer win when an older one lands last', async () => {
+      // Every click re-fires the resolve effect, and the network does
+      // not promise to answer in order. Without the `current` guard
+      // the first, slower answer arrives last and overwrites the one
+      // the person is actually looking at — so the page shows the
+      // parts for a method they already changed their mind about.
+      visit('?guide=wall');
+      const pending: ((value: unknown) => void)[] = [];
+      let resolves = 0;
+      global.fetch = jest.fn((url: string) => {
+        if (!url.includes('/resolve')) {
+          return Promise.resolve({
+            ok: true,
+            status: 200,
+            json: () => Promise.resolve(GUIDE_DOCUMENT),
+          });
+        }
+        resolves += 1;
+        // The first one lands, so the questions render and can be
+        // clicked. The two after it are held open by hand.
+        const body =
+          resolves === 1
+            ? Promise.resolve(RESOLVED)
+            : new Promise((resolve) => pending.push(resolve));
+        return Promise.resolve({ ok: true, status: 200, json: () => body });
+      }) as unknown as typeof fetch;
+
+      render(<GuidePage />);
+      fireEvent.click(await screen.findByText('Separate wall'));
+      await waitFor(() => expect(pending).toHaveLength(1));
+      fireEvent.click(screen.getByText('Modular (s2w)'));
+      await waitFor(() => expect(pending).toHaveLength(2));
+
+      // Newest first, then the stale one — the order that breaks it.
+      pending[pending.length - 1](RESOLVED_WITH_PARTS);
+      await screen.findByText('a dungeon stone wall');
+      pending[pending.length - 2]({
+        ...RESOLVED_WITH_PARTS,
+        parts: [
+          {
+            ...RESOLVED_WITH_PARTS.parts[0],
+            blueprint: {
+              ...RESOLVED_WITH_PARTS.parts[0].blueprint,
+              blueprint_name: 'the wall for the method they left',
+            },
+          },
+        ],
+      });
+
+      // The stale answer has to be given its chance to land before
+      // this is asserted, or the assertion passes on timing rather
+      // than on the guard.
+      await act(async () => {
+        await Promise.resolve();
+        await Promise.resolve();
+      });
+
+      expect(screen.getByText('a dungeon stone wall')).toBeInTheDocument();
+      expect(
+        screen.queryByText('the wall for the method they left')
+      ).not.toBeInTheDocument();
     });
 
     it('draws the sprite frame named front, not frame zero', async () => {
@@ -586,16 +748,22 @@ describe('inspecting a part', () => {
     expect(await screen.findByTestId('part-modal')).toBeInTheDocument();
     const opened = modalProps[modalProps.length - 1];
     expect(opened.partName).toBe('Wall (wall)');
-    // Every term, including the two the tag tree cannot edit: the
-    // modal has to open on the set the guide resolved against, not a
-    // wider one.
+    // Every term the search can act on, including the two the tag
+    // tree cannot edit: the modal has to open on the set the guide
+    // resolved against, not a wider one.
+    //
+    // `accept` is absent on purpose. The search has no subtree
+    // predicate, so passing one would be seeding the modal with a
+    // term that is silently discarded — and a discarded restriction
+    // is a wider set, which is the failure this assertion exists to
+    // catch.
     expect(opened.configValues).toEqual({
       require: [{ tag: 'shape|wall' }],
       deny: [],
-      accept: [],
       deny_children: [{ tag: 'component|wall' }],
       allow: [{ tag: 'shape|square' }],
     });
+    expect(opened.configValues).not.toHaveProperty('accept');
   });
 
   it('is closed until a part is clicked', async () => {
