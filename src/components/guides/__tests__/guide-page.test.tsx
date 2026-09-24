@@ -436,6 +436,99 @@ describe('GuidePage', () => {
       ).toBeInTheDocument();
     });
 
+    it('brings the explanation back when a settled question is reopened', async () => {
+      // Going back to a choice is exactly when its explanation is
+      // wanted again — that is what reopening it is for — and it must
+      // not be the outstanding question's explanation that shows.
+      visit('?guide=wall&method=separate-wall');
+      const withSize = {
+        ...RESOLVED_WITH_PARTS,
+        steps: [
+          ...RESOLVED_WITH_PARTS.steps,
+          {
+            key: 'size',
+            prompt: 'What size tiles?',
+            selected: null,
+            options: [
+              { key: '1x1', title: '1×1', blurb: 'One tile.', roles: {} },
+            ],
+          },
+        ],
+      };
+      mockFetch((url) => (url.includes('/resolve') ? withSize : GUIDE_DOCUMENT));
+
+      render(<GuidePage />);
+      // The outstanding question is explained to begin with.
+      expect(await screen.findByText('One tile.')).toBeInTheDocument();
+
+      fireEvent.click(screen.getByRole('button', { name: /Separate wall/ }));
+
+      // Now the reopened one is, including the answers not taken.
+      expect(
+        screen.getByText('Floor and wall are independent.')
+      ).toBeInTheDocument();
+      expect(
+        screen.getByText('Everything prints separately and stacks.')
+      ).toBeInTheDocument();
+      expect(screen.queryByText('One tile.')).not.toBeInTheDocument();
+    });
+
+    it('does not confuse two questions that share an option key', async () => {
+      // Option keys are only unique within their own question, and the
+      // wall guide really does have two that share one: wall-print and
+      // floor-print both offer `with-base`. Keyed on the option alone,
+      // React matches the old card to the new one across a change of
+      // question and keeps drawing a card whose question is gone.
+      //
+      // It takes a transition to show: on a first paint a duplicate
+      // key still renders both.
+      const printStep = (key: string, title: string, blurb: string) => ({
+        key,
+        prompt: `How should the ${key} print?`,
+        selected: 'with-base',
+        options: [{ key: 'with-base', title, blurb, roles: {} }],
+      });
+      const bothPrints = {
+        ...RESOLVED_WITH_PARTS,
+        steps: [
+          ...RESOLVED_WITH_PARTS.steps,
+          printStep('wall-print', 'Wall plus a base', 'The wall drops into a base.'),
+          printStep('floor-print', 'Floor plus a base', 'The tile sits in a base.'),
+        ],
+      };
+      // Choosing wall-on-tile gates both print questions away.
+      const noPrints = {
+        ...RESOLVED_WITH_PARTS,
+        steps: [
+          {
+            ...RESOLVED_WITH_PARTS.steps[0],
+            selected: 's2w',
+          },
+        ],
+      };
+      visit('?guide=wall&method=separate-wall');
+      let resolved: unknown = bothPrints;
+      mockFetch((url) => (url.includes('/resolve') ? resolved : GUIDE_DOCUMENT));
+
+      render(<GuidePage />);
+      expect(
+        await screen.findByText('The wall drops into a base.')
+      ).toBeInTheDocument();
+
+      resolved = noPrints;
+      fireEvent.click(screen.getByRole('button', { name: /Separate wall/ }));
+      fireEvent.click(screen.getByRole('button', { name: /Modular \(s2w\)/ }));
+
+      // Both print questions are gone, so neither card may survive.
+      await screen.findByText('Everything prints separately and stacks.');
+      expect(
+        screen.queryByText('The wall drops into a base.')
+      ).not.toBeInTheDocument();
+      expect(
+        screen.queryByText('The tile sits in a base.')
+      ).not.toBeInTheDocument();
+    });
+
     it('explains what was chosen when the open question has nothing to say', async () => {
       // "What size tiles?" is eight numbers; explaining them would be
       // padding. Rather than leave a third of the page blank for it,

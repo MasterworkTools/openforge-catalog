@@ -27,12 +27,23 @@ export type Unavailable = Record<string, string[]> | null;
 interface GuideStepsProps {
   steps: GuideStep[];
   unavailable?: Unavailable;
+  /**
+   * Which answered question has been reopened, if any.
+   *
+   * Lifted out of the section that owns it because the column beside
+   * it has to know as well: reopening a question puts its explanation
+   * back, and a section keeping that to itself could not say so.
+   */
+  opened?: string | null;
+  onOpenChange?: (key: string | null) => void;
   onSelect: (key: string, value: string | null) => void;
 }
 
 export function GuideSteps({
   steps,
   unavailable,
+  opened,
+  onOpenChange,
   onSelect,
 }: GuideStepsProps) {
   return (
@@ -51,6 +62,8 @@ export function GuideSteps({
             key={step.key}
             step={step}
             dead={dead}
+            open={opened === step.key}
+            onOpenChange={onOpenChange}
             onSelect={onSelect}
           />
         );
@@ -108,13 +121,16 @@ function OpenStep({
 function AnsweredStep({
   step,
   dead,
+  open,
+  onOpenChange,
   onSelect,
 }: {
   step: GuideStep;
   dead: string[];
+  open: boolean;
+  onOpenChange?: (key: string | null) => void;
   onSelect: (key: string, value: string | null) => void;
 }) {
-  const [open, setOpen] = React.useState(false);
   const chosen = step.options.find((option) => option.key === step.selected);
 
   if (open) {
@@ -135,7 +151,7 @@ function AnsweredStep({
               chosen={step.selected === option.key}
               dead={dead.includes(option.key)}
               onPick={() => {
-                setOpen(false);
+                onOpenChange?.(null);
                 // Re-picking the current answer would rewrite the same
                 // URL and re-resolve it for no change.
                 if (step.selected !== option.key) {
@@ -153,7 +169,7 @@ function AnsweredStep({
     <section className="mb-3">
       <button
         type="button"
-        onClick={() => setOpen(true)}
+        onClick={() => onOpenChange?.(step.key)}
         aria-expanded={false}
         className="w-full text-left rounded border border-gray-200 px-3 py-2 hover:border-gray-400"
       >

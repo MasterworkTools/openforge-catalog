@@ -13,12 +13,20 @@ import { GuideStep } from '@/services/guide-service';
  * parts take the space, which is the right trade: by then the person
  * has made the choice this was explaining.
  */
-export function GuideExplainer({ steps }: GuideExplainerProps) {
-  const asking = currentStep(steps);
+export function GuideExplainer({ steps, opened }: GuideExplainerProps) {
+  // A reopened question wins. Going back to a settled choice is
+  // exactly when the explanation is wanted again — that is what
+  // reopening it is *for* — and it should not have to be read from
+  // memory against the one question still outstanding.
+  const reopened = steps.find((step) => step.key === opened);
+  const asking = reopened ?? currentStep(steps);
   // While a question stands, explain its answers — but only if it has
   // anything to say. Not every question does: "what size tiles?" is
   // eight numbers and explaining them would be padding.
-  const offered = asking?.options.filter((option) => option.blurb) ?? [];
+  const offered =
+    asking?.options
+      .filter((option) => option.blurb)
+      .map((option) => ({ step: asking.key, option })) ?? [];
   // Otherwise the column explains what *was* chosen, rather than going
   // blank. The same words, still the reason this build is this build,
   // and it keeps a third of the page from being empty for two of the
@@ -27,7 +35,7 @@ export function GuideExplainer({ steps }: GuideExplainerProps) {
   const heading = explaining ? 'What these mean' : 'What you chose';
   const described = explaining
     ? offered
-    : chosenOptions(steps).filter((option) => option.blurb);
+    : chosenOptions(steps).filter(({ option }) => option.blurb);
   if (described.length === 0) return null;
 
   return (
@@ -38,9 +46,14 @@ export function GuideExplainer({ steps }: GuideExplainerProps) {
         {heading}
       </h2>
       <div className="flex flex-col gap-4">
-        {described.map((option) => (
+        {described.map(({ step, option }) => (
+          // Keyed by step *and* option: option keys are only unique
+          // within their own question, and two questions here really
+          // do share one — `wall-print` and `floor-print` both offer
+          // `with-base`. Keyed on the option alone, React treats them
+          // as the same card and draws one of them twice.
           <article
-            key={option.key}
+            key={`${step}:${option.key}`}
             className="rounded border border-gray-200 p-4"
           >
             <h3 className="font-semibold mb-1">{option.title}</h3>
@@ -54,13 +67,15 @@ export function GuideExplainer({ steps }: GuideExplainerProps) {
 
 interface GuideExplainerProps {
   steps: GuideStep[];
+  /** An answered question the person has gone back to. */
+  opened?: string | null;
 }
 
 /** The option chosen for each answered step, in the order asked. */
 function chosenOptions(steps: GuideStep[]) {
   return steps.flatMap((step) => {
     const chosen = step.options.find((option) => option.key === step.selected);
-    return chosen ? [chosen] : [];
+    return chosen ? [{ step: step.key, option: chosen }] : [];
   });
 }
 

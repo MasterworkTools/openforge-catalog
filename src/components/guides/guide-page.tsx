@@ -16,6 +16,9 @@ export default function GuidePage() {
   const guideKey = useGuideKey();
   const { guide, resolved, unavailable, error, select } =
     useGuideState(guideKey);
+  // Which settled question has been reopened. Here rather than in the
+  // section itself, because the explanation beside it follows.
+  const [opened, setOpened] = useState<string | null>(null);
 
   // Before hydration the URL is unknown, which is not the same as a URL
   // with no guide in it. Rendering the list here would fetch every
@@ -51,6 +54,8 @@ export default function GuidePage() {
             <GuideSteps
               steps={resolved.steps}
               unavailable={unavailable}
+              opened={opened}
+              onOpenChange={setOpened}
               onSelect={select}
             />
             <GuideRefinements
@@ -63,7 +68,7 @@ export default function GuidePage() {
             <GuideParts parts={resolved.parts} />
           </div>
           <div className="lg:w-96 lg:shrink-0 overflow-y-auto min-h-0 pr-2">
-            <GuideExplainer steps={resolved.steps} />
+            <GuideExplainer steps={resolved.steps} opened={opened} />
           </div>
         </div>
       )}
