@@ -330,8 +330,35 @@ $defs:
       from_namespace:
         type: string
         description: >
-          Tag namespace to offer, e.g. "texture". The options are the
-          namespace's tags carried by the role's candidates.
+          Tag namespace to offer, e.g. "texture". Without `choices` the
+          options are open — any tag in the namespace — and the
+          frontend asks for one as free text.
+      choices:
+        type: array
+        minItems: 2
+        description: >
+          The tags to offer, rather than the whole namespace. A wizard
+          asks a question you can answer by looking at it, and the
+          namespace is not that: 40-odd textures, most of which no wall
+          carries. Each has to sit inside `from_namespace`, so the
+          refinement still answers to one namespace.
+
+          A title is optional and only cosmetic — without one the
+          frontend makes a label out of the tag's last element.
+        items:
+          type: object
+          required: [tag]
+          additionalProperties: false
+          properties:
+            tag:
+              type: string
+              pattern: "^[^|]+(\\|[^|]+)*$"
+            title:
+              type: string
+              minLength: 1
+            blurb:
+              type: string
+              minLength: 1
       on_tags:
         $ref: "#/$defs/predicate"
       off_tags:

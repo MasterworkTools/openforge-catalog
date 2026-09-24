@@ -267,6 +267,14 @@ def _reject_bad_refinement_value(refinement: dict, selections: dict) -> None:
         raise GuideSelectionError(
             f"refinement {refinement['key']!r} takes a {namespace!r} tag, not {value!r}"
         )
+    choices = [choice["tag"] for choice in refinement.get("choices", [])]
+    if choices and value not in choices:
+        # A closed list is a promise about what the answers are, and a
+        # URL is editable. Refusing here is what keeps the offered
+        # buttons and the accepted answers the same set.
+        raise GuideSelectionError(
+            f"refinement {refinement['key']!r} does not offer {value!r}"
+        )
 
 
 def _parts(

@@ -27,11 +27,18 @@ export interface GuideStep {
   selected: string | null;
 }
 
+export interface GuideChoice {
+  tag: string;
+  title?: string;
+  blurb?: string;
+}
+
 export interface GuideRefinement {
   key: string;
   role: string;
   prompt: string;
   from_namespace?: string;
+  choices?: GuideChoice[];
   on_tags?: unknown;
   selected: string | null;
 }

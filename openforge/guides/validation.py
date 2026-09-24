@@ -74,6 +74,7 @@ def _cross_reference_errors(data: dict) -> list[str]:
         _duplicate_errors(data)
         + _role_reference_errors(data)
         + _refinement_role_errors(data)
+        + _choice_errors(data)
         + _match_errors(data)
         + _when_errors(data)
     )
@@ -161,6 +162,35 @@ def _refinement_role_errors(data: dict) -> list[str]:
                 for name in by_role
                 if name not in roles
             ]
+    return errors
+
+
+def _choice_errors(data: dict) -> list[str]:
+    """A refinement's `choices` have to be answers it can accept.
+
+    The namespace check at resolve time refuses a tag from outside
+    `from_namespace`, so a choice outside it is an option that raises
+    the moment someone clicks it. And a toggle has no namespace to sit
+    in, so `choices` on one is a list nothing would ever read.
+    """
+    errors = []
+    for refinement in data.get("refinements", []):
+        choices = refinement.get("choices") or []
+        if not choices:
+            continue
+        where = f"refinement {refinement['key']!r}"
+        namespace = refinement.get("from_namespace")
+        if not namespace:
+            errors.append(f"{where}: `choices` needs `from_namespace`")
+            continue
+        errors += [
+            f"{where}: choice {choice['tag']!r} is not under {namespace!r}"
+            for choice in choices
+            if not choice["tag"].startswith(f"{namespace}|")
+        ]
+        errors += _duplicates(
+            f"choice in {where}", [choice["tag"] for choice in choices]
+        )
     return errors
 
 

@@ -47,10 +47,11 @@ export function GuideSteps({ steps, onSelect }: GuideStepsProps) {
                     : 'border-gray-300'
                 }`}
               >
+                {/* Title only. The blurb is what the explainer shows
+                    in the wide column while this question stands —
+                    putting it here as well makes a narrow column of
+                    paragraphs and says everything twice. */}
                 <span className="block font-semibold">{option.title}</span>
-                {option.blurb && (
-                  <span className="block text-sm mt-1">{option.blurb}</span>
-                )}
               </button>
             ))}
           </div>
@@ -74,9 +75,21 @@ export function GuideRefinements({
     <section className="guide-refinements mb-8">
       <h2 className="text-xl font-bold mb-3">Change anything</h2>
       <div className="flex flex-col gap-3">
-        {refinements.map((refinement) =>
-          refinement.on_tags ? (
-            <Toggle
+        {refinements.map((refinement) => {
+          if (refinement.on_tags) {
+            return (
+              <Toggle
+                key={refinement.key}
+                refinement={refinement}
+                onSelect={onSelect}
+              />
+            );
+          }
+          // A closed list is a question you can answer by looking at
+          // it, so it gets buttons like a step. The open namespace has
+          // no list to show and stays a text box.
+          return refinement.choices?.length ? (
+            <ChoicePicker
               key={refinement.key}
               refinement={refinement}
               onSelect={onSelect}
@@ -87,8 +100,56 @@ export function GuideRefinements({
               refinement={refinement}
               onSelect={onSelect}
             />
-          )
-        )}
+          );
+        })}
+      </div>
+    </section>
+  );
+}
+
+/**
+ * A refinement with a closed list of answers, drawn as the step
+ * options are drawn — because to the person answering it is the same
+ * kind of question, and the only reason it is a refinement is that it
+ * applies to whatever parts happen to be in play.
+ *
+ * Picking the selected answer again clears it, which is how you get
+ * back to "no preference" without a separate control.
+ */
+function ChoicePicker({
+  refinement,
+  onSelect,
+}: {
+  refinement: GuideRefinement;
+  onSelect: (key: string, value: string | null) => void;
+}) {
+  const heading = `refinement-${refinement.key}`;
+  return (
+    <section aria-labelledby={heading}>
+      <h3 id={heading} className="font-semibold mb-2">
+        {refinement.prompt}
+      </h3>
+      <div role="group" aria-labelledby={heading} className="flex flex-col gap-1">
+        {refinement.choices?.map((choice) => {
+          const chosen = refinement.selected === choice.tag;
+          return (
+            <button
+              key={choice.tag}
+              type="button"
+              aria-pressed={chosen}
+              onClick={() =>
+                onSelect(refinement.key, chosen ? null : choice.tag)
+              }
+              className={`text-left rounded border px-3 py-2 ${
+                chosen
+                  ? 'border-blue-600 bg-blue-50 font-semibold'
+                  : 'border-gray-300'
+              }`}
+            >
+              {choice.title ?? choice.tag.split('|').pop()}
+            </button>
+          );
+        })}
       </div>
     </section>
   );

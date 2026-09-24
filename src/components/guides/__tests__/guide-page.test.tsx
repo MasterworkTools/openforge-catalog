@@ -38,7 +38,12 @@ const RESOLVED = {
           blurb: 'Floor and wall are independent.',
           roles: {},
         },
-        { key: 's2w', title: 'Modular (s2w)', roles: {} },
+        {
+          key: 's2w',
+          title: 'Modular (s2w)',
+          blurb: 'Everything prints separately and stacks.',
+          roles: {},
+        },
       ],
     },
   ],
@@ -127,6 +132,18 @@ const RESOLVED_WITH_PARTS = {
       from_namespace: 'texture',
       selected: null,
     },
+    // A closed list, which is drawn as buttons rather than a text box.
+    {
+      key: 'floor-texture',
+      role: 'floor',
+      prompt: 'Floor texture',
+      from_namespace: 'texture',
+      choices: [
+        { tag: 'texture|dungeon_stone', title: 'Dungeon stone' },
+        { tag: 'texture|cave' },
+      ],
+      selected: null,
+    },
     // A toggle rather than a namespace pick: the two arms of the
     // `on_tags` branch render different controls, and both prompts are
     // plain text, so asserting on the text alone cannot tell them
@@ -153,7 +170,11 @@ const GUIDE_DOCUMENT = {
     key: 'wall',
     title: 'How do I make a wall?',
     steps: [{ key: 'method', prompt: 'How?', options: [] }],
-    refinements: [{ key: 'texture' }, { key: 'side-locks' }],
+    refinements: [
+      { key: 'texture' },
+      { key: 'floor-texture' },
+      { key: 'side-locks' },
+    ],
     roles: {},
   },
 };
@@ -243,9 +264,16 @@ describe('GuidePage', () => {
       render(<GuidePage />);
 
       expect(
-        await screen.findByText('How do you want to build it?')
+        await screen.findByRole('heading', {
+          name: 'How do you want to build it?',
+        })
       ).toBeInTheDocument();
-      expect(screen.getByText('Separate wall')).toBeInTheDocument();
+      expect(
+        screen.getByRole('button', { name: /Separate wall/ })
+      ).toBeInTheDocument();
+      // The same options are explained in the other column, which is
+      // where the difference between them actually lives.
+      expect(screen.getByRole('heading', { name: 'What these mean' })).toBeInTheDocument();
     });
 
     it('heads the page with the guide title from the API', async () => {
@@ -268,7 +296,9 @@ describe('GuidePage', () => {
       });
 
       render(<GuidePage />);
-      fireEvent.click(await screen.findByText('Separate wall'));
+      fireEvent.click(
+        await screen.findByRole('button', { name: /Separate wall/ })
+      );
 
       await waitFor(() =>
         expect(urls).toContain(
@@ -351,7 +381,9 @@ describe('GuidePage', () => {
 
       try {
         render(<GuidePage />);
-        fireEvent.click(await screen.findByText('Separate wall'));
+        fireEvent.click(
+          await screen.findByRole('button', { name: /Separate wall/ })
+        );
         await waitFor(() =>
           expect(window.location.search).toContain('method=separate-wall')
         );
@@ -360,6 +392,96 @@ describe('GuidePage', () => {
       } finally {
         window.removeEventListener('popstate', record);
       }
+    });
+
+    it('explains the options in the other column while the question stands', async () => {
+      // The first screen has no parts to show, and the difference
+      // between three ways of building a wall is the whole decision.
+      visit('?guide=wall');
+      mockFetch((url) => (url.includes('/resolve') ? RESOLVED : GUIDE_DOCUMENT));
+
+      render(<GuidePage />);
+
+      expect(
+        await screen.findByRole('heading', { name: 'What these mean' })
+      ).toBeInTheDocument();
+      expect(
+        screen.getByText('Floor and wall are independent.')
+      ).toBeInTheDocument();
+      expect(
+        screen.getByText('Everything prints separately and stacks.')
+      ).toBeInTheDocument();
+    });
+
+    it('stops explaining once the question is answered', async () => {
+      // The parts take the space, which is the right trade: by then the
+      // choice this was explaining has been made.
+      visit('?guide=wall&method=separate-wall');
+      mockFetch((url) =>
+        url.includes('/resolve') ? RESOLVED_WITH_PARTS : GUIDE_DOCUMENT
+      );
+
+      render(<GuidePage />);
+      await screen.findByText('a dungeon stone wall');
+
+      expect(
+        screen.queryByRole('heading', { name: 'What these mean' })
+      ).not.toBeInTheDocument();
+      expect(
+        screen.queryByText('Floor and wall are independent.')
+      ).not.toBeInTheDocument();
+    });
+
+    it('draws a closed refinement as buttons, and answers with one', async () => {
+      visit('?guide=wall&method=separate-wall');
+      mockFetch((url) =>
+        url.includes('/resolve') ? RESOLVED_WITH_PARTS : GUIDE_DOCUMENT
+      );
+
+      render(<GuidePage />);
+      // No text box for this one, and a label made from the tag when
+      // the choice carries no title.
+      const cave = await screen.findByRole('button', { name: 'cave' });
+      expect(
+        screen.getByRole('button', { name: 'Dungeon stone' })
+      ).toBeInTheDocument();
+      expect(
+        screen.queryByPlaceholderText('texture|...')
+      ).toBeInTheDocument(); // the open one is still a box
+
+      fireEvent.click(cave);
+
+      await waitFor(() =>
+        expect(window.location.search).toContain(
+          'floor-texture=texture%7Ccave'
+        )
+      );
+    });
+
+    it('clears a closed refinement by picking its answer again', async () => {
+      visit('?guide=wall&method=separate-wall&floor-texture=texture|cave');
+      mockFetch((url) =>
+        url.includes('/resolve')
+          ? {
+              ...RESOLVED_WITH_PARTS,
+              refinements: RESOLVED_WITH_PARTS.refinements.map((r) =>
+                r.key === 'floor-texture'
+                  ? { ...r, selected: 'texture|cave' }
+                  : r
+              ),
+            }
+          : GUIDE_DOCUMENT
+      );
+
+      render(<GuidePage />);
+      const cave = await screen.findByRole('button', { name: 'cave' });
+      expect(cave).toHaveAttribute('aria-pressed', 'true');
+
+      fireEvent.click(cave);
+
+      await waitFor(() =>
+        expect(window.location.search).not.toContain('floor-texture')
+      );
     });
 
     it('shows which option is the chosen one', async () => {
@@ -472,9 +594,11 @@ describe('GuidePage', () => {
       }) as unknown as typeof fetch;
 
       render(<GuidePage />);
-      fireEvent.click(await screen.findByText('Separate wall'));
+      fireEvent.click(
+        await screen.findByRole('button', { name: /Separate wall/ })
+      );
       await waitFor(() => expect(pending).toHaveLength(1));
-      fireEvent.click(screen.getByText('Modular (s2w)'));
+      fireEvent.click(screen.getByRole('button', { name: /Modular \(s2w\)/ }));
       await waitFor(() => expect(pending).toHaveLength(2));
 
       // Newest first, then the stale one — the order that breaks it.

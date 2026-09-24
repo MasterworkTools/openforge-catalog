@@ -997,3 +997,95 @@ def test_matching_copies_a_tag_that_is_the_namespace_itself():
     parts = {p["role"]: p for p in resolved["parts"]}
 
     assert parts["wall-base"]["query"]["require"] == ["shape|base", "size|width"]
+
+
+def test_a_refinement_offering_a_closed_list_refuses_anything_else(guide):
+    """The buttons and the accepted answers have to be the same set.
+
+    A closed list is a promise about what the answers are, and the URL
+    carrying the answer is editable, so the promise has to be enforced
+    somewhere other than the markup.
+    """
+    texture = next(r for r in guide["refinements"] if r["key"] == "texture")
+    texture["choices"] = [
+        {"tag": "texture|dungeon_stone"},
+        {"tag": "texture|cave"},
+    ]
+
+    resolved = resolve(
+        guide,
+        {"method": "s2w-modular", "texture": "texture|cave"},
+        find_candidates,
+    )
+    assert resolved["refinements"][0]["selected"] == "texture|cave"
+    # Still in the namespace, so the namespace check passes it; only the
+    # list refuses it.
+    with pytest.raises(GuideSelectionError, match="does not offer"):
+        resolve(
+            guide,
+            {"method": "s2w-modular", "texture": "texture|towne"},
+            find_candidates,
+        )
+
+
+def test_an_open_namespace_refinement_still_takes_any_tag_in_it(guide):
+    """`choices` is optional, and its absence is not an empty list."""
+    resolved = resolve(
+        guide,
+        {"method": "s2w-modular", "texture": "texture|anything_at_all"},
+        find_candidates,
+    )
+    assert resolved["refinements"][0]["selected"] == "texture|anything_at_all"
+
+
+def test_the_choices_reach_the_frontend(guide):
+    """They are what it draws the buttons from."""
+    texture = next(r for r in guide["refinements"] if r["key"] == "texture")
+    texture["choices"] = [
+        {"tag": "texture|dungeon_stone", "title": "Dungeon stone"},
+        {"tag": "texture|cave"},
+    ]
+
+    resolved = resolve(guide, {"method": "s2w-modular"}, find_candidates)
+
+    offered = next(r for r in resolved["refinements"] if r["key"] == "texture")
+    assert offered["choices"] == texture["choices"]
+
+
+def test_an_option_that_names_no_base_leaves_it_out_of_the_build(guide):
+    """How a later step removes a part rather than emptying it.
+
+    A role is in play because some chosen option named it, so the
+    single-piece print option is simply an option that does not name the
+    base. The distinction matters: a part that resolved to nothing says
+    "nothing matches" on the page, and a part that is not in the build
+    is not drawn at all.
+    """
+    guide["steps"].append(
+        {
+            "key": "wall-print",
+            "prompt": "How should the wall print?",
+            "options": [
+                {
+                    "key": "with-base",
+                    "title": "Wall plus a base",
+                    "roles": {"base": None},
+                },
+                {
+                    "key": "single-piece",
+                    "title": "One piece",
+                    "roles": {"wall": {"deny": ["build|s2w"]}},
+                },
+            ],
+        }
+    )
+    separate = {"method": "separate-wall"}
+
+    with_base = resolve(guide, {**separate, "wall-print": "with-base"}, find_candidates)
+    single = resolve(guide, {**separate, "wall-print": "single-piece"}, find_candidates)
+
+    assert "base" in [p["role"] for p in with_base["parts"]]
+    assert "base" not in [p["role"] for p in single["parts"]]
+    # And the option's own predicate still applies to the piece it named.
+    wall = next(p for p in single["parts"] if p["role"] == "wall")
+    assert "build|s2w" in wall["query"]["deny"]

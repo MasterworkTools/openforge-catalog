@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { GuideSummary, fetchGuides } from '@/services/guide-service';
 import { useGuideKey, useGuideState } from '@/hooks/use-guide-state';
 import { GuideParts } from './guide-parts';
+import { GuideExplainer, currentStep } from './guide-explainer';
 import { GuideRefinements, GuideSteps } from './guide-steps';
 
 /**
@@ -23,6 +24,8 @@ export default function GuidePage() {
   // `?guide=` is a URL with no guide in it, not a guide named "".
   // Asking the API for that one only produces a 404 to show someone.
   if (!guideKey) return <GuideList />;
+
+  const asking = resolved ? currentStep(resolved.steps) : null;
 
   return (
     <main className="p-6 max-w-7xl">
@@ -44,6 +47,7 @@ export default function GuidePage() {
             />
           </div>
           <div className="lg:flex-1">
+            {asking && <GuideExplainer step={asking} />}
             <GuideParts parts={resolved.parts} />
           </div>
         </div>
