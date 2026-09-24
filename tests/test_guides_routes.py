@@ -183,7 +183,50 @@ def test_resolving_with_no_selections_offers_the_first_step(
     assert response.status_code == 200
     assert response.json["parts"] == []
     assert [step["key"] for step in response.json["steps"]] == ["method"]
-    assert response.json["refinements"][0]["key"] == "texture"
+    # And offers nothing to refine, because there is nothing yet to
+    # refine: a texture question with no part to apply to takes an
+    # answer that changes nothing.
+    assert response.json["refinements"] == []
+
+
+def test_a_refinement_appears_once_it_has_a_part_to_apply_to(
+    client, wall_guide, catalog
+):
+    """The other side of the rule above."""
+    response = client.get("/api/guides/wall/resolve?method=separate-wall")
+
+    assert response.status_code == 200
+    assert [r["key"] for r in response.json["refinements"]] == ["texture"]
+
+
+def test_a_refinement_that_reaches_no_part_is_not_offered(client, test_db, catalog):
+    """A question about parts this build does not have.
+
+    This one applies to the wall alone, and this method builds only a
+    floor — so asking it would take an answer that fits every way and
+    changes nothing, which is worse than silence. It is why "how do
+    the bases clip together?" disappears from the wall guide when both
+    pieces print with their bases built in.
+    """
+    document = copy.deepcopy(WALL_GUIDE)
+    document["steps"][0]["options"][0]["roles"] = {"floor": None}
+    document["refinements"] = document["refinements"] + [
+        {
+            "key": "side-locks",
+            "role": "wall",
+            "prompt": "Locks on the wall ends?",
+            "on_tags": {"require": ["connection|side|openlock"]},
+            "off_tags": {"deny": ["connection|side|openlock"]},
+        }
+    ]
+    with test_db.connection() as conn:
+        with conn.cursor(row_factory=dict_row) as curs:
+            guide_sql.upsert_guide(curs, document)
+
+    response = client.get("/api/guides/wall/resolve?method=separate-wall")
+
+    assert [p["role"] for p in response.json["parts"]] == ["floor"]
+    assert [r["key"] for r in response.json["refinements"]] == ["texture"]
 
 
 def test_a_refinement_narrows_the_recommendation(client, wall_guide, catalog):

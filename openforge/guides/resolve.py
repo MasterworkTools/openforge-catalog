@@ -108,7 +108,7 @@ def resolve(document: dict, selections: dict, find_candidates, exists=None) -> d
     """
     steps, answered = _available_steps(document, selections)
     chosen = _chosen_options(steps, answered)
-    refinements = _available_refinements(document, answered)
+    refinements = _available_refinements(document, answered, _roles_in_play(chosen))
     _reject_unknown_selections(document, steps, refinements, selections)
     parts = _parts(document, chosen, refinements, selections, find_candidates)
     # Availability is opt-in, and the default is off.
@@ -221,8 +221,9 @@ def _holds(
     """
     steps, answered = _available_steps(document, selections)
     chosen = _chosen_options(steps, answered)
-    refinements = _available_refinements(document, answered)
-    for name in _roles_in_play(chosen):
+    in_play = _roles_in_play(chosen)
+    refinements = _available_refinements(document, answered, in_play)
+    for name in in_play:
         role = document["roles"][name]
         predicate = _compose(role["query"], chosen, refinements, selections, name)
         key = _predicate_key(predicate)
@@ -315,12 +316,38 @@ def _with_available_options(step: dict, answered: dict) -> dict:
     return {**step, "options": offered}
 
 
-def _available_refinements(document: dict, answered: dict) -> list[dict]:
-    return [
+def _available_refinements(
+    document: dict, answered: dict, in_play: list[str] | None = None
+) -> list[dict]:
+    """The refinements worth asking about, given what is being built.
+
+    Two filters. `when` is the author's: this question only makes
+    sense on that branch. The second is structural — a refinement that
+    applies to no part in the build is a question about nothing, and
+    asking "how do the bases clip together?" of a build with no bases
+    invites an answer that changes nothing and greys nothing, because
+    every choice fits a set of no roles equally well.
+    """
+    offered = [
         refinement
         for refinement in document.get("refinements", [])
         if _when_holds(refinement.get("when"), answered)
     ]
+    if in_play is None:
+        return offered
+    return [r for r in offered if _applies_to_any(r, in_play)]
+
+
+def _applies_to_any(refinement: dict, in_play: list[str]) -> bool:
+    """Does this refinement reach any role that is actually in play?
+
+    Same test `_compose` applies per role, asked across all of them.
+    """
+    except_roles = refinement.get("except_roles", [])
+    return any(
+        refinement["role"] in ("*", name) and name not in except_roles
+        for name in in_play
+    )
 
 
 def _when_holds(when: dict | None, selections: dict) -> bool:

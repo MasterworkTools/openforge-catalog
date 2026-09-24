@@ -486,8 +486,10 @@ refinements:
   # walls and not one shape|floor|wall between them — so a single
   # texture question would empty the floor for a third of its answers.
   # Only the five that have both are offered here.
-  # Discrete from the side clips, and a yes/no rather than a pick: a
-  # wall can have clips on its ends and pegs, or either, or neither.
+  # Pegs on top of the wall, so another storey can stand on it. A
+  # different question from the side clips, which join wall to wall
+  # along a run: these join floor to floor up a building, and a wall
+  # can have both, either or neither.
   #
   # Only four of the eight wall textures have pegged walls at all —
   # towne 58, dungeon stone 35, cut stone 12, rough stone 10, and
@@ -496,10 +498,37 @@ refinements:
   # greying-out is for rather than something to hide.
   - key: pegs
     role: wall
-    prompt: Pegged ends?
+    prompt: Multifloor pegs?
     when: {selected: {method: [s2w, wall-on-tile, separate-wall]}}
     on_tags: {require: ['connection|pegs']}
     off_tags: {deny: ['connection|pegs']}
+
+  # How the bases clip down. Until now this was only a `prefer` list on
+  # each base role, which is a default nobody can see or change — and
+  # it is the one choice that has to be the same for every base in a
+  # build, because a set whose two bases clip together differently is
+  # not a set.
+  #
+  # Applies to the bases and to nothing else: `role: '*'` minus the
+  # pieces that stand on them, so it follows whichever bases are in
+  # play. Print either piece as one with its base built in and the
+  # question simply has one fewer part to answer for.
+  #
+  # Not exclusive, despite reading like a system: a base commonly
+  # carries magnets *and* clips, so this requires one and says nothing
+  # about the rest.
+  - key: base-connection
+    role: '*'
+    except_roles: ['wall', 'floor']
+    prompt: How do the bases clip together?
+    when: {selected: {method: [s2w, wall-on-tile, separate-wall]}}
+    from_namespace: connection
+    choices:
+      - {tag: 'connection|openlock', title: 'OpenLOCK', blurb: 'The common one. 804 floor bases, 255 wall bases.'}
+      - {tag: 'connection|openlock|topless', title: 'OpenLOCK, topless', blurb: 'Same clip with an open top, so it prints without supports. 236 and 92.'}
+      - {tag: 'connection|magnetic|flex', title: 'Magnets', blurb: 'A magnet in each corner. Holds in any orientation and costs magnets. 759 and 262.'}
+      - {tag: 'connection|dragonlock', title: 'DragonLock', blurb: "Dragonlock's fitting, for mixing with that collection. 417 and 107."}
+      - {tag: 'connection|dual', title: 'Dual', blurb: 'Both clip systems on one base. 41 wall bases and no floor bases, so this greys out unless the floor prints as one piece.'}
 
   - key: floor-texture
     role: floor
