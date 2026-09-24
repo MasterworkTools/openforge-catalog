@@ -88,6 +88,7 @@ def resolve_guide(guide_key: str):
                     guide["document"],
                     _selections_from_request(),
                     _candidate_finder(curs),
+                    facets=_facet_finder(curs),
                 )
             except GuideSelectionError as e:
                 # Both the query-string read and the engine raise this,
@@ -130,6 +131,7 @@ def guide_availability(guide_key: str):
                     _selections_from_request(),
                     _candidate_finder(curs),
                     exists=_existence_finder(curs),
+                    facets=_facet_finder(curs),
                 )
             except GuideSelectionError as e:
                 return jsonify({"error": str(e)}), 400
@@ -204,6 +206,22 @@ def _candidate_finder(curs):
         return found
 
     return find_candidates
+
+
+def _facet_finder(curs):
+    """What answers a namespace question actually has, here and now.
+
+    Given the predicate that narrows a part, the tags it carries under
+    a namespace — so a guide offers the connectors that exist for
+    *these* bases rather than a list somebody wrote down once.
+    """
+
+    def facets(predicate: dict, namespace: str) -> list[dict]:
+        return tag_sql.tag_search_namespace_facets(
+            curs, **to_tag_query(predicate), namespace=namespace
+        )
+
+    return facets
 
 
 def _existence_finder(curs):

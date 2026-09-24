@@ -1,7 +1,11 @@
 'use client';
 
 import React from 'react';
-import { GuideRefinement, GuideStep } from '@/services/guide-service';
+import {
+  GuideChoice,
+  GuideRefinement,
+  GuideStep,
+} from '@/services/guide-service';
 
 /**
  * The questions. A step is a set of options, one of which is chosen; a
@@ -174,11 +178,14 @@ function AnsweredStep({
  */
 function Answer({
   label,
+  hint,
   chosen,
   dead,
   onPick,
 }: {
   label: string;
+  /** What this answer is, when the catalog has something to say. */
+  hint?: string;
   chosen: boolean;
   dead: boolean;
   onPick: () => void;
@@ -188,7 +195,11 @@ function Answer({
       type="button"
       aria-pressed={chosen}
       disabled={dead && !chosen}
-      title={dead ? 'Nothing in the catalog matches this with your other choices' : undefined}
+      title={
+        dead
+          ? 'Nothing in the catalog matches this with your other choices'
+          : hint
+      }
       onClick={onPick}
       className={`border rounded p-3 text-left ${
         chosen
@@ -285,7 +296,8 @@ function ChoicePicker({
           return (
             <Answer
               key={choice.tag}
-              label={choice.title ?? choice.tag.split('|').pop() ?? choice.tag}
+              label={labelFor(choice)}
+              hint={choice.blurb}
               chosen={chosen}
               dead={dead.includes(choice.tag)}
               onPick={() => onSelect(refinement.key, chosen ? null : choice.tag)}
@@ -295,6 +307,28 @@ function ChoicePicker({
       </div>
     </section>
   );
+}
+
+/**
+ * What to call a derived answer.
+ *
+ * A curated choice carries its own title. A derived one carries only
+ * the tag, so the label is its last element with the underscores taken
+ * out — and the count beside it, because "OpenLOCK (135)" and
+ * "DragonLock (46)" is the difference between two answers that
+ * otherwise look equally good.
+ */
+function labelFor(choice: GuideChoice): string {
+  if (choice.title) return choice.title;
+  // A derived answer is a tag: its last element, underscores out, and
+  // the first letter up. Not a brand's own capitalisation — a list of
+  // those would be the stale thing deriving exists to avoid — but
+  // enough that "openlock" does not read as a typo.
+  const name = (choice.tag.split('|').pop() ?? choice.tag).replace(/_/g, ' ');
+  const pretty = name.charAt(0).toUpperCase() + name.slice(1);
+  // The count is the difference between two answers that otherwise
+  // look equally good: 135 pieces behind one and 46 behind another.
+  return choice.count === undefined ? pretty : `${pretty} (${choice.count})`;
 }
 
 function Toggle({

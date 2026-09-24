@@ -33,6 +33,8 @@ export interface GuideChoice {
   tag: string;
   title?: string;
   blurb?: string;
+  /** How many pieces are behind it, when the answer was derived. */
+  count?: number;
 }
 
 export interface GuideRefinement {

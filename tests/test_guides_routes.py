@@ -806,3 +806,99 @@ def test_availability_for_an_unknown_guide_is_a_404(client, wall_guide):
     response = client.get("/api/guides/nonesuch/availability")
 
     assert response.status_code == 404
+
+
+def test_a_namespace_refinement_offers_what_the_parts_carry(client, test_db, catalog):
+    """Derived answers, not a list somebody typed into the guide.
+
+    A guide that names its own answers goes stale the moment the
+    catalog gains a connector. This one says only which namespace to
+    ask about, and the answers come from the parts it applies to.
+    """
+    document = copy.deepcopy(WALL_GUIDE)
+    document["refinements"] = [
+        {
+            "key": "connectors",
+            "role": "wall",
+            "prompt": "Connectors?",
+            "from_namespace": "connection",
+        }
+    ]
+    with test_db.connection() as conn:
+        with conn.cursor(row_factory=dict_row) as curs:
+            guide_sql.upsert_guide(curs, document)
+
+    response = client.get("/api/guides/wall/resolve?method=separate-wall")
+
+    offered = response.json["refinements"][0]["choices"]
+    # Two of the three separate walls carry it and nothing carries
+    # anything else, so that is the whole of the answer — with the
+    # count behind it, because an answer with 240 pieces and one with
+    # 4 are worth telling apart.
+    assert [c["tag"] for c in offered] == ["connection|openforge"]
+    assert offered[0]["count"] == 2
+
+
+def test_derived_answers_are_immediate_children_of_the_namespace(
+    client, test_db, catalog
+):
+    """`connection|side` and `connection|side|openlock` sit on the same
+    pieces, so offering both offers one answer twice. A variant belongs
+    to the question about its parent, not the question about the
+    family."""
+    document = copy.deepcopy(WALL_GUIDE)
+    document["refinements"] = [
+        {
+            "key": "connectors",
+            "role": "wall",
+            "prompt": "Connectors?",
+            "from_namespace": "connection",
+        }
+    ]
+    with test_db.connection() as conn:
+        with conn.cursor(row_factory=dict_row) as curs:
+            guide_sql.upsert_guide(curs, document)
+            blueprint = make_blueprint(
+                test_db,
+                "e side wall",
+                [
+                    "build|separate wall",
+                    "shape|wall",
+                    "connection|openforge",
+                    "connection|side",
+                    "connection|side|openlock",
+                    "texture|cave",
+                ],
+            )
+    assert blueprint is not None
+
+    response = client.get("/api/guides/wall/resolve?method=separate-wall")
+
+    assert [c["tag"] for c in response.json["refinements"][0]["choices"]] == [
+        "connection|openforge",
+        "connection|side",
+    ]
+
+
+def test_a_curated_choice_list_is_left_alone(client, test_db, catalog):
+    """`choices` is an override, and has to beat derivation.
+
+    The texture question needs it: `substitute` means the roles are
+    asked for *different* tags, so what they carry cannot be
+    intersected into one list.
+    """
+    document = copy.deepcopy(WALL_GUIDE)
+    document["refinements"][0]["choices"] = [
+        {"tag": "texture|cave"},
+        {"tag": "texture|nonesuch"},
+    ]
+    with test_db.connection() as conn:
+        with conn.cursor(row_factory=dict_row) as curs:
+            guide_sql.upsert_guide(curs, document)
+
+    response = client.get("/api/guides/wall/resolve?method=separate-wall")
+
+    assert [c["tag"] for c in response.json["refinements"][0]["choices"]] == [
+        "texture|cave",
+        "texture|nonesuch",
+    ]

@@ -503,32 +503,65 @@ refinements:
     on_tags: {require: ['connection|pegs']}
     off_tags: {deny: ['connection|pegs']}
 
-  # How the bases clip down. Until now this was only a `prefer` list on
-  # each base role, which is a default nobody can see or change — and
-  # it is the one choice that has to be the same for every base in a
-  # build, because a set whose two bases clip together differently is
-  # not a set.
+  # How the bases clip down, in three parts because that is how the
+  # catalog is built rather than a taste for controls.
   #
-  # Applies to the bases and to nothing else: `role: '*'` minus the
-  # pieces that stand on them, so it follows whichever bases are in
-  # play. Print either piece as one with its base built in and the
-  # question simply has one fewer part to answer for.
+  # There is one clip system per base and it is OpenLOCK or
+  # DragonLock — no base carries both. Topless is a variant of the
+  # OpenLOCK clip, not a third system. Magnets are independent of all
+  # of it: either system can have them, and 200 bases have magnets and
+  # no clips at all. Counted over every base in the catalog, wall and
+  # floor:
   #
-  # Not exclusive, despite reading like a system: a base commonly
-  # carries magnets *and* clips, so this requires one and says nothing
-  # about the rest.
+  #   dragonlock              52 / 243      + magnets   55 / 174
+  #   openlock                76 / 308      + magnets   87 / 260
+  #   openlock, topless       26 /  57      + magnets   66 / 179
+  #   no clips, magnets only  54 / 146
+  #
+  # Nothing gates topless to OpenLOCK, and nothing needs to: no
+  # DragonLock base is topless, so choosing DragonLock greys it out on
+  # its own. A rule in the guide would say the same thing twice and be
+  # the one that goes stale.
+  #
+  # All three apply to the bases and nothing else — `role: '*'` minus
+  # the pieces that stand on them — so they follow whichever bases are
+  # in play, and disappear when a build has none.
   - key: base-connection
     role: '*'
     except_roles: ['wall', 'floor']
     prompt: How do the bases clip together?
     when: {selected: {method: [s2w, wall-on-tile, separate-wall]}}
+    # No `choices`: the answers are whatever these bases actually
+    # carry, worked out per role and intersected. That is the whole
+    # point — a connector the catalog gains later appears here without
+    # this file being touched, and one it does not have is never
+    # offered. It also means the list narrows as the build narrows: a
+    # 2x2 floor base, a 2x2 s2w base and a 2-wide dungeon stone wall
+    # base do not offer the same connectors.
     from_namespace: connection
-    choices:
-      - {tag: 'connection|openlock', title: 'OpenLOCK', blurb: 'The common one. 804 floor bases, 255 wall bases.'}
-      - {tag: 'connection|openlock|topless', title: 'OpenLOCK, topless', blurb: 'Same clip with an open top, so it prints without supports. 236 and 92.'}
-      - {tag: 'connection|magnetic|flex', title: 'Magnets', blurb: 'A magnet in each corner. Holds in any orientation and costs magnets. 759 and 262.'}
-      - {tag: 'connection|dragonlock', title: 'DragonLock', blurb: "Dragonlock's fitting, for mixing with that collection. 417 and 107."}
-      - {tag: 'connection|dual', title: 'Dual', blurb: 'Both clip systems on one base. 41 wall bases and no floor bases, so this greys out unless the floor prints as one piece.'}
+
+  # The variants of the OpenLOCK clip, which is where "expose more
+  # options as you choose" lands: under DragonLock both of these grey
+  # out on their own, because no DragonLock base is topless and the
+  # eight that are unsupported are floor bases only. Nothing in the
+  # guide says "only for OpenLOCK" — the catalog says it, and a rule
+  # here would be the copy that goes stale.
+  - key: base-topless
+    role: '*'
+    except_roles: ['wall', 'floor']
+    prompt: Topless clips?
+    when: {selected: {method: [s2w, wall-on-tile, separate-wall]}}
+    # An open top, so the clip prints without supports.
+    on_tags: {require: ['connection|openlock|topless']}
+    off_tags: {deny: ['connection|openlock|topless']}
+
+  - key: base-unsupported
+    role: '*'
+    except_roles: ['wall', 'floor']
+    prompt: Unsupported clips?
+    when: {selected: {method: [s2w, wall-on-tile, separate-wall]}}
+    on_tags: {require: ['connection|openlock|unsupported']}
+    off_tags: {deny: ['connection|openlock|unsupported']}
 
   - key: floor-texture
     role: floor

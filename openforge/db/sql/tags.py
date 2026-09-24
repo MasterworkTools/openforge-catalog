@@ -403,6 +403,86 @@ def tag_search_blueprint_start_count(
     return curs.fetchone()["count"]
 
 
+def tag_search_namespace_facets(
+    curs: cursor,
+    accept: list[str],
+    require: list[str],
+    deny: list[str],
+    namespace: str,
+    models: bool = True,
+    blueprints: bool = False,
+    search: str | None = None,
+    deny_children: list[dict] | None = None,
+    allow: list[dict] | None = None,
+) -> list[dict]:
+    """Tags under `namespace` carried by what this predicate matches.
+
+    What a guide offers as answers, rather than a list somebody typed
+    into a fixture. Two things follow from deriving it: an option the
+    catalog does not have is never offered, and one it gains later
+    appears without anyone editing a guide.
+
+    Counted, because a question with 240 answers behind one of them
+    and 4 behind another is worth showing that way, and ordered by the
+    tag so the list does not reshuffle as counts drift.
+    """
+    parts = [
+        # The description comes along for the ride. A derived answer
+        # has no hand-written blurb by definition, and the catalog
+        # already explains its own tags — so a connector added next
+        # year arrives with its explanation rather than as a bare word.
+        sql.SQL("SELECT COUNT(*) AS tag_count, t.tag,"),
+        sql.SQL("       MIN(d.description) AS description"),
+        sql.SQL("  FROM tags AS t"),
+        sql.SQL("  LEFT JOIN tag_descriptions AS d ON d.tag = t.tag"),
+        sql.SQL("  WHERE t.blueprint_id IN ("),
+        _query_tags_basics(
+            accept,
+            require,
+            deny,
+            do_limit=False,
+            do_order=False,
+            models=models,
+            blueprints=blueprints,
+            search=search,
+            deny_children=deny_children,
+            allow=allow,
+        ),
+        sql.SQL("  )"),
+        # The namespace itself is not an answer — `connection` is the
+        # question. Everything strictly beneath it is.
+        sql.SQL("    AND t.tag @> {ns} AND t.tag[1] = {first}").format(
+            ns=sql.Literal(namespace.split("|")),
+            first=sql.Literal(namespace.split("|")[0]),
+        ),
+        sql.SQL("    AND t.tag[1:{depth}] = {ns}").format(
+            depth=sql.Literal(len(namespace.split("|"))),
+            ns=sql.Literal(namespace.split("|")),
+        ),
+        # Immediate children only. `connection|magnetic` and
+        # `connection|magnetic|flex` sit on the same 125 bases, so
+        # offering both is offering the same answer twice — and a
+        # variant belongs to the question about its parent, not to the
+        # question about the family.
+        sql.SQL("    AND array_length(t.tag, 1) = {depth}").format(
+            depth=sql.Literal(len(namespace.split("|")) + 1)
+        ),
+        sql.SQL("  GROUP BY t.tag"),
+        sql.SQL("  ORDER BY t.tag"),
+    ]
+    query = sql.Composed(parts)
+    get_logger().debug(query.join("\n").as_string())
+    curs.execute(query)
+    return [
+        {
+            "tag": array_to_tag(row["tag"]),
+            "count": row["tag_count"],
+            "blurb": row["description"],
+        }
+        for row in curs.fetchall()
+    ]
+
+
 def tag_search_tag_count(
     curs: cursor,
     accept: list[str],

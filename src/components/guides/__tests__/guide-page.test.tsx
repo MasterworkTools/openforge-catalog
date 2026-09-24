@@ -504,7 +504,7 @@ describe('GuidePage', () => {
       render(<GuidePage />);
       // No text box for this one, and a label made from the tag when
       // the choice carries no title.
-      const cave = await screen.findByRole('button', { name: 'cave' });
+      const cave = await screen.findByRole('button', { name: 'Cave' });
       expect(
         screen.getByRole('button', { name: 'Dungeon stone' })
       ).toBeInTheDocument();
@@ -537,7 +537,7 @@ describe('GuidePage', () => {
       );
 
       render(<GuidePage />);
-      const cave = await screen.findByRole('button', { name: 'cave' });
+      const cave = await screen.findByRole('button', { name: 'Cave' });
       expect(cave).toHaveAttribute('aria-pressed', 'true');
 
       fireEvent.click(cave);
@@ -614,7 +614,7 @@ describe('GuidePage', () => {
 
       render(<GuidePage />);
 
-      const cave = await screen.findByRole('button', { name: 'cave' });
+      const cave = await screen.findByRole('button', { name: 'Cave' });
       await waitFor(() => expect(cave).toBeDisabled());
       expect(cave).toHaveAttribute('title', expect.stringContaining('Nothing'));
       // The answers that do work stay clickable.
@@ -642,7 +642,7 @@ describe('GuidePage', () => {
 
       render(<GuidePage />);
 
-      expect(await screen.findByRole('button', { name: 'cave' })).not.toBeDisabled();
+      expect(await screen.findByRole('button', { name: 'Cave' })).not.toBeDisabled();
       expect(await screen.findByText('a dungeon stone wall')).toBeInTheDocument();
     });
 

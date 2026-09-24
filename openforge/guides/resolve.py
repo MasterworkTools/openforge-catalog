@@ -86,7 +86,9 @@ def to_tag_query(predicate: dict) -> dict:
     }
 
 
-def resolve(document: dict, selections: dict, find_candidates, exists=None) -> dict:
+def resolve(
+    document: dict, selections: dict, find_candidates, exists=None, facets=None
+) -> dict:
     """Resolve a guide against a person's selections.
 
     Args:
@@ -108,7 +110,8 @@ def resolve(document: dict, selections: dict, find_candidates, exists=None) -> d
     """
     steps, answered = _available_steps(document, selections)
     chosen = _chosen_options(steps, answered)
-    refinements = _available_refinements(document, answered, _roles_in_play(chosen))
+    in_play = _roles_in_play(chosen)
+    refinements = _available_refinements(document, answered, in_play)
     _reject_unknown_selections(document, steps, refinements, selections)
     parts = _parts(document, chosen, refinements, selections, find_candidates)
     # Availability is opt-in, and the default is off.
@@ -120,6 +123,14 @@ def resolve(document: dict, selections: dict, find_candidates, exists=None) -> d
     # themselves, and the parts are what the person is waiting to see.
     # So the page asks for them separately and greys the buttons when
     # the answer arrives.
+    # A namespace refinement with no `choices` of its own offers
+    # whatever the parts actually carry, so a connector the catalog
+    # gains later shows up without a guide being edited.
+    derived = (
+        _derive_choices(document, chosen, refinements, selections, in_play, facets)
+        if facets is not None
+        else {}
+    )
     dead = (
         _unavailable(document, steps, refinements, selections, parts, exists)
         if exists is not None
@@ -138,6 +149,11 @@ def resolve(document: dict, selections: dict, find_candidates, exists=None) -> d
         "refinements": [
             {
                 **refinement,
+                **(
+                    {"choices": derived[refinement["key"]]}
+                    if refinement["key"] in derived
+                    else {}
+                ),
                 "selected": selections.get(refinement["key"]),
                 "unavailable": dead.get(refinement["key"], []),
             }
@@ -234,6 +250,81 @@ def _holds(
         if not cache[key]:
             return False
     return True
+
+
+def _derive_choices(
+    document: dict,
+    chosen: list[dict],
+    refinements: list[dict],
+    selections: dict,
+    in_play: list[str],
+    facets,
+) -> dict:
+    """What each open-ended namespace refinement can actually offer.
+
+    A guide that lists its own answers goes stale: the catalog gains a
+    connection system and every guide has to be edited to mention it.
+    So a namespace refinement with no `choices` of its own offers
+    whatever the parts it applies to actually carry — which is what
+    `from_namespace` always meant, and what the free-text box was
+    standing in for.
+
+    Derived **per role and intersected**, because the roles it applies
+    to are not alike: a 2x2 floor base, a 2x2 s2w base and a 2-wide
+    dungeon stone wall base do not offer the same connectors. One
+    answer is required of all of them, so offering something only one
+    of them has would empty the others.
+
+    Its own answer is excluded from the predicate first — see
+    `_compose(without=...)` — or the only answer on offer would be the
+    one already chosen.
+
+    `substitute` and derivation do not mix, and a refinement that uses
+    one should list its `choices`: substitution means the roles are
+    asked for *different* tags, so intersecting what they carry
+    describes nothing. The texture question is the live example.
+    """
+    derived = {}
+    for refinement in refinements:
+        namespace = refinement.get("from_namespace")
+        if not namespace or refinement.get("choices"):
+            continue
+        roles = [
+            name
+            for name in in_play
+            if refinement["role"] in ("*", name)
+            and name not in refinement.get("except_roles", [])
+        ]
+        if not roles:
+            continue
+        offered: set | None = None
+        counts: dict = {}
+        for name in roles:
+            predicate = _compose(
+                document["roles"][name]["query"],
+                chosen,
+                refinements,
+                selections,
+                name,
+                without=refinement["key"],
+            )
+            found = {f["tag"]: f for f in facets(predicate, namespace)}
+            offered = set(found) if offered is None else offered & set(found)
+            for tag, facet in found.items():
+                # The smallest count across the roles, because that is
+                # how many builds this answer really leaves you.
+                seen = counts.get(tag)
+                if seen is None or facet["count"] < seen["count"]:
+                    counts[tag] = facet
+        derived[refinement["key"]] = [
+            {
+                "tag": tag,
+                "count": counts[tag]["count"],
+                **({"blurb": counts[tag]["blurb"]} if counts[tag].get("blurb") else {}),
+            }
+            for tag in sorted(offered or ())
+        ]
+    return derived
 
 
 def _predicate_key(predicate: dict):
@@ -569,7 +660,15 @@ def _compose(
     refinements: list[dict],
     selections: dict,
     role_name: str,
+    without: str | None = None,
 ) -> dict:
+    """Everything asked of one role, optionally minus one refinement.
+
+    `without` is for working out what a refinement could offer. Its own
+    answer has to come out of the predicate first, or the only answer
+    on offer is the one already given and no one could ever change
+    their mind.
+    """
     predicates = [query]
     for option in chosen:
         predicates += _option_predicates(option, role_name)
@@ -577,6 +676,7 @@ def _compose(
         _refinement_predicate(refinement, selections[refinement["key"]], role_name)
         for refinement in refinements
         if refinement["key"] in selections
+        and refinement["key"] != without
         and refinement["role"] in ("*", role_name)
         and role_name not in refinement.get("except_roles", [])
     ]
