@@ -112,7 +112,30 @@ const RESOLVED_WITH_PARTS = {
         blueprint_name: 'a dungeon stone base',
         file_md5: 'def',
         storage_address: null,
-        images: [],
+        // Deliberately a different frame order from the wall's sheet:
+        // 'right' is index 1 here and index 2 there. The parts stay in
+        // step by angle *name*, so a sheet that orders its frames
+        // differently still faces the same way — and a version that
+        // shared an index instead would put these two out of step.
+        images: [
+          {
+            id: 'img-base',
+            image_name: 'base render',
+            image_url: 'https://objects.openforge.tools/base.png',
+            image_type: 'thumbnail',
+            sprite_metadata: {
+              grid_rows: 1,
+              grid_cols: 3,
+              tile_size: 512,
+              default_angle: 0,
+              angles: [
+                { index: 0, name: 'front' },
+                { index: 1, name: 'right' },
+                { index: 2, name: 'top' },
+              ],
+            },
+          },
+        ],
         tags: ['shape|base', 'size|width|2'],
       },
     },
@@ -413,9 +436,43 @@ describe('GuidePage', () => {
       ).toBeInTheDocument();
     });
 
-    it('stops explaining once the question is answered', async () => {
-      // The parts take the space, which is the right trade: by then the
-      // choice this was explaining has been made.
+    it('explains what was chosen when the open question has nothing to say', async () => {
+      // "What size tiles?" is eight numbers; explaining them would be
+      // padding. Rather than leave a third of the page blank for it,
+      // the column keeps explaining the choices already made.
+      visit('?guide=wall&method=separate-wall');
+      const withSize = {
+        ...RESOLVED_WITH_PARTS,
+        steps: [
+          ...RESOLVED_WITH_PARTS.steps,
+          {
+            key: 'size',
+            prompt: 'What size tiles?',
+            selected: null,
+            options: [
+              { key: '1x1', title: '1×1', roles: {} },
+              { key: '2x2', title: '2×2', roles: {} },
+            ],
+          },
+        ],
+      };
+      mockFetch((url) => (url.includes('/resolve') ? withSize : GUIDE_DOCUMENT));
+
+      render(<GuidePage />);
+
+      expect(
+        await screen.findByRole('heading', { name: 'What you chose' })
+      ).toBeInTheDocument();
+      expect(
+        screen.getByText('Floor and wall are independent.')
+      ).toBeInTheDocument();
+    });
+
+    it('explains what was chosen once there is nothing left to ask', async () => {
+      // The column does not go blank when the questions run out: the
+      // same words are still the reason this build is this build. What
+      // changes is that only the chosen answer is described — the ones
+      // not taken are no longer a choice to explain.
       visit('?guide=wall&method=separate-wall');
       mockFetch((url) =>
         url.includes('/resolve') ? RESOLVED_WITH_PARTS : GUIDE_DOCUMENT
@@ -425,10 +482,16 @@ describe('GuidePage', () => {
       await screen.findByText('a dungeon stone wall');
 
       expect(
+        screen.getByRole('heading', { name: 'What you chose' })
+      ).toBeInTheDocument();
+      expect(
         screen.queryByRole('heading', { name: 'What these mean' })
       ).not.toBeInTheDocument();
       expect(
-        screen.queryByText('Floor and wall are independent.')
+        screen.getByText('Floor and wall are independent.')
+      ).toBeInTheDocument();
+      expect(
+        screen.queryByText('Everything prints separately and stacks.')
       ).not.toBeInTheDocument();
     });
 
@@ -484,6 +547,105 @@ describe('GuidePage', () => {
       );
     });
 
+    it('turns every part together when the list is dragged', async () => {
+      // The pieces are different sheets, so they are kept in step by
+      // angle *name*. A list where one piece faced another way would
+      // be answering a different question.
+      visit('?guide=wall&method=separate-wall');
+      mockFetch((url) =>
+        url.includes('/resolve') ? RESOLVED_WITH_PARTS : GUIDE_DOCUMENT
+      );
+
+      render(<GuidePage />);
+      const sprite = await screen.findByLabelText(
+        /a dungeon stone wall, seen from the front/
+      );
+      const surface = sprite.closest('.guide-parts')!.querySelector('.select-none')!;
+
+      // Two thresholds to the right is two steps round the ring.
+      fireEvent.mouseDown(surface, { button: 0, clientX: 100, clientY: 100 });
+      fireEvent.mouseMove(window, { clientX: 162, clientY: 100 });
+      fireEvent.mouseUp(window);
+
+      expect(
+        screen.getByLabelText(/a dungeon stone wall, seen from the right/)
+      ).toBeInTheDocument();
+      // And the base above it moved with it, not just the one grabbed.
+      expect(
+        screen.getByLabelText(/a dungeon stone base, seen from the right/)
+      ).toBeInTheDocument();
+    });
+
+    it('does not open the tag search at the end of a drag', async () => {
+      // The picture is also the button that opens the search, so
+      // letting go after turning it must not count as a click.
+      visit('?guide=wall&method=separate-wall');
+      mockFetch((url) =>
+        url.includes('/resolve') ? RESOLVED_WITH_PARTS : GUIDE_DOCUMENT
+      );
+
+      render(<GuidePage />);
+      const sprite = await screen.findByLabelText(/a dungeon stone wall, seen/);
+      const surface = sprite.closest('.guide-parts')!.querySelector('.select-none')!;
+
+      fireEvent.mouseDown(surface, { button: 0, clientX: 100, clientY: 100 });
+      fireEvent.mouseMove(window, { clientX: 200, clientY: 100 });
+      fireEvent.mouseUp(window);
+      fireEvent.click(sprite.closest('button')!);
+
+      expect(screen.queryByTestId('part-modal')).not.toBeInTheDocument();
+    });
+
+    it('greys an answer the catalog cannot supply', async () => {
+      // Availability is its own request and arrives after the parts.
+      visit('?guide=wall&method=separate-wall');
+      global.fetch = jest.fn((url: string) => {
+        const body = url.includes('/availability')
+          ? { unavailable: { 'floor-texture': ['texture|cave'] } }
+          : url.includes('/resolve')
+            ? RESOLVED_WITH_PARTS
+            : GUIDE_DOCUMENT;
+        return Promise.resolve({
+          ok: true,
+          status: 200,
+          json: () => Promise.resolve(body),
+        });
+      }) as unknown as typeof fetch;
+
+      render(<GuidePage />);
+
+      const cave = await screen.findByRole('button', { name: 'cave' });
+      await waitFor(() => expect(cave).toBeDisabled());
+      expect(cave).toHaveAttribute('title', expect.stringContaining('Nothing'));
+      // The answers that do work stay clickable.
+      expect(
+        screen.getByRole('button', { name: 'Dungeon stone' })
+      ).not.toBeDisabled();
+    });
+
+    it('stays usable when availability never arrives', async () => {
+      // Greying is an improvement on a working page, not part of it.
+      visit('?guide=wall&method=separate-wall');
+      global.fetch = jest.fn((url: string) => {
+        if (url.includes('/availability')) {
+          return Promise.resolve({ ok: false, status: 500, json: () => Promise.resolve({}) });
+        }
+        return Promise.resolve({
+          ok: true,
+          status: 200,
+          json: () =>
+            Promise.resolve(
+              url.includes('/resolve') ? RESOLVED_WITH_PARTS : GUIDE_DOCUMENT
+            ),
+        });
+      }) as unknown as typeof fetch;
+
+      render(<GuidePage />);
+
+      expect(await screen.findByRole('button', { name: 'cave' })).not.toBeDisabled();
+      expect(await screen.findByText('a dungeon stone wall')).toBeInTheDocument();
+    });
+
     it('shows which option is the chosen one', async () => {
       // Raised in both review rounds: forcing `aria-pressed` to false
       // and dropping the selected styling left the suite green, so
@@ -495,8 +657,23 @@ describe('GuidePage', () => {
 
       render(<GuidePage />);
 
-      const chosen = await screen.findByRole('button', { name: /Separate wall/ });
-      expect(chosen).toHaveAttribute('aria-pressed', 'true');
+      // An answered question collapses to its answer, so that is where
+      // "which one did I pick" is shown. The other options are not on
+      // screen at all until it is reopened.
+      const summary = await screen.findByRole('button', {
+        name: /Separate wall/,
+      });
+      expect(summary).toHaveAttribute('aria-expanded', 'false');
+      expect(
+        screen.queryByRole('button', { name: /Modular \(s2w\)/ })
+      ).not.toBeInTheDocument();
+
+      // Reopening shows every option, with the chosen one pressed.
+      fireEvent.click(summary);
+
+      expect(
+        screen.getByRole('button', { name: /Separate wall/ })
+      ).toHaveAttribute('aria-pressed', 'true');
       expect(
         screen.getByRole('button', { name: /Modular \(s2w\)/ })
       ).toHaveAttribute('aria-pressed', 'false');
@@ -723,9 +900,9 @@ describe('GuidePage', () => {
       render(<GuidePage />);
       await screen.findByText('a dungeon stone wall');
 
-      // Two of them: the wall base carries no images, and the floor
-      // base resolved to no blueprint at all.
-      expect(screen.getAllByText('no picture')).toHaveLength(2);
+      // One: the floor base resolved to no blueprint at all. The two
+      // parts that did resolve both carry a sheet.
+      expect(screen.getAllByText('no picture')).toHaveLength(1);
     });
 
     it('offers the refinements the backend says are available', async () => {

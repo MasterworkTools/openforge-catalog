@@ -11,11 +11,13 @@ import { GuideBlueprint, thumbnailOf } from '@/services/guide-service';
  * you are looking at one piece. Here there are up to four pieces side
  * by side and the question is whether they go together, which only
  * works if they are all drawn from the same direction. So this is a
- * still, and the angle is chosen by name rather than by index: the
- * index of "front" is not the same in every sheet.
+ * still from the parts list's point of view — it does not spin itself.
+ * The list spins it, handing every piece the same angle *by name*,
+ * because these are different sheets and the name is the only thing
+ * they have in common. (In practice every sheet in the catalog carries
+ * the same ten angles in the same order, but leaning on that would
+ * make the first sheet that does not a silent wrong picture.)
  */
-
-const VIEW = 'front';
 
 // One size, because every part is drawn at the same one: a parts list
 // answers "do these go together" at a glance, and pieces drawn at
@@ -24,9 +26,11 @@ const SIZE = 240;
 
 interface GuideSpriteProps {
   blueprint: GuideBlueprint | null;
+  /** Angle name, shared by every part so they turn together. */
+  view?: string;
 }
 
-export function GuideSprite({ blueprint }: GuideSpriteProps) {
+export function GuideSprite({ blueprint, view = 'front' }: GuideSpriteProps) {
   const image = thumbnailOf(blueprint);
   const sprite = image?.sprite_metadata;
 
@@ -54,7 +58,7 @@ export function GuideSprite({ blueprint }: GuideSpriteProps) {
   }
 
   const index =
-    sprite.angles?.find((angle) => angle.name === VIEW)?.index ??
+    sprite.angles?.find((angle) => angle.name === view)?.index ??
     sprite.default_angle ??
     0;
   const row = Math.floor(index / sprite.grid_cols);
@@ -63,7 +67,7 @@ export function GuideSprite({ blueprint }: GuideSpriteProps) {
   return (
     <div
       role="img"
-      aria-label={`${blueprint?.blueprint_name ?? 'part'}, seen from the ${VIEW}`}
+      aria-label={`${blueprint?.blueprint_name ?? 'part'}, seen from the ${view}`}
       className="rounded"
       style={{
         width: SIZE,

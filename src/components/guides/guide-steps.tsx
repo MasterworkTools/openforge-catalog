@@ -9,67 +9,213 @@ import { GuideRefinement, GuideStep } from '@/services/guide-service';
  * Answering either one re-resolves the parts.
  */
 
+/**
+ * Which answers are dead, keyed by question.
+ *
+ * Arrives separately from the resolution and a moment later, because
+ * working it out costs several times what the parts cost. Null until
+ * it lands, and null means "nothing known to be dead" rather than
+ * "nothing is" — so every answer stays clickable in the meantime and
+ * the worst case is the honest "nothing matches" on the part itself.
+ */
+export type Unavailable = Record<string, string[]> | null;
+
 interface GuideStepsProps {
   steps: GuideStep[];
+  unavailable?: Unavailable;
   onSelect: (key: string, value: string | null) => void;
 }
 
-export function GuideSteps({ steps, onSelect }: GuideStepsProps) {
+export function GuideSteps({
+  steps,
+  unavailable,
+  onSelect,
+}: GuideStepsProps) {
   return (
     <div className="guide-steps">
-      {steps.map((step) => (
-        <section key={step.key} className="mb-8">
-          <h2 id={`step-${step.key}`} className="text-xl font-bold mb-3">
-            {step.prompt}
-          </h2>
-          {/* Tied to the heading so a screen reader announces which
-              question these buttons answer. */}
-          <div
-            role="group"
-            aria-labelledby={`step-${step.key}`}
-            className="flex flex-wrap gap-3"
-          >
-            {step.options.map((option) => (
-              <button
-                key={option.key}
-                type="button"
-                aria-pressed={step.selected === option.key}
+      {steps.map((step) => {
+        const dead = unavailable?.[step.key] ?? step.unavailable ?? [];
+        return step.selected === null ? (
+          <OpenStep
+            key={step.key}
+            step={step}
+            dead={dead}
+            onSelect={onSelect}
+          />
+        ) : (
+          <AnsweredStep
+            key={step.key}
+            step={step}
+            dead={dead}
+            onSelect={onSelect}
+          />
+        );
+      })}
+    </div>
+  );
+}
+
+/**
+ * A question still being asked: every answer, laid out to be read.
+ */
+function OpenStep({
+  step,
+  dead,
+  onSelect,
+}: {
+  step: GuideStep;
+  dead: string[];
+  onSelect: (key: string, value: string | null) => void;
+}) {
+  return (
+    <section className="mb-8">
+      <h2 id={`step-${step.key}`} className="text-xl font-bold mb-3">
+        {step.prompt}
+      </h2>
+      {/* Tied to the heading so a screen reader announces which
+          question these buttons answer. */}
+      <div
+        role="group"
+        aria-labelledby={`step-${step.key}`}
+        className="flex flex-col gap-2"
+      >
+        {step.options.map((option) => (
+          <Answer
+            key={option.key}
+            label={option.title}
+            chosen={false}
+            dead={dead.includes(option.key)}
+            onPick={() => onSelect(step.key, option.key)}
+          />
+        ))}
+      </div>
+    </section>
+  );
+}
+
+/**
+ * A question already answered, collapsed to one line.
+ *
+ * The wizard is a column of questions and it grows as you go, so a
+ * question that is settled keeps only what it settled. Clicking it
+ * reopens it — the answer is the control, which is why it is a button
+ * rather than a heading with an edit link beside it.
+ */
+function AnsweredStep({
+  step,
+  dead,
+  onSelect,
+}: {
+  step: GuideStep;
+  dead: string[];
+  onSelect: (key: string, value: string | null) => void;
+}) {
+  const [open, setOpen] = React.useState(false);
+  const chosen = step.options.find((option) => option.key === step.selected);
+
+  if (open) {
+    return (
+      <section className="mb-8">
+        <h2 id={`step-${step.key}`} className="text-xl font-bold mb-3">
+          {step.prompt}
+        </h2>
+        <div
+          role="group"
+          aria-labelledby={`step-${step.key}`}
+          className="flex flex-col gap-2"
+        >
+          {step.options.map((option) => (
+            <Answer
+              key={option.key}
+              label={option.title}
+              chosen={step.selected === option.key}
+              dead={dead.includes(option.key)}
+              onPick={() => {
+                setOpen(false);
                 // Re-picking the current answer would rewrite the same
                 // URL and re-resolve it for no change.
-                onClick={() =>
-                  step.selected === option.key
-                    ? undefined
-                    : onSelect(step.key, option.key)
+                if (step.selected !== option.key) {
+                  onSelect(step.key, option.key);
                 }
-                className={`border rounded p-3 text-left max-w-xs ${
-                  step.selected === option.key
-                    ? 'border-blue-600 bg-blue-50'
-                    : 'border-gray-300'
-                }`}
-              >
-                {/* Title only. The blurb is what the explainer shows
-                    in the wide column while this question stands —
-                    putting it here as well makes a narrow column of
-                    paragraphs and says everything twice. */}
-                <span className="block font-semibold">{option.title}</span>
-              </button>
-            ))}
-          </div>
-        </section>
-      ))}
-    </div>
+              }}
+            />
+          ))}
+        </div>
+      </section>
+    );
+  }
+
+  return (
+    <section className="mb-3">
+      <button
+        type="button"
+        onClick={() => setOpen(true)}
+        aria-expanded={false}
+        className="w-full text-left rounded border border-gray-200 px-3 py-2 hover:border-gray-400"
+      >
+        <span className="block text-xs uppercase tracking-wide text-gray-500">
+          {step.prompt}
+        </span>
+        <span className="block font-semibold">
+          {chosen?.title ?? step.selected}
+        </span>
+      </button>
+    </section>
+  );
+}
+
+/**
+ * One answer to one question, whatever kind of question it is.
+ *
+ * `dead` means the catalog has nothing for it given everything else
+ * chosen. Greyed and still focusable rather than removed: "pegs, but
+ * not in this texture" is a fact worth seeing, and a list that
+ * reshuffles itself as you change your mind is hard to use.
+ */
+function Answer({
+  label,
+  chosen,
+  dead,
+  onPick,
+}: {
+  label: string;
+  chosen: boolean;
+  dead: boolean;
+  onPick: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      aria-pressed={chosen}
+      disabled={dead && !chosen}
+      title={dead ? 'Nothing in the catalog matches this with your other choices' : undefined}
+      onClick={onPick}
+      className={`border rounded p-3 text-left ${
+        chosen
+          ? 'border-blue-600 bg-blue-50 font-semibold'
+          : dead
+            ? 'border-gray-200 text-gray-400 bg-gray-50 cursor-not-allowed'
+            : 'border-gray-300'
+      }`}
+    >
+      {label}
+    </button>
   );
 }
 
 interface GuideRefinementsProps {
   refinements: GuideRefinement[];
+  unavailable?: Unavailable;
   onSelect: (key: string, value: string | null) => void;
 }
 
 export function GuideRefinements({
   refinements,
+  unavailable,
   onSelect,
 }: GuideRefinementsProps) {
+  const deadFor = (refinement: GuideRefinement) =>
+    unavailable?.[refinement.key] ?? refinement.unavailable ?? [];
   if (refinements.length === 0) return null;
   return (
     <section className="guide-refinements mb-8">
@@ -81,6 +227,7 @@ export function GuideRefinements({
               <Toggle
                 key={refinement.key}
                 refinement={refinement}
+                dead={deadFor(refinement)}
                 onSelect={onSelect}
               />
             );
@@ -92,6 +239,7 @@ export function GuideRefinements({
             <ChoicePicker
               key={refinement.key}
               refinement={refinement}
+              dead={deadFor(refinement)}
               onSelect={onSelect}
             />
           ) : (
@@ -118,9 +266,11 @@ export function GuideRefinements({
  */
 function ChoicePicker({
   refinement,
+  dead,
   onSelect,
 }: {
   refinement: GuideRefinement;
+  dead: string[];
   onSelect: (key: string, value: string | null) => void;
 }) {
   const heading = `refinement-${refinement.key}`;
@@ -133,21 +283,13 @@ function ChoicePicker({
         {refinement.choices?.map((choice) => {
           const chosen = refinement.selected === choice.tag;
           return (
-            <button
+            <Answer
               key={choice.tag}
-              type="button"
-              aria-pressed={chosen}
-              onClick={() =>
-                onSelect(refinement.key, chosen ? null : choice.tag)
-              }
-              className={`text-left rounded border px-3 py-2 ${
-                chosen
-                  ? 'border-blue-600 bg-blue-50 font-semibold'
-                  : 'border-gray-300'
-              }`}
-            >
-              {choice.title ?? choice.tag.split('|').pop()}
-            </button>
+              label={choice.title ?? choice.tag.split('|').pop() ?? choice.tag}
+              chosen={chosen}
+              dead={dead.includes(choice.tag)}
+              onPick={() => onSelect(refinement.key, chosen ? null : choice.tag)}
+            />
           );
         })}
       </div>
@@ -157,15 +299,30 @@ function ChoicePicker({
 
 function Toggle({
   refinement,
+  dead: deadValues,
   onSelect,
 }: {
   refinement: GuideRefinement;
+  dead: string[];
   onSelect: (key: string, value: string | null) => void;
 }) {
+  // A yes/no the catalog cannot always answer: four of the eight wall
+  // textures have no pegged wall at all. Disabled rather than hidden,
+  // with the reason on hover, because "not with this texture" is the
+  // useful half of the answer.
+  const dead = deadValues.includes('on') && refinement.selected !== 'on';
   return (
-    <label className="flex items-center gap-2">
+    <label
+      className={`flex items-center gap-2 ${dead ? 'text-gray-400' : ''}`}
+      title={
+        dead
+          ? 'Nothing in the catalog matches this with your other choices'
+          : undefined
+      }
+    >
       <input
         type="checkbox"
+        disabled={dead}
         checked={refinement.selected === 'on'}
         onChange={(e) =>
           onSelect(refinement.key, e.target.checked ? 'on' : 'off')

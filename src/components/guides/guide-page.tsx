@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { GuideSummary, fetchGuides } from '@/services/guide-service';
 import { useGuideKey, useGuideState } from '@/hooks/use-guide-state';
 import { GuideParts } from './guide-parts';
-import { GuideExplainer, currentStep } from './guide-explainer';
+import { GuideExplainer } from './guide-explainer';
 import { GuideRefinements, GuideSteps } from './guide-steps';
 
 /**
@@ -14,7 +14,8 @@ import { GuideRefinements, GuideSteps } from './guide-steps';
  */
 export default function GuidePage() {
   const guideKey = useGuideKey();
-  const { guide, resolved, error, select } = useGuideState(guideKey);
+  const { guide, resolved, unavailable, error, select } =
+    useGuideState(guideKey);
 
   // Before hydration the URL is unknown, which is not the same as a URL
   // with no guide in it. Rendering the list here would fetch every
@@ -25,30 +26,44 @@ export default function GuidePage() {
   // Asking the API for that one only produces a 404 to show someone.
   if (!guideKey) return <GuideList />;
 
-  const asking = resolved ? currentStep(resolved.steps) : null;
-
   return (
-    <main className="p-6 max-w-7xl">
-      <h1 className="text-3xl font-bold mb-6">
+    // A fixed-height page rather than a scrolling one, because the
+    // three columns fill up at different rates: the questions grow as
+    // you answer them, the parts stay about the same, and the prose
+    // varies wildly. Scrolling them together means hunting for the
+    // question you wanted while the pictures slide away.
+    <main className="p-6 h-screen flex flex-col">
+      <h1 className="text-3xl font-bold mb-4 shrink-0">
         {guide?.title ?? 'Guided build'}
       </h1>
-      {error && <p className="mb-6 text-red-700">{error}</p>}
+      {error && <p className="mb-4 text-red-700 shrink-0">{error}</p>}
       {resolved && (
-        // Questions on the left, pieces on the right: you read the
-        // questions, and the answer appears beside them. One column
-        // below `lg`, where side by side would make both too narrow,
-        // and there the questions come first for the same reason.
-        <div className="flex flex-col lg:flex-row gap-10 items-start">
-          <div className="lg:w-80 lg:shrink-0">
-            <GuideSteps steps={resolved.steps} onSelect={select} />
+        // Questions, then pieces, then the words. Left to right is the
+        // order you use them in: you choose, you look at what you got,
+        // and you read about it when you want to know why.
+        //
+        // `min-h-0` on the row and on each column is what lets the
+        // columns scroll rather than the page — without it a flex
+        // child refuses to shrink below its content and every
+        // `overflow-y-auto` below is dead.
+        <div className="flex flex-col lg:flex-row gap-8 flex-1 min-h-0">
+          <div className="lg:w-72 lg:shrink-0 overflow-y-auto min-h-0 pr-2">
+            <GuideSteps
+              steps={resolved.steps}
+              unavailable={unavailable}
+              onSelect={select}
+            />
             <GuideRefinements
               refinements={resolved.refinements}
+              unavailable={unavailable}
               onSelect={select}
             />
           </div>
-          <div className="lg:flex-1">
-            {asking && <GuideExplainer step={asking} />}
+          <div className="lg:flex-1 overflow-y-auto min-h-0 pr-2">
             <GuideParts parts={resolved.parts} />
+          </div>
+          <div className="lg:w-96 lg:shrink-0 overflow-y-auto min-h-0 pr-2">
+            <GuideExplainer steps={resolved.steps} />
           </div>
         </div>
       )}

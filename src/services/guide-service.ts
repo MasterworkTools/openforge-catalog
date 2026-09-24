@@ -23,6 +23,8 @@ export interface GuideOption {
 export interface GuideStep {
   key: string;
   prompt: string;
+  /** Option keys that would empty a part, for greying out. */
+  unavailable?: string[];
   options: GuideOption[];
   selected: string | null;
 }
@@ -40,6 +42,8 @@ export interface GuideRefinement {
   from_namespace?: string;
   choices?: GuideChoice[];
   on_tags?: unknown;
+  /** Choice tags, or "on"/"off", that would empty a part. */
+  unavailable?: string[];
   selected: string | null;
 }
 
@@ -188,4 +192,30 @@ export function thumbnailOf(
   return (
     blueprint?.images?.find((image) => image.image_type === 'thumbnail') ?? null
   );
+}
+
+
+/**
+ * Which offered answers would leave a part with nothing.
+ *
+ * Its own request because it costs several times what the parts cost:
+ * the engine re-composes every role for every answer on offer. The
+ * page draws on `resolveGuide` and greys the buttons when this lands,
+ * so nobody waits on it.
+ */
+export async function fetchAvailability(
+  guideKey: string,
+  selections: Selections
+): Promise<Record<string, string[]>> {
+  const query = new URLSearchParams(selections).toString();
+  const response = await fetch(
+    `/api/guides/${encodeURIComponent(guideKey)}/availability${
+      query ? `?${query}` : ''
+    }`
+  );
+  if (!response.ok) {
+    throw new Error(`Failed to fetch availability: ${response.statusText}`);
+  }
+  const body = await response.json();
+  return body.unavailable ?? {};
 }

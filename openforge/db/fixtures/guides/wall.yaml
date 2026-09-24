@@ -37,7 +37,9 @@ steps:
           # their base part for build|s2w, but that is not what a wall
           # stands on — of the 35 dungeon stone wall bases in the
           # catalog, none carries build|s2w.
-          floor: {require: ['build|s2w']}
+          floor:
+            require: ['build|s2w', 'shape|floor|wall']
+            allow: ['shape|floor|s2w']
           wall:
           # The s2w floor base carries the wall's own base as well:
           # shape|base, s2w, wall and square, all four.
@@ -58,7 +60,9 @@ steps:
           # one openforge piece here rather than two — this is the only
           # method where a single base serves both. No base carries
           # build|wall on tile either: it is an ordinary base.
-          floor: {require: ['build|s2w']}
+          floor:
+            require: ['build|s2w', 'shape|floor|wall']
+            allow: ['shape|floor|s2w']
           # This method has no wall-print step — the wall is part of the
           # tile — so it asks for the openforge socket itself.
           wall: {require: ['connection|openforge']}
@@ -79,7 +83,12 @@ steps:
           # no build tag on purpose — no floor tile carries
           # build|separate wall, and 114 of the 115 records that carry
           # both shape|floor and that tag are bases.
-          floor:
+          #
+          # A plain tile, explicitly. The role's sweep already keeps
+          # shape|floor|wall out, and denying build|s2w as well is what
+          # stops an s2w tile arriving by the other door: these walls
+          # stand beside the floor, not on it.
+          floor: {deny: ['build|s2w']}
           wall:
 
   # Both print steps do the same thing from opposite ends: the
@@ -258,7 +267,7 @@ steps:
   # the parent is swept. 175 of the 482 plain openforge walls carry
   # side openlock and every one of them was unreachable.
   - key: connectors
-    prompt: Any connectors on the wall ends?
+    prompt: Side clips on the wall ends?
     # Every method, but not before one is chosen. A wizard's first
     # screen asks one question; listing all three methods here is how a
     # step says "once that is answered" with the vocabulary there is.
@@ -270,7 +279,11 @@ steps:
           Nothing on the ends. Walls butt up against each other and
           stay put because their bases are clipped to the floor.
         roles:
-          wall:
+          # A real answer rather than an absence: denying the bare
+          # `connection|side` parent excludes every side-clip variant
+          # at once, because all of them carry it beside the specific
+          # tag.
+          wall: {deny: ['connection|side']}
       - key: side-openlock
         title: OpenLOCK side clips
         blurb: >
@@ -288,24 +301,6 @@ steps:
         roles:
           wall:
             require: ['connection|side|dragonlock']
-            allow: ['connection|side']
-      - key: pegs
-        title: Pegs
-        blurb: >
-          Pegged ends rather than clips — simpler to print, and it will
-          not come apart sideways. 60 walls.
-        roles:
-          wall:
-            require: ['connection|pegs']
-      - key: side-filament
-        title: Filament hinge
-        blurb: >
-          A length of filament through both ends makes the joint bend,
-          so a wall can follow a curve. 13 walls, so expect to be
-          narrowed to one texture.
-        roles:
-          wall:
-            require: ['connection|side|filament']
             allow: ['connection|side']
 
 
@@ -328,8 +323,14 @@ roles:
       # tag. Requiring build|s2w role-wide put those 29 out of reach of
       # the one method that should have them. With every other term of
       # this role applied, separate wall's pool goes from 80 to 168.
-      require: ['shape|floor', 'shape|floor|wall']
-      allow: ['shape|floor|s2w']
+      # shape|floor and nothing else beneath it. Which children are
+      # wanted is the method's business: s2w and wall-on-tile ask for
+      # shape|floor|wall, because on those methods the tile is what the
+      # wall stands on. A separate wall does not — it stands on its own
+      # base beside a plain tile — so it asks for nothing here and the
+      # sweep keeps the s2w tiles, the curved, the concave and the
+      # diagonal out of its answer.
+      require: ['shape|floor']
       deny_children: ['shape|floor']
       # A base is not a floor. Bases reach this role because
       # `_copy_base_shapes` gives a shape|base piece the plain shape
@@ -380,7 +381,16 @@ roles:
       # shape|square is the straight one, and the sweep would take it
       # along with shape|angled. Permitted, not required: plenty of
       # plain walls carry no shape|? at all.
-      allow: ['shape|square']
+      #
+      # Both connectors are permitted here for the same reason, and it
+      # is load-bearing: until the wall-print question is answered,
+      # neither is required, and `deny_children: ['connection']` would
+      # otherwise sweep every wall in the catalog — they all carry one
+      # or the other. That left the wall with no answer at all on the
+      # screen between choosing a method and choosing how it prints.
+      # The print options narrow this: one requires the openforge
+      # socket, the other denies it.
+      allow: ['shape|square', 'connection|openforge', 'connection|openlock']
     prefer: ['texture|dungeon_stone', 'size|width|2']
   floor-base:
     title: Base for the floor
@@ -476,6 +486,21 @@ refinements:
   # walls and not one shape|floor|wall between them — so a single
   # texture question would empty the floor for a third of its answers.
   # Only the five that have both are offered here.
+  # Discrete from the side clips, and a yes/no rather than a pick: a
+  # wall can have clips on its ends and pegs, or either, or neither.
+  #
+  # Only four of the eight wall textures have pegged walls at all —
+  # towne 58, dungeon stone 35, cut stone 12, rough stone 10, and
+  # necro, mortar and stone, aztlan and stone brick have none. So on
+  # half the textures this question has no answer, which is what the
+  # greying-out is for rather than something to hide.
+  - key: pegs
+    role: wall
+    prompt: Pegged ends?
+    when: {selected: {method: [s2w, wall-on-tile, separate-wall]}}
+    on_tags: {require: ['connection|pegs']}
+    off_tags: {deny: ['connection|pegs']}
+
   - key: floor-texture
     role: floor
     prompt: Floor texture

@@ -1,7 +1,8 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import { GuidePart } from '@/services/guide-service';
+import { stepView, useDragRotation } from '@/hooks/use-drag-rotation';
 import { ConfigTags } from '@/types';
 import { downloadFiles, downloadUrl } from '@/utils/blueprint-utils';
 import PartSelectionModal from '../part-selection-modal';
@@ -20,6 +21,11 @@ interface GuidePartsProps {
  * pieces go together, and you cannot see that if each one is turned a
  * different way.
  *
+ * Drag anywhere in the list to turn them, and they all turn together
+ * for the same reason — a list where one piece faced a different way
+ * would be answering a different question. The angle is shared by
+ * name, so sheets that order their frames differently still line up.
+ *
  * Every piece shows its tags. A guide recommending the wrong thing is
  * far easier to diagnose from the tags than from the filename, and
  * while the guides are being written that is most of what this page is
@@ -27,6 +33,40 @@ interface GuidePartsProps {
  */
 export function GuideParts({ parts }: GuidePartsProps) {
   const [inspecting, setInspecting] = useState<GuidePart | null>(null);
+  const [view, setView] = useState<string>('front');
+  // Where the drag began, so each move is measured from there rather
+  // than accumulating rounding as the pointer travels.
+  const viewAtStart = useRef(view);
+  // Whether this gesture turned anything. The picture is also a button
+  // that opens the tag search, and letting go after a drag must not
+  // count as a click on it.
+  const turned = useRef(false);
+
+  const onStart = useCallback(() => {
+    viewAtStart.current = view;
+    turned.current = false;
+  }, [view]);
+  const onHorizontal = useCallback((steps: number) => {
+    if (steps !== 0) turned.current = true;
+    setView(stepView(viewAtStart.current, steps));
+  }, []);
+  const onVertical = useCallback((face: 'top' | 'bottom') => {
+    turned.current = true;
+    setView(face);
+  }, []);
+  const { handleMouseDown, isDragging } = useDragRotation({
+    onStart,
+    onHorizontal,
+    onVertical,
+  });
+
+  const swallowDragClick = useCallback((e: React.MouseEvent) => {
+    if (!turned.current) return;
+    e.stopPropagation();
+    e.preventDefault();
+    turned.current = false;
+  }, []);
+
   const urls = parts.flatMap((part) =>
     part.blueprint ? [downloadUrl(part.blueprint.id)] : []
   );
@@ -35,15 +75,31 @@ export function GuideParts({ parts }: GuidePartsProps) {
   return (
     <section className="guide-parts mb-8">
       <h2 className="text-xl font-bold mb-3">What to print</h2>
-      <div className="flex flex-wrap gap-6 items-start">
+      {/* The whole list is the handle, not each picture: you are
+          turning the build, not a piece of it. */}
+      <div
+        onMouseDown={handleMouseDown}
+        onClickCapture={swallowDragClick}
+        className={`flex flex-wrap gap-6 items-start select-none ${
+          isDragging ? 'cursor-grabbing' : 'cursor-grab'
+        }`}
+      >
         {stacks(parts).map((stack) => (
           <div key={stack[0].role} className="flex flex-col gap-1">
             {stack.map((part) => (
-              <Part key={part.role} part={part} onInspect={setInspecting} />
+              <Part
+                key={part.role}
+                part={part}
+                view={view}
+                onInspect={setInspecting}
+              />
             ))}
           </div>
         ))}
       </div>
+      <p className="mt-2 text-xs text-gray-500">
+        Drag the pieces to turn them. They turn together.
+      </p>
       {urls.length > 0 && (
         <button
           type="button"
@@ -114,9 +170,11 @@ function stacks(parts: GuidePart[]): GuidePart[][] {
 
 function Part({
   part,
+  view,
   onInspect,
 }: {
   part: GuidePart;
+  view: string;
   onInspect: (part: GuidePart) => void;
 }) {
   return (
@@ -131,7 +189,7 @@ function Part({
         title="Open the tag search for this part"
         className="block cursor-zoom-in"
       >
-        <GuideSprite blueprint={part.blueprint} />
+        <GuideSprite blueprint={part.blueprint} view={view} />
       </button>
       <div className="mt-2 font-semibold">{part.title}</div>
       {part.blueprint ? (

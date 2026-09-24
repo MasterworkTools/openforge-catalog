@@ -199,6 +199,53 @@ def tag_search_blueprints(
     return [_convert_config(row) for row in curs.fetchall()]
 
 
+def tag_search_blueprint_exists(
+    curs: cursor,
+    accept: list[str],
+    require: list[str],
+    deny: list[str],
+    models: bool = True,
+    blueprints: bool = False,
+    search: str | None = None,
+    deny_children: list[dict] | None = None,
+    allow: list[dict] | None = None,
+) -> bool:
+    """Is there a single blueprint matching this predicate?
+
+    The guide's availability pass asks this about thirty times per
+    request, to grey out the answers that would empty a part. It never
+    looks at what it found, so it wants neither the row nor the order
+    — and the order is the expensive half, since it sorts every match
+    before LIMIT 1 discards the rest.
+    """
+    parts = [
+        sql.SQL("SELECT EXISTS ("),
+        sql.SQL("  SELECT 1"),
+        sql.SQL("  FROM blueprints"),
+        sql.SQL("  WHERE blueprints.id IN ("),
+        _query_tags_basics(
+            accept,
+            require,
+            deny,
+            None,
+            None,
+            1,
+            models=models,
+            blueprints=blueprints,
+            search=search,
+            deny_children=deny_children,
+            allow=allow,
+            do_order=False,
+        ),
+        sql.SQL("  )"),
+        sql.SQL(") AS found"),
+    ]
+    query = sql.Composed(parts)
+    get_logger().debug(query.join("\n").as_string())
+    curs.execute(query)
+    return bool(curs.fetchone()["found"])
+
+
 def tag_search_tags(
     curs: cursor,
     accept: list[str],
@@ -399,6 +446,7 @@ def _query_tags_basics(
     previous: uuid.UUID | None = None,
     limit: int = 20,
     do_limit: bool = True,
+    do_order: bool = True,
     models: bool = True,
     blueprints: bool = False,
     search: str | None = None,
@@ -438,7 +486,7 @@ SELECT DISTINCT bp.id
     for parent in deny_children or []:
         if "tag" not in parent:
             continue
-        deny_parts.append(sql.SQL("    AND bp2.id NOT IN ("))
+        deny_parts.append(sql.SQL("    AND NOT EXISTS ("))
         deny_parts.append(_query_tags_deny_children(parent["tag"], exempt))
         deny_parts.append(sql.SQL("    )"))
 
@@ -482,12 +530,17 @@ SELECT DISTINCT bp.id
     # resolve a role with LIMIT 1, so without the id the same
     # selections can recommend a different part after any unrelated
     # write, and a shared guide URL stops meaning one thing.
-    end_parts = [
-        sql.SQL(
-            "      ORDER BY bp2.blueprint_name %s, bp2.id %s"
-            % ("DESC" if previous else "ASC", "DESC" if previous else "ASC")
+    # An existence check wants no order at all: the sort runs over
+    # every matching row before LIMIT 1 takes one, and "is there
+    # anything" does not care which.
+    end_parts = []
+    if do_order:
+        end_parts.append(
+            sql.SQL(
+                "      ORDER BY bp2.blueprint_name %s, bp2.id %s"
+                % ("DESC" if previous else "ASC", "DESC" if previous else "ASC")
+            )
         )
-    ]
     if do_limit:
         end_parts.append(
             sql.SQL("      LIMIT {limit}").format(limit=sql.Literal(limit))
@@ -638,12 +691,19 @@ def _query_tags_deny_children(parent: str, exempt: list[str]) -> sql.Composed:
     depth = len(parent.split("|"))
     tags_name = f"tags_child_{depth}_neg"
     parts = [
-        sql.SQL("      SELECT DISTINCT bp_neg.id"),
-        sql.SQL("  FROM blueprints AS bp_neg"),
-        sql.SQL("    JOIN tags AS {table} ON bp_neg.id = {table}.blueprint_id").format(
+        # Correlated, not a set to subtract. This used to build
+        # `DISTINCT bp_neg.id` over every blueprint carrying any tag
+        # below the parent and hand it to `NOT IN` — which means
+        # materialising most of the catalog for a sweep over a broad
+        # parent like `shape` (21,033 tag rows). As `NOT EXISTS` it
+        # asks one indexed question per candidate row instead, and the
+        # join to blueprints goes with it: a tag only exists if its
+        # blueprint does.
+        sql.SQL("      SELECT 1"),
+        sql.SQL("  FROM tags AS {table}").format(table=sql.Identifier(tags_name)),
+        sql.SQL("  WHERE {table}.blueprint_id = bp2.id").format(
             table=sql.Identifier(tags_name)
         ),
-        sql.SQL("  WHERE bp_neg.deprecated = false"),
         # Redundant with the slice below, and there to be indexable.
         # `tag[1:n] = ...` cannot use the GIN index, so the sweep was
         # a sequential scan of all 81,931 tag rows; `@>` is a

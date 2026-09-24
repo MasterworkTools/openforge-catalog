@@ -2,9 +2,7 @@
 
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { Blueprint, SpriteThumbnailData } from '@/types';
-
-// Drag sensitivity constant
-const DRAG_THRESHOLD_PX = 30;
+import { useDragRotation, VerticalView } from '@/hooks/use-drag-rotation';
 
 /**
  * Helper functions to derive angle indices from sprite metadata
@@ -65,7 +63,13 @@ function useKeyboardRotation(
 }
 
 /**
- * Custom hook for mouse drag-based sprite rotation
+ * Drag to spin this sheet.
+ *
+ * The gesture itself — where it started, which axis won, how far
+ * counts as a step — lives in `useDragRotation`, shared with the
+ * guide's parts list. What is left here is the part that is about
+ * *this* viewer: it thinks in frame indices within one sheet, where
+ * the parts list thinks in angle names across several.
  */
 function useMouseDragRotation(
   currentAngle: number,
@@ -73,72 +77,38 @@ function useMouseDragRotation(
   angleIndices: ReturnType<typeof getAngleIndices>
 ) {
   const { horizontalCount, topIndex, bottomIndex } = angleIndices;
-  const [isDragging, setIsDragging] = useState(false);
-  const dragStartX = useRef<number>(0);
-  const dragStartY = useRef<number>(0);
   const initialAngle = useRef<number>(0);
 
-  const handleMouseDown = useCallback((e: React.MouseEvent) => {
-    // Only respond to left mouse button (button 0) to avoid conflicts with context menu
-    if (e.button !== 0) return;
-
-    setIsDragging(true);
-    dragStartX.current = e.clientX;
-    dragStartY.current = e.clientY;
+  const onStart = useCallback(() => {
     initialAngle.current = currentAngle;
   }, [currentAngle]);
 
-  const handleMouseMove = useCallback((e: MouseEvent) => {
-    if (!isDragging) return;
-
-    const deltaX = e.clientX - dragStartX.current;
-    const deltaY = e.clientY - dragStartY.current;
-    const absX = Math.abs(deltaX);
-    const absY = Math.abs(deltaY);
-
-    // Determine drag direction based on which delta is larger
-    if (absY > absX && absY >= DRAG_THRESHOLD_PX) {
-      // Vertical drag: go to top or bottom
-      if (deltaY < 0) {
-        setCurrentAngle(topIndex);
-      } else {
-        setCurrentAngle(bottomIndex);
-      }
-    } else if (absX > absY && absX >= DRAG_THRESHOLD_PX) {
-      // Horizontal drag: rotate through horizontal angles
-      // If initial angle was vertical, just go to front (0) without calculating rotation
+  const onHorizontal = useCallback(
+    (steps: number) => {
+      // Starting from a pole, a sideways drag means "come back to the
+      // equator" rather than a rotation from a place that has none.
       if (
         initialAngle.current === topIndex ||
         initialAngle.current === bottomIndex
       ) {
         setCurrentAngle(0);
-      } else {
-        // Normal horizontal rotation from a horizontal starting angle
-        const angleChange = Math.floor(deltaX / DRAG_THRESHOLD_PX);
-        let newAngle = (initialAngle.current + angleChange) % horizontalCount;
-        if (newAngle < 0) newAngle += horizontalCount;
-        setCurrentAngle(newAngle);
+        return;
       }
-    }
-  }, [isDragging, setCurrentAngle, horizontalCount, topIndex, bottomIndex]);
+      let next = (initialAngle.current + steps) % horizontalCount;
+      if (next < 0) next += horizontalCount;
+      setCurrentAngle(next);
+    },
+    [setCurrentAngle, horizontalCount, topIndex, bottomIndex]
+  );
 
-  const handleMouseUp = useCallback(() => {
-    setIsDragging(false);
-  }, []);
+  const onVertical = useCallback(
+    (face: VerticalView) => {
+      setCurrentAngle(face === 'top' ? topIndex : bottomIndex);
+    },
+    [setCurrentAngle, topIndex, bottomIndex]
+  );
 
-  // Setup and cleanup window event listeners for drag
-  useEffect(() => {
-    if (isDragging) {
-      window.addEventListener('mousemove', handleMouseMove);
-      window.addEventListener('mouseup', handleMouseUp);
-      return () => {
-        window.removeEventListener('mousemove', handleMouseMove);
-        window.removeEventListener('mouseup', handleMouseUp);
-      };
-    }
-  }, [isDragging, handleMouseMove, handleMouseUp]);
-
-  return { handleMouseDown, isDragging };
+  return useDragRotation({ onStart, onHorizontal, onVertical });
 }
 
 interface SpriteViewerProps {

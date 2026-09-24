@@ -12,6 +12,7 @@ import {
   fetchGuide,
   resolveGuide,
   selectionKeys,
+  fetchAvailability,
 } from '@/services/guide-service';
 
 /**
@@ -43,6 +44,12 @@ export function useGuideState(guideKey: string | null | undefined) {
   // another's parts, with a working Download button under them.
   const [answer, setAnswer] = useState<ResolvedAnswer | null>(null);
   const mine = answer && answer.key === guideKey ? answer : null;
+  // Which answers would empty a part. Keyed like everything else here,
+  // and separate from the resolution because it arrives later: the
+  // buttons are usable the whole time, they just stop being greyed
+  // wrongly once this lands.
+  const [dead, setDead] = useState<DeadAnswers | null>(null);
+  const myDead = dead && dead.key === guideKey ? dead : null;
 
   // Only the parameters this guide defines. Everything else in the URL
   // — `fbclid`, `utm_source`, another guide's leftover answers — is
@@ -75,6 +82,26 @@ export function useGuideState(guideKey: string | null | undefined) {
     };
   }, [guideKey, selections]);
 
+  // Its own effect, and deliberately not awaited by the one above: a
+  // second of greying must not hold up the parts.
+  useEffect(() => {
+    if (!guideKey || selections === null) return;
+    let current = true;
+    fetchAvailability(guideKey, selections)
+      .then((result) => {
+        if (current) setDead({ key: guideKey, unavailable: result });
+      })
+      .catch((e: Error) => {
+        // Nothing to show the person: greying is an improvement on a
+        // working page, not a part of it. Every answer stays clickable
+        // and tells them the honest "nothing matches" instead.
+        if (current) console.error('Error fetching availability:', e);
+      });
+    return () => {
+      current = false;
+    };
+  }, [guideKey, selections]);
+
   const select = useCallback(
     (key: string, value: string | null) => {
       const next = { ...(selections ?? {}) };
@@ -91,9 +118,15 @@ export function useGuideState(guideKey: string | null | undefined) {
   return {
     guide,
     resolved: mine?.resolved ?? null,
+    unavailable: myDead?.unavailable ?? null,
     error: mine?.error ?? guideError,
     select,
   };
+}
+
+interface DeadAnswers {
+  key: string;
+  unavailable: Record<string, string[]>;
 }
 
 interface ResolvedAnswer {

@@ -86,7 +86,7 @@ def to_tag_query(predicate: dict) -> dict:
     }
 
 
-def resolve(document: dict, selections: dict, find_candidates) -> dict:
+def resolve(document: dict, selections: dict, find_candidates, exists=None) -> dict:
     """Resolve a guide against a person's selections.
 
     Args:
@@ -110,14 +110,141 @@ def resolve(document: dict, selections: dict, find_candidates) -> dict:
     chosen = _chosen_options(steps, answered)
     refinements = _available_refinements(document, answered)
     _reject_unknown_selections(document, steps, refinements, selections)
+    parts = _parts(document, chosen, refinements, selections, find_candidates)
+    # Availability is opt-in, and the default is off.
+    #
+    # Working out which answers would empty a part means re-composing
+    # every role for every offered answer — around thirty-five of them
+    # on this guide — and asking the catalog about each. That is a
+    # second or two, against a quarter of a second for the parts
+    # themselves, and the parts are what the person is waiting to see.
+    # So the page asks for them separately and greys the buttons when
+    # the answer arrives.
+    dead = (
+        _unavailable(document, steps, refinements, selections, parts, exists)
+        if exists is not None
+        else {}
+    )
     return {
-        "steps": [{**step, "selected": answered.get(step["key"])} for step in steps],
-        "parts": _parts(document, chosen, refinements, selections, find_candidates),
+        "steps": [
+            {
+                **step,
+                "selected": answered.get(step["key"]),
+                "unavailable": dead.get(step["key"], []),
+            }
+            for step in steps
+        ],
+        "parts": parts,
         "refinements": [
-            {**refinement, "selected": selections.get(refinement["key"])}
+            {
+                **refinement,
+                "selected": selections.get(refinement["key"]),
+                "unavailable": dead.get(refinement["key"], []),
+            }
             for refinement in refinements
         ],
     }
+
+
+def _unavailable(
+    document: dict,
+    steps: list,
+    refinements: list,
+    selections: dict,
+    parts: list,
+    find_candidates,
+) -> dict:
+    """For each question, the answers that would empty a part.
+
+    An answer that matches nothing is worth showing greyed rather than
+    hidden: half the wall textures have no pegged wall, and "pegs, but
+    not with this texture" is a fact about the catalog the person is
+    better off seeing than discovering by clicking. Hiding it would
+    also make the list jump about as they change their mind.
+
+    Optimistic where it is unsure. A role that copies a size from the
+    part above it is not checked against that size, because knowing it
+    would mean recommending the part above first. So an answer is
+    greyed only when it is empty on its own terms, never on a guess,
+    and the failure mode is an answer that looks available and turns
+    out thin — not one that looks impossible and was not.
+    """
+    baseline = {
+        part["role"]: _predicate_key(part["query"])
+        for part in parts
+        if part["blueprint"] is not None
+    }
+    cache: dict = {}
+    dead = {}
+    for question, values in _offered(steps, refinements):
+        empty = [
+            value
+            for value in values
+            if not _holds(
+                document,
+                {**selections, question: value},
+                baseline,
+                cache,
+                find_candidates,
+            )
+        ]
+        if empty:
+            dead[question] = empty
+    return dead
+
+
+def _offered(steps: list, refinements: list):
+    """Every question paired with the answers it is offering."""
+    for step in steps:
+        yield step["key"], [option["key"] for option in step["options"]]
+    for refinement in refinements:
+        if "on_tags" in refinement:
+            yield refinement["key"], ["on", "off"]
+        elif refinement.get("choices"):
+            yield refinement["key"], [c["tag"] for c in refinement["choices"]]
+
+
+def _holds(
+    document: dict, selections: dict, baseline: dict, cache: dict, find_candidates
+) -> bool:
+    """Would these answers leave every part with something?
+
+    Predicates only: no `prefer`, which costs a search per tag it
+    drops, and no `match`, which costs the part above. Two more things
+    keep the count down, because this runs once per offered answer and
+    a guide offers around thirty:
+
+    - a role whose predicate is the one the real resolution already
+      used, and already found something for, is not asked again
+    - identical predicates are asked once, and most answers leave most
+      roles untouched, so the same few recur constantly
+    """
+    steps, answered = _available_steps(document, selections)
+    chosen = _chosen_options(steps, answered)
+    refinements = _available_refinements(document, answered)
+    for name in _roles_in_play(chosen):
+        role = document["roles"][name]
+        predicate = _compose(role["query"], chosen, refinements, selections, name)
+        key = _predicate_key(predicate)
+        if baseline.get(name) == key:
+            continue
+        if key not in cache:
+            cache[key] = bool(find_candidates(predicate))
+        if not cache[key]:
+            return False
+    return True
+
+
+def _predicate_key(predicate: dict):
+    """A predicate's identity, for comparing and for caching.
+
+    Terms are lists whose order carries no meaning, so two predicates
+    that ask the same thing have to hash the same however they were
+    composed.
+    """
+    return tuple(
+        sorted((term, tuple(sorted(tags))) for term, tags in predicate.items())
+    )
 
 
 def _available_steps(document: dict, selections: dict):

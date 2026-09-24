@@ -1,3 +1,5 @@
+import copy
+
 import pytest
 from psycopg.rows import dict_row
 
@@ -676,3 +678,88 @@ def test_a_stored_guide_that_no_longer_validates_is_a_500_not_a_400(client, test
 
     with pytest.raises(KeyError):
         client.get("/api/guides/broken/resolve?method=separate-wall")
+
+
+@pytest.fixture
+def choosy_guide(test_db):
+    """The wall guide with a closed texture list, which can be greyed.
+
+    An open namespace cannot: its answers are every tag in the
+    namespace, so there is no list to walk.
+    """
+    document = copy.deepcopy(WALL_GUIDE)
+    document["refinements"][0]["choices"] = [
+        {"tag": "texture|cave"},
+        {"tag": "texture|towne"},
+    ]
+    with test_db.connection() as conn:
+        with conn.cursor(row_factory=dict_row) as curs:
+            return guide_sql.upsert_guide(curs, document)
+
+
+def test_availability_names_the_answers_that_would_empty_a_part(
+    client, choosy_guide, catalog
+):
+    """The greying-out, and why it is a second request.
+
+    Working this out means re-composing every role for every answer on
+    offer, which costs several times what the parts cost — so the page
+    draws on /resolve and greys the buttons when this lands. It has to
+    answer the same question about the same selections.
+    """
+    response = client.get("/api/guides/wall/availability?method=separate-wall")
+
+    assert response.status_code == 200
+    # One towne wall exists and no towne floor does, so choosing towne
+    # leaves the floor with nothing; cave has both.
+    assert response.json["unavailable"]["texture"] == ["texture|towne"]
+
+
+def test_availability_has_nothing_to_say_about_an_open_namespace(
+    client, wall_guide, catalog
+):
+    """Its answers are every tag in the namespace, so there is no list.
+
+    Worth pinning rather than leaving implicit: it is the reason a
+    refinement gets `choices` at all, and someone reading only the
+    greying would otherwise call this a bug.
+    """
+    response = client.get("/api/guides/wall/availability?method=separate-wall")
+
+    assert response.status_code == 200
+    assert "texture" not in response.json["unavailable"]
+
+
+def test_availability_is_silent_when_every_answer_works(client, wall_guide, catalog):
+    """An empty map rather than a list of empty lists."""
+    response = client.get("/api/guides/wall/availability")
+
+    assert response.status_code == 200
+    assert response.json["unavailable"] == {}
+
+
+def test_resolving_does_not_pay_for_availability(client, wall_guide, catalog):
+    """The hot path must not do the expensive pass.
+
+    Guarded by the count of searches rather than by a clock: the engine
+    asks the catalog once per role per offered answer when it is
+    working out availability, and once per role when it is not.
+    """
+    response = client.get("/api/guides/wall/resolve?method=separate-wall")
+
+    assert response.status_code == 200
+    for question in response.json["steps"] + response.json["refinements"]:
+        assert question["unavailable"] == []
+
+
+def test_availability_refuses_the_same_bad_selections_resolve_does(client, wall_guide):
+    response = client.get("/api/guides/wall/availability?method=nonesuch")
+
+    assert response.status_code == 400
+    assert "nonesuch" in response.json["error"]
+
+
+def test_availability_for_an_unknown_guide_is_a_404(client, wall_guide):
+    response = client.get("/api/guides/nonesuch/availability")
+
+    assert response.status_code == 404

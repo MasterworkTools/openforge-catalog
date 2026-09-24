@@ -110,6 +110,40 @@ def resolve_guide(guide_key: str):
             return jsonify(resolved)
 
 
+def guide_availability(guide_key: str):
+    """Which offered answers would empty a part, for greying them out.
+
+    Its own endpoint because it costs several times what the parts
+    cost — a predicate per role per offered answer — and the parts are
+    what the person is waiting to see. The page renders on `resolve`
+    and greys the buttons when this lands.
+
+    Same selections, same errors, same 404: it is the same question
+    asked about the answers rather than about the pieces.
+    """
+    with current_app.db.connection() as conn:
+        with conn.cursor(row_factory=dict_row) as curs:
+            guide = _guide_or_404(curs, guide_key)
+            try:
+                resolved = resolve(
+                    guide["document"],
+                    _selections_from_request(),
+                    _candidate_finder(curs),
+                    exists=_existence_finder(curs),
+                )
+            except GuideSelectionError as e:
+                return jsonify({"error": str(e)}), 400
+            return jsonify(
+                {
+                    "unavailable": {
+                        question["key"]: question["unavailable"]
+                        for question in resolved["steps"] + resolved["refinements"]
+                        if question["unavailable"]
+                    }
+                }
+            )
+
+
 def _selections_from_request() -> dict:
     """Read the selections out of the query string.
 
@@ -170,6 +204,21 @@ def _candidate_finder(curs):
         return found
 
     return find_candidates
+
+
+def _existence_finder(curs):
+    """The same search without the tags, for the availability pass.
+
+    That pass asks "is there anything at all" around thirty times a
+    request and never looks at what it found, so fetching each
+    candidate's tags is a second round trip per question for something
+    nobody reads.
+    """
+
+    def exists(predicate: dict) -> bool:
+        return tag_sql.tag_search_blueprint_exists(curs, **to_tag_query(predicate))
+
+    return exists
 
 
 def _attach_tags(curs, blueprints: list[dict]) -> None:

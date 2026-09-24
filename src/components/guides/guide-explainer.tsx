@@ -13,8 +13,21 @@ import { GuideStep } from '@/services/guide-service';
  * parts take the space, which is the right trade: by then the person
  * has made the choice this was explaining.
  */
-export function GuideExplainer({ step }: GuideExplainerProps) {
-  const described = step.options.filter((option) => option.blurb);
+export function GuideExplainer({ steps }: GuideExplainerProps) {
+  const asking = currentStep(steps);
+  // While a question stands, explain its answers — but only if it has
+  // anything to say. Not every question does: "what size tiles?" is
+  // eight numbers and explaining them would be padding.
+  const offered = asking?.options.filter((option) => option.blurb) ?? [];
+  // Otherwise the column explains what *was* chosen, rather than going
+  // blank. The same words, still the reason this build is this build,
+  // and it keeps a third of the page from being empty for two of the
+  // five questions.
+  const explaining = offered.length > 0;
+  const heading = explaining ? 'What these mean' : 'What you chose';
+  const described = explaining
+    ? offered
+    : chosenOptions(steps).filter((option) => option.blurb);
   if (described.length === 0) return null;
 
   return (
@@ -22,7 +35,7 @@ export function GuideExplainer({ step }: GuideExplainerProps) {
       {/* Not the step's own prompt — that is asked on the left, and
           repeating it here would read as two questions. */}
       <h2 id="explainer" className="text-xl font-bold mb-3">
-        What these mean
+        {heading}
       </h2>
       <div className="flex flex-col gap-4">
         {described.map((option) => (
@@ -40,7 +53,15 @@ export function GuideExplainer({ step }: GuideExplainerProps) {
 }
 
 interface GuideExplainerProps {
-  step: GuideStep;
+  steps: GuideStep[];
+}
+
+/** The option chosen for each answered step, in the order asked. */
+function chosenOptions(steps: GuideStep[]) {
+  return steps.flatMap((step) => {
+    const chosen = step.options.find((option) => option.key === step.selected);
+    return chosen ? [chosen] : [];
+  });
 }
 
 /**
