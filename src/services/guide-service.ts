@@ -43,6 +43,8 @@ export interface GuideRefinement {
   prompt: string;
   from_namespace?: string;
   choices?: GuideChoice[];
+  /** Heading to file this question under, when it is not a main one. */
+  group?: string;
   on_tags?: unknown;
   /** Choice tags, or "on"/"off", that would empty a part. */
   unavailable?: string[];

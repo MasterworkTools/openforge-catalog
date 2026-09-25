@@ -325,6 +325,15 @@ $defs:
       prompt:
         type: string
         minLength: 1
+      group:
+        type: string
+        minLength: 1
+        description: >
+          Heading to file this refinement under. Refinements sharing
+          one are drawn together, in the order the document lists
+          them, and those without one come first under the default
+          heading. For the questions that are real but rarely the
+          reason anyone came.
       when:
         $ref: "#/$defs/when"
       from_namespace:

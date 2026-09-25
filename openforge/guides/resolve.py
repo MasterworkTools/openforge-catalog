@@ -146,7 +146,16 @@ def resolve(
             for step in steps
         ],
         "parts": parts,
-        "refinements": [
+        # Held back until the questions are done, for the same reason
+        # the questions come one at a time: answering "how do you want
+        # to build it?" should open the next question, not the whole
+        # form. They still *apply* while hidden — a texture in the URL
+        # is the person's answer whether or not its control is on
+        # screen, and silently ignoring it would change the parts they
+        # are looking at.
+        "refinements": []
+        if _unanswered(steps, answered)
+        else [
             {
                 **refinement,
                 **(
@@ -339,6 +348,16 @@ def _predicate_key(predicate: dict):
     )
 
 
+def _unanswered(steps: list, answered: dict) -> bool:
+    """Is there still a question on the table?
+
+    Reads the answers map rather than the steps, because `selected` is
+    put on a step when the response is assembled and these are the
+    steps as the engine has them.
+    """
+    return any(step["key"] not in answered for step in steps)
+
+
 def _available_steps(document: dict, selections: dict):
     """The reachable steps, and the answers that actually count.
 
@@ -348,6 +367,16 @@ def _available_steps(document: dict, selections: dict):
     on `b` and `b` waiting on `a`, changing the answer to `a` drops `b`
     but would leave a stale answer to `c` alive — offering a question
     nobody can see, and narrowing the parts off a branch nobody is on.
+
+    One question at a time, too. A reachable step is offered only if
+    every step before it has been answered, so answering one opens the
+    next rather than all of them at once. That is the difference
+    between a wizard and a form, and it cannot be written as a `when`:
+    the chain is not the same on every branch — wall-on-tile has no
+    print questions, so its size question follows the method directly,
+    while a separate wall's follows two print questions — and `when`
+    ANDs across steps, so it cannot say "whichever of these came
+    before".
 
     Returns the reachable steps and the selections belonging to them.
     """
@@ -359,7 +388,10 @@ def _available_steps(document: dict, selections: dict):
         offered = _with_available_options(step, answered)
         available.append(offered)
         if step["key"] not in selections:
-            continue
+            # Offered, unanswered, and the last one anybody sees: the
+            # questions after it depend on this answer, and asking them
+            # first invites an answer that this one then throws away.
+            break
         # An answer naming an option this branch does not offer counts
         # as no answer, and the step is asked again. It is not a bad
         # request: the key is one this step really has, it is just not
@@ -370,8 +402,11 @@ def _available_steps(document: dict, selections: dict):
         # Anything else stays in `answered` so that `_chosen_options`
         # can refuse it: a key no option has is still a bad request,
         # and so is a repeated parameter, which arrives as a list.
-        if not _gated_off(selections[step["key"]], step, offered):
-            answered[step["key"]] = selections[step["key"]]
+        if _gated_off(selections[step["key"]], step, offered):
+            # Answered with something this branch does not offer, which
+            # counts as unanswered — so this is where the wizard stops.
+            break
+        answered[step["key"]] = selections[step["key"]]
     return available, answered
 
 

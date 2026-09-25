@@ -274,7 +274,7 @@ steps:
     when: {selected: {method: [s2w, wall-on-tile, separate-wall]}}
     options:
       - key: none
-        title: Plain ends
+        title: No side clips
         blurb: >
           Nothing on the ends. Walls butt up against each other and
           stay put because their bases are clipped to the floor.
@@ -287,8 +287,8 @@ steps:
       - key: side-openlock
         title: OpenLOCK side clips
         blurb: >
-          The usual choice. A clip on each end joins wall to wall, so a
-          run of wall holds its line. 175 walls have them.
+          A clip on each end joins wall to wall, so a run of wall holds
+          its line. 175 walls have them.
         roles:
           wall:
             require: ['connection|side|openlock']
@@ -486,23 +486,6 @@ refinements:
   # walls and not one shape|floor|wall between them — so a single
   # texture question would empty the floor for a third of its answers.
   # Only the five that have both are offered here.
-  # Pegs on top of the wall, so another storey can stand on it. A
-  # different question from the side clips, which join wall to wall
-  # along a run: these join floor to floor up a building, and a wall
-  # can have both, either or neither.
-  #
-  # Only four of the eight wall textures have pegged walls at all —
-  # towne 58, dungeon stone 35, cut stone 12, rough stone 10, and
-  # necro, mortar and stone, aztlan and stone brick have none. So on
-  # half the textures this question has no answer, which is what the
-  # greying-out is for rather than something to hide.
-  - key: pegs
-    role: wall
-    prompt: Multifloor pegs?
-    when: {selected: {method: [s2w, wall-on-tile, separate-wall]}}
-    on_tags: {require: ['connection|pegs']}
-    off_tags: {deny: ['connection|pegs']}
-
   # How the bases clip down, in three parts because that is how the
   # catalog is built rather than a taste for controls.
   #
@@ -576,3 +559,21 @@ refinements:
       - {tag: 'texture|cut-stone', title: 'Cut stone', blurb: '32 floors.'}
       - {tag: 'texture|towne', title: 'Towne', blurb: '23 floors.'}
       - {tag: 'texture|aztlan', title: 'Aztlan', blurb: '11 floors.'}
+
+  # Pegs on top of the wall, so another storey can stand on it. A
+  # different question from the side clips, which join wall to wall
+  # along a run: these join floor to floor up a building, and a wall
+  # can have both, either or neither.
+  #
+  # Only four of the eight wall textures have pegged walls at all —
+  # towne 58, dungeon stone 35, cut stone 12, rough stone 10, and
+  # necro, mortar and stone, aztlan and stone brick have none. So on
+  # half the textures this question has no answer, which is what the
+  # greying-out is for rather than something to hide.
+  - key: pegs
+    role: wall
+    group: Other options
+    prompt: Multifloor pegs?
+    when: {selected: {method: [s2w, wall-on-tile, separate-wall]}}
+    on_tags: {require: ['connection|pegs']}
+    off_tags: {deny: ['connection|pegs']}

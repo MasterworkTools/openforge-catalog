@@ -7,6 +7,7 @@ import { ConfigTags } from '@/types';
 import { downloadFiles, downloadUrl } from '@/utils/blueprint-utils';
 import PartSelectionModal from '../part-selection-modal';
 import { GuideSprite } from './guide-sprite';
+import { SpriteControls } from '../sprite-controls';
 
 interface GuidePartsProps {
   parts: GuidePart[];
@@ -97,9 +98,16 @@ export function GuideParts({ parts }: GuidePartsProps) {
           </div>
         ))}
       </div>
-      <p className="mt-2 text-xs text-gray-500">
-        Drag the pieces to turn them. They turn together.
-      </p>
+      {/* The widget is here to be seen as much as used: dragging is
+          not discoverable, and a flattened cube offering "front, left,
+          top" says the pictures turn without anyone reading a line of
+          help text. */}
+      <div className="mt-3 flex items-center gap-3">
+        <SpriteControls view={view} onView={setView} />
+        <p className="text-xs text-gray-500">
+          Pick a side, or drag the pieces. They all turn together.
+        </p>
+      </div>
       {urls.length > 0 && (
         <button
           type="button"

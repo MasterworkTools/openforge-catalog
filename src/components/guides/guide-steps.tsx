@@ -244,9 +244,46 @@ export function GuideRefinements({
   const deadFor = (refinement: GuideRefinement) =>
     unavailable?.[refinement.key] ?? refinement.unavailable ?? [];
   if (refinements.length === 0) return null;
+  // Grouped in document order, ungrouped first. "Other options" is
+  // for the questions that are real but are rarely why anyone came —
+  // putting them in the main list makes the main list look longer
+  // than the decision actually is.
+  const groups: string[] = [];
+  for (const refinement of refinements) {
+    const name = refinement.group ?? 'Change anything';
+    if (!groups.includes(name)) groups.push(name);
+  }
+  return (
+    <>
+      {groups.map((name) => (
+        <RefinementGroup
+          key={name}
+          name={name}
+          refinements={refinements.filter(
+            (r) => (r.group ?? 'Change anything') === name
+          )}
+          deadFor={deadFor}
+          onSelect={onSelect}
+        />
+      ))}
+    </>
+  );
+}
+
+function RefinementGroup({
+  name,
+  refinements,
+  deadFor,
+  onSelect,
+}: {
+  name: string;
+  refinements: GuideRefinement[];
+  deadFor: (refinement: GuideRefinement) => string[];
+  onSelect: (key: string, value: string | null) => void;
+}) {
   return (
     <section className="guide-refinements mb-8">
-      <h2 className="text-xl font-bold mb-3">Change anything</h2>
+      <h2 className="text-xl font-bold mb-3">{name}</h2>
       <div className="flex flex-col gap-3">
         {refinements.map((refinement) => {
           if (refinement.on_tags) {

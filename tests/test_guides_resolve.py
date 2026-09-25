@@ -301,10 +301,12 @@ def test_a_later_answer_narrows_the_roles_it_names(guide):
 
 
 def test_a_refinement_appears_only_when_its_when_holds(guide):
-    resolved = resolve(guide, {"method": "s2w-modular"}, find_candidates)
+    resolved = resolve(guide, {"method": "s2w-modular", "size": "two"}, find_candidates)
     assert [r["key"] for r in resolved["refinements"]] == ["texture"]
 
-    resolved = resolve(guide, {"method": "separate-wall"}, find_candidates)
+    resolved = resolve(
+        guide, {"method": "separate-wall", "size": "two"}, find_candidates
+    )
     assert [r["key"] for r in resolved["refinements"]] == [
         "texture",
         "side-locks",
@@ -330,7 +332,7 @@ def test_a_toggle_applies_on_tags_or_off_tags(guide):
 def test_an_unreachable_refinement_is_ignored_not_an_error(guide):
     resolved = resolve(
         guide,
-        {"method": "s2w-modular", "side-locks": "on"},
+        {"method": "s2w-modular", "size": "two", "side-locks": "on"},
         find_candidates,
     )
 
@@ -446,7 +448,17 @@ def test_the_answers_come_back_with_the_questions(guide):
     steps = {step["key"]: step for step in resolved["steps"]}
     assert steps["method"]["selected"] == "s2w-modular"
     assert steps["size"]["selected"] is None
-    refinements = {r["key"]: r for r in resolved["refinements"]}
+    # No refinements while `size` is outstanding — one question at a
+    # time — but the answer to one is still held and still applied, so
+    # it comes back the moment the questions are done.
+    assert resolved["refinements"] == []
+
+    answered = resolve(
+        guide,
+        {"method": "s2w-modular", "size": "two", "texture": "texture|cave"},
+        find_candidates,
+    )
+    refinements = {r["key"]: r for r in answered["refinements"]}
     assert refinements["texture"]["selected"] == "texture|cave"
 
 
@@ -1014,7 +1026,7 @@ def test_a_refinement_offering_a_closed_list_refuses_anything_else(guide):
 
     resolved = resolve(
         guide,
-        {"method": "s2w-modular", "texture": "texture|cave"},
+        {"method": "s2w-modular", "size": "two", "texture": "texture|cave"},
         find_candidates,
     )
     assert resolved["refinements"][0]["selected"] == "texture|cave"
@@ -1023,7 +1035,7 @@ def test_a_refinement_offering_a_closed_list_refuses_anything_else(guide):
     with pytest.raises(GuideSelectionError, match="does not offer"):
         resolve(
             guide,
-            {"method": "s2w-modular", "texture": "texture|towne"},
+            {"method": "s2w-modular", "size": "two", "texture": "texture|towne"},
             find_candidates,
         )
 
@@ -1032,7 +1044,7 @@ def test_an_open_namespace_refinement_still_takes_any_tag_in_it(guide):
     """`choices` is optional, and its absence is not an empty list."""
     resolved = resolve(
         guide,
-        {"method": "s2w-modular", "texture": "texture|anything_at_all"},
+        {"method": "s2w-modular", "size": "two", "texture": "texture|anything_at_all"},
         find_candidates,
     )
     assert resolved["refinements"][0]["selected"] == "texture|anything_at_all"
@@ -1046,7 +1058,7 @@ def test_the_choices_reach_the_frontend(guide):
         {"tag": "texture|cave"},
     ]
 
-    resolved = resolve(guide, {"method": "s2w-modular"}, find_candidates)
+    resolved = resolve(guide, {"method": "s2w-modular", "size": "two"}, find_candidates)
 
     offered = next(r for r in resolved["refinements"] if r["key"] == "texture")
     assert offered["choices"] == texture["choices"]
@@ -1079,7 +1091,9 @@ def test_an_option_that_names_no_base_leaves_it_out_of_the_build(guide):
             ],
         }
     )
-    separate = {"method": "separate-wall"}
+    # `size` comes before the step under test, and an unanswered
+    # step stops the wizard there.
+    separate = {"method": "separate-wall", "size": "two"}
 
     with_base = resolve(guide, {**separate, "wall-print": "with-base"}, find_candidates)
     single = resolve(guide, {**separate, "wall-print": "single-piece"}, find_candidates)
@@ -1089,3 +1103,54 @@ def test_an_option_that_names_no_base_leaves_it_out_of_the_build(guide):
     # And the option's own predicate still applies to the piece it named.
     wall = next(p for p in single["parts"] if p["role"] == "wall")
     assert "build|s2w" in wall["query"]["deny"]
+
+
+def test_one_question_is_offered_at_a_time(guide):
+    """Answering a question opens the next one, not all of them.
+
+    The difference between a wizard and a form, and it cannot be
+    written as a `when`: the chain is not the same on every branch, and
+    `when` ANDs across steps so it cannot say "whichever came before".
+    """
+    # Three steps, because with two the last one is the next one and
+    # truncating changes nothing — the version of this test that had
+    # two passed with the rule removed.
+    guide["steps"].append(
+        {
+            "key": "finish",
+            "prompt": "Anything else?",
+            "options": [{"key": "no", "title": "No", "roles": {"wall": None}}],
+        }
+    )
+
+    assert [s["key"] for s in resolve(guide, {}, find_candidates)["steps"]] == [
+        "method"
+    ]
+    resolved = resolve(guide, {"method": "s2w-modular"}, find_candidates)
+    assert [s["key"] for s in resolved["steps"]] == ["method", "size"]
+    # The third waits on the second, even though nothing in the
+    # document says so.
+    answered = resolve(guide, {"method": "s2w-modular", "size": "two"}, find_candidates)
+    assert [s["key"] for s in answered["steps"]] == ["method", "size", "finish"]
+    # And the questions after it are not merely collapsed — they are
+    # not asked, so nothing downstream narrows on an answer nobody has
+    # had the chance to give.
+    assert resolved["refinements"] == []
+
+
+def test_an_answer_this_branch_withholds_stops_the_wizard_there(guide):
+    """An answer the branch does not offer counts as no answer.
+
+    So the step is asked again — and the questions after it wait, the
+    same as if it had never been answered, rather than running ahead on
+    an answer that was discarded.
+    """
+    guide["steps"][1]["options"][0]["when"] = {
+        "selected": {"method": ["separate-wall"]}
+    }
+
+    resolved = resolve(guide, {"method": "s2w-modular", "size": "two"}, find_candidates)
+
+    size = next(s for s in resolved["steps"] if s["key"] == "size")
+    assert size["selected"] is None
+    assert resolved["refinements"] == []
