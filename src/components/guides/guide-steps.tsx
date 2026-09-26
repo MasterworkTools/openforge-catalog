@@ -244,24 +244,37 @@ export function GuideRefinements({
   const deadFor = (refinement: GuideRefinement) =>
     unavailable?.[refinement.key] ?? refinement.unavailable ?? [];
   if (refinements.length === 0) return null;
-  // Grouped in document order, ungrouped first. "Other options" is
-  // for the questions that are real but are rarely why anyone came —
-  // putting them in the main list makes the main list look longer
-  // than the decision actually is.
-  const groups: string[] = [];
+  // A section each, in document order. A question is its own section
+  // headed by its own prompt — "Change anything" over the lot of them
+  // said nothing and made four unrelated questions look like one.
+  //
+  // A `group` joins several into one section under a shared heading,
+  // for the ones that really are a single decision: which clip the
+  // bases use, and then its variants.
+  const sections: { name: string; grouped: boolean; of: GuideRefinement[] }[] =
+    [];
   for (const refinement of refinements) {
-    const name = refinement.group ?? 'Change anything';
-    if (!groups.includes(name)) groups.push(name);
+    const last = sections[sections.length - 1];
+    if (refinement.group && last?.grouped && last.name === refinement.group) {
+      last.of.push(refinement);
+      continue;
+    }
+    sections.push({
+      name: refinement.group ?? refinement.prompt,
+      grouped: Boolean(refinement.group),
+      of: [refinement],
+    });
   }
   return (
     <>
-      {groups.map((name) => (
+      {sections.map((section) => (
         <RefinementGroup
-          key={name}
-          name={name}
-          refinements={refinements.filter(
-            (r) => (r.group ?? 'Change anything') === name
-          )}
+          key={section.name}
+          name={section.name}
+          // A lone question's prompt is already the heading, so
+          // repeating it inside would ask it twice.
+          showPrompts={section.grouped}
+          refinements={section.of}
           deadFor={deadFor}
           onSelect={onSelect}
         />
@@ -272,18 +285,23 @@ export function GuideRefinements({
 
 function RefinementGroup({
   name,
+  showPrompts,
   refinements,
   deadFor,
   onSelect,
 }: {
   name: string;
+  showPrompts: boolean;
   refinements: GuideRefinement[];
   deadFor: (refinement: GuideRefinement) => string[];
   onSelect: (key: string, value: string | null) => void;
 }) {
+  const headingId = `refinements-${name.replace(/\W+/g, '-').toLowerCase()}`;
   return (
     <section className="guide-refinements mb-8">
-      <h2 className="text-xl font-bold mb-3">{name}</h2>
+      <h2 id={headingId} className="text-xl font-bold mb-3">
+        {name}
+      </h2>
       <div className="flex flex-col gap-3">
         {refinements.map((refinement) => {
           if (refinement.on_tags) {
@@ -291,6 +309,7 @@ function RefinementGroup({
               <Toggle
                 key={refinement.key}
                 refinement={refinement}
+                showPrompt={showPrompts}
                 dead={deadFor(refinement)}
                 onSelect={onSelect}
               />
@@ -303,6 +322,8 @@ function RefinementGroup({
             <ChoicePicker
               key={refinement.key}
               refinement={refinement}
+              showPrompt={showPrompts}
+              labelledBy={headingId}
               dead={deadFor(refinement)}
               onSelect={onSelect}
             />
@@ -310,6 +331,7 @@ function RefinementGroup({
             <NamespacePicker
               key={refinement.key}
               refinement={refinement}
+              showPrompt={showPrompts}
               onSelect={onSelect}
             />
           );
@@ -330,19 +352,30 @@ function RefinementGroup({
  */
 function ChoicePicker({
   refinement,
+  showPrompt,
+  labelledBy,
   dead,
   onSelect,
 }: {
   refinement: GuideRefinement;
+  /** False when the section heading is already this question. */
+  showPrompt: boolean;
+  /** The section heading, to name the group by when it is. */
+  labelledBy: string;
   dead: string[];
   onSelect: (key: string, value: string | null) => void;
 }) {
-  const heading = `refinement-${refinement.key}`;
+  // Named by its own prompt when it has one, and by the section
+  // heading when the heading *is* its prompt — rather than a hidden
+  // copy of the same words, which a screen reader would read twice.
+  const heading = showPrompt ? `refinement-${refinement.key}` : labelledBy;
   return (
     <section aria-labelledby={heading}>
-      <h3 id={heading} className="font-semibold mb-2">
-        {refinement.prompt}
-      </h3>
+      {showPrompt && (
+        <h3 id={heading} className="font-semibold mb-2">
+          {refinement.prompt}
+        </h3>
+      )}
       <div role="group" aria-labelledby={heading} className="flex flex-col gap-1">
         {refinement.choices?.map((choice) => {
           const chosen = refinement.selected === choice.tag;
@@ -386,10 +419,13 @@ function labelFor(choice: GuideChoice): string {
 
 function Toggle({
   refinement,
+  showPrompt,
   dead: deadValues,
   onSelect,
 }: {
   refinement: GuideRefinement;
+  /** False when the section heading is already this question. */
+  showPrompt: boolean;
   dead: string[];
   onSelect: (key: string, value: string | null) => void;
 }) {
@@ -409,13 +445,14 @@ function Toggle({
     >
       <input
         type="checkbox"
+        aria-label={showPrompt ? undefined : refinement.prompt}
         disabled={dead}
         checked={refinement.selected === 'on'}
         onChange={(e) =>
           onSelect(refinement.key, e.target.checked ? 'on' : 'off')
         }
       />
-      <span>{refinement.prompt}</span>
+      {showPrompt && <span>{refinement.prompt}</span>}
     </label>
   );
 }
@@ -428,23 +465,31 @@ function Toggle({
  */
 function NamespacePicker({
   refinement,
+  showPrompt,
   onSelect,
 }: {
   refinement: GuideRefinement;
+  /** False when the section heading is already this question. */
+  showPrompt: boolean;
   onSelect: (key: string, value: string | null) => void;
 }) {
+  const box = (
+    <input
+      type="text"
+      // Named either by the visible label or by `aria-label`, never
+      // by a hidden copy of the heading above it.
+      aria-label={showPrompt ? undefined : refinement.prompt}
+      className="border border-gray-300 rounded px-2 py-1"
+      placeholder={`${refinement.from_namespace}|...`}
+      defaultValue={refinement.selected ?? ''}
+      onBlur={(e) => onSelect(refinement.key, e.target.value.trim() || null)}
+    />
+  );
+  if (!showPrompt) return box;
   return (
     <label className="flex items-center gap-2">
       <span>{refinement.prompt}</span>
-      <input
-        type="text"
-        className="border border-gray-300 rounded px-2 py-1"
-        placeholder={`${refinement.from_namespace}|...`}
-        defaultValue={refinement.selected ?? ''}
-        onBlur={(e) =>
-          onSelect(refinement.key, e.target.value.trim() || null)
-        }
-      />
+      {box}
     </label>
   );
 }

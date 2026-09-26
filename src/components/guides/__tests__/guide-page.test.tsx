@@ -553,6 +553,44 @@ describe('GuidePage', () => {
       expect(links[0]).toHaveAttribute('rel', expect.stringContaining('noopener'));
     });
 
+    it('explains a question that carries prose of its own', async () => {
+      // Not every question is explained by its answers. What is true
+      // of the size question — that sizes are in inches, that a 1 inch
+      // hallway does not fit a mini — belongs to the question, and
+      // repeating it on eight buttons would be absurd.
+      visit('?guide=wall&method=separate-wall');
+      const withPreamble = {
+        ...RESOLVED_WITH_PARTS,
+        steps: [
+          ...RESOLVED_WITH_PARTS.steps,
+          {
+            key: 'size',
+            prompt: 'What size tiles?',
+            blurb: 'All tile sizes are in inches.\n\nOne inch is tight.',
+            selected: null,
+            options: [{ key: '2x2', title: '2×2', roles: {} }],
+          },
+        ],
+      };
+      mockFetch((url) =>
+        url.includes('/resolve') ? withPreamble : GUIDE_DOCUMENT
+      );
+
+      render(<GuidePage />);
+
+      expect(
+        await screen.findByRole('heading', { name: 'What these mean' })
+      ).toBeInTheDocument();
+      // Both paragraphs, and not the previous question's explanation.
+      expect(
+        screen.getByText('All tile sizes are in inches.')
+      ).toBeInTheDocument();
+      expect(screen.getByText('One inch is tight.')).toBeInTheDocument();
+      expect(
+        screen.queryByText(/Floor and wall are independent\./)
+      ).not.toBeInTheDocument();
+    });
+
     it('explains what was chosen when the open question has nothing to say', async () => {
       // "What size tiles?" is eight numbers; explaining them would be
       // padding. Rather than leave a third of the page blank for it,

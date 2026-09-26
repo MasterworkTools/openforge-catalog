@@ -147,6 +147,21 @@ $defs:
       prompt:
         type: string
         minLength: 1
+      blurb:
+        type: string
+        description: >
+          What to know before answering, shown above the options. For
+          what is true of the question rather than of any one answer —
+          "all sizes are in inches" belongs here, not repeated on
+          eight buttons. Blank lines separate paragraphs.
+      links:
+        type: object
+        minProperties: 1
+        description: Phrases in the step's blurb to link, as on an option.
+        additionalProperties:
+          type: string
+          format: uri
+          pattern: "^https://"
       when:
         $ref: "#/$defs/when"
       options:

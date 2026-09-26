@@ -25,6 +25,9 @@ export interface GuideOption {
 export interface GuideStep {
   key: string;
   prompt: string;
+  /** What to know before answering, shown above the options. */
+  blurb?: string;
+  links?: Record<string, string>;
   /** Option keys that would empty a part, for greying out. */
   unavailable?: string[];
   options: GuideOption[];

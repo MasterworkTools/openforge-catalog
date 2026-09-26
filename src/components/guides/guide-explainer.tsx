@@ -27,16 +27,21 @@ export function GuideExplainer({ steps, opened }: GuideExplainerProps) {
     asking?.options
       .filter((option) => option.blurb)
       .map((option) => ({ step: asking.key, option })) ?? [];
+  // A step can also carry prose of its own, for what is true of the
+  // question rather than of any one answer: that sizes are in inches,
+  // and that a 1 inch hallway does not fit a mini. Repeating that on
+  // eight size buttons would be absurd.
+  const preamble = asking?.blurb;
   // Otherwise the column explains what *was* chosen, rather than going
   // blank. The same words, still the reason this build is this build,
-  // and it keeps a third of the page from being empty for two of the
-  // five questions.
-  const explaining = offered.length > 0;
+  // and it keeps a third of the page from being empty for the
+  // questions whose answers explain themselves.
+  const explaining = offered.length > 0 || Boolean(preamble);
   const heading = explaining ? 'What these mean' : 'What you chose';
   const described = explaining
     ? offered
     : chosenOptions(steps).filter(({ option }) => option.blurb);
-  if (described.length === 0) return null;
+  if (described.length === 0 && !(explaining && preamble)) return null;
 
   return (
     <section className="guide-explainer mb-8" aria-labelledby="explainer">
@@ -45,6 +50,15 @@ export function GuideExplainer({ steps, opened }: GuideExplainerProps) {
       <h2 id="explainer" className="text-xl font-bold mb-3">
         {heading}
       </h2>
+      {explaining && preamble && (
+        <div className="mb-4">
+          {paragraphs(preamble).map((para, i) => (
+            <p key={i} className="text-sm text-gray-700 mb-2 last:mb-0">
+              {linked(para, asking?.links)}
+            </p>
+          ))}
+        </div>
+      )}
       <div className="flex flex-col gap-4">
         {described.map(({ step, option }) => (
           // Keyed by step *and* option: option keys are only unique

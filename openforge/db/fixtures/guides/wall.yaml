@@ -195,6 +195,14 @@ steps:
 
   - key: size
     prompt: What size tiles?
+    blurb: >
+      All tile sizes are in inches, which are also squares. Most people
+      use 2×2. 4×2 can be handy, especially for separate wall for
+      hallways. A few systems have used 3×3 as their basis.
+
+      A warning: 1 inch wide hallways don't really fit minis well. I
+      strongly recommend not using walls for hallways that thin —
+      though you can also use low walls.
     when: {selected: {method: [s2w, wall-on-tile, separate-wall]}}
     options:
       - key: 1x1
@@ -288,6 +296,38 @@ steps:
           # them — see `match` on the roles — so they are not named.
           floor: {require: ['size|width|4', 'size|depth|4']}
           wall: {require: ['size|width|4']}
+
+  - key: wall-height
+    prompt: How tall are the walls?
+    options:
+      - key: normal
+        title: Normal walls
+        blurb: >
+          Normal walls provide the most flexibility and options. Some
+          people find them too hard to see the minis on the board.
+        roles:
+          wall:
+            require: ['shape|wall', 'component|wall']
+      - key: low
+        title: Low walls
+        blurb: >
+          Low walls give clearer line of sight at the table. It can also
+          be a minimalist style thing.
+
+          A warning: we don't have options for any other type of tile in
+          low wall, under the idea that if you want a door or a window,
+          you'll use the normal height wall.
+        roles:
+          # A different tag rather than a modifier on the same one.
+          # `component|wall|low` is what the scanner reads to make the
+          # swap, and it stays on the piece — so the role's
+          # `deny_children: ['component|wall']` would refuse all 500 of
+          # them unless it is allowed back. Allowed and not required,
+          # because the sweep still has to take the curved, diagonal
+          # and mirrored variants, which are what that sweep is for.
+          wall:
+            require: ['shape|wall|low']
+            allow: ['component|wall|low']
 
   # Last, because it is the question you can only answer once you know
   # what you are building. An option here names `wall` and nothing
@@ -407,11 +447,24 @@ roles:
       # base — a wall printed with its base built in does not have one,
       # and requiring it role-wide made the single-piece option a
       # contradiction that resolved to nothing every time.
+      #
+      # Nor is what makes a piece a wall, which is the height
+      # question's: a low wall carries neither shape|wall nor
+      # component|wall. The scanner swaps them for shape|wall|low when
+      # it sees component|wall|low, so the two heights are not the same
+      # tag with a modifier — they are different tags, and requiring
+      # the normal ones here made low walls unreachable.
       require:
-        - 'shape|wall'
-        - 'component|wall'
         - 'build|separate wall'
-      deny_children: ['component|wall', 'connection', 'shape']
+      # The whole `component` namespace, not just under
+      # `component|wall`. A wall is a plain wall when the only
+      # component tag it carries is the one that says it is a wall —
+      # and the things that make it something else are not all filed
+      # under `component|wall`. A secret door is `component|secret_door`,
+      # and the narrower sweep let one through as soon as the low-wall
+      # option stopped requiring `component|wall`. Each height option
+      # names the component it keeps.
+      deny_children: ['component', 'component|wall', 'connection', 'shape']
       # shape|square is the straight one, and the sweep would take it
       # along with shape|angled. Permitted, not required: plenty of
       # plain walls carry no shape|? at all.
@@ -543,9 +596,65 @@ refinements:
   # All three apply to the bases and nothing else — `role: '*'` minus
   # the pieces that stand on them — so they follow whichever bases are
   # in play, and disappear when a build has none.
+
+  - key: floor-texture
+    role: floor
+    prompt: Floor texture
+    # Not on the first screen: nothing is being built yet, so a
+    # texture is not a question about anything.
+    when: {selected: {method: [s2w, wall-on-tile, separate-wall]}}
+    from_namespace: texture
+    choices:
+      - {tag: 'texture|dungeon_stone', title: 'Dungeon stone', blurb: '71 floors that take a wall.'}
+      - {tag: 'texture|rough_stone', title: 'Rough stone', blurb: '38 floors.'}
+      - {tag: 'texture|cut-stone', title: 'Cut stone', blurb: '32 floors.'}
+      - {tag: 'texture|towne', title: 'Towne', blurb: '23 floors.'}
+      - {tag: 'texture|aztlan', title: 'Aztlan', blurb: '11 floors.'}
+
+  # Pegs on top of the wall, so another storey can stand on it. A
+  # different question from the side clips, which join wall to wall
+  # along a run: these join floor to floor up a building, and a wall
+  # can have both, either or neither.
+  #
+  # Only four of the eight wall textures have pegged walls at all —
+  # towne 58, dungeon stone 35, cut stone 12, rough stone 10, and
+  # necro, mortar and stone, aztlan and stone brick have none. So on
+  # half the textures this question has no answer, which is what the
+  # greying-out is for rather than something to hide.
+
+  # The floor asks separately, and that is the point rather than a
+  # concession. Three of the eight wall textures have no floor of their
+  # own name at all — cave, stone brick and necro carry 110, 40 and 25
+  # walls and not one shape|floor|wall between them — so a single
+  # texture question would empty the floor for a third of its answers.
+  # Only the five that have both are offered here.
+  # How the bases clip down, in three parts because that is how the
+  # catalog is built rather than a taste for controls.
+  #
+  # There is one clip system per base and it is OpenLOCK or
+  # DragonLock — no base carries both. Topless is a variant of the
+  # OpenLOCK clip, not a third system. Magnets are independent of all
+  # of it: either system can have them, and 200 bases have magnets and
+  # no clips at all. Counted over every base in the catalog, wall and
+  # floor:
+  #
+  #   dragonlock              52 / 243      + magnets   55 / 174
+  #   openlock                76 / 308      + magnets   87 / 260
+  #   openlock, topless       26 /  57      + magnets   66 / 179
+  #   no clips, magnets only  54 / 146
+  #
+  # Nothing gates topless to OpenLOCK, and nothing needs to: no
+  # DragonLock base is topless, so choosing DragonLock greys it out on
+  # its own. A rule in the guide would say the same thing twice and be
+  # the one that goes stale.
+  #
+  # All three apply to the bases and nothing else — `role: '*'` minus
+  # the pieces that stand on them — so they follow whichever bases are
+  # in play, and disappear when a build has none.
   - key: base-connection
     role: '*'
     except_roles: ['wall', 'floor']
+    group: Base clips
     prompt: How do the bases clip together?
     when: {selected: {method: [s2w, wall-on-tile, separate-wall]}}
     # No `choices`: the answers are whatever these bases actually
@@ -563,9 +672,17 @@ refinements:
   # eight that are unsupported are floor bases only. Nothing in the
   # guide says "only for OpenLOCK" — the catalog says it, and a rule
   # here would be the copy that goes stale.
+
+  # The variants of the OpenLOCK clip, which is where "expose more
+  # options as you choose" lands: under DragonLock both of these grey
+  # out on their own, because no DragonLock base is topless and the
+  # eight that are unsupported are floor bases only. Nothing in the
+  # guide says "only for OpenLOCK" — the catalog says it, and a rule
+  # here would be the copy that goes stale.
   - key: base-topless
     role: '*'
     except_roles: ['wall', 'floor']
+    group: Base clips
     prompt: Topless clips?
     when: {selected: {method: [s2w, wall-on-tile, separate-wall]}}
     # An open top, so the clip prints without supports.
@@ -575,24 +692,11 @@ refinements:
   - key: base-unsupported
     role: '*'
     except_roles: ['wall', 'floor']
+    group: Base clips
     prompt: Unsupported clips?
     when: {selected: {method: [s2w, wall-on-tile, separate-wall]}}
     on_tags: {require: ['connection|openlock|unsupported']}
     off_tags: {deny: ['connection|openlock|unsupported']}
-
-  - key: floor-texture
-    role: floor
-    prompt: Floor texture
-    # Not on the first screen: nothing is being built yet, so a
-    # texture is not a question about anything.
-    when: {selected: {method: [s2w, wall-on-tile, separate-wall]}}
-    from_namespace: texture
-    choices:
-      - {tag: 'texture|dungeon_stone', title: 'Dungeon stone', blurb: '71 floors that take a wall.'}
-      - {tag: 'texture|rough_stone', title: 'Rough stone', blurb: '38 floors.'}
-      - {tag: 'texture|cut-stone', title: 'Cut stone', blurb: '32 floors.'}
-      - {tag: 'texture|towne', title: 'Towne', blurb: '23 floors.'}
-      - {tag: 'texture|aztlan', title: 'Aztlan', blurb: '11 floors.'}
 
   # Pegs on top of the wall, so another storey can stand on it. A
   # different question from the side clips, which join wall to wall

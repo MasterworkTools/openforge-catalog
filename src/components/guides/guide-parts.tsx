@@ -76,47 +76,55 @@ export function GuideParts({ parts }: GuidePartsProps) {
   return (
     <section className="guide-parts mb-8">
       <h2 className="text-xl font-bold mb-3">What to print</h2>
-      {/* The whole list is the handle, not each picture: you are
-          turning the build, not a piece of it. */}
-      <div
-        onMouseDown={handleMouseDown}
-        onClickCapture={swallowDragClick}
-        className={`flex flex-wrap gap-6 items-start select-none ${
-          isDragging ? 'cursor-grabbing' : 'cursor-grab'
-        }`}
-      >
-        {stacks(parts).map((stack) => (
-          <div key={stack[0].role} className="flex flex-col gap-1">
-            {stack.map((part) => (
-              <Part
-                key={part.role}
-                part={part}
-                view={view}
-                onInspect={setInspecting}
-              />
-            ))}
-          </div>
-        ))}
-      </div>
-      {/* The widget is here to be seen as much as used: dragging is
-          not discoverable, and a flattened cube offering "front, left,
-          top" says the pictures turn without anyone reading a line of
-          help text. */}
-      <div className="mt-3 flex items-center gap-3">
-        <SpriteControls view={view} onView={setView} />
-        <p className="text-xs text-gray-500">
-          Pick a side, or drag the pieces. They all turn together.
-        </p>
-      </div>
-      {urls.length > 0 && (
-        <button
-          type="button"
-          className="mt-4 border border-gray-300 rounded px-3 py-2"
-          onClick={() => downloadFiles(urls)}
+      {/* Pieces and controls side by side, and stacked when there is
+          not room for both — `flex-wrap` rather than a breakpoint,
+          because what matters is whether *this column* is wide enough
+          and the column's width depends on the window, the questions
+          beside it and how many pieces the build has. */}
+      <div className="flex flex-wrap items-start gap-6">
+        {/* The whole list is the handle, not each picture: you are
+            turning the build, not a piece of it. */}
+        <div
+          onMouseDown={handleMouseDown}
+          onClickCapture={swallowDragClick}
+          className={`flex flex-wrap gap-6 items-start select-none ${
+            isDragging ? 'cursor-grabbing' : 'cursor-grab'
+          }`}
         >
-          Download {urls.length === 1 ? 'the file' : `all ${urls.length} files`}
-        </button>
-      )}
+          {stacks(parts).map((stack) => (
+            <div key={stack[0].role} className="flex flex-col gap-1">
+              {stack.map((part) => (
+                <Part
+                  key={part.role}
+                  part={part}
+                  view={view}
+                  onInspect={setInspecting}
+                />
+              ))}
+            </div>
+          ))}
+        </div>
+        {/* The widget is here to be seen as much as used: dragging is
+            not discoverable, and a flattened cube offering "front,
+            left, top" says the pictures turn without anyone reading a
+            line of help text. */}
+        <div className="flex flex-col gap-3">
+          <SpriteControls view={view} onView={setView} />
+          <p className="text-xs text-gray-500 max-w-[10rem]">
+            Pick a side, or drag the pieces. They all turn together.
+          </p>
+          {urls.length > 0 && (
+            <button
+              type="button"
+              className="border border-gray-300 rounded px-3 py-2 text-sm"
+              onClick={() => downloadFiles(urls)}
+            >
+              Download{' '}
+              {urls.length === 1 ? 'the file' : `all ${urls.length} files`}
+            </button>
+          )}
+        </div>
+      </div>
       <PartSelectionModal
         isOpen={inspecting !== null}
         onClose={() => setInspecting(null)}
