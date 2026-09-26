@@ -64,10 +64,16 @@ export default function GuidePage() {
               onSelect={select}
             />
           </div>
-          <div className="lg:flex-1 overflow-y-auto min-h-0 pr-2">
+          {/* The questions keep a fixed width — they are a list of
+              short labels and do not want more. The pieces and the
+              words split what is left evenly: `min-w-0` because a flex
+              child will not shrink below its content otherwise, and a
+              long filename under a part would push the text column
+              off the side. */}
+          <div className="lg:flex-1 lg:min-w-0 overflow-y-auto min-h-0 pr-2">
             <GuideParts parts={resolved.parts} />
           </div>
-          <div className="lg:w-96 lg:shrink-0 overflow-y-auto min-h-0 pr-2">
+          <div className="lg:flex-1 lg:min-w-0 overflow-y-auto min-h-0 pr-2">
             <GuideExplainer steps={resolved.steps} opened={opened} />
           </div>
         </div>
