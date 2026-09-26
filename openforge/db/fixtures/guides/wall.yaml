@@ -355,7 +355,12 @@ steps:
   # side openlock and every one of them was unreachable.
   - key: connectors
     prompt: Side clips on the wall ends?
-    default: side-openlock
+    # Wall on tile is the exception: the wall is part of the tile, so
+    # its neighbour is held by the tile's own base clips and a side
+    # clip on the end has nothing to join that is not already joined.
+    default:
+      - {when: {selected: {method: [wall-on-tile]}}, value: none}
+      - {value: side-openlock}
     # Every method, but not before one is chosen. A wizard's first
     # screen asks one question; listing all three methods here is how a
     # step says "once that is answered" with the vocabulary there is.
@@ -605,24 +610,40 @@ refinements:
   # walls and not one shape|floor|wall between them — so a single
   # texture question would empty the floor for a third of its answers.
   # Only the five that have both are offered here.
-
-  # The floor asks separately, and that is the point rather than a
-  # concession. Three of the eight wall textures have no floor of their
-  # own name at all — cave, stone brick and necro carry 110, 40 and 25
-  # walls and not one shape|floor|wall between them — so a single
-  # texture question would empty the floor for a third of its answers.
-  # Only the five that have both are offered here.
+  #
+  # The sub-textures matter here in a way they do not for the wall.
+  # Every dungeon stone floor in the catalog is block or eroded — 34
+  # and 37, which is the whole 71 — so "dungeon stone" alone is not a
+  # floor anyone pictures, it is a coin toss between two that look
+  # nothing alike. Towne divides the same way, into long planks and
+  # plain boards. The parent stays on the list as "either is fine".
   - key: floor-texture
     role: floor
     prompt: Floor texture
-    default: 'texture|dungeon_stone'
+    # The floor to recommend depends on the wall standing on it. A
+    # wooden-framed building wants a wooden floor, and mortar and
+    # stone has no floor of its own name at all, so it borrows the
+    # blockwork that reads closest to it.
+    default:
+      - when: {selected: {texture: ['texture|towne', 'texture|stone_brick']}}
+        value: 'texture|towne'
+      - when: {selected: {texture: ['texture|mortar_and_stone']}}
+        value: 'texture|dungeon_stone|block'
+      - {value: 'texture|dungeon_stone'}
     when: {selected: {method: [s2w, wall-on-tile, separate-wall]}}
     from_namespace: texture
     choices:
-      - {tag: 'texture|dungeon_stone', title: 'Dungeon stone', blurb: '71 floors that take a wall.'}
+      - {tag: 'texture|dungeon_stone', title: 'Dungeon stone', blurb: '71 floors that take a wall, and every one of them is block or eroded.'}
+      - {tag: 'texture|dungeon_stone|block', title: 'Dungeon stone, block', blurb: 'Square-cut flags laid in courses. 34 floors.'}
+      - {tag: 'texture|dungeon_stone|eroded', title: 'Dungeon stone, eroded', blurb: 'The same flags worn round at the edges. 37 floors.'}
       - {tag: 'texture|rough_stone', title: 'Rough stone', blurb: '38 floors.'}
       - {tag: 'texture|cut-stone', title: 'Cut stone', blurb: '32 floors.'}
-      - {tag: 'texture|towne', title: 'Towne', blurb: '23 floors.'}
+      # Every towne floor is planking, whatever the wall above it is
+      # doing, so the list says what it is rather than which set it
+      # came out of.
+      - {tag: 'texture|towne', title: 'Wood', blurb: '23 floors, all of them boarded.'}
+      - {tag: 'texture|towne|long_planks', title: 'Wood, long planks', blurb: 'Boards running the length of the tile. 12 floors, in two layouts.'}
+      - {tag: 'texture|towne|wood', title: 'Wood, short boards', blurb: '3 floors, and no tile sizes — these come in the one size.'}
       - {tag: 'texture|aztlan', title: 'Aztlan', blurb: '11 floors.'}
 
 
@@ -641,24 +662,10 @@ refinements:
   # Derived, so it follows the build rather than a list written here:
   # a 1-inch dungeon stone wall base offers four, a 2-inch one seven,
   # and aztlan offers a different set again because it has unsupported
-  # bases where dungeon stone does not.
-
-  # How the bases clip down — one question, whose answers are the
-  # combinations that actually exist.
-  #
-  # It was three chained yes/nos (which system, then topless, then
-  # unsupported) and that was wrong twice over. It forced an answer to
-  # each before the next appeared, and it could offer topless *and*
-  # unsupported, which no base in the catalog is. The tags are not
-  # independent: a base is OpenLOCK or DragonLock, with magnets or
-  # without, and the OpenLOCK one may be topless or unsupported but
-  # never both. Asking which combination you want says all of that and
-  # cannot express the pairings that do not exist.
-  #
-  # Derived, so it follows the build rather than a list written here:
-  # a 1-inch dungeon stone wall base offers four, a 2-inch one seven,
-  # and aztlan offers a different set again because it has unsupported
-  # bases where dungeon stone does not.
+  # bases where dungeon stone does not. Deriving is also why nothing
+  # here gates topless to OpenLOCK: no DragonLock base is topless, so
+  # the combination never comes up to be offered, and a rule saying so
+  # would be a second copy of that fact and the one that goes stale.
   - key: base-clips
     role: '*'
     except_roles: ['wall', 'floor']
@@ -735,68 +742,22 @@ refinements:
   # necro, mortar and stone, aztlan and stone brick have none. So on
   # half the textures this question has no answer, and the page drops
   # it rather than asking something unanswerable.
-
-  # The floor asks separately, and that is the point rather than a
-  # concession. Three of the eight wall textures have no floor of their
-  # own name at all — cave, stone brick and necro carry 110, 40 and 25
-  # walls and not one shape|floor|wall between them — so a single
-  # texture question would empty the floor for a third of its answers.
-  # Only the five that have both are offered here.
-  # Pegs on top of the wall, so another storey can stand on it. A
-  # different question from the side clips, which join wall to wall
-  # along a run: these join floor to floor up a building, and a wall
-  # can have both, either or neither.
-  #
-  # Only four of the eight wall textures have pegged walls at all —
-  # towne 58, dungeon stone 35, cut stone 12, rough stone 10, and
-  # necro, mortar and stone, aztlan and stone brick have none. So on
-  # half the textures this question has no answer, and the page drops
-  # it rather than asking something unanswerable.
-
-  # The floor asks separately, and that is the point rather than a
-  # concession. Three of the eight wall textures have no floor of their
-  # own name at all — cave, stone brick and necro carry 110, 40 and 25
-  # walls and not one shape|floor|wall between them — so a single
-  # texture question would empty the floor for a third of its answers.
-  # Only the five that have both are offered here.
-  # How the bases clip down, in three parts because that is how the
-  # catalog is built rather than a taste for controls.
-  #
-  # There is one clip system per base and it is OpenLOCK or
-  # DragonLock — no base carries both. Topless is a variant of the
-  # OpenLOCK clip, not a third system. Magnets are independent of all
-  # of it: either system can have them, and 200 bases have magnets and
-  # no clips at all. Counted over every base in the catalog, wall and
-  # floor:
-  #
-  #   dragonlock              52 / 243      + magnets   55 / 174
-  #   openlock                76 / 308      + magnets   87 / 260
-  #   openlock, topless       26 /  57      + magnets   66 / 179
-  #   no clips, magnets only  54 / 146
-  #
-  # Nothing gates topless to OpenLOCK, and nothing needs to: no
-  # DragonLock base is topless, so choosing DragonLock takes it off the
-  # list on its own. A rule in the guide would say the same thing twice and be
-  # the one that goes stale.
-  #
-  # All three apply to the bases and nothing else — `role: '*'` minus
-  # the pieces that stand on them — so they follow whichever bases are
-  # in play, and disappear when a build has none.
-
-  # Pegs on top of the wall, so another storey can stand on it. A
-  # different question from the side clips, which join wall to wall
-  # along a run: these join floor to floor up a building, and a wall
-  # can have both, either or neither.
-  #
-  # Only four of the eight wall textures have pegged walls at all —
-  # towne 58, dungeon stone 35, cut stone 12, rough stone 10, and
-  # necro, mortar and stone, aztlan and stone brick have none. So on
-  # half the textures this question has no answer, and the page drops
-  # it rather than asking something unanswerable.
   - key: pegs
     role: wall
     group: Other options
     prompt: Multifloor pegs?
+    blurb: >
+      Pegs on the top edge of the wall, and matching holes in the
+      bottom of the tile above. They are OpenLOCK's way of registering
+      one storey on the next: the upper floor drops onto them and
+      stops sliding about, which is the difference between a building
+      you can pick a roof off and one that comes apart when someone
+      leans on the table.
+
+      Only worth saying yes to if you are actually building upwards. A
+      pegged wall prints the same and costs nothing extra, but the
+      pegs stand proud of the top edge, so a wall meant to be the top
+      of the thing looks better without them.
     when: {selected: {method: [s2w, wall-on-tile, separate-wall]}}
     on_tags: {require: ['connection|pegs']}
     off_tags: {deny: ['connection|pegs']}

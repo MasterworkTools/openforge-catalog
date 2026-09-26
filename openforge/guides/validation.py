@@ -195,6 +195,21 @@ def _choice_errors(data: dict) -> list[str]:
     return errors
 
 
+def _recommended_values(question: dict) -> list:
+    """Every value a `default` can recommend.
+
+    One for a plain default, and one per clause for a conditional one.
+    Each is checked the same way: which branch recommends it does not
+    change whether it names an answer that exists.
+    """
+    default = question.get("default")
+    if default is None:
+        return []
+    if isinstance(default, list):
+        return [clause["value"] for clause in default]
+    return [default]
+
+
 def _default_errors(data: dict) -> list[str]:
     """A recommendation has to name an answer that exists.
 
@@ -205,33 +220,34 @@ def _default_errors(data: dict) -> list[str]:
     """
     errors = []
     for step in data["steps"]:
-        if "default" not in step:
-            continue
         keys = {option["key"] for option in step["options"]}
-        if step["default"] not in keys:
-            errors.append(
-                f"step {step['key']!r}: `default` names unknown option "
-                f"{step['default']!r}"
-            )
+        errors += [
+            f"step {step['key']!r}: `default` names unknown option {value!r}"
+            for value in _recommended_values(step)
+            if value not in keys
+        ]
     for refinement in data.get("refinements", []):
-        if "default" not in refinement:
-            continue
         where = f"refinement {refinement['key']!r}"
-        value = refinement["default"]
-        if "on_tags" in refinement:
-            if value not in ("on", "off"):
-                errors.append(f"{where}: `default` takes 'on' or 'off', not {value!r}")
-            continue
-        namespace = refinement.get("from_namespace") or refinement.get(
-            "from_combination"
-        )
-        if namespace and not all(
-            part.startswith(f"{namespace}|") for part in value.split(",")
-        ):
-            errors.append(f"{where}: `default` {value!r} is not under {namespace!r}")
-        choices = [choice["tag"] for choice in refinement.get("choices", [])]
-        if choices and value not in choices:
-            errors.append(f"{where}: `default` {value!r} is not one of its choices")
+        for value in _recommended_values(refinement):
+            errors += _refinement_default_errors(refinement, where, value)
+    return errors
+
+
+def _refinement_default_errors(refinement: dict, where: str, value: str) -> list[str]:
+    """One recommended value, against the answers this refinement has."""
+    if "on_tags" in refinement:
+        if value not in ("on", "off"):
+            return [f"{where}: `default` takes 'on' or 'off', not {value!r}"]
+        return []
+    errors = []
+    namespace = refinement.get("from_namespace") or refinement.get("from_combination")
+    if namespace and not all(
+        part.startswith(f"{namespace}|") for part in value.split(",")
+    ):
+        errors.append(f"{where}: `default` {value!r} is not under {namespace!r}")
+    choices = [choice["tag"] for choice in refinement.get("choices", [])]
+    if choices and value not in choices:
+        errors.append(f"{where}: `default` {value!r} is not one of its choices")
     return errors
 
 

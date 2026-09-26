@@ -125,7 +125,7 @@ def resolve(
     # and drives the parts: the page shows a complete, buildable set
     # from the first screen rather than four empty boxes and an
     # instruction to keep clicking.
-    assumed = _with_defaults(document, selections)
+    assumed, recommended = _with_defaults(document, selections)
     steps, answered = _available_steps(document, assumed)
     chosen = _chosen_options(steps, answered)
     in_play = _roles_in_play(chosen)
@@ -175,7 +175,7 @@ def resolve(
                 # defaulted question is still being asked, and shows
                 # its options with the recommendation marked.
                 "selected": given.get(step["key"]),
-                "recommended": step.get("default"),
+                "recommended": recommended.get(step["key"]),
                 "unavailable": dead.get(step["key"], []),
                 "because": {
                     value: because[f"{step['key']}:{value}"]
@@ -204,7 +204,7 @@ def resolve(
                     else {}
                 ),
                 "selected": selections.get(refinement["key"]),
-                "recommended": refinement.get("default"),
+                "recommended": recommended.get(refinement["key"]),
                 "unavailable": dead.get(refinement["key"], []),
                 "because": {
                     value: because[f"{refinement['key']}:{value}"]
@@ -571,35 +571,60 @@ def _predicate_key(predicate: dict):
     )
 
 
-def _with_defaults(document: dict, selections: dict) -> dict:
+def _with_defaults(document: dict, selections: dict) -> tuple[dict, dict]:
     """The person's answers, with each question's recommendation for
-    the rest.
+    the rest — and the recommendations themselves.
 
-    Walked in document order because reachability depends on answers:
-    defaulting the method to s2w is what makes the wall-print question
-    reachable, and only then does its own default apply. A question
-    the branch does not reach contributes nothing.
+    Walked in document order because both depend on the answers so
+    far: defaulting the method to s2w is what makes the wall-print
+    question reachable, and only then does its own default apply. A
+    question the branch does not reach contributes nothing, and a
+    recommendation that reads an earlier answer reads the assumed one,
+    so the chain follows the build actually on screen.
+
+    Refinements join the answers as they are walked, which steps do
+    not need but they do: the floor to recommend depends on the wall
+    texture, and the wall texture is a refinement.
 
     An explicit answer always wins, including one that happens to
-    equal the default — the difference is invisible in the parts and
-    very visible in the wizard, where answering is what opens the next
-    question.
+    equal the recommendation — the difference is invisible in the
+    parts and very visible in the wizard, where answering is what
+    opens the next question.
     """
     assumed = dict(selections)
     answered: dict = {}
-    for step in document["steps"]:
-        if not _when_holds(step.get("when"), answered):
+    recommended: dict = {}
+    for question in [*document["steps"], *document.get("refinements", [])]:
+        if not _when_holds(question.get("when"), answered):
             continue
-        if step["key"] not in assumed and "default" in step:
-            assumed[step["key"]] = step["default"]
-        if step["key"] in assumed:
-            answered[step["key"]] = assumed[step["key"]]
-    for refinement in document.get("refinements", []):
-        if not _when_holds(refinement.get("when"), answered):
-            continue
-        if refinement["key"] not in assumed and "default" in refinement:
-            assumed[refinement["key"]] = refinement["default"]
-    return assumed
+        key = question["key"]
+        value = _recommendation(question, answered)
+        if value is not None:
+            recommended[key] = value
+            assumed.setdefault(key, value)
+        if key in assumed:
+            answered[key] = assumed[key]
+    return assumed, recommended
+
+
+def _recommendation(question: dict, answered: dict):
+    """What to recommend for this question, given the answers so far.
+
+    A plain value recommends the same thing whatever else was chosen.
+    A list of clauses recommends by branch, the first whose `when`
+    holds winning and a clause without one catching the rest. Some
+    recommendations simply are conditional — a wall on a tile has
+    nothing beside it to clip to, and a wooden wall wants a wooden
+    floor — and writing that as one value would mean recommending the
+    wrong thing on some branch.
+    """
+    default = question.get("default")
+    if not isinstance(default, list):
+        return default
+    for clause in default:
+        if _when_holds(clause.get("when"), answered):
+            return clause["value"]
+    return None
 
 
 def _unanswered(steps: list, answered: dict) -> bool:

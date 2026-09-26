@@ -476,6 +476,41 @@ describe('GuidePage', () => {
       expect(screen.queryByText('One tile.')).not.toBeInTheDocument();
     });
 
+    it('never answers a reopening with the other questions', async () => {
+      // A question with nothing written about it used to fall through
+      // to "what you chose", so clicking one settled question printed
+      // a summary of all of them — which reads as though the click did
+      // something else entirely. Nothing to say means say nothing.
+      visit('?guide=wall&method=separate-wall');
+      const withPlainSize = {
+        ...RESOLVED_WITH_PARTS,
+        steps: [
+          ...RESOLVED_WITH_PARTS.steps,
+          {
+            key: 'size',
+            prompt: 'What size tiles?',
+            selected: '1x1',
+            options: [{ key: '1x1', title: '1×1', roles: {} }],
+          },
+        ],
+      };
+      mockFetch((url) =>
+        url.includes('/resolve') ? withPlainSize : GUIDE_DOCUMENT
+      );
+
+      render(<GuidePage />);
+      await screen.findByRole('heading', { name: 'What you chose' });
+
+      fireEvent.click(screen.getByRole('button', { name: /What size tiles/ }));
+
+      expect(
+        screen.queryByRole('heading', { name: 'What you chose' })
+      ).not.toBeInTheDocument();
+      expect(
+        screen.queryByText(/Floor and wall are independent\./)
+      ).not.toBeInTheDocument();
+    });
+
     it('does not confuse two questions that share an option key', async () => {
       // Option keys are only unique within their own question, and the
       // wall guide really does have two that share one: wall-print and

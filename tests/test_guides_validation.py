@@ -473,3 +473,23 @@ def test_a_sound_choice_list_validates(guide):
     ]
 
     assert validate_guide_document(guide) is guide
+
+
+def test_every_clause_of_a_conditional_default_names_a_real_answer(guide):
+    """A recommendation is used before anyone clicks anything.
+
+    A conditional one hides its mistakes better than a plain one: the
+    misspelled clause is on a branch, so the guide looks right until
+    somebody reaches that branch and the parts empty for no visible
+    reason. So each clause is checked, not just the first.
+    """
+    guide["steps"][0]["default"] = [
+        {"when": {"selected": {"method": ["separate-wall"]}}, "value": "separate-wall"},
+        {"value": "s2w-modualr"},
+    ]
+
+    with pytest.raises(ValueError) as excinfo:
+        validate_guide_document(guide)
+
+    assert "step 'method'" in str(excinfo.value)
+    assert "s2w-modualr" in str(excinfo.value)

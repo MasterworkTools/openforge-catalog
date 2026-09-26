@@ -47,7 +47,13 @@ export function GuideExplainer({
   // blank. The same words, still the reason this build is this build,
   // and it keeps a third of the page from being empty for the
   // questions whose answers explain themselves.
-  const explaining = offered.length > 0 || Boolean(preamble);
+  //
+  // Never for a question the person deliberately went back to,
+  // though. Reopening one is a request for that question's
+  // explanation, and answering it with a list of everything else
+  // chosen so far reads as though the click did something different
+  // from what it did. If there is nothing to say, say nothing.
+  const explaining = Boolean(reopened) || offered.length > 0 || Boolean(preamble);
   const heading = explaining ? 'What these mean' : 'What you chose';
   const described = explaining
     ? offered

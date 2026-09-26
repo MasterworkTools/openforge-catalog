@@ -134,6 +134,33 @@ $defs:
           items:
             type: string
 
+  recommendation:
+    description: >
+      What to recommend, and to assume until the person answers. A
+      plain value recommends the same thing on every branch. A list
+      recommends by branch: the first clause whose `when` holds wins,
+      and a clause without one catches the rest, so a wall on a tile
+      can be told to want no side clips while everything else wants
+      OpenLOCK. A list matching no clause recommends nothing.
+
+      Assuming is not answering: the wizard still walks from the first
+      question nobody has answered, so a recommendation never skips a
+      question. Clauses may read any earlier answer, refinements
+      included — the floor to recommend depends on the wall texture.
+    oneOf:
+      - type: string
+      - type: array
+        minItems: 1
+        items:
+          type: object
+          required: [value]
+          additionalProperties: false
+          properties:
+            when:
+              $ref: "#/$defs/when"
+            value:
+              type: string
+
   step:
     type: object
     required:
@@ -148,16 +175,12 @@ $defs:
         type: string
         minLength: 1
       default:
-        type: string
+        allOf:
+          - $ref: "#/$defs/recommendation"
         description: >
-          The option key to recommend, and to assume until the person
-          answers. Marked on the button and used for the parts, so the
-          page shows a complete buildable set from the first screen
-          rather than empty boxes.
-
-          Assuming is not answering: the wizard still walks from the
-          first question nobody has answered, so a default never skips
-          a question.
+          The option key to recommend. Marked on the button and used
+          for the parts, so the page shows a complete buildable set
+          from the first screen rather than empty boxes.
       blurb:
         type: string
         description: >
@@ -379,11 +402,12 @@ $defs:
         type: string
         minLength: 1
       default:
-        type: string
+        allOf:
+          - $ref: "#/$defs/recommendation"
         description: >
-          The answer to recommend and to assume until the person
-          answers: a tag for a namespace refinement, the joined tags
-          for a combination, or "on"/"off" for a toggle.
+          The answer to recommend: a tag for a namespace refinement,
+          the joined tags for a combination, or "on"/"off" for a
+          toggle.
       blurb:
         type: string
         description: >

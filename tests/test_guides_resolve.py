@@ -1273,6 +1273,87 @@ def test_an_answer_beats_the_recommendation(guide):
     assert "build|s2w" not in floor["query"].get("require", [])
 
 
+def test_a_recommendation_can_depend_on_an_earlier_answer(guide):
+    """Some recommendations only make sense per branch.
+
+    A wall on a tile has nothing beside it to clip to, so the clip to
+    recommend is none — while every other method wants one. Written as
+    a single value, one branch or the other is wrong.
+    """
+    guide["steps"][1]["options"].append({"key": "any", "title": "Any width"})
+    guide["steps"][1]["default"] = [
+        {"when": {"selected": {"method": ["separate-wall"]}}, "value": "two"},
+        {"value": "any"},
+    ]
+
+    separate = resolve(guide, {"method": "separate-wall"}, find_candidates)
+    modular = resolve(guide, {"method": "s2w-modular"}, find_candidates)
+
+    assert separate["steps"][1]["recommended"] == "two"
+    assert modular["steps"][1]["recommended"] == "any"
+    # And it is in force, not merely marked: the parts are built from
+    # the branch's own recommendation.
+    wall = next(p for p in separate["parts"] if p["role"] == "wall")
+    assert "size|width|2" in wall["query"]["require"]
+
+
+def test_a_recommendation_with_no_matching_clause_recommends_nothing(guide):
+    """A clause list that matches nothing is not an error.
+
+    It is how an author says "on this branch I have no advice", and
+    the question is asked with nothing marked rather than falling back
+    to whichever clause was written first.
+    """
+    guide["steps"][1]["default"] = [
+        {"when": {"selected": {"method": ["separate-wall"]}}, "value": "two"},
+    ]
+
+    resolved = resolve(guide, {"method": "s2w-modular"}, find_candidates)
+
+    assert resolved["steps"][1]["recommended"] is None
+    assert resolved["steps"][1]["selected"] is None
+
+
+def test_a_refinement_recommendation_can_read_an_earlier_refinement(guide):
+    """The floor to recommend depends on the wall texture.
+
+    Steps are enough for the rest, but not for this: the texture that
+    decides it is itself a refinement, so the answers a recommendation
+    reads have to include the refinements walked before it.
+    """
+    guide["refinements"].insert(
+        1,
+        {
+            "key": "floor-texture",
+            "role": "floor",
+            "prompt": "Floor texture",
+            "from_namespace": "texture",
+            "default": [
+                {
+                    "when": {"selected": {"texture": ["texture|cave"]}},
+                    "value": "texture|cave",
+                },
+                {"value": "texture|dungeon_stone"},
+            ],
+        },
+    )
+    guide["steps"][0]["default"] = "s2w-modular"
+    guide["steps"][1]["default"] = "two"
+
+    def recommended(texture):
+        resolved = resolve(
+            guide,
+            {"method": "s2w-modular", "size": "two", "texture": texture},
+            find_candidates,
+        )
+        return {r["key"]: r for r in resolved["refinements"]}["floor-texture"][
+            "recommended"
+        ]
+
+    assert recommended("texture|cave") == "texture|cave"
+    assert recommended("texture|dungeon_stone") == "texture|dungeon_stone"
+
+
 def test_a_default_only_applies_where_the_branch_reaches_it(guide):
     """Defaults chain, and stop where the questions stop.
 
