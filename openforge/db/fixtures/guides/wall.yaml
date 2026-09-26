@@ -17,16 +17,95 @@ summary: |
 steps:
   - key: method
     prompt: How do you want to build it?
+    # Ordered by how they are best explained rather than by how much
+    # they are recommended: wall on tile is the one everybody has seen,
+    # separate wall is the other pole, and s2w only makes sense once
+    # you know both — it is the compromise between them.
     options:
-      - key: s2w
-        title: Modular (s2w)
+      - key: wall-on-tile
+        title: Wall on Tile
         blurb: >
-          Wall, floor and base print as separate pieces and stack up.
-          The tile clips to its neighbours, the wall drops onto the
-          tile, and the wall sits on a base of its own. Most pieces to
-          print and most to keep track of, and in exchange you can
-          rearrange a room without reprinting any of it — take the
-          walls off and the same tiles are an open floor.
+          The wall is connected to the floor, as both are glued to an
+          openforge base, and the wall takes up half of a square. These
+          are the traditional tiles: easy to work with and easy to
+          reason about.
+
+          Recommended for GMs who lay tiles down at game time, as these
+          are the fastest to use — you can just set them and go. You can
+          still use clips, so they also work for rooms you build ahead
+          of time. In a combined set, I also recommend you use these for
+          interior walls.
+
+          Wall on tile sucks the most for hallways. Most maps don't
+          account for wall thickness, so the thickness of the wall has
+          to come out of somewhere. Other people doing wall on tile
+          include Aether Studios, most of Fat Dragon Games, and the
+          original, Dwarven Forge. I find the half square is useful for
+          decorations, and it doesn't bother me.
+        links:
+          Aether Studios: https://aether-studios.com/
+          Fat Dragon Games: https://www.fatdragongames.com
+          Dwarven Forge: https://dwarvenforge.com
+        image: sets/dungeon_stone.wall_on_tile.wall.1.png
+        roles:
+          # One base, shared. The wall is part of the tile, so there is
+          # one openforge piece here rather than two — this is the only
+          # method where a single base serves both. No base carries
+          # build|wall on tile either: it is an ordinary base.
+          floor:
+            require: ['build|s2w', 'shape|floor|wall']
+            allow: ['shape|floor|s2w']
+          # This method has no wall-print step — the wall is part of the
+          # tile — so it asks for the openforge socket itself.
+          wall: {require: ['connection|openforge']}
+          floor-base: {require: ['shape|base|square'], deny: ['build|s2w']}
+
+      - key: separate-wall
+        title: Separate Wall
+        blurb: >
+          The wall is its own part, and it can be clipped onto a floor.
+          Recommended for GMs who prepare their rooms ahead of time: if
+          you clip these, you can make rigid rooms that you slap down on
+          the table at game time.
+
+          Separate wall generally lets you get closer to an original
+          map, because all the squares are complete. Internal walls can
+          leave you with tough decisions as to how you deal with the gap
+          left by the wall — say, when a room wraps around a wall in an
+          L. In a combined set, I recommend you use these for exterior
+          walls and hallways.
+
+          Other people doing separate wall include Printable Scenery,
+          and many miniature patreons who produce a few walls and floors
+          to go with their releases.
+        links:
+          Printable Scenery: https://www.printablescenery.com
+        image: sets/dungeon_stone.separate_wall.primary_wall.1.png
+        roles:
+          # Both bases belong to the print steps on this method: either
+          # piece can be printed with its base built in. The floor takes
+          # no build tag on purpose — no floor tile carries
+          # build|separate wall, and 114 of the 115 records that carry
+          # both shape|floor and that tag are bases.
+          #
+          # A plain tile, explicitly. The role's sweep already keeps
+          # shape|floor|wall out, and denying build|s2w as well is what
+          # stops an s2w tile arriving by the other door: these walls
+          # stand beside the floor, not on it.
+          floor: {deny: ['build|s2w']}
+          wall:
+
+      - key: s2w
+        title: Modular (S2W)
+        blurb: >
+          The compromise system. You use separate walls, but s2w has
+          separate floors with the half tile on them. This lets you make
+          both wall on tile and separate wall layouts using the same
+          walls, and just adding in extra floors.
+
+          I developed this system to merge the two approaches, and this
+          is the most flexible. I recommend this approach — but you
+          don't have to be pure, you can mix all three.
         image: sets/dungeon_stone.s2w.wall.1.png
         roles:
           # The wall base is not here: it is the wall-print step's, so
@@ -45,51 +124,6 @@ steps:
           # shape|base, s2w, wall and square, all four.
           floor-base:
             require: ['shape|base|s2w', 'shape|base|wall', 'shape|base|square']
-
-      - key: wall-on-tile
-        title: Wall on tile
-        blurb: >
-          The wall is printed as part of the floor tile, so a walled
-          tile is one piece that stands on one base. Far fewer pieces
-          and nothing to align, and the trade is that the wall is where
-          it is: a room built this way is the shape you printed. Good
-          for corridors and rooms you know you will build again.
-        image: sets/dungeon_stone.wall_on_tile.wall.1.png
-        roles:
-          # One base, shared. The wall is part of the tile, so there is
-          # one openforge piece here rather than two — this is the only
-          # method where a single base serves both. No base carries
-          # build|wall on tile either: it is an ordinary base.
-          floor:
-            require: ['build|s2w', 'shape|floor|wall']
-            allow: ['shape|floor|s2w']
-          # This method has no wall-print step — the wall is part of the
-          # tile — so it asks for the openforge socket itself.
-          wall: {require: ['connection|openforge']}
-          floor-base: {require: ['shape|base|square'], deny: ['build|s2w']}
-
-      - key: separate-wall
-        title: Separate wall
-        blurb: >
-          Floors and walls are independent. The tiles go down as a
-          plain floor and the walls stand on their own bases wherever
-          you put them, so one set of tiles is every room shape rather
-          than one. The most freedom while you are playing, and the
-          walls need somewhere to stand.
-        image: sets/dungeon_stone.separate_wall.primary_wall.1.png
-        roles:
-          # Both bases belong to the print steps on this method: either
-          # piece can be printed with its base built in. The floor takes
-          # no build tag on purpose — no floor tile carries
-          # build|separate wall, and 114 of the 115 records that carry
-          # both shape|floor and that tag are bases.
-          #
-          # A plain tile, explicitly. The role's sweep already keeps
-          # shape|floor|wall out, and denying build|s2w as well is what
-          # stops an s2w tile arriving by the other door: these walls
-          # stand beside the floor, not on it.
-          floor: {deny: ['build|s2w']}
-          wall:
 
   # Both print steps do the same thing from opposite ends: the
   # "with a base" option puts a base role in play, and the single-piece

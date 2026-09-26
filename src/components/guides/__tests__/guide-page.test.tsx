@@ -35,7 +35,10 @@ const RESOLVED = {
         {
           key: 'separate-wall',
           title: 'Separate wall',
-          blurb: 'Floor and wall are independent.',
+          blurb:
+            'Floor and wall are independent. Others doing this ' +
+            'include Printable Scenery, and Printable Scenery again.',
+          links: { 'Printable Scenery': 'https://www.printablescenery.com' },
           roles: {},
         },
         {
@@ -429,7 +432,7 @@ describe('GuidePage', () => {
         await screen.findByRole('heading', { name: 'What these mean' })
       ).toBeInTheDocument();
       expect(
-        screen.getByText('Floor and wall are independent.')
+        screen.getByText(/Floor and wall are independent\./)
       ).toBeInTheDocument();
       expect(
         screen.getByText('Everything prints separately and stacks.')
@@ -465,7 +468,7 @@ describe('GuidePage', () => {
 
       // Now the reopened one is, including the answers not taken.
       expect(
-        screen.getByText('Floor and wall are independent.')
+        screen.getByText(/Floor and wall are independent\./)
       ).toBeInTheDocument();
       expect(
         screen.getByText('Everything prints separately and stacks.')
@@ -529,6 +532,27 @@ describe('GuidePage', () => {
       ).not.toBeInTheDocument();
     });
 
+    it('links the makers a description names', async () => {
+      // The names live in the prose and the URLs beside it, so an
+      // author writes a sentence rather than markup — and a name that
+      // appears twice links twice without them thinking about it.
+      visit('?guide=wall');
+      mockFetch((url) => (url.includes('/resolve') ? RESOLVED : GUIDE_DOCUMENT));
+
+      render(<GuidePage />);
+
+      const links = await screen.findAllByRole('link', {
+        name: 'Printable Scenery',
+      });
+      expect(links).toHaveLength(2);
+      expect(links[0]).toHaveAttribute('href', 'https://www.printablescenery.com');
+      // Opening someone else's site should not navigate away from a
+      // build in progress, and an untrusted target needs the opener
+      // severed.
+      expect(links[0]).toHaveAttribute('target', '_blank');
+      expect(links[0]).toHaveAttribute('rel', expect.stringContaining('noopener'));
+    });
+
     it('explains what was chosen when the open question has nothing to say', async () => {
       // "What size tiles?" is eight numbers; explaining them would be
       // padding. Rather than leave a third of the page blank for it,
@@ -557,7 +581,7 @@ describe('GuidePage', () => {
         await screen.findByRole('heading', { name: 'What you chose' })
       ).toBeInTheDocument();
       expect(
-        screen.getByText('Floor and wall are independent.')
+        screen.getByText(/Floor and wall are independent\./)
       ).toBeInTheDocument();
     });
 
@@ -581,7 +605,7 @@ describe('GuidePage', () => {
         screen.queryByRole('heading', { name: 'What these mean' })
       ).not.toBeInTheDocument();
       expect(
-        screen.getByText('Floor and wall are independent.')
+        screen.getByText(/Floor and wall are independent\./)
       ).toBeInTheDocument();
       expect(
         screen.queryByText('Everything prints separately and stacks.')

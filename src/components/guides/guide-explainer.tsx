@@ -57,12 +57,67 @@ export function GuideExplainer({ steps, opened }: GuideExplainerProps) {
             className="rounded border border-gray-200 p-4"
           >
             <h3 className="font-semibold mb-1">{option.title}</h3>
-            <p className="text-sm text-gray-700">{option.blurb}</p>
+            {/* A paragraph each, rather than one block with the breaks
+                held by CSS: these descriptions run to three paragraphs
+                and want the space between them. The author writes
+                blank lines in the fixture and never sees any markup. */}
+            {paragraphs(option.blurb).map((para, i) => (
+              <p key={i} className="text-sm text-gray-700 mb-2 last:mb-0">
+                {linked(para, option.links)}
+              </p>
+            ))}
           </article>
         ))}
       </div>
     </section>
   );
+}
+
+/** The blurb's paragraphs. A folded YAML blank line is one newline. */
+function paragraphs(blurb?: string): string[] {
+  return (blurb ?? '')
+    .split('\n')
+    .map((para) => para.trim())
+    .filter(Boolean);
+}
+
+/**
+ * The blurb with its named entities turned into links.
+ *
+ * The names live in the prose and the URLs live beside it, rather than
+ * markup in the middle of a sentence an author is trying to write. A
+ * name that appears twice links twice without anyone thinking about
+ * it, and a link that is only ever data cannot inject markup.
+ *
+ * Longest phrase first, so "Fat Dragon Games" wins over a bare "Fat
+ * Dragon" if both were ever listed.
+ */
+function linked(text: string, links?: Record<string, string>) {
+  const phrases = Object.keys(links ?? {}).sort((a, b) => b.length - a.length);
+  if (phrases.length === 0) return text;
+  const pattern = new RegExp(
+    `(${phrases.map(escapeForRegExp).join('|')})`,
+    'g'
+  );
+  return text.split(pattern).map((piece, i) =>
+    links?.[piece] ? (
+      <a
+        key={i}
+        href={links[piece]}
+        target="_blank"
+        rel="noreferrer noopener"
+        className="text-blue-700 underline"
+      >
+        {piece}
+      </a>
+    ) : (
+      piece
+    )
+  );
+}
+
+function escapeForRegExp(phrase: string): string {
+  return phrase.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
 interface GuideExplainerProps {

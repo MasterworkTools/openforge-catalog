@@ -169,6 +169,20 @@ $defs:
         minLength: 1
       blurb:
         type: string
+      links:
+        type: object
+        minProperties: 1
+        description: >
+          Phrases in the blurb to turn into links, mapped to their
+          URLs. Here rather than as markup in the blurb because the
+          blurb is prose an author writes, and because a name that
+          appears twice should link both times without them thinking
+          about it. Matched literally, longest phrase first, so
+          "Fat Dragon Games" wins over a bare "Fat Dragon".
+        additionalProperties:
+          type: string
+          format: uri
+          pattern: "^https://"
       image:
         type: string
         description: Path to an illustration, relative to the image host.

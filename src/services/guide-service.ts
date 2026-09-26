@@ -16,6 +16,8 @@ export interface GuideOption {
   key: string;
   title: string;
   blurb?: string;
+  /** Phrases in the blurb to link, mapped to their URLs. */
+  links?: Record<string, string>;
   image?: string;
   roles?: Record<string, unknown>;
 }
