@@ -101,6 +101,8 @@ function OpenStep({
             key={option.key}
             label={option.title}
             chosen={false}
+            recommended={step.recommended === option.key}
+            assumed={step.recommended === option.key}
             dead={dead.includes(option.key)}
             onPick={() => onSelect(step.key, option.key)}
           />
@@ -149,6 +151,7 @@ function AnsweredStep({
               key={option.key}
               label={option.title}
               chosen={step.selected === option.key}
+              recommended={step.recommended === option.key}
               dead={dead.includes(option.key)}
               onPick={() => {
                 onOpenChange?.(null);
@@ -196,6 +199,8 @@ function Answer({
   label,
   hint,
   chosen,
+  recommended,
+  assumed,
   dead,
   onPick,
 }: {
@@ -203,6 +208,10 @@ function Answer({
   /** What this answer is, when the catalog has something to say. */
   hint?: string;
   chosen: boolean;
+  /** Marked as the one to pick if you have no opinion. */
+  recommended?: boolean;
+  /** Recommended *and* in force, because nothing else was chosen. */
+  assumed?: boolean;
   dead: boolean;
   onPick: () => void;
 }) {
@@ -222,10 +231,19 @@ function Answer({
           ? 'border-blue-600 bg-blue-50 font-semibold'
           : dead
             ? 'border-gray-200 text-gray-400 bg-gray-50 cursor-not-allowed'
-            : 'border-gray-300'
+            : // Dashed, not solid: this is what the parts are being
+              // built from, but nobody has said so yet.
+              assumed
+              ? 'border-blue-400 border-dashed bg-blue-50/40'
+              : 'border-gray-300'
       }`}
     >
       {label}
+      {recommended && (
+        <span className="ml-2 text-xs font-normal text-blue-700">
+          Recommended
+        </span>
+      )}
     </button>
   );
 }
@@ -457,6 +475,11 @@ function ChoicePicker({
               label={labelFor(choice)}
               hint={choice.blurb}
               chosen={chosen}
+              recommended={refinement.recommended === choice.tag}
+              assumed={
+                refinement.selected === null &&
+                refinement.recommended === choice.tag
+              }
               dead={dead.includes(choice.tag)}
               onPick={() => onSelect(refinement.key, chosen ? null : choice.tag)}
             />

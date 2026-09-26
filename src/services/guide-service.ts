@@ -30,6 +30,8 @@ export interface GuideStep {
   links?: Record<string, string>;
   /** Option keys that would empty a part, for greying out. */
   unavailable?: string[];
+  /** The option recommended, and assumed until one is chosen. */
+  recommended?: string | null;
   options: GuideOption[];
   selected: string | null;
 }
@@ -53,6 +55,8 @@ export interface GuideRefinement {
   on_tags?: unknown;
   /** Choice tags, or "on"/"off", that would empty a part. */
   unavailable?: string[];
+  /** The answer recommended, and assumed until one is chosen. */
+  recommended?: string | null;
   selected: string | null;
 }
 

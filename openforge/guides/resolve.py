@@ -113,12 +113,29 @@ def resolve(
             does not offer. Selections come from a query string, so a bad one is
             a bad request rather than something to quietly ignore.
     """
-    steps, answered = _available_steps(document, selections)
+    # Two views of the same answers, and the difference is the whole
+    # of how defaults work here.
+    #
+    # `selections` is what the person actually said, and drives what
+    # they are asked: the wizard walks from the first question they
+    # have not answered, so a default never counts as an answer and
+    # never skips a question.
+    #
+    # `assumed` fills the rest in with each question's recommendation,
+    # and drives the parts: the page shows a complete, buildable set
+    # from the first screen rather than four empty boxes and an
+    # instruction to keep clicking.
+    assumed = _with_defaults(document, selections)
+    steps, answered = _available_steps(document, assumed)
     chosen = _chosen_options(steps, answered)
     in_play = _roles_in_play(chosen)
     refinements = _available_refinements(document, answered, in_play)
+    # The explicit answers that survived the branch. An answer this
+    # branch does not offer counts as no answer — so it neither shows
+    # as chosen nor opens the question after it.
+    given = {key: value for key, value in answered.items() if key in selections}
     _reject_unknown_selections(document, steps, refinements, selections)
-    parts = _parts(document, chosen, refinements, selections, find_candidates)
+    parts = _parts(document, chosen, refinements, assumed, find_candidates)
     # Availability is opt-in, and the default is off.
     #
     # Working out which answers would empty a part means re-composing
@@ -136,7 +153,7 @@ def resolve(
             document,
             chosen,
             refinements,
-            selections,
+            assumed,
             in_play,
             parts,
             facets,
@@ -146,7 +163,7 @@ def resolve(
         else {}
     )
     dead = (
-        _unavailable(document, steps, refinements, selections, parts, exists)
+        _unavailable(document, steps, refinements, assumed, parts, exists)
         if exists is not None
         else {}
     )
@@ -154,10 +171,14 @@ def resolve(
         "steps": [
             {
                 **step,
-                "selected": answered.get(step["key"]),
+                # What they said, not what was assumed for them: a
+                # defaulted question is still being asked, and shows
+                # its options with the recommendation marked.
+                "selected": given.get(step["key"]),
+                "recommended": step.get("default"),
                 "unavailable": dead.get(step["key"], []),
             }
-            for step in steps
+            for step in _up_to_first_unanswered(steps, given)
         ],
         "parts": parts,
         # Held back until the questions are done, for the same reason
@@ -168,7 +189,7 @@ def resolve(
         # screen, and silently ignoring it would change the parts they
         # are looking at.
         "refinements": []
-        if _unanswered(steps, answered)
+        if _unanswered(steps, given)
         else [
             {
                 **refinement,
@@ -178,6 +199,7 @@ def resolve(
                     else {}
                 ),
                 "selected": selections.get(refinement["key"]),
+                "recommended": refinement.get("default"),
                 "unavailable": dead.get(refinement["key"], []),
             }
             for refinement in _up_to_first_unanswered(refinements, selections)
@@ -436,6 +458,37 @@ def _predicate_key(predicate: dict):
     return tuple(
         sorted((term, tuple(sorted(tags))) for term, tags in predicate.items())
     )
+
+
+def _with_defaults(document: dict, selections: dict) -> dict:
+    """The person's answers, with each question's recommendation for
+    the rest.
+
+    Walked in document order because reachability depends on answers:
+    defaulting the method to s2w is what makes the wall-print question
+    reachable, and only then does its own default apply. A question
+    the branch does not reach contributes nothing.
+
+    An explicit answer always wins, including one that happens to
+    equal the default — the difference is invisible in the parts and
+    very visible in the wizard, where answering is what opens the next
+    question.
+    """
+    assumed = dict(selections)
+    answered: dict = {}
+    for step in document["steps"]:
+        if not _when_holds(step.get("when"), answered):
+            continue
+        if step["key"] not in assumed and "default" in step:
+            assumed[step["key"]] = step["default"]
+        if step["key"] in assumed:
+            answered[step["key"]] = assumed[step["key"]]
+    for refinement in document.get("refinements", []):
+        if not _when_holds(refinement.get("when"), answered):
+            continue
+        if refinement["key"] not in assumed and "default" in refinement:
+            assumed[refinement["key"]] = refinement["default"]
+    return assumed
 
 
 def _unanswered(steps: list, answered: dict) -> bool:

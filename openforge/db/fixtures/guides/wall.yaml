@@ -17,6 +17,7 @@ summary: |
 steps:
   - key: method
     prompt: How do you want to build it?
+    default: s2w
     # Ordered by how they are best explained rather than by how much
     # they are recommended: wall on tile is the one everybody has seen,
     # separate wall is the other pole, and s2w only makes sense once
@@ -133,6 +134,7 @@ steps:
   # to name one is how a step removes a part rather than emptying it.
   - key: wall-print
     prompt: How should the wall print?
+    default: with-base
     # Not wall-on-tile: there the wall is part of the tile, so there is
     # no separate wall piece to print either way.
     when: {selected: {method: [s2w, separate-wall]}}
@@ -172,6 +174,7 @@ steps:
 
   - key: floor-print
     prompt: How should the floor print?
+    default: with-base
     # Only separate wall. The other two methods stand their tile on an
     # s2w base by construction, which is not an option to offer.
     when: {selected: {method: [separate-wall]}}
@@ -195,6 +198,7 @@ steps:
 
   - key: size
     prompt: What size tiles?
+    default: 2x2
     blurb: >
       All tile sizes are in inches, which are also squares. Most people
       use 2×2. 4×2 can be handy, especially for separate wall for
@@ -299,6 +303,7 @@ steps:
 
   - key: wall-height
     prompt: How tall are the walls?
+    default: normal
     options:
       - key: normal
         title: Normal walls
@@ -342,6 +347,7 @@ steps:
   # side openlock and every one of them was unreachable.
   - key: connectors
     prompt: Side clips on the wall ends?
+    default: side-openlock
     # Every method, but not before one is chosen. A wizard's first
     # screen asks one question; listing all three methods here is how a
     # step says "once that is answered" with the vocabulary there is.
@@ -535,6 +541,7 @@ refinements:
   - key: texture
     role: '*'
     prompt: Wall texture
+    default: 'texture|dungeon_stone'
     # Not on the first screen: nothing is being built yet, so a
     # texture is not a question about anything.
     when: {selected: {method: [s2w, wall-on-tile, separate-wall]}}
@@ -600,6 +607,7 @@ refinements:
   - key: floor-texture
     role: floor
     prompt: Floor texture
+    default: 'texture|dungeon_stone'
     when: {selected: {method: [s2w, wall-on-tile, separate-wall]}}
     from_namespace: texture
     choices:
@@ -648,6 +656,10 @@ refinements:
     except_roles: ['wall', 'floor']
     prompt: How do the bases clip together?
     when: {selected: {method: [s2w, wall-on-tile, separate-wall]}}
+    # Magnets and topless openlock: the clips print without supports
+    # and the magnets hold in any orientation, which is the set most
+    # people end up with.
+    default: 'connection|magnetic,connection|openlock,connection|openlock|topless'
     from_combination: connection
     # Every magnetic base is also magnetic|flex, so showing both
     # doubles the label and separates nothing. Hidden, not refused —

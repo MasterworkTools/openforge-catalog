@@ -1220,3 +1220,71 @@ def test_a_hidden_refinement_still_applies(guide):
     assert [r["key"] for r in resolved["refinements"]] == ["texture"]
     wall = next(p for p in resolved["parts"] if p["role"] == "wall")
     assert "connection|side|openlock" in wall["query"]["require"]
+
+
+def test_a_default_builds_the_parts_without_answering_anything(guide):
+    """The recommendation is in force until somebody says otherwise.
+
+    The first screen shows a complete, buildable set rather than four
+    empty boxes and an instruction to keep clicking.
+    """
+    # No size default: nothing in this catalog carries a size tag, so
+    # requiring one would empty every role and prove nothing.
+    guide["steps"][0]["default"] = "s2w-modular"
+    guide["refinements"][0]["default"] = "texture|cave"
+
+    resolved = resolve(guide, {}, find_candidates)
+
+    parts = {p["role"]: p for p in resolved["parts"]}
+    assert parts["wall"]["blueprint"] is not None
+    assert parts["floor"]["blueprint"] is not None
+    assert "build|s2w" in parts["floor"]["query"]["require"]
+    # The refinement's default reaches the parts as well as the step's.
+    assert "texture|cave" in parts["wall"]["query"]["require"]
+
+
+def test_assuming_is_not_answering(guide):
+    """A default must not skip the question it answers.
+
+    The wizard walks from the first question nobody has answered, so a
+    defaulted one is still asked — shown with its recommendation
+    marked, and the question after it still waiting.
+    """
+    guide["steps"][0]["default"] = "s2w-modular"
+
+    resolved = resolve(guide, {}, find_candidates)
+
+    assert [s["key"] for s in resolved["steps"]] == ["method"]
+    method = resolved["steps"][0]
+    assert method["selected"] is None
+    assert method["recommended"] == "s2w-modular"
+    # And nothing to refine yet, because a question is still open.
+    assert resolved["refinements"] == []
+
+
+def test_an_answer_beats_the_recommendation(guide):
+    guide["steps"][0]["default"] = "s2w-modular"
+
+    resolved = resolve(guide, {"method": "separate-wall"}, find_candidates)
+
+    assert resolved["steps"][0]["selected"] == "separate-wall"
+    assert resolved["steps"][0]["recommended"] == "s2w-modular"
+    floor = next(p for p in resolved["parts"] if p["role"] == "floor")
+    assert "build|s2w" not in floor["query"].get("require", [])
+
+
+def test_a_default_only_applies_where_the_branch_reaches_it(guide):
+    """Defaults chain, and stop where the questions stop.
+
+    Defaulting the method is what makes the size question reachable,
+    and only then does its own default apply — so a default on a step
+    that this branch never offers contributes nothing.
+    """
+    guide["steps"][1]["when"] = {"selected": {"method": ["separate-wall"]}}
+    guide["steps"][0]["default"] = "s2w-modular"
+    guide["steps"][1]["default"] = "two"
+
+    resolved = resolve(guide, {}, find_candidates)
+
+    wall = next(p for p in resolved["parts"] if p["role"] == "wall")
+    assert "size|width|2" not in wall["query"].get("require", [])

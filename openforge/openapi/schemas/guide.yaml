@@ -147,6 +147,17 @@ $defs:
       prompt:
         type: string
         minLength: 1
+      default:
+        type: string
+        description: >
+          The option key to recommend, and to assume until the person
+          answers. Marked on the button and used for the parts, so the
+          page shows a complete buildable set from the first screen
+          rather than empty boxes.
+
+          Assuming is not answering: the wizard still walks from the
+          first question nobody has answered, so a default never skips
+          a question.
       blurb:
         type: string
         description: >
@@ -367,6 +378,12 @@ $defs:
       prompt:
         type: string
         minLength: 1
+      default:
+        type: string
+        description: >
+          The answer to recommend and to assume until the person
+          answers: a tag for a namespace refinement, the joined tags
+          for a combination, or "on"/"off" for a toggle.
       group:
         type: string
         minLength: 1

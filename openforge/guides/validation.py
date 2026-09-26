@@ -75,6 +75,7 @@ def _cross_reference_errors(data: dict) -> list[str]:
         + _role_reference_errors(data)
         + _refinement_role_errors(data)
         + _choice_errors(data)
+        + _default_errors(data)
         + _match_errors(data)
         + _when_errors(data)
     )
@@ -191,6 +192,46 @@ def _choice_errors(data: dict) -> list[str]:
         errors += _duplicates(
             f"choice in {where}", [choice["tag"] for choice in choices]
         )
+    return errors
+
+
+def _default_errors(data: dict) -> list[str]:
+    """A recommendation has to name an answer that exists.
+
+    It is used before anyone clicks anything, so a misspelled one is
+    not a button that misbehaves — it is a predicate asking for a tag
+    nothing has, on the first screen, with no way to tell from the
+    page that a default is what did it.
+    """
+    errors = []
+    for step in data["steps"]:
+        if "default" not in step:
+            continue
+        keys = {option["key"] for option in step["options"]}
+        if step["default"] not in keys:
+            errors.append(
+                f"step {step['key']!r}: `default` names unknown option "
+                f"{step['default']!r}"
+            )
+    for refinement in data.get("refinements", []):
+        if "default" not in refinement:
+            continue
+        where = f"refinement {refinement['key']!r}"
+        value = refinement["default"]
+        if "on_tags" in refinement:
+            if value not in ("on", "off"):
+                errors.append(f"{where}: `default` takes 'on' or 'off', not {value!r}")
+            continue
+        namespace = refinement.get("from_namespace") or refinement.get(
+            "from_combination"
+        )
+        if namespace and not all(
+            part.startswith(f"{namespace}|") for part in value.split(",")
+        ):
+            errors.append(f"{where}: `default` {value!r} is not under {namespace!r}")
+        choices = [choice["tag"] for choice in refinement.get("choices", [])]
+        if choices and value not in choices:
+            errors.append(f"{where}: `default` {value!r} is not one of its choices")
     return errors
 
 
