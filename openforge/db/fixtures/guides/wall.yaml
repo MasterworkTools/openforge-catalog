@@ -627,21 +627,27 @@ refinements:
     default:
       - when: {selected: {texture: ['texture|towne', 'texture|stone_brick']}}
         value: 'texture|towne'
-      - when: {selected: {texture: ['texture|mortar_and_stone']}}
-        value: 'texture|dungeon_stone|block'
-      - {value: 'texture|dungeon_stone'}
+      - {value: 'texture|dungeon_stone|block'}
     when: {selected: {method: [s2w, wall-on-tile, separate-wall]}}
     from_namespace: texture
     choices:
-      - {tag: 'texture|dungeon_stone', title: 'Dungeon stone', blurb: '71 floors that take a wall, and every one of them is block or eroded.'}
-      - {tag: 'texture|dungeon_stone|block', title: 'Dungeon stone, block', blurb: 'Square-cut flags laid in courses. 34 floors.'}
+      # No bare `texture|dungeon_stone`: not one floor in the catalog
+      # carries it without also being block or eroded, so offering it
+      # is not a third kind of floor, it is a coin toss dressed as an
+      # answer — and whichever the search happened to sort first is
+      # what you would have got.
+      - {tag: 'texture|dungeon_stone|block', title: 'Dungeon stone, block', blurb: 'Square-cut flags laid in courses. The default, and 34 floors.'}
       - {tag: 'texture|dungeon_stone|eroded', title: 'Dungeon stone, eroded', blurb: 'The same flags worn round at the edges. 37 floors.'}
       - {tag: 'texture|rough_stone', title: 'Rough stone', blurb: '38 floors.'}
       - {tag: 'texture|cut-stone', title: 'Cut stone', blurb: '32 floors.'}
       # Every towne floor is planking, whatever the wall above it is
       # doing, so the list says what it is rather than which set it
       # came out of.
-      - {tag: 'texture|towne', title: 'Wood', blurb: '23 floors, all of them boarded.'}
+      # Wood keeps its parent, unlike dungeon stone: 8 floors really
+      # are plain towne boards with no sub-texture, the s2w tiles in
+      # every size. On separate wall there are none, so there it means
+      # "either", and lands on long planks.
+      - {tag: 'texture|towne', title: 'Wood, any', blurb: 'Either of the two below, whichever the size you picked has. 23 floors in all.'}
       - {tag: 'texture|towne|long_planks', title: 'Wood, long planks', blurb: 'Boards running the length of the tile. 12 floors, in two layouts.'}
       - {tag: 'texture|towne|wood', title: 'Wood, short boards', blurb: '3 floors, and no tile sizes — these come in the one size.'}
       - {tag: 'texture|aztlan', title: 'Aztlan', blurb: '11 floors.'}
@@ -669,7 +675,8 @@ refinements:
   - key: base-clips
     role: '*'
     except_roles: ['wall', 'floor']
-    prompt: How do the bases clip together?
+    group: How do the pieces clip together?
+    prompt: The bases
     when: {selected: {method: [s2w, wall-on-tile, separate-wall]}}
     # Magnets and topless openlock: the clips print without supports
     # and the magnets hold in any orientation, which is the set most
@@ -731,6 +738,53 @@ refinements:
     # doubles the label and separates nothing. Hidden, not refused —
     # the pieces still carry it.
     exclude: ['connection|magnetic|flex']
+
+  # A piece printed with its base built in *is* the base, so it has
+  # the same question to answer and a different set of answers: no
+  # magnets, because the flex magnetic bases are separate bases, and
+  # unsupported where the separate bases offer topless.
+  #
+  # Two questions rather than one because the wall and the floor
+  # choose independently — either can print in one piece while the
+  # other takes a base — and the pieces really do differ: the floors
+  # offer DragonLock where the one-piece walls in a given texture
+  # often do not. Both answer lists are derived, so neither says
+  # anything about what the catalog holds today.
+  #
+  # `when` rather than `except_roles`, because "this piece is its own
+  # base" is exactly what the print question asked. Wall on tile never
+  # reaches either: it has no print question, its wall plugs into the
+  # tile and its tile plugs into a base.
+  - key: wall-clips
+    role: wall
+    group: How do the pieces clip together?
+    prompt: The wall
+    when: {selected: {wall-print: [single-piece]}}
+    default: 'connection|openlock'
+    from_combination: connection
+    titles:
+      'connection|openlock': OpenLOCK
+      'connection|dragonlock': DragonLock
+      'connection|magnetic': Magnets
+    # The side clips are the connectors step's question, asked of this
+    # same piece — a one-piece wall carries both. Naming the parent
+    # keeps a side system nobody has designed yet out of this list too.
+    # `openforge` is the socket a separate base plugs into, which this
+    # piece by definition does not have.
+    exclude: ['connection|side', 'connection|openforge']
+
+  - key: floor-clips
+    role: floor
+    group: How do the pieces clip together?
+    prompt: The floor
+    when: {selected: {floor-print: [single-piece]}}
+    default: 'connection|openlock'
+    from_combination: connection
+    titles:
+      'connection|openlock': OpenLOCK
+      'connection|dragonlock': DragonLock
+      'connection|magnetic': Magnets
+    exclude: ['connection|side', 'connection|openforge']
 
   # Pegs on top of the wall, so another storey can stand on it. A
   # different question from the side clips, which join wall to wall

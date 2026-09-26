@@ -1051,6 +1051,51 @@ def test_a_combination_refinement_offers_the_sets_that_exist(
     assert all("flex" not in c["title"] for c in offered)
 
 
+def test_exclude_takes_the_whole_subtree(client, test_db, catalog, clip_catalog):
+    """`exclude` names a parent and means everything under it.
+
+    A question about how a piece clips *down* has no use for the side
+    clips the connectors question already asked about, and the piece
+    carries both. Naming `connection|side` has to keep a side system
+    nobody has designed yet out of the list too — listing the ones
+    that exist today is the thing that goes stale.
+    """
+    make_blueprint(
+        test_db,
+        "d openlock with side clips",
+        [
+            "shape|base",
+            "build|separate wall",
+            "connection|openlock",
+            "connection|side",
+            "connection|side|openlock",
+        ],
+    )
+    document = copy.deepcopy(WALL_GUIDE)
+    document["roles"]["base"] = {"title": "Base", "query": {"require": ["shape|base"]}}
+    document["steps"][0]["options"][0]["roles"]["base"] = None
+    document["refinements"] = [
+        {
+            "key": "clips",
+            "role": "base",
+            "prompt": "Clips?",
+            "from_combination": "connection",
+            "exclude": ["connection|side"],
+        }
+    ]
+    with test_db.connection() as conn:
+        with conn.cursor(row_factory=dict_row) as curs:
+            guide_sql.upsert_guide(curs, document)
+
+    response = client.get("/api/guides/wall/resolve?method=separate-wall")
+
+    offered = [c["tag"] for c in response.json["refinements"][0]["choices"]]
+    assert not any("side" in tag for tag in offered)
+    # And the side-clipped base is not a fifth answer of its own: with
+    # its side tags hidden it is plain OpenLOCK, like the others.
+    assert "connection|openlock" in offered
+
+
 def test_choosing_a_combination_excludes_the_others(
     client, test_db, catalog, clip_catalog
 ):

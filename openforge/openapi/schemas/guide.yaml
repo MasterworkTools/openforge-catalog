@@ -472,11 +472,14 @@ $defs:
         type: array
         minItems: 1
         description: >
-          Tags to leave out of the combinations. For the ones that add
-          length and no meaning: every magnetic base is also
-          `connection|magnetic|flex`, so listing both doubles the label
-          and distinguishes nothing. Excluded tags are permitted on the
-          piece — they are hidden, not refused.
+          Tags to leave out of the combinations, each standing for its
+          whole subtree. For the ones that add length and no meaning —
+          every magnetic base is also `connection|magnetic|flex`, so
+          listing both doubles the label and distinguishes nothing —
+          and for the ones another question already asks about, where
+          naming the parent keeps a new sibling out too rather than
+          waiting to be noticed. Excluded tags are permitted on the
+          piece: they are hidden, not refused.
         items:
           type: string
           pattern: "^[^|]+(\\|[^|]+)*$"

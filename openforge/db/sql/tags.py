@@ -510,7 +510,11 @@ def tag_search_namespace_combinations(
 
     `exclude` drops tags that only add noise: every magnetic base in
     the catalog is also `magnetic|flex`, so listing both doubles the
-    label and distinguishes nothing.
+    label and distinguishes nothing. It drops the whole subtree, not
+    the one tag — a question about how a wall clips *down* has no use
+    for `connection|side` and none for a side system nobody has
+    invented yet, and a hand-written list of the ones that exist today
+    is the thing that goes stale.
     """
     excluded = exclude or []
     depth = len(namespace.split("|"))
@@ -545,7 +549,9 @@ def tag_search_namespace_combinations(
     ]
     for tag in excluded:
         parts.append(
-            sql.SQL("      AND t.tag <> {tag}").format(tag=sql.Literal(tag.split("|")))
+            sql.SQL("      AND NOT (t.tag @> {tag})").format(
+                tag=sql.Literal(tag.split("|"))
+            )
         )
     parts += [
         sql.SQL("    GROUP BY t.blueprint_id"),
