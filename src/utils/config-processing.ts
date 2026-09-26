@@ -3,6 +3,8 @@ import { ConfigTags, Blueprint, ConfigPart } from '@/types';
 export interface ProcessedTags {
   require: string[];
   deny: string[];
+  denyChildren?: string[];
+  allow?: string[];
 }
 
 export interface SiblingSelection {
@@ -66,6 +68,12 @@ export function processConfigValues(
   if (!configValues) {
     return { require: [], deny: [] };
   }
+
+  // Passed through rather than merged into require/deny: they are a
+  // different question, and flattening them would change the result
+  // set rather than describe it.
+  const denyChildren = (configValues.deny_children ?? []).map((t) => t.tag);
+  const allow = (configValues.allow ?? []).map((t) => t.tag);
 
   // Process require tags
   if (configValues.require) {
@@ -154,9 +162,14 @@ export function processConfigValues(
     });
   }
 
+  // Only when they are used: an empty term should leave the result
+  // exactly as it was before these existed, because every other caller
+  // of this function is unaware of them.
   return {
     require: Array.from(requireTags),
-    deny: Array.from(denyTags)
+    deny: Array.from(denyTags),
+    ...(denyChildren.length ? { denyChildren } : {}),
+    ...(allow.length ? { allow } : {}),
   };
 }
 

@@ -1,3 +1,5 @@
+import copy
+
 import pytest
 from psycopg.rows import dict_row
 
@@ -181,7 +183,50 @@ def test_resolving_with_no_selections_offers_the_first_step(
     assert response.status_code == 200
     assert response.json["parts"] == []
     assert [step["key"] for step in response.json["steps"]] == ["method"]
-    assert response.json["refinements"][0]["key"] == "texture"
+    # And offers nothing to refine, because there is nothing yet to
+    # refine: a texture question with no part to apply to takes an
+    # answer that changes nothing.
+    assert response.json["refinements"] == []
+
+
+def test_a_refinement_appears_once_it_has_a_part_to_apply_to(
+    client, wall_guide, catalog
+):
+    """The other side of the rule above."""
+    response = client.get("/api/guides/wall/resolve?method=separate-wall")
+
+    assert response.status_code == 200
+    assert [r["key"] for r in response.json["refinements"]] == ["texture"]
+
+
+def test_a_refinement_that_reaches_no_part_is_not_offered(client, test_db, catalog):
+    """A question about parts this build does not have.
+
+    This one applies to the wall alone, and this method builds only a
+    floor — so asking it would take an answer that fits every way and
+    changes nothing, which is worse than silence. It is why "how do
+    the bases clip together?" disappears from the wall guide when both
+    pieces print with their bases built in.
+    """
+    document = copy.deepcopy(WALL_GUIDE)
+    document["steps"][0]["options"][0]["roles"] = {"floor": None}
+    document["refinements"] = document["refinements"] + [
+        {
+            "key": "side-locks",
+            "role": "wall",
+            "prompt": "Locks on the wall ends?",
+            "on_tags": {"require": ["connection|side|openlock"]},
+            "off_tags": {"deny": ["connection|side|openlock"]},
+        }
+    ]
+    with test_db.connection() as conn:
+        with conn.cursor(row_factory=dict_row) as curs:
+            guide_sql.upsert_guide(curs, document)
+
+    response = client.get("/api/guides/wall/resolve?method=separate-wall")
+
+    assert [p["role"] for p in response.json["parts"]] == ["floor"]
+    assert [r["key"] for r in response.json["refinements"]] == ["texture"]
 
 
 def test_a_refinement_narrows_the_recommendation(client, wall_guide, catalog):
@@ -286,6 +331,29 @@ def test_the_recommendation_carries_what_a_parts_list_needs(
     assert wall["blueprint"]["blueprint_name"] == "b openforge wall"
     assert wall["blueprint"]["id"] == str(catalog["openforge"]["id"])
     assert wall["title"] == "Wall"
+
+
+def test_a_recommended_part_carries_its_tags(client, wall_guide, catalog):
+    """The search does not return tags; something has to fetch them.
+
+    Two callers need them and both fail quietly without: a role with
+    `match` reads the size of the part above it from here, and the
+    page shows them beside each piece because while the guides are
+    being written the tags are how you see that a recommendation is
+    wrong. Plain strings, not arrays — the page prints them and the
+    namespace match splits them on `|`.
+    """
+    response = client.get("/api/guides/wall/resolve?method=separate-wall")
+
+    wall = next(p for p in response.json["parts"] if p["role"] == "wall")
+    tags = wall["blueprint"]["tags"]
+    assert all(isinstance(tag, str) for tag in tags)
+    assert sorted(tags) == [
+        "build|separate wall",
+        "connection|openforge",
+        "shape|wall",
+        "texture|cave",
+    ]
 
 
 def test_the_predicate_reaches_the_search_in_the_shape_it_takes(
@@ -653,3 +721,440 @@ def test_a_stored_guide_that_no_longer_validates_is_a_500_not_a_400(client, test
 
     with pytest.raises(KeyError):
         client.get("/api/guides/broken/resolve?method=separate-wall")
+
+
+@pytest.fixture
+def choosy_guide(test_db):
+    """The wall guide with a closed texture list, which can be greyed.
+
+    An open namespace cannot: its answers are every tag in the
+    namespace, so there is no list to walk.
+    """
+    document = copy.deepcopy(WALL_GUIDE)
+    document["refinements"][0]["choices"] = [
+        {"tag": "texture|cave"},
+        {"tag": "texture|towne"},
+    ]
+    with test_db.connection() as conn:
+        with conn.cursor(row_factory=dict_row) as curs:
+            return guide_sql.upsert_guide(curs, document)
+
+
+def test_availability_names_the_answers_that_would_empty_a_part(
+    client, choosy_guide, catalog
+):
+    """The greying-out, and why it is a second request.
+
+    Working this out means re-composing every role for every answer on
+    offer, which costs several times what the parts cost — so the page
+    draws on /resolve and greys the buttons when this lands. It has to
+    answer the same question about the same selections.
+    """
+    response = client.get("/api/guides/wall/availability?method=separate-wall")
+
+    assert response.status_code == 200
+    # One towne wall exists and no towne floor does, so choosing towne
+    # leaves the floor with nothing; cave has both.
+    assert response.json["unavailable"]["texture"] == ["texture|towne"]
+
+
+def test_availability_has_nothing_to_say_about_an_open_namespace(
+    client, wall_guide, catalog
+):
+    """Its answers are every tag in the namespace, so there is no list.
+
+    Worth pinning rather than leaving implicit: it is the reason a
+    refinement gets `choices` at all, and someone reading only the
+    greying would otherwise call this a bug.
+    """
+    response = client.get("/api/guides/wall/availability?method=separate-wall")
+
+    assert response.status_code == 200
+    assert "texture" not in response.json["unavailable"]
+
+
+def test_availability_is_silent_when_every_answer_works(client, wall_guide, catalog):
+    """An empty map rather than a list of empty lists."""
+    response = client.get("/api/guides/wall/availability")
+
+    assert response.status_code == 200
+    assert response.json["unavailable"] == {}
+
+
+def test_resolving_does_not_pay_for_availability(client, wall_guide, catalog):
+    """The hot path must not do the expensive pass.
+
+    Guarded by the count of searches rather than by a clock: the engine
+    asks the catalog once per role per offered answer when it is
+    working out availability, and once per role when it is not.
+    """
+    response = client.get("/api/guides/wall/resolve?method=separate-wall")
+
+    assert response.status_code == 200
+    for question in response.json["steps"] + response.json["refinements"]:
+        assert question["unavailable"] == []
+
+
+def test_availability_refuses_the_same_bad_selections_resolve_does(client, wall_guide):
+    response = client.get("/api/guides/wall/availability?method=nonesuch")
+
+    assert response.status_code == 400
+    assert "nonesuch" in response.json["error"]
+
+
+def test_availability_for_an_unknown_guide_is_a_404(client, wall_guide):
+    response = client.get("/api/guides/nonesuch/availability")
+
+    assert response.status_code == 404
+
+
+def test_a_namespace_refinement_offers_what_the_parts_carry(client, test_db, catalog):
+    """Derived answers, not a list somebody typed into the guide.
+
+    A guide that names its own answers goes stale the moment the
+    catalog gains a connector. This one says only which namespace to
+    ask about, and the answers come from the parts it applies to.
+    """
+    document = copy.deepcopy(WALL_GUIDE)
+    document["refinements"] = [
+        {
+            "key": "connectors",
+            "role": "wall",
+            "prompt": "Connectors?",
+            "from_namespace": "connection",
+        }
+    ]
+    with test_db.connection() as conn:
+        with conn.cursor(row_factory=dict_row) as curs:
+            guide_sql.upsert_guide(curs, document)
+
+    response = client.get("/api/guides/wall/resolve?method=separate-wall")
+
+    offered = response.json["refinements"][0]["choices"]
+    # Two of the three separate walls carry it and nothing carries
+    # anything else, so that is the whole of the answer — with the
+    # count behind it, because an answer with 240 pieces and one with
+    # 4 are worth telling apart.
+    assert [c["tag"] for c in offered] == ["connection|openforge"]
+    assert offered[0]["count"] == 2
+
+
+def test_derived_answers_are_immediate_children_of_the_namespace(
+    client, test_db, catalog
+):
+    """`connection|side` and `connection|side|openlock` sit on the same
+    pieces, so offering both offers one answer twice. A variant belongs
+    to the question about its parent, not the question about the
+    family."""
+    document = copy.deepcopy(WALL_GUIDE)
+    document["refinements"] = [
+        {
+            "key": "connectors",
+            "role": "wall",
+            "prompt": "Connectors?",
+            "from_namespace": "connection",
+        }
+    ]
+    with test_db.connection() as conn:
+        with conn.cursor(row_factory=dict_row) as curs:
+            guide_sql.upsert_guide(curs, document)
+            blueprint = make_blueprint(
+                test_db,
+                "e side wall",
+                [
+                    "build|separate wall",
+                    "shape|wall",
+                    "connection|openforge",
+                    "connection|side",
+                    "connection|side|openlock",
+                    "texture|cave",
+                ],
+            )
+    assert blueprint is not None
+
+    response = client.get("/api/guides/wall/resolve?method=separate-wall")
+
+    assert [c["tag"] for c in response.json["refinements"][0]["choices"]] == [
+        "connection|openforge",
+        "connection|side",
+    ]
+
+
+def test_a_curated_choice_list_is_left_alone(client, test_db, catalog):
+    """`choices` is an override, and has to beat derivation.
+
+    The texture question needs it: `substitute` means the roles are
+    asked for *different* tags, so what they carry cannot be
+    intersected into one list.
+    """
+    document = copy.deepcopy(WALL_GUIDE)
+    document["refinements"][0]["choices"] = [
+        {"tag": "texture|cave"},
+        {"tag": "texture|nonesuch"},
+    ]
+    with test_db.connection() as conn:
+        with conn.cursor(row_factory=dict_row) as curs:
+            guide_sql.upsert_guide(curs, document)
+
+    response = client.get("/api/guides/wall/resolve?method=separate-wall")
+
+    assert [c["tag"] for c in response.json["refinements"][0]["choices"]] == [
+        "texture|cave",
+        "texture|nonesuch",
+    ]
+
+
+def test_a_later_question_must_not_grey_out_the_first_screen(client, test_db, catalog):
+    """A role has to be answerable before the question that narrows it.
+
+    The trap, hit three times on this guide: move a required tag off a
+    role and onto a later step, and the role matches *nothing* until
+    that step is answered — because a sweep with nothing exempt takes
+    everything. The availability pass then correctly reports that
+    every first answer empties a part, and greys out the whole opening
+    screen. The page is not broken-looking; it is unusable, and the
+    cause is three questions away.
+
+    `allow` is the fix each time: permit what the later question will
+    choose between, so the role resolves now and narrows later.
+    """
+    document = copy.deepcopy(WALL_GUIDE)
+    # A sweep over the namespace that makes a wall a wall...
+    document["roles"]["wall"]["query"] = {
+        "require": ["build|separate wall"],
+        "deny_children": ["shape"],
+        "allow": ["shape|wall"],
+    }
+    # ...and a later question that decides which one.
+    document["steps"].append(
+        {
+            "key": "height",
+            "prompt": "How tall?",
+            "options": [
+                {
+                    "key": "normal",
+                    "title": "Normal",
+                    "roles": {"wall": {"require": ["shape|wall"]}},
+                }
+            ],
+        }
+    )
+    with test_db.connection() as conn:
+        with conn.cursor(row_factory=dict_row) as curs:
+            guide_sql.upsert_guide(curs, document)
+
+    response = client.get("/api/guides/wall/availability")
+
+    assert response.status_code == 200
+    assert response.json["unavailable"] == {}
+
+
+def test_without_the_allow_the_first_screen_does_grey_out(client, test_db, catalog):
+    """The other half, so the guard above cannot pass vacuously."""
+    document = copy.deepcopy(WALL_GUIDE)
+    document["roles"]["wall"]["query"] = {
+        "require": ["build|separate wall"],
+        "deny_children": ["shape"],
+    }
+    document["steps"].append(
+        {
+            "key": "height",
+            "prompt": "How tall?",
+            "options": [
+                {
+                    "key": "normal",
+                    "title": "Normal",
+                    "roles": {"wall": {"require": ["shape|wall"]}},
+                }
+            ],
+        }
+    )
+    with test_db.connection() as conn:
+        with conn.cursor(row_factory=dict_row) as curs:
+            guide_sql.upsert_guide(curs, document)
+
+    response = client.get("/api/guides/wall/availability")
+
+    assert response.json["unavailable"]["method"] == ["separate-wall"]
+
+
+@pytest.fixture
+def clip_catalog(test_db):
+    """Bases whose connection tags are not independent of each other.
+
+    Modelled on the real ones: a base is OpenLOCK or DragonLock, with
+    magnets or without, and the OpenLOCK one may be topless — but
+    nothing is both topless and unsupported, which is the pairing three
+    separate yes/no questions would happily offer.
+    """
+    # Named so that the *plain* OpenLOCK base sorts last. All three
+    # openlock bases match a bare `require: connection|openlock`, and
+    # candidates come back in name order — so if the plain one sorted
+    # first, a predicate that failed to exclude the others would still
+    # return it and the test would pass on an accident.
+    combos = {
+        "z plain openlock": ["connection|openlock"],
+        "a openlock with magnets": [
+            "connection|openlock",
+            "connection|magnetic",
+            "connection|magnetic|flex",
+        ],
+        "b openlock topless": [
+            "connection|openlock",
+            "connection|openlock|topless",
+        ],
+        "c dragonlock": ["connection|dragonlock"],
+    }
+    for name, tags in combos.items():
+        # `build|separate wall` because the method option asks every
+        # role it names for it.
+        make_blueprint(test_db, name, ["shape|base", "build|separate wall", *tags])
+    return combos
+
+
+def test_a_combination_refinement_offers_the_sets_that_exist(
+    client, test_db, catalog, clip_catalog
+):
+    """Whole combinations, not one tag at a time.
+
+    Four bases, four answers — and no answer pairing tags that no base
+    carries together, which is the thing separate questions cannot
+    promise.
+    """
+    document = copy.deepcopy(WALL_GUIDE)
+    document["roles"]["base"] = {"title": "Base", "query": {"require": ["shape|base"]}}
+    document["steps"][0]["options"][0]["roles"]["base"] = None
+    document["refinements"] = [
+        {
+            "key": "clips",
+            "role": "base",
+            "prompt": "Clips?",
+            "from_combination": "connection",
+            "exclude": ["connection|magnetic|flex"],
+        }
+    ]
+    with test_db.connection() as conn:
+        with conn.cursor(row_factory=dict_row) as curs:
+            guide_sql.upsert_guide(curs, document)
+
+    response = client.get("/api/guides/wall/resolve?method=separate-wall")
+
+    offered = response.json["refinements"][0]["choices"]
+    assert [c["title"] for c in offered] == [
+        "Dragonlock",
+        "Magnetic + openlock",
+        "Openlock",
+        "Openlock topless",
+    ]
+    # The excluded tag is hidden from the label, not refused: the
+    # magnetic base is still one of the four.
+    assert all("flex" not in c["title"] for c in offered)
+
+
+def test_choosing_a_combination_excludes_the_others(
+    client, test_db, catalog, clip_catalog
+):
+    """Exact, or it is not a combination.
+
+    Asking for plain OpenLOCK has to exclude the magnetic one and the
+    topless one, which a bare `require` would not — all three carry
+    `connection|openlock`.
+    """
+    document = copy.deepcopy(WALL_GUIDE)
+    document["roles"]["base"] = {"title": "Base", "query": {"require": ["shape|base"]}}
+    document["steps"][0]["options"][0]["roles"]["base"] = None
+    document["refinements"] = [
+        {
+            "key": "clips",
+            "role": "base",
+            "prompt": "Clips?",
+            "from_combination": "connection",
+            "exclude": ["connection|magnetic|flex"],
+        }
+    ]
+    with test_db.connection() as conn:
+        with conn.cursor(row_factory=dict_row) as curs:
+            guide_sql.upsert_guide(curs, document)
+
+    response = client.get(
+        "/api/guides/wall/resolve?method=separate-wall&clips=connection%7Copenlock"
+    )
+
+    base = next(p for p in response.json["parts"] if p["role"] == "base")
+    assert base["blueprint"]["blueprint_name"] == "z plain openlock"
+
+
+def test_the_options_narrow_with_the_size_the_base_inherits(client, test_db):
+    """Base size changes the answers, and by data rather than a rule.
+
+    A base copies its width from the piece standing on it, so the clip
+    combinations on offer have to be the ones *that* size has. In the
+    real catalog a 1-inch dungeon stone wall base has four and a 2-inch
+    one has seven; here, one and two.
+
+    Without the inherited size in the derivation, both sizes offer
+    everything and the narrow base's question lists answers it cannot
+    honour.
+    """
+    document = copy.deepcopy(WALL_GUIDE)
+    document["roles"] = {
+        "wall": {"title": "Wall", "query": {"require": ["shape|wall"]}},
+        "base": {
+            "title": "Base",
+            "query": {"require": ["shape|base"]},
+            "under": "wall",
+            "match": ["size|width"],
+        },
+    }
+    document["steps"] = [
+        {
+            "key": "size",
+            "prompt": "How wide?",
+            "options": [
+                {
+                    "key": "one",
+                    "title": "1",
+                    "roles": {"wall": {"require": ["size|width|1"]}, "base": None},
+                },
+                {
+                    "key": "two",
+                    "title": "2",
+                    "roles": {"wall": {"require": ["size|width|2"]}, "base": None},
+                },
+            ],
+        }
+    ]
+    document["refinements"] = [
+        {
+            "key": "clips",
+            "role": "base",
+            "prompt": "Clips?",
+            "from_combination": "connection",
+        }
+    ]
+    with test_db.connection() as conn:
+        with conn.cursor(row_factory=dict_row) as curs:
+            guide_sql.upsert_guide(curs, document)
+    make_blueprint(test_db, "wall 1", ["shape|wall", "size|width|1"])
+    make_blueprint(test_db, "wall 2", ["shape|wall", "size|width|2"])
+    # The narrow base comes in one flavour; the wide one in two.
+    make_blueprint(
+        test_db, "base 1", ["shape|base", "size|width|1", "connection|openlock"]
+    )
+    make_blueprint(
+        test_db, "base 2a", ["shape|base", "size|width|2", "connection|openlock"]
+    )
+    make_blueprint(
+        test_db, "base 2b", ["shape|base", "size|width|2", "connection|dragonlock"]
+    )
+
+    narrow = client.get("/api/guides/wall/resolve?size=one")
+    wide = client.get("/api/guides/wall/resolve?size=two")
+
+    assert [c["title"] for c in narrow.json["refinements"][0]["choices"]] == [
+        "Openlock"
+    ]
+    assert [c["title"] for c in wide.json["refinements"][0]["choices"]] == [
+        "Dragonlock",
+        "Openlock",
+    ]

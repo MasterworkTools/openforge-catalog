@@ -297,6 +297,11 @@ def guide_resolve(guide_key):
     return guide_routes.resolve_guide(guide_key)
 
 
+@app.route("/api/guides/<guide_key>/availability", methods=["GET"])
+def guide_availability(guide_key):
+    return guide_routes.guide_availability(guide_key)
+
+
 ####################
 ### Tag Description routes
 ####################

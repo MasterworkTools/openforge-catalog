@@ -170,6 +170,8 @@ def tag_search_blueprints(
     models: bool = True,
     blueprints: bool = False,
     search: str | None = None,
+    deny_children: list[dict] | None = None,
+    allow: list[dict] | None = None,
 ) -> list[uuid.UUID]:
     parts = [
         sql.SQL("SELECT *"),
@@ -185,6 +187,8 @@ def tag_search_blueprints(
             models=models,
             blueprints=blueprints,
             search=search,
+            deny_children=deny_children,
+            allow=allow,
         ),
         sql.SQL("  )"),
         sql.SQL("  ORDER BY blueprints.blueprint_name, blueprints.id"),
@@ -193,6 +197,53 @@ def tag_search_blueprints(
     get_logger().debug(query.join("\n").as_string())
     curs.execute(query)
     return [_convert_config(row) for row in curs.fetchall()]
+
+
+def tag_search_blueprint_exists(
+    curs: cursor,
+    accept: list[str],
+    require: list[str],
+    deny: list[str],
+    models: bool = True,
+    blueprints: bool = False,
+    search: str | None = None,
+    deny_children: list[dict] | None = None,
+    allow: list[dict] | None = None,
+) -> bool:
+    """Is there a single blueprint matching this predicate?
+
+    The guide's availability pass asks this about thirty times per
+    request, to drop the answers that would empty a part. It never
+    looks at what it found, so it wants neither the row nor the order
+    — and the order is the expensive half, since it sorts every match
+    before LIMIT 1 discards the rest.
+    """
+    parts = [
+        sql.SQL("SELECT EXISTS ("),
+        sql.SQL("  SELECT 1"),
+        sql.SQL("  FROM blueprints"),
+        sql.SQL("  WHERE blueprints.id IN ("),
+        _query_tags_basics(
+            accept,
+            require,
+            deny,
+            None,
+            None,
+            1,
+            models=models,
+            blueprints=blueprints,
+            search=search,
+            deny_children=deny_children,
+            allow=allow,
+            do_order=False,
+        ),
+        sql.SQL("  )"),
+        sql.SQL(") AS found"),
+    ]
+    query = sql.Composed(parts)
+    get_logger().debug(query.join("\n").as_string())
+    curs.execute(query)
+    return bool(curs.fetchone()["found"])
 
 
 def tag_search_tags(
@@ -206,6 +257,8 @@ def tag_search_tags(
     models: bool = True,
     blueprints: bool = False,
     search: str | None = None,
+    deny_children: list[dict] | None = None,
+    allow: list[dict] | None = None,
 ) -> list[uuid.UUID]:
     parts = [
         sql.SQL("SELECT *"),
@@ -221,6 +274,8 @@ def tag_search_tags(
             models=models,
             blueprints=blueprints,
             search=search,
+            deny_children=deny_children,
+            allow=allow,
         ),
         sql.SQL("  )"),
         sql.SQL("  ORDER BY bptags.blueprint_id"),
@@ -242,6 +297,8 @@ def tag_search_blueprint_images(
     models: bool = True,
     blueprints: bool = False,
     search: str | None = None,
+    deny_children: list[dict] | None = None,
+    allow: list[dict] | None = None,
 ) -> list[dict]:
     parts = [
         sql.SQL(
@@ -261,6 +318,8 @@ def tag_search_blueprint_images(
             models=models,
             blueprints=blueprints,
             search=search,
+            deny_children=deny_children,
+            allow=allow,
         ),
         sql.SQL("  )"),
         sql.SQL("  ORDER BY bpi.blueprint_id"),
@@ -279,6 +338,8 @@ def tag_search_blueprint_count(
     models: bool = True,
     blueprints: bool = False,
     search: str | None = None,
+    deny_children: list[dict] | None = None,
+    allow: list[dict] | None = None,
 ) -> int:
     parts = [
         sql.SQL("SELECT COUNT(*)"),
@@ -292,6 +353,8 @@ def tag_search_blueprint_count(
             models=models,
             blueprints=blueprints,
             search=search,
+            deny_children=deny_children,
+            allow=allow,
         ),
         sql.SQL("  )"),
     ]
@@ -310,6 +373,8 @@ def tag_search_blueprint_start_count(
     models: bool = True,
     blueprints: bool = False,
     search: str | None = None,
+    deny_children: list[dict] | None = None,
+    allow: list[dict] | None = None,
 ) -> int:
     parts = [
         sql.SQL("SELECT COUNT(*)"),
@@ -323,6 +388,8 @@ def tag_search_blueprint_start_count(
             models=models,
             blueprints=blueprints,
             search=search,
+            deny_children=deny_children,
+            allow=allow,
         ),
         sql.SQL("  )"),
         sql.SQL(
@@ -336,6 +403,165 @@ def tag_search_blueprint_start_count(
     return curs.fetchone()["count"]
 
 
+def tag_search_namespace_facets(
+    curs: cursor,
+    accept: list[str],
+    require: list[str],
+    deny: list[str],
+    namespace: str,
+    models: bool = True,
+    blueprints: bool = False,
+    search: str | None = None,
+    deny_children: list[dict] | None = None,
+    allow: list[dict] | None = None,
+) -> list[dict]:
+    """Tags under `namespace` carried by what this predicate matches.
+
+    What a guide offers as answers, rather than a list somebody typed
+    into a fixture. Two things follow from deriving it: an option the
+    catalog does not have is never offered, and one it gains later
+    appears without anyone editing a guide.
+
+    Counted, because a question with 240 answers behind one of them
+    and 4 behind another is worth showing that way, and ordered by the
+    tag so the list does not reshuffle as counts drift.
+    """
+    parts = [
+        # The description comes along for the ride. A derived answer
+        # has no hand-written blurb by definition, and the catalog
+        # already explains its own tags — so a connector added next
+        # year arrives with its explanation rather than as a bare word.
+        sql.SQL("SELECT COUNT(*) AS tag_count, t.tag,"),
+        sql.SQL("       MIN(d.description) AS description"),
+        sql.SQL("  FROM tags AS t"),
+        sql.SQL("  LEFT JOIN tag_descriptions AS d ON d.tag = t.tag"),
+        sql.SQL("  WHERE t.blueprint_id IN ("),
+        _query_tags_basics(
+            accept,
+            require,
+            deny,
+            do_limit=False,
+            do_order=False,
+            models=models,
+            blueprints=blueprints,
+            search=search,
+            deny_children=deny_children,
+            allow=allow,
+        ),
+        sql.SQL("  )"),
+        # The namespace itself is not an answer — `connection` is the
+        # question. Everything strictly beneath it is.
+        sql.SQL("    AND t.tag @> {ns} AND t.tag[1] = {first}").format(
+            ns=sql.Literal(namespace.split("|")),
+            first=sql.Literal(namespace.split("|")[0]),
+        ),
+        sql.SQL("    AND t.tag[1:{depth}] = {ns}").format(
+            depth=sql.Literal(len(namespace.split("|"))),
+            ns=sql.Literal(namespace.split("|")),
+        ),
+        # Immediate children only. `connection|magnetic` and
+        # `connection|magnetic|flex` sit on the same 125 bases, so
+        # offering both is offering the same answer twice — and a
+        # variant belongs to the question about its parent, not to the
+        # question about the family.
+        sql.SQL("    AND array_length(t.tag, 1) = {depth}").format(
+            depth=sql.Literal(len(namespace.split("|")) + 1)
+        ),
+        sql.SQL("  GROUP BY t.tag"),
+        sql.SQL("  ORDER BY t.tag"),
+    ]
+    query = sql.Composed(parts)
+    get_logger().debug(query.join("\n").as_string())
+    curs.execute(query)
+    return [
+        {
+            "tag": array_to_tag(row["tag"]),
+            "count": row["tag_count"],
+            "blurb": row["description"],
+        }
+        for row in curs.fetchall()
+    ]
+
+
+def tag_search_namespace_combinations(
+    curs: cursor,
+    accept: list[str],
+    require: list[str],
+    deny: list[str],
+    namespace: str,
+    exclude: list[str] | None = None,
+    models: bool = True,
+    blueprints: bool = False,
+    search: str | None = None,
+    deny_children: list[dict] | None = None,
+    allow: list[dict] | None = None,
+) -> list[dict]:
+    """The distinct *sets* of tags under `namespace` that pieces carry.
+
+    Not each tag on its own, which is what
+    `tag_search_namespace_facets` gives: the whole combination a piece
+    actually has, so "OpenLOCK with magnets" and "OpenLOCK topless
+    without" are two answers rather than three overlapping questions.
+
+    Some pairings do not exist — nothing is both topless and
+    unsupported — and asking about each tag separately cannot say so.
+    Asking which combination you want cannot express it in the first
+    place.
+
+    `exclude` drops tags that only add noise: every magnetic base in
+    the catalog is also `magnetic|flex`, so listing both doubles the
+    label and distinguishes nothing.
+    """
+    excluded = exclude or []
+    depth = len(namespace.split("|"))
+    parts = [
+        sql.SQL("SELECT combo, COUNT(*) AS piece_count FROM ("),
+        sql.SQL("  SELECT t.blueprint_id,"),
+        sql.SQL(
+            "         array_agg(array_to_string(t.tag, '|') ORDER BY t.tag) AS combo"
+        ),
+        sql.SQL("    FROM tags AS t"),
+        sql.SQL("    WHERE t.blueprint_id IN ("),
+        _query_tags_basics(
+            accept,
+            require,
+            deny,
+            do_limit=False,
+            do_order=False,
+            models=models,
+            blueprints=blueprints,
+            search=search,
+            deny_children=deny_children,
+            allow=allow,
+        ),
+        sql.SQL("    )"),
+        sql.SQL("      AND t.tag @> {ns}").format(ns=sql.Literal(namespace.split("|"))),
+        sql.SQL("      AND t.tag[1:{depth}] = {ns}").format(
+            depth=sql.Literal(depth), ns=sql.Literal(namespace.split("|"))
+        ),
+        sql.SQL("      AND array_length(t.tag, 1) > {depth}").format(
+            depth=sql.Literal(depth)
+        ),
+    ]
+    for tag in excluded:
+        parts.append(
+            sql.SQL("      AND t.tag <> {tag}").format(tag=sql.Literal(tag.split("|")))
+        )
+    parts += [
+        sql.SQL("    GROUP BY t.blueprint_id"),
+        sql.SQL(" ) AS per_piece"),
+        sql.SQL(" GROUP BY combo"),
+        sql.SQL(" ORDER BY combo"),
+    ]
+    query = sql.Composed(parts)
+    get_logger().debug(query.join("\n").as_string())
+    curs.execute(query)
+    return [
+        {"tags": list(row["combo"]), "count": row["piece_count"]}
+        for row in curs.fetchall()
+    ]
+
+
 def tag_search_tag_count(
     curs: cursor,
     accept: list[str],
@@ -344,6 +570,8 @@ def tag_search_tag_count(
     models: bool = True,
     blueprints: bool = False,
     search: str | None = None,
+    deny_children: list[dict] | None = None,
+    allow: list[dict] | None = None,
 ) -> list[dict]:
     parts = [
         sql.SQL("SELECT COUNT(*) AS tag_count, t.tag"),
@@ -357,6 +585,8 @@ def tag_search_tag_count(
             models=models,
             blueprints=blueprints,
             search=search,
+            deny_children=deny_children,
+            allow=allow,
         ),
         sql.SQL("  )"),
         sql.SQL("  GROUP BY t.tag"),
@@ -375,9 +605,12 @@ def _query_tags_basics(
     previous: uuid.UUID | None = None,
     limit: int = 20,
     do_limit: bool = True,
+    do_order: bool = True,
     models: bool = True,
     blueprints: bool = False,
     search: str | None = None,
+    deny_children: list[dict] | None = None,
+    allow: list[dict] | None = None,
 ) -> sql.Composed:
     query_parts = [
         sql.SQL(
@@ -401,6 +634,20 @@ SELECT DISTINCT bp.id
             deny_parts.append(sql.SQL("    AND bp2.id NOT IN ("))
             deny_parts.append(_query_tags_deny([d]))
             deny_parts.append(sql.SQL("    )"))
+
+    # A child sweep means "nothing else under this tag", and what
+    # counts as "else" is whatever require and allow did not already
+    # ask for. That is what `exempt` carries. It is not a matter of
+    # where this block sits — every term below is an AND in the same
+    # WHERE clause, so moving it changes the SQL and no rows.
+    exempt = [t["tag"] for t in (require or []) if "tag" in t]
+    exempt += [t["tag"] for t in (allow or []) if "tag" in t]
+    for parent in deny_children or []:
+        if "tag" not in parent:
+            continue
+        deny_parts.append(sql.SQL("    AND NOT EXISTS ("))
+        deny_parts.append(_query_tags_deny_children(parent["tag"], exempt))
+        deny_parts.append(sql.SQL("    )"))
 
     # Handle blueprint type filtering
     if models and blueprints:
@@ -442,12 +689,17 @@ SELECT DISTINCT bp.id
     # resolve a role with LIMIT 1, so without the id the same
     # selections can recommend a different part after any unrelated
     # write, and a shared guide URL stops meaning one thing.
-    end_parts = [
-        sql.SQL(
-            "      ORDER BY bp2.blueprint_name %s, bp2.id %s"
-            % ("DESC" if previous else "ASC", "DESC" if previous else "ASC")
+    # An existence check wants no order at all: the sort runs over
+    # every matching row before LIMIT 1 takes one, and "is there
+    # anything" does not care which.
+    end_parts = []
+    if do_order:
+        end_parts.append(
+            sql.SQL(
+                "      ORDER BY bp2.blueprint_name %s, bp2.id %s"
+                % ("DESC" if previous else "ASC", "DESC" if previous else "ASC")
+            )
         )
-    ]
     if do_limit:
         end_parts.append(
             sql.SQL("      LIMIT {limit}").format(limit=sql.Literal(limit))
@@ -575,6 +827,72 @@ LIMIT {limit} OFFSET {offset}
         "total_count": total_count,
         "has_more": (offset + len(tags)) < total_count,
     }
+
+
+def _query_tags_deny_children(parent: str, exempt: list[str]) -> sql.Composed:
+    """Blueprints carrying any tag *strictly under* `parent`.
+
+    Subtracted from a result set, this is "has nothing below this tag".
+    `component|wall` survives it; `component|wall|curved` does not —
+    which is how a guide asks for a plain wall rather than listing
+    every variant it does not want.
+
+    `exempt` is the tags that survive anyway, and it is why this cannot
+    simply be a `deny`: the caller has already said which children it
+    wants (`shape|floor|wall`), and those have to survive the sweep.
+
+    Not by ordering. Every term here is an AND in one WHERE clause, so
+    moving this block above the `deny` loop or above the includes
+    changes the generated SQL and not one row. What does the work is
+    `exempt` itself: the sweep is not run *after* the includes, it is
+    *told about* them.
+    """
+    depth = len(parent.split("|"))
+    tags_name = f"tags_child_{depth}_neg"
+    parts = [
+        # Correlated, not a set to subtract. This used to build
+        # `DISTINCT bp_neg.id` over every blueprint carrying any tag
+        # below the parent and hand it to `NOT IN` — which means
+        # materialising most of the catalog for a sweep over a broad
+        # parent like `shape` (21,033 tag rows). As `NOT EXISTS` it
+        # asks one indexed question per candidate row instead, and the
+        # join to blueprints goes with it: a tag only exists if its
+        # blueprint does.
+        sql.SQL("      SELECT 1"),
+        sql.SQL("  FROM tags AS {table}").format(table=sql.Identifier(tags_name)),
+        sql.SQL("  WHERE {table}.blueprint_id = bp2.id").format(
+            table=sql.Identifier(tags_name)
+        ),
+        # Redundant with the slice below, and there to be indexable.
+        # `tag[1:n] = ...` cannot use the GIN index, so the sweep was
+        # a sequential scan of all 81,931 tag rows; `@>` is a
+        # containment test the index answers, and ANDing it in front
+        # turns the scan into a bitmap index scan — 26.3ms to 3.3ms
+        # for `deny_children: [component|wall]`, same 954 rows.
+        # Containment is positionless, so it is a superset of the
+        # slice and narrows nothing on its own.
+        sql.SQL("    AND {table}.tag @> {parent}").format(
+            table=sql.Identifier(tags_name),
+            parent=sql.Literal(parent.split("|")),
+        ),
+        sql.SQL("    AND {table}.tag[1:{depth}] = {parent}").format(
+            table=sql.Identifier(tags_name),
+            depth=sql.Literal(depth),
+            parent=sql.Literal(parent.split("|")),
+        ),
+        sql.SQL("    AND array_length({table}.tag, 1) > {depth}").format(
+            table=sql.Identifier(tags_name),
+            depth=sql.Literal(depth),
+        ),
+    ]
+    for tag in exempt:
+        parts.append(
+            sql.SQL("    AND {table}.tag <> {tag}").format(
+                table=sql.Identifier(tags_name),
+                tag=sql.Literal(tag.split("|")),
+            )
+        )
+    return sql.Composed(parts).join("\n      ")
 
 
 def _query_tags_deny(deny: list[str]) -> sql.Composed:

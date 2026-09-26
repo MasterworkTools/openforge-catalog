@@ -1,0 +1,763 @@
+# The first guide: how do I make a wall?
+#
+# DRAFT — the structure is settled and every role/method pair below was
+# resolved against the fixtures, so each recommends a part of the right
+# kind. What is not settled is whether they recommend the *right* part:
+# the prefer lists are a guess, and with the current ones the wall guide
+# leans toward ruined and collapsed variants because those sort first by
+# name once prefer runs out. That, and whether a "method" should be a
+# build tag at all, is Devon's call (openforge_catalog-z76).
+key: wall
+title: How do I make a wall?
+summary: |
+  Three ways to build one, and the difference is where the wall meets the
+  floor. Pick a method and you get a printable set; change anything
+  afterwards.
+
+steps:
+  - key: method
+    prompt: How do you want to build it?
+    default: s2w
+    # Ordered by how they are best explained rather than by how much
+    # they are recommended: wall on tile is the one everybody has seen,
+    # separate wall is the other pole, and s2w only makes sense once
+    # you know both — it is the compromise between them.
+    options:
+      - key: wall-on-tile
+        title: Wall on Tile
+        blurb: >
+          The wall is connected to the floor, as both are glued to an
+          openforge base, and the wall takes up half of a square. These
+          are the traditional tiles: easy to work with and easy to
+          reason about.
+
+          Recommended for GMs who lay tiles down at game time, as these
+          are the fastest to use — you can just set them and go. You can
+          still use clips, so they also work for rooms you build ahead
+          of time. In a combined set, I also recommend you use these for
+          interior walls. Wall on tile is at its weakest for hallways.
+          Most maps don't account for wall thickness, so the thickness
+          of the wall has to come out of somewhere.
+
+          Aether Studios, our development partners, focus on this
+          style. Others include most of Fat Dragon Games, and the
+          original, Dwarven Forge. I find the half square is useful for
+          decorations, and it doesn't bother me.
+        links:
+          Aether Studios: https://aether-studios.com/
+          Fat Dragon Games: https://www.fatdragongames.com
+          Dwarven Forge: https://dwarvenforge.com
+        image: sets/dungeon_stone.wall_on_tile.wall.1.png
+        roles:
+          # One base, shared. The wall is part of the tile, so there is
+          # one openforge piece here rather than two — this is the only
+          # method where a single base serves both. No base carries
+          # build|wall on tile either: it is an ordinary base.
+          floor:
+            require: ['build|s2w', 'shape|floor|wall']
+            allow: ['shape|floor|s2w']
+          # This method has no wall-print step — the wall is part of the
+          # tile — so it asks for the openforge socket itself.
+          wall: {require: ['connection|openforge']}
+          floor-base: {require: ['shape|base|square'], deny: ['build|s2w']}
+
+      - key: separate-wall
+        title: Separate Wall
+        blurb: >
+          The wall is its own part, and it can be clipped onto a floor.
+          Recommended for GMs who prepare their rooms ahead of time: if
+          you clip these, you can make rigid rooms that you slap down on
+          the table at game time.
+
+          Separate wall generally lets you get closer to an original
+          map, because all the squares are complete. Internal walls can
+          leave you with tough decisions as to how you deal with the gap
+          left by the wall — say, when a room wraps around a wall in an
+          L. Half-inch walls on a one-inch grid means those offsets
+          accumulate, which is sometimes called offset hell. In a
+          combined set, I recommend you use these for exterior walls
+          and hallways.
+
+          I recommend prebuilding your rooms with separate wall —
+          except for hallways, where it is the one thing it is best
+          at and prebuilding buys you nothing.
+
+          Other people doing separate wall include Printable Scenery,
+          and many miniature patreons who produce a few walls and floors
+          to go with their releases.
+        links:
+          Printable Scenery: https://www.printablescenery.com
+        image: sets/dungeon_stone.separate_wall.primary_wall.1.png
+        roles:
+          # Both bases belong to the print steps on this method: either
+          # piece can be printed with its base built in. The floor takes
+          # no build tag on purpose — no floor tile carries
+          # build|separate wall, and 114 of the 115 records that carry
+          # both shape|floor and that tag are bases.
+          #
+          # A plain tile, explicitly. The role's sweep already keeps
+          # shape|floor|wall out, and denying build|s2w as well is what
+          # stops an s2w tile arriving by the other door: these walls
+          # stand beside the floor, not on it.
+          floor: {deny: ['build|s2w']}
+          wall:
+
+      - key: s2w
+        title: Modular (S2W)
+        blurb: >
+          The compromise system. You use separate walls, but s2w has
+          separate floors with the half tile on them. This lets you make
+          both wall on tile and separate wall layouts using the same
+          walls, and just adding in extra floors. It also unifies wall
+          thickness across the systems, so the same wall fits either
+          way round.
+
+          I developed this system to merge the two approaches, and this
+          is the most flexible. I recommend this approach — but you
+          don't have to be pure, you can mix all three.
+        image: sets/dungeon_stone.s2w.wall.1.png
+        roles:
+          # The wall base is not here: it is the wall-print step's, so
+          # that a single-piece wall can simply not have one. The floor
+          # base is not optional on this method and stays.
+          #
+          # Neither base is an s2w piece: the composition blueprints ask
+          # their base part for build|s2w, but that is not what a wall
+          # stands on — of the 35 dungeon stone wall bases in the
+          # catalog, none carries build|s2w.
+          floor:
+            require: ['build|s2w', 'shape|floor|wall']
+            allow: ['shape|floor|s2w']
+          wall:
+          # The s2w floor base carries the wall's own base as well:
+          # shape|base, s2w, wall and square, all four.
+          floor-base:
+            require: ['shape|base|s2w', 'shape|base|wall', 'shape|base|square']
+
+  # Both print steps do the same thing from opposite ends: the
+  # "with a base" option puts a base role in play, and the single-piece
+  # option does not — it denies connection|openforge on the piece
+  # instead, which is what a model with its base built in looks like.
+  # A role is in play because some chosen option named it, so declining
+  # to name one is how a step removes a part rather than emptying it.
+  - key: wall-print
+    prompt: How should the wall print?
+    default: with-base
+    # Not wall-on-tile: there the wall is part of the tile, so there is
+    # no separate wall piece to print either way.
+    when: {selected: {method: [s2w, separate-wall]}}
+    options:
+      - key: with-base
+        title: Wall plus a base
+        blurb: >
+          The wall prints as a bare wall and drops into a base that
+          clips to the floor. Two pieces per wall, and you can swap
+          either one — a different base changes how it connects without
+          reprinting the wall.
+        roles:
+          # The socket the base plugs into.
+          wall: {require: ['connection|openforge']}
+          # 48 wall bases lack build|separate wall and every one is an
+          # s2w base, so this is what keeps a separate wall off them.
+          wall-base: {require: ['shape|base|wall']}
+      - key: single-piece
+        title: One piece, base included
+        blurb: >
+          The wall and its base are one model. Half the pieces and
+          nothing to align, and the wall is fixed to the kind of
+          connector it was printed with. 249 walls print this way.
+        roles:
+          # No wall-base role at all — that is the point of the option.
+          #
+          # A wall with its base built in does not carry
+          # connection|openforge, because that tag is the socket the
+          # separate base plugs into. It carries the clips instead: all
+          # 199 of them have connection|openlock, which the role's
+          # `deny_children: ['connection']` sweep refuses unless
+          # something says otherwise. Allowed rather than required so
+          # that the connectors step can still narrow this further.
+          wall:
+            deny: ['connection|openforge']
+            allow: ['connection|openlock']
+
+  - key: floor-print
+    prompt: How should the floor print?
+    default: with-base
+    # Only separate wall. The other two methods stand their tile on an
+    # s2w base by construction, which is not an option to offer.
+    when: {selected: {method: [separate-wall]}}
+    options:
+      - key: with-base
+        title: Floor plus a base
+        blurb: >
+          The tile prints bare and sits in a base that carries the
+          connectors. The usual openforge arrangement.
+        roles:
+          floor-base: {require: ['shape|base|square']}
+      - key: single-piece
+        title: One piece, base included
+        blurb: >
+          The tile is printed with its base already part of it. Fewer
+          pieces on the table and less to lose.
+        roles:
+          floor:
+            deny: ['connection|openforge']
+            allow: ['connection|openlock']
+
+  - key: size
+    prompt: What size tiles?
+    default: 2x2
+    blurb: >
+      All tile sizes are in inches, which are also squares. Most people
+      use 2×2. 4×2 can be handy, especially for separate wall for
+      hallways. A few systems have used 3×3 as their basis.
+
+      A warning: 1 inch wide hallways don't really fit minis well. I
+      strongly recommend not using walls for hallways that thin —
+      though you can also use low walls.
+    when: {selected: {method: [s2w, wall-on-tile, separate-wall]}}
+    options:
+      - key: 1x1
+        title: 1×1
+        # s2w has no tile shallower than it is wide: every
+        # s2w base in the catalog is 2x2, 3x3, 4x2 or 4x4.
+        when: {selected: {method: [wall-on-tile, separate-wall]}}
+        roles:
+          # Depth only on the floor: a wall is a line along an edge and
+          # carries a width but no depth, so asking it for one matches
+          # nothing. The bases take their size from the piece above
+          # them — see `match` on the roles — so they are not named.
+          floor: {require: ['size|width|1', 'size|depth|1']}
+          wall: {require: ['size|width|1']}
+
+      - key: 2x1
+        title: 2×1
+        # s2w has no tile shallower than it is wide: every
+        # s2w base in the catalog is 2x2, 3x3, 4x2 or 4x4.
+        when: {selected: {method: [wall-on-tile, separate-wall]}}
+        roles:
+          # Depth only on the floor: a wall is a line along an edge and
+          # carries a width but no depth, so asking it for one matches
+          # nothing. The bases take their size from the piece above
+          # them — see `match` on the roles — so they are not named.
+          floor: {require: ['size|width|2', 'size|depth|1']}
+          wall: {require: ['size|width|2']}
+
+      - key: 2x2
+        title: 2×2
+        roles:
+          # Depth only on the floor: a wall is a line along an edge and
+          # carries a width but no depth, so asking it for one matches
+          # nothing. The bases take their size from the piece above
+          # them — see `match` on the roles — so they are not named.
+          floor: {require: ['size|width|2', 'size|depth|2']}
+          wall: {require: ['size|width|2']}
+
+      - key: 3x1
+        title: 3×1
+        # s2w has no tile shallower than it is wide: every
+        # s2w base in the catalog is 2x2, 3x3, 4x2 or 4x4.
+        when: {selected: {method: [wall-on-tile, separate-wall]}}
+        roles:
+          # Depth only on the floor: a wall is a line along an edge and
+          # carries a width but no depth, so asking it for one matches
+          # nothing. The bases take their size from the piece above
+          # them — see `match` on the roles — so they are not named.
+          floor: {require: ['size|width|3', 'size|depth|1']}
+          wall: {require: ['size|width|3']}
+
+      - key: 3x3
+        title: 3×3
+        roles:
+          # Depth only on the floor: a wall is a line along an edge and
+          # carries a width but no depth, so asking it for one matches
+          # nothing. The bases take their size from the piece above
+          # them — see `match` on the roles — so they are not named.
+          floor: {require: ['size|width|3', 'size|depth|3']}
+          wall: {require: ['size|width|3']}
+
+      - key: 4x1
+        title: 4×1
+        # s2w has no tile shallower than it is wide: every
+        # s2w base in the catalog is 2x2, 3x3, 4x2 or 4x4.
+        when: {selected: {method: [wall-on-tile, separate-wall]}}
+        roles:
+          # Depth only on the floor: a wall is a line along an edge and
+          # carries a width but no depth, so asking it for one matches
+          # nothing. The bases take their size from the piece above
+          # them — see `match` on the roles — so they are not named.
+          floor: {require: ['size|width|4', 'size|depth|1']}
+          wall: {require: ['size|width|4']}
+
+      - key: 4x2
+        title: 4×2
+        roles:
+          # Depth only on the floor: a wall is a line along an edge and
+          # carries a width but no depth, so asking it for one matches
+          # nothing. The bases take their size from the piece above
+          # them — see `match` on the roles — so they are not named.
+          floor: {require: ['size|width|4', 'size|depth|2']}
+          wall: {require: ['size|width|4']}
+
+      - key: 4x4
+        title: 4×4
+        roles:
+          # Depth only on the floor: a wall is a line along an edge and
+          # carries a width but no depth, so asking it for one matches
+          # nothing. The bases take their size from the piece above
+          # them — see `match` on the roles — so they are not named.
+          floor: {require: ['size|width|4', 'size|depth|4']}
+          wall: {require: ['size|width|4']}
+
+  - key: wall-height
+    prompt: How tall are the walls?
+    default: normal
+    options:
+      - key: normal
+        title: Normal walls
+        blurb: >
+          Normal walls provide the most flexibility and options. Some
+          people find them too hard to see the minis on the board.
+        roles:
+          wall:
+            require: ['shape|wall', 'component|wall']
+      - key: low
+        title: Low walls
+        blurb: >
+          Low walls give clearer line of sight at the table. It can also
+          be a minimalist style thing.
+
+          A warning: we don't have options for any other type of tile in
+          low wall, under the idea that if you want a door or a window,
+          you'll use the normal height wall.
+        roles:
+          # A different tag rather than a modifier on the same one.
+          # `component|wall|low` is what the scanner reads to make the
+          # swap, and it stays on the piece — so the role's
+          # `deny_children: ['component|wall']` would refuse all 500 of
+          # them unless it is allowed back. Allowed and not required,
+          # because the sweep still has to take the curved, diagonal
+          # and mirrored variants, which are what that sweep is for.
+          wall:
+            require: ['shape|wall|low']
+            allow: ['component|wall|low']
+
+  # Last, because it is the question you can only answer once you know
+  # what you are building. An option here names `wall` and nothing
+  # else, which is why this is a step rather than a refinement: a
+  # refinement can only add a `require`, and these need an `allow` too.
+  #
+  # The allow is the whole reason. The wall role sweeps
+  # deny_children: ['connection'], and a wall with side clips carries
+  # the bare `connection|side` parent as well as the specific tag — so
+  # requiring connection|side|openlock alone matches nothing, because
+  # the parent is swept. 175 of the 482 plain openforge walls carry
+  # side openlock and every one of them was unreachable.
+  - key: connectors
+    prompt: Side clips on the wall ends?
+    # Wall on tile is the exception: the wall is part of the tile, so
+    # its neighbour is held by the tile's own base clips and a side
+    # clip on the end has nothing to join that is not already joined.
+    default:
+      - {when: {selected: {method: [wall-on-tile]}}, value: none}
+      - {value: side-openlock}
+    # Every method, but not before one is chosen. A wizard's first
+    # screen asks one question; listing all three methods here is how a
+    # step says "once that is answered" with the vocabulary there is.
+    when: {selected: {method: [s2w, wall-on-tile, separate-wall]}}
+    options:
+      - key: none
+        title: No side clips
+        blurb: >
+          Nothing on the ends. Walls butt up against each other and
+          stay put because their bases are clipped to the floor.
+        roles:
+          # A real answer rather than an absence: denying the bare
+          # `connection|side` parent excludes every side-clip variant
+          # at once, because all of them carry it beside the specific
+          # tag.
+          wall: {deny: ['connection|side']}
+      - key: side-openlock
+        title: OpenLOCK side clips
+        blurb: >
+          A clip on each end joins wall to wall, so a run of wall holds
+          its line. 175 walls have them.
+        roles:
+          wall:
+            require: ['connection|side|openlock']
+            allow: ['connection|side']
+      - key: side-dragonlock
+        title: DragonLock side clips
+        blurb: >
+          The same idea in Dragonlock's fitting, for mixing with a
+          Dragonlock collection. 79 walls.
+        roles:
+          wall:
+            require: ['connection|side|dragonlock']
+            allow: ['connection|side']
+
+
+roles:
+  floor:
+    title: Floor
+    query:
+      # What every method's floor has in common, and no more.
+      # shape|floor|wall says it takes a wall; shape|floor|s2w is
+      # permitted but not required, and everything else under
+      # shape|floor — curved, concave, diagonal, corner — is swept,
+      # which is what keeps the answer a plain tile.
+      #
+      # build|s2w is *not* here. Only s2w and wall-on-tile want it, and
+      # they ask for it themselves; a separate wall stands on an
+      # ordinary floor, as its own comment below says.
+      #
+      # 176 pieces carry shape|floor|wall, which is everything this
+      # role can ever return: 88 s2w, 58 wall on tile, 29 with no build
+      # tag. Requiring build|s2w role-wide put those 29 out of reach of
+      # the one method that should have them. With every other term of
+      # this role applied, separate wall's pool goes from 80 to 168.
+      # shape|floor and nothing else beneath it. Which children are
+      # wanted is the method's business: s2w and wall-on-tile ask for
+      # shape|floor|wall, because on those methods the tile is what the
+      # wall stands on. A separate wall does not — it stands on its own
+      # base beside a plain tile — so it asks for nothing here and the
+      # sweep keeps the s2w tiles, the curved, the concave and the
+      # diagonal out of its answer.
+      require: ['shape|floor']
+      deny_children: ['shape|floor']
+      # A base is not a floor. Bases reach this role because
+      # `_copy_base_shapes` gives a shape|base piece the plain shape
+      # beside it, and the sweep above is scoped to shape|floor, so it
+      # does not catch shape|base. The wall role needs no such line —
+      # its sweep is the whole shape namespace.
+      deny:
+        - 'shape|base'
+    # 2x2 is the default tile, and by a distance the most common: 450
+    # floors carry it against 88 at 1x1. Size is listed last because it
+    # is dropped first — a dungeon stone floor of another size is a
+    # better answer than a 2x2 floor of some other texture.
+    # connection|openforge last, not first. `prefer` drops from the end,
+    # so a term the single-piece option *denies* has to be the least
+    # wanted — leading with it meant every surviving subset contained a
+    # contradiction, prefer ran out entirely, and the floor fell back to
+    # alphabetical order.
+    prefer:
+      - 'texture|dungeon_stone'
+      - 'size|width|2'
+      - 'size|depth|2'
+      - 'connection|openforge'
+  wall:
+    title: Wall
+    query:
+      # component|wall is what makes it a wall rather than a wall-shaped
+      # feature, and denying everything below it is what makes it a
+      # plain one: the arrow slits and windows carry a child tag. Same
+      # shape of rule for the connection system — openforge and nothing
+      # else, so the side locks and pegs variants stay out until a
+      # refinement asks for them.
+      # shape too: a 60 degree angled wall carries shape|angled beside
+      # shape|wall, and every other shape|? is something this is not.
+      # shape|wall itself is required, so the sweep spares it.
+      # build|separate wall on every method, including wall on tile:
+      # the wall a tile takes is a separate wall, and build|wall on
+      # tile is not a tag this builder uses.
+      # connection|openforge is *not* here. It is the socket a separate
+      # base plugs into, so it belongs to the options that ask for a
+      # base — a wall printed with its base built in does not have one,
+      # and requiring it role-wide made the single-piece option a
+      # contradiction that resolved to nothing every time.
+      #
+      # Nor is what makes a piece a wall, which is the height
+      # question's: a low wall carries neither shape|wall nor
+      # component|wall. The scanner swaps them for shape|wall|low when
+      # it sees component|wall|low, so the two heights are not the same
+      # tag with a modifier — they are different tags, and requiring
+      # the normal ones here made low walls unreachable.
+      require:
+        - 'build|separate wall'
+      # The whole `component` namespace, not just under
+      # `component|wall`. A wall is a plain wall when the only
+      # component tag it carries is the one that says it is a wall —
+      # and the things that make it something else are not all filed
+      # under `component|wall`. A secret door is `component|secret_door`,
+      # and the narrower sweep let one through as soon as the low-wall
+      # option stopped requiring `component|wall`. Each height option
+      # names the component it keeps.
+      deny_children: ['component', 'component|wall', 'connection', 'shape']
+      # shape|square is the straight one, and the sweep would take it
+      # along with shape|angled. Permitted, not required: plenty of
+      # plain walls carry no shape|? at all.
+      #
+      # Both connectors are permitted here for the same reason, and it
+      # is load-bearing: until the wall-print question is answered,
+      # neither is required, and `deny_children: ['connection']` would
+      # otherwise sweep every wall in the catalog — they all carry one
+      # or the other. That left the wall with no answer at all on the
+      # screen between choosing a method and choosing how it prints.
+      # The print options narrow this: one requires the openforge
+      # socket, the other denies it.
+      # Both heights, and both connectors, for the same reason: until
+      # the question that decides between them is answered, neither is
+      # required, and the sweeps above would take every wall in the
+      # catalog. Requiring nothing and allowing nothing is not "no
+      # constraint" here — it is "nothing matches", and it took every
+      # method off the first screen.
+      #
+      # The height question then narrows to one by requiring it. Note
+      # both `shape|` and `component|` markers: a normal wall carries
+      # shape|wall and component|wall, a low one carries shape|wall|low
+      # and component|wall|low, and the sweeps cover both namespaces.
+      allow:
+        - 'shape|square'
+        - 'shape|wall'
+        - 'shape|wall|low'
+        - 'component|wall'
+        - 'component|wall|low'
+        - 'connection|openforge'
+        - 'connection|openlock'
+    prefer: ['texture|dungeon_stone', 'size|width|2']
+  floor-base:
+    title: Base for the floor
+    query:
+      # Square, and nothing else under shape|base. Which children are
+      # wanted is the method's business — s2w asks for the s2w base as
+      # well — so the options add to this and the sweep spares whatever
+      # they required.
+      require: ['shape|base', 'shape|base|square']
+      deny_children: ['shape|base']
+    # No connection preference here any more. It used to default both
+    # bases to topless openlock with magnets, which is a reasonable
+    # default and is now a question — and `prefer` adds its tags to
+    # `require`, so the old default outranked the answer: asking for
+    # plain OpenLOCK still returned a topless one.
+    prefer:
+      - 'texture|plain'
+
+    under: floor
+    # A base has to match the footprint of the tile standing on it, and
+    # the tile is not chosen until the person answers. These copy
+    # whatever it turned out to be.
+    match: ['size|width', 'size|depth']
+  wall-base:
+    title: Base for the wall
+    query: {require: ['shape|base']}
+    # Dungeon stone like the wall it sits under: a parts list that mixes
+    # textures looks like a mistake even when every piece fits.
+    prefer:
+      - 'texture|dungeon_stone'
+    under: wall
+    # Width only. A wall is a line along an edge: it has a width and no
+    # depth, and its base is the same shape.
+    match: ['size|width']
+
+refinements:
+  - key: texture
+    role: '*'
+    prompt: Wall texture
+    default: 'texture|dungeon_stone'
+    # Not on the first screen: nothing is being built yet, so a
+    # texture is not a question about anything.
+    when: {selected: {method: [s2w, wall-on-tile, separate-wall]}}
+    from_namespace: texture
+    # A closed list, because the namespace is not a question anyone can
+    # answer by looking at it: 40-odd textures, most carried by no wall
+    # at all. These eight are the ones with plain walls to recommend,
+    # counts measured on the fixtures.
+    choices:
+      - {tag: 'texture|dungeon_stone', title: 'Dungeon stone', blurb: 'The default. Cut blocks, 121 walls.'}
+      - {tag: 'texture|towne', title: 'Towne', blurb: 'Timber and plaster above the street. 229 walls, the largest set.'}
+      - {tag: 'texture|mortar_and_stone', title: 'Mortar and stone', blurb: 'Stones set in thick mortar. 20 walls, on foundation bases.'}
+      - {tag: 'texture|rough_stone', title: 'Rough stone', blurb: 'Undressed stone, older and cruder than dungeon stone. 75 walls.'}
+      - {tag: 'texture|cut-stone', title: 'Cut stone', blurb: 'Fine masonry with tight joints. 49 walls.'}
+      - {tag: 'texture|stone_brick', title: 'Stone brick', blurb: 'A building facade: brick below, timber above. 40 walls, no matching floor.'}
+      - {tag: 'texture|aztlan', title: 'Aztlan', blurb: 'Carved stepped stone. 38 walls.'}
+      - {tag: 'texture|necro', title: 'Necro', blurb: 'Bone and black stone. 25 walls, no matching floor.'}
+    # The base that goes under a texture is not always a base of that
+    # name. A towne building stands on a wood base: the catalog has 441
+    # towne walls and no towne base at all, so without this, asking for
+    # towne empties both base roles.
+    #
+    # Five more wall textures still have no base of their own name and
+    # no mapping: cavern (8 walls), mine (7), dwarven_halls (2),
+    # large_brick (2) and foundations (1, where the base texture is
+    # `foundation`, singular). Choosing one of those empties the wall
+    # base, which is the honest answer until someone says what it
+    # stands on — guessing would quietly recommend the wrong base
+    # instead of visibly recommending none.
+    # The floor base is not in this vocabulary at all: every base that
+    # carries shape|base|square is texture|plain, all 324 of them, and
+    # the textured bases are all wall bases. Asking it for a texture
+    # matches nothing whichever texture is chosen.
+    except_roles: ['floor-base', 'floor']
+    substitute:
+      'texture|towne':
+        wall-base: 'texture|wood'
+      # A stone brick facade's storey is a texture, not a component:
+      # the ground floor is brick on a foundation, the upper storey is
+      # timber-framed and stands on timber.
+      'texture|stone_brick':
+        wall-base: 'texture|foundation'
+      'texture|stone_brick|ground':
+        wall-base: 'texture|foundation'
+      'texture|stone_brick|upper':
+        wall-base: 'texture|timber'
+      'texture|mortar_and_stone':
+        wall-base: 'texture|foundation'
+
+  # The floor asks separately, and that is the point rather than a
+  # concession. Three of the eight wall textures have no floor of their
+  # own name at all — cave, stone brick and necro carry 110, 40 and 25
+  # walls and not one shape|floor|wall between them — so a single
+  # texture question would empty the floor for a third of its answers.
+  # Only the five that have both are offered here.
+  #
+  # The sub-textures matter here in a way they do not for the wall.
+  # Every dungeon stone floor in the catalog is block or eroded — 34
+  # and 37, which is the whole 71 — so "dungeon stone" alone is not a
+  # floor anyone pictures, it is a coin toss between two that look
+  # nothing alike. Towne divides the same way, into long planks and
+  # plain boards. The parent stays on the list as "either is fine".
+  - key: floor-texture
+    role: floor
+    prompt: Floor texture
+    # The floor to recommend depends on the wall standing on it. A
+    # wooden-framed building wants a wooden floor, and mortar and
+    # stone has no floor of its own name at all, so it borrows the
+    # blockwork that reads closest to it.
+    default:
+      - when: {selected: {texture: ['texture|towne', 'texture|stone_brick']}}
+        value: 'texture|towne'
+      - when: {selected: {texture: ['texture|mortar_and_stone']}}
+        value: 'texture|dungeon_stone|block'
+      - {value: 'texture|dungeon_stone'}
+    when: {selected: {method: [s2w, wall-on-tile, separate-wall]}}
+    from_namespace: texture
+    choices:
+      - {tag: 'texture|dungeon_stone', title: 'Dungeon stone', blurb: '71 floors that take a wall, and every one of them is block or eroded.'}
+      - {tag: 'texture|dungeon_stone|block', title: 'Dungeon stone, block', blurb: 'Square-cut flags laid in courses. 34 floors.'}
+      - {tag: 'texture|dungeon_stone|eroded', title: 'Dungeon stone, eroded', blurb: 'The same flags worn round at the edges. 37 floors.'}
+      - {tag: 'texture|rough_stone', title: 'Rough stone', blurb: '38 floors.'}
+      - {tag: 'texture|cut-stone', title: 'Cut stone', blurb: '32 floors.'}
+      # Every towne floor is planking, whatever the wall above it is
+      # doing, so the list says what it is rather than which set it
+      # came out of.
+      - {tag: 'texture|towne', title: 'Wood', blurb: '23 floors, all of them boarded.'}
+      - {tag: 'texture|towne|long_planks', title: 'Wood, long planks', blurb: 'Boards running the length of the tile. 12 floors, in two layouts.'}
+      - {tag: 'texture|towne|wood', title: 'Wood, short boards', blurb: '3 floors, and no tile sizes — these come in the one size.'}
+      - {tag: 'texture|aztlan', title: 'Aztlan', blurb: '11 floors.'}
+
+
+  # How the bases clip down — one question, whose answers are the
+  # combinations that actually exist.
+  #
+  # It was three chained yes/nos (which system, then topless, then
+  # unsupported) and that was wrong twice over. It forced an answer to
+  # each before the next appeared, and it could offer topless *and*
+  # unsupported, which no base in the catalog is. The tags are not
+  # independent: a base is OpenLOCK or DragonLock, with magnets or
+  # without, and the OpenLOCK one may be topless or unsupported but
+  # never both. Asking which combination you want says all of that and
+  # cannot express the pairings that do not exist.
+  #
+  # Derived, so it follows the build rather than a list written here:
+  # a 1-inch dungeon stone wall base offers four, a 2-inch one seven,
+  # and aztlan offers a different set again because it has unsupported
+  # bases where dungeon stone does not. Deriving is also why nothing
+  # here gates topless to OpenLOCK: no DragonLock base is topless, so
+  # the combination never comes up to be offered, and a rule saying so
+  # would be a second copy of that fact and the one that goes stale.
+  - key: base-clips
+    role: '*'
+    except_roles: ['wall', 'floor']
+    prompt: How do the bases clip together?
+    when: {selected: {method: [s2w, wall-on-tile, separate-wall]}}
+    # Magnets and topless openlock: the clips print without supports
+    # and the magnets hold in any orientation, which is the set most
+    # people end up with.
+    default: 'connection|magnetic,connection|openlock,connection|openlock|topless'
+    blurb: >
+      Clips are how the bases join to each other. There are two
+      systems, and the honest answer is that it rarely matters: the
+      consensus is that Dragonbite clips hold better and OpenLOCK
+      clips are easier for rapid swapping, but most people agree they
+      aren't different enough to worry about. Supporting both is built
+      into how this project is developed, from the ground up.
+
+      For what it is worth, I have more OpenLOCK tiles than
+      DragonLock, OpenLOCK is somewhat more widespread, and there are
+      separate wall cases I can't replicate in DragonLock.
+
+      Magnets are better if you lay tiles down at game time — they
+      help you align tiles quickly, and frankly they have a pleasing
+      feel. The flex magnetic bases take 5mm spheres and five
+      cylindrical sizes: 5mm×3mm, 5mm×2mm, 4mm×3mm, 4mm×2mm and
+      3/16"×1/8". They spin in place, so you never have to think about
+      polarity.
+
+      Topless removes the material above the clip bay, which is not
+      thick to begin with: faster to print, and no supports to take
+      out. I don't recommend it on its own, though — there is very
+      little contact between the top of the base and whatever you glue
+      it to. If you want a single central OpenLOCK bay, which is a
+      common choice, take the magnetic OpenLOCK base and simply don't
+      fit the magnets. Unsupported is newer: modern printers bridge
+      well enough that many people find they don't need supports at
+      all.
+
+      Print your clips in PETG, not PLA. PLA is rigid and brittle, so
+      clips snap instead of flexing. Keep the bases in whatever you
+      are printing everything else in — PETG is harder to glue and
+      harder to paint.
+
+      If a clip will not go into its bay, that is almost always the
+      built-in supports: OpenLOCK and DragonLock clips both print with
+      supports you have to snap out first. It is the question people
+      ask most.
+    links:
+      5mm×3mm: https://amzn.to/3TiebAV
+      5mm×2mm: https://amzn.to/3n2prFa
+      4mm×3mm: https://amzn.to/3JOtXzd
+      4mm×2mm: https://amzn.to/3looXJl
+      3/16"×1/8": https://www.kjmagnetics.com/proddetail.asp?prod=D32AH
+    # The names the catalog cannot spell: a tag says `openlock` and the
+    # product is OpenLOCK. Only the names, so a new sibling tag still
+    # appears on its own.
+    titles:
+      'connection|openlock': OpenLOCK
+      'connection|dragonlock': DragonLock
+      'connection|magnetic': Magnets
+    from_combination: connection
+    # Every magnetic base is also magnetic|flex, so showing both
+    # doubles the label and separates nothing. Hidden, not refused —
+    # the pieces still carry it.
+    exclude: ['connection|magnetic|flex']
+
+  # Pegs on top of the wall, so another storey can stand on it. A
+  # different question from the side clips, which join wall to wall
+  # along a run: these join floor to floor up a building, and a wall
+  # can have both, either or neither.
+  #
+  # Only four of the eight wall textures have pegged walls at all —
+  # towne 58, dungeon stone 35, cut stone 12, rough stone 10, and
+  # necro, mortar and stone, aztlan and stone brick have none. So on
+  # half the textures this question has no answer, and the page drops
+  # it rather than asking something unanswerable.
+  - key: pegs
+    role: wall
+    group: Other options
+    prompt: Multifloor pegs?
+    blurb: >
+      Pegs on the top edge of the wall, and matching holes in the
+      bottom of the tile above. They are OpenLOCK's way of registering
+      one storey on the next: the upper floor drops onto them and
+      stops sliding about, which is the difference between a building
+      you can pick a roof off and one that comes apart when someone
+      leans on the table.
+
+      Only worth saying yes to if you are actually building upwards. A
+      pegged wall prints the same and costs nothing extra, but the
+      pegs stand proud of the top edge, so a wall meant to be the top
+      of the thing looks better without them.
+    when: {selected: {method: [s2w, wall-on-tile, separate-wall]}}
+    on_tags: {require: ['connection|pegs']}
+    off_tags: {deny: ['connection|pegs']}

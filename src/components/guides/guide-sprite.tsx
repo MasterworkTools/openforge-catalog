@@ -1,0 +1,84 @@
+'use client';
+
+import React from 'react';
+import { GuideBlueprint, thumbnailOf } from '@/services/guide-service';
+
+/**
+ * One frame of a blueprint's sprite sheet, at a fixed angle.
+ *
+ * The sprite viewer on a blueprint's own page is interactive — drag to
+ * rotate, arrow keys, an unwrapped cube. That is the right thing when
+ * you are looking at one piece. Here there are up to four pieces side
+ * by side and the question is whether they go together, which only
+ * works if they are all drawn from the same direction. So this is a
+ * still from the parts list's point of view — it does not spin itself.
+ * The list spins it, handing every piece the same angle *by name*,
+ * because these are different sheets and the name is the only thing
+ * they have in common. (In practice every sheet in the catalog carries
+ * the same ten angles in the same order, but leaning on that would
+ * make the first sheet that does not a silent wrong picture.)
+ */
+
+// One size, because every part is drawn at the same one: a parts list
+// answers "do these go together" at a glance, and pieces drawn at
+// different scales do not.
+const SIZE = 240;
+
+interface GuideSpriteProps {
+  blueprint: GuideBlueprint | null;
+  /** Angle name, shared by every part so they turn together. */
+  view?: string;
+}
+
+export function GuideSprite({ blueprint, view = 'front' }: GuideSpriteProps) {
+  const image = thumbnailOf(blueprint);
+  const sprite = image?.sprite_metadata;
+
+  if (!image) {
+    return (
+      <div
+        className="flex items-center justify-center rounded bg-gray-100 text-xs text-gray-500"
+        style={{ width: SIZE, height: SIZE }}
+      >
+        no picture
+      </div>
+    );
+  }
+
+  // A thumbnail that is not a sprite sheet is just a picture.
+  if (!sprite) {
+    return (
+      <img
+        src={image.image_url}
+        alt={blueprint?.blueprint_name ?? ''}
+        className="object-contain rounded"
+        style={{ width: SIZE, height: SIZE }}
+      />
+    );
+  }
+
+  const index =
+    sprite.angles?.find((angle) => angle.name === view)?.index ??
+    sprite.default_angle ??
+    0;
+  const row = Math.floor(index / sprite.grid_cols);
+  const col = index % sprite.grid_cols;
+
+  return (
+    <div
+      role="img"
+      aria-label={`${blueprint?.blueprint_name ?? 'part'}, seen from the ${view}`}
+      className="rounded"
+      style={{
+        width: SIZE,
+        height: SIZE,
+        backgroundImage: `url(${image.image_url})`,
+        // The sheet is drawn at `SIZE` per tile rather than its native
+        // tile_size, so the whole sheet scales with it.
+        backgroundSize: `${sprite.grid_cols * SIZE}px ${sprite.grid_rows * SIZE}px`,
+        backgroundPosition: `-${col * SIZE}px -${row * SIZE}px`,
+        backgroundRepeat: 'no-repeat',
+      }}
+    />
+  );
+}

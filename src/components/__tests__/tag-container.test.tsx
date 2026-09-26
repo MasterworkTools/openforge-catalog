@@ -55,6 +55,8 @@ describe('TagContainer', () => {
     fetchTagDescriptions: mockFetchTagDescriptions,
     selectedTags: [],
     denyTags: [],
+    denyChildrenTags: [],
+    allowTags: [],
     blueprints: [],
     paging: null,
     autoload: false,

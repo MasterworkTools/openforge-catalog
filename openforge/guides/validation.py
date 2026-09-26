@@ -70,7 +70,15 @@ def _describe_path(data: dict, path) -> str:
 
 
 def _cross_reference_errors(data: dict) -> list[str]:
-    return _duplicate_errors(data) + _role_reference_errors(data) + _when_errors(data)
+    return (
+        _duplicate_errors(data)
+        + _role_reference_errors(data)
+        + _refinement_role_errors(data)
+        + _choice_errors(data)
+        + _default_errors(data)
+        + _match_errors(data)
+        + _when_errors(data)
+    )
 
 
 def _duplicate_errors(data: dict) -> list[str]:
@@ -128,6 +136,133 @@ def _role_reference_errors(data: dict) -> list[str]:
     errors += _under_cycle_errors(roles)
     errors += _orphan_role_errors(data, roles)
     return errors
+
+
+def _refinement_role_errors(data: dict) -> list[str]:
+    """`except_roles` and `substitute` name roles too.
+
+    `role` was already checked; these two were not, and both fail
+    silently rather than loudly. A misspelled `except_roles` entry
+    excepts nothing, so the refinement is asked of a part that cannot
+    answer it and the part comes back empty. A misspelled `substitute`
+    role gets the chosen tag instead of its exception — which is the
+    bug the substitution exists to prevent, reappearing under a typo.
+    """
+    roles = data["roles"]
+    errors = []
+    for refinement in data.get("refinements", []):
+        where = f"refinement {refinement['key']!r}"
+        errors += [
+            f"{where}: `except_roles` names unknown role {name!r}"
+            for name in refinement.get("except_roles", [])
+            if name not in roles
+        ]
+        for tag, by_role in (refinement.get("substitute") or {}).items():
+            errors += [
+                f"{where}: `substitute` for {tag!r} names unknown role {name!r}"
+                for name in by_role
+                if name not in roles
+            ]
+    return errors
+
+
+def _choice_errors(data: dict) -> list[str]:
+    """A refinement's `choices` have to be answers it can accept.
+
+    The namespace check at resolve time refuses a tag from outside
+    `from_namespace`, so a choice outside it is an option that raises
+    the moment someone clicks it. And a toggle has no namespace to sit
+    in, so `choices` on one is a list nothing would ever read.
+    """
+    errors = []
+    for refinement in data.get("refinements", []):
+        choices = refinement.get("choices") or []
+        if not choices:
+            continue
+        where = f"refinement {refinement['key']!r}"
+        namespace = refinement.get("from_namespace")
+        if not namespace:
+            errors.append(f"{where}: `choices` needs `from_namespace`")
+            continue
+        errors += [
+            f"{where}: choice {choice['tag']!r} is not under {namespace!r}"
+            for choice in choices
+            if not choice["tag"].startswith(f"{namespace}|")
+        ]
+        errors += _duplicates(
+            f"choice in {where}", [choice["tag"] for choice in choices]
+        )
+    return errors
+
+
+def _recommended_values(question: dict) -> list:
+    """Every value a `default` can recommend.
+
+    One for a plain default, and one per clause for a conditional one.
+    Each is checked the same way: which branch recommends it does not
+    change whether it names an answer that exists.
+    """
+    default = question.get("default")
+    if default is None:
+        return []
+    if isinstance(default, list):
+        return [clause["value"] for clause in default]
+    return [default]
+
+
+def _default_errors(data: dict) -> list[str]:
+    """A recommendation has to name an answer that exists.
+
+    It is used before anyone clicks anything, so a misspelled one is
+    not a button that misbehaves — it is a predicate asking for a tag
+    nothing has, on the first screen, with no way to tell from the
+    page that a default is what did it.
+    """
+    errors = []
+    for step in data["steps"]:
+        keys = {option["key"] for option in step["options"]}
+        errors += [
+            f"step {step['key']!r}: `default` names unknown option {value!r}"
+            for value in _recommended_values(step)
+            if value not in keys
+        ]
+    for refinement in data.get("refinements", []):
+        where = f"refinement {refinement['key']!r}"
+        for value in _recommended_values(refinement):
+            errors += _refinement_default_errors(refinement, where, value)
+    return errors
+
+
+def _refinement_default_errors(refinement: dict, where: str, value: str) -> list[str]:
+    """One recommended value, against the answers this refinement has."""
+    if "on_tags" in refinement:
+        if value not in ("on", "off"):
+            return [f"{where}: `default` takes 'on' or 'off', not {value!r}"]
+        return []
+    errors = []
+    namespace = refinement.get("from_namespace") or refinement.get("from_combination")
+    if namespace and not all(
+        part.startswith(f"{namespace}|") for part in value.split(",")
+    ):
+        errors.append(f"{where}: `default` {value!r} is not under {namespace!r}")
+    choices = [choice["tag"] for choice in refinement.get("choices", [])]
+    if choices and value not in choices:
+        errors.append(f"{where}: `default` {value!r} is not one of its choices")
+    return errors
+
+
+def _match_errors(data: dict) -> list[str]:
+    """`match` copies from the role above, so there has to be one.
+
+    Without `under` there is nothing to copy from and the role silently
+    takes no constraint at all — a base that was meant to match the
+    footprint above it matches every footprint instead.
+    """
+    return [
+        f"role {name!r}: `match` requires `under`, which it does not have"
+        for name, role in data["roles"].items()
+        if role.get("match") and "under" not in role
+    ]
 
 
 def _under_cycle_errors(roles: dict) -> list[str]:
@@ -198,6 +333,17 @@ def _when_errors(data: dict) -> list[str]:
             options_by_step,
             earlier=[s["key"] for s in steps[:position]],
         )
+        # An option carries a `when` of its own, read by the same
+        # helper the step's is, and gating one option of eight rather
+        # than the whole step. It answers to the same rule: the step it
+        # reads has to come before the step the option belongs to.
+        for option in step["options"]:
+            errors += _when_clause_errors(
+                f"step {step['key']!r} option {option['key']!r}",
+                option.get("when"),
+                options_by_step,
+                earlier=[s["key"] for s in steps[:position]],
+            )
     for refinement in data.get("refinements", []):
         errors += _when_clause_errors(
             f"refinement {refinement['key']!r}",

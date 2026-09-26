@@ -88,6 +88,8 @@ def resolve_guide(guide_key: str):
                     guide["document"],
                     _selections_from_request(),
                     _candidate_finder(curs),
+                    facets=_facet_finder(curs),
+                    combinations=_combination_finder(curs),
                 )
             except GuideSelectionError as e:
                 # Both the query-string read and the engine raise this,
@@ -108,6 +110,51 @@ def resolve_guide(guide_key: str):
                 return jsonify({"error": str(e)}), 400
             _attach_images(curs, resolved["parts"])
             return jsonify(resolved)
+
+
+def guide_availability(guide_key: str):
+    """Which offered answers would empty a part, and which answer did it.
+
+    Its own endpoint because it costs several times what the parts
+    cost — a predicate per role per offered answer — and the parts are
+    what the person is waiting to see. The page renders on `resolve`
+    and drops the dead answers when this lands.
+
+    Same selections, same errors, same 404: it is the same question
+    asked about the answers rather than about the pieces.
+    """
+    with current_app.db.connection() as conn:
+        with conn.cursor(row_factory=dict_row) as curs:
+            guide = _guide_or_404(curs, guide_key)
+            try:
+                resolved = resolve(
+                    guide["document"],
+                    _selections_from_request(),
+                    _candidate_finder(curs),
+                    exists=_existence_finder(curs),
+                    facets=_facet_finder(curs),
+                    combinations=_combination_finder(curs),
+                )
+            except GuideSelectionError as e:
+                return jsonify({"error": str(e)}), 400
+            questions = resolved["steps"] + resolved["refinements"]
+            return jsonify(
+                {
+                    "unavailable": {
+                        question["key"]: question["unavailable"]
+                        for question in questions
+                        if question["unavailable"]
+                    },
+                    # Which earlier answer is responsible for each, so
+                    # the page can say why an answer is not there
+                    # rather than simply not have it.
+                    "because": {
+                        question["key"]: question["because"]
+                        for question in questions
+                        if question.get("because")
+                    },
+                }
+            )
 
 
 def _selections_from_request() -> dict:
@@ -165,9 +212,78 @@ def _candidate_finder(curs):
         # One row, because the engine narrows and asks again rather
         # than paging: a limit that varies would be flexibility with
         # no second value.
-        return tag_sql.tag_search_blueprints(curs, **to_tag_query(predicate), limit=1)
+        found = tag_sql.tag_search_blueprints(curs, **to_tag_query(predicate), limit=1)
+        _attach_tags(curs, found)
+        return found
 
     return find_candidates
+
+
+def _facet_finder(curs):
+    """What answers a namespace question actually has, here and now.
+
+    Given the predicate that narrows a part, the tags it carries under
+    a namespace — so a guide offers the connectors that exist for
+    *these* bases rather than a list somebody wrote down once.
+    """
+
+    def facets(predicate: dict, namespace: str) -> list[dict]:
+        return tag_sql.tag_search_namespace_facets(
+            curs, **to_tag_query(predicate), namespace=namespace
+        )
+
+    return facets
+
+
+def _combination_finder(curs):
+    """The distinct sets of tags a namespace's pieces actually carry."""
+
+    def combinations(predicate: dict, namespace: str, exclude: list) -> list[dict]:
+        return tag_sql.tag_search_namespace_combinations(
+            curs, **to_tag_query(predicate), namespace=namespace, exclude=exclude
+        )
+
+    return combinations
+
+
+def _existence_finder(curs):
+    """The same search without the tags, for the availability pass.
+
+    That pass asks "is there anything at all" around thirty times a
+    request and never looks at what it found, so fetching each
+    candidate's tags is a second round trip per question for something
+    nobody reads.
+    """
+
+    def exists(predicate: dict) -> bool:
+        return tag_sql.tag_search_blueprint_exists(curs, **to_tag_query(predicate))
+
+    return exists
+
+
+def _attach_tags(curs, blueprints: list[dict]) -> None:
+    """Put each blueprint's tags on it, as plain strings.
+
+    Two callers need these and neither can get them from the search.
+    A role with `match` has to read the size of the part it sits under,
+    which is not known until that part is chosen; and the page shows
+    the tags beside each piece, because the fastest way to see that a
+    guide is recommending the wrong thing is to read what it actually
+    asked for.
+
+    One query per successful search rather than one batch at the end:
+    the engine needs them mid-resolution, and a search that found
+    nothing does not ask.
+    """
+    if not blueprints:
+        return
+    by_blueprint = {}
+    for tag in tag_sql.get_tags_for_blueprints(
+        curs, [blueprint["id"] for blueprint in blueprints]
+    ):
+        by_blueprint.setdefault(tag["blueprint_id"], []).append(tag["tag"])
+    for blueprint in blueprints:
+        blueprint["tags"] = by_blueprint.get(blueprint["id"], [])
 
 
 def _attach_images(curs, parts: list[dict]) -> None:

@@ -123,6 +123,8 @@ describe('BlueprintContainer', () => {
         expandedNodes: {},
         selectedTags: [],
         denyTags: [],
+        denyChildrenTags: [],
+        allowTags: [],
         blueprints: [],
         paging: null,
         autoload: false,

@@ -44,6 +44,14 @@ export interface TagStore {
   expandedNodes: Record<string, boolean>;
   selectedTags: string[];
   denyTags: string[];
+  /**
+   * "This tag and nothing else beneath it", and the children spared
+   * from that sweep. Set from a guide's resolved predicate so the
+   * modal shows the set the guide saw; the tag tree does not offer
+   * them yet, so they survive the tags a person adds and removes.
+   */
+  denyChildrenTags: string[];
+  allowTags: string[];
   blueprints: Blueprint[];
   paging: Paging | null;
   autoload: boolean;
@@ -61,7 +69,13 @@ export interface TagStore {
   clearTags: () => void;
   addDenyTag: (tag: string) => void;
   removeDenyTag: (tag: string) => void;
-  setTagState: (tags: { require?: string[]; deny?: string[]; searchTerm?: string | null }) => void;
+  setTagState: (tags: {
+    require?: string[];
+    deny?: string[];
+    denyChildren?: string[];
+    allow?: string[];
+    searchTerm?: string | null;
+  }) => void;
   fetchBlueprints: (params?: { next?: string; previous?: string }) => Promise<void>;
   setBlueprints: (blueprints: Blueprint[], paging: Paging) => void;
   setSearchTerm: (term: string | null) => void;
@@ -75,6 +89,8 @@ export const createTagStore = (autoload = false, search_models = false, search_b
     expandedNodes: {},
     selectedTags: [],
     denyTags: [],
+    denyChildrenTags: [],
+    allowTags: [],
     blueprints: [],
     paging: null,
     autoload,
@@ -84,7 +100,14 @@ export const createTagStore = (autoload = false, search_models = false, search_b
     tagDescriptions: {},
     initialSetupComplete: false,
     fetchData: async () => {
-      const { search_models, search_blueprints, selectedTags, denyTags } = get();
+      const {
+        search_models,
+        search_blueprints,
+        selectedTags,
+        denyTags,
+        denyChildrenTags,
+        allowTags,
+      } = get();
       const params = new URLSearchParams();
 
       // Add parameters for model/blueprint search
@@ -94,6 +117,12 @@ export const createTagStore = (autoload = false, search_models = false, search_b
       const requestBody = {
         require: selectedTags.map(tag => ({ tag })),
         deny: denyTags.map(tag => ({ tag })),
+        // Omitted when unused, so an ordinary search sends exactly
+        // the body it always did.
+        ...(denyChildrenTags.length
+          ? { deny_children: denyChildrenTags.map(tag => ({ tag })) }
+          : {}),
+        ...(allowTags.length ? { allow: allowTags.map(tag => ({ tag })) } : {}),
       };
 
       const response = await fetch(`/api/blueprints/tags${params.toString() ? '?' + params.toString() : ''}`, {
@@ -242,7 +271,7 @@ export const createTagStore = (autoload = false, search_models = false, search_b
     },
     clearTags: () => {
       devLog('clearTags');
-      set({ selectedTags: [], denyTags: [], searchTerm: null });
+      set({ selectedTags: [], denyTags: [], denyChildrenTags: [], allowTags: [], searchTerm: null });
       // Clear blueprint selection by setting it to null
       const blueprintStore = (window as { __BLUEPRINT_STORE__?: { getState: () => { setSelectedBlueprint: (blueprint: Blueprint | null) => void } } }).__BLUEPRINT_STORE__;
       if (blueprintStore) {
@@ -250,11 +279,24 @@ export const createTagStore = (autoload = false, search_models = false, search_b
       }
       get().fetchBlueprints();
     },
-    setTagState: (tags: { require?: string[]; deny?: string[]; searchTerm?: string | null }) => {
+    setTagState: (tags: {
+      require?: string[];
+      deny?: string[];
+      denyChildren?: string[];
+      allow?: string[];
+      searchTerm?: string | null;
+    }) => {
       devLog('setTagState', tags);
-      const updates: Partial<Pick<TagStore, 'selectedTags' | 'denyTags' | 'searchTerm'>> = {
+      const updates: Partial<
+        Pick<
+          TagStore,
+          'selectedTags' | 'denyTags' | 'denyChildrenTags' | 'allowTags' | 'searchTerm'
+        >
+      > = {
         selectedTags: tags.require || [],
         denyTags: tags.deny || [],
+        denyChildrenTags: tags.denyChildren || [],
+        allowTags: tags.allow || [],
       };
       if ('searchTerm' in tags) {
         updates.searchTerm = tags.searchTerm;
@@ -268,7 +310,15 @@ export const createTagStore = (autoload = false, search_models = false, search_b
       get().fetchBlueprints();
     },
     fetchBlueprints: async (params?: { next?: string; previous?: string }) => {
-      const { selectedTags, denyTags, search_models, search_blueprints, searchTerm } = get();
+      const {
+        selectedTags,
+        denyTags,
+        denyChildrenTags,
+        allowTags,
+        search_models,
+        search_blueprints,
+        searchTerm,
+      } = get();
 
       const urlParams = new URLSearchParams();
 
@@ -291,6 +341,12 @@ export const createTagStore = (autoload = false, search_models = false, search_b
       const requestBody = {
         require: selectedTags.map(tag => ({ tag })),
         deny: denyTags.map(tag => ({ tag })),
+        // Omitted when unused, so an ordinary search sends exactly
+        // the body it always did.
+        ...(denyChildrenTags.length
+          ? { deny_children: denyChildrenTags.map(tag => ({ tag })) }
+          : {}),
+        ...(allowTags.length ? { allow: allowTags.map(tag => ({ tag })) } : {}),
       };
 
       const response = await fetch(`/api/blueprints/tags${urlParams.toString() ? '?' + urlParams.toString() : ''}`, {

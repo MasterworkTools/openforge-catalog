@@ -70,13 +70,39 @@ $defs:
     description: >
       Tag predicate over blueprints, in the same vocabulary as a
       blueprint slot and the tag_query API schema. `require` and `deny`
-      match a tag exactly; `accept` matches it or any tag below it.
+      match a tag exactly; `accept` matches it or any tag below it;
+      `deny_children` refuses everything *below* a tag while leaving the
+      tag itself, and `allow` names the children that survive that
+      sweep.
     properties:
       require:
         $ref: "#/$defs/tag_list"
       deny:
         $ref: "#/$defs/tag_list"
       accept:
+        $ref: "#/$defs/tag_list"
+      deny_children:
+        description: >
+          Refuse every tag strictly beneath these, keeping the tag
+          itself. `require: [component|wall]` with
+          `deny_children: [component|wall]` is "a plain wall": the
+          arrow slits and curved variants carry a child tag and are
+          refused, and listing them by hand would mean revisiting every
+          guide whenever a new variant is designed.
+
+          Every tag named in `require` or `allow` is exempt from the
+          sweep, which is what makes "shape|floor|wall and nothing else
+          under shape|floor" expressible in one predicate. The
+          exemption is by exact tag, not by ordering, so `accept` — a
+          subtree match with no single tag to spare — does not confer
+          it. Combining `accept` with a `deny_children` over the same
+          namespace matches nothing.
+        $ref: "#/$defs/tag_list"
+      allow:
+        description: >
+          Tags permitted but not required, which exist to survive a
+          `deny_children` sweep. Unlike `accept` this asks for nothing:
+          a piece without the tag still matches.
         $ref: "#/$defs/tag_list"
 
   tag_list:
@@ -108,6 +134,33 @@ $defs:
           items:
             type: string
 
+  recommendation:
+    description: >
+      What to recommend, and to assume until the person answers. A
+      plain value recommends the same thing on every branch. A list
+      recommends by branch: the first clause whose `when` holds wins,
+      and a clause without one catches the rest, so a wall on a tile
+      can be told to want no side clips while everything else wants
+      OpenLOCK. A list matching no clause recommends nothing.
+
+      Assuming is not answering: the wizard still walks from the first
+      question nobody has answered, so a recommendation never skips a
+      question. Clauses may read any earlier answer, refinements
+      included — the floor to recommend depends on the wall texture.
+    oneOf:
+      - type: string
+      - type: array
+        minItems: 1
+        items:
+          type: object
+          required: [value]
+          additionalProperties: false
+          properties:
+            when:
+              $ref: "#/$defs/when"
+            value:
+              type: string
+
   step:
     type: object
     required:
@@ -121,6 +174,28 @@ $defs:
       prompt:
         type: string
         minLength: 1
+      default:
+        allOf:
+          - $ref: "#/$defs/recommendation"
+        description: >
+          The option key to recommend. Marked on the button and used
+          for the parts, so the page shows a complete buildable set
+          from the first screen rather than empty boxes.
+      blurb:
+        type: string
+        description: >
+          What to know before answering, shown above the options. For
+          what is true of the question rather than of any one answer —
+          "all sizes are in inches" belongs here, not repeated on
+          eight buttons. Blank lines separate paragraphs.
+      links:
+        type: object
+        minProperties: 1
+        description: Phrases in the step's blurb to link, as on an option.
+        additionalProperties:
+          type: string
+          format: uri
+          pattern: "^https://"
       when:
         $ref: "#/$defs/when"
       options:
@@ -143,9 +218,36 @@ $defs:
         minLength: 1
       blurb:
         type: string
+      links:
+        type: object
+        minProperties: 1
+        description: >
+          Phrases in the blurb to turn into links, mapped to their
+          URLs. Here rather than as markup in the blurb because the
+          blurb is prose an author writes, and because a name that
+          appears twice should link both times without them thinking
+          about it. Matched literally, longest phrase first, so
+          "Fat Dragon Games" wins over a bare "Fat Dragon".
+        additionalProperties:
+          type: string
+          format: uri
+          pattern: "^https://"
       image:
         type: string
         description: Path to an illustration, relative to the image host.
+      when:
+        $ref: "#/$defs/when"
+        description: >
+          Offer this option only when earlier steps were answered this
+          way. Reads exactly like a step's `when`, and exists because
+          gating a whole step is too blunt when it is some of its
+          options that do not apply — s2w builds have no tile
+          shallower than they are wide, so the depth-1 sizes are not
+          offered once s2w is chosen.
+
+          An answer naming an option that this branch does not offer
+          counts as unanswered, and the step is asked again. That is
+          not a bad request: the key is one the step really has.
       roles:
         type: object
         minProperties: 1
@@ -203,6 +305,23 @@ $defs:
       under:
         type: string
         description: The role this one sits beneath, when it sits under one.
+      match:
+        type: array
+        minItems: 1
+        maxItems: 4
+        description: >
+          Tag namespaces this role copies from the role it sits `under`,
+          once that role has resolved. A base has to match the footprint
+          of the piece standing on it, and the size of that piece is not
+          known until it is chosen — so `match: ['size|width',
+          'size|depth']` on a base means "whatever width and depth the
+          part above turned out to be". Requires `under`; the role above
+          resolves first. If the part above resolves to nothing, or
+          carries no tag in a namespace, that namespace adds no
+          constraint rather than matching nothing.
+        items:
+          type: string
+          pattern: "^[^|]+(\\|[^|]+)*$"
 
   refinement:
     type: object
@@ -213,9 +332,22 @@ $defs:
     additionalProperties: false
     oneOf:
       - required: [from_namespace]
-        not: {anyOf: [{required: [on_tags]}, {required: [off_tags]}]}
+        not:
+          anyOf:
+            - {required: [on_tags]}
+            - {required: [off_tags]}
+            - {required: [from_combination]}
+      - required: [from_combination]
+        not:
+          anyOf:
+            - {required: [on_tags]}
+            - {required: [off_tags]}
+            - {required: [from_namespace]}
       - required: [on_tags]
-        not: {required: [from_namespace]}
+        not:
+          anyOf:
+            - {required: [from_namespace]}
+            - {required: [from_combination]}
     description: >
       Either a pick from a tag namespace (from_namespace) or a toggle
       (on_tags / off_tags), not both. The toggle fields are spelled with
@@ -228,16 +360,152 @@ $defs:
         type: string
         minLength: 1
         description: Role name this refinement applies to, or "*" for all.
+      except_roles:
+        type: array
+        minItems: 1
+        description: >
+          Roles this refinement does not apply to, despite `role: "*"`.
+
+          Some parts are not in the vocabulary the question is asked in.
+          A floor base is structurally plain — 324 bases carry
+          `shape|base|square` and every one of them is `texture|plain`,
+          while the textured bases are all wall bases — so asking one
+          for a texture matches nothing whatever texture is chosen. It
+          is not an exception to be substituted, it is a part the
+          question does not apply to.
+        items:
+          type: string
+          minLength: 1
+      substitute:
+        type: object
+        minProperties: 1
+        description: >
+          Per-role exceptions, keyed by the chosen tag and then by role
+          name: what that role should be asked for instead.
+
+          The answer to one question is not always the same tag for
+          every part. The catalog has 441 towne walls and no towne base
+          at all, because a towne building stands on a wood base — so
+          choosing towne has to mean wood for the base roles or it
+          empties them. A role with no entry is asked for the chosen
+          tag, as usual.
+
+          Only meaningful for a namespace refinement; a toggle already
+          names its own tags.
+        additionalProperties:
+          type: object
+          minProperties: 1
+          additionalProperties:
+            type: string
+            pattern: "^[^|]+(\\|[^|]+)*$"
       prompt:
         type: string
         minLength: 1
+      default:
+        allOf:
+          - $ref: "#/$defs/recommendation"
+        description: >
+          The answer to recommend: a tag for a namespace refinement,
+          the joined tags for a combination, or "on"/"off" for a
+          toggle.
+      blurb:
+        type: string
+        description: >
+          What to know before answering, as on a step. For what is
+          true of the question rather than of any one answer — which
+          filament to print clips in, and why a clip will not go into
+          its bay. Blank lines separate paragraphs.
+      links:
+        type: object
+        minProperties: 1
+        description: Phrases in the blurb to link, as on a step option.
+        additionalProperties:
+          type: string
+          format: uri
+          pattern: "^https://"
+      titles:
+        type: object
+        minProperties: 1
+        description: >
+          Display names for derived answers, keyed by tag. Deriving an
+          answer from a tag gives "Openlock", and the product is called
+          OpenLOCK — a label is the one thing the catalog cannot spell
+          for us. Only the names, so a tag gaining a new sibling still
+          appears without anyone editing this.
+        additionalProperties:
+          type: string
+          minLength: 1
+      group:
+        type: string
+        minLength: 1
+        description: >
+          Heading to file this refinement under. Refinements sharing
+          one are drawn together, in the order the document lists
+          them, and those without one come first under the default
+          heading. For the questions that are real but rarely the
+          reason anyone came.
       when:
         $ref: "#/$defs/when"
       from_namespace:
         type: string
         description: >
-          Tag namespace to offer, e.g. "texture". The options are the
-          namespace's tags carried by the role's candidates.
+          Tag namespace to offer, e.g. "texture". Without `choices` the
+          options are open — any tag in the namespace — and the
+          frontend asks for one as free text.
+      from_combination:
+        type: string
+        description: >
+          Like `from_namespace`, but the answers are whole
+          *combinations* of tags rather than one tag at a time.
+
+          For a namespace whose tags are not independent. A base is
+          OpenLOCK or DragonLock, with magnets or without, and the
+          OpenLOCK one may be topless or unsupported but never both —
+          three chained yes/nos both misdescribe that and force an
+          answer to each. The combinations that exist say it exactly,
+          and cannot offer a pairing the catalog does not have.
+
+          Derived like any other answer, so the list narrows with the
+          build: a 1-inch dungeon stone wall base has four, a 2-inch
+          one has seven.
+      exclude:
+        type: array
+        minItems: 1
+        description: >
+          Tags to leave out of the combinations. For the ones that add
+          length and no meaning: every magnetic base is also
+          `connection|magnetic|flex`, so listing both doubles the label
+          and distinguishes nothing. Excluded tags are permitted on the
+          piece — they are hidden, not refused.
+        items:
+          type: string
+          pattern: "^[^|]+(\\|[^|]+)*$"
+      choices:
+        type: array
+        minItems: 2
+        description: >
+          The tags to offer, rather than the whole namespace. A wizard
+          asks a question you can answer by looking at it, and the
+          namespace is not that: 40-odd textures, most of which no wall
+          carries. Each has to sit inside `from_namespace`, so the
+          refinement still answers to one namespace.
+
+          A title is optional and only cosmetic — without one the
+          frontend makes a label out of the tag's last element.
+        items:
+          type: object
+          required: [tag]
+          additionalProperties: false
+          properties:
+            tag:
+              type: string
+              pattern: "^[^|]+(\\|[^|]+)*$"
+            title:
+              type: string
+              minLength: 1
+            blurb:
+              type: string
+              minLength: 1
       on_tags:
         $ref: "#/$defs/predicate"
       off_tags:

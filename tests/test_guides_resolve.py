@@ -301,14 +301,24 @@ def test_a_later_answer_narrows_the_roles_it_names(guide):
 
 
 def test_a_refinement_appears_only_when_its_when_holds(guide):
-    resolved = resolve(guide, {"method": "s2w-modular"}, find_candidates)
+    resolved = resolve(guide, {"method": "s2w-modular", "size": "two"}, find_candidates)
     assert [r["key"] for r in resolved["refinements"]] == ["texture"]
 
-    resolved = resolve(guide, {"method": "separate-wall"}, find_candidates)
-    assert [r["key"] for r in resolved["refinements"]] == [
-        "texture",
-        "side-locks",
-    ]
+    # `side-locks` is reachable on this branch, but it is the second
+    # question and the first is unanswered — one at a time applies to
+    # refinements as much as to steps, so answering the texture is what
+    # puts it on the screen.
+    resolved = resolve(
+        guide, {"method": "separate-wall", "size": "two"}, find_candidates
+    )
+    assert [r["key"] for r in resolved["refinements"]] == ["texture"]
+
+    answered = resolve(
+        guide,
+        {"method": "separate-wall", "size": "two", "texture": "texture|cave"},
+        find_candidates,
+    )
+    assert [r["key"] for r in answered["refinements"]] == ["texture", "side-locks"]
 
 
 def test_a_toggle_applies_on_tags_or_off_tags(guide):
@@ -330,7 +340,7 @@ def test_a_toggle_applies_on_tags_or_off_tags(guide):
 def test_an_unreachable_refinement_is_ignored_not_an_error(guide):
     resolved = resolve(
         guide,
-        {"method": "s2w-modular", "side-locks": "on"},
+        {"method": "s2w-modular", "size": "two", "side-locks": "on"},
         find_candidates,
     )
 
@@ -446,7 +456,17 @@ def test_the_answers_come_back_with_the_questions(guide):
     steps = {step["key"]: step for step in resolved["steps"]}
     assert steps["method"]["selected"] == "s2w-modular"
     assert steps["size"]["selected"] is None
-    refinements = {r["key"]: r for r in resolved["refinements"]}
+    # No refinements while `size` is outstanding — one question at a
+    # time — but the answer to one is still held and still applied, so
+    # it comes back the moment the questions are done.
+    assert resolved["refinements"] == []
+
+    answered = resolve(
+        guide,
+        {"method": "s2w-modular", "size": "two", "texture": "texture|cave"},
+        find_candidates,
+    )
+    refinements = {r["key"]: r for r in answered["refinements"]}
     assert refinements["texture"]["selected"] == "texture|cave"
 
 
@@ -536,10 +556,19 @@ def test_the_catalog_gets_predicates_in_the_shape_it_understands():
     every term: a lost `require` matches everything, a lost `deny`
     matches nothing. This is the one conversion point.
     """
-    assert to_tag_query({"require": ["shape|wall"], "deny": ["shape|base"]}) == {
+    assert to_tag_query(
+        {
+            "require": ["shape|wall"],
+            "deny": ["shape|base"],
+            "deny_children": ["component|wall"],
+            "allow": ["component|wall|arch"],
+        }
+    ) == {
         "accept": [],
         "require": [{"tag": "shape|wall"}],
         "deny": [{"tag": "shape|base"}],
+        "deny_children": [{"tag": "component|wall"}],
+        "allow": [{"tag": "component|wall|arch"}],
     }
 
     # All three keys are always present, because the search takes them
@@ -556,3 +585,787 @@ def test_the_catalog_gets_predicates_in_the_shape_it_understands():
     }
     assert required == {"accept", "require", "deny"}
     assert required <= set(to_tag_query({}))
+
+
+MATCHING_GUIDE = {
+    "key": "matching",
+    "title": "A guide whose bases match what they carry",
+    "steps": [
+        {
+            "key": "method",
+            "prompt": "How?",
+            "options": [
+                {
+                    "key": "separate",
+                    "title": "Separate",
+                    # Bases named before the parts they sit under, so
+                    # that resolving in the order they are mentioned
+                    # would ask a base for a size nobody has chosen
+                    # yet. The dependency has to drive the order.
+                    "roles": {
+                        "floor-base": None,
+                        "floor": {"require": ["shape|floor"]},
+                        "wall-base": None,
+                        "wall": {"require": ["shape|wall"]},
+                    },
+                },
+                {
+                    # A base with nothing above it in this branch. Not
+                    # a mistake: an option chooses which parts a build
+                    # has, and "just the bases" is a build the engine
+                    # has to answer rather than refuse.
+                    "key": "bases-only",
+                    "title": "Bases only",
+                    "roles": {"wall-base": None},
+                },
+            ],
+        }
+    ],
+    "roles": {
+        # Declared base-first on purpose: a base has to resolve after
+        # the part it copies from, whatever order the document lists
+        # them in.
+        "floor-base": {
+            "title": "Base for the floor",
+            "query": {"require": ["shape|base"]},
+            "under": "floor",
+            "match": ["size|width", "size|depth"],
+        },
+        "wall-base": {
+            "title": "Base for the wall",
+            "query": {"require": ["shape|base"]},
+            "under": "wall",
+            "match": ["size|width"],
+        },
+        "floor": {"title": "Floor", "query": {"require": ["shape|floor"]}},
+        "wall": {"title": "Wall", "query": {"require": ["shape|wall"]}},
+    },
+}
+
+MATCHING_CATALOG = [
+    {
+        "id": "f1",
+        "blueprint_name": "a floor",
+        "tags": ["shape|floor", "size|width|2", "size|depth|2"],
+    },
+    {
+        "id": "w1",
+        "blueprint_name": "a wall",
+        "tags": ["shape|wall", "size|width|2"],
+    },
+    {
+        "id": "b1",
+        "blueprint_name": "a 2x2 base",
+        "tags": ["shape|base", "size|width|2", "size|depth|2"],
+    },
+    {
+        "id": "b2",
+        "blueprint_name": "b 1x1 base",
+        "tags": ["shape|base", "size|width|1", "size|depth|1"],
+    },
+]
+
+
+def matching_finder(catalog):
+    def find_candidates(predicate):
+        def matches(blueprint):
+            tags = blueprint["tags"]
+            if any(tag not in tags for tag in predicate.get("require", [])):
+                return False
+            return all(tag not in tags for tag in predicate.get("deny", []))
+
+        found = [b for b in catalog if matches(b)]
+        found.sort(key=lambda b: b["blueprint_name"])
+        return found
+
+    return find_candidates
+
+
+def test_a_base_takes_the_size_of_the_part_it_sits_under():
+    """A base has to fit the footprint of the piece standing on it.
+
+    The size is not knowable when the guide is written — it depends on
+    what the floor turned out to be — so the role copies it from the
+    resolved part rather than naming it.
+    """
+    resolved = resolve(
+        MATCHING_GUIDE, {"method": "separate"}, matching_finder(MATCHING_CATALOG)
+    )
+    parts = {p["role"]: p for p in resolved["parts"]}
+
+    # "b 1x1 base" sorts first, so without matching it would win.
+    assert parts["floor-base"]["blueprint"]["blueprint_name"] == "a 2x2 base"
+    assert "size|width|2" in parts["floor-base"]["query"]["require"]
+    assert "size|depth|2" in parts["floor-base"]["query"]["require"]
+
+
+def test_a_wall_base_matches_the_width_and_asks_for_no_depth():
+    """A wall is a line along an edge: it has a width and no depth.
+
+    Matching `size|depth` against it must add nothing rather than
+    requiring a depth no wall carries, which would match no base.
+    """
+    resolved = resolve(
+        MATCHING_GUIDE, {"method": "separate"}, matching_finder(MATCHING_CATALOG)
+    )
+    parts = {p["role"]: p for p in resolved["parts"]}
+
+    required = parts["wall-base"]["query"]["require"]
+    assert "size|width|2" in required
+    assert not [tag for tag in required if tag.startswith("size|depth")]
+    assert parts["wall-base"]["blueprint"]["blueprint_name"] == "a 2x2 base"
+
+
+def test_a_base_for_a_part_that_resolved_to_nothing_resolves_to_nothing():
+    """Otherwise the size it falls back on is arbitrary.
+
+    A 1x1 base sitting under an absent 3x1 floor reads as an answer
+    rather than as the gap it is, and it is the wrong base for the
+    floor the person actually asked for.
+    """
+    without_floor = [b for b in MATCHING_CATALOG if b["id"] != "f1"]
+
+    resolved = resolve(
+        MATCHING_GUIDE, {"method": "separate"}, matching_finder(without_floor)
+    )
+    parts = {p["role"]: p for p in resolved["parts"]}
+
+    assert parts["floor"]["blueprint"] is None
+    assert parts["floor-base"]["blueprint"] is None
+    # The wall is unaffected: only the base that matches against the
+    # missing part goes with it.
+    assert parts["wall"]["blueprint"]["blueprint_name"] == "a wall"
+    assert parts["wall-base"]["blueprint"] is not None
+
+
+def test_parts_are_listed_in_the_order_the_options_asked_for_them():
+    """Resolution order is a dependency, not a reading order.
+
+    This option names the bases first, so they have to resolve last
+    and still be reported first. Getting this wrong is invisible in a
+    document that happens to name parts before their bases, which is
+    why this one deliberately does not.
+    """
+    resolved = resolve(
+        MATCHING_GUIDE, {"method": "separate"}, matching_finder(MATCHING_CATALOG)
+    )
+
+    assert [p["role"] for p in resolved["parts"]] == [
+        "floor-base",
+        "floor",
+        "wall-base",
+        "wall",
+    ]
+
+
+GATED_GUIDE = {
+    "key": "gated",
+    "title": "A guide where one answer rules out some of the next",
+    "steps": [
+        {
+            "key": "method",
+            "prompt": "How?",
+            "options": [
+                {"key": "deep", "title": "Deep", "roles": {"floor": None}},
+                {"key": "flat", "title": "Flat", "roles": {"floor": None}},
+            ],
+        },
+        {
+            "key": "size",
+            "prompt": "What size?",
+            "options": [
+                {
+                    "key": "2x1",
+                    "title": "2x1",
+                    "when": {"selected": {"method": ["flat"]}},
+                    "tags": {"require": ["size|2x1"]},
+                },
+                {"key": "2x2", "title": "2x2", "tags": {"require": ["size|2x2"]}},
+            ],
+        },
+    ],
+    "roles": {"floor": {"title": "Floor", "query": {"require": ["shape|floor"]}}},
+}
+
+GATED_CATALOG = [
+    {"id": "a", "blueprint_name": "a 2x1", "tags": ["shape|floor", "size|2x1"]},
+    {"id": "b", "blueprint_name": "b 2x2", "tags": ["shape|floor", "size|2x2"]},
+]
+
+
+def test_an_option_can_be_ruled_out_by_an_earlier_answer():
+    """Gating a whole step is too blunt when it is some of its options.
+
+    The catalog has no s2w tile shallower than it is wide, so the
+    depth-1 sizes are not offered once s2w is chosen — but the other
+    sizes still are, and the question still needs asking.
+    """
+    finder = matching_finder(GATED_CATALOG)
+
+    flat = resolve(GATED_GUIDE, {"method": "flat"}, finder)
+    deep = resolve(GATED_GUIDE, {"method": "deep"}, finder)
+
+    offered = {
+        step["key"]: [o["key"] for o in step["options"]] for step in flat["steps"]
+    }
+    assert offered["size"] == ["2x1", "2x2"]
+
+    offered = {
+        step["key"]: [o["key"] for o in step["options"]] for step in deep["steps"]
+    }
+    assert offered["size"] == ["2x2"]
+
+
+def test_an_answer_this_branch_does_not_offer_counts_as_unanswered():
+    """Rather than 400ing a URL someone reached by clicking.
+
+    Answer the size, then change the method to one that does not offer
+    that size: the question is asked again, and the parts resolve
+    without it. A bad *key* is still a bad request — this is a real
+    key that this branch does not have.
+    """
+    finder = matching_finder(GATED_CATALOG)
+
+    resolved = resolve(GATED_GUIDE, {"method": "deep", "size": "2x1"}, finder)
+
+    size = [step for step in resolved["steps"] if step["key"] == "size"][0]
+    assert size["selected"] is None
+    # ...and the narrowing that option would have applied is not in
+    # force: the floor is whatever the catalog offers first.
+    parts = {p["role"]: p for p in resolved["parts"]}
+    assert "size|2x1" not in parts["floor"]["query"].get("require", [])
+
+
+def test_a_key_no_step_has_is_still_a_bad_request():
+    """The leniency above is narrow, and this is the boundary."""
+    finder = matching_finder(GATED_CATALOG)
+
+    with pytest.raises(GuideSelectionError, match="nonesuch"):
+        resolve(GATED_GUIDE, {"method": "deep", "size": "nonesuch"}, finder)
+
+
+SUBSTITUTE_GUIDE = {
+    "key": "substituting",
+    "title": "A guide where one answer means different tags per part",
+    "steps": [
+        {
+            "key": "method",
+            "prompt": "How?",
+            "options": [
+                {
+                    "key": "only",
+                    "title": "Only",
+                    "roles": {"wall": None, "wall-base": None, "floor-base": None},
+                }
+            ],
+        }
+    ],
+    "roles": {
+        "wall": {"title": "Wall", "query": {"require": ["shape|wall"]}},
+        "wall-base": {"title": "Wall base", "query": {"require": ["shape|base|wall"]}},
+        "floor-base": {
+            "title": "Floor base",
+            "query": {"require": ["shape|base|square"]},
+        },
+    },
+    "refinements": [
+        {
+            "key": "texture",
+            "role": "*",
+            "prompt": "Texture",
+            "from_namespace": "texture",
+            # The floor base is structurally plain, so the question does
+            # not apply to it; the wall base takes wood for towne,
+            # because no towne base exists.
+            "except_roles": ["floor-base"],
+            "substitute": {"texture|towne": {"wall-base": "texture|wood"}},
+        }
+    ],
+}
+
+SUBSTITUTE_CATALOG = [
+    {
+        "id": "w",
+        "blueprint_name": "a towne wall",
+        "tags": ["shape|wall", "texture|towne"],
+    },
+    {
+        "id": "wb",
+        "blueprint_name": "b wood wall base",
+        "tags": ["shape|base|wall", "texture|wood"],
+    },
+    {
+        "id": "wbt",
+        "blueprint_name": "c towne wall base",
+        "tags": ["shape|base|wall", "texture|towne"],
+    },
+    {
+        "id": "fb",
+        "blueprint_name": "d plain square base",
+        "tags": ["shape|base|square", "texture|plain"],
+    },
+]
+
+
+def test_a_refinement_can_mean_a_different_tag_for_a_different_part():
+    """Choosing towne has to mean wood for the base that carries it.
+
+    The catalog has 441 towne walls and no towne base at all, because a
+    towne building stands on a wood base. Without the substitution the
+    base role asks for a piece that does not exist.
+    """
+    resolved = resolve(
+        SUBSTITUTE_GUIDE,
+        {"method": "only", "texture": "texture|towne"},
+        matching_finder(SUBSTITUTE_CATALOG),
+    )
+    parts = {p["role"]: p for p in resolved["parts"]}
+
+    assert parts["wall"]["blueprint"]["blueprint_name"] == "a towne wall"
+    # The towne wall base sorts later but would match; the wood one is
+    # what the substitution asked for.
+    assert parts["wall-base"]["blueprint"]["blueprint_name"] == "b wood wall base"
+    assert "texture|wood" in parts["wall-base"]["query"]["require"]
+
+
+def test_a_role_can_be_outside_the_question_a_refinement_asks():
+    """A floor base is plain whatever the walls are made of.
+
+    Every base carrying `shape|base|square` is `texture|plain`, so this
+    is not an exception to substitute — it is a part the question does
+    not apply to, and asking it would empty the role.
+    """
+    resolved = resolve(
+        SUBSTITUTE_GUIDE,
+        {"method": "only", "texture": "texture|towne"},
+        matching_finder(SUBSTITUTE_CATALOG),
+    )
+    parts = {p["role"]: p for p in resolved["parts"]}
+
+    assert parts["floor-base"]["blueprint"]["blueprint_name"] == "d plain square base"
+    assert not [
+        tag
+        for tag in parts["floor-base"]["query"].get("require", [])
+        if tag.startswith("texture|")
+    ]
+
+
+def test_a_role_with_no_substitution_is_asked_for_what_was_chosen():
+    """The exception list is an exception, not the rule."""
+    resolved = resolve(
+        SUBSTITUTE_GUIDE,
+        {"method": "only", "texture": "texture|wood"},
+        matching_finder(SUBSTITUTE_CATALOG),
+    )
+    parts = {p["role"]: p for p in resolved["parts"]}
+
+    assert "texture|wood" in parts["wall-base"]["query"]["require"]
+    assert "texture|wood" in parts["wall"]["query"]["require"]
+
+
+def test_a_base_whose_part_is_not_in_play_still_resolves():
+    """Not in play and resolved-to-nothing are different answers.
+
+    A role the chosen option never named is not a part that failed —
+    it is a part this build does not have. Matching against it can add
+    no constraint, so the base resolves on its own query. Conflating
+    the two empties every base in an option that names bases alone.
+    """
+    resolved = resolve(
+        MATCHING_GUIDE, {"method": "bases-only"}, matching_finder(MATCHING_CATALOG)
+    )
+    parts = {p["role"]: p for p in resolved["parts"]}
+
+    assert list(parts) == ["wall-base"]
+    # No size came from anywhere, so the first base by name wins.
+    assert parts["wall-base"]["blueprint"]["blueprint_name"] == "a 2x2 base"
+    assert not [
+        tag for tag in parts["wall-base"]["query"]["require"] if tag.startswith("size|")
+    ]
+
+
+def test_matching_a_namespace_stops_at_the_separator():
+    """`size|width` is not a prefix of `size|widthwise`.
+
+    Without the separator the match would copy a neighbouring
+    namespace's tag into `require`, and since no base carries it the
+    base would come back empty — a wrong answer that looks like an
+    honest "nothing matches".
+    """
+    catalog = copy.deepcopy(MATCHING_CATALOG)
+    wall = next(b for b in catalog if b["id"] == "w1")
+    wall["tags"] = wall["tags"] + ["size|widthwise|9"]
+
+    resolved = resolve(MATCHING_GUIDE, {"method": "separate"}, matching_finder(catalog))
+    parts = {p["role"]: p for p in resolved["parts"]}
+
+    assert parts["wall-base"]["query"]["require"] == ["shape|base", "size|width|2"]
+    assert parts["wall-base"]["blueprint"] is not None
+
+
+def test_matching_copies_a_tag_that_is_the_namespace_itself():
+    """The other half of the same test: an exact tag is in its own
+    namespace, and a match that only looked for children would drop it.
+    """
+    catalog = copy.deepcopy(MATCHING_CATALOG)
+    wall = next(b for b in catalog if b["id"] == "w1")
+    wall["tags"] = ["shape|wall", "size|width"]
+    base = next(b for b in catalog if b["id"] == "b1")
+    base["tags"] = base["tags"] + ["size|width"]
+
+    resolved = resolve(MATCHING_GUIDE, {"method": "separate"}, matching_finder(catalog))
+    parts = {p["role"]: p for p in resolved["parts"]}
+
+    assert parts["wall-base"]["query"]["require"] == ["shape|base", "size|width"]
+
+
+def test_a_refinement_offering_a_closed_list_refuses_anything_else(guide):
+    """The buttons and the accepted answers have to be the same set.
+
+    A closed list is a promise about what the answers are, and the URL
+    carrying the answer is editable, so the promise has to be enforced
+    somewhere other than the markup.
+    """
+    texture = next(r for r in guide["refinements"] if r["key"] == "texture")
+    texture["choices"] = [
+        {"tag": "texture|dungeon_stone"},
+        {"tag": "texture|cave"},
+    ]
+
+    resolved = resolve(
+        guide,
+        {"method": "s2w-modular", "size": "two", "texture": "texture|cave"},
+        find_candidates,
+    )
+    assert resolved["refinements"][0]["selected"] == "texture|cave"
+    # Still in the namespace, so the namespace check passes it; only the
+    # list refuses it.
+    with pytest.raises(GuideSelectionError, match="does not offer"):
+        resolve(
+            guide,
+            {"method": "s2w-modular", "size": "two", "texture": "texture|towne"},
+            find_candidates,
+        )
+
+
+def test_an_open_namespace_refinement_still_takes_any_tag_in_it(guide):
+    """`choices` is optional, and its absence is not an empty list."""
+    resolved = resolve(
+        guide,
+        {"method": "s2w-modular", "size": "two", "texture": "texture|anything_at_all"},
+        find_candidates,
+    )
+    assert resolved["refinements"][0]["selected"] == "texture|anything_at_all"
+
+
+def test_the_choices_reach_the_frontend(guide):
+    """They are what it draws the buttons from."""
+    texture = next(r for r in guide["refinements"] if r["key"] == "texture")
+    texture["choices"] = [
+        {"tag": "texture|dungeon_stone", "title": "Dungeon stone"},
+        {"tag": "texture|cave"},
+    ]
+
+    resolved = resolve(guide, {"method": "s2w-modular", "size": "two"}, find_candidates)
+
+    offered = next(r for r in resolved["refinements"] if r["key"] == "texture")
+    assert offered["choices"] == texture["choices"]
+
+
+def test_an_option_that_names_no_base_leaves_it_out_of_the_build(guide):
+    """How a later step removes a part rather than emptying it.
+
+    A role is in play because some chosen option named it, so the
+    single-piece print option is simply an option that does not name the
+    base. The distinction matters: a part that resolved to nothing says
+    "nothing matches" on the page, and a part that is not in the build
+    is not drawn at all.
+    """
+    guide["steps"].append(
+        {
+            "key": "wall-print",
+            "prompt": "How should the wall print?",
+            "options": [
+                {
+                    "key": "with-base",
+                    "title": "Wall plus a base",
+                    "roles": {"base": None},
+                },
+                {
+                    "key": "single-piece",
+                    "title": "One piece",
+                    "roles": {"wall": {"deny": ["build|s2w"]}},
+                },
+            ],
+        }
+    )
+    # `size` comes before the step under test, and an unanswered
+    # step stops the wizard there.
+    separate = {"method": "separate-wall", "size": "two"}
+
+    with_base = resolve(guide, {**separate, "wall-print": "with-base"}, find_candidates)
+    single = resolve(guide, {**separate, "wall-print": "single-piece"}, find_candidates)
+
+    assert "base" in [p["role"] for p in with_base["parts"]]
+    assert "base" not in [p["role"] for p in single["parts"]]
+    # And the option's own predicate still applies to the piece it named.
+    wall = next(p for p in single["parts"] if p["role"] == "wall")
+    assert "build|s2w" in wall["query"]["deny"]
+
+
+def test_one_question_is_offered_at_a_time(guide):
+    """Answering a question opens the next one, not all of them.
+
+    The difference between a wizard and a form, and it cannot be
+    written as a `when`: the chain is not the same on every branch, and
+    `when` ANDs across steps so it cannot say "whichever came before".
+    """
+    # Three steps, because with two the last one is the next one and
+    # truncating changes nothing — the version of this test that had
+    # two passed with the rule removed.
+    guide["steps"].append(
+        {
+            "key": "finish",
+            "prompt": "Anything else?",
+            "options": [{"key": "no", "title": "No", "roles": {"wall": None}}],
+        }
+    )
+
+    assert [s["key"] for s in resolve(guide, {}, find_candidates)["steps"]] == [
+        "method"
+    ]
+    resolved = resolve(guide, {"method": "s2w-modular"}, find_candidates)
+    assert [s["key"] for s in resolved["steps"]] == ["method", "size"]
+    # The third waits on the second, even though nothing in the
+    # document says so.
+    answered = resolve(guide, {"method": "s2w-modular", "size": "two"}, find_candidates)
+    assert [s["key"] for s in answered["steps"]] == ["method", "size", "finish"]
+    # And the questions after it are not merely collapsed — they are
+    # not asked, so nothing downstream narrows on an answer nobody has
+    # had the chance to give.
+    assert resolved["refinements"] == []
+
+
+def test_an_answer_this_branch_withholds_stops_the_wizard_there(guide):
+    """An answer the branch does not offer counts as no answer.
+
+    So the step is asked again — and the questions after it wait, the
+    same as if it had never been answered, rather than running ahead on
+    an answer that was discarded.
+    """
+    guide["steps"][1]["options"][0]["when"] = {
+        "selected": {"method": ["separate-wall"]}
+    }
+
+    resolved = resolve(guide, {"method": "s2w-modular", "size": "two"}, find_candidates)
+
+    size = next(s for s in resolved["steps"] if s["key"] == "size")
+    assert size["selected"] is None
+    assert resolved["refinements"] == []
+
+
+def test_refinements_are_offered_one_at_a_time_too(guide):
+    """Answering the wall texture is what puts the next question up.
+
+    The same rule as the steps, and the one I kept applying only to
+    them: finishing the questions and being handed every refinement at
+    once is the form this stopped being.
+    """
+    guide["refinements"].append(
+        {
+            "key": "colour",
+            "role": "wall",
+            "prompt": "Colour?",
+            "from_namespace": "colour",
+            "choices": [{"tag": "colour|grey"}, {"tag": "colour|brown"}],
+        }
+    )
+    answered = {"method": "separate-wall", "size": "two"}
+
+    first = resolve(guide, answered, find_candidates)
+    assert [r["key"] for r in first["refinements"]] == ["texture"]
+
+    second = resolve(guide, {**answered, "texture": "texture|cave"}, find_candidates)
+    assert [r["key"] for r in second["refinements"]] == ["texture", "side-locks"]
+
+    third = resolve(
+        guide,
+        {**answered, "texture": "texture|cave", "side-locks": "off"},
+        find_candidates,
+    )
+    assert [r["key"] for r in third["refinements"]] == [
+        "texture",
+        "side-locks",
+        "colour",
+    ]
+
+
+def test_a_hidden_refinement_still_applies(guide):
+    """Display only — a shared link resolves to the parts it was shared for.
+
+    The answers are in the URL whether or not their controls are on
+    screen, and dropping one would quietly change the build somebody
+    sent to somebody else.
+    """
+    selections = {
+        "method": "separate-wall",
+        "size": "two",
+        # `side-locks` is answered but not yet on offer, because the
+        # texture before it is not.
+        "side-locks": "on",
+    }
+
+    resolved = resolve(guide, selections, find_candidates)
+
+    assert [r["key"] for r in resolved["refinements"]] == ["texture"]
+    wall = next(p for p in resolved["parts"] if p["role"] == "wall")
+    assert "connection|side|openlock" in wall["query"]["require"]
+
+
+def test_a_default_builds_the_parts_without_answering_anything(guide):
+    """The recommendation is in force until somebody says otherwise.
+
+    The first screen shows a complete, buildable set rather than four
+    empty boxes and an instruction to keep clicking.
+    """
+    # No size default: nothing in this catalog carries a size tag, so
+    # requiring one would empty every role and prove nothing.
+    guide["steps"][0]["default"] = "s2w-modular"
+    guide["refinements"][0]["default"] = "texture|cave"
+
+    resolved = resolve(guide, {}, find_candidates)
+
+    parts = {p["role"]: p for p in resolved["parts"]}
+    assert parts["wall"]["blueprint"] is not None
+    assert parts["floor"]["blueprint"] is not None
+    assert "build|s2w" in parts["floor"]["query"]["require"]
+    # The refinement's default reaches the parts as well as the step's.
+    assert "texture|cave" in parts["wall"]["query"]["require"]
+
+
+def test_assuming_is_not_answering(guide):
+    """A default must not skip the question it answers.
+
+    The wizard walks from the first question nobody has answered, so a
+    defaulted one is still asked — shown with its recommendation
+    marked, and the question after it still waiting.
+    """
+    guide["steps"][0]["default"] = "s2w-modular"
+
+    resolved = resolve(guide, {}, find_candidates)
+
+    assert [s["key"] for s in resolved["steps"]] == ["method"]
+    method = resolved["steps"][0]
+    assert method["selected"] is None
+    assert method["recommended"] == "s2w-modular"
+    # And nothing to refine yet, because a question is still open.
+    assert resolved["refinements"] == []
+
+
+def test_an_answer_beats_the_recommendation(guide):
+    guide["steps"][0]["default"] = "s2w-modular"
+
+    resolved = resolve(guide, {"method": "separate-wall"}, find_candidates)
+
+    assert resolved["steps"][0]["selected"] == "separate-wall"
+    assert resolved["steps"][0]["recommended"] == "s2w-modular"
+    floor = next(p for p in resolved["parts"] if p["role"] == "floor")
+    assert "build|s2w" not in floor["query"].get("require", [])
+
+
+def test_a_recommendation_can_depend_on_an_earlier_answer(guide):
+    """Some recommendations only make sense per branch.
+
+    A wall on a tile has nothing beside it to clip to, so the clip to
+    recommend is none — while every other method wants one. Written as
+    a single value, one branch or the other is wrong.
+    """
+    guide["steps"][1]["options"].append({"key": "any", "title": "Any width"})
+    guide["steps"][1]["default"] = [
+        {"when": {"selected": {"method": ["separate-wall"]}}, "value": "two"},
+        {"value": "any"},
+    ]
+
+    separate = resolve(guide, {"method": "separate-wall"}, find_candidates)
+    modular = resolve(guide, {"method": "s2w-modular"}, find_candidates)
+
+    assert separate["steps"][1]["recommended"] == "two"
+    assert modular["steps"][1]["recommended"] == "any"
+    # And it is in force, not merely marked: the parts are built from
+    # the branch's own recommendation.
+    wall = next(p for p in separate["parts"] if p["role"] == "wall")
+    assert "size|width|2" in wall["query"]["require"]
+
+
+def test_a_recommendation_with_no_matching_clause_recommends_nothing(guide):
+    """A clause list that matches nothing is not an error.
+
+    It is how an author says "on this branch I have no advice", and
+    the question is asked with nothing marked rather than falling back
+    to whichever clause was written first.
+    """
+    guide["steps"][1]["default"] = [
+        {"when": {"selected": {"method": ["separate-wall"]}}, "value": "two"},
+    ]
+
+    resolved = resolve(guide, {"method": "s2w-modular"}, find_candidates)
+
+    assert resolved["steps"][1]["recommended"] is None
+    assert resolved["steps"][1]["selected"] is None
+
+
+def test_a_refinement_recommendation_can_read_an_earlier_refinement(guide):
+    """The floor to recommend depends on the wall texture.
+
+    Steps are enough for the rest, but not for this: the texture that
+    decides it is itself a refinement, so the answers a recommendation
+    reads have to include the refinements walked before it.
+    """
+    guide["refinements"].insert(
+        1,
+        {
+            "key": "floor-texture",
+            "role": "floor",
+            "prompt": "Floor texture",
+            "from_namespace": "texture",
+            "default": [
+                {
+                    "when": {"selected": {"texture": ["texture|cave"]}},
+                    "value": "texture|cave",
+                },
+                {"value": "texture|dungeon_stone"},
+            ],
+        },
+    )
+    guide["steps"][0]["default"] = "s2w-modular"
+    guide["steps"][1]["default"] = "two"
+
+    def recommended(texture):
+        resolved = resolve(
+            guide,
+            {"method": "s2w-modular", "size": "two", "texture": texture},
+            find_candidates,
+        )
+        return {r["key"]: r for r in resolved["refinements"]}["floor-texture"][
+            "recommended"
+        ]
+
+    assert recommended("texture|cave") == "texture|cave"
+    assert recommended("texture|dungeon_stone") == "texture|dungeon_stone"
+
+
+def test_a_default_only_applies_where_the_branch_reaches_it(guide):
+    """Defaults chain, and stop where the questions stop.
+
+    Defaulting the method is what makes the size question reachable,
+    and only then does its own default apply — so a default on a step
+    that this branch never offers contributes nothing.
+    """
+    guide["steps"][1]["when"] = {"selected": {"method": ["separate-wall"]}}
+    guide["steps"][0]["default"] = "s2w-modular"
+    guide["steps"][1]["default"] = "two"
+
+    resolved = resolve(guide, {}, find_candidates)
+
+    wall = next(p for p in resolved["parts"] if p["role"] == "wall")
+    assert "size|width|2" not in wall["query"].get("require", [])

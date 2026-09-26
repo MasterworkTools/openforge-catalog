@@ -419,3 +419,77 @@ def test_prefer_holds_tags_like_every_other_list(guide):
         validate_guide_document(guide)
 
     assert "role 'wall'" in str(excinfo.value)
+
+
+def test_a_choice_must_sit_inside_the_namespace_it_offers(guide):
+    """Otherwise it is a button that raises the moment it is clicked.
+
+    Resolve refuses a value from outside `from_namespace`, so a choice
+    outside it is offered and then rejected — a fault the author can
+    only find by trying every option.
+    """
+    guide["refinements"][0]["choices"] = [
+        {"tag": "texture|cave"},
+        {"tag": "connection|pegs"},
+    ]
+
+    with pytest.raises(ValueError) as excinfo:
+        validate_guide_document(guide)
+
+    assert "refinement 'texture'" in str(excinfo.value)
+    assert "connection|pegs" in str(excinfo.value)
+
+
+def test_choices_need_a_namespace_to_be_choices_of(guide):
+    """A toggle already names its own tags, so a list on one reads
+    nothing."""
+    guide["refinements"][1]["choices"] = [
+        {"tag": "connection|pegs"},
+        {"tag": "connection|side|openlock"},
+    ]
+
+    with pytest.raises(ValueError) as excinfo:
+        validate_guide_document(guide)
+
+    assert "`choices` needs `from_namespace`" in str(excinfo.value)
+
+
+def test_the_same_choice_may_not_be_offered_twice(guide):
+    guide["refinements"][0]["choices"] = [
+        {"tag": "texture|cave"},
+        {"tag": "texture|cave"},
+    ]
+
+    with pytest.raises(ValueError) as excinfo:
+        validate_guide_document(guide)
+
+    assert "duplicate" in str(excinfo.value)
+
+
+def test_a_sound_choice_list_validates(guide):
+    guide["refinements"][0]["choices"] = [
+        {"tag": "texture|cave", "title": "Cave", "blurb": "Rough rock."},
+        {"tag": "texture|dungeon_stone"},
+    ]
+
+    assert validate_guide_document(guide) is guide
+
+
+def test_every_clause_of_a_conditional_default_names_a_real_answer(guide):
+    """A recommendation is used before anyone clicks anything.
+
+    A conditional one hides its mistakes better than a plain one: the
+    misspelled clause is on a branch, so the guide looks right until
+    somebody reaches that branch and the parts empty for no visible
+    reason. So each clause is checked, not just the first.
+    """
+    guide["steps"][0]["default"] = [
+        {"when": {"selected": {"method": ["separate-wall"]}}, "value": "separate-wall"},
+        {"value": "s2w-modualr"},
+    ]
+
+    with pytest.raises(ValueError) as excinfo:
+        validate_guide_document(guide)
+
+    assert "step 'method'" in str(excinfo.value)
+    assert "s2w-modualr" in str(excinfo.value)

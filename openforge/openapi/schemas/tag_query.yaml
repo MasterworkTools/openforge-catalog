@@ -22,3 +22,26 @@ properties:
       properties:
         tag:
           type: string
+  deny_children:
+    description: >
+      Refuse every tag strictly beneath these, keeping the tag itself.
+      Every tag named in `require` or `allow` is exempt, so anything
+      those asked for survives the sweep. `accept` is not exempt: it
+      matches a whole subtree rather than a tag, and there is nothing
+      exact to spare.
+    type: array
+    items:
+      type: object
+      properties:
+        tag:
+          type: string
+  allow:
+    description: >
+      Tags permitted but not required. They ask for nothing; they only
+      survive a deny_children sweep.
+    type: array
+    items:
+      type: object
+      properties:
+        tag:
+          type: string
