@@ -73,8 +73,14 @@ steps:
           map, because all the squares are complete. Internal walls can
           leave you with tough decisions as to how you deal with the gap
           left by the wall — say, when a room wraps around a wall in an
-          L. In a combined set, I recommend you use these for exterior
-          walls and hallways.
+          L. Half-inch walls on a one-inch grid means those offsets
+          accumulate, which is sometimes called offset hell. In a
+          combined set, I recommend you use these for exterior walls
+          and hallways.
+
+          I recommend prebuilding your rooms with separate wall —
+          except for hallways, where it is the one thing it is best
+          at and prebuilding buys you nothing.
 
           Other people doing separate wall include Printable Scenery,
           and many miniature patreons who produce a few walls and floors
@@ -102,7 +108,9 @@ steps:
           The compromise system. You use separate walls, but s2w has
           separate floors with the half tile on them. This lets you make
           both wall on tile and separate wall layouts using the same
-          walls, and just adding in extra floors.
+          walls, and just adding in extra floors. It also unifies wall
+          thickness across the systems, so the same wall fits either
+          way round.
 
           I developed this system to merge the two approaches, and this
           is the most flexible. I recommend this approach — but you
@@ -487,8 +495,8 @@ roles:
       # the question that decides between them is answered, neither is
       # required, and the sweeps above would take every wall in the
       # catalog. Requiring nothing and allowing nothing is not "no
-      # constraint" here — it is "nothing matches", and it greyed out
-      # every method on the first screen.
+      # constraint" here — it is "nothing matches", and it took every
+      # method off the first screen.
       #
       # The height question then narrows to one by requiring it. Note
       # both `shape|` and `component|` markers: a normal wall carries
@@ -660,6 +668,57 @@ refinements:
     # and the magnets hold in any orientation, which is the set most
     # people end up with.
     default: 'connection|magnetic,connection|openlock,connection|openlock|topless'
+    blurb: >
+      Clips are how the bases join to each other. There are two
+      systems, and the honest answer is that it rarely matters: the
+      consensus is that Dragonbite clips hold better and OpenLOCK
+      clips are easier for rapid swapping, but most people agree they
+      aren't different enough to worry about. Supporting both is built
+      into how this project is developed, from the ground up.
+
+      For what it is worth, I have more OpenLOCK tiles than
+      DragonLock, OpenLOCK is somewhat more widespread, and there are
+      separate wall cases I can't replicate in DragonLock.
+
+      Magnets are better if you lay tiles down at game time — they
+      help you align tiles quickly, and frankly they have a pleasing
+      feel. The flex magnetic bases take 5mm spheres and five
+      cylindrical sizes: 5mm×3mm, 5mm×2mm, 4mm×3mm, 4mm×2mm and
+      3/16"×1/8". They spin in place, so you never have to think about
+      polarity.
+
+      Topless removes the material above the clip bay, which is not
+      thick to begin with: faster to print, and no supports to take
+      out. I don't recommend it on its own, though — there is very
+      little contact between the top of the base and whatever you glue
+      it to. If you want a single central OpenLOCK bay, which is a
+      common choice, take the magnetic OpenLOCK base and simply don't
+      fit the magnets. Unsupported is newer: modern printers bridge
+      well enough that many people find they don't need supports at
+      all.
+
+      Print your clips in PETG, not PLA. PLA is rigid and brittle, so
+      clips snap instead of flexing. Keep the bases in whatever you
+      are printing everything else in — PETG is harder to glue and
+      harder to paint.
+
+      If a clip will not go into its bay, that is almost always the
+      built-in supports: OpenLOCK and DragonLock clips both print with
+      supports you have to snap out first. It is the question people
+      ask most.
+    links:
+      5mm×3mm: https://amzn.to/3TiebAV
+      5mm×2mm: https://amzn.to/3n2prFa
+      4mm×3mm: https://amzn.to/3JOtXzd
+      4mm×2mm: https://amzn.to/3looXJl
+      3/16"×1/8": https://www.kjmagnetics.com/proddetail.asp?prod=D32AH
+    # The names the catalog cannot spell: a tag says `openlock` and the
+    # product is OpenLOCK. Only the names, so a new sibling tag still
+    # appears on its own.
+    titles:
+      'connection|openlock': OpenLOCK
+      'connection|dragonlock': DragonLock
+      'connection|magnetic': Magnets
     from_combination: connection
     # Every magnetic base is also magnetic|flex, so showing both
     # doubles the label and separates nothing. Hidden, not refused —
@@ -674,8 +733,8 @@ refinements:
   # Only four of the eight wall textures have pegged walls at all —
   # towne 58, dungeon stone 35, cut stone 12, rough stone 10, and
   # necro, mortar and stone, aztlan and stone brick have none. So on
-  # half the textures this question has no answer, which is what the
-  # greying-out is for rather than something to hide.
+  # half the textures this question has no answer, and the page drops
+  # it rather than asking something unanswerable.
 
   # The floor asks separately, and that is the point rather than a
   # concession. Three of the eight wall textures have no floor of their
@@ -691,8 +750,8 @@ refinements:
   # Only four of the eight wall textures have pegged walls at all —
   # towne 58, dungeon stone 35, cut stone 12, rough stone 10, and
   # necro, mortar and stone, aztlan and stone brick have none. So on
-  # half the textures this question has no answer, which is what the
-  # greying-out is for rather than something to hide.
+  # half the textures this question has no answer, and the page drops
+  # it rather than asking something unanswerable.
 
   # The floor asks separately, and that is the point rather than a
   # concession. Three of the eight wall textures have no floor of their
@@ -716,8 +775,8 @@ refinements:
   #   no clips, magnets only  54 / 146
   #
   # Nothing gates topless to OpenLOCK, and nothing needs to: no
-  # DragonLock base is topless, so choosing DragonLock greys it out on
-  # its own. A rule in the guide would say the same thing twice and be
+  # DragonLock base is topless, so choosing DragonLock takes it off the
+  # list on its own. A rule in the guide would say the same thing twice and be
   # the one that goes stale.
   #
   # All three apply to the bases and nothing else — `role: '*'` minus
@@ -732,8 +791,8 @@ refinements:
   # Only four of the eight wall textures have pegged walls at all —
   # towne 58, dungeon stone 35, cut stone 12, rough stone 10, and
   # necro, mortar and stone, aztlan and stone brick have none. So on
-  # half the textures this question has no answer, which is what the
-  # greying-out is for rather than something to hide.
+  # half the textures this question has no answer, and the page drops
+  # it rather than asking something unanswerable.
   - key: pegs
     role: wall
     group: Other options

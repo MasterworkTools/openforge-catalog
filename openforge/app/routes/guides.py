@@ -113,12 +113,12 @@ def resolve_guide(guide_key: str):
 
 
 def guide_availability(guide_key: str):
-    """Which offered answers would empty a part, for greying them out.
+    """Which offered answers would empty a part, and which answer did it.
 
     Its own endpoint because it costs several times what the parts
     cost — a predicate per role per offered answer — and the parts are
     what the person is waiting to see. The page renders on `resolve`
-    and greys the buttons when this lands.
+    and drops the dead answers when this lands.
 
     Same selections, same errors, same 404: it is the same question
     asked about the answers rather than about the pieces.
@@ -137,13 +137,22 @@ def guide_availability(guide_key: str):
                 )
             except GuideSelectionError as e:
                 return jsonify({"error": str(e)}), 400
+            questions = resolved["steps"] + resolved["refinements"]
             return jsonify(
                 {
                     "unavailable": {
                         question["key"]: question["unavailable"]
-                        for question in resolved["steps"] + resolved["refinements"]
+                        for question in questions
                         if question["unavailable"]
-                    }
+                    },
+                    # Which earlier answer is responsible for each, so
+                    # the page can say why an answer is not there
+                    # rather than simply not have it.
+                    "because": {
+                        question["key"]: question["because"]
+                        for question in questions
+                        if question.get("because")
+                    },
                 }
             )
 

@@ -5,6 +5,7 @@ import {
   GuideChoice,
   GuideRefinement,
   GuideStep,
+  MissingReason,
 } from '@/services/guide-service';
 
 /**
@@ -24,9 +25,46 @@ import {
  */
 export type Unavailable = Record<string, string[]> | null;
 
+/** Why answers are missing, by question then by answer. */
+export type Because = Record<string, Record<string, MissingReason>> | null;
+
+/**
+ * What is not on offer, and why.
+ *
+ * Missing answers are not drawn at all — an answer you cannot pick is
+ * not an answer. But "no rough stone floor" is baffling on its own and
+ * obvious once you know which choice did it, so the list says what it
+ * would have left empty and, where one answer is responsible, which.
+ */
+function Missing({
+  hidden,
+  because,
+  labels,
+}: {
+  hidden: string[];
+  because?: Record<string, MissingReason>;
+  labels: (value: string) => string;
+}) {
+  if (hidden.length === 0) return null;
+  return (
+    <ul className="mt-2 text-xs text-gray-500 list-none">
+      {hidden.map((value) => {
+        const why = because?.[value];
+        return (
+          <li key={value}>
+            {labels(value)} — no {why?.part ?? 'match'}
+            {why?.prompt ? ` for your "${why.prompt}" answer` : ''}
+          </li>
+        );
+      })}
+    </ul>
+  );
+}
+
 interface GuideStepsProps {
   steps: GuideStep[];
   unavailable?: Unavailable;
+  because?: Because;
   /**
    * Which answered question has been reopened, if any.
    *
@@ -42,6 +80,7 @@ interface GuideStepsProps {
 export function GuideSteps({
   steps,
   unavailable,
+  because,
   opened,
   onOpenChange,
   onSelect,
@@ -50,11 +89,13 @@ export function GuideSteps({
     <div className="guide-steps">
       {steps.map((step) => {
         const dead = unavailable?.[step.key] ?? step.unavailable ?? [];
+        const why = because?.[step.key] ?? step.because;
         return step.selected === null ? (
           <OpenStep
             key={step.key}
             step={step}
             dead={dead}
+            because={why}
             onSelect={onSelect}
           />
         ) : (
@@ -62,6 +103,7 @@ export function GuideSteps({
             key={step.key}
             step={step}
             dead={dead}
+            because={why}
             open={opened === step.key}
             onOpenChange={onOpenChange}
             onSelect={onSelect}
@@ -78,12 +120,15 @@ export function GuideSteps({
 function OpenStep({
   step,
   dead,
+  because,
   onSelect,
 }: {
   step: GuideStep;
   dead: string[];
+  because?: Record<string, MissingReason>;
   onSelect: (key: string, value: string | null) => void;
 }) {
+  const live = step.options.filter((option) => !dead.includes(option.key));
   return (
     <section className="mb-8">
       <h2 id={`step-${step.key}`} className="text-xl font-bold mb-3">
@@ -96,18 +141,24 @@ function OpenStep({
         aria-labelledby={`step-${step.key}`}
         className="flex flex-col gap-2"
       >
-        {step.options.map((option) => (
+        {live.map((option) => (
           <Answer
             key={option.key}
             label={option.title}
             chosen={false}
             recommended={step.recommended === option.key}
             assumed={step.recommended === option.key}
-            dead={dead.includes(option.key)}
             onPick={() => onSelect(step.key, option.key)}
           />
         ))}
       </div>
+      <Missing
+        hidden={dead}
+        because={because}
+        labels={(value) =>
+          step.options.find((o) => o.key === value)?.title ?? value
+        }
+      />
     </section>
   );
 }
@@ -123,17 +174,25 @@ function OpenStep({
 function AnsweredStep({
   step,
   dead,
+  because,
   open,
   onOpenChange,
   onSelect,
 }: {
   step: GuideStep;
   dead: string[];
+  because?: Record<string, MissingReason>;
   open: boolean;
   onOpenChange?: (key: string | null) => void;
   onSelect: (key: string, value: string | null) => void;
 }) {
   const chosen = step.options.find((option) => option.key === step.selected);
+  // The answer in force is always drawn, dead or not: it is the one
+  // thing this section is here to show, and hiding it would leave a
+  // reopened question looking as though it was never answered.
+  const live = step.options.filter(
+    (option) => option.key === step.selected || !dead.includes(option.key)
+  );
 
   if (open) {
     return (
@@ -146,13 +205,12 @@ function AnsweredStep({
           aria-labelledby={`step-${step.key}`}
           className="flex flex-col gap-2"
         >
-          {step.options.map((option) => (
+          {live.map((option) => (
             <Answer
               key={option.key}
               label={option.title}
               chosen={step.selected === option.key}
               recommended={step.recommended === option.key}
-              dead={dead.includes(option.key)}
               onPick={() => {
                 onOpenChange?.(null);
                 // Re-picking the current answer would rewrite the same
@@ -164,6 +222,13 @@ function AnsweredStep({
             />
           ))}
         </div>
+        <Missing
+          hidden={dead.filter((value) => value !== step.selected)}
+          because={because}
+          labels={(value) =>
+            step.options.find((o) => o.key === value)?.title ?? value
+          }
+        />
       </section>
     );
   }
@@ -190,10 +255,8 @@ function AnsweredStep({
 /**
  * One answer to one question, whatever kind of question it is.
  *
- * `dead` means the catalog has nothing for it given everything else
- * chosen. Greyed and still focusable rather than removed: "pegs, but
- * not in this texture" is a fact worth seeing, and a list that
- * reshuffles itself as you change your mind is hard to use.
+ * Every answer drawn here is one you can pick. The ones the catalog
+ * has nothing for never reach this — see `Missing`.
  */
 function Answer({
   label,
@@ -201,7 +264,6 @@ function Answer({
   chosen,
   recommended,
   assumed,
-  dead,
   onPick,
 }: {
   label: string;
@@ -212,30 +274,22 @@ function Answer({
   recommended?: boolean;
   /** Recommended *and* in force, because nothing else was chosen. */
   assumed?: boolean;
-  dead: boolean;
   onPick: () => void;
 }) {
   return (
     <button
       type="button"
       aria-pressed={chosen}
-      disabled={dead && !chosen}
-      title={
-        dead
-          ? 'Nothing in the catalog matches this with your other choices'
-          : hint
-      }
+      title={hint}
       onClick={onPick}
       className={`border rounded p-3 text-left ${
         chosen
           ? 'border-blue-600 bg-blue-50 font-semibold'
-          : dead
-            ? 'border-gray-200 text-gray-400 bg-gray-50 cursor-not-allowed'
-            : // Dashed, not solid: this is what the parts are being
-              // built from, but nobody has said so yet.
-              assumed
-              ? 'border-blue-400 border-dashed bg-blue-50/40'
-              : 'border-gray-300'
+          : // Dashed, not solid: this is what the parts are being
+            // built from, but nobody has said so yet.
+            assumed
+            ? 'border-blue-400 border-dashed bg-blue-50/40'
+            : 'border-gray-300'
       }`}
     >
       {label}
@@ -251,6 +305,7 @@ function Answer({
 interface GuideRefinementsProps {
   refinements: GuideRefinement[];
   unavailable?: Unavailable;
+  because?: Because;
   /** The one answered question reopened, shared with the steps. */
   opened?: string | null;
   onOpenChange?: (key: string | null) => void;
@@ -260,13 +315,25 @@ interface GuideRefinementsProps {
 export function GuideRefinements({
   refinements,
   unavailable,
+  because,
   opened,
   onOpenChange,
   onSelect,
 }: GuideRefinementsProps) {
   const deadFor = (refinement: GuideRefinement) =>
     unavailable?.[refinement.key] ?? refinement.unavailable ?? [];
-  if (refinements.length === 0) return null;
+  const becauseFor = (refinement: GuideRefinement) =>
+    because?.[refinement.key] ?? refinement.because;
+  // A yes/no question whose "yes" is dead is not a question — pegs in
+  // a texture that has none is nothing to decide. Dropped here rather
+  // than inside, so a section left with nothing is never headed.
+  const asked = refinements.filter(
+    (refinement) =>
+      !refinement.on_tags ||
+      refinement.selected !== null ||
+      !deadFor(refinement).includes('on')
+  );
+  if (asked.length === 0) return null;
   // A section each, in document order. A question is its own section
   // headed by its own prompt — "Change anything" over the lot of them
   // said nothing and made four unrelated questions look like one.
@@ -276,7 +343,7 @@ export function GuideRefinements({
   // bases use, and then its variants.
   const sections: { name: string; grouped: boolean; of: GuideRefinement[] }[] =
     [];
-  for (const refinement of refinements) {
+  for (const refinement of asked) {
     const last = sections[sections.length - 1];
     if (refinement.group && last?.grouped && last.name === refinement.group) {
       last.of.push(refinement);
@@ -299,6 +366,7 @@ export function GuideRefinements({
           showPrompts={section.grouped}
           refinements={section.of}
           deadFor={deadFor}
+          becauseFor={becauseFor}
           opened={opened}
           onOpenChange={onOpenChange}
           onSelect={onSelect}
@@ -313,6 +381,7 @@ function RefinementGroup({
   showPrompts,
   refinements,
   deadFor,
+  becauseFor,
   opened,
   onOpenChange,
   onSelect,
@@ -321,6 +390,9 @@ function RefinementGroup({
   showPrompts: boolean;
   refinements: GuideRefinement[];
   deadFor: (refinement: GuideRefinement) => string[];
+  becauseFor: (
+    refinement: GuideRefinement
+  ) => Record<string, MissingReason> | undefined;
   opened?: string | null;
   onOpenChange?: (key: string | null) => void;
   onSelect: (key: string, value: string | null) => void;
@@ -356,7 +428,6 @@ function RefinementGroup({
                 key={refinement.key}
                 refinement={refinement}
                 showPrompt={showPrompts}
-                dead={deadFor(refinement)}
                 onSelect={answer}
               />
             );
@@ -371,6 +442,7 @@ function RefinementGroup({
               showPrompt={showPrompts}
               labelledBy={headingId}
               dead={deadFor(refinement)}
+              because={becauseFor(refinement)}
               onSelect={answer}
             />
           ) : (
@@ -445,6 +517,7 @@ function ChoicePicker({
   showPrompt,
   labelledBy,
   dead,
+  because,
   onSelect,
 }: {
   refinement: GuideRefinement;
@@ -453,12 +526,16 @@ function ChoicePicker({
   /** The section heading, to name the group by when it is. */
   labelledBy: string;
   dead: string[];
+  because?: Record<string, MissingReason>;
   onSelect: (key: string, value: string | null) => void;
 }) {
   // Named by its own prompt when it has one, and by the section
   // heading when the heading *is* its prompt — rather than a hidden
   // copy of the same words, which a screen reader would read twice.
   const heading = showPrompt ? `refinement-${refinement.key}` : labelledBy;
+  const live = (refinement.choices ?? []).filter(
+    (choice) => choice.tag === refinement.selected || !dead.includes(choice.tag)
+  );
   return (
     <section aria-labelledby={heading}>
       {showPrompt && (
@@ -467,7 +544,7 @@ function ChoicePicker({
         </h3>
       )}
       <div role="group" aria-labelledby={heading} className="flex flex-col gap-1">
-        {refinement.choices?.map((choice) => {
+        {live.map((choice) => {
           const chosen = refinement.selected === choice.tag;
           return (
             <Answer
@@ -480,12 +557,19 @@ function ChoicePicker({
                 refinement.selected === null &&
                 refinement.recommended === choice.tag
               }
-              dead={dead.includes(choice.tag)}
               onPick={() => onSelect(refinement.key, chosen ? null : choice.tag)}
             />
           );
         })}
       </div>
+      <Missing
+        hidden={dead.filter((tag) => tag !== refinement.selected)}
+        because={because}
+        labels={(tag) => {
+          const choice = refinement.choices?.find((c) => c.tag === tag);
+          return choice ? labelFor(choice) : tag;
+        }}
+      />
     </section>
   );
 }
@@ -515,33 +599,22 @@ function labelFor(choice: GuideChoice): string {
 function Toggle({
   refinement,
   showPrompt,
-  dead: deadValues,
   onSelect,
 }: {
   refinement: GuideRefinement;
   /** False when the section heading is already this question. */
   showPrompt: boolean;
-  dead: string[];
   onSelect: (key: string, value: string | null) => void;
 }) {
-  // A yes/no the catalog cannot always answer: four of the eight wall
-  // textures have no pegged wall at all. Disabled rather than hidden,
-  // with the reason on hover, because "not with this texture" is the
-  // useful half of the answer.
-  const dead = deadValues.includes('on') && refinement.selected !== 'on';
+  // A yes/no the catalog cannot always answer — four of the eight wall
+  // textures have no pegged wall at all — is not drawn at all. That is
+  // decided by the caller, which drops the whole question rather than
+  // heading a section over an unanswerable one.
   return (
-    <label
-      className={`flex items-center gap-2 ${dead ? 'text-gray-400' : ''}`}
-      title={
-        dead
-          ? 'Nothing in the catalog matches this with your other choices'
-          : undefined
-      }
-    >
+    <label className="flex items-center gap-2">
       <input
         type="checkbox"
         aria-label={showPrompt ? undefined : refinement.prompt}
-        disabled={dead}
         checked={refinement.selected === 'on'}
         onChange={(e) =>
           onSelect(refinement.key, e.target.checked ? 'on' : 'off')

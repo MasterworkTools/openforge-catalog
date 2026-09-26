@@ -213,7 +213,7 @@ def tag_search_blueprint_exists(
     """Is there a single blueprint matching this predicate?
 
     The guide's availability pass asks this about thirty times per
-    request, to grey out the answers that would empty a part. It never
+    request, to drop the answers that would empty a part. It never
     looks at what it found, so it wants neither the row nor the order
     — and the order is the expensive half, since it sorts every match
     before LIMIT 1 discards the rest.

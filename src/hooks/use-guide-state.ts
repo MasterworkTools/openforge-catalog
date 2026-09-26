@@ -12,6 +12,7 @@ import {
   fetchGuide,
   resolveGuide,
   selectionKeys,
+  Availability,
   fetchAvailability,
 } from '@/services/guide-service';
 
@@ -46,8 +47,8 @@ export function useGuideState(guideKey: string | null | undefined) {
   const mine = answer && answer.key === guideKey ? answer : null;
   // Which answers would empty a part. Keyed like everything else here,
   // and separate from the resolution because it arrives later: the
-  // buttons are usable the whole time, they just stop being greyed
-  // wrongly once this lands.
+  // buttons are all usable the whole time, and the ones that lead
+  // nowhere go away once this lands.
   const [dead, setDead] = useState<DeadAnswers | null>(null);
   const myDead = dead && dead.key === guideKey ? dead : null;
 
@@ -83,18 +84,19 @@ export function useGuideState(guideKey: string | null | undefined) {
   }, [guideKey, selections]);
 
   // Its own effect, and deliberately not awaited by the one above: a
-  // second of greying must not hold up the parts.
+  // second of narrowing the answers must not hold up the parts.
   useEffect(() => {
     if (!guideKey || selections === null) return;
     let current = true;
     fetchAvailability(guideKey, selections)
       .then((result) => {
-        if (current) setDead({ key: guideKey, unavailable: result });
+        if (current) setDead({ key: guideKey, ...result });
       })
       .catch((e: Error) => {
-        // Nothing to show the person: greying is an improvement on a
-        // working page, not a part of it. Every answer stays clickable
-        // and tells them the honest "nothing matches" instead.
+        // Nothing to show the person: dropping dead answers is an
+        // improvement on a working page, not a part of it. Every
+        // answer stays on offer and tells them the honest "nothing
+        // matches" instead.
         if (current) console.error('Error fetching availability:', e);
       });
     return () => {
@@ -119,14 +121,14 @@ export function useGuideState(guideKey: string | null | undefined) {
     guide,
     resolved: mine?.resolved ?? null,
     unavailable: myDead?.unavailable ?? null,
+    because: myDead?.because ?? null,
     error: mine?.error ?? guideError,
     select,
   };
 }
 
-interface DeadAnswers {
+interface DeadAnswers extends Availability {
   key: string;
-  unavailable: Record<string, string[]>;
 }
 
 interface ResolvedAnswer {

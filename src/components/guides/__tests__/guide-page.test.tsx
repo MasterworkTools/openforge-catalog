@@ -753,12 +753,19 @@ describe('GuidePage', () => {
       expect(screen.queryByTestId('part-modal')).not.toBeInTheDocument();
     });
 
-    it('greys an answer the catalog cannot supply', async () => {
+    it('drops an answer the catalog cannot supply, and says why', async () => {
       // Availability is its own request and arrives after the parts.
       visit('?guide=wall&method=separate-wall');
       global.fetch = jest.fn((url: string) => {
         const body = url.includes('/availability')
-          ? { unavailable: { 'floor-texture': ['texture|cave'] } }
+          ? {
+              unavailable: { 'floor-texture': ['texture|cave'] },
+              because: {
+                'floor-texture': {
+                  'texture|cave': { part: 'Floor', question: 'size', prompt: 'What size?' },
+                },
+              },
+            }
           : url.includes('/resolve')
             ? RESOLVED_WITH_PARTS
             : GUIDE_DOCUMENT;
@@ -771,13 +778,74 @@ describe('GuidePage', () => {
 
       render(<GuidePage />);
 
-      const cave = await screen.findByRole('button', { name: 'Cave' });
-      await waitFor(() => expect(cave).toBeDisabled());
-      expect(cave).toHaveAttribute('title', expect.stringContaining('Nothing'));
-      // The answers that do work stay clickable.
+      await screen.findByRole('button', { name: 'Dungeon stone' });
+      // Gone entirely once availability lands, and accounted for —
+      // naming the part it would empty and the answer at fault, so
+      // its absence is not a mystery.
+      expect(
+        screen.getByText(/Cave — no Floor for your "What size\?" answer/)
+      ).toBeInTheDocument();
+      expect(screen.queryByRole('button', { name: 'Cave' })).toBeNull();
+      // The answers that do work are still on offer.
       expect(
         screen.getByRole('button', { name: 'Dungeon stone' })
-      ).not.toBeDisabled();
+      ).toBeInTheDocument();
+    });
+
+    it('drops a step answer too, not only a refinement', async () => {
+      // Steps and refinements are the same question to the person
+      // answering, and a dead answer is as useless in either.
+      visit('?guide=wall');
+      global.fetch = jest.fn((url: string) => {
+        const body = url.includes('/availability')
+          ? {
+              unavailable: { method: ['s2w'] },
+              because: { method: { s2w: { part: 'Wall' } } },
+            }
+          : url.includes('/resolve')
+            ? RESOLVED
+            : GUIDE_DOCUMENT;
+        return Promise.resolve({
+          ok: true,
+          status: 200,
+          json: () => Promise.resolve(body),
+        });
+      }) as unknown as typeof fetch;
+
+      render(<GuidePage />);
+
+      await screen.findByRole('button', { name: /Separate wall/ });
+      await waitFor(() =>
+        expect(screen.queryByRole('button', { name: /Modular/ })).toBeNull()
+      );
+      // No single answer is to blame, so it says the honest half.
+      expect(screen.getByText(/Modular \(s2w\) — no Wall$/)).toBeInTheDocument();
+    });
+
+    it('drops a yes/no the catalog cannot answer', async () => {
+      // Pegs in a texture that has none is not a decision, and a
+      // checkbox you cannot tick is worse than no checkbox.
+      visit('?guide=wall&method=separate-wall');
+      global.fetch = jest.fn((url: string) => {
+        const body = url.includes('/availability')
+          ? { unavailable: { 'side-locks': ['on'] }, because: {} }
+          : url.includes('/resolve')
+            ? RESOLVED_WITH_PARTS
+            : GUIDE_DOCUMENT;
+        return Promise.resolve({
+          ok: true,
+          status: 200,
+          json: () => Promise.resolve(body),
+        });
+      }) as unknown as typeof fetch;
+
+      render(<GuidePage />);
+
+      await screen.findByRole('button', { name: 'Dungeon stone' });
+      expect(screen.queryByRole('checkbox', { name: 'Side locks' })).toBeNull();
+      // And the heading over it goes with it, rather than standing
+      // over an empty section.
+      expect(screen.queryByText('Side locks')).toBeNull();
     });
 
     it('stays usable when availability never arrives', async () => {

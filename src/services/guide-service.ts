@@ -12,6 +12,20 @@ export interface GuideSummary {
   summary: string | null;
 }
 
+/**
+ * Why an answer is not on offer.
+ *
+ * `part` is the piece it would leave empty, and is always known.
+ * `prompt` names the earlier question responsible, and is known only
+ * when one answer is responsible on its own — two answers can be
+ * jointly at fault with neither to blame.
+ */
+export interface MissingReason {
+  part: string;
+  question?: string;
+  prompt?: string;
+}
+
 export interface GuideOption {
   key: string;
   title: string;
@@ -28,8 +42,10 @@ export interface GuideStep {
   /** What to know before answering, shown above the options. */
   blurb?: string;
   links?: Record<string, string>;
-  /** Option keys that would empty a part, for greying out. */
+  /** Option keys with no match, which are not offered at all. */
   unavailable?: string[];
+  /** Why each is missing, keyed by option. */
+  because?: Record<string, MissingReason>;
   /** The option recommended, and assumed until one is chosen. */
   recommended?: string | null;
   options: GuideOption[];
@@ -53,10 +69,15 @@ export interface GuideRefinement {
   /** Heading to file this question under, when it is not a main one. */
   group?: string;
   on_tags?: unknown;
-  /** Choice tags, or "on"/"off", that would empty a part. */
+  /** Choice tags, or "on"/"off", with no match; not offered at all. */
   unavailable?: string[];
+  /** Why each is missing, keyed by answer. */
+  because?: Record<string, MissingReason>;
   /** The answer recommended, and assumed until one is chosen. */
   recommended?: string | null;
+  /** What to know before answering, as on a step. */
+  blurb?: string;
+  links?: Record<string, string>;
   selected: string | null;
 }
 
@@ -208,18 +229,24 @@ export function thumbnailOf(
 }
 
 
+/** What is not on offer, and why, by question. */
+export interface Availability {
+  unavailable: Record<string, string[]>;
+  because: Record<string, Record<string, MissingReason>>;
+}
+
 /**
  * Which offered answers would leave a part with nothing.
  *
  * Its own request because it costs several times what the parts cost:
  * the engine re-composes every role for every answer on offer. The
- * page draws on `resolveGuide` and greys the buttons when this lands,
- * so nobody waits on it.
+ * page draws on `resolveGuide` and drops the dead answers when this
+ * lands, so nobody waits on it.
  */
 export async function fetchAvailability(
   guideKey: string,
   selections: Selections
-): Promise<Record<string, string[]>> {
+): Promise<Availability> {
   const query = new URLSearchParams(selections).toString();
   const response = await fetch(
     `/api/guides/${encodeURIComponent(guideKey)}/availability${
@@ -230,5 +257,5 @@ export async function fetchAvailability(
     throw new Error(`Failed to fetch availability: ${response.statusText}`);
   }
   const body = await response.json();
-  return body.unavailable ?? {};
+  return { unavailable: body.unavailable ?? {}, because: body.because ?? {} };
 }

@@ -1,5 +1,5 @@
 import React from 'react';
-import { GuideStep } from '@/services/guide-service';
+import { GuideRefinement, GuideStep } from '@/services/guide-service';
 
 /**
  * The question, explained, in the column where the answer will appear.
@@ -13,20 +13,31 @@ import { GuideStep } from '@/services/guide-service';
  * parts take the space, which is the right trade: by then the person
  * has made the choice this was explaining.
  */
-export function GuideExplainer({ steps, opened }: GuideExplainerProps) {
+export function GuideExplainer({
+  steps,
+  refinements = [],
+  opened,
+}: GuideExplainerProps) {
+  // Steps and refinements are one queue from here: the column
+  // explains whatever question is open, and to the person answering
+  // there is no difference between the two kinds.
+  const questions: Question[] = [
+    ...steps.map(asQuestion),
+    ...refinements.map(asQuestion),
+  ];
   // A reopened question wins. Going back to a settled choice is
   // exactly when the explanation is wanted again — that is what
   // reopening it is *for* — and it should not have to be read from
   // memory against the one question still outstanding.
-  const reopened = steps.find((step) => step.key === opened);
-  const asking = reopened ?? currentStep(steps);
+  const reopened = questions.find((question) => question.key === opened);
+  const asking = reopened ?? questions.find((q) => q.selected === null);
   // While a question stands, explain its answers — but only if it has
   // anything to say. Not every question does: "what size tiles?" is
   // eight numbers and explaining them would be padding.
   const offered =
-    asking?.options
-      .filter((option) => option.blurb)
-      .map((option) => ({ step: asking.key, option })) ?? [];
+    asking?.answers
+      .filter((answer) => answer.blurb)
+      .map((answer) => ({ step: asking.key, option: answer })) ?? [];
   // A step can also carry prose of its own, for what is true of the
   // question rather than of any one answer: that sizes are in inches,
   // and that a 1 inch hallway does not fit a mini. Repeating that on
@@ -40,7 +51,7 @@ export function GuideExplainer({ steps, opened }: GuideExplainerProps) {
   const heading = explaining ? 'What these mean' : 'What you chose';
   const described = explaining
     ? offered
-    : chosenOptions(steps).filter(({ option }) => option.blurb);
+    : chosenOptions(questions).filter(({ option }) => option.blurb);
   if (described.length === 0 && !(explaining && preamble)) return null;
 
   return (
@@ -136,22 +147,58 @@ function escapeForRegExp(phrase: string): string {
 
 interface GuideExplainerProps {
   steps: GuideStep[];
+  refinements?: GuideRefinement[];
   /** An answered question the person has gone back to. */
   opened?: string | null;
 }
 
-/** The option chosen for each answered step, in the order asked. */
-function chosenOptions(steps: GuideStep[]) {
-  return steps.flatMap((step) => {
-    const chosen = step.options.find((option) => option.key === step.selected);
-    return chosen ? [{ step: step.key, option: chosen }] : [];
-  });
+/**
+ * A step and a refinement, seen as the same thing.
+ *
+ * They differ in what they do to the build — a step chooses which
+ * parts there are, a refinement narrows the ones there already — and
+ * not at all in how they are explained.
+ */
+interface Question {
+  key: string;
+  selected: string | null;
+  blurb?: string;
+  links?: Record<string, string>;
+  answers: {
+    key: string;
+    title: string;
+    blurb?: string;
+    links?: Record<string, string>;
+  }[];
 }
 
-/**
- * The step the person is being asked right now: the first one with no
- * answer. Null once every reachable step is answered.
- */
-export function currentStep(steps: GuideStep[]): GuideStep | null {
-  return steps.find((step) => step.selected === null) ?? null;
+function asQuestion(q: GuideStep | GuideRefinement): Question {
+  const options = 'options' in q ? q.options : undefined;
+  return {
+    key: q.key,
+    selected: q.selected,
+    blurb: q.blurb,
+    links: q.links,
+    answers:
+      options?.map((o) => ({
+        key: o.key,
+        title: o.title,
+        blurb: o.blurb,
+        links: o.links,
+      })) ??
+      (q as GuideRefinement).choices?.map((c) => ({
+        key: c.tag,
+        title: c.title ?? c.tag,
+        blurb: c.blurb,
+      })) ??
+      [],
+  };
+}
+
+/** The answer chosen for each settled question, in the order asked. */
+function chosenOptions(questions: Question[]) {
+  return questions.flatMap((question) => {
+    const chosen = question.answers.find((a) => a.key === question.selected);
+    return chosen ? [{ step: question.key, option: chosen }] : [];
+  });
 }

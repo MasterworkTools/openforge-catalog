@@ -143,8 +143,8 @@ def resolve(
     # on this guide — and asking the catalog about each. That is a
     # second or two, against a quarter of a second for the parts
     # themselves, and the parts are what the person is waiting to see.
-    # So the page asks for them separately and greys the buttons when
-    # the answer arrives.
+    # So the page asks for them separately and drops the dead answers
+    # when the answer arrives.
     # A namespace refinement with no `choices` of its own offers
     # whatever the parts actually carry, so a connector the catalog
     # gains later shows up without a guide being edited.
@@ -162,10 +162,10 @@ def resolve(
         if facets is not None
         else {}
     )
-    dead = (
+    dead, because = (
         _unavailable(document, steps, refinements, assumed, parts, exists)
         if exists is not None
-        else {}
+        else ({}, {})
     )
     return {
         "steps": [
@@ -177,6 +177,11 @@ def resolve(
                 "selected": given.get(step["key"]),
                 "recommended": step.get("default"),
                 "unavailable": dead.get(step["key"], []),
+                "because": {
+                    value: because[f"{step['key']}:{value}"]
+                    for value in dead.get(step["key"], [])
+                    if f"{step['key']}:{value}" in because
+                },
             }
             for step in _up_to_first_unanswered(steps, given)
         ],
@@ -201,6 +206,11 @@ def resolve(
                 "selected": selections.get(refinement["key"]),
                 "recommended": refinement.get("default"),
                 "unavailable": dead.get(refinement["key"], []),
+                "because": {
+                    value: because[f"{refinement['key']}:{value}"]
+                    for value in dead.get(refinement["key"], [])
+                    if f"{refinement['key']}:{value}" in because
+                },
             }
             for refinement in _up_to_first_unanswered(refinements, selections)
         ],
@@ -236,20 +246,23 @@ def _unavailable(
     parts: list,
     find_candidates,
 ) -> dict:
-    """For each question, the answers that would empty a part.
+    """For each question, the answers that would empty a part — and
+    which earlier answer is responsible for each.
 
-    An answer that matches nothing is worth showing greyed rather than
-    hidden: half the wall textures have no pegged wall, and "pegs, but
-    not with this texture" is a fact about the catalog the person is
-    better off seeing than discovering by clicking. Hiding it would
-    also make the list jump about as they change their mind.
+    An answer that matches nothing is not shown at all. It is worth
+    saying *why* it is not there, though: "no rough stone floor"
+    is baffling on its own and obvious once you know it is the
+    separate-wall choice that did it. So each missing answer is
+    attributed by removing one other answer at a time and seeing
+    whether it comes back — the first removal that revives it is what
+    is blamed.
 
     Optimistic where it is unsure. A role that copies a size from the
     part above it is not checked against that size, because knowing it
     would mean recommending the part above first. So an answer is
-    greyed only when it is empty on its own terms, never on a guess,
-    and the failure mode is an answer that looks available and turns
-    out thin — not one that looks impossible and was not.
+    dropped only when it is empty on its own terms, never on a guess,
+    and the failure mode is an answer that is offered and turns out
+    thin — not one that vanishes and should not have.
     """
     baseline = {
         part["role"]: _predicate_key(part["query"])
@@ -257,22 +270,86 @@ def _unavailable(
         if part["blueprint"] is not None
     }
     cache: dict = {}
-    dead = {}
-    for question, values in _offered(steps, refinements):
-        empty = [
-            value
-            for value in values
-            if not _holds(
+    dead: dict = {}
+    because: dict = {}
+    offered = list(_offered(steps, refinements))
+    # Questions are named to the person by their prompt, not their key.
+    prompts = {q["key"]: q["prompt"] for q in [*steps, *refinements]}
+    for question, values in offered:
+        empty = {}
+        for value in values:
+            role = _first_empty_role(
                 document,
                 {**selections, question: value},
                 baseline,
                 cache,
                 find_candidates,
             )
-        ]
-        if empty:
-            dead[question] = empty
-    return dead
+            if role is not None:
+                empty[value] = role
+        if not empty:
+            continue
+        dead[question] = list(empty)
+        for value, role in empty.items():
+            # What it would empty is always knowable and always useful:
+            # "no wall base in that texture" says what is missing. Which
+            # answer is responsible is knowable only when one answer is
+            # responsible, so it is the extra rather than the point.
+            reason = {"part": document["roles"][role]["title"]}
+            blamed = _blame(
+                document,
+                selections,
+                question,
+                value,
+                [other for other, _ in offered if other != question],
+                baseline,
+                cache,
+                find_candidates,
+            )
+            if blamed:
+                reason["question"] = blamed
+                reason["prompt"] = prompts.get(blamed, blamed)
+            because[f"{question}:{value}"] = reason
+    return dead, because
+
+
+def _blame(
+    document: dict,
+    selections: dict,
+    question: str,
+    value: str,
+    others: list,
+    baseline: dict,
+    cache: dict,
+    find_candidates,
+) -> str | None:
+    """Which other answer is stopping this one, if any single one is.
+
+    One at a time, and the first that works is the answer: "rough
+    stone is not there because of the method you chose" is useful
+    where "some combination of your five answers" is not. Two answers
+    can be jointly responsible with neither one to blame, and then
+    this says nothing rather than pick a scapegoat.
+    """
+    in_play = _roles_in_play(_chosen_options(*_available_steps(document, selections)))
+    for other in others:
+        if other not in selections:
+            continue
+        without = {k: v for k, v in selections.items() if k != other}
+        hypothetical = {**without, question: value}
+        # Only a removal that still builds the same parts is evidence.
+        # Dropping the method unbuilds everything, and a question about
+        # no parts is satisfied by any answer — so without this the
+        # first question is blamed for every missing answer in the
+        # guide, which is both useless and wrong.
+        if (
+            _roles_in_play(_chosen_options(*_available_steps(document, hypothetical)))
+            != in_play
+        ):
+            continue
+        if _holds(document, hypothetical, baseline, cache, find_candidates):
+            return other
+    return None
 
 
 def _offered(steps: list, refinements: list):
@@ -289,7 +366,19 @@ def _offered(steps: list, refinements: list):
 def _holds(
     document: dict, selections: dict, baseline: dict, cache: dict, find_candidates
 ) -> bool:
-    """Would these answers leave every part with something?
+    """Whether every part has something. See `_first_empty_role`."""
+    return (
+        _first_empty_role(document, selections, baseline, cache, find_candidates)
+        is None
+    )
+
+
+def _first_empty_role(
+    document: dict, selections: dict, baseline: dict, cache: dict, find_candidates
+) -> str | None:
+    """The first part these answers would leave with nothing.
+
+    `None` when every part has something.
 
     Predicates only: no `prefer`, which costs a search per tag it
     drops, and no `match`, which costs the part above. Two more things
@@ -314,8 +403,8 @@ def _holds(
         if key not in cache:
             cache[key] = bool(find_candidates(predicate))
         if not cache[key]:
-            return False
-    return True
+            return name
+    return None
 
 
 def _derive_choices(
@@ -414,7 +503,13 @@ def _derive_choices(
                 "tag": tag,
                 "count": counts[tag]["count"],
                 **(
-                    {"title": _combination_title(counts[tag]["tags"], namespace)}
+                    {
+                        "title": _combination_title(
+                            counts[tag]["tags"],
+                            namespace,
+                            refinement.get("titles", {}),
+                        )
+                    }
                     if whole
                     else {}
                 ),
@@ -434,16 +529,32 @@ def _answer_key(answer: dict, whole: bool) -> str:
     return ",".join(sorted(answer["tags"])) if whole else answer["tag"]
 
 
-def _combination_title(tags: list[str], namespace: str) -> str:
+def _combination_title(
+    tags: list[str], namespace: str, titles: dict | None = None
+) -> str:
     """A combination, said out loud.
 
     A tag whose child is also in the set is dropped, because the child
     already names it: OpenLOCK *and* OpenLOCK topless is one clip, and
     "openlock + openlock topless" reads as two.
+
+    `titles` names the parts the catalog cannot spell. A tag says
+    `openlock` and the product is OpenLOCK; a tag with no entry falls
+    back to its own words, so a new sibling still appears.
     """
+    names = titles or {}
     kept = [t for t in tags if not any(o.startswith(f"{t}|") for o in tags)]
     depth = len(namespace.split("|"))
-    words = [" ".join(t.split("|")[depth:]).replace("_", " ") for t in sorted(kept)]
+    words = []
+    for tag in sorted(kept):
+        # The parent's display name carries the family, and the child
+        # adds what it is: "OpenLOCK topless", not "openlock topless".
+        parts = tag.split("|")
+        pieces = []
+        for i in range(depth, len(parts)):
+            head = "|".join(parts[: i + 1])
+            pieces.append(names.get(head, parts[i].replace("_", " ")))
+        words.append(" ".join(pieces))
     title = " + ".join(words)
     return title[:1].upper() + title[1:]
 
@@ -594,7 +705,7 @@ def _available_refinements(
     sense on that branch. The second is structural — a refinement that
     applies to no part in the build is a question about nothing, and
     asking "how do the bases clip together?" of a build with no bases
-    invites an answer that changes nothing and greys nothing, because
+    invites an answer that changes nothing and rules out nothing, because
     every choice fits a set of no roles equally well.
     """
     offered = [

@@ -384,6 +384,33 @@ $defs:
           The answer to recommend and to assume until the person
           answers: a tag for a namespace refinement, the joined tags
           for a combination, or "on"/"off" for a toggle.
+      blurb:
+        type: string
+        description: >
+          What to know before answering, as on a step. For what is
+          true of the question rather than of any one answer — which
+          filament to print clips in, and why a clip will not go into
+          its bay. Blank lines separate paragraphs.
+      links:
+        type: object
+        minProperties: 1
+        description: Phrases in the blurb to link, as on a step option.
+        additionalProperties:
+          type: string
+          format: uri
+          pattern: "^https://"
+      titles:
+        type: object
+        minProperties: 1
+        description: >
+          Display names for derived answers, keyed by tag. Deriving an
+          answer from a tag gives "Openlock", and the product is called
+          OpenLOCK — a label is the one thing the catalog cannot spell
+          for us. Only the names, so a tag gaining a new sibling still
+          appears without anyone editing this.
+        additionalProperties:
+          type: string
+          minLength: 1
       group:
         type: string
         minLength: 1
