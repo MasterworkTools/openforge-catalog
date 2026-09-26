@@ -61,6 +61,8 @@ export default function GuidePage() {
             <GuideRefinements
               refinements={resolved.refinements}
               unavailable={unavailable}
+              opened={opened}
+              onOpenChange={setOpened}
               onSelect={select}
             />
           </div>

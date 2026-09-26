@@ -166,9 +166,30 @@ def resolve(
                 "selected": selections.get(refinement["key"]),
                 "unavailable": dead.get(refinement["key"], []),
             }
-            for refinement in refinements
+            for refinement in _up_to_first_unanswered(refinements, selections)
         ],
     }
+
+
+def _up_to_first_unanswered(refinements: list, selections: dict) -> list:
+    """The refinements to show: answered ones, then the next.
+
+    One at a time, exactly as the steps are. Answering the wall texture
+    is what puts the floor texture on the screen, and so on — the
+    alternative is finishing the questions and being handed four more
+    all at once, which is the form this stopped being.
+
+    Display only. Every refinement still *applies*, answered or hidden,
+    because a texture in the URL is the person's answer whether or not
+    its control is on screen — a shared link has to resolve to the
+    parts it was shared for.
+    """
+    shown = []
+    for refinement in refinements:
+        shown.append(refinement)
+        if refinement["key"] not in selections:
+            break
+    return shown
 
 
 def _unavailable(

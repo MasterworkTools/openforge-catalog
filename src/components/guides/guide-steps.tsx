@@ -233,12 +233,17 @@ function Answer({
 interface GuideRefinementsProps {
   refinements: GuideRefinement[];
   unavailable?: Unavailable;
+  /** The one answered question reopened, shared with the steps. */
+  opened?: string | null;
+  onOpenChange?: (key: string | null) => void;
   onSelect: (key: string, value: string | null) => void;
 }
 
 export function GuideRefinements({
   refinements,
   unavailable,
+  opened,
+  onOpenChange,
   onSelect,
 }: GuideRefinementsProps) {
   const deadFor = (refinement: GuideRefinement) =>
@@ -276,6 +281,8 @@ export function GuideRefinements({
           showPrompts={section.grouped}
           refinements={section.of}
           deadFor={deadFor}
+          opened={opened}
+          onOpenChange={onOpenChange}
           onSelect={onSelect}
         />
       ))}
@@ -288,12 +295,16 @@ function RefinementGroup({
   showPrompts,
   refinements,
   deadFor,
+  opened,
+  onOpenChange,
   onSelect,
 }: {
   name: string;
   showPrompts: boolean;
   refinements: GuideRefinement[];
   deadFor: (refinement: GuideRefinement) => string[];
+  opened?: string | null;
+  onOpenChange?: (key: string | null) => void;
   onSelect: (key: string, value: string | null) => void;
 }) {
   const headingId = `refinements-${name.replace(/\W+/g, '-').toLowerCase()}`;
@@ -304,6 +315,23 @@ function RefinementGroup({
       </h2>
       <div className="flex flex-col gap-3">
         {refinements.map((refinement) => {
+          // Answered and not reopened: folded to its answer, exactly
+          // as a settled step is. Clicking it opens it again.
+          if (refinement.selected !== null && opened !== refinement.key) {
+            return (
+              <AnsweredRefinement
+                key={refinement.key}
+                refinement={refinement}
+                showPrompt={showPrompts}
+                onOpen={() => onOpenChange?.(refinement.key)}
+              />
+            );
+          }
+          // Answering closes it, so the next question is what is open.
+          const answer = (key: string, value: string | null) => {
+            onOpenChange?.(null);
+            onSelect(key, value);
+          };
           if (refinement.on_tags) {
             return (
               <Toggle
@@ -311,7 +339,7 @@ function RefinementGroup({
                 refinement={refinement}
                 showPrompt={showPrompts}
                 dead={deadFor(refinement)}
-                onSelect={onSelect}
+                onSelect={answer}
               />
             );
           }
@@ -325,19 +353,63 @@ function RefinementGroup({
               showPrompt={showPrompts}
               labelledBy={headingId}
               dead={deadFor(refinement)}
-              onSelect={onSelect}
+              onSelect={answer}
             />
           ) : (
             <NamespacePicker
               key={refinement.key}
               refinement={refinement}
               showPrompt={showPrompts}
-              onSelect={onSelect}
+              onSelect={answer}
             />
           );
         })}
       </div>
     </section>
+  );
+}
+
+/**
+ * A settled question, folded to its answer.
+ *
+ * The same shape as a settled step, and for the same reason: the
+ * column grows as you go, and a question that is answered keeps only
+ * what it answered. Clicking it opens it again, which is also how you
+ * clear it — the answers inside toggle.
+ */
+function AnsweredRefinement({
+  refinement,
+  showPrompt,
+  onOpen,
+}: {
+  refinement: GuideRefinement;
+  showPrompt: boolean;
+  onOpen: () => void;
+}) {
+  const chosen = refinement.choices?.find(
+    (choice) => choice.tag === refinement.selected
+  );
+  const answer = chosen
+    ? labelFor(chosen)
+    : refinement.selected === 'on'
+      ? 'Yes'
+      : refinement.selected === 'off'
+        ? 'No'
+        : (refinement.selected ?? '');
+  return (
+    <button
+      type="button"
+      onClick={onOpen}
+      aria-expanded={false}
+      className="w-full text-left rounded border border-gray-200 px-3 py-2 hover:border-gray-400"
+    >
+      {showPrompt && (
+        <span className="block text-xs uppercase tracking-wide text-gray-500">
+          {refinement.prompt}
+        </span>
+      )}
+      <span className="block font-semibold">{answer}</span>
+    </button>
   );
 }
 

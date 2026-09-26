@@ -304,13 +304,21 @@ def test_a_refinement_appears_only_when_its_when_holds(guide):
     resolved = resolve(guide, {"method": "s2w-modular", "size": "two"}, find_candidates)
     assert [r["key"] for r in resolved["refinements"]] == ["texture"]
 
+    # `side-locks` is reachable on this branch, but it is the second
+    # question and the first is unanswered — one at a time applies to
+    # refinements as much as to steps, so answering the texture is what
+    # puts it on the screen.
     resolved = resolve(
         guide, {"method": "separate-wall", "size": "two"}, find_candidates
     )
-    assert [r["key"] for r in resolved["refinements"]] == [
-        "texture",
-        "side-locks",
-    ]
+    assert [r["key"] for r in resolved["refinements"]] == ["texture"]
+
+    answered = resolve(
+        guide,
+        {"method": "separate-wall", "size": "two", "texture": "texture|cave"},
+        find_candidates,
+    )
+    assert [r["key"] for r in answered["refinements"]] == ["texture", "side-locks"]
 
 
 def test_a_toggle_applies_on_tags_or_off_tags(guide):
@@ -1154,3 +1162,61 @@ def test_an_answer_this_branch_withholds_stops_the_wizard_there(guide):
     size = next(s for s in resolved["steps"] if s["key"] == "size")
     assert size["selected"] is None
     assert resolved["refinements"] == []
+
+
+def test_refinements_are_offered_one_at_a_time_too(guide):
+    """Answering the wall texture is what puts the next question up.
+
+    The same rule as the steps, and the one I kept applying only to
+    them: finishing the questions and being handed every refinement at
+    once is the form this stopped being.
+    """
+    guide["refinements"].append(
+        {
+            "key": "colour",
+            "role": "wall",
+            "prompt": "Colour?",
+            "from_namespace": "colour",
+            "choices": [{"tag": "colour|grey"}, {"tag": "colour|brown"}],
+        }
+    )
+    answered = {"method": "separate-wall", "size": "two"}
+
+    first = resolve(guide, answered, find_candidates)
+    assert [r["key"] for r in first["refinements"]] == ["texture"]
+
+    second = resolve(guide, {**answered, "texture": "texture|cave"}, find_candidates)
+    assert [r["key"] for r in second["refinements"]] == ["texture", "side-locks"]
+
+    third = resolve(
+        guide,
+        {**answered, "texture": "texture|cave", "side-locks": "off"},
+        find_candidates,
+    )
+    assert [r["key"] for r in third["refinements"]] == [
+        "texture",
+        "side-locks",
+        "colour",
+    ]
+
+
+def test_a_hidden_refinement_still_applies(guide):
+    """Display only — a shared link resolves to the parts it was shared for.
+
+    The answers are in the URL whether or not their controls are on
+    screen, and dropping one would quietly change the build somebody
+    sent to somebody else.
+    """
+    selections = {
+        "method": "separate-wall",
+        "size": "two",
+        # `side-locks` is answered but not yet on offer, because the
+        # texture before it is not.
+        "side-locks": "on",
+    }
+
+    resolved = resolve(guide, selections, find_candidates)
+
+    assert [r["key"] for r in resolved["refinements"]] == ["texture"]
+    wall = next(p for p in resolved["parts"] if p["role"] == "wall")
+    assert "connection|side|openlock" in wall["query"]["require"]

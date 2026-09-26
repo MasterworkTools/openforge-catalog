@@ -692,7 +692,9 @@ describe('GuidePage', () => {
       );
 
       render(<GuidePage />);
-      const cave = await screen.findByRole('button', { name: 'Cave' });
+      // Folded to its answer; open it to change your mind.
+      fireEvent.click(await screen.findByRole('button', { name: /Cave/ }));
+      const cave = screen.getByRole('button', { name: 'Cave' });
       expect(cave).toHaveAttribute('aria-pressed', 'true');
 
       fireEvent.click(cave);
@@ -892,6 +894,17 @@ describe('GuidePage', () => {
 
       render(<GuidePage />);
 
+      // Answered, so it is folded to its answer — and that is where
+      // the answer is shown now.
+      const summary = await screen.findByRole('button', {
+        name: /texture\|dungeon_stone/,
+      });
+      expect(summary).toHaveAttribute('aria-expanded', 'false');
+
+      // Reopened, the box still arrives filled in: `defaultValue` is
+      // what does that, and an uncontrolled input reads empty without
+      // it whatever the refinement says.
+      fireEvent.click(summary);
       const box = (await screen.findByPlaceholderText(
         'texture|...'
       )) as HTMLInputElement;
