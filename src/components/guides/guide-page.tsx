@@ -81,6 +81,7 @@ export default function GuidePage() {
             <GuideExplainer
               steps={resolved.steps}
               refinements={resolved.refinements}
+              unavailable={unavailable}
               opened={opened}
             />
           </div>

@@ -166,7 +166,9 @@ const RESOLVED_WITH_PARTS = {
       from_namespace: 'texture',
       choices: [
         { tag: 'texture|dungeon_stone', title: 'Dungeon stone' },
-        { tag: 'texture|cave' },
+        // A blurb, so the column beside the list has something to
+        // drop when this answer is not on offer.
+        { tag: 'texture|cave', blurb: 'Lumpy and irregular.' },
       ],
       selected: null,
     },
@@ -790,7 +792,10 @@ describe('GuidePage', () => {
 
     it('drops an answer the catalog cannot supply, and says why', async () => {
       // Availability is its own request and arrives after the parts.
-      visit('?guide=wall&method=separate-wall');
+      // `texture` answered, so floor-texture is the question the third
+      // column is explaining and its dropped answer has somewhere to
+      // visibly not be.
+      visit('?guide=wall&method=separate-wall&texture=texture|dungeon_stone');
       global.fetch = jest.fn((url: string) => {
         const body = url.includes('/availability')
           ? {
@@ -802,7 +807,14 @@ describe('GuidePage', () => {
               },
             }
           : url.includes('/resolve')
-            ? RESOLVED_WITH_PARTS
+            ? {
+                ...RESOLVED_WITH_PARTS,
+                refinements: RESOLVED_WITH_PARTS.refinements.map((r) =>
+                  r.key === 'texture'
+                    ? { ...r, selected: 'texture|dungeon_stone' }
+                    : r
+                ),
+              }
             : GUIDE_DOCUMENT;
         return Promise.resolve({
           ok: true,
@@ -821,6 +833,9 @@ describe('GuidePage', () => {
         screen.getByText(/Cave — no Floor for your "What size\?" answer/)
       ).toBeInTheDocument();
       expect(screen.queryByRole('button', { name: 'Cave' })).toBeNull();
+      // And not described in the column beside it either, which would
+      // read as though the choice is there and cannot be found.
+      expect(screen.queryByText('Lumpy and irregular.')).not.toBeInTheDocument();
       // The answers that do work are still on offer.
       expect(
         screen.getByRole('button', { name: 'Dungeon stone' })

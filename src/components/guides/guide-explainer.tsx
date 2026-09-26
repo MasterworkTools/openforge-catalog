@@ -16,15 +16,15 @@ import { GuideRefinement, GuideStep } from '@/services/guide-service';
 export function GuideExplainer({
   steps,
   refinements = [],
+  unavailable,
   opened,
 }: GuideExplainerProps) {
   // Steps and refinements are one queue from here: the column
   // explains whatever question is open, and to the person answering
   // there is no difference between the two kinds.
-  const questions: Question[] = [
-    ...steps.map(asQuestion),
-    ...refinements.map(asQuestion),
-  ];
+  const questions: Question[] = [...steps, ...refinements].map((q) =>
+    asQuestion(q, unavailable?.[q.key] ?? q.unavailable ?? [])
+  );
   // A reopened question wins. Going back to a settled choice is
   // exactly when the explanation is wanted again — that is what
   // reopening it is *for* — and it should not have to be read from
@@ -154,6 +154,8 @@ function escapeForRegExp(phrase: string): string {
 interface GuideExplainerProps {
   steps: GuideStep[];
   refinements?: GuideRefinement[];
+  /** Which answers are not on offer, keyed by question. */
+  unavailable?: Record<string, string[]> | null;
   /** An answered question the person has gone back to. */
   opened?: string | null;
 }
@@ -178,26 +180,32 @@ interface Question {
   }[];
 }
 
-function asQuestion(q: GuideStep | GuideRefinement): Question {
+function asQuestion(q: GuideStep | GuideRefinement, dead: string[]): Question {
   const options = 'options' in q ? q.options : undefined;
+  const answers =
+    options?.map((o) => ({
+      key: o.key,
+      title: o.title,
+      blurb: o.blurb,
+      links: o.links,
+    })) ??
+    (q as GuideRefinement).choices?.map((c) => ({
+      key: c.tag,
+      title: c.title ?? c.tag,
+      blurb: c.blurb,
+    })) ??
+    [];
   return {
     key: q.key,
     selected: q.selected,
     blurb: q.blurb,
     links: q.links,
-    answers:
-      options?.map((o) => ({
-        key: o.key,
-        title: o.title,
-        blurb: o.blurb,
-        links: o.links,
-      })) ??
-      (q as GuideRefinement).choices?.map((c) => ({
-        key: c.tag,
-        title: c.title ?? c.tag,
-        blurb: c.blurb,
-      })) ??
-      [],
+    // Describing an answer the list beside this does not offer is
+    // worse than saying nothing: it reads as though the choice is
+    // there and the person cannot find it.
+    answers: answers.filter(
+      (answer) => answer.key === q.selected || !dead.includes(answer.key)
+    ),
   };
 }
 
