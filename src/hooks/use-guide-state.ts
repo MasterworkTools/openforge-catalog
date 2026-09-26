@@ -104,17 +104,29 @@ export function useGuideState(guideKey: string | null | undefined) {
     };
   }, [guideKey, selections]);
 
-  const select = useCallback(
-    (key: string, value: string | null) => {
+  // Several answers at once, because some changes are not one answer.
+  // Picking a part by hand settles the questions that part answers,
+  // and `select`-ing them one after another would not work: each call
+  // reads the selections this render closed over, so the second would
+  // be written on top of a map that never saw the first.
+  const selectAll = useCallback(
+    (changes: Record<string, string | null>) => {
       const next = { ...(selections ?? {}) };
-      if (value === null) {
-        delete next[key];
-      } else {
-        next[key] = value;
+      for (const [key, value] of Object.entries(changes)) {
+        if (value === null) {
+          delete next[key];
+        } else {
+          next[key] = value;
+        }
       }
       writeUrl(guideKey ?? null, next);
     },
     [guideKey, selections]
+  );
+
+  const select = useCallback(
+    (key: string, value: string | null) => selectAll({ [key]: value }),
+    [selectAll]
   );
 
   return {
@@ -124,6 +136,7 @@ export function useGuideState(guideKey: string | null | undefined) {
     because: myDead?.because ?? null,
     error: mine?.error ?? guideError,
     select,
+    selectAll,
   };
 }
 

@@ -310,10 +310,10 @@ steps:
           wall: {require: ['size|width|4']}
 
   - key: wall-height
-    # A low wall is a different wall, not a different build: it stands
-    # on the same base and beside the same floor. So the catalog
-    # dialog lets you cross between the two while you look.
-    browsable: true
+    # Not browsable, deliberately. A low wall stands on the same base
+    # as a tall one, so it would be safe to cross between them in the
+    # catalog dialog — but the height is the thing you asked for, and
+    # a build that quietly ends up half low is not what you asked for.
     prompt: How tall are the walls?
     default: normal
     options:

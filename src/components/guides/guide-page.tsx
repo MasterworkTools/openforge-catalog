@@ -14,7 +14,7 @@ import { GuideRefinements, GuideSteps } from './guide-steps';
  */
 export default function GuidePage() {
   const guideKey = useGuideKey();
-  const { guide, resolved, unavailable, because, error, select } =
+  const { guide, resolved, unavailable, because, error, select, selectAll } =
     useGuideState(guideKey);
   // Which settled question has been reopened. Here rather than in the
   // section itself, because the explanation beside it follows.
@@ -75,7 +75,12 @@ export default function GuidePage() {
               long filename under a part would push the text column
               off the side. */}
           <div className="lg:flex-1 lg:min-w-0 overflow-y-auto min-h-0 pr-2">
-            <GuideParts parts={resolved.parts} onSelect={select} />
+            <GuideParts
+              parts={resolved.parts}
+              refinements={resolved.refinements}
+              onSelect={select}
+              onSelectAll={selectAll}
+            />
           </div>
           <div className="lg:flex-1 lg:min-w-0 overflow-y-auto min-h-0 pr-2">
             <GuideExplainer

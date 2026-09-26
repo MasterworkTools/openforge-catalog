@@ -66,6 +66,10 @@ export interface GuideRefinement {
   prompt: string;
   from_namespace?: string;
   choices?: GuideChoice[];
+  /** Roles this question does not reach, out of the ones `role` names. */
+  except_roles?: string[];
+  /** True when the answer is a preference rather than a fit. */
+  browsable?: boolean;
   /** Heading to file this question under, when it is not a main one. */
   group?: string;
   on_tags?: unknown;
@@ -276,4 +280,50 @@ export async function fetchAvailability(
   }
   const body = await response.json();
   return { unavailable: body.unavailable ?? {}, because: body.because ?? {} };
+}
+
+/**
+ * The answers a hand-picked part settles.
+ *
+ * Picking a rough stone wall out of the catalog while the texture
+ * question says dungeon stone leaves the page contradicting itself:
+ * the piece on screen is rough stone and the answer beside it is not.
+ * So the questions that piece *answers* are reset to what it is.
+ *
+ * Only the browsable ones. The rest were not relaxed for the browse
+ * in the first place, so whatever was picked already agrees with
+ * them, and a question the dialog would not let you cross has no
+ * business being rewritten by it.
+ *
+ * A question the piece answers with nothing is cleared rather than
+ * left: a wall with no peg tag is an answer of "no" to pegs, and
+ * leaving "yes" there would be the same contradiction pointing the
+ * other way.
+ */
+export function impliedBy(
+  // Only the tags: the catalog's own Blueprint type and the guide's
+  // differ in what else they carry, and this reads neither.
+  blueprint: { tags?: string[] },
+  role: string,
+  refinements: GuideRefinement[]
+): Record<string, string | null> {
+  const carried = new Set(blueprint.tags ?? []);
+  const changes: Record<string, string | null> = {};
+  for (const refinement of refinements) {
+    if (!refinement.browsable || !reaches(refinement, role)) continue;
+    // A combination answer is several tags at once, joined — it is
+    // that combination or it is not, so every part has to be there.
+    const answer =
+      refinement.choices?.find((choice) =>
+        choice.tag.split(',').every((tag) => carried.has(tag))
+      )?.tag ?? null;
+    if (answer !== refinement.selected) changes[refinement.key] = answer;
+  }
+  return changes;
+}
+
+/** Does this question apply to that role? Same test the engine makes. */
+function reaches(refinement: GuideRefinement, role: string): boolean {
+  if (refinement.role !== '*' && refinement.role !== role) return false;
+  return !(refinement.except_roles ?? []).includes(role);
 }

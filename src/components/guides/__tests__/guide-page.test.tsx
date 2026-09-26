@@ -1559,6 +1559,101 @@ describe('inspecting a part', () => {
     expect(screen.queryByTestId('part-modal')).not.toBeInTheDocument();
   });
 
+  it('brings the questions that part answers into line with it', async () => {
+    // Picking a cave wall out of the catalog while the texture
+    // question says dungeon stone leaves the page contradicting
+    // itself. The questions the piece answers are reset to what it is
+    // — and in one write, because the URL is the state and two writes
+    // would lose the first.
+    visit('?guide=wall&method=separate-wall&texture=texture|dungeon_stone');
+    mockFetch((url) =>
+      url.includes('/resolve')
+        ? {
+            ...RESOLVED_WITH_PARTS,
+            refinements: RESOLVED_WITH_PARTS.refinements.map((r) =>
+              r.key === 'texture'
+                ? {
+                    ...r,
+                    browsable: true,
+                    selected: 'texture|dungeon_stone',
+                    choices: [
+                      { tag: 'texture|dungeon_stone' },
+                      { tag: 'texture|cave' },
+                    ],
+                  }
+                : r
+            ),
+          }
+        : GUIDE_DOCUMENT
+    );
+
+    render(<GuidePage />);
+    fireEvent.click(await screen.findByLabelText(/a dungeon stone wall, seen/));
+    await screen.findByTestId('part-modal');
+
+    const onPartSelected = modalProps[modalProps.length - 1]
+      .onPartSelected as (
+      name: string,
+      blueprint: { file_md5: string; tags: string[] }
+    ) => void;
+    act(() =>
+      onPartSelected('Wall (wall)', {
+        file_md5: 'chosen-md5',
+        tags: ['shape|wall', 'texture|cave'],
+      })
+    );
+
+    const search = decodeURIComponent(window.location.search);
+    expect(search).toContain('part.wall=chosen-md5');
+    expect(search).toContain('texture=texture|cave');
+    expect(search).not.toContain('texture=texture|dungeon_stone');
+  });
+
+  it('leaves the questions that part does not answer alone', async () => {
+    // A question the dialog would not let you cross is not one the
+    // dialog may rewrite: whatever was picked already agrees with it.
+    visit('?guide=wall&method=separate-wall&texture=texture|dungeon_stone');
+    mockFetch((url) =>
+      url.includes('/resolve')
+        ? {
+            ...RESOLVED_WITH_PARTS,
+            refinements: RESOLVED_WITH_PARTS.refinements.map((r) =>
+              r.key === 'texture'
+                ? {
+                    ...r,
+                    selected: 'texture|dungeon_stone',
+                    choices: [
+                      { tag: 'texture|dungeon_stone' },
+                      { tag: 'texture|cave' },
+                    ],
+                  }
+                : r
+            ),
+          }
+        : GUIDE_DOCUMENT
+    );
+
+    render(<GuidePage />);
+    fireEvent.click(await screen.findByLabelText(/a dungeon stone wall, seen/));
+    await screen.findByTestId('part-modal');
+
+    const onPartSelected = modalProps[modalProps.length - 1]
+      .onPartSelected as (
+      name: string,
+      blueprint: { file_md5: string; tags: string[] }
+    ) => void;
+    act(() =>
+      onPartSelected('Wall (wall)', {
+        file_md5: 'chosen-md5',
+        tags: ['shape|wall', 'texture|cave'],
+      })
+    );
+
+    expect(decodeURIComponent(window.location.search)).toContain(
+      'texture=texture|dungeon_stone'
+    );
+  });
+
   it('marks a pinned part as the person\'s, with a way back', async () => {
     // A pinned part stops answering to the questions on the left, and
     // saying so is the only way the page can explain why changing the

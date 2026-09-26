@@ -1,7 +1,12 @@
 'use client';
 
 import React, { useCallback, useRef, useState } from 'react';
-import { GuidePart, pinKey } from '@/services/guide-service';
+import {
+  GuidePart,
+  GuideRefinement,
+  impliedBy,
+  pinKey,
+} from '@/services/guide-service';
 import { stepView, useDragRotation } from '@/hooks/use-drag-rotation';
 import { ConfigTags } from '@/types';
 import { downloadFiles, downloadUrl } from '@/utils/blueprint-utils';
@@ -11,8 +16,19 @@ import { SpriteControls } from '../sprite-controls';
 
 interface GuidePartsProps {
   parts: GuidePart[];
+  /**
+   * The questions, so that picking a part by hand can bring the ones
+   * it answers into line with what was picked.
+   */
+  refinements?: GuideRefinement[];
   /** Same setter the questions use: a pin is a selection like any other. */
   onSelect?: (key: string, value: string | null) => void;
+  /**
+   * Several answers at once. Picking a part settles the pin and the
+   * questions that part answers, and those have to be one write — the
+   * URL is the state, and two writes would lose the first.
+   */
+  onSelectAll?: (changes: Record<string, string | null>) => void;
 }
 
 /**
@@ -34,7 +50,12 @@ interface GuidePartsProps {
  * while the guides are being written that is most of what this page is
  * for.
  */
-export function GuideParts({ parts, onSelect }: GuidePartsProps) {
+export function GuideParts({
+  parts,
+  refinements = [],
+  onSelect,
+  onSelectAll,
+}: GuidePartsProps) {
   const [inspecting, setInspecting] = useState<GuidePart | null>(null);
   const [view, setView] = useState<string>('front');
   // Where the drag began, so each move is measured from there rather
@@ -141,9 +162,15 @@ export function GuideParts({ parts, onSelect }: GuidePartsProps) {
         // the dialog should not make you find it again.
         initialMd5={inspecting?.blueprint?.file_md5 ?? null}
         onPartSelected={
-          onSelect && inspecting
+          onSelectAll && inspecting
             ? (_name, blueprint) => {
-                onSelect(pinKey(inspecting.role), blueprint.file_md5);
+                onSelectAll({
+                  [pinKey(inspecting.role)]: blueprint.file_md5,
+                  // What was picked is now the answer to the questions
+                  // it answers, or the page would show a rough stone
+                  // wall beside the word "dungeon stone".
+                  ...impliedBy(blueprint, inspecting.role, refinements),
+                });
                 setInspecting(null);
               }
             : undefined
