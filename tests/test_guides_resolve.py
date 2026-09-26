@@ -1369,3 +1369,58 @@ def test_a_default_only_applies_where_the_branch_reaches_it(guide):
 
     wall = next(p for p in resolved["parts"] if p["role"] == "wall")
     assert "size|width|2" not in wall["query"].get("require", [])
+
+
+def test_a_browsable_answer_comes_off_the_browsing_predicate(guide):
+    """Two predicates, and the difference is what you may go looking for.
+
+    `query` is what the guide resolved against. `browse` is what the
+    catalog dialog opens on: the same thing minus the answers that are
+    only a preference, so somebody after an odd texture can find one —
+    while the answers that decide whether a piece *fits* stay on, and
+    what they find still goes together.
+    """
+    guide["refinements"][0]["browsable"] = True
+
+    resolved = resolve(
+        guide,
+        {"method": "s2w-modular", "size": "two", "texture": "texture|cave"},
+        find_candidates,
+    )
+
+    wall = next(p for p in resolved["parts"] if p["role"] == "wall")
+    assert "texture|cave" in wall["query"]["require"]
+    assert "texture|cave" not in wall["browse"]["require"]
+    # Everything structural is still there: the method's own tag, and
+    # the size, which is what decides whether a piece fits at all.
+    assert "build|s2w" in wall["browse"]["require"]
+    assert "size|width|2" in wall["browse"]["require"]
+
+
+def test_a_browsable_step_comes_off_it_too(guide):
+    """Not only refinements. A step can be a preference as well — a low
+    wall stands on the same base as a tall one — and the engine should
+    not need to know which kind of question it was.
+    """
+    guide["steps"][1]["browsable"] = True
+
+    resolved = resolve(guide, {"method": "s2w-modular", "size": "two"}, find_candidates)
+
+    wall = next(p for p in resolved["parts"] if p["role"] == "wall")
+    assert "size|width|2" in wall["query"]["require"]
+    assert "size|width|2" not in wall["browse"].get("require", [])
+    assert "build|s2w" in wall["browse"]["require"]
+
+
+def test_nothing_browsable_means_the_two_predicates_agree(guide):
+    """A guide that marks nothing gets the behaviour it had: the dialog
+    opens on exactly what narrowed the part.
+    """
+    resolved = resolve(
+        guide,
+        {"method": "s2w-modular", "size": "two", "texture": "texture|cave"},
+        find_candidates,
+    )
+
+    for part in resolved["parts"]:
+        assert part["browse"] == part["query"]

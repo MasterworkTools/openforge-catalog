@@ -310,6 +310,10 @@ steps:
           wall: {require: ['size|width|4']}
 
   - key: wall-height
+    # A low wall is a different wall, not a different build: it stands
+    # on the same base and beside the same floor. So the catalog
+    # dialog lets you cross between the two while you look.
+    browsable: true
     prompt: How tall are the walls?
     default: normal
     options:
@@ -553,6 +557,10 @@ roles:
 refinements:
   - key: texture
     role: '*'
+    # Texture is the obvious thing to go looking for: any wall of the
+    # right shape fits, whatever it is carved as, and the catalog has
+    # forty-odd textures against the eight worth recommending.
+    browsable: true
     prompt: Wall texture
     default: 'texture|dungeon_stone'
     # Not on the first screen: nothing is being built yet, so a
@@ -619,6 +627,7 @@ refinements:
   # plain boards. The parent stays on the list as "either is fine".
   - key: floor-texture
     role: floor
+    browsable: true
     prompt: Floor texture
     # The floor to recommend depends on the wall standing on it. A
     # wooden-framed building wants a wooden floor, and mortar and
@@ -674,6 +683,10 @@ refinements:
   # would be a second copy of that fact and the one that goes stale.
   - key: base-clips
     role: '*'
+    # Which clip a base carries is a preference — every base of the
+    # right footprint fits the same piece — and the unusual ones are
+    # exactly what somebody opening the catalog is after.
+    browsable: true
     except_roles: ['wall', 'floor']
     group: How do the pieces clip together?
     prompt: The bases
@@ -757,6 +770,7 @@ refinements:
   # tile and its tile plugs into a base.
   - key: wall-clips
     role: wall
+    browsable: true
     group: How do the pieces clip together?
     prompt: The wall
     when: {selected: {wall-print: [single-piece]}}
@@ -775,6 +789,7 @@ refinements:
 
   - key: floor-clips
     role: floor
+    browsable: true
     group: How do the pieces clip together?
     prompt: The floor
     when: {selected: {floor-print: [single-piece]}}
@@ -798,6 +813,7 @@ refinements:
   # it rather than asking something unanswerable.
   - key: pegs
     role: wall
+    browsable: true
     group: Other options
     prompt: Multifloor pegs?
     blurb: >

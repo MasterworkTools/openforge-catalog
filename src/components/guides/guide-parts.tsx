@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useCallback, useRef, useState } from 'react';
-import { GuidePart } from '@/services/guide-service';
+import { GuidePart, pinKey } from '@/services/guide-service';
 import { stepView, useDragRotation } from '@/hooks/use-drag-rotation';
 import { ConfigTags } from '@/types';
 import { downloadFiles, downloadUrl } from '@/utils/blueprint-utils';
@@ -11,6 +11,8 @@ import { SpriteControls } from '../sprite-controls';
 
 interface GuidePartsProps {
   parts: GuidePart[];
+  /** Same setter the questions use: a pin is a selection like any other. */
+  onSelect?: (key: string, value: string | null) => void;
 }
 
 /**
@@ -32,7 +34,7 @@ interface GuidePartsProps {
  * while the guides are being written that is most of what this page is
  * for.
  */
-export function GuideParts({ parts }: GuidePartsProps) {
+export function GuideParts({ parts, onSelect }: GuidePartsProps) {
   const [inspecting, setInspecting] = useState<GuidePart | null>(null);
   const [view, setView] = useState<string>('front');
   // Where the drag began, so each move is measured from there rather
@@ -99,6 +101,9 @@ export function GuideParts({ parts }: GuidePartsProps) {
                   part={part}
                   view={view}
                   onInspect={setInspecting}
+                  onUnpin={
+                    onSelect ? () => onSelect(pinKey(part.role), null) : undefined
+                  }
                 />
               ))}
             </div>
@@ -129,32 +134,44 @@ export function GuideParts({ parts }: GuidePartsProps) {
         isOpen={inspecting !== null}
         onClose={() => setInspecting(null)}
         partName={inspecting ? `${inspecting.title} (${inspecting.role})` : ''}
-        configValues={inspecting ? asConfigTags(inspecting.query) : null}
+        // The browsing predicate, not the resolved one: the point of
+        // opening this is to see what else there is.
+        configValues={inspecting ? asConfigTags(inspecting.browse) : null}
+        // Open on the piece that was clicked. You were looking at it;
+        // the dialog should not make you find it again.
+        initialMd5={inspecting?.blueprint?.file_md5 ?? null}
+        onPartSelected={
+          onSelect && inspecting
+            ? (_name, blueprint) => {
+                onSelect(pinKey(inspecting.role), blueprint.file_md5);
+                setInspecting(null);
+              }
+            : undefined
+        }
       />
     </section>
   );
 }
 
 /**
- * A resolved role's predicate, in the shape the part-selection modal
- * seeds its tag search from.
+ * A role's predicate, in the shape the part-selection modal seeds its
+ * tag search from.
  *
- * Every term the search can act on — four of the five — so the modal
- * opens on exactly the set the guide resolved against rather than a
- * wider one. `accept` is the exception and the body says why. The tag
- * tree can only add and remove exact tags, so the sweep stays as the
- * guide left it while you explore around it — which is the right way
- * round for finding a restriction that is missing.
+ * Every term the search can act on — four of the five. `accept` is
+ * the exception and the body says why. The tag tree can only add and
+ * remove exact tags, so a sweep stays as it arrived while you explore
+ * around it, which is the right way round: the sweep is what keeps
+ * the arrow slits and the curved corners out, and those are their own
+ * builds rather than alternatives to this one.
  */
 function asConfigTags(query: GuidePart['query']): ConfigTags {
   const tags = (names?: string[]) => (names ?? []).map((tag) => ({ tag }));
   // `accept` is deliberately not passed. The tag search has no subtree
   // predicate — `processConfigValues` reads require, deny,
   // deny_children and allow, and drops anything else — so sending it
-  // would seed the modal with a set *wider* than the one that narrowed
-  // the part, which is the opposite of what this is for. No guide uses
-  // `accept` yet; the day one does, the search needs the predicate
-  // before this line changes.
+  // would seed the modal wider than intended. No guide uses `accept`
+  // yet; the day one does, the search needs the predicate before this
+  // line changes.
   return {
     require: tags(query.require),
     deny: tags(query.deny),
@@ -188,10 +205,13 @@ function Part({
   part,
   view,
   onInspect,
+  onUnpin,
 }: {
   part: GuidePart;
   view: string;
   onInspect: (part: GuidePart) => void;
+  /** Undoes a pin, putting the role back on the guide's own answer. */
+  onUnpin?: () => void;
 }) {
   return (
     <div className="border border-gray-300 rounded p-3 w-64">
@@ -208,6 +228,19 @@ function Part({
         <GuideSprite blueprint={part.blueprint} view={view} />
       </button>
       <div className="mt-2 font-semibold">{part.title}</div>
+      {/* A pinned part is no longer an answer to the questions on the
+          left, and saying so is the only way the page can explain why
+          changing a texture leaves this piece alone. */}
+      {part.pinned && (
+        <div className="text-xs text-blue-700 flex items-center gap-2">
+          <span>You picked this part</span>
+          {onUnpin && (
+            <button type="button" onClick={onUnpin} className="underline">
+              undo
+            </button>
+          )}
+        </div>
+      )}
       {part.blueprint ? (
         <>
           <a

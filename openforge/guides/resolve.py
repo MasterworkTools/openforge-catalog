@@ -44,6 +44,11 @@ cache.
 
 PREDICATES = ("require", "deny", "accept", "allow", "deny_children")
 
+#: How a selection names a role rather than a question: `part.wall`.
+#: Its own part of the key space, which a question key cannot reach —
+#: a step or refinement key is a url_key and has no dot in it.
+PIN = "part."
+
 
 class GuideSelectionError(ValueError):
     """A selection this guide cannot act on.
@@ -93,6 +98,7 @@ def resolve(
     exists=None,
     facets=None,
     combinations=None,
+    find_pinned=None,
 ) -> dict:
     """Resolve a guide against a person's selections.
 
@@ -135,7 +141,7 @@ def resolve(
     # as chosen nor opens the question after it.
     given = {key: value for key, value in answered.items() if key in selections}
     _reject_unknown_selections(document, steps, refinements, selections)
-    parts = _parts(document, chosen, refinements, assumed, find_candidates)
+    parts = _parts(document, chosen, refinements, assumed, find_candidates, find_pinned)
     # Availability is opt-in, and the default is off.
     #
     # Working out which answers would empty a part means re-composing
@@ -782,7 +788,11 @@ def _chosen_options(steps: list[dict], selections: dict) -> list[dict]:
             raise GuideSelectionError(
                 f"step {step['key']!r} has no option {selected!r}"
             )
-        chosen.append(options[selected])
+        # Carrying which question it answered, so that composing a
+        # predicate can leave out the questions that are only a
+        # preference. The option dicts belong to the document, so this
+        # is a copy rather than a mark on the guide itself.
+        chosen.append({**options[selected], "step": step["key"]})
     return chosen
 
 
@@ -800,6 +810,10 @@ def _reject_unknown_selections(
     """
     known = {step["key"] for step in document["steps"]}
     known |= {r["key"] for r in document.get("refinements", [])}
+    # A pin names a role rather than a question, so it lives in its own
+    # part of the key space — `part.wall` — where it cannot collide
+    # with a step: a question key is a url_key and has no dot in it.
+    known |= {f"{PIN}{name}" for name in document["roles"]}
     unknown = sorted(set(selections) - known)
     if unknown:
         raise GuideSelectionError(
@@ -845,8 +859,10 @@ def _parts(
     refinements: list[dict],
     selections: dict,
     find_candidates,
+    find_pinned=None,
 ) -> list[dict]:
     in_play = _roles_in_play(chosen)
+    relax = _browsable(document)
     parts = {}
     for name in _resolution_order(in_play, document["roles"]):
         role = document["roles"][name]
@@ -854,23 +870,78 @@ def _parts(
         inherited = _matched(role, parts)
         if inherited is not None:
             predicate = _union([predicate, inherited])
+        pinned = _pinned(name, selections, find_pinned)
         parts[name] = {
             "role": name,
             "title": role["title"],
             "under": role.get("under"),
             "query": predicate,
+            # The same predicate with the answers that are only a
+            # preference taken out, for opening the catalog on this
+            # part. Narrow enough that what you find still fits the
+            # build, wide enough to be worth browsing.
+            "browse": _union(
+                [
+                    _compose(
+                        role["query"],
+                        [o for o in chosen if o.get("step") not in relax],
+                        [r for r in refinements if r["key"] not in relax],
+                        selections,
+                        name,
+                    ),
+                    inherited or {},
+                ]
+            ),
+            "pinned": pinned is not None,
+            # A part someone chose by hand wins over the search. They
+            # were looking at it when they chose it, so no predicate
+            # this guide composes is a better answer than the one they
+            # gave — and the piece beneath still matches its size,
+            # because `_matched` reads the tags of whatever landed
+            # here rather than what was asked for.
+            #
             # A role matching against a part that resolved to nothing
             # resolves to nothing too. Recommending here would mean
             # sizing a base to fit a piece nobody has: the size it fell
             # back on would be arbitrary, and a 1x1 base under an absent
             # 3x1 floor reads as an answer rather than as the gap it is.
-            "blueprint": None
+            "blueprint": pinned
+            if pinned is not None
+            else None
             if inherited is None
             else _recommend(predicate, role.get("prefer", []), find_candidates),
         }
     # Reported in the order the options called for them, not the order
     # they had to be resolved in: a parts list reads floor, wall, base.
     return [parts[name] for name in in_play]
+
+
+def _browsable(document: dict) -> set[str]:
+    """Questions whose answer is a preference, not a fit.
+
+    Their answers come off the predicate the catalog dialog opens on,
+    so that someone looking for an odd texture or an unusual clip can
+    find one — while the answers that decide whether a piece fits the
+    rest of the build stay on.
+    """
+    questions = [*document["steps"], *document.get("refinements", [])]
+    return {q["key"] for q in questions if q.get("browsable")}
+
+
+def _pinned(role_name: str, selections: dict, find_pinned) -> dict | None:
+    """The part someone chose by hand for this role, if they did.
+
+    Pinned by md5 rather than by id, because md5 is what the catalog
+    is addressed by: the file keeps it across a move or a rename, and
+    a shared guide URL keeps pointing at the piece rather than at a
+    row that a rescan may have replaced.
+    """
+    if find_pinned is None:
+        return None
+    md5 = selections.get(f"{PIN}{role_name}")
+    if not isinstance(md5, str) or not md5:
+        return None
+    return find_pinned(md5)
 
 
 def _roles_in_play(chosen: list[dict]) -> list[str]:

@@ -18,9 +18,17 @@ interface PartSelectionModalProps {
   onPartSelected?: (partName: string, blueprint: Blueprint) => void;
   parentTags?: string[];
   siblingSelections?: { partName: string; tags: string[] }[];
+  /**
+   * Open showing this blueprint, by md5, rather than nothing.
+   *
+   * For a caller that already knows which piece is under discussion.
+   * Optional, so the composer's use — where the point is to go and
+   * find one — is unchanged.
+   */
+  initialMd5?: string | null;
 }
 
-const PartSelectionModal = ({ isOpen, onClose, partName, configValues, onPartSelected, parentTags = [], siblingSelections = [] }: PartSelectionModalProps): React.ReactPortal | null => {
+const PartSelectionModal = ({ isOpen, onClose, partName, configValues, onPartSelected, parentTags = [], siblingSelections = [], initialMd5 = null }: PartSelectionModalProps): React.ReactPortal | null => {
   if (!isOpen) return null;
 
   return createPortal(
@@ -40,7 +48,7 @@ const PartSelectionModal = ({ isOpen, onClose, partName, configValues, onPartSel
           </div>
           <div className="part-selection-modal__body">
             <TagProvider autoload={false} search_models={true} search_blueprints={false}>
-              <BlueprintProvider autoload={false}>
+              <BlueprintProvider autoload={false} initialMd5={initialMd5}>
                 <div className="part-selection-modal__grid">
                   <div className="part-selection-modal__tags">
                     <TagContainer />

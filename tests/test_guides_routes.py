@@ -1203,3 +1203,57 @@ def test_the_options_narrow_with_the_size_the_base_inherits(client, test_db):
         "Dragonlock",
         "Openlock",
     ]
+
+
+def test_a_pinned_part_beats_the_search(client, test_db, wall_guide, catalog):
+    """Someone who picked a part was looking at it when they picked it.
+
+    No predicate this guide composes is a better answer than the one
+    they gave, so the pin wins outright — and the page can say whose
+    choice it was, which is the only way it can explain why changing
+    a texture leaves that one piece alone.
+    """
+    odd = make_blueprint(
+        test_db, "an odd wall", ["shape|wall", "build|separate wall", "texture|cave"]
+    )
+
+    response = client.get(
+        "/api/guides/wall/resolve?method=separate-wall"
+        f"&texture=texture%7Cdungeon_stone&part.wall={odd['file_md5']}"
+    )
+
+    wall = next(p for p in response.json["parts"] if p["role"] == "wall")
+    assert wall["blueprint"]["blueprint_name"] == "an odd wall"
+    assert wall["pinned"] is True
+    # The other roles are untouched: pinning one part is not opting
+    # out of the guide.
+    assert all(p["pinned"] is False for p in response.json["parts"] if p != wall)
+
+
+def test_a_pin_nobody_can_find_falls_back_to_the_recommendation(
+    client, wall_guide, catalog
+):
+    """A guide URL outlives the catalog it was made from.
+
+    A pinned file that has been deleted or replaced should leave a
+    page of parts, not a 404 — the guide still knows what it would
+    have recommended.
+    """
+    response = client.get(
+        "/api/guides/wall/resolve?method=separate-wall&part.wall=nosuchmd5"
+    )
+
+    assert response.status_code == 200
+    wall = next(p for p in response.json["parts"] if p["role"] == "wall")
+    assert wall["blueprint"] is not None
+    assert wall["pinned"] is False
+
+
+def test_a_pin_names_a_role_this_guide_has(client, wall_guide, catalog):
+    """Still strict. `part.` is a key space, not an escape hatch."""
+    response = client.get(
+        "/api/guides/wall/resolve?method=separate-wall&part.nosuchrole=abc"
+    )
+
+    assert response.status_code == 400
+    assert "part.nosuchrole" in response.json["error"]

@@ -75,7 +75,7 @@ export default function GuidePage() {
               long filename under a part would push the text column
               off the side. */}
           <div className="lg:flex-1 lg:min-w-0 overflow-y-auto min-h-0 pr-2">
-            <GuideParts parts={resolved.parts} />
+            <GuideParts parts={resolved.parts} onSelect={select} />
           </div>
           <div className="lg:flex-1 lg:min-w-0 overflow-y-auto min-h-0 pr-2">
             <GuideExplainer

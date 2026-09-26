@@ -118,8 +118,23 @@ export interface GuidePart {
   under: string | null;
   /** The resolved predicate: require, deny, accept, allow, deny_children. */
   query: Partial<Record<string, string[]>>;
+  /**
+   * The same predicate with the merely-preferred answers taken out,
+   * for opening the catalog on this part: narrow enough that what you
+   * find still fits the build, wide enough to be worth browsing.
+   */
+  browse: Partial<Record<string, string[]>>;
+  /** True when this part is the one the person picked, not the search's. */
+  pinned: boolean;
   blueprint: GuideBlueprint | null;
 }
+
+/** The query key that pins a part to a role: `part.wall`. */
+export function pinKey(role: string): string {
+  return `${PIN}${role}`;
+}
+
+const PIN = 'part.';
 
 export interface GuideDocument {
   key: string;
@@ -185,6 +200,9 @@ export function selectionKeys(document: GuideDocument): Set<string> {
   return new Set([
     ...document.steps.map((step) => step.key),
     ...(document.refinements ?? []).map((refinement) => refinement.key),
+    // A pin names a role rather than a question — `part.wall` — and
+    // is as much a part of a shared link as any answer is.
+    ...Object.keys(document.roles ?? {}).map(pinKey),
   ]);
 }
 

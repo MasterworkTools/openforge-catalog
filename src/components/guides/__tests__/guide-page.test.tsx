@@ -65,12 +65,23 @@ const RESOLVED_WITH_PARTS = {
       title: 'Wall',
       under: null,
       query: {
+        require: ['shape|wall', 'texture|dungeon_stone'],
+        deny: [],
+        accept: [],
+        deny_children: ['component|wall'],
+        allow: ['shape|square'],
+      },
+      // The same thing minus the texture, which is a preference
+      // rather than a fit — so a test can tell which one the dialog
+      // opened on.
+      browse: {
         require: ['shape|wall'],
         deny: [],
         accept: [],
         deny_children: ['component|wall'],
         allow: ['shape|square'],
       },
+      pinned: false,
       blueprint: {
         id: 'bp-1',
         blueprint_name: 'a dungeon stone wall',
@@ -110,6 +121,8 @@ const RESOLVED_WITH_PARTS = {
       title: 'Base for the wall',
       under: 'wall',
       query: { require: ['shape|base'] },
+      browse: { require: ['shape|base'] },
+      pinned: false,
       blueprint: {
         id: 'bp-2',
         blueprint_name: 'a dungeon stone base',
@@ -147,6 +160,8 @@ const RESOLVED_WITH_PARTS = {
       title: 'Base for the floor',
       under: 'floor',
       query: { require: ['shape|base'] },
+      browse: { require: ['shape|base'] },
+      pinned: false,
       blueprint: null,
     },
   ],
@@ -203,7 +218,10 @@ const GUIDE_DOCUMENT = {
       { key: 'floor-texture' },
       { key: 'side-locks' },
     ],
-    roles: {},
+    // The roles this guide builds. They are also the pin keys the page
+    // will forward — `part.wall` — so an empty map here would make a
+    // pinned part look like somebody else's query parameter.
+    roles: { wall: {}, floor: {}, 'wall-base': {}, 'floor-base': {} },
   },
 };
 
@@ -1472,7 +1490,7 @@ describe('moving between guides', () => {
 });
 
 describe('inspecting a part', () => {
-  it('opens the tag search seeded with what narrowed that part down', async () => {
+  it('opens the tag search on what still has to fit, not on every answer', async () => {
     visit('?guide=wall&method=separate-wall');
     mockFetch((url) =>
       url.includes('/resolve') ? RESOLVED_WITH_PARTS : GUIDE_DOCUMENT
@@ -1484,9 +1502,10 @@ describe('inspecting a part', () => {
     expect(await screen.findByTestId('part-modal')).toBeInTheDocument();
     const opened = modalProps[modalProps.length - 1];
     expect(opened.partName).toBe('Wall (wall)');
-    // Every term the search can act on, including the two the tag
-    // tree cannot edit: the modal has to open on the set the guide
-    // resolved against, not a wider one.
+    // The browsing predicate, not the resolved one. The texture this
+    // part resolved against is gone — going and finding an odd one is
+    // the whole point of opening this — while the shape sweep stays,
+    // because an arrow slit is its own build rather than another wall.
     //
     // `accept` is absent on purpose. The search has no subtree
     // predicate, so passing one would be seeding the modal with a
@@ -1500,6 +1519,78 @@ describe('inspecting a part', () => {
       allow: [{ tag: 'shape|square' }],
     });
     expect(opened.configValues).not.toHaveProperty('accept');
+  });
+
+  it('opens showing the part that was clicked', async () => {
+    // You were looking at it when you clicked it. Opening on "No
+    // Blueprint Selected" and a list would make you go and find the
+    // thing you already had.
+    visit('?guide=wall&method=separate-wall');
+    mockFetch((url) =>
+      url.includes('/resolve') ? RESOLVED_WITH_PARTS : GUIDE_DOCUMENT
+    );
+
+    render(<GuidePage />);
+    fireEvent.click(await screen.findByLabelText(/a dungeon stone wall, seen/));
+
+    await screen.findByTestId('part-modal');
+    expect(modalProps[modalProps.length - 1].initialMd5).toBe('abc');
+  });
+
+  it('pins the part the person chose, and says whose choice it is', async () => {
+    visit('?guide=wall&method=separate-wall');
+    mockFetch((url) =>
+      url.includes('/resolve') ? RESOLVED_WITH_PARTS : GUIDE_DOCUMENT
+    );
+
+    render(<GuidePage />);
+    fireEvent.click(await screen.findByLabelText(/a dungeon stone wall, seen/));
+    await screen.findByTestId('part-modal');
+
+    const onPartSelected = modalProps[modalProps.length - 1]
+      .onPartSelected as (name: string, blueprint: { file_md5: string }) => void;
+    act(() => onPartSelected('Wall (wall)', { file_md5: 'chosen-md5' }));
+
+    // The pin is a selection like any other, so it lands in the URL
+    // and the link still describes the whole build.
+    expect(window.location.search).toContain('part.wall=chosen-md5');
+    // And the dialog closes: the question it was open to answer has
+    // been answered.
+    expect(screen.queryByTestId('part-modal')).not.toBeInTheDocument();
+  });
+
+  it('marks a pinned part as the person\'s, with a way back', async () => {
+    // A pinned part stops answering to the questions on the left, and
+    // saying so is the only way the page can explain why changing the
+    // texture leaves this one piece alone.
+    visit('?guide=wall&method=separate-wall&part.wall=chosen-md5');
+    const asked: string[] = [];
+    mockFetch((url) => {
+      asked.push(url);
+      return url.includes('/resolve')
+        ? {
+            ...RESOLVED_WITH_PARTS,
+            parts: RESOLVED_WITH_PARTS.parts.map((p) =>
+              p.role === 'wall' ? { ...p, pinned: true } : p
+            ),
+          }
+        : GUIDE_DOCUMENT;
+    });
+
+    render(<GuidePage />);
+    await screen.findByText('a dungeon stone wall');
+
+    // Forwarded to the backend, or a shared link would resolve
+    // without the very part it was shared to show. The page sends
+    // only the keys the guide owns, so a pin has to be one of them.
+    expect(
+      asked.some(
+        (url) => url.includes('/resolve') && url.includes('part.wall=chosen-md5')
+      )
+    ).toBe(true);
+    expect(screen.getByText('You picked this part')).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'undo' }));
+    expect(window.location.search).not.toContain('part.wall');
   });
 
   it('is closed until a part is clicked', async () => {

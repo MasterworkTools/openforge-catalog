@@ -39,6 +39,7 @@ from flask import abort, current_app, jsonify, make_response, request
 from psycopg.rows import dict_row
 from werkzeug.exceptions import NotFound
 
+import openforge.db.sql.blueprints as blueprint_sql
 import openforge.db.sql.guides as guide_sql
 import openforge.db.sql.images as image_sql
 import openforge.db.sql.tags as tag_sql
@@ -90,6 +91,7 @@ def resolve_guide(guide_key: str):
                     _candidate_finder(curs),
                     facets=_facet_finder(curs),
                     combinations=_combination_finder(curs),
+                    find_pinned=_pinned_finder(curs),
                 )
             except GuideSelectionError as e:
                 # Both the query-string read and the engine raise this,
@@ -134,6 +136,7 @@ def guide_availability(guide_key: str):
                     exists=_existence_finder(curs),
                     facets=_facet_finder(curs),
                     combinations=_combination_finder(curs),
+                    find_pinned=_pinned_finder(curs),
                 )
             except GuideSelectionError as e:
                 return jsonify({"error": str(e)}), 400
@@ -217,6 +220,26 @@ def _candidate_finder(curs):
         return found
 
     return find_candidates
+
+
+def _pinned_finder(curs):
+    """The piece someone pinned to a role, by md5.
+
+    A miss is not an error. A guide URL outlives the catalog it was
+    made from, and a pin whose file has been deleted or replaced
+    should fall back to what the guide would have recommended anyway
+    — a page of parts is a better answer to a stale link than a 404.
+    """
+
+    def find_pinned(md5: str) -> dict | None:
+        try:
+            found = blueprint_sql.get_blueprint_by_md5(curs, md5)
+        except NotFound:
+            return None
+        _attach_tags(curs, [found])
+        return found
+
+    return find_pinned
 
 
 def _facet_finder(curs):
