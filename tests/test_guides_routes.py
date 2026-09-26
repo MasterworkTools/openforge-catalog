@@ -902,3 +902,77 @@ def test_a_curated_choice_list_is_left_alone(client, test_db, catalog):
         "texture|cave",
         "texture|nonesuch",
     ]
+
+
+def test_a_later_question_must_not_grey_out_the_first_screen(client, test_db, catalog):
+    """A role has to be answerable before the question that narrows it.
+
+    The trap, hit three times on this guide: move a required tag off a
+    role and onto a later step, and the role matches *nothing* until
+    that step is answered — because a sweep with nothing exempt takes
+    everything. The availability pass then correctly reports that
+    every first answer empties a part, and greys out the whole opening
+    screen. The page is not broken-looking; it is unusable, and the
+    cause is three questions away.
+
+    `allow` is the fix each time: permit what the later question will
+    choose between, so the role resolves now and narrows later.
+    """
+    document = copy.deepcopy(WALL_GUIDE)
+    # A sweep over the namespace that makes a wall a wall...
+    document["roles"]["wall"]["query"] = {
+        "require": ["build|separate wall"],
+        "deny_children": ["shape"],
+        "allow": ["shape|wall"],
+    }
+    # ...and a later question that decides which one.
+    document["steps"].append(
+        {
+            "key": "height",
+            "prompt": "How tall?",
+            "options": [
+                {
+                    "key": "normal",
+                    "title": "Normal",
+                    "roles": {"wall": {"require": ["shape|wall"]}},
+                }
+            ],
+        }
+    )
+    with test_db.connection() as conn:
+        with conn.cursor(row_factory=dict_row) as curs:
+            guide_sql.upsert_guide(curs, document)
+
+    response = client.get("/api/guides/wall/availability")
+
+    assert response.status_code == 200
+    assert response.json["unavailable"] == {}
+
+
+def test_without_the_allow_the_first_screen_does_grey_out(client, test_db, catalog):
+    """The other half, so the guard above cannot pass vacuously."""
+    document = copy.deepcopy(WALL_GUIDE)
+    document["roles"]["wall"]["query"] = {
+        "require": ["build|separate wall"],
+        "deny_children": ["shape"],
+    }
+    document["steps"].append(
+        {
+            "key": "height",
+            "prompt": "How tall?",
+            "options": [
+                {
+                    "key": "normal",
+                    "title": "Normal",
+                    "roles": {"wall": {"require": ["shape|wall"]}},
+                }
+            ],
+        }
+    )
+    with test_db.connection() as conn:
+        with conn.cursor(row_factory=dict_row) as curs:
+            guide_sql.upsert_guide(curs, document)
+
+    response = client.get("/api/guides/wall/availability")
+
+    assert response.json["unavailable"]["method"] == ["separate-wall"]

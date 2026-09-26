@@ -477,7 +477,25 @@ roles:
       # screen between choosing a method and choosing how it prints.
       # The print options narrow this: one requires the openforge
       # socket, the other denies it.
-      allow: ['shape|square', 'connection|openforge', 'connection|openlock']
+      # Both heights, and both connectors, for the same reason: until
+      # the question that decides between them is answered, neither is
+      # required, and the sweeps above would take every wall in the
+      # catalog. Requiring nothing and allowing nothing is not "no
+      # constraint" here — it is "nothing matches", and it greyed out
+      # every method on the first screen.
+      #
+      # The height question then narrows to one by requiring it. Note
+      # both `shape|` and `component|` markers: a normal wall carries
+      # shape|wall and component|wall, a low one carries shape|wall|low
+      # and component|wall|low, and the sweeps cover both namespaces.
+      allow:
+        - 'shape|square'
+        - 'shape|wall'
+        - 'shape|wall|low'
+        - 'component|wall'
+        - 'component|wall|low'
+        - 'connection|openforge'
+        - 'connection|openlock'
     prefer: ['texture|dungeon_stone', 'size|width|2']
   floor-base:
     title: Base for the floor
