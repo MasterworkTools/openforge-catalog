@@ -1,5 +1,12 @@
 import React from 'react';
-import { render, screen, waitFor, fireEvent, act } from '@testing-library/react';
+import {
+  render,
+  screen,
+  waitFor,
+  fireEvent,
+  act,
+  within,
+} from '@testing-library/react';
 import GuidePage from '../guide-page';
 
 /**
@@ -1686,6 +1693,70 @@ describe('inspecting a part', () => {
     expect(screen.getByText('You picked this part')).toBeInTheDocument();
     fireEvent.click(screen.getByRole('button', { name: 'undo' }));
     expect(window.location.search).not.toContain('part.wall');
+  });
+
+  it('lets a pinned part go when you answer the question that decides it', async () => {
+    // A pinned part outranks the questions, so without this, going
+    // back to the texture after hand-picking a wall changes nothing
+    // at all and the button looks dead. Answering is the plainest
+    // possible way of saying you want the guide to decide it again.
+    visit('?guide=wall&method=separate-wall&part.wall=chosen-md5');
+    mockFetch((url) =>
+      url.includes('/resolve')
+        ? {
+            ...RESOLVED_WITH_PARTS,
+            parts: RESOLVED_WITH_PARTS.parts.map((p) =>
+              p.role === 'wall' ? { ...p, pinned: true } : p
+            ),
+            refinements: RESOLVED_WITH_PARTS.refinements.map((r) =>
+              r.key === 'texture'
+                ? {
+                    ...r,
+                    choices: [
+                      { tag: 'texture|dungeon_stone', title: 'Dungeon stone' },
+                      { tag: 'texture|cave', title: 'Cave' },
+                    ],
+                  }
+                : r
+            ),
+          }
+        : GUIDE_DOCUMENT
+    );
+
+    render(<GuidePage />);
+    const texture = await screen.findByRole('group', { name: 'Texture' });
+    fireEvent.click(within(texture).getByRole('button', { name: 'Dungeon stone' }));
+
+    const search = decodeURIComponent(window.location.search);
+    expect(search).toContain('texture=texture|dungeon_stone');
+    expect(search).not.toContain('part.wall');
+  });
+
+  it('keeps a pinned part when the question does not reach it', async () => {
+    // The floor texture has no business dropping a wall somebody
+    // chose by hand.
+    visit('?guide=wall&method=separate-wall&part.wall=chosen-md5');
+    mockFetch((url) =>
+      url.includes('/resolve')
+        ? {
+            ...RESOLVED_WITH_PARTS,
+            parts: RESOLVED_WITH_PARTS.parts.map((p) =>
+              p.role === 'wall' ? { ...p, pinned: true } : p
+            ),
+            refinements: RESOLVED_WITH_PARTS.refinements.map((r) =>
+              r.key === 'texture' ? { ...r, selected: 'texture|cave' } : r
+            ),
+          }
+        : GUIDE_DOCUMENT
+    );
+
+    render(<GuidePage />);
+    const floor = await screen.findByRole('group', { name: 'Floor texture' });
+    fireEvent.click(within(floor).getByRole('button', { name: 'Dungeon stone' }));
+
+    const search = decodeURIComponent(window.location.search);
+    expect(search).toContain('floor-texture=texture|dungeon_stone');
+    expect(search).toContain('part.wall=chosen-md5');
   });
 
   it('is closed until a part is clicked', async () => {

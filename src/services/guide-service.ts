@@ -327,3 +327,41 @@ function reaches(refinement: GuideRefinement, role: string): boolean {
   if (refinement.role !== '*' && refinement.role !== role) return false;
   return !(refinement.except_roles ?? []).includes(role);
 }
+
+/**
+ * The pins an answer invalidates.
+ *
+ * A pinned part outranks the questions — that is what pinning is — so
+ * without this, going back and answering one of them does nothing
+ * visible and the page looks broken. Answering a question is the
+ * plainest possible statement that you want the guide to decide that
+ * part again, so the pins it reaches are let go.
+ *
+ * Only the parts the question actually reaches. Changing the floor
+ * texture has no business dropping a wall somebody chose by hand.
+ */
+export function releasedBy(
+  question: GuideStep | GuideRefinement,
+  pinnedRoles: string[]
+): Record<string, null> {
+  return Object.fromEntries(
+    pinnedRoles
+      .filter((role) => narrows(question, role))
+      .map((role) => [pinKey(role), null])
+  );
+}
+
+/**
+ * Does this question narrow that role?
+ *
+ * A refinement says so directly, and `reaches` is the same test the
+ * engine makes. A step says it per option: one predicate per role,
+ * and an option with no roles of its own — "how wide?" — narrows
+ * whatever the earlier answers put in play, which is every role.
+ */
+function narrows(question: GuideStep | GuideRefinement, role: string): boolean {
+  if (!('options' in question)) return reaches(question, role);
+  return question.options.some(
+    (option) => !option.roles || role in option.roles
+  );
+}

@@ -1,7 +1,11 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { GuideSummary, fetchGuides } from '@/services/guide-service';
+import {
+  GuideSummary,
+  fetchGuides,
+  releasedBy,
+} from '@/services/guide-service';
 import { useGuideKey, useGuideState } from '@/hooks/use-guide-state';
 import { GuideParts } from './guide-parts';
 import { GuideExplainer } from './guide-explainer';
@@ -19,6 +23,20 @@ export default function GuidePage() {
   // Which settled question has been reopened. Here rather than in the
   // section itself, because the explanation beside it follows.
   const [opened, setOpened] = useState<string | null>(null);
+
+  // Answering a question also lets go of the parts that question
+  // decides. A pinned part outranks the questions — that is what
+  // pinning is — so without this, going back to the texture after
+  // hand-picking a wall changes nothing and the button looks dead.
+  const pinned = (resolved?.parts ?? []).filter((p) => p.pinned);
+  const answer = (key: string, value: string | null) => {
+    const asked = [...(resolved?.steps ?? []), ...(resolved?.refinements ?? [])];
+    const question = asked.find((q) => q.key === key);
+    selectAll({
+      [key]: value,
+      ...(question ? releasedBy(question, pinned.map((p) => p.role)) : {}),
+    });
+  };
 
   // Before hydration the URL is unknown, which is not the same as a URL
   // with no guide in it. Rendering the list here would fetch every
@@ -57,7 +75,7 @@ export default function GuidePage() {
               because={because}
               opened={opened}
               onOpenChange={setOpened}
-              onSelect={select}
+              onSelect={answer}
             />
             <GuideRefinements
               refinements={resolved.refinements}
@@ -65,7 +83,7 @@ export default function GuidePage() {
               because={because}
               opened={opened}
               onOpenChange={setOpened}
-              onSelect={select}
+              onSelect={answer}
             />
           </div>
           {/* The questions keep a fixed width — they are a list of
