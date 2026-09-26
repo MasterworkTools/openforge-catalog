@@ -506,12 +506,13 @@ roles:
       # they required.
       require: ['shape|base', 'shape|base|square']
       deny_children: ['shape|base']
-    # The same connections as the wall base: a set whose two bases
-    # clip together differently is not a set.
+    # No connection preference here any more. It used to default both
+    # bases to topless openlock with magnets, which is a reasonable
+    # default and is now a question — and `prefer` adds its tags to
+    # `require`, so the old default outranked the answer: asking for
+    # plain OpenLOCK still returned a topless one.
     prefer:
       - 'texture|plain'
-      - 'connection|openlock|topless'
-      - 'connection|magnetic|flex'
 
     under: floor
     # A base has to match the footprint of the tile standing on it, and
@@ -525,8 +526,6 @@ roles:
     # textures looks like a mistake even when every piece fits.
     prefer:
       - 'texture|dungeon_stone'
-      - 'connection|openlock|topless'
-      - 'connection|magnetic|flex'
     under: wall
     # Width only. A wall is a line along an edge: it has a width and no
     # depth, and its base is the same shape.
@@ -591,35 +590,16 @@ refinements:
   # walls and not one shape|floor|wall between them — so a single
   # texture question would empty the floor for a third of its answers.
   # Only the five that have both are offered here.
-  # How the bases clip down, in three parts because that is how the
-  # catalog is built rather than a taste for controls.
-  #
-  # There is one clip system per base and it is OpenLOCK or
-  # DragonLock — no base carries both. Topless is a variant of the
-  # OpenLOCK clip, not a third system. Magnets are independent of all
-  # of it: either system can have them, and 200 bases have magnets and
-  # no clips at all. Counted over every base in the catalog, wall and
-  # floor:
-  #
-  #   dragonlock              52 / 243      + magnets   55 / 174
-  #   openlock                76 / 308      + magnets   87 / 260
-  #   openlock, topless       26 /  57      + magnets   66 / 179
-  #   no clips, magnets only  54 / 146
-  #
-  # Nothing gates topless to OpenLOCK, and nothing needs to: no
-  # DragonLock base is topless, so choosing DragonLock greys it out on
-  # its own. A rule in the guide would say the same thing twice and be
-  # the one that goes stale.
-  #
-  # All three apply to the bases and nothing else — `role: '*'` minus
-  # the pieces that stand on them — so they follow whichever bases are
-  # in play, and disappear when a build has none.
 
+  # The floor asks separately, and that is the point rather than a
+  # concession. Three of the eight wall textures have no floor of their
+  # own name at all — cave, stone brick and necro carry 110, 40 and 25
+  # walls and not one shape|floor|wall between them — so a single
+  # texture question would empty the floor for a third of its answers.
+  # Only the five that have both are offered here.
   - key: floor-texture
     role: floor
     prompt: Floor texture
-    # Not on the first screen: nothing is being built yet, so a
-    # texture is not a question about anything.
     when: {selected: {method: [s2w, wall-on-tile, separate-wall]}}
     from_namespace: texture
     choices:
@@ -629,6 +609,68 @@ refinements:
       - {tag: 'texture|towne', title: 'Towne', blurb: '23 floors.'}
       - {tag: 'texture|aztlan', title: 'Aztlan', blurb: '11 floors.'}
 
+
+  # How the bases clip down — one question, whose answers are the
+  # combinations that actually exist.
+  #
+  # It was three chained yes/nos (which system, then topless, then
+  # unsupported) and that was wrong twice over. It forced an answer to
+  # each before the next appeared, and it could offer topless *and*
+  # unsupported, which no base in the catalog is. The tags are not
+  # independent: a base is OpenLOCK or DragonLock, with magnets or
+  # without, and the OpenLOCK one may be topless or unsupported but
+  # never both. Asking which combination you want says all of that and
+  # cannot express the pairings that do not exist.
+  #
+  # Derived, so it follows the build rather than a list written here:
+  # a 1-inch dungeon stone wall base offers four, a 2-inch one seven,
+  # and aztlan offers a different set again because it has unsupported
+  # bases where dungeon stone does not.
+
+  # How the bases clip down — one question, whose answers are the
+  # combinations that actually exist.
+  #
+  # It was three chained yes/nos (which system, then topless, then
+  # unsupported) and that was wrong twice over. It forced an answer to
+  # each before the next appeared, and it could offer topless *and*
+  # unsupported, which no base in the catalog is. The tags are not
+  # independent: a base is OpenLOCK or DragonLock, with magnets or
+  # without, and the OpenLOCK one may be topless or unsupported but
+  # never both. Asking which combination you want says all of that and
+  # cannot express the pairings that do not exist.
+  #
+  # Derived, so it follows the build rather than a list written here:
+  # a 1-inch dungeon stone wall base offers four, a 2-inch one seven,
+  # and aztlan offers a different set again because it has unsupported
+  # bases where dungeon stone does not.
+  - key: base-clips
+    role: '*'
+    except_roles: ['wall', 'floor']
+    prompt: How do the bases clip together?
+    when: {selected: {method: [s2w, wall-on-tile, separate-wall]}}
+    from_combination: connection
+    # Every magnetic base is also magnetic|flex, so showing both
+    # doubles the label and separates nothing. Hidden, not refused —
+    # the pieces still carry it.
+    exclude: ['connection|magnetic|flex']
+
+  # Pegs on top of the wall, so another storey can stand on it. A
+  # different question from the side clips, which join wall to wall
+  # along a run: these join floor to floor up a building, and a wall
+  # can have both, either or neither.
+  #
+  # Only four of the eight wall textures have pegged walls at all —
+  # towne 58, dungeon stone 35, cut stone 12, rough stone 10, and
+  # necro, mortar and stone, aztlan and stone brick have none. So on
+  # half the textures this question has no answer, which is what the
+  # greying-out is for rather than something to hide.
+
+  # The floor asks separately, and that is the point rather than a
+  # concession. Three of the eight wall textures have no floor of their
+  # own name at all — cave, stone brick and necro carry 110, 40 and 25
+  # walls and not one shape|floor|wall between them — so a single
+  # texture question would empty the floor for a third of its answers.
+  # Only the five that have both are offered here.
   # Pegs on top of the wall, so another storey can stand on it. A
   # different question from the side clips, which join wall to wall
   # along a run: these join floor to floor up a building, and a wall
@@ -669,52 +711,6 @@ refinements:
   # All three apply to the bases and nothing else — `role: '*'` minus
   # the pieces that stand on them — so they follow whichever bases are
   # in play, and disappear when a build has none.
-  - key: base-connection
-    role: '*'
-    except_roles: ['wall', 'floor']
-    group: Base clips
-    prompt: How do the bases clip together?
-    when: {selected: {method: [s2w, wall-on-tile, separate-wall]}}
-    # No `choices`: the answers are whatever these bases actually
-    # carry, worked out per role and intersected. That is the whole
-    # point — a connector the catalog gains later appears here without
-    # this file being touched, and one it does not have is never
-    # offered. It also means the list narrows as the build narrows: a
-    # 2x2 floor base, a 2x2 s2w base and a 2-wide dungeon stone wall
-    # base do not offer the same connectors.
-    from_namespace: connection
-
-  # The variants of the OpenLOCK clip, which is where "expose more
-  # options as you choose" lands: under DragonLock both of these grey
-  # out on their own, because no DragonLock base is topless and the
-  # eight that are unsupported are floor bases only. Nothing in the
-  # guide says "only for OpenLOCK" — the catalog says it, and a rule
-  # here would be the copy that goes stale.
-
-  # The variants of the OpenLOCK clip, which is where "expose more
-  # options as you choose" lands: under DragonLock both of these grey
-  # out on their own, because no DragonLock base is topless and the
-  # eight that are unsupported are floor bases only. Nothing in the
-  # guide says "only for OpenLOCK" — the catalog says it, and a rule
-  # here would be the copy that goes stale.
-  - key: base-topless
-    role: '*'
-    except_roles: ['wall', 'floor']
-    group: Base clips
-    prompt: Topless clips?
-    when: {selected: {method: [s2w, wall-on-tile, separate-wall]}}
-    # An open top, so the clip prints without supports.
-    on_tags: {require: ['connection|openlock|topless']}
-    off_tags: {deny: ['connection|openlock|topless']}
-
-  - key: base-unsupported
-    role: '*'
-    except_roles: ['wall', 'floor']
-    group: Base clips
-    prompt: Unsupported clips?
-    when: {selected: {method: [s2w, wall-on-tile, separate-wall]}}
-    on_tags: {require: ['connection|openlock|unsupported']}
-    off_tags: {deny: ['connection|openlock|unsupported']}
 
   # Pegs on top of the wall, so another storey can stand on it. A
   # different question from the side clips, which join wall to wall

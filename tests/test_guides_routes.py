@@ -976,3 +976,185 @@ def test_without_the_allow_the_first_screen_does_grey_out(client, test_db, catal
     response = client.get("/api/guides/wall/availability")
 
     assert response.json["unavailable"]["method"] == ["separate-wall"]
+
+
+@pytest.fixture
+def clip_catalog(test_db):
+    """Bases whose connection tags are not independent of each other.
+
+    Modelled on the real ones: a base is OpenLOCK or DragonLock, with
+    magnets or without, and the OpenLOCK one may be topless — but
+    nothing is both topless and unsupported, which is the pairing three
+    separate yes/no questions would happily offer.
+    """
+    # Named so that the *plain* OpenLOCK base sorts last. All three
+    # openlock bases match a bare `require: connection|openlock`, and
+    # candidates come back in name order — so if the plain one sorted
+    # first, a predicate that failed to exclude the others would still
+    # return it and the test would pass on an accident.
+    combos = {
+        "z plain openlock": ["connection|openlock"],
+        "a openlock with magnets": [
+            "connection|openlock",
+            "connection|magnetic",
+            "connection|magnetic|flex",
+        ],
+        "b openlock topless": [
+            "connection|openlock",
+            "connection|openlock|topless",
+        ],
+        "c dragonlock": ["connection|dragonlock"],
+    }
+    for name, tags in combos.items():
+        # `build|separate wall` because the method option asks every
+        # role it names for it.
+        make_blueprint(test_db, name, ["shape|base", "build|separate wall", *tags])
+    return combos
+
+
+def test_a_combination_refinement_offers_the_sets_that_exist(
+    client, test_db, catalog, clip_catalog
+):
+    """Whole combinations, not one tag at a time.
+
+    Four bases, four answers — and no answer pairing tags that no base
+    carries together, which is the thing separate questions cannot
+    promise.
+    """
+    document = copy.deepcopy(WALL_GUIDE)
+    document["roles"]["base"] = {"title": "Base", "query": {"require": ["shape|base"]}}
+    document["steps"][0]["options"][0]["roles"]["base"] = None
+    document["refinements"] = [
+        {
+            "key": "clips",
+            "role": "base",
+            "prompt": "Clips?",
+            "from_combination": "connection",
+            "exclude": ["connection|magnetic|flex"],
+        }
+    ]
+    with test_db.connection() as conn:
+        with conn.cursor(row_factory=dict_row) as curs:
+            guide_sql.upsert_guide(curs, document)
+
+    response = client.get("/api/guides/wall/resolve?method=separate-wall")
+
+    offered = response.json["refinements"][0]["choices"]
+    assert [c["title"] for c in offered] == [
+        "Dragonlock",
+        "Magnetic + openlock",
+        "Openlock",
+        "Openlock topless",
+    ]
+    # The excluded tag is hidden from the label, not refused: the
+    # magnetic base is still one of the four.
+    assert all("flex" not in c["title"] for c in offered)
+
+
+def test_choosing_a_combination_excludes_the_others(
+    client, test_db, catalog, clip_catalog
+):
+    """Exact, or it is not a combination.
+
+    Asking for plain OpenLOCK has to exclude the magnetic one and the
+    topless one, which a bare `require` would not — all three carry
+    `connection|openlock`.
+    """
+    document = copy.deepcopy(WALL_GUIDE)
+    document["roles"]["base"] = {"title": "Base", "query": {"require": ["shape|base"]}}
+    document["steps"][0]["options"][0]["roles"]["base"] = None
+    document["refinements"] = [
+        {
+            "key": "clips",
+            "role": "base",
+            "prompt": "Clips?",
+            "from_combination": "connection",
+            "exclude": ["connection|magnetic|flex"],
+        }
+    ]
+    with test_db.connection() as conn:
+        with conn.cursor(row_factory=dict_row) as curs:
+            guide_sql.upsert_guide(curs, document)
+
+    response = client.get(
+        "/api/guides/wall/resolve?method=separate-wall&clips=connection%7Copenlock"
+    )
+
+    base = next(p for p in response.json["parts"] if p["role"] == "base")
+    assert base["blueprint"]["blueprint_name"] == "z plain openlock"
+
+
+def test_the_options_narrow_with_the_size_the_base_inherits(client, test_db):
+    """Base size changes the answers, and by data rather than a rule.
+
+    A base copies its width from the piece standing on it, so the clip
+    combinations on offer have to be the ones *that* size has. In the
+    real catalog a 1-inch dungeon stone wall base has four and a 2-inch
+    one has seven; here, one and two.
+
+    Without the inherited size in the derivation, both sizes offer
+    everything and the narrow base's question lists answers it cannot
+    honour.
+    """
+    document = copy.deepcopy(WALL_GUIDE)
+    document["roles"] = {
+        "wall": {"title": "Wall", "query": {"require": ["shape|wall"]}},
+        "base": {
+            "title": "Base",
+            "query": {"require": ["shape|base"]},
+            "under": "wall",
+            "match": ["size|width"],
+        },
+    }
+    document["steps"] = [
+        {
+            "key": "size",
+            "prompt": "How wide?",
+            "options": [
+                {
+                    "key": "one",
+                    "title": "1",
+                    "roles": {"wall": {"require": ["size|width|1"]}, "base": None},
+                },
+                {
+                    "key": "two",
+                    "title": "2",
+                    "roles": {"wall": {"require": ["size|width|2"]}, "base": None},
+                },
+            ],
+        }
+    ]
+    document["refinements"] = [
+        {
+            "key": "clips",
+            "role": "base",
+            "prompt": "Clips?",
+            "from_combination": "connection",
+        }
+    ]
+    with test_db.connection() as conn:
+        with conn.cursor(row_factory=dict_row) as curs:
+            guide_sql.upsert_guide(curs, document)
+    make_blueprint(test_db, "wall 1", ["shape|wall", "size|width|1"])
+    make_blueprint(test_db, "wall 2", ["shape|wall", "size|width|2"])
+    # The narrow base comes in one flavour; the wide one in two.
+    make_blueprint(
+        test_db, "base 1", ["shape|base", "size|width|1", "connection|openlock"]
+    )
+    make_blueprint(
+        test_db, "base 2a", ["shape|base", "size|width|2", "connection|openlock"]
+    )
+    make_blueprint(
+        test_db, "base 2b", ["shape|base", "size|width|2", "connection|dragonlock"]
+    )
+
+    narrow = client.get("/api/guides/wall/resolve?size=one")
+    wide = client.get("/api/guides/wall/resolve?size=two")
+
+    assert [c["title"] for c in narrow.json["refinements"][0]["choices"]] == [
+        "Openlock"
+    ]
+    assert [c["title"] for c in wide.json["refinements"][0]["choices"]] == [
+        "Dragonlock",
+        "Openlock",
+    ]

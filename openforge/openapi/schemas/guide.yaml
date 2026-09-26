@@ -298,9 +298,22 @@ $defs:
     additionalProperties: false
     oneOf:
       - required: [from_namespace]
-        not: {anyOf: [{required: [on_tags]}, {required: [off_tags]}]}
+        not:
+          anyOf:
+            - {required: [on_tags]}
+            - {required: [off_tags]}
+            - {required: [from_combination]}
+      - required: [from_combination]
+        not:
+          anyOf:
+            - {required: [on_tags]}
+            - {required: [off_tags]}
+            - {required: [from_namespace]}
       - required: [on_tags]
-        not: {required: [from_namespace]}
+        not:
+          anyOf:
+            - {required: [from_namespace]}
+            - {required: [from_combination]}
     description: >
       Either a pick from a tag namespace (from_namespace) or a toggle
       (on_tags / off_tags), not both. The toggle fields are spelled with
@@ -371,6 +384,34 @@ $defs:
           Tag namespace to offer, e.g. "texture". Without `choices` the
           options are open — any tag in the namespace — and the
           frontend asks for one as free text.
+      from_combination:
+        type: string
+        description: >
+          Like `from_namespace`, but the answers are whole
+          *combinations* of tags rather than one tag at a time.
+
+          For a namespace whose tags are not independent. A base is
+          OpenLOCK or DragonLock, with magnets or without, and the
+          OpenLOCK one may be topless or unsupported but never both —
+          three chained yes/nos both misdescribe that and force an
+          answer to each. The combinations that exist say it exactly,
+          and cannot offer a pairing the catalog does not have.
+
+          Derived like any other answer, so the list narrows with the
+          build: a 1-inch dungeon stone wall base has four, a 2-inch
+          one has seven.
+      exclude:
+        type: array
+        minItems: 1
+        description: >
+          Tags to leave out of the combinations. For the ones that add
+          length and no meaning: every magnetic base is also
+          `connection|magnetic|flex`, so listing both doubles the label
+          and distinguishes nothing. Excluded tags are permitted on the
+          piece — they are hidden, not refused.
+        items:
+          type: string
+          pattern: "^[^|]+(\\|[^|]+)*$"
       choices:
         type: array
         minItems: 2

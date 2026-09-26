@@ -89,6 +89,7 @@ def resolve_guide(guide_key: str):
                     _selections_from_request(),
                     _candidate_finder(curs),
                     facets=_facet_finder(curs),
+                    combinations=_combination_finder(curs),
                 )
             except GuideSelectionError as e:
                 # Both the query-string read and the engine raise this,
@@ -132,6 +133,7 @@ def guide_availability(guide_key: str):
                     _candidate_finder(curs),
                     exists=_existence_finder(curs),
                     facets=_facet_finder(curs),
+                    combinations=_combination_finder(curs),
                 )
             except GuideSelectionError as e:
                 return jsonify({"error": str(e)}), 400
@@ -222,6 +224,17 @@ def _facet_finder(curs):
         )
 
     return facets
+
+
+def _combination_finder(curs):
+    """The distinct sets of tags a namespace's pieces actually carry."""
+
+    def combinations(predicate: dict, namespace: str, exclude: list) -> list[dict]:
+        return tag_sql.tag_search_namespace_combinations(
+            curs, **to_tag_query(predicate), namespace=namespace, exclude=exclude
+        )
+
+    return combinations
 
 
 def _existence_finder(curs):

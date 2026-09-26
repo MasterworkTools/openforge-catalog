@@ -87,7 +87,12 @@ def to_tag_query(predicate: dict) -> dict:
 
 
 def resolve(
-    document: dict, selections: dict, find_candidates, exists=None, facets=None
+    document: dict,
+    selections: dict,
+    find_candidates,
+    exists=None,
+    facets=None,
+    combinations=None,
 ) -> dict:
     """Resolve a guide against a person's selections.
 
@@ -127,7 +132,16 @@ def resolve(
     # whatever the parts actually carry, so a connector the catalog
     # gains later shows up without a guide being edited.
     derived = (
-        _derive_choices(document, chosen, refinements, selections, in_play, facets)
+        _derive_choices(
+            document,
+            chosen,
+            refinements,
+            selections,
+            in_play,
+            parts,
+            facets,
+            combinations,
+        )
         if facets is not None
         else {}
     )
@@ -288,7 +302,9 @@ def _derive_choices(
     refinements: list[dict],
     selections: dict,
     in_play: list[str],
+    parts: list,
     facets,
+    combinations=None,
 ) -> dict:
     """What each open-ended namespace refinement can actually offer.
 
@@ -314,11 +330,20 @@ def _derive_choices(
     asked for *different* tags, so intersecting what they carry
     describes nothing. The texture question is the live example.
     """
+    parts_by_role = {part["role"]: part for part in parts}
     derived = {}
     for refinement in refinements:
-        namespace = refinement.get("from_namespace")
+        namespace = refinement.get("from_namespace") or refinement.get(
+            "from_combination"
+        )
         if not namespace or refinement.get("choices"):
             continue
+        # Whole combinations rather than one tag at a time. Some
+        # pairings simply do not exist — nothing is both topless and
+        # unsupported — and asking about each tag separately cannot
+        # say so, while asking which combination you want cannot
+        # express it in the first place.
+        whole = "from_combination" in refinement
         roles = [
             name
             for name in in_play
@@ -330,15 +355,31 @@ def _derive_choices(
         offered: set | None = None
         counts: dict = {}
         for name in roles:
+            role = document["roles"][name]
             predicate = _compose(
-                document["roles"][name]["query"],
+                role["query"],
                 chosen,
                 refinements,
                 selections,
                 name,
                 without=refinement["key"],
             )
-            found = {f["tag"]: f for f in facets(predicate, namespace)}
+            # The size a base copies from the piece it sits under is
+            # part of what narrows it, and a 1-inch wall base has four
+            # clip combinations where a 2-inch one has seven. Without
+            # this the question offers answers the chosen size does not
+            # have.
+            inherited = _matched(role, parts_by_role)
+            if inherited is None:
+                offered = set()
+                break
+            predicate = _union([predicate, inherited])
+            answers = (
+                combinations(predicate, namespace, refinement.get("exclude", []))
+                if whole
+                else facets(predicate, namespace)
+            )
+            found = {_answer_key(a, whole): a for a in answers}
             offered = set(found) if offered is None else offered & set(found)
             for tag, facet in found.items():
                 # The smallest count across the roles, because that is
@@ -350,11 +391,39 @@ def _derive_choices(
             {
                 "tag": tag,
                 "count": counts[tag]["count"],
+                **(
+                    {"title": _combination_title(counts[tag]["tags"], namespace)}
+                    if whole
+                    else {}
+                ),
                 **({"blurb": counts[tag]["blurb"]} if counts[tag].get("blurb") else {}),
             }
             for tag in sorted(offered or ())
         ]
     return derived
+
+
+def _answer_key(answer: dict, whole: bool) -> str:
+    """One string for one answer, because a URL carries strings.
+
+    A combination is several tags, joined — it has to survive a round
+    trip through a query string and come back as the same answer.
+    """
+    return ",".join(sorted(answer["tags"])) if whole else answer["tag"]
+
+
+def _combination_title(tags: list[str], namespace: str) -> str:
+    """A combination, said out loud.
+
+    A tag whose child is also in the set is dropped, because the child
+    already names it: OpenLOCK *and* OpenLOCK topless is one clip, and
+    "openlock + openlock topless" reads as two.
+    """
+    kept = [t for t in tags if not any(o.startswith(f"{t}|") for o in tags)]
+    depth = len(namespace.split("|"))
+    words = [" ".join(t.split("|")[depth:]).replace("_", " ") for t in sorted(kept)]
+    title = " + ".join(words)
+    return title[:1].upper() + title[1:]
 
 
 def _predicate_key(predicate: dict):
@@ -563,8 +632,11 @@ def _reject_bad_refinement_value(refinement: dict, selections: dict) -> None:
         raise GuideSelectionError(
             f"refinement {refinement['key']!r} takes 'on' or 'off', not {value!r}"
         )
-    namespace = refinement.get("from_namespace")
-    if namespace and not value.startswith(f"{namespace}|"):
+    namespace = refinement.get("from_namespace") or refinement.get("from_combination")
+    # A combination arrives as its tags joined, so each one is checked.
+    if namespace and not all(
+        part.startswith(f"{namespace}|") for part in value.split(",")
+    ):
         raise GuideSelectionError(
             f"refinement {refinement['key']!r} takes a {namespace!r} tag, not {value!r}"
         )
@@ -753,6 +825,20 @@ def _refinement_predicate(refinement: dict, value: str, role_name: str) -> dict:
     if "on_tags" in refinement:
         key = "on_tags" if value == "on" else "off_tags"
         return refinement.get(key, {})
+    namespace = refinement.get("from_combination")
+    if namespace:
+        # A combination is exact, or it is not a combination: asking
+        # for OpenLOCK without magnets has to exclude the magnetic
+        # ones. Requiring the set and sweeping the rest of the
+        # namespace says that without needing to know what the rest
+        # is — the required tags are exempt from the sweep, and
+        # `exclude` names the ones that were too noisy to offer and so
+        # must not be swept either.
+        return {
+            "require": value.split(","),
+            "deny_children": [namespace],
+            "allow": refinement.get("exclude", []),
+        }
     substitute = refinement.get("substitute", {}).get(value, {})
     return {"require": [substitute.get(role_name, value)]}
 

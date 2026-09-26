@@ -483,6 +483,85 @@ def tag_search_namespace_facets(
     ]
 
 
+def tag_search_namespace_combinations(
+    curs: cursor,
+    accept: list[str],
+    require: list[str],
+    deny: list[str],
+    namespace: str,
+    exclude: list[str] | None = None,
+    models: bool = True,
+    blueprints: bool = False,
+    search: str | None = None,
+    deny_children: list[dict] | None = None,
+    allow: list[dict] | None = None,
+) -> list[dict]:
+    """The distinct *sets* of tags under `namespace` that pieces carry.
+
+    Not each tag on its own, which is what
+    `tag_search_namespace_facets` gives: the whole combination a piece
+    actually has, so "OpenLOCK with magnets" and "OpenLOCK topless
+    without" are two answers rather than three overlapping questions.
+
+    Some pairings do not exist — nothing is both topless and
+    unsupported — and asking about each tag separately cannot say so.
+    Asking which combination you want cannot express it in the first
+    place.
+
+    `exclude` drops tags that only add noise: every magnetic base in
+    the catalog is also `magnetic|flex`, so listing both doubles the
+    label and distinguishes nothing.
+    """
+    excluded = exclude or []
+    depth = len(namespace.split("|"))
+    parts = [
+        sql.SQL("SELECT combo, COUNT(*) AS piece_count FROM ("),
+        sql.SQL("  SELECT t.blueprint_id,"),
+        sql.SQL(
+            "         array_agg(array_to_string(t.tag, '|') ORDER BY t.tag) AS combo"
+        ),
+        sql.SQL("    FROM tags AS t"),
+        sql.SQL("    WHERE t.blueprint_id IN ("),
+        _query_tags_basics(
+            accept,
+            require,
+            deny,
+            do_limit=False,
+            do_order=False,
+            models=models,
+            blueprints=blueprints,
+            search=search,
+            deny_children=deny_children,
+            allow=allow,
+        ),
+        sql.SQL("    )"),
+        sql.SQL("      AND t.tag @> {ns}").format(ns=sql.Literal(namespace.split("|"))),
+        sql.SQL("      AND t.tag[1:{depth}] = {ns}").format(
+            depth=sql.Literal(depth), ns=sql.Literal(namespace.split("|"))
+        ),
+        sql.SQL("      AND array_length(t.tag, 1) > {depth}").format(
+            depth=sql.Literal(depth)
+        ),
+    ]
+    for tag in excluded:
+        parts.append(
+            sql.SQL("      AND t.tag <> {tag}").format(tag=sql.Literal(tag.split("|")))
+        )
+    parts += [
+        sql.SQL("    GROUP BY t.blueprint_id"),
+        sql.SQL(" ) AS per_piece"),
+        sql.SQL(" GROUP BY combo"),
+        sql.SQL(" ORDER BY combo"),
+    ]
+    query = sql.Composed(parts)
+    get_logger().debug(query.join("\n").as_string())
+    curs.execute(query)
+    return [
+        {"tags": list(row["combo"]), "count": row["piece_count"]}
+        for row in curs.fetchall()
+    ]
+
+
 def tag_search_tag_count(
     curs: cursor,
     accept: list[str],
