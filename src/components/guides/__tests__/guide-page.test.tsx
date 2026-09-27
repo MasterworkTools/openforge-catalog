@@ -454,6 +454,41 @@ describe('GuidePage', () => {
       }
     });
 
+    it('names the combination in the free-text box, not `undefined`', async () => {
+      // A combination refinement has no `from_namespace`, and it only
+      // draws a text box at all when its derivation came back empty —
+      // so this is exactly the path where the placeholder is read.
+      visit('?guide=wall&method=separate-wall');
+      mockFetch((url) =>
+        url.includes('/resolve')
+          ? {
+              ...RESOLVED_WITH_PARTS,
+              refinements: [
+                {
+                  key: 'side-clips',
+                  role: 'wall',
+                  prompt: 'Side clips',
+                  from_combination: 'connection',
+                  unavailable: [],
+                  because: {},
+                  recommended: null,
+                  selected: null,
+                },
+              ],
+            }
+          : GUIDE_DOCUMENT
+      );
+
+      render(<GuidePage />);
+
+      expect(
+        await screen.findByPlaceholderText('connection|...')
+      ).toBeInTheDocument();
+      expect(
+        screen.queryByPlaceholderText('undefined|...')
+      ).not.toBeInTheDocument();
+    });
+
     it('explains the options in the other column while the question stands', async () => {
       // The first screen has no parts to show, and the difference
       // between three ways of building a wall is the whole decision.

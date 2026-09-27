@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { GuideBlueprint, thumbnailOf } from '@/services/guide-service';
 
 /**
@@ -33,6 +33,24 @@ interface GuideSpriteProps {
 export function GuideSprite({ blueprint, view = 'front' }: GuideSpriteProps) {
   const image = thumbnailOf(blueprint);
   const sprite = image?.sprite_metadata;
+  // A sheet that does not carry the angle being shown falls back to
+  // its default frame. The label has to fall back with it, or the page
+  // draws one side and tells a screen reader it is another — every
+  // sheet in the catalog carries all ten, so this is the sheet that
+  // has not been generated yet rather than a case anyone plans for.
+  const angle = sprite?.angles?.find((a) => a.name === view);
+  const name = blueprint?.blueprint_name ?? 'part';
+
+  // Says so out loud rather than only in the aria-label: a missing
+  // side is a generation gap, and otherwise the person sees a pressed
+  // "Left" button over a picture of something else. In an effect and
+  // above the early returns so it is one line per sheet and angle
+  // rather than one per render.
+  useEffect(() => {
+    if (sprite && !angle) {
+      console.warn('sprite for %s has no %s angle', name, view);
+    }
+  }, [sprite, angle, name, view]);
 
   if (!image) {
     return (
@@ -57,23 +75,6 @@ export function GuideSprite({ blueprint, view = 'front' }: GuideSpriteProps) {
     );
   }
 
-  // A sheet that does not carry the angle being shown falls back to
-  // its default frame. The label has to fall back with it, or the page
-  // draws one side and tells a screen reader it is another — every
-  // sheet in the catalog carries all ten, so this is the sheet that
-  // has not been generated yet rather than a case anyone plans for.
-  const angle = sprite.angles?.find((a) => a.name === view);
-  if (!angle) {
-    // Says so once rather than only in the aria-label: a sheet that
-    // is missing a side is a generation gap, and the person sees a
-    // pressed "Left" button over a picture of something else with no
-    // other sign that anything is wrong.
-    console.warn(
-      'sprite for %s has no %s angle',
-      blueprint?.blueprint_name ?? 'part',
-      view
-    );
-  }
   const index = angle?.index ?? sprite.default_angle ?? 0;
   const showing = angle
     ? view
@@ -84,7 +85,7 @@ export function GuideSprite({ blueprint, view = 'front' }: GuideSpriteProps) {
   return (
     <div
       role="img"
-      aria-label={`${blueprint?.blueprint_name ?? 'part'}, seen from the ${showing}`}
+      aria-label={`${name}, seen from the ${showing}`}
       className="rounded"
       style={{
         width: SIZE,
