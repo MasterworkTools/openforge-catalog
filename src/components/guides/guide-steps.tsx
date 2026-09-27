@@ -38,26 +38,50 @@ type Because = Record<string, Record<string, MissingReason>> | null;
  */
 function Missing({
   hidden,
+  chosen,
   because,
   labels,
 }: {
   hidden: string[];
+  /**
+   * The answer in force, when it is one of the dead ones.
+   *
+   * It is kept out of `hidden` because its button is still drawn — that
+   * is what the section is for — but its *reason* is the one the person
+   * most needs. In the state where the build is broken by an answer
+   * already given, every other line on screen points somewhere else:
+   * the other questions each say "no Wall for your size answer" while
+   * the answer actually responsible sits there unremarked.
+   */
+  chosen?: string | null;
   because?: Record<string, MissingReason>;
   labels: (value: string) => string;
 }) {
-  if (hidden.length === 0) return null;
+  const why = chosen ? because?.[chosen] : undefined;
+  const broken = chosen && (why || hidden.length === 0);
+  if (hidden.length === 0 && !broken) return null;
   return (
-    <ul className="mt-2 text-xs text-gray-500 list-none">
-      {hidden.map((value) => {
-        const why = because?.[value];
-        return (
-          <li key={value}>
-            {labels(value)} — no {why?.part ?? 'match'}
-            {why?.prompt ? ` for your "${why.prompt}" answer` : ''}
-          </li>
-        );
-      })}
-    </ul>
+    <>
+      {broken && (
+        <p className="mt-2 text-xs text-red-700">
+          Your answer, {labels(chosen)}, leaves no {why?.part ?? 'match'}
+          {why?.prompt ? ` — it is your "${why.prompt}" answer` : ''}.
+        </p>
+      )}
+      {hidden.length > 0 && (
+        <ul className="mt-2 text-xs text-gray-500 list-none">
+          {hidden.map((value) => {
+            const reason = because?.[value];
+            return (
+              <li key={value}>
+                {labels(value)} — no {reason?.part ?? 'match'}
+                {reason?.prompt ? ` for your "${reason.prompt}" answer` : ''}
+              </li>
+            );
+          })}
+        </ul>
+      )}
+    </>
   );
 }
 
@@ -224,6 +248,9 @@ function AnsweredStep({
         </div>
         <Missing
           hidden={dead.filter((value) => value !== step.selected)}
+          chosen={
+            step.selected && dead.includes(step.selected) ? step.selected : null
+          }
           because={because}
           labels={(value) =>
             step.options.find((o) => o.key === value)?.title ?? value
@@ -433,6 +460,11 @@ function RefinementGroup({
                 refinement={refinement}
                 showPrompt={showPrompts}
                 more={more?.[refinement.key]}
+                why={
+                  deadFor(refinement).includes(refinement.selected)
+                    ? becauseFor(refinement)?.[refinement.selected]
+                    : undefined
+                }
                 onOpen={() => onOpenChange?.(refinement.key)}
               />
             );
@@ -509,12 +541,22 @@ function AnsweredRefinement({
   refinement,
   showPrompt,
   more,
+  why,
   onOpen,
 }: {
   refinement: GuideRefinement;
   showPrompt: boolean;
   /** How many pieces this answer left, when it left more than one. */
   more?: { count: number; onOpen: () => void };
+  /**
+   * Why this answer empties a part, when it does.
+   *
+   * A settled question folds to its answer, so an answer that broke the
+   * build folded to a tidy label with nothing beside it — while every
+   * *other* question listed its own absent answers and blamed something
+   * else. This is the one line that points at the answer responsible.
+   */
+  why?: MissingReason;
   onOpen: () => void;
 }) {
   const chosen = refinement.choices?.find(
@@ -536,6 +578,12 @@ function AnsweredRefinement({
         )}
         <span className="block font-semibold">{answer}</span>
       </button>
+      {why && (
+        <p className="mt-1 text-xs text-red-700">
+          Leaves no {why.part}
+          {why.prompt ? ` — it is your "${why.prompt}" answer` : ''}.
+        </p>
+      )}
       {/* Answering "towne" is where you find out there are six of
           them, so this is one of the two places to say so — the same
           bar as on the part, opening the same dialog. Its own button
@@ -615,6 +663,11 @@ function ChoicePicker({
       </div>
       <Missing
         hidden={dead.filter((tag) => tag !== refinement.selected)}
+        chosen={
+          refinement.selected && dead.includes(refinement.selected)
+            ? refinement.selected
+            : null
+        }
         because={because}
         labels={(tag) => {
           const choice = refinement.choices?.find((c) => c.tag === tag);

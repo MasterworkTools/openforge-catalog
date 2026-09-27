@@ -31,7 +31,12 @@ export const HORIZONTAL_VIEWS = [
   'front-left',
 ] as const;
 
-export type HorizontalView = (typeof HORIZONTAL_VIEWS)[number];
+/**
+ * A ring member. Module-local: the parts list's state is wider than
+ * this — it also holds `top` and `bottom` — and `SpriteControls` deals
+ * in plain angle names, so nothing outside can usefully narrow to it.
+ */
+type HorizontalView = (typeof HORIZONTAL_VIEWS)[number];
 export type VerticalView = 'top' | 'bottom';
 
 /** How far the pointer travels before it counts as one step round. */

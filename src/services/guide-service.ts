@@ -32,7 +32,7 @@ export interface MissingReason {
   prompt?: string;
 }
 
-export interface GuideOption {
+interface GuideOption {
   key: string;
   title: string;
   blurb?: string;
@@ -125,7 +125,7 @@ export interface SpriteAngle {
   name: string;
 }
 
-export interface GuideSpriteMetadata {
+interface GuideSpriteMetadata {
   grid_rows: number;
   grid_cols: number;
   tile_size: number;
@@ -133,7 +133,7 @@ export interface GuideSpriteMetadata {
   default_angle?: number;
 }
 
-export interface GuideImage {
+interface GuideImage {
   id: string;
   image_name: string;
   image_url: string;

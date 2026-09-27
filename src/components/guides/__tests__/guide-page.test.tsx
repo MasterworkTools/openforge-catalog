@@ -459,6 +459,57 @@ describe('GuidePage', () => {
       }
     });
 
+    it('says which of your own answers broke the build, not only the others', async () => {
+      // The reason for the answer in force used to be computed and then
+      // dropped, so the page held the diagnosis and showed every line
+      // except that one.
+      visit('?guide=wall&method=separate-wall&floor-texture=texture|cave');
+      global.fetch = jest.fn((url: string) => {
+        const body = url.includes('/availability')
+          ? {
+              unavailable: { 'floor-texture': ['texture|cave'] },
+              because: {
+                'floor-texture': {
+                  'texture|cave': {
+                    part: 'Floor',
+                    question: 'method',
+                    prompt: 'How do you want to build it?',
+                  },
+                },
+              },
+              options: {},
+            }
+          : url.includes('/resolve')
+            ? {
+                ...RESOLVED_WITH_PARTS,
+                refinements: RESOLVED_WITH_PARTS.refinements.map((r) =>
+                  r.key === 'floor-texture'
+                    ? { ...r, selected: 'texture|cave' }
+                    : r
+                ),
+              }
+            : GUIDE_DOCUMENT;
+        return Promise.resolve({
+          ok: true,
+          status: 200,
+          json: () => Promise.resolve(body),
+        });
+      }) as unknown as typeof fetch;
+
+      render(<GuidePage />);
+
+      // Folded to its answer, with the reason beside it rather than a
+      // tidy label and silence.
+      await waitFor(() =>
+        expect(document.body.textContent).toContain('Leaves no Floor')
+      );
+      // And it names the question responsible, rather than only the
+      // answers that happen to be absent.
+      expect(document.body.textContent).toContain(
+        'it is your "How do you want to build it?" answer'
+      );
+    });
+
     it('folds grouped questions into one section and leaves others alone', async () => {
       // `wall.yaml` groups four refinements under two headings, and
       // nothing exercised the merge. A group shows its own heading once

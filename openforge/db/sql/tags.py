@@ -595,10 +595,17 @@ def tag_search_namespace_combinations(
         ),
     ]
     for tag in excluded:
+        # Anchored at the front, like the namespace filter above and for
+        # the same reason: `@>` alone is positionless containment, not a
+        # subtree test, so `exclude: ['connection|side']` also dropped
+        # `connection|openlock|side` — a tag under `connection|openlock`
+        # that has nothing to do with the one being hidden. `@>` stays
+        # as the GIN prefilter; the slice is the decision.
+        elements = tag.split("|")
         parts.append(
-            sql.SQL("      AND NOT (t.tag @> {tag})").format(
-                tag=sql.Literal(tag.split("|"))
-            )
+            sql.SQL(
+                "      AND NOT (t.tag @> {tag} AND t.tag[1:{depth}] = {tag})"
+            ).format(tag=sql.Literal(elements), depth=sql.Literal(len(elements)))
         )
     parts += [
         sql.SQL("    GROUP BY t.blueprint_id"),

@@ -73,6 +73,9 @@ export function GuideParts({
   onSelect,
   onSelectAll,
 }: GuidePartsProps) {
+  // `string` rather than the ring's own type: this also holds `top` and
+  // `bottom`, which are not on the ring, and `SpriteControls` hands
+  // angle names back as plain strings.
   const [view, setView] = useState<string>('front');
   // Where the drag began, so each move is measured from there rather
   // than accumulating rounding as the pointer travels.

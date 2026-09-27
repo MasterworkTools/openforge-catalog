@@ -1306,6 +1306,53 @@ def test_exclude_takes_the_whole_subtree(client, test_db, catalog, clip_catalog)
     assert "connection|openlock" in offered
 
 
+def test_exclude_takes_that_subtree_and_not_a_namesake_under_another(
+    client, test_db, catalog, clip_catalog
+):
+    """`exclude` is anchored at the front, not "contains these words".
+
+    `@>` on its own is positionless containment, so
+    `exclude: ['connection|side']` also hid `connection|openlock|side`,
+    which lives under `connection|openlock` and has nothing to do with
+    the side-clip question. The piece carrying it was then merged into
+    the plain OpenLOCK answer and counted towards its label.
+    """
+    make_blueprint(
+        test_db,
+        "d openlock side-mount",
+        [
+            "shape|base",
+            "build|separate wall",
+            "connection|openlock",
+            # Under `connection|openlock`, sharing only a word with the
+            # `connection|side` subtree being hidden.
+            "connection|openlock|side",
+        ],
+    )
+    document = copy.deepcopy(WALL_GUIDE)
+    document["roles"]["base"] = {"title": "Base", "query": {"require": ["shape|base"]}}
+    document["steps"][0]["options"][0]["roles"]["base"] = None
+    document["refinements"] = [
+        {
+            "key": "clips",
+            "role": "base",
+            "prompt": "Clips?",
+            "from_combination": "connection",
+            "exclude": ["connection|side"],
+        }
+    ]
+    with test_db.connection() as conn:
+        with conn.cursor(row_factory=dict_row) as curs:
+            guide_sql.upsert_guide(curs, document)
+
+    response = client.get("/api/guides/wall/resolve?method=separate-wall")
+
+    offered = [c["tag"] for c in response.json["refinements"][0]["choices"]]
+    # It is its own answer, distinguishable from plain OpenLOCK.
+    assert "connection|openlock,connection|openlock|side" in offered
+    assert "connection|openlock" in offered
+
+
 def test_choosing_a_combination_excludes_the_others(
     client, test_db, catalog, clip_catalog
 ):
