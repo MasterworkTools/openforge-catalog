@@ -134,6 +134,7 @@ export function useGuideState(guideKey: string | null | undefined) {
     resolved: mine?.resolved ?? null,
     unavailable: myDead?.unavailable ?? null,
     because: myDead?.because ?? null,
+    options: myDead?.options ?? null,
     error: mine?.error ?? guideError,
     select,
     selectAll,

@@ -88,6 +88,7 @@ const RESOLVED_WITH_PARTS = {
         deny_children: ['component|wall'],
         allow: ['shape|square'],
       },
+      relaxable: ['texture|dungeon_stone'],
       pinned: false,
       blueprint: {
         id: 'bp-1',
@@ -129,6 +130,7 @@ const RESOLVED_WITH_PARTS = {
       under: 'wall',
       query: { require: ['shape|base'] },
       browse: { require: ['shape|base'] },
+      relaxable: [],
       pinned: false,
       blueprint: {
         id: 'bp-2',
@@ -168,6 +170,7 @@ const RESOLVED_WITH_PARTS = {
       under: 'floor',
       query: { require: ['shape|base'] },
       browse: { require: ['shape|base'] },
+      relaxable: [],
       pinned: false,
       blueprint: null,
     },
@@ -1497,7 +1500,7 @@ describe('moving between guides', () => {
 });
 
 describe('inspecting a part', () => {
-  it('opens the tag search on what still has to fit, not on every answer', async () => {
+  it('opens the tag search on this part, with its preferences droppable', async () => {
     visit('?guide=wall&method=separate-wall');
     mockFetch((url) =>
       url.includes('/resolve') ? RESOLVED_WITH_PARTS : GUIDE_DOCUMENT
@@ -1509,10 +1512,8 @@ describe('inspecting a part', () => {
     expect(await screen.findByTestId('part-modal')).toBeInTheDocument();
     const opened = modalProps[modalProps.length - 1];
     expect(opened.partName).toBe('Wall (wall)');
-    // The browsing predicate, not the resolved one. The texture this
-    // part resolved against is gone — going and finding an odd one is
-    // the whole point of opening this — while the shape sweep stays,
-    // because an arrow slit is its own build rather than another wall.
+    // What the guide resolved, texture and all: opening on your own
+    // wall is the useful place to start looking for another one.
     //
     // `accept` is absent on purpose. The search has no subtree
     // predicate, so passing one would be seeding the modal with a
@@ -1520,12 +1521,40 @@ describe('inspecting a part', () => {
     // is a wider set, which is the failure this assertion exists to
     // catch.
     expect(opened.configValues).toEqual({
-      require: [{ tag: 'shape|wall' }],
+      require: [{ tag: 'shape|wall' }, { tag: 'texture|dungeon_stone' }],
       deny: [],
       deny_children: [{ tag: 'component|wall' }],
       allow: [{ tag: 'shape|square' }],
     });
     expect(opened.configValues).not.toHaveProperty('accept');
+    // And the texture comes off from inside, so leaving the family is
+    // a deliberate click rather than the default.
+    expect(opened.removable).toEqual(['texture|dungeon_stone']);
+  });
+
+  it('offers the other pieces when the answer left more than one', async () => {
+    // "Towne" is six walls and "dungeon stone" is one, and nothing on
+    // the page said so. The count is how many pieces the part's own
+    // predicate matches, so it is also what the dialog will show.
+    visit('?guide=wall&method=separate-wall');
+    mockFetch((url) =>
+      url.includes('/availability')
+        ? { unavailable: {}, because: {}, options: { wall: 6, 'wall-base': 1 } }
+        : url.includes('/resolve')
+          ? RESOLVED_WITH_PARTS
+          : GUIDE_DOCUMENT
+    );
+
+    render(<GuidePage />);
+    const more = await screen.findByRole('button', { name: '6 options' });
+
+    // One piece behind an answer is the guide having decided, and not
+    // worth a control.
+    expect(screen.queryByRole('button', { name: '1 options' })).toBeNull();
+    // It opens the same dialog the picture does.
+    fireEvent.click(more);
+    expect(await screen.findByTestId('part-modal')).toBeInTheDocument();
+    expect(modalProps[modalProps.length - 1].partName).toBe('Wall (wall)');
   });
 
   it('opens showing the part that was clicked', async () => {

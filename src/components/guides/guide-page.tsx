@@ -18,7 +18,16 @@ import { GuideRefinements, GuideSteps } from './guide-steps';
  */
 export default function GuidePage() {
   const guideKey = useGuideKey();
-  const { guide, resolved, unavailable, because, error, select, selectAll } =
+  const {
+    guide,
+    resolved,
+    unavailable,
+    because,
+    options,
+    error,
+    select,
+    selectAll,
+  } =
     useGuideState(guideKey);
   // Which settled question has been reopened. Here rather than in the
   // section itself, because the explanation beside it follows.
@@ -96,6 +105,7 @@ export default function GuidePage() {
             <GuideParts
               parts={resolved.parts}
               refinements={resolved.refinements}
+              options={options}
               onSelect={select}
               onSelectAll={selectAll}
             />

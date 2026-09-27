@@ -16,9 +16,20 @@ interface ResultsContainerProps {
   configValues?: ConfigTags | null;
   parentTags?: string[];
   siblingSelections?: { partName: string; tags: string[] }[];
+  /**
+   * Seeded tags the person may take off again.
+   *
+   * A seeded tag is normally fixed — it is what the caller is asking
+   * about, and removing it would answer a different question. These
+   * are the exceptions: the guide's merely-preferred restrictions,
+   * which it opens the dialog with so that browsing starts inside the
+   * family you chose, and offers to drop so that leaving the family
+   * is one click rather than the default.
+   */
+  removable?: string[];
 }
 
-const ResultsContainer = ({ configValues, parentTags = [], siblingSelections = [] }: ResultsContainerProps) => {
+const ResultsContainer = ({ configValues, parentTags = [], siblingSelections = [], removable = [] }: ResultsContainerProps) => {
   const setSelectedBlueprint = useBlueprintContext((state) => state.setSelectedBlueprint);
   const selectedBlueprint = useBlueprintContext((state) => state.selectedBlueprint);
   const blueprints = useTagContext((state) => state.blueprints);
@@ -133,6 +144,10 @@ const ResultsContainer = ({ configValues, parentTags = [], siblingSelections = [
     // Tag is not removable if it's from other selections
     if (parentTags.includes(tag) || siblingSelections.some(selection => selection.tags.includes(tag))) {
       return false;
+    }
+    // Named by the caller as one of its own it is willing to lose.
+    if (removable.includes(tag)) {
+      return true;
     }
     // If configValues exists, check if the tag is in require or deny
     if (configValues) {

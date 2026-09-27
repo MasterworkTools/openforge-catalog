@@ -21,6 +21,11 @@ interface GuidePartsProps {
    * it answers into line with what was picked.
    */
   refinements?: GuideRefinement[];
+  /**
+   * How many pieces each role could have been, when it is known.
+   * Arrives with availability, a moment after the parts.
+   */
+  options?: Record<string, number> | null;
   /** Same setter the questions use: a pin is a selection like any other. */
   onSelect?: (key: string, value: string | null) => void;
   /**
@@ -53,6 +58,7 @@ interface GuidePartsProps {
 export function GuideParts({
   parts,
   refinements = [],
+  options,
   onSelect,
   onSelectAll,
 }: GuidePartsProps) {
@@ -121,6 +127,7 @@ export function GuideParts({
                   key={part.role}
                   part={part}
                   view={view}
+                  options={options?.[part.role]}
                   onInspect={setInspecting}
                   onUnpin={
                     onSelect ? () => onSelect(pinKey(part.role), null) : undefined
@@ -155,9 +162,12 @@ export function GuideParts({
         isOpen={inspecting !== null}
         onClose={() => setInspecting(null)}
         partName={inspecting ? `${inspecting.title} (${inspecting.role})` : ''}
-        // The browsing predicate, not the resolved one: the point of
-        // opening this is to see what else there is.
-        configValues={inspecting ? asConfigTags(inspecting.browse) : null}
+        // What the guide actually resolved, not a wider set. Opening
+        // on your own wall is the useful place to start looking for
+        // another one — and the restrictions that are only a
+        // preference come off from inside, a chip at a time.
+        configValues={inspecting ? asConfigTags(inspecting.query) : null}
+        removable={inspecting?.relaxable ?? []}
         // Open on the piece that was clicked. You were looking at it;
         // the dialog should not make you find it again.
         initialMd5={inspecting?.blueprint?.file_md5 ?? null}
@@ -231,11 +241,14 @@ function stacks(parts: GuidePart[]): GuidePart[][] {
 function Part({
   part,
   view,
+  options,
   onInspect,
   onUnpin,
 }: {
   part: GuidePart;
   view: string;
+  /** How many pieces this role could have been, when it is known. */
+  options?: number;
   onInspect: (part: GuidePart) => void;
   /** Undoes a pin, putting the role back on the guide's own answer. */
   onUnpin?: () => void;
@@ -254,7 +267,21 @@ function Part({
       >
         <GuideSprite blueprint={part.blueprint} view={view} />
       </button>
-      <div className="mt-2 font-semibold">{part.title}</div>
+      <div className="mt-2 flex items-baseline justify-between gap-2">
+        <span className="font-semibold">{part.title}</span>
+        {/* Only when there is a choice to make. One piece behind the
+            answer is the guide having decided; six is towne having
+            six kinds of wall and nothing on the page saying so. */}
+        {options !== undefined && options > 1 && (
+          <button
+            type="button"
+            onClick={() => onInspect(part)}
+            className="text-xs text-blue-700 underline shrink-0"
+          >
+            {options} options
+          </button>
+        )}
+      </div>
       {/* A pinned part is no longer an answer to the questions on the
           left, and saying so is the only way the page can explain why
           changing a texture leaves this piece alone. */}

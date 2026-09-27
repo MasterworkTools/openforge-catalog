@@ -26,9 +26,11 @@ interface PartSelectionModalProps {
    * find one — is unchanged.
    */
   initialMd5?: string | null;
+  /** Seeded tags the person may take off again. See ResultsContainer. */
+  removable?: string[];
 }
 
-const PartSelectionModal = ({ isOpen, onClose, partName, configValues, onPartSelected, parentTags = [], siblingSelections = [], initialMd5 = null }: PartSelectionModalProps): React.ReactPortal | null => {
+const PartSelectionModal = ({ isOpen, onClose, partName, configValues, onPartSelected, parentTags = [], siblingSelections = [], initialMd5 = null, removable = [] }: PartSelectionModalProps): React.ReactPortal | null => {
   if (!isOpen) return null;
 
   return createPortal(
@@ -58,6 +60,7 @@ const PartSelectionModal = ({ isOpen, onClose, partName, configValues, onPartSel
                       configValues={configValues}
                       parentTags={parentTags}
                       siblingSelections={siblingSelections}
+                      removable={removable}
                     />
                   </div>
                   <div className="part-selection-modal__main">

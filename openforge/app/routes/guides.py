@@ -141,8 +141,17 @@ def guide_availability(guide_key: str):
             except GuideSelectionError as e:
                 return jsonify({"error": str(e)}), 400
             questions = resolved["steps"] + resolved["refinements"]
+            count = _counter(curs)
             return jsonify(
                 {
+                    # How many pieces each part could have been. One
+                    # is a decision the guide made; more than one is a
+                    # choice somebody might want to make themselves.
+                    "options": {
+                        part["role"]: count(part["query"])
+                        for part in resolved["parts"]
+                        if part["blueprint"] is not None and not part["pinned"]
+                    },
                     "unavailable": {
                         question["key"]: question["unavailable"]
                         for question in questions
@@ -220,6 +229,21 @@ def _candidate_finder(curs):
         return found
 
     return find_candidates
+
+
+def _counter(curs):
+    """How many pieces are behind a part's recommendation.
+
+    On the availability endpoint rather than on `resolve`, because it
+    is a count per part and `resolve` is what the person is waiting
+    for. One means the guide has decided; six means there is a choice
+    worth opening.
+    """
+
+    def count(predicate: dict) -> int:
+        return tag_sql.tag_search_blueprint_count(curs, **to_tag_query(predicate))
+
+    return count
 
 
 def _pinned_finder(curs):

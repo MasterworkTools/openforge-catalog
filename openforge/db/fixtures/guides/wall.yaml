@@ -428,7 +428,27 @@ roles:
       # sweep keeps the s2w tiles, the curved, the concave and the
       # diagonal out of its answer.
       require: ['shape|floor']
-      deny_children: ['shape|floor']
+      # The component sweep the wall has had all along, and the floor
+      # has not. A floor with a brazier in it, or a pool, or tram
+      # tracks, carries `component|brazier` and `shape|floor` and
+      # nothing else to tell it apart — so without this the guide can
+      # and does answer "your floor" with a brazier. 1100 plain floors
+      # carry no component tag at all; every featured one carries one.
+      #
+      # `component|wall` is the exception, and has to be: the s2w tile
+      # is a floor with its wall built in, and it says so with exactly
+      # that tag.
+      # The sweep covers the whole shape namespace, not just
+      # `shape|floor`. A corner tile is `shape|corner` beside
+      # `shape|floor`, a sibling rather than a child, so a sweep
+      # scoped to `shape|floor` walked straight past it and the guide
+      # answered "your floor" with a corner piece. The wall role has
+      # always swept the whole namespace; this is the floor catching
+      # up. `shape|floor` is exempt because it is required, and the
+      # methods that want `shape|floor|wall` and `shape|floor|s2w`
+      # name them themselves.
+      deny_children: ['shape', 'component']
+      allow: ['shape|square', 'component|wall']
       # A base is not a floor. Bases reach this role because
       # `_copy_base_shapes` gives a shape|base piece the plain shape
       # beside it, and the sweep above is scoped to shape|floor, so it
@@ -445,7 +465,13 @@ roles:
     # wanted — leading with it meant every surviving subset contained a
     # contradiction, prefer ran out entirely, and the floor fell back to
     # alphabetical order.
+    # Block ahead of bare dungeon stone, because there is no such
+    # thing as a bare one: every dungeon stone floor in the catalog is
+    # block or eroded, so "dungeon stone" on its own is a coin toss
+    # and this is which way it lands. First, so it is the last thing
+    # dropped — the tie is about looks rather than fit.
     prefer:
+      - 'texture|dungeon_stone|block'
       - 'texture|dungeon_stone'
       - 'size|width|2'
       - 'size|depth|2'
@@ -636,29 +662,22 @@ refinements:
     default:
       - when: {selected: {texture: ['texture|towne', 'texture|stone_brick']}}
         value: 'texture|towne'
-      - {value: 'texture|dungeon_stone|block'}
+      - {value: 'texture|dungeon_stone'}
     when: {selected: {method: [s2w, wall-on-tile, separate-wall]}}
     from_namespace: texture
     choices:
-      # No bare `texture|dungeon_stone`: not one floor in the catalog
-      # carries it without also being block or eroded, so offering it
-      # is not a third kind of floor, it is a coin toss dressed as an
-      # answer — and whichever the search happened to sort first is
-      # what you would have got.
-      - {tag: 'texture|dungeon_stone|block', title: 'Dungeon stone, block', blurb: 'Square-cut flags laid in courses. The default, and 34 floors.'}
-      - {tag: 'texture|dungeon_stone|eroded', title: 'Dungeon stone, eroded', blurb: 'The same flags worn round at the edges. 37 floors.'}
+      # Parents only, like the wall's list. A texture with more than
+      # one floor under it says so on the part and opens the catalog
+      # on that family, which is a better place to choose between
+      # block and eroded than a wizard that would have to name every
+      # variant the day it is designed.
+      - {tag: 'texture|dungeon_stone', title: 'Dungeon stone', blurb: 'Cut flags. 71 floors, every one of them block or eroded; the recommendation is block.'}
       - {tag: 'texture|rough_stone', title: 'Rough stone', blurb: '38 floors.'}
       - {tag: 'texture|cut-stone', title: 'Cut stone', blurb: '32 floors.'}
       # Every towne floor is planking, whatever the wall above it is
       # doing, so the list says what it is rather than which set it
       # came out of.
-      # Wood keeps its parent, unlike dungeon stone: 8 floors really
-      # are plain towne boards with no sub-texture, the s2w tiles in
-      # every size. On separate wall there are none, so there it means
-      # "either", and lands on long planks.
-      - {tag: 'texture|towne', title: 'Wood, any', blurb: 'Either of the two below, whichever the size you picked has. 23 floors in all.'}
-      - {tag: 'texture|towne|long_planks', title: 'Wood, long planks', blurb: 'Boards running the length of the tile. 12 floors, in two layouts.'}
-      - {tag: 'texture|towne|wood', title: 'Wood, short boards', blurb: '3 floors, and no tile sizes — these come in the one size.'}
+      - {tag: 'texture|towne', title: 'Wood', blurb: '23 floors, all of them boarded, in two or three plank layouts.'}
       - {tag: 'texture|aztlan', title: 'Aztlan', blurb: '11 floors.'}
 
 

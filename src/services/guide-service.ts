@@ -128,6 +128,12 @@ export interface GuidePart {
    * find still fits the build, wide enough to be worth browsing.
    */
   browse: Partial<Record<string, string[]>>;
+  /**
+   * Tags of `query` the dialog will let you take off, one at a time.
+   * The merely-preferred ones, so browsing starts inside the family
+   * you chose and leaving it is a deliberate click.
+   */
+  relaxable: string[];
   /** True when this part is the one the person picked, not the search's. */
   pinned: boolean;
   blueprint: GuideBlueprint | null;
@@ -251,10 +257,12 @@ export function thumbnailOf(
 }
 
 
-/** What is not on offer, and why, by question. */
+/** What is not on offer, and why, by question; and how many each part has. */
 export interface Availability {
   unavailable: Record<string, string[]>;
   because: Record<string, Record<string, MissingReason>>;
+  /** Matching pieces per role. One means the guide decided; more is a choice. */
+  options: Record<string, number>;
 }
 
 /**
@@ -279,7 +287,11 @@ export async function fetchAvailability(
     throw new Error(`Failed to fetch availability: ${response.statusText}`);
   }
   const body = await response.json();
-  return { unavailable: body.unavailable ?? {}, because: body.because ?? {} };
+  return {
+    unavailable: body.unavailable ?? {},
+    because: body.because ?? {},
+    options: body.options ?? {},
+  };
 }
 
 /**

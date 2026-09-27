@@ -341,6 +341,17 @@ def tag_search_blueprint_count(
     deny_children: list[dict] | None = None,
     allow: list[dict] | None = None,
 ) -> int:
+    """How many blueprints match this predicate?
+
+    The guide asks this once per part, to say whether there is more
+    than one piece behind a recommendation — "dungeon stone" leaves
+    exactly one wall at this size and "towne" leaves six, and only the
+    second is worth opening a dialog over.
+
+    Unordered, like the existence query above and for the same reason:
+    sorting every match in order to count them is the expensive half
+    of a question that never looks at what it found.
+    """
     parts = [
         sql.SQL("SELECT COUNT(*)"),
         sql.SQL("  FROM blueprints"),
@@ -350,6 +361,7 @@ def tag_search_blueprint_count(
             require,
             deny,
             do_limit=False,
+            do_order=False,
             models=models,
             blueprints=blueprints,
             search=search,

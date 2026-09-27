@@ -892,6 +892,9 @@ def _parts(
                     inherited or {},
                 ]
             ),
+            # Which of those the dialog may take off again, so that
+            # browsing starts inside the family you chose.
+            "relaxable": _relaxable(document, chosen, refinements, selections, name),
             "pinned": pinned is not None,
             # A part someone chose by hand wins over the search. They
             # were looking at it when they chose it, so no predicate
@@ -926,6 +929,52 @@ def _browsable(document: dict) -> set[str]:
     """
     questions = [*document["steps"], *document.get("refinements", [])]
     return {q["key"] for q in questions if q.get("browsable")}
+
+
+def _relaxable(
+    document: dict,
+    chosen: list[dict],
+    refinements: list[dict],
+    selections: dict,
+    role_name: str,
+) -> list[str]:
+    """Which of this role's tags the catalog dialog may take off.
+
+    The dialog opens on what the guide actually resolved — your wall,
+    not a wider set — and these are the restrictions it will let you
+    peel away one at a time. So looking for another towne wall starts
+    inside towne, and leaving towne is a deliberate click rather than
+    the default.
+
+    Only the questions marked browsable, and only the ones whose whole
+    contribution to this role is plain tags. A combination answer
+    brings a `deny_children` sweep with it, and removing its tags
+    while leaving the sweep would narrow the set rather than widen it
+    — worse than not offering the chip. `browse` is what widens those.
+    """
+    relax = _browsable(document)
+    tags: list[str] = []
+    predicates = [
+        predicate
+        for option in chosen
+        if option.get("step") in relax
+        for predicate in _option_predicates(option, role_name)
+    ]
+    predicates += [
+        _refinement_predicate(refinement, selections[refinement["key"]], role_name)
+        for refinement in refinements
+        if refinement["key"] in relax
+        and refinement["key"] in selections
+        and refinement["role"] in ("*", role_name)
+        and role_name not in refinement.get("except_roles", [])
+    ]
+    for predicate in predicates:
+        if any(predicate.get(name) for name in ("deny_children", "allow", "accept")):
+            continue
+        for tag in predicate.get("require", []) + predicate.get("deny", []):
+            if tag not in tags:
+                tags.append(tag)
+    return tags
 
 
 def _pinned(role_name: str, selections: dict, find_pinned) -> dict | None:

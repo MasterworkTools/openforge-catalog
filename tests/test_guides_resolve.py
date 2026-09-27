@@ -1424,3 +1424,71 @@ def test_nothing_browsable_means_the_two_predicates_agree(guide):
 
     for part in resolved["parts"]:
         assert part["browse"] == part["query"]
+
+
+def test_relaxable_names_the_tags_the_dialog_can_drop(guide):
+    """The dialog opens on what the guide resolved, and offers to undo
+    the parts of it that were only a preference.
+
+    So the tags a browsable question contributed are listed, and the
+    ones the person actually needs are not.
+    """
+    guide["refinements"][0]["browsable"] = True
+    # A second question, of the same shape and not browsable, so the
+    # test can tell "every tag" from "the preferred ones".
+    guide["refinements"][1]["when"] = None
+
+    resolved = resolve(
+        guide,
+        {
+            "method": "s2w-modular",
+            "size": "two",
+            "texture": "texture|cave",
+            "side-locks": "on",
+        },
+        find_candidates,
+    )
+
+    wall = next(p for p in resolved["parts"] if p["role"] == "wall")
+    assert wall["relaxable"] == ["texture|cave"]
+    # In force, and not droppable: nobody asked for the side clips to
+    # be negotiable.
+    assert "connection|side|openlock" in wall["query"]["require"]
+    assert "connection|side|openlock" not in wall["relaxable"]
+    # The size is not a preference either, so it stays put.
+    assert "size|width|2" in wall["query"]["require"]
+    assert "size|width|2" not in wall["relaxable"]
+
+
+def test_an_answer_that_sweeps_is_not_offered_as_a_chip(guide):
+    """A combination answer cannot be undone one tag at a time.
+
+    It brings a `deny_children` sweep with it — that is what makes a
+    combination exact — and taking its tags off while leaving the
+    sweep would *narrow* the set rather than widen it, which is worse
+    than not offering the chip at all.
+    """
+    guide["refinements"].append(
+        {
+            "key": "clips",
+            "role": "*",
+            "prompt": "Clips?",
+            "browsable": True,
+            "from_combination": "connection",
+        }
+    )
+
+    resolved = resolve(
+        guide,
+        {
+            "method": "s2w-modular",
+            "size": "two",
+            "clips": "connection|openlock,connection|magnetic",
+        },
+        find_candidates,
+    )
+
+    wall = next(p for p in resolved["parts"] if p["role"] == "wall")
+    # It is in force — the sweep and all — and it is not droppable.
+    assert "connection|openlock" in wall["query"]["require"]
+    assert wall["relaxable"] == []
