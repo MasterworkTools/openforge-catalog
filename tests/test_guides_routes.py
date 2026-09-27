@@ -875,6 +875,135 @@ def test_availability_names_the_answer_responsible_when_one_is(
     assert reason["prompt"] == "How wide?"
 
 
+def test_blame_reads_the_survivors_off_the_candidate_s_own_answers(client, test_db):
+    """Which questions still count depends on the answer being judged.
+
+    Blame clears one earlier answer at a time and asks whether the dead
+    option comes back, and it believes the revival only if every
+    *other* answer survived the clearing — otherwise the earliest
+    removable question is named for everything, because removing it
+    truncates the questions after it and a guide with no questions left
+    is satisfied by anything.
+    `test_blame_names_a_later_answer_rather_than_the_one_that_truncates_it`
+    pins that guard. This pins where it gets its answers from.
+
+    "Every other answer" has to be read off the map the candidate
+    itself would produce. Not off the map the person is standing on,
+    and not off that map with the candidate pasted over it afterwards:
+    those two agree with it on every guide whose later questions do not
+    move when an earlier answer changes, which is why handing this the
+    wrong map left the whole suite green through two rewrites and the
+    comment in `_blame` had to admit the line was right by construction
+    and not by evidence.
+
+    Here the three maps differ. `trim` recommends nothing once the size
+    is 4 inch, so choosing 4 inch is what leaves it standing unanswered
+    and stops it counting. Judged against the person's own answers — or
+    against those with `four` dropped on top after the
+    recommendations were worked out — `trim` still looks answered, it
+    is duly missing from the counterfactual, and the one honest blame
+    there is gets thrown away as collateral truncation.
+    """
+    for name, tags in [
+        # The build they are standing on: smooth, no size asked for.
+        ("a smooth wall", ["shape|wall", "finish|smooth"]),
+        ("b smooth floor", ["shape|floor", "finish|smooth"]),
+        # Smooth at 4 inch is a floor and not a wall, so `four` empties
+        # exactly one part and the reason has one part to name.
+        (
+            "c smooth floor wide",
+            ["shape|floor", "finish|smooth", "size|width|4"],
+        ),
+        # Rough at 4 inch is complete, so clearing the finish — which
+        # falls back to its recommendation rather than vanishing —
+        # brings the wall back without unbuilding anything. That is
+        # what makes `finish` the honest answer to point at.
+        ("d rough wall wide", ["shape|wall", "finish|rough", "size|width|4"]),
+        (
+            "e rough floor wide",
+            ["shape|floor", "finish|rough", "size|width|4"],
+        ),
+    ]:
+        make_blueprint(test_db, name, ["build|separate wall", *tags])
+    document = copy.deepcopy(WALL_GUIDE)
+    document["steps"].append(
+        {
+            "key": "finish",
+            "prompt": "How is it finished?",
+            # Recommended, so clearing it re-applies rough rather than
+            # unasking the question. A question with no recommendation
+            # cannot be re-answered and so cannot be blamed at all.
+            "default": "rough",
+            "options": [
+                {
+                    "key": "rough",
+                    "title": "Rough",
+                    "tags": {"require": ["finish|rough"]},
+                },
+                {
+                    "key": "smooth",
+                    "title": "Smooth",
+                    "tags": {"require": ["finish|smooth"]},
+                },
+            ],
+        }
+    )
+    document["steps"].append(
+        {
+            "key": "size",
+            "prompt": "How wide?",
+            "default": "any",
+            "options": [
+                {"key": "any", "title": "Any", "tags": {}},
+                {
+                    "key": "four",
+                    "title": "4 inch",
+                    "tags": {"require": ["size|width|4"]},
+                },
+            ],
+        }
+    )
+    document["steps"].append(
+        {
+            "key": "trim",
+            "prompt": "Trim?",
+            # No catch-all clause, so at 4 inch this recommends nothing
+            # and the wizard stops here waiting to be answered. That is
+            # the whole fixture: the candidate answer changes which
+            # questions are still standing, which is the one thing the
+            # candidate's own map carries that the other two do not.
+            # Its options are untagged, so it moves the question set
+            # and nothing else — no part is empty or full because of
+            # it.
+            "default": [{"when": {"selected": {"size": ["any"]}}, "value": "plain"}],
+            "options": [{"key": "plain", "title": "Plain", "tags": {}}],
+        }
+    )
+    with test_db.connection() as conn:
+        with conn.cursor(row_factory=dict_row) as curs:
+            guide_sql.upsert_guide(curs, document)
+
+    response = client.get(
+        "/api/guides/wall/availability?method=separate-wall&finish=smooth"
+    )
+
+    assert response.status_code == 200
+    # The premise: 4 inch really is dead, so there is something for
+    # blame to explain. Without this the assertions below could pass on
+    # an availability sweep that never ran.
+    assert response.json["unavailable"]["size"] == ["four"]
+    reason = response.json["because"]["size"]["four"]
+    assert reason["part"] == "Wall"
+    assert reason.get("question") == "finish", (
+        f"blame came back as {reason.get('question')!r}. `trim` is "
+        "unanswered in the counterfactual because 4 inch is what "
+        "unrecommends it, so reading the surviving answers off any map "
+        "but the candidate's own discards the only honest blame there "
+        "is"
+    )
+    assert reason["prompt"] == "How is it finished?"
+
+
 def test_availability_counts_the_pieces_behind_each_part(client, wall_guide, catalog):
     """The "N options" bar reads this.
 

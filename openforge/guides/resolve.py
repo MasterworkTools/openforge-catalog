@@ -434,11 +434,16 @@ def _blame(
     # counterfactual, the one with `other` un-answered, and the two
     # wore the same name across this boundary until round 10.
     #
-    # Only its *keys* are read, below, so nothing in the suite can yet
-    # tell it from the defaulted map — handing this the wrong one
-    # leaves every test green. That needs a guide whose later step is
-    # gated on the answer under test; until there is one, this line is
-    # right by construction and not by evidence.
+    # Only its *keys* are read, below, which for a long time made this
+    # indistinguishable from the defaulted map: handing it the wrong
+    # one left every test green, because no fixture had a later
+    # question that moved when the answer under test changed. One does
+    # now —
+    # `test_blame_reads_the_survivors_off_the_candidate_s_own_answers`
+    # gives the last step a recommendation that lapses on the candidate
+    # answer, so the candidate is what leaves that step unanswered and
+    # out of the count. Both the defaulted map and the defaulted map
+    # with the candidate pasted over it fail it.
     _, would_answer = _available_steps(document, if_taken)
     for other in others:
         # Their own answers only. A question sitting on its
