@@ -30,6 +30,17 @@ export interface MissingReason {
   part: string;
   question?: string;
   prompt?: string;
+  /**
+   * Whether the question blamed is one the person actually answered.
+   *
+   * A recommendation the guide made is blameable too — it is what the
+   * parts were built from — but it may still be sitting unanswered
+   * further down the column with its recommendation marked, and
+   * calling that "your answer" is simply false. Set alongside
+   * `question`, so it is present exactly when there is something to
+   * word.
+   */
+  theirs?: boolean;
 }
 
 interface GuideOption {

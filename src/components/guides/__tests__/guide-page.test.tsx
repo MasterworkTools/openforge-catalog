@@ -492,6 +492,39 @@ describe('GuidePage', () => {
       expect(out).toHaveAttribute('href', '?guide=wall');
     });
 
+    it('sends you to the list when the document itself is broken', async () => {
+      // The third case the two arms did not cover. A 500 means the
+      // stored guide is at fault, so `?guide=wall` is the request that
+      // just failed — the same dead end the list arm exists to remove,
+      // reached by a different route.
+      visit('?guide=wall');
+      global.fetch = jest.fn((url: string) =>
+        Promise.resolve(
+          url.includes('/resolve')
+            ? {
+                ok: false,
+                status: 500,
+                statusText: 'Server Error',
+                json: () => Promise.resolve({}),
+              }
+            : {
+                ok: true,
+                status: 200,
+                json: () => Promise.resolve(GUIDE_DOCUMENT),
+              }
+        )
+      ) as unknown as typeof fetch;
+
+      render(<GuidePage />);
+
+      expect(
+        await screen.findByRole('link', { name: 'All guides' })
+      ).toHaveAttribute('href', './');
+      expect(
+        screen.queryByRole('link', { name: 'Start this guide over' })
+      ).toBeNull();
+    });
+
     it('sends you to the list when the guide itself is the thing missing', async () => {
       // The other arm of the same error. Starting `nosuch` over reloads
       // the identical 404, and `/guides` has no nav, so that link was
@@ -515,6 +548,196 @@ describe('GuidePage', () => {
       ).toBeNull();
     });
 
+    it('says a reopened step\'s own answer is the broken one', async () => {
+      // `Missing`'s `chosen` line. Six mutants survived this before:
+      // the guard reverted, the paragraph deleted, the old buggy
+      // disjunction restored, `chosen={null}` at both call sites, and
+      // `hidden={[]}`. The tests that read like coverage all assert the
+      // folded *refinement*, which is a different copy of the sentence.
+      visit('?guide=wall&method=separate-wall');
+      global.fetch = jest.fn((url: string) => {
+        const body = url.includes('/availability')
+          ? {
+              unavailable: { method: ['separate-wall', 'one-piece'] },
+              because: {
+                method: {
+                  'separate-wall': { part: 'Wall', theirs: true },
+                  'one-piece': { part: 'Floor' },
+                },
+              },
+              options: {},
+            }
+          : url.includes('/resolve')
+            ? RESOLVED_WITH_PARTS
+            : GUIDE_DOCUMENT;
+        return Promise.resolve({
+          ok: true,
+          status: 200,
+          json: () => Promise.resolve(body),
+        });
+      }) as unknown as typeof fetch;
+
+      render(<GuidePage />);
+
+      // Reopen the settled step: its own answer is dead, so the line
+      // names it rather than only listing the others.
+      fireEvent.click(
+        await screen.findByRole('button', { name: /Separate wall/ })
+      );
+      await waitFor(() =>
+        expect(document.body.textContent).toMatch(
+          /Your answer, Separate wall, leaves no Wall/
+        )
+      );
+      // And the other dead answer is still listed beside it.
+      expect(document.body.textContent).toContain('no Floor');
+    });
+
+    it('still explains itself when its own answer is the only dead one', async () => {
+      // With nothing else to list, an early return on `hidden` alone
+      // would drop the line that matters most.
+      visit('?guide=wall&method=separate-wall');
+      global.fetch = jest.fn((url: string) => {
+        const body = url.includes('/availability')
+          ? {
+              unavailable: { method: ['separate-wall'] },
+              because: { method: { 'separate-wall': { part: 'Wall', theirs: true } } },
+              options: {},
+            }
+          : url.includes('/resolve')
+            ? RESOLVED_WITH_PARTS
+            : GUIDE_DOCUMENT;
+        return Promise.resolve({
+          ok: true,
+          status: 200,
+          json: () => Promise.resolve(body),
+        });
+      }) as unknown as typeof fetch;
+
+      render(<GuidePage />);
+      fireEvent.click(
+        await screen.findByRole('button', { name: /Separate wall/ })
+      );
+
+      await waitFor(() =>
+        expect(document.body.textContent).toMatch(
+          /Your answer, Separate wall, leaves no Wall/
+        )
+      );
+    });
+
+    it('says a settled step broke the build while it is folded shut', async () => {
+      // The folded branch — the state the page is actually in once the
+      // next question opens. Deleting it left 78 tests green, and the
+      // `dead.includes` mutant made every settled step claim it left no
+      // match.
+      visit('?guide=wall&method=separate-wall&texture=texture|dungeon_stone');
+      global.fetch = jest.fn((url: string) => {
+        const body = url.includes('/availability')
+          ? {
+              unavailable: { method: ['separate-wall'] },
+              because: {
+                method: {
+                  'separate-wall': {
+                    part: 'Wall',
+                    question: 'size',
+                    prompt: 'What size?',
+                    theirs: true,
+                  },
+                },
+              },
+              options: {},
+            }
+          : url.includes('/resolve')
+            ? RESOLVED_WITH_PARTS
+            : GUIDE_DOCUMENT;
+        return Promise.resolve({
+          ok: true,
+          status: 200,
+          json: () => Promise.resolve(body),
+        });
+      }) as unknown as typeof fetch;
+
+      render(<GuidePage />);
+
+      // Folded, so no lead — the label is directly above it.
+      await waitFor(() =>
+        expect(document.body.textContent).toContain(
+          'Leaves no Wall — it is your "What size?" answer'
+        )
+      );
+      expect(document.body.textContent).not.toContain('Your answer, Separate wall');
+    });
+
+    it('says nothing about a settled step whose answer is fine', async () => {
+      // Without the membership test, every settled step claims it left
+      // no match — which is the opposite of the feature.
+      visit('?guide=wall&method=separate-wall&texture=texture|dungeon_stone');
+      mockFetch((url) =>
+        url.includes('/availability')
+          ? { unavailable: {}, because: {}, options: {} }
+          : url.includes('/resolve')
+            ? RESOLVED_WITH_PARTS
+            : GUIDE_DOCUMENT
+      );
+
+      render(<GuidePage />);
+
+      await screen.findByRole('button', { name: /Separate wall/ });
+      expect(document.body.textContent).not.toContain('Leaves no');
+    });
+
+    it('does not call a recommendation the guide made "your answer"', async () => {
+      // A defaulted question is blameable — it is what the parts were
+      // built from — but it may still be sitting unanswered further
+      // down the column with its recommendation marked, so claiming
+      // they answered it is false. The engine says which it was.
+      visit('?guide=wall&method=separate-wall&floor-texture=texture|cave');
+      global.fetch = jest.fn((url: string) => {
+        const body = url.includes('/availability')
+          ? {
+              unavailable: { 'floor-texture': ['texture|cave'] },
+              because: {
+                'floor-texture': {
+                  'texture|cave': {
+                    part: 'Floor',
+                    question: 'size',
+                    prompt: 'What size tiles?',
+                    theirs: false,
+                  },
+                },
+              },
+              options: {},
+            }
+          : url.includes('/resolve')
+            ? {
+                ...RESOLVED_WITH_PARTS,
+                refinements: RESOLVED_WITH_PARTS.refinements.map((r) =>
+                  r.key === 'floor-texture'
+                    ? { ...r, selected: 'texture|cave' }
+                    : r
+                ),
+              }
+            : GUIDE_DOCUMENT;
+        return Promise.resolve({
+          ok: true,
+          status: 200,
+          json: () => Promise.resolve(body),
+        });
+      }) as unknown as typeof fetch;
+
+      render(<GuidePage />);
+
+      await waitFor(() =>
+        expect(document.body.textContent).toContain(
+          'it is the recommended "What size tiles?" answer'
+        )
+      );
+      expect(document.body.textContent).not.toContain(
+        'it is your "What size tiles?" answer'
+      );
+    });
+
     it('says which of your own answers broke the build, not only the others', async () => {
       // The reason for the answer in force used to be computed and then
       // dropped, so the page held the diagnosis and showed every line
@@ -530,6 +753,7 @@ describe('GuidePage', () => {
                     part: 'Floor',
                     question: 'method',
                     prompt: 'How do you want to build it?',
+                    theirs: true,
                   },
                 },
               },
@@ -625,6 +849,21 @@ describe('GuidePage', () => {
                   recommended: null,
                   selected: null,
                 },
+                // A *second* group with the same name, after an
+                // ungrouped question — which is what makes the
+                // `grouped` half of the adjacency test load-bearing,
+                // and what a heading-keyed section collides on.
+                {
+                  key: 'led',
+                  role: '*',
+                  prompt: 'LED channel',
+                  group: 'Other options',
+                  from_namespace: 'feature',
+                  unavailable: [],
+                  because: {},
+                  recommended: null,
+                  selected: null,
+                },
               ],
             }
           : GUIDE_DOCUMENT
@@ -638,8 +877,21 @@ describe('GuidePage', () => {
       ).toBeInTheDocument();
       // ...and the next group keeps its own heading rather than being
       // swallowed by the one before it.
-      expect(screen.getByText('Other options')).toBeInTheDocument();
       expect(screen.getByText('Peg holes')).toBeInTheDocument();
+      // The ungrouped question between them breaks the run, so the two
+      // "Other options" groups stay two sections. Without the
+      // `grouped` test the second would be merged into the first even
+      // across it, and with them keyed by heading text they would
+      // collide on both the React key and the DOM id.
+      const headings = screen.getAllByText('Other options');
+      expect(headings).toHaveLength(2);
+      const ids = headings.map((h) => h.id);
+      expect(new Set(ids).size).toBe(2);
+      // `aria-labelledby` has to reach its own heading, not whichever
+      // rendered first.
+      for (const id of ids) {
+        expect(document.querySelectorAll(`[id="${id}"]`)).toHaveLength(1);
+      }
       // ...with both prompts inside it, which a lone question omits.
       expect(screen.getByText('Which clip')).toBeInTheDocument();
       expect(screen.getByText('Clips on the wall')).toBeInTheDocument();

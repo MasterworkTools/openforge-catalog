@@ -36,6 +36,40 @@ type Because = Record<string, Record<string, MissingReason>> | null;
  * obvious once you know which choice did it, so the list says what it
  * would have left empty and, where one answer is responsible, which.
  */
+/**
+ * Why one dead answer is dead, in one sentence.
+ *
+ * Three places need it — the open list's chosen answer, a folded step,
+ * and a folded refinement — and it existed in three copies with three
+ * spellings until round 8. That was not only untidy: any test asserting
+ * the sentence looked like coverage for all three, which is how two
+ * rounds of "this is tested now" turned out to be false on this exact
+ * feature. One renderer makes the coverage claim checkable.
+ *
+ * `lead` names the answer, which only the list needs — beside a folded
+ * label the answer is directly above, so repeating it reads as a
+ * stutter. `space` is the one other difference between the callers.
+ */
+function DeadAnswer({
+  why,
+  lead,
+  space,
+}: {
+  why?: MissingReason;
+  lead?: string;
+  space: string;
+}) {
+  return (
+    <p className={`${space} text-xs text-red-700`}>
+      {lead ? `${lead} leaves` : 'Leaves'} no {why?.part ?? 'match'}
+      {why?.prompt
+        ? ` — it is ${why.theirs ? 'your' : 'the recommended'} "${why.prompt}" answer`
+        : ''}
+      .
+    </p>
+  );
+}
+
 function Missing({
   hidden,
   chosen,
@@ -68,10 +102,7 @@ function Missing({
   return (
     <>
       {chosen && (
-        <p className="mt-2 text-xs text-red-700">
-          Your answer, {labels(chosen)}, leaves no {why?.part ?? 'match'}
-          {why?.prompt ? ` — it is your "${why.prompt}" answer` : ''}.
-        </p>
+        <DeadAnswer why={why} lead={`Your answer, ${labels(chosen)},`} space="mt-2" />
       )}
       {hidden.length > 0 && (
         <ul className="mt-2 text-xs text-gray-500 list-none">
@@ -285,13 +316,7 @@ function AnsweredStep({
           *other* question listed its absent answers and blamed
           something else. A step was the case actually reported. */}
       {step.selected && dead.includes(step.selected) && (
-        <p className="mt-1 text-xs text-red-700">
-          Leaves no {because?.[step.selected]?.part ?? 'match'}
-          {because?.[step.selected]?.prompt
-            ? ` — it is your "${because[step.selected].prompt}" answer`
-            : ''}
-          .
-        </p>
+        <DeadAnswer why={because?.[step.selected]} space="mt-1" />
       )}
     </section>
   );
@@ -402,8 +427,12 @@ export function GuideRefinements({
   // A `group` joins several into one section under a shared heading,
   // for the ones that really are a single decision: which clip the
   // bases use, and then its variants.
-  const sections: { name: string; grouped: boolean; of: GuideRefinement[] }[] =
-    [];
+  const sections: {
+    id: string;
+    name: string;
+    grouped: boolean;
+    of: GuideRefinement[];
+  }[] = [];
   for (const refinement of asked) {
     const last = sections[sections.length - 1];
     if (refinement.group && last?.grouped && last.name === refinement.group) {
@@ -411,6 +440,13 @@ export function GuideRefinements({
       continue;
     }
     sections.push({
+      // Keyed by the first question in it, not by the heading: two
+      // groups can legitimately carry the same name — `wall.yaml` has
+      // "Other options" more than once — and two ungrouped questions
+      // can share a prompt. A name-keyed section meant a duplicate
+      // React key and a duplicate DOM id, so `aria-labelledby` pointed
+      // at whichever heading rendered first.
+      id: refinement.key,
       name: refinement.group ?? refinement.prompt,
       grouped: Boolean(refinement.group),
       of: [refinement],
@@ -420,7 +456,8 @@ export function GuideRefinements({
     <>
       {sections.map((section) => (
         <RefinementGroup
-          key={section.name}
+          key={section.id}
+          id={section.id}
           name={section.name}
           // A lone question's prompt is already the heading, so
           // repeating it inside would ask it twice.
@@ -439,6 +476,7 @@ export function GuideRefinements({
 }
 
 function RefinementGroup({
+  id,
   name,
   showPrompts,
   refinements,
@@ -449,6 +487,8 @@ function RefinementGroup({
   onOpenChange,
   onSelect,
 }: {
+  /** Unique per section; the heading text is not, so it cannot key the id. */
+  id: string;
   name: string;
   showPrompts: boolean;
   refinements: GuideRefinement[];
@@ -461,7 +501,7 @@ function RefinementGroup({
   onOpenChange?: (key: string | null) => void;
   onSelect: (key: string, value: string | null) => void;
 }) {
-  const headingId = `refinements-${name.replace(/\W+/g, '-').toLowerCase()}`;
+  const headingId = `refinements-${id}`;
   return (
     <section className="guide-refinements mb-8">
       <h2 id={headingId} className="text-xl font-bold mb-3">
@@ -596,12 +636,7 @@ function AnsweredRefinement({
         )}
         <span className="block font-semibold">{answer}</span>
       </button>
-      {why && (
-        <p className="mt-1 text-xs text-red-700">
-          Leaves no {why.part}
-          {why.prompt ? ` — it is your "${why.prompt}" answer` : ''}.
-        </p>
-      )}
+      {why && <DeadAnswer why={why} space="mt-1" />}
       {/* Answering "towne" is where you find out there are six of
           them, so this is one of the two places to say so — the same
           bar as on the part, opening the same dialog. Its own button

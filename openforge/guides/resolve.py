@@ -889,9 +889,13 @@ def _reject_unknown_selections(
     known |= {f"{PIN}{name}" for name in document["roles"]}
     unknown = sorted(set(selections) - known)
     if unknown:
-        raise GuideSelectionError(
-            f"guide {document['key']!r} has no {', '.join(unknown)}"
-        )
+        # `repr` and bounded, like every other message that echoes a
+        # query-string key: this was the fourth and the only one still
+        # sending a real newline back in the body, and it names every
+        # offender at once, so sixty of them made a 15KB response.
+        named = ", ".join(repr(key[:64]) for key in unknown[:10])
+        more = "" if len(unknown) <= 10 else f" and {len(unknown) - 10} more"
+        raise GuideSelectionError(f"guide {document['key']!r} has no {named}{more}")
     for refinement in refinements:
         _reject_bad_refinement_value(refinement, selections)
 

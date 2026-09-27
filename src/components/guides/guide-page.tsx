@@ -28,6 +28,7 @@ export default function GuidePage() {
     because,
     options,
     error,
+    status,
     select,
     selectAll,
   } =
@@ -114,8 +115,11 @@ export default function GuidePage() {
               — then starting that same guide over reloads the same
               404, and there is no site nav to escape by, so the way
               out is the list. */}
+          {/* A 5xx is the document's fault, not the selections': asking
+              again with the same URL is the one thing that cannot
+              help, so it goes to the list like an unknown key does. */}
           {!resolved &&
-            (guide ? (
+            (guide && !(status && status >= 500) ? (
               <a
                 href={`?guide=${encodeURIComponent(guideKey)}`}
                 className="text-blue-700 underline"

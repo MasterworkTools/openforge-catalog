@@ -595,18 +595,19 @@ def tag_search_namespace_combinations(
         ),
     ]
     for tag in excluded:
-        # Anchored at the front, unlike the namespace filter above: `@>`
-        # alone is positionless containment, not a subtree test, so
-        # `exclude: ['connection|side']` also dropped
+        # Front-anchored, like the namespace filter above and for the
+        # same reason: `@>` alone is positionless containment, not a
+        # subtree test, so `exclude: ['connection|side']` also dropped
         # `connection|openlock|side` — a tag under `connection|openlock`
-        # that shares nothing with the one being hidden but a word.
+        # sharing nothing with the one being hidden but a word.
         #
-        # The slice alone, without the `@>` its positive counterpart
-        # pairs with: under `NOT (...)` Postgres turns the conjunction
-        # into a per-row filter, so the containment is not a GIN
-        # prefilter here and cannot change the outcome — the slice
+        # What differs from that filter is the `@>` it pairs with, which
+        # is absent here. Under `NOT (...)` Postgres turns the
+        # conjunction into a per-row filter, so the containment is not a
+        # GIN prefilter and cannot change the outcome — the slice
         # equality already implies it. Measured identical rows and
-        # buffers with and without.
+        # buffers with and without, on both the standalone shape and
+        # every combination query the wall guide issues.
         elements = tag.split("|")
         parts.append(
             sql.SQL("      AND NOT (t.tag[1:{depth}] = {tag})").format(

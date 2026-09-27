@@ -97,7 +97,13 @@ export function useGuideState(guideKey: string | null | undefined) {
     resolveGuide(guideKey, selections)
       .then((result) => {
         if (!current) return;
-        setAnswer({ key: guideKey, asked, resolved: result, error: null });
+        setAnswer({
+          key: guideKey,
+          asked,
+          resolved: result,
+          error: null,
+          status: null,
+        });
       })
       .catch((e: Error) => {
         if (!current) return;
@@ -117,6 +123,7 @@ export function useGuideState(guideKey: string | null | undefined) {
             asked: kept?.asked ?? asked,
             resolved: kept?.resolved ?? null,
             error: e.message,
+            status: (e as Partial<HttpError>).status ?? null,
           };
         });
       });
@@ -180,6 +187,9 @@ export function useGuideState(guideKey: string | null | undefined) {
     because: myDead?.because ?? null,
     options: myDead?.options ?? null,
     error: mine?.error ?? guideError,
+    // Which failure it was, so the page can offer a way out that has
+    // some chance of working.
+    status: mine?.status ?? null,
     select,
     selectAll,
   };
@@ -197,6 +207,15 @@ interface ResolvedAnswer {
   asked: string | null;
   resolved: ResolvedGuide | null;
   error: string | null;
+  /**
+   * The status behind `error`, when there was one.
+   *
+   * The page needs it to choose a way out: dropping the selections
+   * fixes a 400 about them, and cannot fix a 500 about the stored
+   * document — where sending the same request again is the one thing
+   * guaranteed not to work.
+   */
+  status: number | null;
 }
 
 /**

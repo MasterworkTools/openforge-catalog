@@ -116,13 +116,13 @@ def resolve_guide(guide_key: str):
                 # 500 it deserves, so nothing inside this block should
                 # start raising it for a document fault.
                 #
-                # Narrower than it looks today: GuideSelectionError is
-                # a ValueError, and nothing reachable here raises a
-                # bare one, so `except ValueError` would behave
-                # identically and no test could tell. It stops being
-                # identical the moment anything in this block
-                # validates the document — which is the edit this
+                # `except ValueError` would NOT behave identically, and
+                # a test says so now: `_reject_bad_recommendation`
+                # raises a bare one for a rotted `default`, and
+                # widening this catch would swallow it back into a 400
+                # and silently undo that fix. This is the edit the
                 # comment exists to warn off.
+                _log_bad_request(guide_key, e)
                 return jsonify({"error": str(e)}), 400
             _attach_images(curs, resolved["parts"])
             return jsonify(resolved)
@@ -146,13 +146,17 @@ def guide_availability(guide_key: str):
                 # No `facets`/`combinations`: those only feed the
                 # derived `choices` list, which this response does not
                 # carry. Measured, the saving is two statements a
-                # request — 52 down to 50 on a cold open, 61 to 59
-                # answered — and all of it is `combinations`, since
-                # `facets` never ran on this endpoint at all. Small,
-                # but it is the endpoint whose own docstring is an
-                # apology for what it costs, and the responses are
-                # byte-identical either way. `unavailable` and
-                # `because` come from `exists` and are unaffected.
+                # request, all of it `combinations` — `facets` never ran
+                # on this endpoint at all — and the responses are
+                # byte-identical either way. Small, but it is the
+                # endpoint whose own docstring is an apology for what it
+                # costs. `unavailable` and `because` come from `exists`
+                # and are unaffected.
+                #
+                # No absolute counts here on purpose: they were quoted
+                # three times and stale three times, because later
+                # commits kept moving them. The delta and the reason
+                # survive a rebase; `52 → 50` did not.
                 resolved = resolve(
                     guide["document"],
                     _selections_from_request(),
@@ -161,6 +165,7 @@ def guide_availability(guide_key: str):
                     find_pinned=_pinned_finder(curs),
                 )
             except GuideSelectionError as e:
+                _log_bad_request(guide_key, e)
                 return jsonify({"error": str(e)}), 400
             questions = resolved["steps"] + resolved["refinements"]
             count = _counter(curs)
@@ -189,6 +194,25 @@ def guide_availability(guide_key: str):
                     },
                 }
             )
+
+
+def _log_bad_request(guide_key: str, error: Exception) -> None:
+    """Record a refused request, because nothing else does.
+
+    A 400 leaves no trace: no alarm, no metric, and CloudWatch is this
+    Lambda's only forensics. Two bugs in this feature hid there for a
+    round each — a rotted recommendation blamed on the visitor, and an
+    over-long value reported under the wrong key — and both looked
+    exactly like people typing bad URLs.
+
+    WARNING for the same reason `_pinned_finder` uses it: nothing sets
+    `LOG_LEVEL` in the production Lambda, so INFO would be evaluated
+    and discarded. `%s` on the message is safe because everything that
+    reaches it has been through `_shown`.
+    """
+    current_app.logger.warning(
+        "guide %r refused a request: %s", guide_key[:SELECTION_CHARS], error
+    )
 
 
 #: Generous cap for one selection. The longest the guide itself ever
@@ -260,8 +284,16 @@ def _shown(text: str) -> str:
     and capped so a 200KB key does not come back as a 200KB message —
     the pin log has both and the body it is answering alongside had
     neither.
+
+    The length is stated when it is cut, because the prefix alone is
+    identical for every over-long value: 257 characters, 200,000
+    characters, and 256 characters followed by something else all
+    rendered the same, which said nothing about which rule was broken
+    or by how much.
     """
-    return repr(text[:SELECTION_CHARS])
+    if len(text) <= SELECTION_CHARS:
+        return repr(text)
+    return f"{text[:SELECTION_CHARS]!r} ({len(text)} characters)"
 
 
 def _reject_bad_selection(what: str, part: str) -> None:

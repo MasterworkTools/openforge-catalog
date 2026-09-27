@@ -1618,8 +1618,40 @@ def test_the_selection_cap_is_the_cap_it_says(client, wall_guide, catalog):
     )
     over = "a" * (guides.SELECTION_CHARS + 1)
     assert client.get(f"/api/guides/wall/resolve?part.wall={over}").status_code == 400
-    # And the key is measured too, not only the value.
-    assert client.get(f"/api/guides/wall/resolve?{over}=x").status_code == 400
+    # And the key is measured too, not only the value — asserted on the
+    # message, because an over-long key is *also* an unknown key, so the
+    # status alone stays 400 with the length check deleted.
+    got = client.get(f"/api/guides/wall/resolve?{over}=x")
+    assert got.status_code == 400
+    assert "longer than" in got.get_json()["error"]
+
+
+def test_a_refused_length_says_how_long_it_was(client, wall_guide, catalog):
+    """The prefix is the same for every over-long value.
+
+    257 characters and 200,000 characters echoed identically, so the
+    body said which rule was broken but nothing about by how much.
+    """
+    got = client.get(f"/api/guides/wall/resolve?part.wall={'a' * 5000}")
+    assert got.status_code == 400
+    assert "(5000 characters)" in got.get_json()["error"]
+
+
+def test_a_refused_request_is_logged_where_it_can_be_seen(
+    client, wall_guide, catalog, caplog
+):
+    """A 400 left no trace at all, which is where two bugs hid.
+
+    WARNING, because nothing sets `LOG_LEVEL` in the production Lambda
+    and an INFO record would be evaluated and discarded.
+    """
+    with caplog.at_level(logging.WARNING):
+        client.get("/api/guides/wall/resolve?method=no-such-option")
+
+    refused = [r for r in caplog.records if "refused a request" in r.getMessage()]
+    assert refused, "a refused request left no log record"
+    assert refused[0].levelno >= logging.WARNING
+    assert "has no option" in refused[0].getMessage()
 
 
 def test_a_refused_selection_cannot_forge_a_line_in_the_body(
