@@ -1535,6 +1535,66 @@ def test_availability_is_worked_out_for_a_yes_no_question_too(guide):
     assert locks["unavailable"] == ["on"]
 
 
+def test_availability_does_not_ask_about_questions_it_will_not_publish(guide):
+    """The sweep costs a catalog round trip per offered answer.
+
+    The page asks one question at a time, so asking the catalog about
+    every answer of every question in the guide buys nothing — the
+    answers to a question that is not published have nowhere to be
+    shown. The saving is the whole point of the trim and it is only
+    visible as a call count: the response is byte-identical either way,
+    by construction, because `on_screen` is built from the very lists
+    the response publishes.
+
+    An earlier version of this test asserted that the swept questions
+    were a subset of the published ones. That is a property of the
+    route's own dict comprehension rather than of the sweep, it is the
+    converse of the contract, and it passed with the trim removed
+    entirely. Counting is the only thing that can fail.
+    """
+    # A second refinement, behind the first and so off screen, with
+    # answers of its own to be asked about. Without one the guide has
+    # nothing off screen that `_offered` yields and the trim has
+    # nothing to skip.
+    guide["refinements"].append(
+        {
+            "key": "finish",
+            "role": "*",
+            "prompt": "What finish?",
+            "from_namespace": "finish",
+            "choices": [{"tag": f"finish|f{i}"} for i in range(8)],
+        }
+    )
+    lookups = []
+
+    def counting(predicate):
+        lookups.append(predicate)
+        return find_exists(predicate)
+
+    resolved = resolve(
+        guide,
+        # Both steps answered, so the refinements begin; the first is
+        # unanswered, so it is the last thing published.
+        {"method": "s2w-modular", "size": "two"},
+        find_candidates,
+        exists=counting,
+    )
+
+    published = [step["key"] for step in resolved["steps"]]
+    published += [r["key"] for r in resolved["refinements"]]
+    assert published == ["method", "size", "texture"], (
+        "the fixture no longer leaves a question off screen, so there is "
+        "nothing for this test to measure"
+    )
+    # Eight answers to a question nobody can see yet, each a distinct
+    # predicate and so a distinct lookup. Sweeping them takes this from
+    # 5 to 21.
+    assert len(lookups) <= 8, (
+        f"{len(lookups)} catalog lookups for three published questions — "
+        "the sweep is asking about answers the page will not show"
+    )
+
+
 def test_a_question_offers_nothing_when_the_part_above_is_missing(guide):
     """Derivation reads the resolved part above, and there may not be one.
 

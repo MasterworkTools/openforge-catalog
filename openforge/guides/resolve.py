@@ -214,10 +214,18 @@ def resolve(
     )
     # Only the questions the page is about to publish. The sweep asks
     # the catalog about every answer of every question it is given, and
-    # the page shows one or two of them — measured at 46 statements and
-    # 4.9s against 19 and 1.6s for a byte-identical response. `offered`
-    # inside stays whole, because blame must still be able to name a
-    # question that is not on screen.
+    # the page shows one or two of them, so the rest is bought and
+    # thrown away. The response is byte-identical either way — these
+    # are the same lists the response publishes — so the saving is only
+    # ever visible as a count of catalog round trips, which is what
+    # `test_availability_does_not_ask_about_questions_it_will_not_publish`
+    # measures. It is a several-fold cut on a guide whose later
+    # questions carry `choices`, and nothing at all on one whose
+    # refinements are all `from_namespace`, because `_offered` yields
+    # only the first kind. No absolute figures here: the ones quoted for
+    # the older optimisation thirty lines down went stale three times.
+    # `offered` inside stays whole, because blame must still be able to
+    # name a question that is not on screen.
     shown_steps = _up_to_first_unanswered(steps, given)
     shown_refinements = (
         []
@@ -319,6 +327,12 @@ def _unavailable(
     and the failure mode is an answer that is offered and turns out
     thin — not one that vanishes and should not have.
     """
+    # The same expression `resolve` computes, on the same input, rather
+    # than the parameter it used to arrive as — see the docstring. It
+    # is exact by construction and not by test: replacing it with
+    # `dict(sent)`, the very confusion this rename was to end, leaves
+    # the suite green, because every state the fixtures reach answers
+    # the questions that would differ.
     assumed, _ = _with_defaults(document, sent)
     baseline = {
         part["role"]: _predicate_key(part["query"])
@@ -408,12 +422,25 @@ def _blame(
     # silently drop every answer after it as well.
     #
     # `if_taken` is the map the caller already derived for this
-    # candidate, passed in rather than derived a second time — the two
-    # were the same expression under two names, and one of them was a
-    # line no test could see.
+    # candidate, passed in rather than derived a second time: the two
+    # were the same expression under two names.
+    #
+    # Only its *keys* are read, below, so nothing in the suite can yet
+    # tell it from the defaulted map — handing this the wrong one
+    # leaves every test green. That needs a guide whose later step is
+    # gated on the answer under test; until there is one, this line is
+    # right by construction and not by evidence.
     _, would_answer = _available_steps(document, if_taken)
     for other in others:
-        if other not in assumed:
+        # Their own answers only. A question sitting on its
+        # recommendation cannot be blamed even if it is tried —
+        # `without` is built from `sent`, so removing a key that was
+        # never sent leaves the map unchanged and the hypothetical is
+        # the one already found empty. Written against `sent` the
+        # invariant the page relies on ("your answer") is structural
+        # rather than emergent, and the seven candidates a fresh page
+        # used to try and discard are not tried.
+        if other not in sent:
             continue
         # Un-answering `other`, not deleting it. On screen, clearing a
         # question re-applies the recommendation below it rather than
@@ -881,9 +908,13 @@ def _chosen_options(steps: list[dict], selections: dict) -> list[dict]:
     """The option each answered step names, as dicts the parts can use.
 
     Everything reaching here is the person's answer as far as this
-    function can tell: the engine's own recommendations are checked
-    where they enter the map, by `_reject_bad_recommendation`, because
-    by this point the two are merged and indistinguishable.
+    function can tell — by this point their answers and the engine's
+    recommendations are merged and indistinguishable. The
+    recommendations are checked before the merge is ever built, once
+    per request, by `reject_bad_recommendations` at the top of
+    `resolve`; they used to be checked as each one entered the map,
+    which made a fault on an unvisited branch findable only by the
+    counterfactual.
     """
     chosen = []
     for step in steps:
@@ -937,6 +968,17 @@ def _reject_unknown_selections(
         raise GuideSelectionError(
             f"guide {document['key']!r} has no {listed(unknown, KEY_CHARS)}"
         )
+    # Every step answer, not only the reachable ones. `resolve` ignores
+    # an answer this branch has not reached — a shared URL whose first
+    # answer changed should lose the later ones, not break — but the
+    # availability sweep re-derives on hypothetical branches, and one of
+    # those can make an ignored answer reachable. `_chosen_options` then
+    # raised out of the counterfactual, so `/resolve` answered 200 and
+    # `/availability` 400 on the same URL: 75 of 1,125 selection
+    # combinations on the fixture guide, and the browser only logs that.
+    # Checking here keeps the two endpoints agreeing about what a bad
+    # request is, which is the rule `resolve_guide` states.
+    _chosen_options(document["steps"], selections)
     for refinement in refinements:
         _reject_bad_refinement_value(refinement, selections)
 

@@ -1,12 +1,12 @@
-"use client";
+'use client';
 
-import React from "react";
+import React from 'react';
 import {
   GuideChoice,
   GuideRefinement,
   GuideStep,
   MissingReason,
-} from "@/services/guide-service";
+} from '@/services/guide-service';
 
 /**
  * The questions. A step is a set of options, one of which is chosen; a
@@ -38,16 +38,17 @@ type Because = Record<string, Record<string, MissingReason>> | null;
  * rounds of "this is tested now" turned out to be false on this exact
  * feature. One renderer makes the coverage claim checkable.
  *
- * `lead` names the answer, which only the list needs — beside a folded
- * label the answer is directly above, so repeating it reads as a
- * stutter. `space` is the one other difference between the callers.
+ * `answer` is the answer's label, which only the open list needs —
+ * beside a folded one the answer is directly above, so repeating it
+ * reads as a stutter. The margin follows from it: the list needs the
+ * extra space, the folded callers do not.
  */
 function DeadAnswer({ why, answer }: { why?: MissingReason; answer?: string }) {
   return (
-    <p className={`${answer ? "mt-2" : "mt-1"} text-xs text-red-700`}>
-      {answer ? `Your answer, ${answer}, leaves` : "Leaves"} no{" "}
-      {why?.part ?? "match"}
-      {blame(why, " — it is")}.
+    <p className={`${answer ? 'mt-2' : 'mt-1'} text-xs text-red-700`}>
+      {answer ? `Your answer, ${answer}, leaves` : 'Leaves'} no{' '}
+      {why?.part ?? 'match'}
+      {blame(why, ' — it is')}.
     </p>
   );
 }
@@ -56,16 +57,16 @@ function DeadAnswer({ why, answer }: { why?: MissingReason; answer?: string }) {
  * Which answer is responsible, when one is.
  *
  * Shared by the sentence above and the list below, which word it
- * differently — "leaves no wall base — it is your ... answer" against
- * "cave — no wall base for your ... answer" — but must not disagree
- * about whose answer it was. It is always the person's: blame only
- * ever names a question they answered themselves, because the
- * counterfactual is derived from what they sent, so removing a
- * question still sitting on its recommendation changes nothing and it
- * can never be named. See `_blame` in `openforge/guides/resolve.py`.
+ * differently — "leaves no wall base — it is your … answer" against
+ * "cave — no wall base for your … answer" — but must not disagree
+ * about whose answer it was. It is always the person's: blame only ever
+ * names a question they answered themselves, because the counterfactual
+ * is derived from what they sent, so removing a question still sitting
+ * on its recommendation changes nothing and it can never be named. See
+ * `_blame` in `openforge/guides/resolve.py`.
  */
 function blame(why: MissingReason | undefined, lead: string): string {
-  return why?.prompt ? `${lead} your "${why.prompt}" answer` : "";
+  return why?.prompt ? `${lead} your "${why.prompt}" answer` : '';
 }
 
 /**
@@ -76,6 +77,7 @@ function blame(why: MissingReason | undefined, lead: string): string {
  * obvious once you know which choice did it, so the list says what it
  * would have left empty and, where one answer is responsible, which.
  */
+
 function Missing({
   hidden,
   chosen,
@@ -107,15 +109,17 @@ function Missing({
   if (hidden.length === 0 && !chosen) return null;
   return (
     <>
-      {chosen && <DeadAnswer why={why} answer={labels(chosen)} />}
+      {chosen && (
+        <DeadAnswer why={why} answer={labels(chosen)} />
+      )}
       {hidden.length > 0 && (
         <ul className="mt-2 text-xs text-gray-500 list-none">
           {hidden.map((value) => {
             const reason = because?.[value];
             return (
               <li key={value}>
-                {labels(value)} — no {reason?.part ?? "match"}
-                {blame(reason, " for")}
+                {labels(value)} — no {reason?.part ?? 'match'}
+                {blame(reason, ' for')}
               </li>
             );
           })}
@@ -255,14 +259,15 @@ function AnsweredStep({
   // thing this section is here to show, and hiding it would leave a
   // reopened question looking as though it was never answered.
   const live = step.options.filter(
-    (option) => option.key === step.selected || !dead.includes(option.key),
+    (option) => option.key === step.selected || !dead.includes(option.key)
   );
   // The answer in force, when it is the one that broke the build, and
   // null otherwise. Both branches of this component ask it — the
   // reopened one to explain the answer beside the choices, the folded
   // one to explain it under the label — and they must not be able to
-  // disagree.
-  const brokeIt =
+  // disagree. Named for the value it holds rather than the question it
+  // answers, because one branch indexes `because` with it.
+  const deadSelection =
     step.selected && dead.includes(step.selected) ? step.selected : null;
 
   if (open) {
@@ -295,7 +300,7 @@ function AnsweredStep({
         </div>
         <Missing
           hidden={dead.filter((value) => value !== step.selected)}
-          chosen={brokeIt}
+          chosen={deadSelection}
           because={because}
           labels={(value) =>
             step.options.find((o) => o.key === value)?.title ?? value
@@ -324,7 +329,9 @@ function AnsweredStep({
           answer that emptied a part folded to a tidy label while every
           *other* question listed its absent answers and blamed
           something else. A step was the case actually reported. */}
-      {brokeIt && <DeadAnswer why={because?.[brokeIt]} />}
+      {deadSelection && (
+        <DeadAnswer why={because?.[deadSelection]} />
+      )}
     </section>
   );
 }
@@ -337,9 +344,9 @@ function AnsweredStep({
  * choice someone made would be a lie about the state.
  */
 function answerBorder(chosen: boolean, assumed?: boolean): string {
-  if (chosen) return "border-blue-600 bg-blue-50 font-semibold";
-  if (assumed) return "border-blue-400 border-dashed bg-blue-50/40";
-  return "border-gray-300";
+  if (chosen) return 'border-blue-600 bg-blue-50 font-semibold';
+  if (assumed) return 'border-blue-400 border-dashed bg-blue-50/40';
+  return 'border-gray-300';
 }
 
 /**
@@ -388,7 +395,10 @@ function Answer({
  * For a question whose answer left more than one piece: how many, and
  * how to go and look at them. Keyed by question.
  */
-export type MoreOptions = Record<string, { count: number; onOpen: () => void }>;
+export type MoreOptions = Record<
+  string,
+  { count: number; onOpen: () => void }
+>;
 
 interface GuideRefinementsProps {
   refinements: GuideRefinement[];
@@ -421,7 +431,7 @@ export function GuideRefinements({
     (refinement) =>
       !refinement.on_tags ||
       refinement.selected !== null ||
-      !deadFor(refinement).includes("on"),
+      !deadFor(refinement).includes('on')
   );
   if (asked.length === 0) return null;
   // A section each, in document order. A question is its own section
@@ -447,11 +457,10 @@ export function GuideRefinements({
       // Keyed by the first question in it, not by the heading: two
       // groups can legitimately carry the same name, and two ungrouped
       // questions can share a prompt. No shipped guide does either
-      // today — `wall.yaml` has one "Other options" — so the case
-      // lives in the fixtures rather than in a fixture file. A
-      // name-keyed section meant a duplicate React key and a duplicate
-      // DOM id, so `aria-labelledby` pointed at whichever heading
-      // rendered first.
+      // today — `wall.yaml` has one "Other options" — so the case lives
+      // in the fixtures rather than in a fixture file. A name-keyed
+      // section meant a duplicate React key and a duplicate DOM id, so
+      // `aria-labelledby` pointed at whichever heading rendered first.
       id: refinement.key,
       name: refinement.group ?? refinement.prompt,
       grouped: Boolean(refinement.group),
@@ -500,7 +509,7 @@ function RefinementGroup({
   refinements: GuideRefinement[];
   deadFor: (refinement: GuideRefinement) => string[];
   becauseFor: (
-    refinement: GuideRefinement,
+    refinement: GuideRefinement
   ) => Record<string, MissingReason> | undefined;
   more?: MoreOptions;
   opened?: string | null;
@@ -585,12 +594,12 @@ function RefinementGroup({
  */
 function answerLabel(
   refinement: GuideRefinement,
-  chosen: GuideChoice | undefined,
+  chosen: GuideChoice | undefined
 ): string {
   if (chosen) return labelFor(chosen);
-  if (refinement.selected === "on") return "Yes";
-  if (refinement.selected === "off") return "No";
-  return refinement.selected ?? "";
+  if (refinement.selected === 'on') return 'Yes';
+  if (refinement.selected === 'off') return 'No';
+  return refinement.selected ?? '';
 }
 
 /**
@@ -624,7 +633,7 @@ function AnsweredRefinement({
   onOpen: () => void;
 }) {
   const chosen = refinement.choices?.find(
-    (choice) => choice.tag === refinement.selected,
+    (choice) => choice.tag === refinement.selected
   );
   const answer = answerLabel(refinement, chosen);
   return (
@@ -692,8 +701,7 @@ function ChoicePicker({
   // copy of the same words, which a screen reader would read twice.
   const heading = showPrompt ? `refinement-${refinement.key}` : labelledBy;
   const live = (refinement.choices ?? []).filter(
-    (choice) =>
-      choice.tag === refinement.selected || !dead.includes(choice.tag),
+    (choice) => choice.tag === refinement.selected || !dead.includes(choice.tag)
   );
   return (
     <section aria-labelledby={heading}>
@@ -702,11 +710,7 @@ function ChoicePicker({
           {refinement.prompt}
         </h3>
       )}
-      <div
-        role="group"
-        aria-labelledby={heading}
-        className="flex flex-col gap-1"
-      >
+      <div role="group" aria-labelledby={heading} className="flex flex-col gap-1">
         {live.map((choice) => {
           const chosen = refinement.selected === choice.tag;
           return (
@@ -720,9 +724,7 @@ function ChoicePicker({
                 refinement.selected === null &&
                 refinement.recommended === choice.tag
               }
-              onPick={() =>
-                onSelect(refinement.key, chosen ? null : choice.tag)
-              }
+              onPick={() => onSelect(refinement.key, chosen ? null : choice.tag)}
             />
           );
         })}
@@ -759,7 +761,7 @@ function labelFor(choice: GuideChoice): string {
   // the first letter up. Not a brand's own capitalisation — a list of
   // those would be the stale thing deriving exists to avoid — but
   // enough that "openlock" does not read as a typo.
-  const name = (choice.tag.split("|").pop() ?? choice.tag).replace(/_/g, " ");
+  const name = (choice.tag.split('|').pop() ?? choice.tag).replace(/_/g, ' ');
   const pretty = name.charAt(0).toUpperCase() + name.slice(1);
   // The count is the difference between two answers that otherwise
   // look equally good: 135 pieces behind one and 46 behind another.
@@ -785,9 +787,9 @@ function Toggle({
       <input
         type="checkbox"
         aria-label={showPrompt ? undefined : refinement.prompt}
-        checked={refinement.selected === "on"}
+        checked={refinement.selected === 'on'}
         onChange={(e) =>
-          onSelect(refinement.key, e.target.checked ? "on" : "off")
+          onSelect(refinement.key, e.target.checked ? 'on' : 'off')
         }
       />
       {showPrompt && <span>{refinement.prompt}</span>}
@@ -831,8 +833,8 @@ function NamespacePicker({
       // here at all means its derivation found nothing — so the
       // placeholder read "undefined|..." on the one path where this
       // box is most likely to be seen.
-      placeholder={`${refinement.from_namespace ?? refinement.from_combination ?? "tag"}|...`}
-      defaultValue={refinement.selected ?? ""}
+      placeholder={`${refinement.from_namespace ?? refinement.from_combination ?? 'tag'}|...`}
+      defaultValue={refinement.selected ?? ''}
       onBlur={(e) => onSelect(refinement.key, e.target.value.trim() || null)}
     />
   );

@@ -27,9 +27,7 @@ def validate_guide_document(data: dict) -> dict:
     _validate_shape(data)
     errors = _cross_reference_errors(data)
     if errors:
-        key = data.get("key", "<no key>")
-        joined = "\n  ".join(errors)
-        raise ValueError(f"guide {key!r} is invalid:\n  {joined}")
+        _raise_invalid(data, errors)
     return data
 
 
@@ -53,11 +51,22 @@ def reject_bad_recommendations(data: dict) -> None:
     else, so `/resolve` answered 200 and only `/availability` faulted.
     """
     errors = _recommendation_type_errors(data) or _default_errors(data)
-    if not errors:
-        return
+    if errors:
+        _raise_invalid(data, errors)
+
+
+def _raise_invalid(data: dict, errors: list[str]) -> None:
+    """One wording for one fault, whoever finds it.
+
+    Both entry points report the same kind of problem about the same
+    document, and they used to join their lines differently — so the
+    same rotted `default` read one way from the loader and another from
+    a request, which is exactly the sort of thing that gets grepped for
+    and missed.
+    """
     key = data.get("key", "<no key>")
-    joined = "; ".join(errors)
-    raise ValueError(f"guide {key!r} is invalid: {joined}")
+    joined = "\n  ".join(errors)
+    raise ValueError(f"guide {key!r} is invalid:\n  {joined}")
 
 
 def _validate_shape(data: dict):
@@ -245,32 +254,39 @@ def _recommended_values(question: dict) -> list:
     if default is None:
         return []
     if isinstance(default, list):
-        return [clause["value"] for clause in default]
+        # `.get`, because this runs on documents the loader never saw.
+        # A clause missing its `value` used to escape as a bare
+        # `KeyError: 'value'` from the one function whose job is to name
+        # the guide and the question at fault.
+        return [clause.get("value") for clause in default]
     return [default]
 
 
 def _recommendation_type_errors(data: dict) -> list[str]:
     """Recommendations the schema would have refused.
 
-    Checked before `_default_errors` and never beside it: that one
-    tests membership of a set and splits on commas, and both raise
-    rather than report on a value that is not a string.
+    Checked before `_default_errors` and never beside it. Only one of
+    that function's three branches actually raises on a non-string —
+    the namespace one, which calls `value.split(",")`. The other two
+    test membership, and `in` never raises on a type mismatch: they
+    report a confident, meaningless error about a value that was never
+    an answer. So this pass is what makes the message name the real
+    fault, not what stops a crash.
+
     `validate_guide_document` has `_validate_shape` in front of it for
     this; a document read back out of the database has only this.
     """
-    errors = []
-    for kind, questions in (
-        ("step", data["steps"]),
-        ("refinement", data.get("refinements", [])),
-    ):
-        for question in questions:
-            for value in _recommended_values(question):
-                if not isinstance(value, str):
-                    errors.append(
-                        f"{kind} {question['key']!r}: `default` recommends "
-                        f"{value!r}, which is not a string"
-                    )
-    return errors
+    return [
+        f"{kind} {question['key']!r}: `default` recommends {value!r}, "
+        "which is not a string"
+        for kind, questions in (
+            ("step", data["steps"]),
+            ("refinement", data.get("refinements", [])),
+        )
+        for question in questions
+        for value in _recommended_values(question)
+        if not isinstance(value, str)
+    ]
 
 
 def _default_errors(data: dict) -> list[str]:

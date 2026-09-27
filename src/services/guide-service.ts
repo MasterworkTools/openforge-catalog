@@ -30,9 +30,6 @@ export interface MissingReason {
   part: string;
   question?: string;
   prompt?: string;
-  /**
-   * Whether the question blamed is one the person actually answered.
-   */
 }
 
 interface GuideOption {
@@ -140,7 +137,7 @@ interface GuideImage {
   id: string;
   image_name: string;
   image_url: string;
-  image_type: "thumbnail" | "documentation";
+  image_type: 'thumbnail' | 'documentation';
   sprite_metadata?: GuideSpriteMetadata | null;
 }
 
@@ -159,7 +156,12 @@ export interface GuideBlueprint {
  * resolve.py names them. A closed union rather than a string index,
  * so a typo is a compile error instead of a silent `undefined`.
  */
-type PredicateTerm = "require" | "deny" | "accept" | "allow" | "deny_children";
+type PredicateTerm =
+  | 'require'
+  | 'deny'
+  | 'accept'
+  | 'allow'
+  | 'deny_children';
 
 export interface GuidePart {
   role: string;
@@ -183,7 +185,7 @@ export function pinKey(role: string): string {
   return `${PIN}${role}`;
 }
 
-const PIN = "part.";
+const PIN = 'part.';
 
 export interface GuideDocument {
   key: string;
@@ -228,14 +230,14 @@ function failed(what: string, response: Response): HttpError {
 }
 
 export async function fetchGuides(): Promise<GuideSummary[]> {
-  const response = await fetch("/api/guides");
+  const response = await fetch('/api/guides');
   // An empty collection is a 404 here by house convention
   // (openforge/CLAUDE.md), not an error.
   if (response.status === 404) {
     return [];
   }
   if (!response.ok) {
-    throw failed("Failed to fetch guides", response);
+    throw failed('Failed to fetch guides', response);
   }
   const body = await response.json();
   return body.guides;
@@ -251,7 +253,7 @@ export async function fetchGuides(): Promise<GuideSummary[]> {
 export async function fetchGuide(guideKey: string): Promise<GuideDocument> {
   const response = await fetch(`/api/guides/${encodeURIComponent(guideKey)}`);
   if (!response.ok) {
-    throw failed("Failed to fetch guide", response);
+    throw failed('Failed to fetch guide', response);
   }
   const body = await response.json();
   return body.document;
@@ -291,7 +293,7 @@ export function selectionKeys(document: GuideDocument): Set<string> {
  */
 export async function resolveGuide(
   guideKey: string,
-  selections: Selections,
+  selections: Selections
 ): Promise<ResolvedGuide> {
   const query = new URLSearchParams(selections).toString();
   const path = `/api/guides/${encodeURIComponent(guideKey)}/resolve`;
@@ -300,7 +302,7 @@ export async function resolveGuide(
     const body = await response.json().catch(() => ({}));
     throw body.error
       ? Object.assign(new Error(body.error), { status: response.status })
-      : failed("Failed to resolve", response);
+      : failed('Failed to resolve', response);
   }
   return response.json();
 }
@@ -315,12 +317,13 @@ export async function resolveGuide(
  * which is the backend's version of the same choice.
  */
 export function thumbnailOf(
-  blueprint: GuideBlueprint | null,
+  blueprint: GuideBlueprint | null
 ): GuideImage | null {
   return (
-    blueprint?.images?.find((image) => image.image_type === "thumbnail") ?? null
+    blueprint?.images?.find((image) => image.image_type === 'thumbnail') ?? null
   );
 }
+
 
 /** What is not on offer, and why, by question; and how many each part has. */
 export interface Availability {
@@ -340,16 +343,16 @@ export interface Availability {
  */
 export async function fetchAvailability(
   guideKey: string,
-  selections: Selections,
+  selections: Selections
 ): Promise<Availability> {
   const query = new URLSearchParams(selections).toString();
   const response = await fetch(
     `/api/guides/${encodeURIComponent(guideKey)}/availability${
-      query ? `?${query}` : ""
-    }`,
+      query ? `?${query}` : ''
+    }`
   );
   if (!response.ok) {
-    throw failed("Failed to fetch availability", response);
+    throw failed('Failed to fetch availability', response);
   }
   const body = await response.json();
   return {
@@ -382,7 +385,7 @@ export function impliedBy(
   // differ in what else they carry, and this reads neither.
   blueprint: { tags?: string[] },
   role: string,
-  refinements: GuideRefinement[],
+  refinements: GuideRefinement[]
 ): Record<string, string | null> {
   const carried = new Set(blueprint.tags ?? []);
   const changes: Record<string, string | null> = {};
@@ -409,11 +412,11 @@ export function impliedBy(
 function answeredBy(
   refinement: GuideRefinement,
   role: string,
-  carried: Set<string>,
+  carried: Set<string>
 ): string | null {
   const matched = (refinement.choices ?? []).filter((choice) => {
     const substituted = refinement.substitute?.[choice.tag]?.[role];
-    const wanted = substituted ? [substituted] : choice.tag.split(",");
+    const wanted = substituted ? [substituted] : choice.tag.split(',');
     return wanted.every((tag) => carried.has(tag));
   });
   if (matched.length === 0) return null;
@@ -430,13 +433,13 @@ function answeredBy(
   // Otherwise most tags first. A subset and its superset both match
   // the piece carrying the superset, and only the superset describes
   // it.
-  matched.sort((a, b) => b.tag.split(",").length - a.tag.split(",").length);
+  matched.sort((a, b) => b.tag.split(',').length - a.tag.split(',').length);
   return matched[0].tag;
 }
 
 /** Does this question apply to that role? Same test the engine makes. */
 function reaches(refinement: GuideRefinement, role: string): boolean {
-  if (refinement.role !== "*" && refinement.role !== role) return false;
+  if (refinement.role !== '*' && refinement.role !== role) return false;
   return !(refinement.except_roles ?? []).includes(role);
 }
 
@@ -454,12 +457,12 @@ function reaches(refinement: GuideRefinement, role: string): boolean {
  */
 export function releasedBy(
   question: GuideStep | GuideRefinement,
-  pinnedRoles: string[],
+  pinnedRoles: string[]
 ): Record<string, null> {
   return Object.fromEntries(
     pinnedRoles
       .filter((role) => narrows(question, role))
-      .map((role) => [pinKey(role), null]),
+      .map((role) => [pinKey(role), null])
   );
 }
 
@@ -471,12 +474,9 @@ export function releasedBy(
  * and an option with no roles of its own — "how wide?" — narrows
  * whatever the earlier answers put in play, which is every role.
  */
-export function narrows(
-  question: GuideStep | GuideRefinement,
-  role: string,
-): boolean {
-  if (!("options" in question)) return reaches(question, role);
+export function narrows(question: GuideStep | GuideRefinement, role: string): boolean {
+  if (!('options' in question)) return reaches(question, role);
   return question.options.some(
-    (option) => !option.roles || role in option.roles,
+    (option) => !option.roles || role in option.roles
   );
 }

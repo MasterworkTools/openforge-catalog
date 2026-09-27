@@ -1,18 +1,18 @@
-"use client";
+'use client';
 
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from 'react';
 import {
   GuidePart,
   GuideSummary,
   fetchGuides,
   narrows,
   releasedBy,
-} from "@/services/guide-service";
-import { MoreOptions } from "./guide-steps";
-import { useGuideKey, useGuideState } from "@/hooks/use-guide-state";
-import { GuideParts } from "./guide-parts";
-import { GuideExplainer } from "./guide-explainer";
-import { GuideRefinements, GuideSteps } from "./guide-steps";
+} from '@/services/guide-service';
+import { MoreOptions } from './guide-steps';
+import { useGuideKey, useGuideState } from '@/hooks/use-guide-state';
+import { GuideParts } from './guide-parts';
+import { GuideExplainer } from './guide-explainer';
+import { GuideRefinements, GuideSteps } from './guide-steps';
 
 /**
  * The guide page: pick a guide, answer a question or two, get a parts
@@ -31,7 +31,8 @@ export default function GuidePage() {
     status,
     select,
     selectAll,
-  } = useGuideState(guideKey);
+  } =
+    useGuideState(guideKey);
   // Which settled question has been reopened. Here rather than in the
   // section itself, because the explanation beside it follows.
   const [opened, setOpened] = useState<string | null>(null);
@@ -67,19 +68,11 @@ export default function GuidePage() {
   // hand-picking a wall changes nothing and the button looks dead.
   const pinned = (resolved?.parts ?? []).filter((p) => p.pinned);
   const answer = (key: string, value: string | null) => {
-    const asked = [
-      ...(resolved?.steps ?? []),
-      ...(resolved?.refinements ?? []),
-    ];
+    const asked = [...(resolved?.steps ?? []), ...(resolved?.refinements ?? [])];
     const question = asked.find((q) => q.key === key);
     selectAll({
       [key]: value,
-      ...(question
-        ? releasedBy(
-            question,
-            pinned.map((p) => p.role),
-          )
-        : {}),
+      ...(question ? releasedBy(question, pinned.map((p) => p.role)) : {}),
     });
   };
 
@@ -100,7 +93,7 @@ export default function GuidePage() {
     // question you wanted while the pictures slide away.
     <main className="p-6 h-screen flex flex-col">
       <h1 className="text-3xl font-bold mb-4 shrink-0">
-        {guide?.title ?? "Guided build"}
+        {guide?.title ?? 'Guided build'}
       </h1>
       {error && (
         <div className="mb-4 shrink-0">
@@ -128,7 +121,7 @@ export default function GuidePage() {
               Exactly 500, not every 5xx — a 502 or 504 is a cold start
               or a container that went away and a 503 is no healthy
               target, all transient and all saying nothing about the
-              stored guide, so those are worth retrying from inside. */}
+              stored guide, so those keep the retry. */}
           {!resolved &&
             (guide && status !== 500 ? (
               <a
@@ -216,7 +209,7 @@ function GuideList() {
       })
       .catch((e) => {
         if (!current) return;
-        console.error("Error fetching guides:", e);
+        console.error('Error fetching guides:', e);
         // Distinct from an empty list: "none yet" and "we could not
         // ask" should not read the same to someone looking at it.
         setFailed(true);

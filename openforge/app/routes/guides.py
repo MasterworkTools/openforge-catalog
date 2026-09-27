@@ -51,6 +51,7 @@ import openforge.db.sql.guides as guide_sql
 import openforge.db.sql.images as image_sql
 import openforge.db.sql.tags as tag_sql
 from openforge.guides.resolve import (
+    KEY_CHARS,
     GuideSelectionError,
     listed,
     quoted,
@@ -123,11 +124,14 @@ def resolve_guide(guide_key: str):
                 # start raising it for a document fault.
                 #
                 # `except ValueError` would NOT behave identically, and
-                # a test says so now: `_reject_bad_recommendation`
-                # raises a bare one for a rotted `default`, and
-                # widening this catch would swallow it back into a 400
-                # and silently undo that fix. This is the edit the
-                # comment exists to warn off.
+                # a test says so now: `reject_bad_recommendations`
+                # (`openforge/guides/validation.py`, called at the top
+                # of `resolve`) raises a bare one for a rotted
+                # `default`, and widening this catch would swallow it
+                # back into a 400 and silently undo that fix. This is
+                # the edit the comment exists to warn off, and it is
+                # the only thing holding that rule — nothing deeper
+                # enforces it.
                 _log_bad_request(guide_key, e)
                 return jsonify({"error": str(e)}), 400
             _attach_images(curs, resolved["parts"])
@@ -288,7 +292,7 @@ def _selections_from_request() -> dict:
     repeated = sorted(key for key in request.args if len(request.args.getlist(key)) > 1)
     if repeated:
         raise GuideSelectionError(
-            f"answered more than once: {listed(repeated, SELECTION_CHARS)}"
+            f"answered more than once: {listed(repeated, KEY_CHARS)}"
         )
     selections = request.args.to_dict()
     for key, value in selections.items():
@@ -298,19 +302,7 @@ def _selections_from_request() -> dict:
 
 
 def _shown(text: str) -> str:
-    """A query-string value as it can safely appear in an error body.
-
-    `repr` so a newline or a NUL cannot run off the end of the line,
-    and capped so a 200KB key does not come back as a 200KB message —
-    the pin log has both and the body it is answering alongside had
-    neither.
-
-    The length is stated when it is cut, because the prefix alone is
-    identical for every over-long value: 257 characters, 200,000
-    characters, and 256 characters followed by something else all
-    rendered the same, which said nothing about which rule was broken
-    or by how much.
-    """
+    """`quoted` at the cap a whole selection is allowed."""
     return quoted(text, SELECTION_CHARS)
 
 

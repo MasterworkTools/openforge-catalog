@@ -1659,6 +1659,59 @@ def test_a_refused_request_is_logged_where_it_can_be_seen(
     assert "has no option" in refused[0].getMessage()
 
 
+def test_the_log_line_is_bounded_even_when_the_body_is_not(
+    client, wall_guide, catalog, caplog
+):
+    """The cap at the sink, which nothing measured.
+
+    Needs `SELECTION_CHARS` and `quote`, imported at the call.
+
+    Ten messages feed `_log_bad_request` and the bound is on the sink
+    rather than on any of them, precisely so an eleventh cannot escape
+    it. The `answered more than once` message is the one that can run
+    long today, so it is the one to measure — and the property, not a
+    number: whatever the body costs, the record costs less.
+    """
+    # An over-long value of astral characters. `repr` spends ten
+    # characters on each of them, so 257 of them is a 2.6KB message
+    # from a 1KB query — which is the shape that outruns the cap now
+    # that the key lists are bounded by count as well as by item.
+    from urllib.parse import quote
+
+    from openforge.app.routes.guides import SELECTION_CHARS
+
+    value = "\U0010ffff" * (SELECTION_CHARS + 1)
+    with caplog.at_level(logging.WARNING):
+        got = client.get("/api/guides/wall/resolve?method=" + quote(value))
+
+    assert got.status_code == 400
+    body = got.get_json()["error"]
+    assert len(body) > 2000, "the probe stopped producing a long message"
+    (refused,) = [r for r in caplog.records if "refused a request" in r.getMessage()]
+    assert len(refused.getMessage()) < len(body), (
+        f"a {len(body)}-character refusal reached CloudWatch as "
+        f"{len(refused.getMessage())} characters — the sink is not bounding it"
+    )
+
+
+def test_ten_offenders_are_named_and_the_eleventh_is_counted(
+    client, wall_guide, catalog
+):
+    """The boundary of the bound.
+
+    Exactly ten is the last case that names them all, so it is the one
+    that tells `<= NAMED` from `< NAMED` — and getting that edge wrong
+    means a message that says "and 0 more".
+    """
+    ten = "&".join(f"nosuch{n}=x" for n in range(10))
+    error = client.get(f"/api/guides/wall/resolve?{ten}").get_json()["error"]
+    assert "more" not in error, "ten offenders are all named, so nothing is left over"
+
+    eleven = "&".join(f"nosuch{n}=x" for n in range(11))
+    error = client.get(f"/api/guides/wall/resolve?{eleven}").get_json()["error"]
+    assert "and 1 more" in error
+
+
 def test_a_refused_selection_cannot_forge_a_line_in_the_body(
     client, wall_guide, catalog
 ):
@@ -1705,9 +1758,19 @@ def test_a_value_of_exactly_the_cap_is_not_reported_as_cut(client, wall_guide, c
     """
     from openforge.app.routes.guides import SELECTION_CHARS
 
-    got = client.get("/api/guides/wall/resolve?method=" + "x" * SELECTION_CHARS)
+    # The at-cap string has to be the *key*, with an over-long value
+    # beside it to trip the refusal: an at-cap value is not refused for
+    # length at all, so the 400 came from `_chosen_options`' own `!r`
+    # and this test was asserting a negative about a message `quoted`
+    # never produced.
+    at_cap = "x" * SELECTION_CHARS
+    got = client.get(
+        f"/api/guides/wall/resolve?{at_cap}=" + "y" * (SELECTION_CHARS + 1)
+    )
     assert got.status_code == 400
-    assert f"({SELECTION_CHARS} characters)" not in got.get_json()["error"]
+    error = got.get_json()["error"]
+    assert at_cap in error, "the at-cap key is not quoted whole"
+    assert f"'{at_cap}' ({SELECTION_CHARS} characters)" not in error
 
 
 def test_the_pin_log_is_truncated_not_merely_escaped(
@@ -1829,6 +1892,10 @@ def test_a_rotted_recommendation_on_an_unreached_branch_is_still_the_guide_s(
     [
         ("texture|not_a_real_texture", "is not one of its choices"),
         ("cave", "is not under 'texture'"),
+        # The refinement arm of the type pass. Without it this lands as
+        # `AttributeError: 'dict' object has no attribute 'split'` —
+        # the unnamed crash the pass exists to replace.
+        ({"value": "texture|cave"}, "which is not a string"),
     ],
 )
 def test_a_refinements_rotted_recommendation_is_the_guide_s_fault_too(
@@ -1857,59 +1924,93 @@ def test_a_refinements_rotted_recommendation_is_the_guide_s_fault_too(
         client.get("/api/guides/wall/resolve")
 
 
-def test_blame_only_ever_names_a_question_they_answered(client, wall_guide, catalog):
+def test_blame_only_ever_names_a_question_they_answered(client, test_db, catalog):
     """The invariant behind dropping the "whose answer was it" flag.
 
-    The counterfactual is derived from what the person sent, so
-    removing a question still sitting on its recommendation leaves the
-    map unchanged and the candidate can never hold. Blame therefore
-    names an answer of theirs or says nothing — which is what lets the
-    page write "your answer" without asking.
+    `_blame` builds its counterfactual from what the person sent and
+    skips anything they did not, so blame names an answer of theirs or
+    says nothing. That is what lets the page write "your answer"
+    without asking whose it was.
 
-    Asserted over several states rather than one, because the property
-    is about the mechanism and not about any particular guide.
+    The culprit here is a refinement further down the column than the
+    one being explained — the finish decides which texture exists, and
+    the texture is the question on screen. Sent, the finish is named.
+    Left on its recommendation, it is not named at all, and the dead
+    answer is still reported, so the person is told what is missing
+    either way.
+
+    It has to be a later *refinement* rather than a step: a refinement
+    is only published once every step is answered, so a defaulted step
+    can never be the culprit for anything the page is showing.
+
+    The earlier version of this test swept the shipped guide and
+    asserted `blamed <= sent`, which the empty set satisfies. It
+    produced no blame at all in any state and passed with `_blame`
+    stubbed to return a question nobody answered. An absence assertion
+    needs a presence beside it.
     """
-    for query in (
-        "",
-        "?method=separate-wall",
-        "?method=separate-wall&texture=texture|cave",
+    for name, tags in (
+        ("m cave wall", ["texture|cave", "finish|smooth"]),
+        ("n cave floor", ["texture|cave", "finish|smooth"]),
+        ("o rough wall", ["texture|rough_stone", "finish|rough"]),
+        ("p rough floor", ["texture|rough_stone", "finish|rough"]),
     ):
-        got = client.get(f"/api/guides/wall/availability{query}")
-        assert got.status_code == 200
-        sent = {pair.split("=")[0] for pair in query.lstrip("?").split("&") if pair}
-        blamed = {
-            reason["question"]
-            for answers in got.json["because"].values()
-            for reason in answers.values()
-            if "question" in reason
+        shape = "shape|wall" if "wall" in name else "shape|floor"
+        make_blueprint(test_db, name, ["build|separate wall", shape, *tags])
+
+    document = copy.deepcopy(WALL_GUIDE)
+    document["refinements"][0]["choices"] = [
+        {"tag": "texture|cave"},
+        {"tag": "texture|rough_stone"},
+    ]
+    document["refinements"].append(
+        {
+            "key": "finish",
+            "role": "*",
+            "prompt": "What finish?",
+            "from_namespace": "finish",
+            # Listed, not derived: `_offered` only yields a refinement
+            # carrying `on_tags` or its own `choices`, so a
+            # namespace-only refinement is never swept and never a
+            # blame candidate.
+            "choices": [{"tag": "finish|smooth"}, {"tag": "finish|rough"}],
+            # Smooth, so that a person choosing rough has chosen
+            # something the counterfactual can take away again. A sent
+            # answer equal to the recommendation is unblameable for the
+            # same structural reason a recommendation is: un-answering
+            # it puts the identical value straight back.
+            "default": "finish|smooth",
         }
-        assert (
-            blamed <= sent
-        ), f"{query!r} blamed {sorted(blamed - sent)}, which nobody answered"
+    )
+    with test_db.connection() as conn:
+        with conn.cursor(row_factory=dict_row) as curs:
+            guide_sql.upsert_guide(curs, document)
 
+    def dead(query, tag):
+        got = client.get(f"/api/guides/wall/availability?{query}")
+        assert got.status_code == 200
+        because = got.json["because"].get("texture", {})
+        assert tag in because, (
+            f"{query!r} did not report {tag} as dead, so there is nothing "
+            "for this test to be about"
+        )
+        return because[tag]
 
-def test_availability_asks_only_about_the_questions_on_screen(
-    client, wall_guide, catalog
-):
-    """The sweep costs a catalog round trip per offered answer.
+    # Theirs: they chose rough, which is why cave is gone, and the
+    # question is named.
+    named = dead("method=separate-wall&finish=finish|rough", "texture|cave")
+    assert named["question"] == "finish"
+    assert named["prompt"] == "What finish?"
 
-    The page shows one question at a time, so asking about all of them
-    bought nothing: measured at 46 statements against 19 for a
-    byte-identical response. What it must not do is narrow the answer —
-    every question the response publishes still has to be swept.
-    """
-    got = client.get("/api/guides/wall/availability?method=separate-wall")
-    assert got.status_code == 200
-    shown = {step["key"] for step in got.json.get("steps", [])}
-    resolved = client.get("/api/guides/wall/resolve?method=separate-wall")
-    published = {step["key"] for step in resolved.json["steps"]}
-    published |= {r["key"] for r in resolved.json["refinements"]}
-
-    swept = set(got.json["unavailable"]) | set(got.json["because"])
-    assert (
-        swept <= published
-    ), f"swept {sorted(swept - published)}, which the page never shows"
-    assert shown <= published or not shown
+    # The guide's: the recommendation is smooth, which is why rough
+    # stone is gone — the same question, not named. What is missing
+    # still is.
+    unnamed = dead("method=separate-wall", "texture|rough_stone")
+    assert "question" not in unnamed, (
+        f"blamed {unnamed.get('question')!r}, which nobody answered — "
+        "the page calls whatever is named here 'your answer'"
+    )
+    assert unnamed["part"]
 
 
 def test_a_recommendation_that_is_not_even_a_string_is_the_guide_s_fault(
@@ -1929,6 +2030,58 @@ def test_a_recommendation_that_is_not_even_a_string_is_the_guide_s_fault(
 
     with pytest.raises(ValueError, match="not a string"):
         client.get("/api/guides/wall/resolve")
+
+
+def test_an_unreachable_answer_is_ignored_by_both_endpoints_alike(
+    client, test_db, catalog
+):
+    """What counts as a bad request cannot depend on which endpoint asked.
+
+    An answer the current branch has not reached is deliberately
+    ignored rather than refused — someone who shares a URL and then
+    changes the first answer should see the later ones fall away, not a
+    broken page. `resolve` honours that. The availability sweep
+    re-derives on hypothetical branches, and on one of those the
+    ignored answer becomes reachable, so `_chosen_options` refused it
+    out of the counterfactual: the same URL was 200 from `/resolve` and
+    400 from `/availability`, on 75 of 1,125 selection combinations of
+    the fixture guide. The browser only logs an availability failure,
+    so the page kept every dead answer on offer and looked healthy.
+    """
+    document = copy.deepcopy(WALL_GUIDE)
+    document["steps"].append(
+        {
+            "key": "ends",
+            "prompt": "How does it end?",
+            # Reachable only on a branch this request is not on.
+            "when": {"selected": {"method": ["on-tile"]}},
+            "options": [
+                {"key": "plain", "title": "Plain", "tags": {}},
+            ],
+        }
+    )
+    document["steps"][0]["options"].append(
+        {
+            "key": "on-tile",
+            "title": "Wall on tile",
+            "roles": {"floor": None, "wall": None},
+            "tags": {"require": ["build|separate wall"]},
+        }
+    )
+    with test_db.connection() as conn:
+        with conn.cursor(row_factory=dict_row) as curs:
+            guide_sql.upsert_guide(curs, document)
+
+    query = "method=separate-wall&ends=renamed-away"
+    got = {
+        endpoint: client.get(f"/api/guides/wall/{endpoint}?{query}").status_code
+        for endpoint in ("resolve", "availability")
+    }
+    assert got["resolve"] == got["availability"], (
+        f"{query!r} is {got['resolve']} from /resolve and "
+        f"{got['availability']} from /availability — the two endpoints "
+        "disagree about whether this is a bad request"
+    )
 
 
 def test_a_bad_answer_is_still_the_visitor_s_fault(client, wall_guide, catalog):
