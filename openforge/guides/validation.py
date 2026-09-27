@@ -254,11 +254,18 @@ def _recommended_values(question: dict) -> list:
     if default is None:
         return []
     if isinstance(default, list):
-        # `.get`, because this runs on documents the loader never saw.
-        # A clause missing its `value` used to escape as a bare
-        # `KeyError: 'value'` from the one function whose job is to name
-        # the guide and the question at fault.
-        return [clause.get("value") for clause in default]
+        # Defensive on both counts, because this runs on documents the
+        # loader never saw. A clause missing its `value` used to escape
+        # as a bare `KeyError: 'value'`, and a clause that is a bare
+        # string rather than a mapping as an `AttributeError` — both
+        # from the one function whose whole job is to name the guide
+        # and the question at fault. `None` is not a string, so either
+        # shape comes back through the type pass with its own name on
+        # it.
+        return [
+            clause.get("value") if isinstance(clause, dict) else None
+            for clause in default
+        ]
     return [default]
 
 

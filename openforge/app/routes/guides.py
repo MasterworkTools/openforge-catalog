@@ -313,12 +313,19 @@ def _reject_bad_selection(*, what: str, part: str) -> None:
     a false statement in the body: an over-long *value* came back as
     "'part.wall' is longer than 256 characters" about a nine-character
     key.
+
+    The rule comes before the offender. These are the only two of the
+    ten refusal messages that put an unbounded value in the middle and
+    the rule at the end, and the log sink cuts from the end — so a NUL
+    and an over-long value were indistinguishable in CloudWatch, and
+    the only length left in the line was the message's own rather than
+    the value's.
     """
     if "\x00" in part:
-        raise GuideSelectionError(f"{what} {_shown(part)} contains a NUL byte")
+        raise GuideSelectionError(f"{what} contains a NUL byte: {_shown(part)}")
     if len(part) > SELECTION_CHARS:
         raise GuideSelectionError(
-            f"{what} {_shown(part)} is longer than {SELECTION_CHARS} characters"
+            f"{what} is longer than {SELECTION_CHARS} characters: {_shown(part)}"
         )
 
 

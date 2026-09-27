@@ -1678,7 +1678,7 @@ def test_the_log_line_is_bounded_even_when_the_body_is_not(
     # that the key lists are bounded by count as well as by item.
     from urllib.parse import quote
 
-    from openforge.app.routes.guides import SELECTION_CHARS
+    from openforge.app.routes.guides import MESSAGE_CHARS, SELECTION_CHARS
 
     value = "\U0010ffff" * (SELECTION_CHARS + 1)
     with caplog.at_level(logging.WARNING):
@@ -1688,9 +1688,20 @@ def test_the_log_line_is_bounded_even_when_the_body_is_not(
     body = got.get_json()["error"]
     assert len(body) > 2000, "the probe stopped producing a long message"
     (refused,) = [r for r in caplog.records if "refused a request" in r.getMessage()]
-    assert len(refused.getMessage()) < len(body), (
+    record = refused.getMessage()
+    assert len(record) < len(body), (
         f"a {len(body)}-character refusal reached CloudWatch as "
-        f"{len(refused.getMessage())} characters — the sink is not bounding it"
+        f"{len(record)} characters — the sink is not bounding it"
+    )
+    # And bounded by the cap rather than merely by the body. The
+    # relation above alone passes by the width of the log prefix, so it
+    # would go on passing for a body only slightly longer than the one
+    # this probe happens to make. The ceiling is twice `MESSAGE_CHARS`
+    # because the sink's `repr` escapes the backslashes the inner one
+    # already wrote.
+    assert len(record) < 2 * MESSAGE_CHARS + 200, (
+        f"the record is {len(record)} characters, which is not a cap of "
+        f"{MESSAGE_CHARS} doing the work"
     )
 
 

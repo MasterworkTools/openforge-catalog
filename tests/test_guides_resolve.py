@@ -1586,9 +1586,12 @@ def test_availability_does_not_ask_about_questions_it_will_not_publish(guide):
         "the fixture no longer leaves a question off screen, so there is "
         "nothing for this test to measure"
     )
-    # Eight answers to a question nobody can see yet, each a distinct
-    # predicate and so a distinct lookup. Sweeping them takes this from
-    # 5 to 21.
+    # The bound is the number of answers the *published* questions
+    # offer. The off-screen refinement's eight are each a distinct
+    # predicate, so sweeping them would multiply this several times
+    # over — no figure here, for the reason the trim comment in
+    # `resolve.py` gives: the ones quoted for the last optimisation
+    # went stale three times.
     assert len(lookups) <= 8, (
         f"{len(lookups)} catalog lookups for three published questions — "
         "the sweep is asking about answers the page will not show"

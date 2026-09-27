@@ -344,7 +344,13 @@ def _unavailable(
     because: dict = {}
     offered = list(_offered(steps, refinements))
     # Questions are named to the person by their prompt, not their key.
-    prompts = {q["key"]: q["prompt"] for q in [*steps, *refinements]}
+    # As tolerant as the reader below, which already falls back to the
+    # key — a strict build here meant a question with no `prompt` was
+    # a 500 from the sweep and a 200 from `/resolve`, the same
+    # endpoint disagreement `_reject_unknown_selections` was just fixed
+    # for. A key is a worse name than a prompt and a better one than a
+    # blank page.
+    prompts = {q["key"]: q.get("prompt", q["key"]) for q in [*steps, *refinements]}
     for question, values in offered:
         if question not in on_screen:
             continue
@@ -357,20 +363,20 @@ def _unavailable(
             # against a build the page can never show — which reported
             # live answers dead and hid them. Re-deriving from what the
             # person sent is what clicking the answer would really do.
-            hypothetical, _ = _with_defaults(document, {**sent, question: value})
+            if_taken, _ = _with_defaults(document, {**sent, question: value})
             role = _first_empty_role(
                 document,
-                hypothetical,
+                if_taken,
                 baseline,
                 cache,
                 find_candidates,
             )
             if role is not None:
-                empty[value] = (role, hypothetical)
+                empty[value] = (role, if_taken)
         if not empty:
             continue
         dead[question] = list(empty)
-        for value, (role, hypothetical) in empty.items():
+        for value, (role, if_taken) in empty.items():
             # What it would empty is always knowable and always useful:
             # "no wall base in that texture" says what is missing. Which
             # answer is responsible is knowable only when one answer is
@@ -380,7 +386,7 @@ def _unavailable(
                 document,
                 assumed,
                 sent,
-                hypothetical,
+                if_taken,
                 question,
                 value,
                 [other for other, _ in offered if other != question],
@@ -422,8 +428,11 @@ def _blame(
     # silently drop every answer after it as well.
     #
     # `if_taken` is the map the caller already derived for this
-    # candidate, passed in rather than derived a second time: the two
-    # were the same expression under two names.
+    # candidate — the answers as they would be if this one were taken —
+    # passed in rather than derived a second time. It keeps that name
+    # in both frames: `hypothetical` below is a *different*
+    # counterfactual, the one with `other` un-answered, and the two
+    # wore the same name across this boundary until round 10.
     #
     # Only its *keys* are read, below, so nothing in the suite can yet
     # tell it from the defaulted map — handing this the wrong one
@@ -435,8 +444,9 @@ def _blame(
         # Their own answers only. A question sitting on its
         # recommendation cannot be blamed even if it is tried —
         # `without` is built from `sent`, so removing a key that was
-        # never sent leaves the map unchanged and the hypothetical is
-        # the one already found empty. Written against `sent` the
+        # never sent leaves the map unchanged and `hypothetical` comes
+        # out equal to `if_taken`, which the caller already found a
+        # role empty in. Written against `sent` the
         # invariant the page relies on ("your answer") is structural
         # rather than emergent, and the seven candidates a fresh page
         # used to try and discard are not tried.

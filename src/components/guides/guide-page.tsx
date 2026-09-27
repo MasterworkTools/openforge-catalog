@@ -115,13 +115,21 @@ export default function GuidePage() {
               — then starting that same guide over reloads the same
               404, and there is no site nav to escape by, so the way
               out is the list. */}
-          {/* A 500 is the document's fault, not the selections': asking
-              again with the same URL is the one thing that cannot
-              help, so it goes to the list like an unknown key does.
-              Exactly 500, not every 5xx — a 502 or 504 is a cold start
-              or a container that went away and a 503 is no healthy
-              target, all transient and all saying nothing about the
-              stored guide, so those keep the retry. */}
+          {/* Exactly 500, because it is the only status a broken
+              document can arrive as: Flask runs inside the Lambda, so
+              an unhandled `ValueError` is a 500 and never a 502. A 502
+              or 504 is a cold start or a container that went away and
+              a 503 is no healthy target — none of those is a statement
+              about the stored guide, so they keep the retry.
+
+              Not the converse. A 500 is *also* what a psycopg failure
+              against serverless Postgres looks like, and there is no
+              app-wide error handler to tell the two apart, so this arm
+              sends a transient fault to the list. It costs the person
+              a link, not their answers: neither link retries and both
+              drop the selections. Telling them apart needs the
+              document fault to carry a JSON body the page can key on,
+              which is its own change. */}
           {!resolved &&
             (guide && status !== 500 ? (
               <a
