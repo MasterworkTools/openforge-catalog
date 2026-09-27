@@ -259,9 +259,14 @@ def _recommended_values(question: dict) -> list:
         # as a bare `KeyError: 'value'`, and a clause that is a bare
         # string rather than a mapping as an `AttributeError` — both
         # from the one function whose whole job is to name the guide
-        # and the question at fault. `None` is not a string, so either
-        # shape comes back through the type pass with its own name on
-        # it.
+        # and the question at fault.
+        #
+        # Both come back as `None`, which the type pass then reports as
+        # "recommends None". That names the guide and the question but
+        # not the clause fault, so a missing `value`, a bare string and
+        # an explicit `"value": None` all read alike. Telling those
+        # three apart would mean reporting the shape here rather than
+        # flattening it.
         return [
             clause.get("value") if isinstance(clause, dict) else None
             for clause in default
@@ -272,13 +277,16 @@ def _recommended_values(question: dict) -> list:
 def _recommendation_type_errors(data: dict) -> list[str]:
     """Recommendations the schema would have refused.
 
-    Checked before `_default_errors` and never beside it. Only one of
-    that function's three branches actually raises on a non-string —
-    the namespace one, which calls `value.split(",")`. The other two
-    test membership, and `in` never raises on a type mismatch: they
-    report a confident, meaningless error about a value that was never
-    an answer. So this pass is what makes the message name the real
-    fault, not what stops a crash.
+    Checked before `_default_errors` and never beside it, because what
+    that function does with a non-string depends on the shape and none
+    of it is any good. The namespace branch calls `value.split(",")`
+    and raises `AttributeError`. The two membership branches test
+    against a *set*, so an unhashable value — a mapping, a list — is a
+    `TypeError: unhashable type`, and a hashable one like an int is
+    quietly reported as an answer the question does not offer, which is
+    a confident statement about a value that was never an answer at
+    all. So this pass both stops an unnamed crash and makes the message
+    name the real fault, depending on which it was handed.
 
     `validate_guide_document` has `_validate_shape` in front of it for
     this; a document read back out of the database has only this.

@@ -324,7 +324,6 @@ export function thumbnailOf(
   );
 }
 
-
 /** What is not on offer, and why, by question; and how many each part has. */
 export interface Availability {
   unavailable: Record<string, string[]>;

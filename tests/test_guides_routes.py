@@ -1797,9 +1797,13 @@ def test_the_log_line_is_bounded_even_when_the_body_is_not(
 
     Ten messages feed `_log_bad_request` and the bound is on the sink
     rather than on any of them, precisely so an eleventh cannot escape
-    it. The `answered more than once` message is the one that can run
-    long today, so it is the one to measure — and the property, not a
-    number: whatever the body costs, the record costs less.
+    it.
+
+    The one that can still run long is `_reject_bad_selection`'s, which
+    is what this probe produces: once repeated keys are quoted at
+    `KEY_CHARS` their message is bounded well under the cap, so an
+    over-long *value* under `repr` is the only thing left that outruns
+    it. Astral characters because `repr` spends ten characters on each.
     """
     # An over-long value of astral characters. `repr` spends ten
     # characters on each of them, so 257 of them is a 2.6KB message
@@ -1822,15 +1826,19 @@ def test_the_log_line_is_bounded_even_when_the_body_is_not(
         f"a {len(body)}-character refusal reached CloudWatch as "
         f"{len(record)} characters — the sink is not bounding it"
     )
-    # And bounded by the cap rather than merely by the body. The
-    # relation above alone passes by the width of the log prefix, so it
-    # would go on passing for a body only slightly longer than the one
-    # this probe happens to make. The ceiling is twice `MESSAGE_CHARS`
-    # because the sink's `repr` escapes the backslashes the inner one
-    # already wrote.
-    assert len(record) < 2 * MESSAGE_CHARS + 200, (
-        f"the record is {len(record)} characters, which is not a cap of "
-        f"{MESSAGE_CHARS} doing the work"
+    # And bounded by *the cap*, not by something that merely tracks the
+    # body. A ceiling alone cannot say that: anything smaller passes
+    # one, including a bound computed from the body, which is the thing
+    # being ruled out. What distinguishes them is that the cap is
+    # actually reached — the sink truncates to `MESSAGE_CHARS` and then
+    # `repr` inflates what is left, escaping the backslashes the inner
+    # `repr` already wrote, so the record lands a little *above* the
+    # cap. A body-proportional bound lands below it, and no bound at
+    # all lands at the whole 2,633.
+    assert MESSAGE_CHARS + 100 < len(record) < MESSAGE_CHARS + 300, (
+        f"the record is {len(record)} characters against a body of "
+        f"{len(body)}, which is not a {MESSAGE_CHARS}-character cap "
+        "doing the work"
     )
 
 
@@ -1846,6 +1854,9 @@ def test_ten_offenders_are_named_and_the_eleventh_is_counted(
     ten = "&".join(f"nosuch{n}=x" for n in range(10))
     error = client.get(f"/api/guides/wall/resolve?{ten}").get_json()["error"]
     assert "more" not in error, "ten offenders are all named, so nothing is left over"
+    # Count them. Without this, naming nine and leaving the tally silent
+    # passes: `keys[:NAMED - 1]` drops one and nothing notices.
+    assert error.count("nosuch") == 10
 
     eleven = "&".join(f"nosuch{n}=x" for n in range(11))
     error = client.get(f"/api/guides/wall/resolve?{eleven}").get_json()["error"]
@@ -2067,10 +2078,18 @@ def test_a_refinements_rotted_recommendation_is_the_guide_s_fault_too(
 def test_blame_only_ever_names_a_question_they_answered(client, test_db, catalog):
     """The invariant behind dropping the "whose answer was it" flag.
 
-    `_blame` builds its counterfactual from what the person sent and
-    skips anything they did not, so blame names an answer of theirs or
-    says nothing. That is what lets the page write "your answer"
-    without asking whose it was.
+    `_blame` builds its counterfactual from what the person sent, so
+    removing a question they never answered changes nothing and the
+    candidate cannot hold. Blame names an answer of theirs or says
+    nothing, which is what lets the page write "your answer" without
+    asking whose it was.
+
+    Note which line that is. `_blame` also *skips* anything outside
+    `sent` before it gets there, and that skip is unobservable — it is
+    a round-trip saving, equivalent by construction, and no
+    output-level test can kill it. What this test can see is `without`
+    being derived from `sent`, and the two tests named for the
+    counterfactual see it too.
 
     The culprit here is a refinement further down the column than the
     one being explained — the finish decides which texture exists, and
@@ -2139,6 +2158,15 @@ def test_blame_only_ever_names_a_question_they_answered(client, test_db, catalog
     # Theirs: they chose rough, which is why cave is gone, and the
     # question is named.
     named = dead("method=separate-wall&finish=finish|rough", "texture|cave")
+    # The invariant first, so a failure says which of the two broke.
+    assert named["question"] in {
+        "method",
+        "finish",
+    }, f"blamed {named['question']!r}, which nobody answered"
+    # Then the scenario. This one is stricter than the invariant and
+    # will also fail for a blame that is merely *wrong* rather than
+    # dishonest — dropping the `in_play` guard blames `method`, which
+    # they did answer.
     assert named["question"] == "finish"
     assert named["prompt"] == "What finish?"
 
@@ -2212,16 +2240,39 @@ def test_an_unreachable_answer_is_ignored_by_both_endpoints_alike(
         with conn.cursor(row_factory=dict_row) as curs:
             guide_sql.upsert_guide(curs, document)
 
+    def statuses(query):
+        return {
+            endpoint: client.get(f"/api/guides/wall/{endpoint}?{query}").status_code
+            for endpoint in ("resolve", "availability")
+        }
+
+    # Agreeing is not enough — they agree when both are broken too, so
+    # say which answer they have to agree on.
     query = "method=separate-wall&ends=renamed-away"
-    got = {
-        endpoint: client.get(f"/api/guides/wall/{endpoint}?{query}").status_code
-        for endpoint in ("resolve", "availability")
-    }
-    assert got["resolve"] == got["availability"], (
-        f"{query!r} is {got['resolve']} from /resolve and "
-        f"{got['availability']} from /availability — the two endpoints "
-        "disagree about whether this is a bad request"
+    got = statuses(query)
+    assert got == {"resolve": 200, "availability": 200}, (
+        f"{query!r} gave {got}; an answer this branch never reached is "
+        "ignored by both endpoints or by neither"
     )
+
+    # The first screen of the guide, which is where this matters: no
+    # method answered, a stale answer left over in a shared link.
+    # Reconciling the two endpoints by refusing in both — which is what
+    # round 10 did — turned this into a 400 for everyone holding a link
+    # with a renamed answer in it.
+    got = statuses("ends=renamed-away")
+    assert got == {
+        "resolve": 200,
+        "availability": 200,
+    }, f"a stale answer on the first screen gave {got}"
+
+    # And an answer that is wrong on a branch they *are* on is still a
+    # bad request, from both.
+    got = statuses("method=no-such-option")
+    assert got == {
+        "resolve": 400,
+        "availability": 400,
+    }, f"a bad answer on a reachable step gave {got}"
 
 
 def test_a_bad_answer_is_still_the_visitor_s_fault(client, wall_guide, catalog):

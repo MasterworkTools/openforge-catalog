@@ -220,10 +220,11 @@ def resolve(
     # ever visible as a count of catalog round trips, which is what
     # `test_availability_does_not_ask_about_questions_it_will_not_publish`
     # measures. It is a several-fold cut on a guide whose later
-    # questions carry `choices`, and nothing at all on one whose
-    # refinements are all `from_namespace`, because `_offered` yields
-    # only the first kind. No absolute figures here: the ones quoted for
-    # the older optimisation thirty lines down went stale three times.
+    # questions carry `choices` or a toggle's `on_tags`, and nothing at
+    # all on one whose refinements are all bare `from_namespace`,
+    # because those are the two kinds `_offered` yields. No absolute
+    # figures here: the ones quoted for the older optimisation thirty
+    # lines down went stale three times.
     # `offered` inside stays whole, because blame must still be able to
     # name a question that is not on screen.
     shown_steps = _up_to_first_unanswered(steps, given)
@@ -233,8 +234,28 @@ def resolve(
         else _up_to_first_unanswered(refinements, selections)
     )
     on_screen = {q["key"] for q in [*shown_steps, *shown_refinements]}
+    # What the resolution actually honoured. A step answer this branch
+    # never reached is ignored rather than refused — a shared URL whose
+    # first answer changed should lose the later ones, not break, which
+    # is what `_reject_unknown_selections` promises. But the sweep
+    # re-derives on hypothetical branches, and on one of those the
+    # ignored answer becomes reachable, so `_chosen_options` refused it
+    # out of the counterfactual: the same URL was 200 from `/resolve`
+    # and 400 from `/availability` on 75 of 1,125 selection maps, and
+    # the browser only logs an availability failure.
+    #
+    # Dropping it here reconciles the two the way the rule reads.
+    # Refusing it in both — which is what round 10 did — reconciles them
+    # the other way, and makes the first screen of a guide a 400 for
+    # anyone holding a link with a renamed answer in it.
+    step_keys = {step["key"] for step in document["steps"]}
+    honoured = {
+        key: value
+        for key, value in selections.items()
+        if key in given or key not in step_keys
+    }
     dead, because = (
-        _unavailable(document, steps, refinements, on_screen, selections, parts, exists)
+        _unavailable(document, steps, refinements, on_screen, honoured, parts, exists)
         if exists is not None
         else ({}, {})
     )
@@ -983,17 +1004,6 @@ def _reject_unknown_selections(
         raise GuideSelectionError(
             f"guide {document['key']!r} has no {listed(unknown, KEY_CHARS)}"
         )
-    # Every step answer, not only the reachable ones. `resolve` ignores
-    # an answer this branch has not reached — a shared URL whose first
-    # answer changed should lose the later ones, not break — but the
-    # availability sweep re-derives on hypothetical branches, and one of
-    # those can make an ignored answer reachable. `_chosen_options` then
-    # raised out of the counterfactual, so `/resolve` answered 200 and
-    # `/availability` 400 on the same URL: 75 of 1,125 selection
-    # combinations on the fixture guide, and the browser only logs that.
-    # Checking here keeps the two endpoints agreeing about what a bad
-    # request is, which is the rule `resolve_guide` states.
-    _chosen_options(document["steps"], selections)
     for refinement in refinements:
         _reject_bad_refinement_value(refinement, selections)
 
