@@ -1658,6 +1658,40 @@ def test_the_pin_log_is_truncated_not_merely_escaped(
     assert "b" * (guides.MD5_CHARS + 1) not in lines[0]
 
 
+def test_a_rotted_recommendation_is_the_guide_s_fault_not_the_visitor_s(
+    client, test_db, catalog
+):
+    """A document fault must not come back as a bad request.
+
+    `_with_defaults` merges the guide's own recommendations into the
+    answers before they are validated, and the validator could not tell
+    the two apart — so a guide whose `default` named an option it no
+    longer has answered 400 on an *empty* query string, telling someone
+    their selections were wrong when they had not made any. Nothing
+    alarms on a 400 and CloudWatch is the only forensics here, so it
+    would have read as people typing bad URLs for as long as it lasted.
+    """
+    document = copy.deepcopy(WALL_GUIDE)
+    document["steps"][0]["default"] = "no-such-option"
+    with test_db.connection() as conn:
+        with conn.cursor(row_factory=dict_row) as curs:
+            # Straight past the fixture loader, which is what would have
+            # caught this: the drift being modelled is a stored document
+            # that stopped matching its own options.
+            guide_sql.upsert_guide(curs, document)
+
+    with pytest.raises(ValueError, match="guide is invalid"):
+        client.get("/api/guides/wall/resolve")
+
+
+def test_a_bad_answer_is_still_the_visitor_s_fault(client, wall_guide, catalog):
+    """The other side of it: what they actually sent still 400s."""
+    response = client.get("/api/guides/wall/resolve?method=no-such-option")
+
+    assert response.status_code == 400
+    assert "has no option" in response.json["error"]
+
+
 def test_blame_names_an_earlier_answer_when_that_is_the_one_responsible(
     client, test_db, catalog
 ):

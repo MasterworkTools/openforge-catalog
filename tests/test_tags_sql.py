@@ -443,9 +443,12 @@ def test_allow_spares_a_child_without_requiring_it(test_db):
 def test_deny_children_ignores_an_entry_with_no_tag(test_db):
     """A malformed term is skipped, not a KeyError out of a route.
 
-    Nothing upstream can produce one — `to_tag_query` always writes
-    {"tag": ...} — so this pins which of the two the guard chose,
-    since the guard is the only thing that decides.
+    Two things now stop such a term reaching here — `to_tag_query`
+    always writes {"tag": ...}, and `tag_query.yaml` refuses an item
+    without one at the boundary — so this is defence in depth rather
+    than a reachable path. It stays because the guard is the only
+    thing deciding between skipping and raising, and the SQL layer
+    takes plain dicts from callers other than the route.
     """
     with test_db.connection() as conn:
         with conn.cursor(row_factory=dict_row) as curs:

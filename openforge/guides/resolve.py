@@ -133,7 +133,7 @@ def resolve(
     # instruction to keep clicking.
     assumed, recommended = _with_defaults(document, selections)
     steps, answered = _available_steps(document, assumed)
-    chosen = _chosen_options(steps, answered)
+    chosen = _chosen_options(steps, answered, sent=set(selections))
     in_play = _roles_in_play(chosen)
     refinements = _available_refinements(document, answered, in_play)
     # The explicit answers that survived the branch. An answer this
@@ -345,10 +345,8 @@ def _blame(
         # no parts is satisfied by any answer — so without this the
         # first question is blamed for every missing answer in the
         # guide, which is both useless and wrong.
-        if (
-            _roles_in_play(_chosen_options(*_available_steps(document, hypothetical)))
-            != in_play
-        ):
+        available, answered_after = _available_steps(document, hypothetical)
+        if _roles_in_play(_chosen_options(available, answered_after)) != in_play:
             continue
         # And only a change that took nothing else with it. Every
         # answer but `other`'s own has to survive: `other` itself may
@@ -359,7 +357,6 @@ def _blame(
         # how the earliest removable question came to be named for
         # almost every dead answer. Extra answers are fine; the
         # recommendation that replaces `other` is one.
-        _, answered_after = _available_steps(document, hypothetical)
         if not set(would_answer) - {other} <= set(answered_after):
             continue
         if _holds(document, hypothetical, baseline, cache, find_candidates):
@@ -791,7 +788,22 @@ def _when_holds(when: dict | None, selections: dict) -> bool:
     )
 
 
-def _chosen_options(steps: list[dict], selections: dict) -> list[dict]:
+def _chosen_options(
+    steps: list[dict], selections: dict, sent: set | None = None
+) -> list[dict]:
+    """The option each answered step names, as dicts the parts can use.
+
+    `sent` is the set of keys the *person* actually answered, when the
+    caller knows it. Without it every bad value is read as theirs,
+    which is wrong for the ones this engine put there: `_with_defaults`
+    merges each question's own recommendation into the map first, so a
+    guide whose `default` names an option it no longer has answered 400
+    on an empty query string — telling a visitor their selections were
+    bad when they had not made any, and contradicting the rule
+    `resolve_guide` states, that `GuideSelectionError` means the
+    selections are wrong and never that the document is. Nothing alarms
+    on a 400, so it read as people typing bad URLs forever.
+    """
     chosen = []
     for step in steps:
         selected = selections.get(step["key"])
@@ -806,6 +818,11 @@ def _chosen_options(steps: list[dict], selections: dict) -> list[dict]:
                 f"step {step['key']!r} takes a string, not {selected!r}"
             )
         if selected not in options:
+            if sent is not None and step["key"] not in sent:
+                raise ValueError(
+                    f"guide is invalid: step {step['key']!r} recommends "
+                    f"{selected!r}, which is not one of its options"
+                )
             raise GuideSelectionError(
                 f"step {step['key']!r} has no option {selected!r}"
             )

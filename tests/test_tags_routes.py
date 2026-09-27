@@ -231,6 +231,26 @@ def test_query_tags_reads_deny_children_from_the_body(auth_client, wall_variants
     assert "component|wall|door" not in resp.json["tag_counts"]
 
 
+def test_a_term_without_a_tag_is_refused_rather_than_silently_dropped(
+    auth_client, wall_variants
+):
+    """A predicate term the SQL cannot read used to widen the results.
+
+    The builders skip an item with no `tag`, so `{"deny": [{}]}` came
+    back 200 with *more* blueprints than were asked for — a filter
+    silently not happening, which is the worst direction for it to
+    fail. All five terms are closed at the schema now; the two added
+    with this feature were closed first and the three older ones were
+    left, which made the same typo a 400 under one key and a silent
+    widening under the next.
+    """
+    for term in ("accept", "require", "deny", "deny_children", "allow"):
+        resp = auth_client.post("/api/blueprints/tags", json={term: [{}]})
+
+        assert resp.status_code == 400, f"{term} accepted an item with no tag"
+        assert "'tag' is a required property" in resp.json["error"]
+
+
 def test_query_tags_reads_allow_from_the_body(auth_client, wall_variants):
     """`allow` is the exemption, and it only exists to survive a sweep."""
     query = {
