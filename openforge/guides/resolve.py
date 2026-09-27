@@ -318,6 +318,11 @@ def _blame(
     this says nothing rather than pick a scapegoat.
     """
     in_play = _roles_in_play(_chosen_options(*_available_steps(document, selections)))
+    # Which step answers actually count if they picked this. Compared
+    # per candidate below, because a step is reachable only once every
+    # step before it is answered — so deleting one key from the map can
+    # silently delete every answer after it as well.
+    _, would_answer = _available_steps(document, {**selections, question: value})
     for other in others:
         if other not in selections:
             continue
@@ -332,6 +337,17 @@ def _blame(
             _roles_in_play(_chosen_options(*_available_steps(document, hypothetical)))
             != in_play
         ):
+            continue
+        # And only a removal that took nothing else with it. Removing an
+        # earlier step unanswers every step after it, so the predicate
+        # loses those answers too and the part comes back for a reason
+        # that has nothing to do with `other` — which named the earliest
+        # removable question for almost every dead answer, and named it
+        # confidently. The state was also one the page cannot be in:
+        # un-answering a question on screen re-applies the defaults
+        # below it rather than dropping the lot.
+        _, answered_after = _available_steps(document, hypothetical)
+        if set(answered_after) != set(would_answer) - {other}:
             continue
         if _holds(document, hypothetical, baseline, cache, find_candidates):
             return other

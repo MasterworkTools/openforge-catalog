@@ -1565,3 +1565,80 @@ def test_the_pin_log_is_truncated_not_merely_escaped(
     assert lines, "no pin-miss record"
     assert "b" * guides.MD5_CHARS in lines[0]
     assert "b" * (guides.MD5_CHARS + 1) not in lines[0]
+
+
+def test_blame_names_a_later_answer_rather_than_the_one_that_truncates_it(
+    client, test_db, catalog
+):
+    """Removing an earlier answer removes every answer after it.
+
+    The wizard rule is that a step is reachable only once every step
+    before it is answered, so `_blame`'s hypothetical — the selections
+    with one key deleted — silently drops every *later* step answer
+    too. That state is one the page can never be in, and the earliest
+    removable question therefore "revives" the part and takes the
+    blame for a question after it.
+
+    Here the finish is the culprit and the size is harmless. Dropping
+    the size also drops the finish, which is why it used to look like
+    the answer.
+    """
+    for name, tags in (
+        ("e cave wall", ["texture|cave", "size|width|4", "finish|rough"]),
+        ("f cave floor", ["texture|cave", "size|width|4", "finish|rough"]),
+        # Complete at the chosen size, absent at the chosen finish — so
+        # the finish is the single answer responsible.
+        ("g rough wall", ["texture|rough_stone", "size|width|4", "finish|smooth"]),
+        ("h rough floor", ["texture|rough_stone", "size|width|4", "finish|smooth"]),
+    ):
+        shape = "shape|wall" if "wall" in name else "shape|floor"
+        make_blueprint(test_db, name, ["build|separate wall", shape, *tags])
+
+    document = copy.deepcopy(WALL_GUIDE)
+    document["refinements"][0]["choices"] = [
+        {"tag": "texture|cave"},
+        {"tag": "texture|rough_stone"},
+    ]
+    # Order matters and is the whole point: the harmless question comes
+    # first, so removing it truncates the culprit.
+    document["steps"].append(
+        {
+            "key": "size",
+            "prompt": "How wide?",
+            "options": [
+                {
+                    "key": "four",
+                    "title": "4 inch",
+                    "tags": {"require": ["size|width|4"]},
+                }
+            ],
+        }
+    )
+    document["steps"].append(
+        {
+            "key": "finish",
+            "prompt": "What finish?",
+            "options": [
+                {
+                    "key": "rough",
+                    "title": "Rough",
+                    "tags": {"require": ["finish|rough"]},
+                }
+            ],
+        }
+    )
+    with test_db.connection() as conn:
+        with conn.cursor(row_factory=dict_row) as curs:
+            guide_sql.upsert_guide(curs, document)
+
+    response = client.get(
+        "/api/guides/wall/availability?method=separate-wall&size=four&finish=rough"
+    )
+
+    assert response.status_code == 200
+    reason = response.json["because"]["texture"]["texture|rough_stone"]
+    assert reason["question"] == "finish", (
+        f"blamed {reason['question']!r}; removing it must not take another "
+        "answer with it"
+    )
+    assert reason["prompt"] == "What finish?"
