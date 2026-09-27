@@ -968,6 +968,34 @@ describe('GuidePage', () => {
       );
     });
 
+    it('takes every piece to a pole on a decisive vertical drag', async () => {
+      // The parts list wires `onVertical` at all, which nothing here
+      // covered — the shared hook's vertical arm was held only by the
+      // older sprite-viewer tests, on the other consumer.
+      visit('?guide=wall&method=separate-wall');
+      mockFetch((url) =>
+        url.includes('/resolve') ? RESOLVED_WITH_PARTS : GUIDE_DOCUMENT
+      );
+
+      render(<GuidePage />);
+      const sprite = await screen.findByLabelText(
+        /a dungeon stone base, seen from the front/
+      );
+      const surface = sprite
+        .closest('.guide-parts')!
+        .querySelector('.select-none')!;
+
+      // Mostly upward and past the threshold: straight to the top,
+      // rather than a step round the ring.
+      fireEvent.mouseDown(surface, { button: 0, clientX: 100, clientY: 200 });
+      fireEvent.mouseMove(window, { clientX: 110, clientY: 100 });
+      fireEvent.mouseUp(window);
+
+      expect(
+        screen.getByLabelText(/a dungeon stone base, seen from the top/)
+      ).toBeInTheDocument();
+    });
+
     it('turns the same distance whichever way the drag goes', async () => {
       // 45px is one and a half thresholds. `Math.floor` gave 1 step
       // right and -2 left, so the same gesture turned further one way

@@ -616,6 +616,33 @@ def test_a_default_must_be_one_of_the_choices_when_there_are_choices(guide):
     assert "is not one of its choices" in str(excinfo.value)
 
 
+def test_a_valid_default_is_let_through(guide):
+    """The other side of the three rules above, which all assert refusal.
+
+    Without this, a validator that started refusing legitimate
+    recommendations would ship green and break `bin/fixtures` on a file
+    that was always correct — and `wall.yaml` carries a default on both
+    kinds of refinement.
+    """
+    guide["refinements"][0]["choices"] = [
+        {"tag": "texture|cave"},
+        {"tag": "texture|dungeon_stone"},
+    ]
+    guide["refinements"][0]["default"] = "texture|dungeon_stone"
+    guide["refinements"].append(
+        {
+            "key": "peg-holes",
+            "role": "*",
+            "prompt": "Peg holes",
+            "on_tags": {"require": ["connection|pegs"]},
+            "off_tags": {"deny": ["connection|pegs"]},
+            "default": "off",
+        }
+    )
+
+    validate_guide_document(guide)
+
+
 def test_substitute_must_name_an_answer_the_question_offers(guide):
     """`substitute` is keyed by the answer given, so an entry for an
     answer the question does not offer can never fire.
