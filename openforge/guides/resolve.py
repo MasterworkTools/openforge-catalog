@@ -133,7 +133,7 @@ def resolve(
     # instruction to keep clicking.
     assumed, recommended = _with_defaults(document, selections)
     steps, answered = _available_steps(document, assumed)
-    chosen = _chosen_options(steps, answered, sent=set(selections))
+    chosen = _chosen_options(steps, answered)
     in_play = _roles_in_play(chosen)
     refinements = _available_refinements(document, answered, in_play)
     # The explicit answers that survived the branch. An answer this
@@ -169,7 +169,7 @@ def resolve(
         else {}
     )
     dead, because = (
-        _unavailable(document, steps, refinements, assumed, parts, exists)
+        _unavailable(document, steps, refinements, assumed, selections, parts, exists)
         if exists is not None
         else ({}, {})
     )
@@ -229,6 +229,7 @@ def _unavailable(
     steps: list,
     refinements: list,
     selections: dict,
+    sent: dict,
     parts: list,
     find_candidates,
 ) -> dict:
@@ -264,9 +265,17 @@ def _unavailable(
     for question, values in offered:
         empty = {}
         for value in values:
+            # Derived, not overlaid. Putting the candidate on top of
+            # `selections` keeps every *other* defaulted answer at the
+            # value derived for the branch being left, so a conditional
+            # recommendation stays stale and the answer is judged
+            # against a build the page can never show — which reported
+            # live answers dead and hid them. Re-deriving from what the
+            # person sent is what clicking the answer would really do.
+            hypothetical, _ = _with_defaults(document, {**sent, question: value})
             role = _first_empty_role(
                 document,
-                {**selections, question: value},
+                hypothetical,
                 baseline,
                 cache,
                 find_candidates,
@@ -285,6 +294,7 @@ def _unavailable(
             blamed = _blame(
                 document,
                 selections,
+                sent,
                 question,
                 value,
                 [other for other, _ in offered if other != question],
@@ -295,6 +305,11 @@ def _unavailable(
             if blamed:
                 reason["question"] = blamed
                 reason["prompt"] = prompts.get(blamed, blamed)
+                # Whether they chose it or the guide recommended it. The
+                # page says "your answer", which is false of a question
+                # still sitting unanswered further down the column with
+                # its recommendation marked.
+                reason["theirs"] = blamed in sent
             because[f"{question}:{value}"] = reason
     return dead, because
 
@@ -302,6 +317,7 @@ def _unavailable(
 def _blame(
     document: dict,
     selections: dict,
+    sent: dict,
     question: str,
     value: str,
     others: list,
@@ -322,7 +338,8 @@ def _blame(
     # per candidate below, because a step is reachable only once every
     # step before it is answered — so dropping one key from the map can
     # silently drop every answer after it as well.
-    _, would_answer = _available_steps(document, {**selections, question: value})
+    would, _ = _with_defaults(document, {**sent, question: value})
+    _, would_answer = _available_steps(document, would)
     for other in others:
         if other not in selections:
             continue
@@ -332,7 +349,7 @@ def _blame(
         # request — so deleting the key outright asks about a state the
         # page cannot be in, and every step but the last one came back
         # unblameable because removing it truncated the ones after it.
-        without = {k: v for k, v in selections.items() if k != other}
+        without = {k: v for k, v in sent.items() if k != other}
         # The candidate goes in *before* the defaults are derived, not
         # after. `_with_defaults` walks the questions in order and reads
         # the answers so far, so a conditional default branches on them
@@ -624,11 +641,42 @@ def _with_defaults(document: dict, selections: dict) -> tuple[dict, dict]:
         key = question["key"]
         value = _recommendation(question, answered)
         if value is not None:
+            _reject_bad_recommendation(question, value)
             recommended[key] = value
             assumed.setdefault(key, value)
         if key in assumed:
             answered[key] = assumed[key]
     return assumed, recommended
+
+
+def _reject_bad_recommendation(question: dict, value) -> None:
+    """A recommendation the question cannot accept is the guide's fault.
+
+    Checked here, where the engine's own values enter the map, rather
+    than where they are read. `_chosen_options` and
+    `_reject_bad_refinement_value` see the person's answers and the
+    engine's merged together and cannot tell them apart, so guarding
+    one of their call sites left the others — and a counterfactual that
+    re-derives on a hypothetical branch can surface a recommendation
+    the real branch never walked, which is how a stored guide's own
+    `default` came back as a 400 on an empty query string. That
+    contradicts the rule `resolve_guide` states: a
+    `GuideSelectionError` means the selections are wrong, never that
+    the document is.
+
+    A plain `ValueError`, so it reaches the 500 it deserves. The type
+    check earns its place: a mapping is unhashable, so the membership
+    test below would raise `TypeError` rather than say what is wrong.
+    """
+    where = f"guide is invalid: {question['key']!r}"
+    if not isinstance(value, str):
+        raise ValueError(f"{where} recommends {value!r}, which is not a string")
+    if "options" in question:
+        options = {option["key"] for option in question["options"]}
+        if value not in options:
+            raise ValueError(
+                f"{where} recommends {value!r}, which is not one of its options"
+            )
 
 
 def _recommendation(question: dict, answered: dict):
@@ -788,21 +836,13 @@ def _when_holds(when: dict | None, selections: dict) -> bool:
     )
 
 
-def _chosen_options(
-    steps: list[dict], selections: dict, sent: set | None = None
-) -> list[dict]:
+def _chosen_options(steps: list[dict], selections: dict) -> list[dict]:
     """The option each answered step names, as dicts the parts can use.
 
-    `sent` is the set of keys the *person* actually answered, when the
-    caller knows it. Without it every bad value is read as theirs,
-    which is wrong for the ones this engine put there: `_with_defaults`
-    merges each question's own recommendation into the map first, so a
-    guide whose `default` names an option it no longer has answered 400
-    on an empty query string — telling a visitor their selections were
-    bad when they had not made any, and contradicting the rule
-    `resolve_guide` states, that `GuideSelectionError` means the
-    selections are wrong and never that the document is. Nothing alarms
-    on a 400, so it read as people typing bad URLs forever.
+    Everything reaching here is the person's answer as far as this
+    function can tell: the engine's own recommendations are checked
+    where they enter the map, by `_reject_bad_recommendation`, because
+    by this point the two are merged and indistinguishable.
     """
     chosen = []
     for step in steps:
@@ -818,11 +858,6 @@ def _chosen_options(
                 f"step {step['key']!r} takes a string, not {selected!r}"
             )
         if selected not in options:
-            if sent is not None and step["key"] not in sent:
-                raise ValueError(
-                    f"guide is invalid: step {step['key']!r} recommends "
-                    f"{selected!r}, which is not one of its options"
-                )
             raise GuideSelectionError(
                 f"step {step['key']!r} has no option {selected!r}"
             )

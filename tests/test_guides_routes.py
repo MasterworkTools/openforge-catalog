@@ -1684,12 +1684,236 @@ def test_a_rotted_recommendation_is_the_guide_s_fault_not_the_visitor_s(
         client.get("/api/guides/wall/resolve")
 
 
+def test_a_rotted_recommendation_on_an_unreached_branch_is_still_the_guide_s(
+    client, test_db, catalog
+):
+    """The path the first version of this fix missed.
+
+    Guarding one reader of the merged map left the others. Availability
+    asks "what if they picked this?" for every offered answer, and the
+    hypothetical it builds re-derives the recommendations — so a step
+    the real request never walked, gated behind a `when` on the answer
+    being tested, has its `default` surfaced there. With the guard at
+    the reader that came back as a 400 about a step the visitor is not
+    on, for a document fault.
+
+    `wall.yaml` has exactly this shape: `wall-print` is `when`-gated on
+    the method and carries a default.
+    """
+    document = copy.deepcopy(WALL_GUIDE)
+    # A second way to build, which nothing in the catalog satisfies — so
+    # availability offers it, finds it dead, and asks about it.
+    document["steps"][0]["options"].append(
+        {
+            "key": "on-tile",
+            "title": "Wall on tile",
+            "roles": {"floor": None, "wall": None},
+            "tags": {"require": ["build|nothing has this"]},
+        }
+    )
+    # An ordinary answered question, so `_blame` has a candidate to try
+    # removing — without one it never builds a hypothetical at all.
+    document["steps"].append(
+        {
+            "key": "harmless",
+            "prompt": "Anything",
+            "default": "either",
+            "options": [
+                {"key": "either", "title": "Either", "tags": {}},
+            ],
+        }
+    )
+    # Reachable only on that branch, and rotted.
+    document["steps"].append(
+        {
+            "key": "unreached",
+            "prompt": "Only on a tile",
+            "when": {"selected": {"method": ["on-tile"]}},
+            "default": "rotten",
+            "options": [
+                {"key": "fine", "title": "Fine", "tags": {"require": ["shape|wall"]}}
+            ],
+        }
+    )
+    with test_db.connection() as conn:
+        with conn.cursor(row_factory=dict_row) as curs:
+            guide_sql.upsert_guide(curs, document)
+
+    with pytest.raises(ValueError, match="guide is invalid"):
+        client.get("/api/guides/wall/availability?method=separate-wall")
+
+
+def test_a_recommendation_that_is_not_even_a_string_is_the_guide_s_fault(
+    client, test_db, catalog
+):
+    """The other arm of the same function, which the first fix left alone.
+
+    A YAML list is read as conditional clauses, but a mapping is
+    returned verbatim — so `default: {value: x}` reached the type
+    refusal, which blamed the visitor for it on an empty query string.
+    """
+    document = copy.deepcopy(WALL_GUIDE)
+    document["steps"][0]["default"] = {"value": "separate-wall"}
+    with test_db.connection() as conn:
+        with conn.cursor(row_factory=dict_row) as curs:
+            guide_sql.upsert_guide(curs, document)
+
+    with pytest.raises(ValueError, match="not a string"):
+        client.get("/api/guides/wall/resolve")
+
+
 def test_a_bad_answer_is_still_the_visitor_s_fault(client, wall_guide, catalog):
     """The other side of it: what they actually sent still 400s."""
     response = client.get("/api/guides/wall/resolve?method=no-such-option")
 
     assert response.status_code == 400
     assert "has no option" in response.json["error"]
+
+
+def test_a_live_answer_is_not_reported_dead_by_a_stale_recommendation(
+    client, test_db, catalog
+):
+    """The symptom, as distinct from the attribution.
+
+    Availability asks "what if they picked this?" for every offered
+    answer. Overlaying the candidate on the defaulted map keeps every
+    *other* recommendation at the value derived for the branch being
+    left — so a conditional one stays stale, the candidate is judged
+    against a build that cannot exist, and a perfectly buildable answer
+    is reported dead. `GuideSteps` then hides it, which makes the only
+    route back a hand-edited URL.
+    """
+    # Each method has its own clip system and nothing overlaps.
+    for name, tags in (
+        ("e sep wall", ["build|separate wall", "shape|wall", "connection|openlock"]),
+        ("f sep floor", ["build|separate wall", "shape|floor", "connection|openlock"]),
+        ("g tile wall", ["build|on tile", "shape|wall", "connection|dragonlock"]),
+        ("h tile floor", ["build|on tile", "shape|floor", "connection|dragonlock"]),
+    ):
+        make_blueprint(test_db, name, list(tags))
+
+    document = copy.deepcopy(WALL_GUIDE)
+    document["steps"][0]["options"].append(
+        {
+            "key": "on-tile",
+            "title": "Wall on tile",
+            "roles": {"floor": None, "wall": None},
+            "tags": {"require": ["build|on tile"]},
+        }
+    )
+    # The clip to recommend follows the method, which is exactly the
+    # shape `wall.yaml` ships for `connectors`.
+    document["refinements"] = [
+        {
+            "key": "clips",
+            "role": "*",
+            "prompt": "Clips?",
+            "from_namespace": "connection",
+            "default": [
+                {
+                    "when": {"selected": {"method": ["on-tile"]}},
+                    "value": "connection|dragonlock",
+                },
+                {"value": "connection|openlock"},
+            ],
+        }
+    ]
+    with test_db.connection() as conn:
+        with conn.cursor(row_factory=dict_row) as curs:
+            guide_sql.upsert_guide(curs, document)
+
+    answered = client.get("/api/guides/wall/availability?method=separate-wall")
+    assert answered.status_code == 200
+    # Both ways of building are buildable, so neither is dead.
+    assert answered.json["unavailable"].get("method", []) == [], (
+        "the other method was reported dead while its own recommendation "
+        "would have made it buildable"
+    )
+    # And it really does build, which is what makes the report wrong.
+    built = client.get("/api/guides/wall/resolve?method=on-tile")
+    assert built.status_code == 200
+    assert all(part["blueprint"] for part in built.json["parts"])
+
+
+def test_blame_derives_the_counterfactual_rather_than_overlaying_it(
+    client, test_db, catalog
+):
+    """The test I said could not be built. Three reviewers disagreed.
+
+    My premise was one step off. `_blame` is handed the already-defaulted
+    map, so re-deriving can only change the one key the counterfactual
+    removed — `other`'s own. The discriminating shape is therefore
+    `other`'s *own* recommendation branching on the answer under test,
+    not a third question downstream.
+
+    The finish recommended depends on the size, and rough stone exists
+    only at the 4-inch finish. Blaming the size means re-deriving the
+    finish for the size that would then be in force. Overlaying instead
+    keeps the finish derived for the size being left, so rough stone
+    still matches nothing and the blame is withheld.
+    """
+    for name, tags in (
+        ("e cave wall", ["texture|cave", "size|width|1", "finish|smooth"]),
+        ("f cave floor", ["texture|cave", "size|width|1", "finish|smooth"]),
+        ("g rough wall", ["texture|rough_stone", "size|width|4", "finish|rough"]),
+        ("h rough floor", ["texture|rough_stone", "size|width|4", "finish|rough"]),
+    ):
+        shape = "shape|wall" if "wall" in name else "shape|floor"
+        make_blueprint(test_db, name, ["build|separate wall", shape, *tags])
+
+    document = copy.deepcopy(WALL_GUIDE)
+    document["refinements"][0]["choices"] = [
+        {"tag": "texture|cave"},
+        {"tag": "texture|rough_stone"},
+    ]
+    # A step, so it can be answered; with a recommendation, so clearing
+    # it lands somewhere rather than truncating what follows.
+    document["steps"].append(
+        {
+            "key": "size",
+            "prompt": "How wide?",
+            "default": "four",
+            "options": [
+                {
+                    "key": "one",
+                    "title": "1 inch",
+                    "tags": {"require": ["size|width|1"]},
+                },
+                {
+                    "key": "four",
+                    "title": "4 inch",
+                    "tags": {"require": ["size|width|4"]},
+                },
+            ],
+        }
+    )
+    # A refinement rather than a step: an unanswered step suppresses
+    # every refinement in the response, and this one is deliberately
+    # never sent — it exists only to be re-derived.
+    document["refinements"].append(
+        {
+            "key": "finish",
+            "role": "*",
+            "prompt": "What finish?",
+            "from_namespace": "finish",
+            "default": [
+                {"when": {"selected": {"size": ["four"]}}, "value": "finish|rough"},
+                {"value": "finish|smooth"},
+            ],
+        }
+    )
+    with test_db.connection() as conn:
+        with conn.cursor(row_factory=dict_row) as curs:
+            guide_sql.upsert_guide(curs, document)
+
+    response = client.get("/api/guides/wall/availability?method=separate-wall&size=one")
+
+    assert response.status_code == 200
+    reason = response.json["because"]["texture"]["texture|rough_stone"]
+    assert reason["question"] == "size", (
+        f"blamed {reason.get('question')!r}; the counterfactual has to be "
+        "re-derived so the finish follows the size that would be in force"
+    )
 
 
 def test_blame_names_an_earlier_answer_when_that_is_the_one_responsible(
