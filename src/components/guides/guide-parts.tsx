@@ -255,6 +255,20 @@ function Part({
 }) {
   return (
     <div className="border border-gray-300 rounded p-3 w-64">
+      {/* Across the top, bordered and in red, because the whole point
+          of it is to be noticed: without it the page quietly hands you
+          one of six towne walls and never mentions the other five.
+          Only when there is a choice — one piece behind the answer is
+          the guide having decided. */}
+      {options !== undefined && options > 1 && (
+        <button
+          type="button"
+          onClick={() => onInspect(part)}
+          className="w-full mb-3 rounded border-2 border-red-600 bg-red-50 px-2 py-1 text-sm font-semibold text-red-700 hover:bg-red-100"
+        >
+          {options} options
+        </button>
+      )}
       {/* The picture is the handle: clicking it opens the catalog's own
           tag search, seeded with what narrowed this role down. While
           the guides are being written, "why did it pick that?" is the
@@ -267,21 +281,7 @@ function Part({
       >
         <GuideSprite blueprint={part.blueprint} view={view} />
       </button>
-      <div className="mt-2 flex items-baseline justify-between gap-2">
-        <span className="font-semibold">{part.title}</span>
-        {/* Only when there is a choice to make. One piece behind the
-            answer is the guide having decided; six is towne having
-            six kinds of wall and nothing on the page saying so. */}
-        {options !== undefined && options > 1 && (
-          <button
-            type="button"
-            onClick={() => onInspect(part)}
-            className="text-xs text-blue-700 underline shrink-0"
-          >
-            {options} options
-          </button>
-        )}
-      </div>
+      <div className="mt-2 font-semibold">{part.title}</div>
       {/* A pinned part is no longer an answer to the questions on the
           left, and saying so is the only way the page can explain why
           changing a texture leaves this piece alone. */}
