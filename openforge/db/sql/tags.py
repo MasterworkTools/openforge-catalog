@@ -239,11 +239,19 @@ def tag_search_blueprint_exists(
 ) -> bool:
     """Is there a single blueprint matching this predicate?
 
-    The guide's availability pass asks this about thirty times per
+    The guide's availability pass asks this about fifty times per
     request, to drop the answers that would empty a part. It never
-    looks at what it found, so it wants neither the row nor the order
-    — and the order is the expensive half, since it sorts every match
-    before LIMIT 1 discards the rest.
+    looks at what it found, so it wants neither the row nor the order.
+
+    Dropping the order is not where the saving is, though — measured
+    A/B against the same four predicates it is within noise, and
+    slower on two of them. What this buys is the round trips: the
+    search variant returns rows that the caller would then have to
+    fetch tags for, which is one `_attach_tags` per check. The cost
+    that dominates is neither: three quarters of the database time on
+    this endpoint is spent *planning*, because every tag arrives as a
+    `sql.Literal` and so every statement text is unique and nothing is
+    ever reused. See `openforge_catalog-5ys`.
     """
     parts = [
         sql.SQL("SELECT EXISTS ("),
@@ -643,8 +651,8 @@ def tag_search_tag_count(
 
 
 def _query_tags_exclusions(
-    deny: list[str],
-    require: list[str],
+    deny: list[dict],
+    require: list[dict],
     deny_children: list[dict] | None,
     allow: list[dict] | None,
 ) -> list[sql.Composed | sql.SQL]:

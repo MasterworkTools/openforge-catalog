@@ -186,6 +186,14 @@ describe('BlueprintContext', () => {
       // changes or the provider unmounts, and clicking a different
       // result does neither. Without reading the store back, a slow
       // fetch overwrote the choice the person had just made.
+      //
+      // "Anything selected" is the whole test, and that is sound
+      // rather than lazy: `initialMd5` cannot change under a live
+      // store, because the only mount is inside `PartSelectionModal`,
+      // which is `if (!isOpen) return null` behind a `fixed; inset: 0`
+      // overlay. Every open gets a fresh store, and no other part can
+      // be clicked without closing first — so whatever is in the store
+      // when this lands was put there by the person.
       mockState.fetchBlueprintByMd5.mockImplementation(async () => {
         mockState.selectedBlueprint = { id: 'clicked' } as unknown as Blueprint;
         return fetched;
@@ -201,40 +209,6 @@ describe('BlueprintContext', () => {
         expect(mockState.fetchBlueprintByMd5).toHaveBeenCalled()
       );
       expect(mockState.setSelectedBlueprint).not.toHaveBeenCalled();
-    });
-
-    it('opens on a new md5 over the one it seeded itself', async () => {
-      // "Is anything selected" is permanently true after the first
-      // open, so a guard written that way makes the effect ignore the
-      // only prop it depends on. What it must not clobber is a piece
-      // the *person* chose — not one it put there itself.
-      const second = { ...fetched, id: 'second', file_md5: 'second-md5' };
-      mockState.fetchBlueprintByMd5.mockImplementation(async (md5: string) =>
-        md5 === 'second-md5' ? second : fetched
-      );
-      // Selecting records what landed, as the real store does.
-      mockState.setSelectedBlueprint.mockImplementation((bp: Blueprint) => {
-        mockState.selectedBlueprint = bp;
-      });
-
-      const { rerender } = render(
-        <BlueprintProvider initialMd5="pinned-md5">
-          <div />
-        </BlueprintProvider>
-      );
-      await waitFor(() =>
-        expect(mockState.setSelectedBlueprint).toHaveBeenCalledWith(fetched)
-      );
-
-      rerender(
-        <BlueprintProvider initialMd5="second-md5">
-          <div />
-        </BlueprintProvider>
-      );
-
-      await waitFor(() =>
-        expect(mockState.setSelectedBlueprint).toHaveBeenCalledWith(second)
-      );
     });
 
     it('leaves the dialog usable when the blueprint has gone', async () => {

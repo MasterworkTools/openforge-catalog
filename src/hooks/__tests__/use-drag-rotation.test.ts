@@ -12,9 +12,24 @@ import {
  * dispatched there rather than on an element.
  */
 function drag(dx: number, dy = 0): number[] {
+  return dragBoth(dx, dy).horizontal;
+}
+
+/**
+ * The same gesture, reporting both axes — the winning axis takes the
+ * whole drag, so which handler stayed silent is half the contract.
+ */
+function dragBoth(
+  dx: number,
+  dy = 0
+): { horizontal: number[]; vertical: string[] } {
   const steps: number[] = [];
+  const faces: string[] = [];
   const { result } = renderHook(() =>
-    useDragRotation({ onHorizontal: (n) => steps.push(n) })
+    useDragRotation({
+      onHorizontal: (n) => steps.push(n),
+      onVertical: (f) => faces.push(f),
+    })
   );
   act(() => {
     result.current.handleMouseDown({
@@ -28,14 +43,15 @@ function drag(dx: number, dy = 0): number[] {
       new MouseEvent('mousemove', { clientX: 200 + dx, clientY: 200 + dy })
     );
   });
-  return steps;
+  return { horizontal: steps, vertical: faces };
 }
 
 describe('useDragRotation step counting', () => {
   it('truncates toward zero, so a leftward drag turns as far as a rightward one', () => {
-    // One and a half thresholds is the smallest gesture where `floor`
-    // and `trunc` disagree: `floor(-1.5)` is -2, one step further than
-    // the same drag to the right would go.
+    // Any drag between one threshold and two shows it, since below one
+    // nothing is reported at all: `floor(-1.5)` is -2, one step further
+    // than the same drag to the right would go. 1.5 is the middle of
+    // that range rather than a uniquely minimal case.
     const far = Math.round(DRAG_THRESHOLD_PX * 1.5);
     expect(drag(far)).toEqual([1]);
     expect(drag(-far)).toEqual([-1]);
@@ -46,10 +62,38 @@ describe('useDragRotation step counting', () => {
     expect(drag(-(DRAG_THRESHOLD_PX - 1))).toEqual([]);
   });
 
-  it('leaves a mostly-vertical drag to the vertical handler', () => {
+  it('gives a mostly-vertical drag to the vertical handler, and only it', () => {
     // The winning axis takes the whole gesture, so a sideways step is
-    // not also reported on the way to a pole.
-    expect(drag(DRAG_THRESHOLD_PX, DRAG_THRESHOLD_PX * 3)).toEqual([]);
+    // not also reported on the way to a pole — and the pole it reports
+    // has to be the right one, since the polarity is now shared by two
+    // components rather than owned by one.
+    const down = dragBoth(DRAG_THRESHOLD_PX, DRAG_THRESHOLD_PX * 3);
+    expect(down.horizontal).toEqual([]);
+    expect(down.vertical).toEqual(['bottom']);
+
+    const up = dragBoth(DRAG_THRESHOLD_PX, -DRAG_THRESHOLD_PX * 3);
+    expect(up.horizontal).toEqual([]);
+    expect(up.vertical).toEqual(['top']);
+  });
+
+  it('does nothing at all for an exact diagonal, which has no winner', () => {
+    // "Whichever axis is winning takes the gesture" means a tie has no
+    // winner. This is the only case the `absX > absY` term decides —
+    // the vertical branch already claims everything mostly-vertical —
+    // so without it a 45-degree drag would turn the piece on a
+    // coin-toss between two readings of the same gesture.
+    const even = dragBoth(DRAG_THRESHOLD_PX * 2, DRAG_THRESHOLD_PX * 2);
+    expect(even.horizontal).toEqual([]);
+    expect(even.vertical).toEqual([]);
+  });
+
+  it('gives a mostly-sideways drag to the horizontal handler, and only it', () => {
+    // The other side of the same rule, which was unheld: without it
+    // the axis test could be dropped and every sideways drag would
+    // also jump to a pole.
+    const across = dragBoth(DRAG_THRESHOLD_PX * 3, DRAG_THRESHOLD_PX);
+    expect(across.horizontal).toEqual([3]);
+    expect(across.vertical).toEqual([]);
   });
 });
 

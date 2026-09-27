@@ -1,8 +1,10 @@
 import copy
+import logging
 
 import pytest
 from psycopg.rows import dict_row
 
+import openforge.app.routes.guides as guides
 import openforge.db.sql.blueprints as blueprint_sql
 import openforge.db.sql.guides as guide_sql
 import openforge.db.sql.tags as tag_sql
@@ -1509,3 +1511,57 @@ def test_a_pin_cannot_forge_a_log_line(client, wall_guide, catalog, caplog):
     # unbounded reaches the log.
     assert "\\n" in caplog.text
     assert "\nWARNING forged entry" not in caplog.text
+
+
+def test_a_nul_byte_in_a_selection_is_a_bad_request(client, wall_guide, catalog):
+    """A NUL never reaches the server, so the route has to answer first.
+
+    `sql.Literal` raises `DataError` while building the statement, which
+    escapes as an HTML 500 with no JSON body — for a request whose
+    honest answer is 400, arriving from a hand-editable URL.
+    """
+    for query in (
+        "part.wall=%00",
+        "texture=texture%7Ca%00b",
+        "%00=x",
+    ):
+        got = client.get(f"/api/guides/wall/resolve?{query}")
+        assert got.status_code == 400, query
+        assert "NUL" in got.get_json()["error"], query
+
+
+def test_a_nul_byte_in_the_guide_key_is_a_404(client, wall_guide, catalog):
+    """A key carrying a NUL names no stored guide, and says so as one."""
+    got = client.get("/api/guides/wa%00ll/resolve")
+    assert got.status_code == 404
+    assert "No guide" in got.get_json()["error"]
+
+
+def test_an_enormous_selection_is_refused_rather_than_queried(
+    client, wall_guide, catalog
+):
+    """Without a cap the whole value went to Postgres, and got a 200."""
+    got = client.get(f"/api/guides/wall/resolve?part.wall={'a' * 200_000}")
+    assert got.status_code == 400
+    assert "longer than" in got.get_json()["error"]
+
+
+def test_the_pin_log_is_truncated_not_merely_escaped(
+    client, wall_guide, catalog, caplog
+):
+    """The cap is asserted, not just described.
+
+    The forged-line test uses a short payload, so `MD5_CHARS` could be
+    raised or deleted with it still green.
+    """
+    long_pin = "b" * (guides.MD5_CHARS * 4)
+    with caplog.at_level(logging.WARNING):
+        # The method has to be answered for the wall role to be reached
+        # at all, which is where the pin is looked up.
+        client.get(
+            f"/api/guides/wall/resolve?method=separate-wall&part.wall={long_pin}"
+        )
+    lines = [r.getMessage() for r in caplog.records if "guide pin" in r.getMessage()]
+    assert lines, "no pin-miss record"
+    assert "b" * guides.MD5_CHARS in lines[0]
+    assert "b" * (guides.MD5_CHARS + 1) not in lines[0]

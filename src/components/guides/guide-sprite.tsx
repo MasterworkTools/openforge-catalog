@@ -30,6 +30,7 @@ interface GuideSpriteProps {
   view?: string;
 }
 
+/** One part's sheet, drawn at `view`, or its closest available frame. */
 export function GuideSprite({ blueprint, view = 'front' }: GuideSpriteProps) {
   const image = thumbnailOf(blueprint);
   const sprite = image?.sprite_metadata;
@@ -43,14 +44,20 @@ export function GuideSprite({ blueprint, view = 'front' }: GuideSpriteProps) {
 
   // Says so out loud rather than only in the aria-label: a missing
   // side is a generation gap, and otherwise the person sees a pressed
-  // "Left" button over a picture of something else. In an effect and
-  // above the early returns so it is one line per sheet and angle
-  // rather than one per render.
+  // "Left" button over a picture of something else.
+  //
+  // In an effect, and above the early returns because hooks cannot sit
+  // below them. Keyed on the sheet's URL and whether it is missing
+  // rather than on `sprite` and `angle`: those are object identities
+  // that follow the resolution, so a re-resolve would have said it
+  // again about the same sheet. `angle` is also redundant beside
+  // `view` once `missing` carries the answer.
+  const missing = !!sprite && !angle;
   useEffect(() => {
-    if (sprite && !angle) {
+    if (missing) {
       console.warn('sprite for %s has no %s angle', name, view);
     }
-  }, [sprite, angle, name, view]);
+  }, [missing, image?.image_url, name, view]);
 
   if (!image) {
     return (
@@ -68,7 +75,7 @@ export function GuideSprite({ blueprint, view = 'front' }: GuideSpriteProps) {
     return (
       <img
         src={image.image_url}
-        alt={blueprint?.blueprint_name ?? ''}
+        alt={name}
         className="object-contain rounded"
         style={{ width: SIZE, height: SIZE }}
       />

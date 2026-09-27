@@ -1,6 +1,6 @@
 'use client'
 
-import React, { createContext, useContext, useEffect, useMemo, useRef, Suspense } from 'react';
+import React, { createContext, useContext, useEffect, useMemo, Suspense } from 'react';
 import { StoreApi, useStore } from 'zustand';
 import { createBlueprintStore, BlueprintStore } from '@/stores/blueprint-store';
 import { useSearchParams } from 'next/navigation';
@@ -69,10 +69,6 @@ export function BlueprintProvider({ children, autoload = false, initialMd5 = nul
   // would lose all state and cause infinite re-render loops.
   const store = useMemo(() => createBlueprintStore(), []);
 
-  // The md5 this effect last put in the store, so a piece the person
-  // chose can be told from one we seeded.
-  const seeded = useRef<string | null>(null);
-
   useEffect(() => {
     if (!initialMd5) return;
     let current = true;
@@ -85,17 +81,14 @@ export function BlueprintProvider({ children, autoload = false, initialMd5 = nul
         // the person had just chosen. Reading the store is what
         // actually answers "have they moved on".
         //
-        // Against what *this effect* last seeded, not against "is
-        // anything selected". The latter is permanently true after
-        // the first open, so it would make the effect ignore the very
-        // prop it depends on; and a bare md5 comparison cannot tell a
-        // piece the person clicked from the one the previous md5
-        // seeded, because neither matches the md5 now being asked
-        // for. Remembering what we put there separates the two.
-        const selected = store.getState().selectedBlueprint;
-        const ours = !selected || selected.file_md5 === seeded.current;
-        if (!current || !ours) return;
-        seeded.current = initialMd5;
+        // "Nothing selected" is enough because the store is per-mount
+        // and the only mount is inside `PartSelectionModal`, which is
+        // `if (!isOpen) return null` behind a `fixed; inset: 0`
+        // overlay: a fresh store every open, and no way to click a
+        // different part without closing first. So `initialMd5` never
+        // changes under a live store, and the only thing that can
+        // have selected anything by the time this lands is the person.
+        if (!current || store.getState().selectedBlueprint) return;
         store.getState().setSelectedBlueprint(blueprint);
       })
       .catch(error => {

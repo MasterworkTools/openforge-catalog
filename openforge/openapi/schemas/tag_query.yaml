@@ -32,6 +32,7 @@ properties:
     type: array
     items:
       type: object
+      required: [tag]
       properties:
         tag:
           type: string
@@ -42,6 +43,7 @@ properties:
     type: array
     items:
       type: object
+      required: [tag]
       properties:
         tag:
           type: string

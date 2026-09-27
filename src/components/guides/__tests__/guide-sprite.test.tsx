@@ -68,6 +68,48 @@ describe('GuideSprite', () => {
     );
   });
 
+  it('draws the frame at that angle, on the right row of the sheet', () => {
+    // The label is not the picture. `LEFT` is index 6 of a 5-wide
+    // sheet, so it is the second row — and every sheet in the catalog
+    // is two rows, which means `row = 0` or `col = index` would draw
+    // the wrong half of the ring while the label went on being right.
+    render(<GuideSprite blueprint={sheet([FRONT, LEFT])} view="left" />);
+    const drawn = screen.getByLabelText('rough stone wall, seen from the left');
+    // index 6, grid_cols 5 -> row 1, col 1, at SIZE = 240 per tile.
+    expect(drawn).toHaveStyle({ backgroundPosition: '-240px -240px' });
+    // And the whole sheet is scaled to SIZE per tile, not to its
+    // native tile_size, or the offsets above land between frames.
+    expect(drawn).toHaveStyle({ backgroundSize: '1200px 480px' });
+  });
+
+  it('names the frame it actually drew when it cannot name the angle', () => {
+    // The sheet has a frame at the default index but no entry naming
+    // it, so there is no side to report. Saying `view` here would tell
+    // a reader "left" over a picture of something else, which is the
+    // one thing the label must not do.
+    const bp = sheet([{ index: 3, name: 'back' }]);
+    bp.images![0].sprite_metadata!.default_angle = 9;
+    render(<GuideSprite blueprint={bp} view="left" />);
+    expect(
+      screen.getByLabelText('rough stone wall, seen from the default angle')
+    ).toBeInTheDocument();
+  });
+
+  it('says it once per sheet and angle, not once per render', () => {
+    // Why the warning is in an effect rather than the render body. A
+    // re-render with the same sheet and angle is the same gap, already
+    // reported; in the render body each one said it again.
+    const bp = sheet([FRONT]);
+    const { rerender } = render(<GuideSprite blueprint={bp} view="left" />);
+    rerender(<GuideSprite blueprint={bp} view="left" />);
+    rerender(<GuideSprite blueprint={bp} view="left" />);
+    expect(warn).toHaveBeenCalledTimes(1);
+
+    // A different missing angle on the same sheet is a different gap.
+    rerender(<GuideSprite blueprint={bp} view="back" />);
+    expect(warn).toHaveBeenCalledTimes(2);
+  });
+
   it('stays quiet for a plain thumbnail, which has no angles to miss', () => {
     render(
       <GuideSprite

@@ -19,6 +19,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
  * guess: the eight around the equator, then top and bottom.
  */
 
+/** The eight angles around the equator, in the order they turn. */
 export const HORIZONTAL_VIEWS = [
   'front',
   'front-right',
@@ -45,6 +46,7 @@ interface DragRotationHandlers {
   onVertical?: (face: VerticalView) => void;
 }
 
+/** Owns the drag gesture and reports signed steps; see the file note. */
 export function useDragRotation({
   onStart,
   onHorizontal,
@@ -81,10 +83,10 @@ export function useDragRotation({
         onVertical?.(deltaY < 0 ? 'top' : 'bottom');
       } else if (absX > absY && absX >= DRAG_THRESHOLD_PX) {
         // Truncate toward zero, not down. Below the threshold nothing
-        // happens at all, so the smallest gesture that shows it is
-        // one and a half: `Math.floor` turned that 1 step right and 2
-        // steps left. This is the shared contract now, not one
-        // component's quirk.
+        // happens at all, so the gestures that show it are the ones
+        // between one threshold and two: `Math.floor` turned any of
+        // those 1 step right and 2 steps left. This is the shared
+        // contract now, not one component's quirk.
         onHorizontal(Math.trunc(deltaX / DRAG_THRESHOLD_PX));
       }
     },

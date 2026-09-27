@@ -94,7 +94,25 @@ export default function GuidePage() {
       <h1 className="text-3xl font-bold mb-4 shrink-0">
         {guide?.title ?? 'Guided build'}
       </h1>
-      {error && <p className="mb-4 text-red-700 shrink-0">{error}</p>}
+      {error && (
+        <div className="mb-4 shrink-0">
+          <p className="text-red-700">{error}</p>
+          {/* With no resolution there is nothing else on the page —
+              every column renders behind `resolved` — so a first-load
+              failure would otherwise be a heading, this line, and no
+              control able to change the answers that caused it. The
+              answers live in the URL, so dropping them is a plain
+              link rather than anything this component has to hold. */}
+          {!resolved && (
+            <a
+              href={`?guide=${encodeURIComponent(guideKey)}`}
+              className="text-blue-700 underline"
+            >
+              Start this guide over
+            </a>
+          )}
+        </div>
+      )}
       {resolved && (
         // Questions, then pieces, then the words. Left to right is the
         // order you use them in: you choose, you look at what you got,

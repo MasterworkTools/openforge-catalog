@@ -450,9 +450,15 @@ def _derive_choices(
         # Defensive, and known to be: `_available_refinements` has
         # already dropped every refinement that reaches no in-play
         # role, using this same test. Deleting it passes the suite.
-        # Kept because this function is also the one a new caller
-        # would reach for, and an empty `roles` here would otherwise
-        # intersect nothing into everything.
+        #
+        # What it actually buys is the shape of the answer, not its
+        # content: with no roles the loop below never runs, `offered`
+        # stays `None`, and `sorted(offered or ())` yields nothing
+        # either way. The difference is `choices` absent — meaning "no
+        # derived list, use whatever the guide authored" — versus
+        # `choices: []`, which says the catalog offers nothing. Kept
+        # because a new caller reaching this function directly should
+        # get the first of those, not the second.
         if not roles:
             continue
         offered: set | None = None

@@ -77,6 +77,13 @@ def _guide_or_404(curs, guide_key: str) -> dict:
     error handler exists, and adding one is a change to every route
     rather than to these four.
     """
+    # A NUL never reaches the server: `sql.Literal` raises `DataError`
+    # while building the statement, which is an unhandled 500 with an
+    # HTML body for a key that self-evidently names no stored guide.
+    # `%00` in a path is reachable from a hand-edited URL, so it is
+    # answered the same way any other unknown key is.
+    if "\x00" in guide_key:
+        abort(make_response(jsonify({"error": f"No guide {guide_key!r}"}), 404))
     try:
         return guide_sql.get_guide_by_key(curs, guide_key)
     except NotFound:
@@ -136,13 +143,18 @@ def guide_availability(guide_key: str):
         with conn.cursor(row_factory=dict_row) as curs:
             guide = _guide_or_404(curs, guide_key)
             try:
+                # No `facets`/`combinations`: those only feed the
+                # derived `choices` list, which this response does not
+                # carry. Passing them cost up to six namespace queries
+                # per request for a list that was then discarded — on
+                # the endpoint whose own docstring is an apology for
+                # what it costs. `unavailable` and `because` come from
+                # `exists` and are unaffected.
                 resolved = resolve(
                     guide["document"],
                     _selections_from_request(),
                     _candidate_finder(curs),
                     exists=_existence_finder(curs),
-                    facets=_facet_finder(curs),
-                    combinations=_combination_finder(curs),
                     find_pinned=_pinned_finder(curs),
                 )
             except GuideSelectionError as e:
@@ -174,6 +186,13 @@ def guide_availability(guide_key: str):
                     },
                 }
             )
+
+
+#: Generous cap for one selection. The longest the guide itself ever
+#: produces is a tag or an md5; this is well above both, so it bounds
+#: what a hand-edited URL can send to Postgres without constraining
+#: anything real.
+SELECTION_CHARS = 256
 
 
 def _selections_from_request() -> dict:
@@ -208,11 +227,30 @@ def _selections_from_request() -> dict:
     guide cannot act on, and `resolve_guide` already answers 400 to
     that. A second error channel doing the same job is the kind of
     thing the next endpoint copies.
+
+    The NUL and length checks are here, at the one place every endpoint
+    reads the query string, rather than at each thing a selection can
+    become. A selection reaches the database as a `sql.Literal`, and
+    that raises `DataError` on a NUL *while building the statement* —
+    an unhandled 500 with an HTML body, for a request whose honest
+    answer is 400. Length is the same argument in the other direction:
+    without a cap a 200KB pin was sent to Postgres in full and answered
+    200. Every real selection is a tag, an option key or an md5, so the
+    cap is far above anything the guide itself produces.
     """
     repeated = sorted(key for key in request.args if len(request.args.getlist(key)) > 1)
     if repeated:
         raise GuideSelectionError(f"answered more than once: {', '.join(repeated)}")
-    return request.args.to_dict()
+    selections = request.args.to_dict()
+    for key, value in selections.items():
+        for part in (key, value):
+            if "\x00" in part:
+                raise GuideSelectionError(f"{key!r} contains a NUL byte")
+            if len(part) > SELECTION_CHARS:
+                raise GuideSelectionError(
+                    f"{key!r} is longer than {SELECTION_CHARS} characters"
+                )
+    return selections
 
 
 def _candidate_finder(curs):

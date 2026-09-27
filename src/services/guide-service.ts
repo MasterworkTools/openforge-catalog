@@ -19,6 +19,12 @@ export interface GuideSummary {
  * `prompt` names the earlier question responsible, and is known only
  * when one answer is responsible on its own — two answers can be
  * jointly at fault with neither to blame.
+ *
+ * `question` is that question's key, and `prompt` its text. The engine
+ * sets both together or neither (`_blame` in `resolve.py`), so they are
+ * optional as a pair rather than independently. Nothing reads the key
+ * today — it is what a "take me back to that question" affordance
+ * would need, and it costs nothing to carry until then.
  */
 export interface MissingReason {
   part: string;
@@ -64,6 +70,17 @@ export interface GuideChoice {
   count?: number;
 }
 
+/**
+ * One question that narrows the pieces without choosing a build method.
+ *
+ * Exactly one of `from_namespace`, `from_combination` and `on_tags` is
+ * set: they are what the question is *asked from*, and the three are
+ * mutually exclusive. That is enforced where the guide is loaded, by a
+ * `oneOf` in `openforge/openapi/schemas/guide.yaml`, rather than in
+ * this type — a refinement is only ever read back from an
+ * already-validated response, never built here, so the three stay
+ * independently optional instead of a union every consumer re-narrows.
+ */
 export interface GuideRefinement {
   key: string;
   role: string;

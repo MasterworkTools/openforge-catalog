@@ -259,6 +259,11 @@ describe('GuidePage', () => {
     downloaded.length = 0;
     jest.clearAllMocks();
     jest.spyOn(console, 'error').mockImplementation(() => {});
+    // The wall fixture's sheet deliberately lacks most of the ring, so
+    // the turntable tests exercise the missing-angle fallback and
+    // `GuideSprite` says so. Captured rather than printed, and the one
+    // test the gap is *about* asserts it below.
+    jest.spyOn(console, 'warn').mockImplementation(() => {});
   });
 
   describe('with no guide in the URL', () => {
@@ -452,6 +457,67 @@ describe('GuidePage', () => {
       } finally {
         window.removeEventListener('popstate', record);
       }
+    });
+
+    it('folds grouped questions into one section and leaves others alone', async () => {
+      // `wall.yaml` groups four refinements under two headings, and
+      // nothing exercised the merge. A group shows its own heading once
+      // with every question's prompt inside; an ungrouped question is
+      // its own heading and must not repeat the prompt underneath.
+      visit('?guide=wall&method=separate-wall');
+      mockFetch((url) =>
+        url.includes('/resolve')
+          ? {
+              ...RESOLVED_WITH_PARTS,
+              refinements: [
+                {
+                  key: 'base-clips',
+                  role: '*',
+                  prompt: 'Which clip',
+                  group: 'How do the pieces clip together?',
+                  from_namespace: 'connection',
+                  unavailable: [],
+                  because: {},
+                  recommended: null,
+                  selected: null,
+                },
+                {
+                  key: 'wall-clips',
+                  role: 'wall',
+                  prompt: 'Clips on the wall',
+                  group: 'How do the pieces clip together?',
+                  from_namespace: 'connection',
+                  unavailable: [],
+                  because: {},
+                  recommended: null,
+                  selected: null,
+                },
+                {
+                  key: 'texture',
+                  role: '*',
+                  prompt: 'Texture',
+                  from_namespace: 'texture',
+                  unavailable: [],
+                  because: {},
+                  recommended: null,
+                  selected: null,
+                },
+              ],
+            }
+          : GUIDE_DOCUMENT
+      );
+
+      render(<GuidePage />);
+
+      // One shared heading for the two that belong together...
+      expect(
+        await screen.findByText('How do the pieces clip together?')
+      ).toBeInTheDocument();
+      // ...with both prompts inside it, which a lone question omits.
+      expect(screen.getByText('Which clip')).toBeInTheDocument();
+      expect(screen.getByText('Clips on the wall')).toBeInTheDocument();
+      // The ungrouped one is its own heading and says its prompt once.
+      expect(screen.getAllByText('Texture')).toHaveLength(1);
     });
 
     it('names the combination in the free-text box, not `undefined`', async () => {
@@ -842,6 +908,13 @@ describe('GuidePage', () => {
       expect(
         screen.queryByLabelText(/a dungeon stone wall, seen from the right/)
       ).toBeNull();
+      // And it is not only the label that says so: a sheet missing a
+      // side is a generation gap, so it reaches the console too.
+      expect(console.warn).toHaveBeenCalledWith(
+        'sprite for %s has no %s angle',
+        'a dungeon stone wall',
+        'right'
+      );
     });
 
     it('turns the same distance whichever way the drag goes', async () => {

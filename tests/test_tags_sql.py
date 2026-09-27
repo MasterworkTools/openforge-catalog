@@ -521,15 +521,31 @@ def test_a_bare_sql_statement_logs_itself_not_the_separator(caplog):
 
 def test_a_query_is_not_rendered_when_nothing_is_listening(caplog):
     """The level check is the point: `as_string()` is not free, and the
-    guide's availability pass builds thirty-odd of these per request.
+    guide's availability pass builds fifty-odd of these per request.
+
+    Asserting no output is not enough — `logger.debug` emits nothing at
+    WARNING whether or not the gate is there, so that assertion passes
+    with the gate deleted. What has to be pinned is that the rendering
+    does not happen, which is the whole saving (1.97us gated against
+    168us ungated).
     """
     import logging
+    from unittest.mock import patch
 
     from psycopg import sql
 
     from openforge.db.sql.tags import _log_query
 
-    with caplog.at_level(logging.WARNING):
-        _log_query(sql.SQL("DELETE FROM tags"))
+    with patch.object(
+        sql.Composed, "as_string", autospec=True, return_value="rendered"
+    ) as rendered:
+        with caplog.at_level(logging.WARNING):
+            _log_query(sql.SQL("DELETE FROM tags"))
+        assert rendered.call_count == 0
+        assert caplog.text == ""
 
-    assert caplog.text == ""
+        # And it does render when something is listening, so the test
+        # cannot pass by never reaching the call at all.
+        with caplog.at_level(logging.DEBUG):
+            _log_query(sql.SQL("DELETE FROM tags"))
+        assert rendered.call_count == 1
