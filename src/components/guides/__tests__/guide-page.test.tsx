@@ -543,6 +543,37 @@ describe("GuidePage", () => {
       ).toBeNull();
     });
 
+    it("offers a retry for a 503, which says nothing about the guide", async () => {
+      // The arm keys on exactly 500, not on 5xx. A 502 or 504 is a cold
+      // start or a container that went away and a 503 is no healthy
+      // target — all transient, none of them a statement about the
+      // stored document — so the useful offer is the one that retries
+      // and keeps them where they were.
+      visit("?guide=wall");
+      global.fetch = jest.fn((url: string) =>
+        Promise.resolve(
+          url.includes("/resolve")
+            ? {
+                ok: false,
+                status: 503,
+                statusText: "Service Unavailable",
+                json: () => Promise.resolve({}),
+              }
+            : {
+                ok: true,
+                status: 200,
+                json: () => Promise.resolve(GUIDE_DOCUMENT),
+              },
+        ),
+      ) as unknown as typeof fetch;
+
+      render(<GuidePage />);
+
+      expect(
+        await screen.findByRole("link", { name: "Start this guide over" }),
+      ).toHaveAttribute("href", "?guide=wall");
+    });
+
     it("sends you to the list when the guide itself is the thing missing", async () => {
       // The other arm of the same error. Starting `nosuch` over reloads
       // the identical 404, and `/guides` has no nav, so that link was

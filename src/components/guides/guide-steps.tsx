@@ -29,14 +29,6 @@ type Unavailable = Record<string, string[]> | null;
 type Because = Record<string, Record<string, MissingReason>> | null;
 
 /**
- * What is not on offer, and why.
- *
- * Missing answers are not drawn at all — an answer you cannot pick is
- * not an answer. But "no rough stone floor" is baffling on its own and
- * obvious once you know which choice did it, so the list says what it
- * would have left empty and, where one answer is responsible, which.
- */
-/**
  * Why one dead answer is dead, in one sentence.
  *
  * Three places need it — the open list's chosen answer, a folded step,
@@ -50,10 +42,11 @@ type Because = Record<string, Record<string, MissingReason>> | null;
  * label the answer is directly above, so repeating it reads as a
  * stutter. `space` is the one other difference between the callers.
  */
-function DeadAnswer({ why, lead }: { why?: MissingReason; lead?: string }) {
+function DeadAnswer({ why, answer }: { why?: MissingReason; answer?: string }) {
   return (
-    <p className={`${lead ? "mt-2" : "mt-1"} text-xs text-red-700`}>
-      {lead ? `${lead} leaves` : "Leaves"} no {why?.part ?? "match"}
+    <p className={`${answer ? "mt-2" : "mt-1"} text-xs text-red-700`}>
+      {answer ? `Your answer, ${answer}, leaves` : "Leaves"} no{" "}
+      {why?.part ?? "match"}
       {blame(why, " — it is")}.
     </p>
   );
@@ -75,6 +68,14 @@ function blame(why: MissingReason | undefined, lead: string): string {
   return why?.prompt ? `${lead} your "${why.prompt}" answer` : "";
 }
 
+/**
+ * What is not on offer, and why.
+ *
+ * Missing answers are not drawn at all — an answer you cannot pick is
+ * not an answer. But "no rough stone floor" is baffling on its own and
+ * obvious once you know which choice did it, so the list says what it
+ * would have left empty and, where one answer is responsible, which.
+ */
 function Missing({
   hidden,
   chosen,
@@ -106,9 +107,7 @@ function Missing({
   if (hidden.length === 0 && !chosen) return null;
   return (
     <>
-      {chosen && (
-        <DeadAnswer why={why} lead={`Your answer, ${labels(chosen)},`} />
-      )}
+      {chosen && <DeadAnswer why={why} answer={labels(chosen)} />}
       {hidden.length > 0 && (
         <ul className="mt-2 text-xs text-gray-500 list-none">
           {hidden.map((value) => {
@@ -258,6 +257,13 @@ function AnsweredStep({
   const live = step.options.filter(
     (option) => option.key === step.selected || !dead.includes(option.key),
   );
+  // The answer in force, when it is the one that broke the build, and
+  // null otherwise. Both branches of this component ask it — the
+  // reopened one to explain the answer beside the choices, the folded
+  // one to explain it under the label — and they must not be able to
+  // disagree.
+  const brokeIt =
+    step.selected && dead.includes(step.selected) ? step.selected : null;
 
   if (open) {
     return (
@@ -289,9 +295,7 @@ function AnsweredStep({
         </div>
         <Missing
           hidden={dead.filter((value) => value !== step.selected)}
-          chosen={
-            step.selected && dead.includes(step.selected) ? step.selected : null
-          }
+          chosen={brokeIt}
           because={because}
           labels={(value) =>
             step.options.find((o) => o.key === value)?.title ?? value
@@ -320,9 +324,7 @@ function AnsweredStep({
           answer that emptied a part folded to a tidy label while every
           *other* question listed its absent answers and blamed
           something else. A step was the case actually reported. */}
-      {step.selected && dead.includes(step.selected) && (
-        <DeadAnswer why={because?.[step.selected]} />
-      )}
+      {brokeIt && <DeadAnswer why={because?.[brokeIt]} />}
     </section>
   );
 }

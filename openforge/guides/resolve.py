@@ -226,16 +226,7 @@ def resolve(
     )
     on_screen = {q["key"] for q in [*shown_steps, *shown_refinements]}
     dead, because = (
-        _unavailable(
-            document,
-            steps,
-            refinements,
-            on_screen,
-            assumed,
-            selections,
-            parts,
-            exists,
-        )
+        _unavailable(document, steps, refinements, on_screen, selections, parts, exists)
         if exists is not None
         else ({}, {})
     )
@@ -293,7 +284,6 @@ def _unavailable(
     steps: list,
     refinements: list,
     on_screen: set,
-    selections: dict,
     sent: dict,
     parts: list,
     find_candidates,
@@ -309,6 +299,14 @@ def _unavailable(
     whether it comes back — the first removal that revives it is what
     is blamed.
 
+    Takes only what the person sent. The defaulted map is derived here
+    rather than passed in: it used to arrive as `selections` while the
+    raw map arrived as `sent`, so `selections` meant the defaulted map
+    in this frame and the raw one in the caller — three names for two
+    maps, across the boundary between the two functions whose whole
+    subject is the difference between them. That is the confusion the
+    counterfactual bug grew in.
+
     `on_screen` is which questions to sweep; `steps` and `refinements`
     stay whole because blame reaches past the screen. A question the
     page is not publishing has nowhere to show a dead answer, and
@@ -321,6 +319,7 @@ def _unavailable(
     and the failure mode is an answer that is offered and turns out
     thin — not one that vanishes and should not have.
     """
+    assumed, _ = _with_defaults(document, sent)
     baseline = {
         part["role"]: _predicate_key(part["query"])
         for part in parts
@@ -365,7 +364,7 @@ def _unavailable(
             reason = {"part": document["roles"][role]["title"]}
             blamed = _blame(
                 document,
-                selections,
+                assumed,
                 sent,
                 hypothetical,
                 question,
@@ -384,9 +383,9 @@ def _unavailable(
 
 def _blame(
     document: dict,
-    selections: dict,
+    assumed: dict,
     sent: dict,
-    would: dict,
+    if_taken: dict,
     question: str,
     value: str,
     others: list,
@@ -402,18 +401,19 @@ def _blame(
     can be jointly responsible with neither one to blame, and then
     this says nothing rather than pick a scapegoat.
     """
-    in_play = _roles_in_play(_chosen_options(*_available_steps(document, selections)))
+    in_play = _roles_in_play(_chosen_options(*_available_steps(document, assumed)))
     # Which step answers actually count if they picked this. Compared
     # per candidate below, because a step is reachable only once every
     # step before it is answered — so dropping one key from the map can
     # silently drop every answer after it as well.
     #
-    # `would` is the map the caller already derived for this candidate,
-    # passed in rather than derived a second time — the two were the
-    # same expression, and one of them was a line no test could see.
-    _, would_answer = _available_steps(document, would)
+    # `if_taken` is the map the caller already derived for this
+    # candidate, passed in rather than derived a second time — the two
+    # were the same expression under two names, and one of them was a
+    # line no test could see.
+    _, would_answer = _available_steps(document, if_taken)
     for other in others:
-        if other not in selections:
+        if other not in assumed:
             continue
         # Un-answering `other`, not deleting it. On screen, clearing a
         # question re-applies the recommendation below it rather than

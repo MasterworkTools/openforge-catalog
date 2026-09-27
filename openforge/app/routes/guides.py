@@ -213,14 +213,26 @@ def _log_bad_request(guide_key: str, error: Exception) -> None:
 
     WARNING for the same reason `_pinned_finder` uses it: nothing sets
     `LOG_LEVEL` in the production Lambda, so INFO would be evaluated
-    and discarded. `%s` on the message is safe because every value
-    inside it went through `quoted` and the count of them through
-    `listed` — the key is quoted here for the same reason, rather than
-    sliced, which dropped the length the rest of the message states.
+    and discarded.
+
+    Bounded here rather than at each raise. Ten messages feed this, and
+    the claim that all of them had been through `_shown` was true in
+    effect and false in its reason — `_reject_unknown_selections` has
+    its own quoting, and the refinement refusals rely on a cap applied
+    several frames earlier in another module. A bound at the sink holds
+    for the eleventh message too.
     """
     current_app.logger.warning(
-        "guide %s refused a request: %s", quoted(guide_key, SELECTION_CHARS), error
+        "guide %s refused a request: %s",
+        quoted(guide_key, SELECTION_CHARS),
+        quoted(str(error), MESSAGE_CHARS),
     )
+
+
+#: Cap for a whole refusal message on its way to CloudWatch. Ample for
+#: every message the module raises; it exists so that a future one
+#: cannot quietly become unbounded.
+MESSAGE_CHARS = 1000
 
 
 #: Generous cap for one selection. The longest the guide itself ever
@@ -280,8 +292,8 @@ def _selections_from_request() -> dict:
         )
     selections = request.args.to_dict()
     for key, value in selections.items():
-        _reject_bad_selection("key", key)
-        _reject_bad_selection(f"the answer to {_shown(key)}", value)
+        _reject_bad_selection(what="key", part=key)
+        _reject_bad_selection(what=f"the answer to {_shown(key)}", part=value)
     return selections
 
 
@@ -302,7 +314,7 @@ def _shown(text: str) -> str:
     return quoted(text, SELECTION_CHARS)
 
 
-def _reject_bad_selection(what: str, part: str) -> None:
+def _reject_bad_selection(*, what: str, part: str) -> None:
     """Refuse a selection the search cannot be asked about.
 
     `what` names which half is at fault. Reporting the key for both was
