@@ -244,8 +244,8 @@ def tag_search_blueprint_exists(
     looks at what it found, so it wants neither the row nor the order.
 
     Dropping the order is not where the saving is, though — measured
-    A/B against the same four predicates it is within noise, and
-    slower on two of them. What this buys is the round trips: the
+    A/B against the same four predicates (`openforge_catalog-5ys`) it
+    is within noise, and slower on two of them. What this buys is the round trips: the
     search variant returns rows that the caller would then have to
     fetch tags for, which is one `_attach_tags` per check. The cost
     that dominates is neither: three quarters of the database time on
@@ -595,17 +595,23 @@ def tag_search_namespace_combinations(
         ),
     ]
     for tag in excluded:
-        # Anchored at the front, like the namespace filter above and for
-        # the same reason: `@>` alone is positionless containment, not a
-        # subtree test, so `exclude: ['connection|side']` also dropped
+        # Anchored at the front, unlike the namespace filter above: `@>`
+        # alone is positionless containment, not a subtree test, so
+        # `exclude: ['connection|side']` also dropped
         # `connection|openlock|side` — a tag under `connection|openlock`
-        # that has nothing to do with the one being hidden. `@>` stays
-        # as the GIN prefilter; the slice is the decision.
+        # that shares nothing with the one being hidden but a word.
+        #
+        # The slice alone, without the `@>` its positive counterpart
+        # pairs with: under `NOT (...)` Postgres turns the conjunction
+        # into a per-row filter, so the containment is not a GIN
+        # prefilter here and cannot change the outcome — the slice
+        # equality already implies it. Measured identical rows and
+        # buffers with and without.
         elements = tag.split("|")
         parts.append(
-            sql.SQL(
-                "      AND NOT (t.tag @> {tag} AND t.tag[1:{depth}] = {tag})"
-            ).format(tag=sql.Literal(elements), depth=sql.Literal(len(elements)))
+            sql.SQL("      AND NOT (t.tag[1:{depth}] = {tag})").format(
+                tag=sql.Literal(elements), depth=sql.Literal(len(elements))
+            )
         )
     parts += [
         sql.SQL("    GROUP BY t.blueprint_id"),
@@ -971,7 +977,7 @@ def _query_tags_deny_children(parent: str, exempt: list[str]) -> sql.Composed:
     return sql.Composed(parts).join("\n      ")
 
 
-def _query_tags_deny(deny: list[str]) -> sql.Composed:
+def _query_tags_deny(deny: list[dict]) -> sql.Composed:
     deny_parts = []
     if len(deny) > 0:
         deny_parts.extend(

@@ -459,6 +459,62 @@ describe('GuidePage', () => {
       }
     });
 
+    it('offers a way out of a resolve failure, and it drops the answers', async () => {
+      // The whole page renders behind `resolved`, so on a first-load
+      // failure this link is the only control there is. It shipped
+      // uncovered, which is how its second arm stayed broken.
+      visit('?guide=wall&method=nonesuch');
+      global.fetch = jest.fn((url: string) =>
+        Promise.resolve(
+          url.includes('/resolve')
+            ? {
+                ok: false,
+                status: 400,
+                statusText: 'Bad Request',
+                json: () =>
+                  Promise.resolve({ error: "step 'method' has no option" }),
+              }
+            : {
+                ok: true,
+                status: 200,
+                json: () => Promise.resolve(GUIDE_DOCUMENT),
+              }
+        )
+      ) as unknown as typeof fetch;
+
+      render(<GuidePage />);
+
+      const out = await screen.findByRole('link', {
+        name: 'Start this guide over',
+      });
+      // Back to this guide with no answers — not to the URL that just
+      // failed.
+      expect(out).toHaveAttribute('href', '?guide=wall');
+    });
+
+    it('sends you to the list when the guide itself is the thing missing', async () => {
+      // The other arm of the same error. Starting `nosuch` over reloads
+      // the identical 404, and `/guides` has no nav, so that link was
+      // the only control on the page and it pointed at the failure.
+      visit('?guide=nosuch');
+      global.fetch = jest.fn(() =>
+        Promise.resolve({ ok: false, status: 404, statusText: 'Not Found' })
+      ) as unknown as typeof fetch;
+
+      render(<GuidePage />);
+
+      expect(
+        await screen.findByText("No guide called 'nosuch'.")
+      ).toBeInTheDocument();
+      expect(screen.getByRole('link', { name: 'All guides' })).toHaveAttribute(
+        'href',
+        './'
+      );
+      expect(
+        screen.queryByRole('link', { name: 'Start this guide over' })
+      ).toBeNull();
+    });
+
     it('says which of your own answers broke the build, not only the others', async () => {
       // The reason for the answer in force used to be computed and then
       // dropped, so the page held the diagnosis and showed every line
@@ -543,6 +599,22 @@ describe('GuidePage', () => {
                   recommended: null,
                   selected: null,
                 },
+                // A *second* group, immediately after the first, which
+                // is the shape `wall.yaml` actually ships — `pegs`
+                // under "Other options" follows three clip questions.
+                // With only one group, dropping the name comparison
+                // merges everything into it and nothing notices.
+                {
+                  key: 'pegs',
+                  role: '*',
+                  prompt: 'Peg holes',
+                  group: 'Other options',
+                  from_namespace: 'connection',
+                  unavailable: [],
+                  because: {},
+                  recommended: null,
+                  selected: null,
+                },
                 {
                   key: 'texture',
                   role: '*',
@@ -564,6 +636,10 @@ describe('GuidePage', () => {
       expect(
         await screen.findByText('How do the pieces clip together?')
       ).toBeInTheDocument();
+      // ...and the next group keeps its own heading rather than being
+      // swallowed by the one before it.
+      expect(screen.getByText('Other options')).toBeInTheDocument();
+      expect(screen.getByText('Peg holes')).toBeInTheDocument();
       // ...with both prompts inside it, which a lone question omits.
       expect(screen.getByText('Which clip')).toBeInTheDocument();
       expect(screen.getByText('Clips on the wall')).toBeInTheDocument();
@@ -1046,6 +1122,29 @@ describe('GuidePage', () => {
 
       fireEvent.mouseDown(surface, { button: 0, clientX: 100, clientY: 100 });
       fireEvent.mouseMove(window, { clientX: 200, clientY: 100 });
+      fireEvent.mouseUp(window);
+      fireEvent.click(sprite.closest('button')!);
+
+      expect(screen.queryByTestId('part-modal')).not.toBeInTheDocument();
+    });
+
+    it('does not open the tag search at the end of a vertical drag either', async () => {
+      // Only the horizontal handler was covered, so the `turned` flag
+      // could be dropped from the vertical one and a drag to a pole
+      // would open the dialog on release.
+      visit('?guide=wall&method=separate-wall');
+      mockFetch((url) =>
+        url.includes('/resolve') ? RESOLVED_WITH_PARTS : GUIDE_DOCUMENT
+      );
+
+      render(<GuidePage />);
+      const sprite = await screen.findByLabelText(/a dungeon stone wall, seen/);
+      const surface = sprite
+        .closest('.guide-parts')!
+        .querySelector('.select-none')!;
+
+      fireEvent.mouseDown(surface, { button: 0, clientX: 100, clientY: 200 });
+      fireEvent.mouseMove(window, { clientX: 105, clientY: 100 });
       fireEvent.mouseUp(window);
       fireEvent.click(sprite.closest('button')!);
 

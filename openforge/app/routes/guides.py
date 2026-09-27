@@ -145,11 +145,14 @@ def guide_availability(guide_key: str):
             try:
                 # No `facets`/`combinations`: those only feed the
                 # derived `choices` list, which this response does not
-                # carry. Passing them cost up to six namespace queries
-                # per request for a list that was then discarded — on
-                # the endpoint whose own docstring is an apology for
-                # what it costs. `unavailable` and `because` come from
-                # `exists` and are unaffected.
+                # carry. Measured, the saving is two statements a
+                # request — 52 down to 50 on a cold open, 61 to 59
+                # answered — and all of it is `combinations`, since
+                # `facets` never ran on this endpoint at all. Small,
+                # but it is the endpoint whose own docstring is an
+                # apology for what it costs, and the responses are
+                # byte-identical either way. `unavailable` and
+                # `because` come from `exists` and are unaffected.
                 resolved = resolve(
                     guide["document"],
                     _selections_from_request(),
@@ -240,17 +243,41 @@ def _selections_from_request() -> dict:
     """
     repeated = sorted(key for key in request.args if len(request.args.getlist(key)) > 1)
     if repeated:
-        raise GuideSelectionError(f"answered more than once: {', '.join(repeated)}")
+        raise GuideSelectionError(
+            f"answered more than once: {', '.join(_shown(key) for key in repeated)}"
+        )
     selections = request.args.to_dict()
     for key, value in selections.items():
-        for part in (key, value):
-            if "\x00" in part:
-                raise GuideSelectionError(f"{key!r} contains a NUL byte")
-            if len(part) > SELECTION_CHARS:
-                raise GuideSelectionError(
-                    f"{key!r} is longer than {SELECTION_CHARS} characters"
-                )
+        _reject_bad_selection("key", key)
+        _reject_bad_selection(f"the answer to {_shown(key)}", value)
     return selections
+
+
+def _shown(text: str) -> str:
+    """A query-string value as it can safely appear in an error body.
+
+    `repr` so a newline or a NUL cannot run off the end of the line,
+    and capped so a 200KB key does not come back as a 200KB message —
+    the pin log has both and the body it is answering alongside had
+    neither.
+    """
+    return repr(text[:SELECTION_CHARS])
+
+
+def _reject_bad_selection(what: str, part: str) -> None:
+    """Refuse a selection the search cannot be asked about.
+
+    `what` names which half is at fault. Reporting the key for both was
+    a false statement in the body: an over-long *value* came back as
+    "'part.wall' is longer than 256 characters" about a nine-character
+    key.
+    """
+    if "\x00" in part:
+        raise GuideSelectionError(f"{what} {_shown(part)} contains a NUL byte")
+    if len(part) > SELECTION_CHARS:
+        raise GuideSelectionError(
+            f"{what} {_shown(part)} is longer than {SELECTION_CHARS} characters"
+        )
 
 
 def _candidate_finder(curs):
@@ -364,10 +391,10 @@ def _combination_finder(curs):
 def _existence_finder(curs):
     """The same search without the tags, for the availability pass.
 
-    That pass asks "is there anything at all" around thirty times a
-    request and never looks at what it found, so fetching each
-    candidate's tags is a second round trip per question for something
-    nobody reads.
+    That pass asks "is there anything at all" about fifty times a
+    request — 48 on the shipped wall guide — and never looks at what
+    it found, so fetching each candidate's tags is a second round trip
+    per question for something nobody reads.
     """
 
     def exists(predicate: dict) -> bool:

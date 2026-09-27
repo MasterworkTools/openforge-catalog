@@ -57,12 +57,17 @@ function Missing({
   because?: Record<string, MissingReason>;
   labels: (value: string) => string;
 }) {
+  // `chosen` is passed only when the answer in force is itself dead, so
+  // it is the whole condition for the line below. It used to also
+  // require a blame or an empty list, which was unreachable —
+  // `_unavailable` writes a `because` entry for every dead value,
+  // blamed or not — and wrong if it ever fired, since it tied this
+  // line to how many *other* answers were hidden.
   const why = chosen ? because?.[chosen] : undefined;
-  const broken = chosen && (why || hidden.length === 0);
-  if (hidden.length === 0 && !broken) return null;
+  if (hidden.length === 0 && !chosen) return null;
   return (
     <>
-      {broken && (
+      {chosen && (
         <p className="mt-2 text-xs text-red-700">
           Your answer, {labels(chosen)}, leaves no {why?.part ?? 'match'}
           {why?.prompt ? ` — it is your "${why.prompt}" answer` : ''}.
@@ -275,6 +280,19 @@ function AnsweredStep({
           {chosen?.title ?? step.selected}
         </span>
       </button>
+      {/* Same as a folded refinement, and for the same reason: an
+          answer that emptied a part folded to a tidy label while every
+          *other* question listed its absent answers and blamed
+          something else. A step was the case actually reported. */}
+      {step.selected && dead.includes(step.selected) && (
+        <p className="mt-1 text-xs text-red-700">
+          Leaves no {because?.[step.selected]?.part ?? 'match'}
+          {because?.[step.selected]?.prompt
+            ? ` — it is your "${because[step.selected].prompt}" answer`
+            : ''}
+          .
+        </p>
+      )}
     </section>
   );
 }

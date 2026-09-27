@@ -320,14 +320,26 @@ def _blame(
     in_play = _roles_in_play(_chosen_options(*_available_steps(document, selections)))
     # Which step answers actually count if they picked this. Compared
     # per candidate below, because a step is reachable only once every
-    # step before it is answered — so deleting one key from the map can
-    # silently delete every answer after it as well.
+    # step before it is answered — so dropping one key from the map can
+    # silently drop every answer after it as well.
     _, would_answer = _available_steps(document, {**selections, question: value})
     for other in others:
         if other not in selections:
             continue
+        # Un-answering `other`, not deleting it. On screen, clearing a
+        # question re-applies the recommendation below it rather than
+        # dropping the lot — `resolve` runs `_with_defaults` on every
+        # request — so deleting the key outright asks about a state the
+        # page cannot be in, and every step but the last one came back
+        # unblameable because removing it truncated the ones after it.
         without = {k: v for k, v in selections.items() if k != other}
-        hypothetical = {**without, question: value}
+        # The candidate goes in *before* the defaults are derived, not
+        # after. `_with_defaults` walks the questions in order and reads
+        # the answers so far, so a conditional default branches on them
+        # — overlaying `question` afterwards would compute the chain
+        # from the answer being replaced and default a later question
+        # for the wrong branch.
+        hypothetical, _ = _with_defaults(document, {**without, question: value})
         # Only a removal that still builds the same parts is evidence.
         # Dropping the method unbuilds everything, and a question about
         # no parts is satisfied by any answer — so without this the
@@ -338,16 +350,17 @@ def _blame(
             != in_play
         ):
             continue
-        # And only a removal that took nothing else with it. Removing an
-        # earlier step unanswers every step after it, so the predicate
-        # loses those answers too and the part comes back for a reason
-        # that has nothing to do with `other` — which named the earliest
-        # removable question for almost every dead answer, and named it
-        # confidently. The state was also one the page cannot be in:
-        # un-answering a question on screen re-applies the defaults
-        # below it rather than dropping the lot.
+        # And only a change that took nothing else with it. Every
+        # answer but `other`'s own has to survive: `other` itself may
+        # legitimately be gone, because a question with no
+        # recommendation cannot be re-answered — but if clearing it
+        # also truncated the questions after it, the part comes back
+        # for a reason that has nothing to do with `other`, which is
+        # how the earliest removable question came to be named for
+        # almost every dead answer. Extra answers are fine; the
+        # recommendation that replaces `other` is one.
         _, answered_after = _available_steps(document, hypothetical)
-        if set(answered_after) != set(would_answer) - {other}:
+        if not set(would_answer) - {other} <= set(answered_after):
             continue
         if _holds(document, hypothetical, baseline, cache, find_candidates):
             return other

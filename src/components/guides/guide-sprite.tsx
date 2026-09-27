@@ -19,9 +19,16 @@ import { GuideBlueprint, thumbnailOf } from '@/services/guide-service';
  * make the first sheet that does not a silent wrong picture.)
  */
 
-// One size, because every part is drawn at the same one: a parts list
-// answers "do these go together" at a glance, and pieces drawn at
-// different scales do not.
+/**
+ * One size, because every part is drawn at the same one: a parts list
+ * answers "do these go together" at a glance, and pieces drawn at
+ * different scales do not.
+ *
+ * A doc comment rather than a line comment so the file overview above
+ * does not attach itself to this constant — `getDocumentationComment`
+ * takes the last JSDoc node before a statement, and with none of its
+ * own `SIZE` inherited the whole header.
+ */
 const SIZE = 240;
 
 interface GuideSpriteProps {

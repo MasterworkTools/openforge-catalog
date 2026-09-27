@@ -393,7 +393,7 @@ _ENCODED_SLASH = re.compile("%2F", re.IGNORECASE)
 
 
 def _decode_alb_event(event):
-    """Undo the ALB's percent-encoding before the adapter re-applies it.
+    r"""Undo the ALB's percent-encoding before the adapter re-applies it.
 
     An ALB hands Lambda `queryStringParameters` still encoded — API
     Gateway decodes them, an ALB does not — and `aws_lambda_wsgi`

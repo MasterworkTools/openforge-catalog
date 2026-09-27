@@ -304,7 +304,10 @@ def test_a_question_answered_twice_is_a_bad_request(client, wall_guide):
     response = client.get("/api/guides/wall/resolve?method=separate-wall&method=s2w")
 
     assert response.status_code == 400
-    assert "answered more than once: method" in response.json["error"]
+    # `repr`-quoted, like every other key this endpoint echoes: a
+    # repeated key is attacker-supplied too, and it was the one message
+    # in the function that did not escape its input.
+    assert "answered more than once: 'method'" in response.json["error"]
 
     # And the plural path: every offender named, in a fixed order
     # rather than in whatever order the client built the URL.
@@ -313,7 +316,7 @@ def test_a_question_answered_twice_is_a_bad_request(client, wall_guide):
     )
 
     assert response.status_code == 400
-    assert "answered more than once: method, texture" in response.json["error"]
+    assert "answered more than once: 'method', 'texture'" in response.json["error"]
 
 
 # Determinism is not asserted here. Two GETs of one URL against an
@@ -1590,7 +1593,48 @@ def test_an_enormous_selection_is_refused_rather_than_queried(
     """Without a cap the whole value went to Postgres, and got a 200."""
     got = client.get(f"/api/guides/wall/resolve?part.wall={'a' * 200_000}")
     assert got.status_code == 400
-    assert "longer than" in got.get_json()["error"]
+    error = got.get_json()["error"]
+    assert "longer than" in error
+    # The *answer* is the offender, not the key. Saying `'part.wall' is
+    # longer than 256 characters` about a nine-character key is a false
+    # statement, and asserting only "longer than" could not see it.
+    assert "the answer to 'part.wall'" in error
+    # And the echo is capped, or refusing a 200KB value answers with a
+    # 200KB body.
+    assert len(error) < 2 * guides.SELECTION_CHARS
+
+
+def test_the_selection_cap_is_the_cap_it_says(client, wall_guide, catalog):
+    """Pinned at the boundary, in both directions.
+
+    A test that sends 200,000 characters passes whatever the cap is —
+    it stays green if the cap is raised a hundredfold, and green if the
+    length is only checked on values. One character either side of
+    `SELECTION_CHARS` is what actually holds the number.
+    """
+    at_limit = "a" * guides.SELECTION_CHARS
+    assert client.get(f"/api/guides/wall/resolve?part.wall={at_limit}").status_code == (
+        200
+    )
+    over = "a" * (guides.SELECTION_CHARS + 1)
+    assert client.get(f"/api/guides/wall/resolve?part.wall={over}").status_code == 400
+    # And the key is measured too, not only the value.
+    assert client.get(f"/api/guides/wall/resolve?{over}=x").status_code == 400
+
+
+def test_a_refused_selection_cannot_forge_a_line_in_the_body(
+    client, wall_guide, catalog
+):
+    """The body escapes what it echoes, like the log line does.
+
+    The key is attacker-supplied and comes straight back; `repr` is
+    what stops a newline in it from looking like a second message.
+    """
+    got = client.get("/api/guides/wall/resolve?a%0Ab=" + "x" * 300)
+    assert got.status_code == 400
+    error = got.get_json()["error"]
+    assert "\\n" in error
+    assert "\n" not in error
 
 
 def test_the_pin_log_is_truncated_not_merely_escaped(
@@ -1612,6 +1656,86 @@ def test_the_pin_log_is_truncated_not_merely_escaped(
     assert lines, "no pin-miss record"
     assert "b" * guides.MD5_CHARS in lines[0]
     assert "b" * (guides.MD5_CHARS + 1) not in lines[0]
+
+
+def test_blame_names_an_earlier_answer_when_that_is_the_one_responsible(
+    client, test_db, catalog
+):
+    """The mirror of the test below, and the case the first guard broke.
+
+    Deleting a key outright unanswers every step after it, so the
+    guard that noticed the truncation withheld blame for every step
+    except the last one — five of the six in the shipped wall guide.
+    Clearing a question on screen re-applies the recommendation below
+    it instead, which is what the counterfactual now does, so an
+    earlier step is blameable again when it really is at fault.
+    """
+    for name, tags in (
+        ("e cave wall", ["texture|cave", "size|width|4", "finish|rough"]),
+        ("f cave floor", ["texture|cave", "size|width|4", "finish|rough"]),
+        # Present at the recommended size, absent at the chosen one —
+        # so the size is the culprit and the finish is harmless.
+        ("g rough wall", ["texture|rough_stone", "size|width|1", "finish|rough"]),
+        ("h rough floor", ["texture|rough_stone", "size|width|1", "finish|rough"]),
+    ):
+        shape = "shape|wall" if "wall" in name else "shape|floor"
+        make_blueprint(test_db, name, ["build|separate wall", shape, *tags])
+
+    document = copy.deepcopy(WALL_GUIDE)
+    document["refinements"][0]["choices"] = [
+        {"tag": "texture|cave"},
+        {"tag": "texture|rough_stone"},
+    ]
+    # The culprit comes first and carries a recommendation, so clearing
+    # it leaves the finish below it answered.
+    document["steps"].append(
+        {
+            "key": "size",
+            "prompt": "How wide?",
+            "default": "one",
+            "options": [
+                {
+                    "key": "four",
+                    "title": "4 inch",
+                    "tags": {"require": ["size|width|4"]},
+                },
+                {
+                    "key": "one",
+                    "title": "1 inch",
+                    "tags": {"require": ["size|width|1"]},
+                },
+            ],
+        }
+    )
+    document["steps"].append(
+        {
+            "key": "finish",
+            "prompt": "What finish?",
+            "options": [
+                {
+                    "key": "rough",
+                    "title": "Rough",
+                    "tags": {"require": ["finish|rough"]},
+                }
+            ],
+        }
+    )
+    with test_db.connection() as conn:
+        with conn.cursor(row_factory=dict_row) as curs:
+            guide_sql.upsert_guide(curs, document)
+
+    response = client.get(
+        "/api/guides/wall/availability?method=separate-wall&size=four&finish=rough"
+    )
+
+    assert response.status_code == 200
+    reason = response.json["because"]["texture"]["texture|rough_stone"]
+    assert reason["question"] == "size", (
+        f"blamed {reason.get('question')!r}; an earlier step with a "
+        "recommendation is blameable, because clearing it re-answers it "
+        "rather than truncating the steps below"
+    )
+    assert reason["prompt"] == "How wide?"
 
 
 def test_blame_names_a_later_answer_rather_than_the_one_that_truncates_it(

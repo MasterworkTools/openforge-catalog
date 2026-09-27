@@ -1,13 +1,13 @@
 import { ConfigTags, Blueprint, ConfigPart } from '@/types';
 
-export interface ProcessedTags {
+interface ProcessedTags {
   require: string[];
   deny: string[];
   denyChildren?: string[];
   allow?: string[];
 }
 
-export interface SiblingSelection {
+interface SiblingSelection {
   partName: string;
   tags: string[];
 }

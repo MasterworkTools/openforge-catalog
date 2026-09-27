@@ -24,7 +24,10 @@ function sheet(angles: SpriteAngle[]): GuideBlueprint {
         sprite_metadata: {
           grid_rows: 2,
           grid_cols: 5,
-          tile_size: 240,
+          // Deliberately not 240: the sheet is drawn at `SIZE` per
+          // tile, not at its native `tile_size`, and with the two equal
+          // the assertion below could not tell which one was used.
+          tile_size: 120,
           angles,
           default_angle: 0,
         },
@@ -34,7 +37,9 @@ function sheet(angles: SpriteAngle[]): GuideBlueprint {
 }
 
 const FRONT: SpriteAngle = { index: 0, name: 'front' };
-const LEFT: SpriteAngle = { index: 6, name: 'left' };
+// Index 7, not 6: 6 of a 5-wide sheet is row 1 *and* column 1, so a
+// transposed backgroundPosition would have looked correct.
+const LEFT: SpriteAngle = { index: 7, name: 'left' };
 
 describe('GuideSprite', () => {
   let warn: jest.SpyInstance;
@@ -75,10 +80,12 @@ describe('GuideSprite', () => {
     // the wrong half of the ring while the label went on being right.
     render(<GuideSprite blueprint={sheet([FRONT, LEFT])} view="left" />);
     const drawn = screen.getByLabelText('rough stone wall, seen from the left');
-    // index 6, grid_cols 5 -> row 1, col 1, at SIZE = 240 per tile.
-    expect(drawn).toHaveStyle({ backgroundPosition: '-240px -240px' });
-    // And the whole sheet is scaled to SIZE per tile, not to its
-    // native tile_size, or the offsets above land between frames.
+    // index 7, grid_cols 5 -> row 1, col 2, at SIZE = 240 per tile.
+    // Row and column differ, so swapping them fails.
+    expect(drawn).toHaveStyle({ backgroundPosition: '-480px -240px' });
+    // And the whole sheet is scaled to SIZE per tile, not to the
+    // sheet's own tile_size (120 here), or the offsets land between
+    // frames.
     expect(drawn).toHaveStyle({ backgroundSize: '1200px 480px' });
   });
 

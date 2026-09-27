@@ -101,16 +101,32 @@ export default function GuidePage() {
               every column renders behind `resolved` — so a first-load
               failure would otherwise be a heading, this line, and no
               control able to change the answers that caused it. The
-              answers live in the URL, so dropping them is a plain
-              link rather than anything this component has to hold. */}
-          {!resolved && (
-            <a
-              href={`?guide=${encodeURIComponent(guideKey)}`}
-              className="text-blue-700 underline"
-            >
-              Start this guide over
-            </a>
-          )}
+              answers live in the URL, so dropping them is a plain link
+              rather than anything this component has to hold.
+              A `Link` would not do: the page reads the URL through
+              `useSyncExternalStore` over `popstate`, which pushState
+              does not fire, so it would change the address bar and
+              leave the page on the state that failed.
+
+              Two arms, because `error` covers two failures. If the
+              guide document loaded, the selections are the problem and
+              dropping them is the fix. If it did not — an unknown key
+              — then starting that same guide over reloads the same
+              404, and there is no site nav to escape by, so the way
+              out is the list. */}
+          {!resolved &&
+            (guide ? (
+              <a
+                href={`?guide=${encodeURIComponent(guideKey)}`}
+                className="text-blue-700 underline"
+              >
+                Start this guide over
+              </a>
+            ) : (
+              <a href="./" className="text-blue-700 underline">
+                All guides
+              </a>
+            ))}
         </div>
       )}
       {resolved && (

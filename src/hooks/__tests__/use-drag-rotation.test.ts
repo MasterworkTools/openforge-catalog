@@ -57,9 +57,14 @@ describe('useDragRotation step counting', () => {
     expect(drag(-far)).toEqual([-1]);
   });
 
-  it('reports nothing below the threshold, in either direction', () => {
+  it('reports nothing below the threshold, and one step exactly on it', () => {
     expect(drag(DRAG_THRESHOLD_PX - 1)).toEqual([]);
     expect(drag(-(DRAG_THRESHOLD_PX - 1))).toEqual([]);
+    // Exactly on the threshold counts, so `>=` is not `>`. Every other
+    // distance here is 29, 45, 60 or 90, which cannot tell them apart.
+    expect(drag(DRAG_THRESHOLD_PX)).toEqual([1]);
+    expect(drag(-DRAG_THRESHOLD_PX)).toEqual([-1]);
+    expect(dragBoth(0, DRAG_THRESHOLD_PX).vertical).toEqual(['bottom']);
   });
 
   it('gives a mostly-vertical drag to the vertical handler, and only it', () => {
@@ -80,8 +85,9 @@ describe('useDragRotation step counting', () => {
     // "Whichever axis is winning takes the gesture" means a tie has no
     // winner. This is the only case the `absX > absY` term decides —
     // the vertical branch already claims everything mostly-vertical —
-    // so without it a 45-degree drag would turn the piece on a
-    // coin-toss between two readings of the same gesture.
+    // so without it every exact diagonal would resolve to a sideways
+    // turn, which is one reading of an ambiguous gesture asserted as
+    // if it were the only one.
     const even = dragBoth(DRAG_THRESHOLD_PX * 2, DRAG_THRESHOLD_PX * 2);
     expect(even.horizontal).toEqual([]);
     expect(even.vertical).toEqual([]);
