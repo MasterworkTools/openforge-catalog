@@ -9,18 +9,30 @@ from openforge.db import get_logger
 from .tag_utils import array_to_tag, convert_tag_dict, tag_to_array
 
 
-def _log_query(query: sql.Composed) -> None:
-    """Dump a composed query, but only when something is listening.
+def _log_query(query: sql.Composed | sql.SQL) -> None:
+    """Dump a query, but only when something is listening.
 
     `as_string()` renders the whole composition, which is not free,
     and the argument to `debug()` is evaluated whether or not DEBUG is
     on. The guide's availability pass builds thirty-odd of these per
     request, so the level check comes first rather than inside the
     logger.
+
+    A bare `SQL` is wrapped first, because `join` means opposite
+    things on the two classes: `Composed.join(sep)` joins its parts
+    with the separator, while `SQL.join(seq)` treats *self* as the
+    separator and iterates the argument — so a bare `SQL` logged the
+    string `'\n'` and discarded the statement. One caller passes one.
+
+    Only a bare one. Wrapping a `Composed` again would make it a
+    single element and the separator would never appear, which turns
+    a readable multi-line dump into one run-on line.
     """
     logger = get_logger()
-    if logger.isEnabledFor(logging.DEBUG):
-        logger.debug(query.join("\n").as_string())
+    if not logger.isEnabledFor(logging.DEBUG):
+        return
+    composed = query if isinstance(query, sql.Composed) else sql.Composed([query])
+    logger.debug(composed.join("\n").as_string())
 
 
 def _convert_tag(tag: dict) -> dict:

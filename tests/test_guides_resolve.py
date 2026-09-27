@@ -1566,6 +1566,43 @@ def test_a_question_offers_nothing_when_the_part_above_is_missing(guide):
     assert texture["choices"] == []
 
 
+def test_an_absent_part_zeroes_a_question_across_every_role_it_reaches(guide):
+    """`break`, not `continue`: one empty role empties the question.
+
+    A derived question offers the intersection of what its roles
+    carry, because one answer is required of all of them. If any role
+    cannot be resolved at all, there is no honest intersection to
+    offer — so the question goes empty rather than offering what the
+    *other* roles happen to have, which would be answers that leave a
+    part blank.
+
+    The earlier test reached only one role, where `continue` and
+    `break` produce the same empty list; this one reaches two.
+    """
+    guide["roles"]["base"]["match"] = ["texture"]
+    guide["roles"]["floor"]["query"] = {"require": ["texture|nonesuch"]}
+    # Reaches the wall (which resolves) and the base (which cannot,
+    # because the floor above it did not).
+    guide["refinements"][0]["role"] = "*"
+    guide["refinements"][0]["except_roles"] = ["floor"]
+    guide["steps"][1]["when"] = {"selected": {"method": ["nonesuch"]}}
+
+    resolved = resolve(
+        guide,
+        {"method": "s2w-modular"},
+        find_candidates,
+        facets=find_facets,
+    )
+
+    parts = parts_by_role(resolved)
+    assert parts["wall"]["blueprint"] is not None, "the wall should resolve"
+    assert parts["base"]["blueprint"] is None, "the base should not"
+    texture = {r["key"]: r for r in resolved["refinements"]}["texture"]
+    # Not the wall's textures: an answer the base cannot honour is not
+    # an answer.
+    assert texture["choices"] == []
+
+
 def test_an_off_branch_recommendation_is_not_an_answer_to_read(guide):
     """`_with_defaults` walks reachable questions only.
 

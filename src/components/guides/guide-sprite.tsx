@@ -63,6 +63,17 @@ export function GuideSprite({ blueprint, view = 'front' }: GuideSpriteProps) {
   // sheet in the catalog carries all ten, so this is the sheet that
   // has not been generated yet rather than a case anyone plans for.
   const angle = sprite.angles?.find((a) => a.name === view);
+  if (!angle) {
+    // Says so once rather than only in the aria-label: a sheet that
+    // is missing a side is a generation gap, and the person sees a
+    // pressed "Left" button over a picture of something else with no
+    // other sign that anything is wrong.
+    console.warn(
+      'sprite for %s has no %s angle',
+      blueprint?.blueprint_name ?? 'part',
+      view
+    );
+  }
   const index = angle?.index ?? sprite.default_angle ?? 0;
   const showing = angle
     ? view

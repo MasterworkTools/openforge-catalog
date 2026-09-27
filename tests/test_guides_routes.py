@@ -796,6 +796,80 @@ def test_availability_blames_an_answer_only_when_one_is_responsible(
     assert "prompt" not in reason
 
 
+def test_availability_names_the_answer_responsible_when_one_is(
+    client, test_db, choosy_guide, catalog
+):
+    """The positive half of blame, which no test reached.
+
+    The existing test pins the *guard* — that blame is withheld when
+    removing the only other answer unbuilds the part. It passes with
+    `_blame` stubbed to `return None`, so the branch that actually
+    names a question had never run, while the page renders the phrase
+    it produces.
+
+    Here the size question is the culprit and the method is not:
+    dropping the size brings the cave wall back without changing which
+    parts are in play, so there is an honest answer to point at.
+    """
+    # A texture with a complete set of parts, so nothing but the size
+    # can empty it — towne cannot serve here, because it has no floor
+    # at any size and so is dead for a reason blame must refuse to
+    # pin on the size question.
+    make_blueprint(
+        test_db,
+        "e cave wall wide",
+        ["build|separate wall", "shape|wall", "texture|cave", "size|width|4"],
+    )
+    make_blueprint(
+        test_db,
+        "f cave floor wide",
+        ["build|separate wall", "shape|floor", "texture|cave", "size|width|4"],
+    )
+    make_blueprint(
+        test_db,
+        "g rough wall",
+        ["build|separate wall", "shape|wall", "texture|rough_stone"],
+    )
+    make_blueprint(
+        test_db,
+        "h rough floor",
+        ["build|separate wall", "shape|floor", "texture|rough_stone"],
+    )
+    document = copy.deepcopy(WALL_GUIDE)
+    document["refinements"][0]["choices"] = [
+        {"tag": "texture|cave"},
+        # Complete at no size, missing at 4 inch — so the size is the
+        # single answer responsible, and there is something to name.
+        {"tag": "texture|rough_stone"},
+    ]
+    document["steps"].append(
+        {
+            "key": "size",
+            "prompt": "How wide?",
+            "options": [
+                {
+                    "key": "four",
+                    "title": "4 inch",
+                    "tags": {"require": ["size|width|4"]},
+                }
+            ],
+        }
+    )
+    with test_db.connection() as conn:
+        with conn.cursor(row_factory=dict_row) as curs:
+            guide_sql.upsert_guide(curs, document)
+
+    response = client.get(
+        "/api/guides/wall/availability?method=separate-wall&size=four"
+    )
+
+    assert response.status_code == 200
+    reason = response.json["because"]["texture"]["texture|rough_stone"]
+    assert reason["part"] in ("Wall", "Floor")
+    assert reason["question"] == "size"
+    assert reason["prompt"] == "How wide?"
+
+
 def test_availability_counts_the_pieces_behind_each_part(client, wall_guide, catalog):
     """The "N options" bar reads this.
 
@@ -817,6 +891,59 @@ def test_availability_counts_the_pieces_behind_each_part(client, wall_guide, cat
     }
     for role, part in parts.items():
         assert (role in options) == (part["blueprint"] is not None)
+
+
+def test_the_option_count_is_the_number_this_part_could_have_been(
+    client, choosy_guide, catalog
+):
+    """The number, not merely a number.
+
+    `count(part["query"])` replaced with `count({})` — every part
+    reporting the whole catalog — left every route test green, because
+    the only assertion was `>= 1`. The count drives a bar that says "6
+    options", so being wrong by the size of the catalog matters.
+    """
+    response = client.get(
+        "/api/guides/wall/availability?method=separate-wall&texture=texture%7Ccave"
+    )
+
+    assert response.status_code == 200
+    options = response.json["options"]
+    # Exactly the cave walls this branch can use — two of them — not
+    # every model in the catalog, which is larger. Asserted against a
+    # search for the part's own predicate rather than a literal, so
+    # the number stays honest if the fixture grows.
+    resolved = client.get(
+        "/api/guides/wall/resolve?method=separate-wall&texture=texture%7Ccave"
+    ).json
+    wall = next(p for p in resolved["parts"] if p["role"] == "wall")
+    assert wall["blueprint"] is not None
+    assert options["wall"] == 2
+    # And fewer than the catalog holds, which is what `count({})`
+    # would have reported — the fixture builds five pieces and no one
+    # role can use them all.
+    assert options["wall"] < len(catalog)
+
+
+def test_a_part_that_resolved_to_nothing_has_no_count(client, choosy_guide, catalog):
+    """No count rather than a count of zero.
+
+    The page has nothing to offer for a part it could not fill, so the
+    bar must not appear at all. The previous test could not tell:
+    every part resolved, so `(role in options) == (blueprint is not
+    None)` only ever compared True with True.
+    """
+    response = client.get(
+        "/api/guides/wall/availability?method=separate-wall&texture=texture%7Ctowne"
+    )
+    resolved = client.get(
+        "/api/guides/wall/resolve?method=separate-wall&texture=texture%7Ctowne"
+    ).json
+
+    empty = [p["role"] for p in resolved["parts"] if p["blueprint"] is None]
+    assert empty, "the fixture no longer produces an empty part here"
+    for role in empty:
+        assert role not in response.json["options"]
 
 
 def test_a_pinned_part_is_not_counted_as_a_choice(client, test_db, wall_guide, catalog):
@@ -1338,3 +1465,47 @@ def test_a_pin_names_a_role_this_guide_has(client, wall_guide, catalog):
 
     assert response.status_code == 400
     assert "part.nosuchrole" in response.json["error"]
+
+
+def test_a_pin_that_matches_nothing_is_logged_where_it_can_be_seen(
+    client, wall_guide, catalog, caplog
+):
+    """The one case the fallback's docstring says it wants to see.
+
+    At WARNING, not INFO: nothing sets `LOG_LEVEL` in the production
+    Lambda, so `app.logger` is NOTSET under a root logger the runtime
+    leaves at WARNING, and an INFO line was evaluated and discarded in
+    the one place it was written for.
+    """
+    import logging
+
+    with caplog.at_level(logging.WARNING):
+        response = client.get(
+            "/api/guides/wall/resolve?method=separate-wall&part.wall=nosuchmd5"
+        )
+
+    assert response.status_code == 200
+    assert "nosuchmd5" in caplog.text
+    assert any(r.levelno >= logging.WARNING for r in caplog.records)
+
+
+def test_a_pin_cannot_forge_a_log_line(client, wall_guide, catalog, caplog):
+    """The md5 is a query parameter, so it is attacker-shaped.
+
+    A raw `%s` of `?part.wall=%0A...` splits the record in a Text-format
+    CloudWatch log, and whitespace-only input logged as nothing at all.
+    `%r` and a length cap answer both.
+    """
+    import logging
+
+    forged = "a\nWARNING forged entry"
+    with caplog.at_level(logging.WARNING):
+        client.get(
+            "/api/guides/wall/resolve",
+            query_string={"method": "separate-wall", "part.wall": forged},
+        )
+
+    # The newline is escaped rather than ending the line, and nothing
+    # unbounded reaches the log.
+    assert "\\n" in caplog.text
+    assert "\nWARNING forged entry" not in caplog.text

@@ -508,7 +508,7 @@ describe('config-processing', () => {
     });
   });
 
-    describe('createDeepLink', () => {
+  describe('createDeepLink', () => {
     it('creates deep link with tags only', () => {
       const tags = ['tag1', 'tag2'];
       const result = createDeepLink(tags);

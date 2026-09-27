@@ -6,10 +6,13 @@ import React from 'react';
  * The unwrapped cube: pick a side to look at.
  *
  * The guide's parts list uses this one. `sprite-viewer.tsx` keeps its
- * own, keyed by frame index — the two were not unified, because the
- * guide turns several sheets at once and can only address them by
- * angle *name*, while the viewer turns one sheet and has indices to
- * hand. `useDragRotation` is the part that is genuinely shared.
+ * own and the two were not unified — but not for the reason first
+ * written here: the viewer also works from angle names and maps them
+ * to indices itself. The real difference is that it omits a button
+ * for a side its sheet does not carry, which one widget turning
+ * several sheets at once cannot do, because the sides they are
+ * missing differ. `useDragRotation` is the part that is genuinely
+ * shared.
  *
  * Its second job is the more important one — dragging to spin is not
  * discoverable, and a widget that plainly offers "front, left, top"

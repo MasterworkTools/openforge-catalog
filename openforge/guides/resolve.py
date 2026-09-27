@@ -447,6 +447,12 @@ def _derive_choices(
             if refinement["role"] in ("*", name)
             and name not in refinement.get("except_roles", [])
         ]
+        # Defensive, and known to be: `_available_refinements` has
+        # already dropped every refinement that reaches no in-play
+        # role, using this same test. Deleting it passes the suite.
+        # Kept because this function is also the one a new caller
+        # would reach for, and an empty `roles` here would otherwise
+        # intersect nothing into everything.
         if not roles:
             continue
         offered: set | None = None
@@ -949,7 +955,9 @@ def _relaxable(
     contribution to this role is plain tags. A combination answer
     brings a `deny_children` sweep with it, and removing its tags
     while leaving the sweep would narrow the set rather than widen it
-    — worse than not offering the chip. `browse` is what widens those.
+    — worse than not offering the chip. So a combination answer is not
+    offered as a chip at all, and the way past one is to answer the
+    question differently rather than to drop it in the dialog.
     """
     relax = _browsable(document)
     tags: list[str] = []

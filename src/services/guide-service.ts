@@ -139,7 +139,7 @@ export interface GuideBlueprint {
  * resolve.py names them. A closed union rather than a string index,
  * so a typo is a compile error instead of a silent `undefined`.
  */
-export type PredicateTerm =
+type PredicateTerm =
   | 'require'
   | 'deny'
   | 'accept'
@@ -187,19 +187,29 @@ export interface ResolvedGuide {
 
 export type Selections = Record<string, string>;
 
+/** An error carrying the HTTP status that caused it. */
+export interface HttpError extends Error {
+  status: number;
+}
+
 /**
- * A failed response, in words, for a message someone will read.
+ * A failed response as an Error, with the status kept as a number.
  *
- * The status number and not only `statusText`, because HTTP/2 has no
- * reason phrase: over it `statusText` is the empty string, and the
- * one error the page shows rendered as "Failed to resolve: " with
- * nothing after it. The number also lets a caller tell "no such
- * guide" from "not right now".
+ * The message gets the status too, because HTTP/2 has no reason
+ * phrase: over it `statusText` is the empty string, and the one error
+ * the page shows rendered as "Failed to resolve: " with nothing after
+ * it. But callers that need to *decide* something read `.status` —
+ * telling "no such guide" from "not right now" by grepping a
+ * human-readable sentence built in another module is a coupling
+ * nothing holds in step.
  */
-function describe(response: Response): string {
-  return response.statusText
+function failed(what: string, response: Response): HttpError {
+  const said = response.statusText
     ? `${response.status} ${response.statusText}`
     : `${response.status}`;
+  return Object.assign(new Error(`${what}: ${said}`), {
+    status: response.status,
+  });
 }
 
 export async function fetchGuides(): Promise<GuideSummary[]> {
@@ -210,7 +220,7 @@ export async function fetchGuides(): Promise<GuideSummary[]> {
     return [];
   }
   if (!response.ok) {
-    throw new Error(`Failed to fetch guides: ${describe(response)}`);
+    throw failed('Failed to fetch guides', response);
   }
   const body = await response.json();
   return body.guides;
@@ -226,7 +236,7 @@ export async function fetchGuides(): Promise<GuideSummary[]> {
 export async function fetchGuide(guideKey: string): Promise<GuideDocument> {
   const response = await fetch(`/api/guides/${encodeURIComponent(guideKey)}`);
   if (!response.ok) {
-    throw new Error(`Failed to fetch guide: ${describe(response)}`);
+    throw failed('Failed to fetch guide', response);
   }
   const body = await response.json();
   return body.document;
@@ -273,7 +283,9 @@ export async function resolveGuide(
   const response = await fetch(query ? `${path}?${query}` : path);
   if (!response.ok) {
     const body = await response.json().catch(() => ({}));
-    throw new Error(body.error || `Failed to resolve: ${describe(response)}`);
+    throw body.error
+      ? Object.assign(new Error(body.error), { status: response.status })
+      : failed('Failed to resolve', response);
   }
   return response.json();
 }
@@ -323,7 +335,7 @@ export async function fetchAvailability(
     }`
   );
   if (!response.ok) {
-    throw new Error(`Failed to fetch availability: ${describe(response)}`);
+    throw failed('Failed to fetch availability', response);
   }
   const body = await response.json();
   return {
@@ -341,10 +353,10 @@ export async function fetchAvailability(
  * the piece on screen is rough stone and the answer beside it is not.
  * So the questions that piece *answers* are reset to what it is.
  *
- * Only the browsable ones. The rest were not relaxed for the browse
- * in the first place, so whatever was picked already agrees with
- * them, and a question the dialog would not let you cross has no
- * business being rewritten by it.
+ * Only the browsable ones. The rest were never relaxed in the dialog,
+ * so whatever was picked already agrees with them, and a question the
+ * dialog would not let you cross has no business being rewritten by
+ * it.
  *
  * A question the piece answers with nothing is cleared rather than
  * left: a wall with no peg tag is an answer of "no" to pegs, and
@@ -391,8 +403,19 @@ function answeredBy(
     return wanted.every((tag) => carried.has(tag));
   });
   if (matched.length === 0) return null;
-  // Most tags first. A subset and its superset both match the piece
-  // carrying the superset, and only the superset describes it.
+  // The answer already given wins when it is one of the matches.
+  // Substitution is many-to-one — a stone brick facade and a mortar
+  // and stone wall both stand on a `texture|foundation` base — so the
+  // reverse lookup is genuinely ambiguous, and a piece that satisfies
+  // the current answer is no evidence for any other. Without this,
+  // pinning a foundation base under a stone brick wall reported
+  // mortar and stone and changed the wall to match.
+  if (matched.some((choice) => choice.tag === refinement.selected)) {
+    return refinement.selected;
+  }
+  // Otherwise most tags first. A subset and its superset both match
+  // the piece carrying the superset, and only the superset describes
+  // it.
   matched.sort((a, b) => b.tag.split(',').length - a.tag.split(',').length);
   return matched[0].tag;
 }

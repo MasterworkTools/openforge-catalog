@@ -494,3 +494,42 @@ def test_namespace_facets_carry_the_tag_description(test_db):
     assert by_tag["connection|magnetic"]["count"] == 1
     # A tag nobody has described is still an answer, just a quiet one.
     assert by_tag["connection|openlock"]["blurb"] is None
+
+
+def test_a_bare_sql_statement_logs_itself_not_the_separator(caplog):
+    """`join` means opposite things on `SQL` and `Composed`.
+
+    `Composed.join(sep)` joins its parts with the separator;
+    `SQL.join(seq)` treats *self* as the separator and iterates the
+    argument. One caller passes a bare `SQL`, and it used to log the
+    string `'\\n'` with the statement thrown away — visible only once
+    somebody turned DEBUG on, which is exactly when they needed it.
+    """
+    import logging
+
+    from psycopg import sql
+
+    from openforge.db.sql.tags import _log_query
+
+    with caplog.at_level(logging.DEBUG):
+        _log_query(sql.SQL("DELETE FROM tags"))
+        _log_query(sql.Composed([sql.SQL("SELECT 1"), sql.SQL("FROM tags")]))
+
+    assert "DELETE FROM tags" in caplog.text
+    assert "SELECT 1\nFROM tags" in caplog.text
+
+
+def test_a_query_is_not_rendered_when_nothing_is_listening(caplog):
+    """The level check is the point: `as_string()` is not free, and the
+    guide's availability pass builds thirty-odd of these per request.
+    """
+    import logging
+
+    from psycopg import sql
+
+    from openforge.db.sql.tags import _log_query
+
+    with caplog.at_level(logging.WARNING):
+        _log_query(sql.SQL("DELETE FROM tags"))
+
+    assert caplog.text == ""

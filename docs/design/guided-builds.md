@@ -454,6 +454,15 @@ Proposed endpoints (four shipped — the fourth, `/availability`, was split out 
   browser caching and edge caching additionally needs a cache-policy change in
   openforge-infra-frontend. Still not an API change, which is the point.
 
+- Pinning. A selection may also name a *role* rather than a question — `part.wall=<md5>`
+  — and that piece wins outright over anything the predicates would have recommended.
+  By md5 because that is what the catalog is addressed by: the file keeps it across a
+  move or a rename, so a shared link keeps pointing at the piece rather than at a row a
+  rescan may have replaced. A pin whose file has gone falls back to the recommendation
+  rather than erroring, because a guide URL outlives the catalog it was made from.
+  Answering a question releases the pins on the parts that question decides, or the
+  answer would appear to do nothing.
+
 - `GET /api/guides/<key>/availability` — the same selections, answered with which
   offered answers would leave a part empty, why, and how many pieces each part could
   have been. Its own endpoint because it costs several times what the parts cost — it

@@ -36,6 +36,13 @@ const ResultsContainer = ({ configValues, parentTags = [], siblingSelections = [
   const paging = useTagContext((state) => state.paging);
   const selectedTags = useTagContext((state) => state.selectedTags);
   const denyTags = useTagContext((state) => state.denyTags);
+  // Read back so the change test below can see them. Without these
+  // the merge carried the sweep but the comparison ignored it, so a
+  // config change confined to `deny_children`/`allow` was computed,
+  // merged, and then never written — the widening bug again, one
+  // step further along.
+  const denyChildrenTags = useTagContext((state) => state.denyChildrenTags);
+  const allowTags = useTagContext((state) => state.allowTags);
   const searchTerm = useTagContext((state) => state.searchTerm);
   const removeTag = useTagContext((state) => state.removeTag);
   const clearTags = useTagContext((state) => state.clearTags);
@@ -125,11 +132,16 @@ const ResultsContainer = ({ configValues, parentTags = [], siblingSelections = [
           ...(derivedTags.allow ? { allow: derivedTags.allow } : {})
         };
 
-        // Compare arrays to prevent infinite loops
-        const requireChanged = !areTagArraysUnsortedEqual(mergedTags.require || [], selectedTags);
-        const denyChanged = !areTagArraysUnsortedEqual(mergedTags.deny || [], denyTags);
+        // Compare arrays to prevent infinite loops. All four terms,
+        // not just the two the tag tree can edit: the other two are
+        // still part of what the caller asked for.
+        const changed =
+          !areTagArraysUnsortedEqual(mergedTags.require || [], selectedTags) ||
+          !areTagArraysUnsortedEqual(mergedTags.deny || [], denyTags) ||
+          !areTagArraysUnsortedEqual(mergedTags.denyChildren || [], denyChildrenTags) ||
+          !areTagArraysUnsortedEqual(mergedTags.allow || [], allowTags);
 
-        if (requireChanged || denyChanged) {
+        if (changed) {
           setTagState(mergedTags);
         }
       }
@@ -138,7 +150,7 @@ const ResultsContainer = ({ configValues, parentTags = [], siblingSelections = [
         isCancelled = true;
       };
     }
-  }, [configValues, parentTags, siblingSelections, fetchData, setTagState, hasSetTagState, selectedTags, denyTags]);
+  }, [configValues, parentTags, siblingSelections, fetchData, setTagState, hasSetTagState, selectedTags, denyTags, denyChildrenTags, allowTags]);
 
   const handleSelect = (blueprint: Blueprint) => {
     setSelectedBlueprint(blueprint);

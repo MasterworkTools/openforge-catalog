@@ -1,10 +1,12 @@
 import copy
+import importlib.resources as impresources
 import re
 from pathlib import Path
 
 import pytest
 import yaml
 
+import openforge.db.fixtures.guides as guide_fixtures
 from openforge.guides.validation import validate_guide_document
 
 WALL_GUIDE = {
@@ -260,9 +262,17 @@ def test_every_shipped_guide_fixture_is_a_valid_guide():
     The wall guide is 850 lines and uses every term the format has, so
     it is the one most able to drift away from the schema.
     """
-    fixtures = sorted(Path("openforge/db/fixtures/guides").glob("*.yaml"))
-    if not fixtures:
-        pytest.skip("guide fixtures not in this checkout")
+    # Located as a package resource, not by a path relative to the
+    # working directory. The first version of this globbed
+    # `openforge/db/fixtures/guides` and skipped on an empty result,
+    # so run from anywhere but the repo root it reported a green
+    # SKIPPED and validated nothing — a guard that guarded nothing.
+    fixtures = [
+        entry
+        for entry in impresources.files(guide_fixtures).iterdir()
+        if entry.name.endswith(".yaml")
+    ]
+    assert fixtures, "no guide fixtures found — this test must not pass quietly"
 
     for path in fixtures:
         try:

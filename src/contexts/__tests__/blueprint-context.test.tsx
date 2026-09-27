@@ -203,6 +203,40 @@ describe('BlueprintContext', () => {
       expect(mockState.setSelectedBlueprint).not.toHaveBeenCalled();
     });
 
+    it('opens on a new md5 over the one it seeded itself', async () => {
+      // "Is anything selected" is permanently true after the first
+      // open, so a guard written that way makes the effect ignore the
+      // only prop it depends on. What it must not clobber is a piece
+      // the *person* chose — not one it put there itself.
+      const second = { ...fetched, id: 'second', file_md5: 'second-md5' };
+      mockState.fetchBlueprintByMd5.mockImplementation(async (md5: string) =>
+        md5 === 'second-md5' ? second : fetched
+      );
+      // Selecting records what landed, as the real store does.
+      mockState.setSelectedBlueprint.mockImplementation((bp: Blueprint) => {
+        mockState.selectedBlueprint = bp;
+      });
+
+      const { rerender } = render(
+        <BlueprintProvider initialMd5="pinned-md5">
+          <div />
+        </BlueprintProvider>
+      );
+      await waitFor(() =>
+        expect(mockState.setSelectedBlueprint).toHaveBeenCalledWith(fetched)
+      );
+
+      rerender(
+        <BlueprintProvider initialMd5="second-md5">
+          <div />
+        </BlueprintProvider>
+      );
+
+      await waitFor(() =>
+        expect(mockState.setSelectedBlueprint).toHaveBeenCalledWith(second)
+      );
+    });
+
     it('leaves the dialog usable when the blueprint has gone', async () => {
       // A part whose file was replaced since the link was made is a
       // reason to open on nothing, not to break the list.

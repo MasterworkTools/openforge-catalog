@@ -253,6 +253,10 @@ def _counter(curs):
     return count
 
 
+#: An md5 is 32 hex characters; anything longer is not one.
+MD5_CHARS = 32
+
+
 def _pinned_finder(curs):
     """The piece someone pinned to a role, by md5.
 
@@ -265,13 +269,26 @@ def _pinned_finder(curs):
     that has since been rescanned — and a caller bug that sends a
     uuid where an md5 belongs produce the identical silent `None`,
     and only one of those is fine.
+
+    At WARNING, not INFO. A pin that no longer resolves is an anomaly
+    rather than a milestone, and more practically: nothing sets
+    `LOG_LEVEL` in the production Lambda, so `app.logger` is NOTSET
+    under a root logger the runtime leaves at WARNING. An INFO line
+    here was evaluated and discarded in the one place it was written
+    for.
+
+    `%r`, and the value truncated, because the md5 is a query
+    parameter: a raw `%s` of `?part.wall=%0Aforged` splits the log
+    line, and whitespace-only input logged as nothing at all.
     """
 
     def find_pinned(md5: str) -> dict | None:
         try:
             found = blueprint_sql.get_blueprint_by_md5(curs, md5)
         except NotFound:
-            current_app.logger.info("guide pin %s matches no blueprint", md5)
+            current_app.logger.warning(
+                "guide pin %r matches no blueprint", md5[:MD5_CHARS]
+            )
             return None
         _attach_tags(curs, [found])
         return found

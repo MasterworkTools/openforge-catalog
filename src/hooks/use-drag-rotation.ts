@@ -80,10 +80,10 @@ export function useDragRotation({
       if (absY > absX && absY >= DRAG_THRESHOLD_PX) {
         onVertical?.(deltaY < 0 ? 'top' : 'bottom');
       } else if (absX > absY && absX >= DRAG_THRESHOLD_PX) {
-        // Truncate toward zero, not down. `Math.floor` gave -1 for
-        // half a threshold left and 0 for half a threshold right, so
-        // the same gesture turned one step further one way than the
-        // other — and this is now the shared contract, not one
+        // Truncate toward zero, not down. Below the threshold nothing
+        // happens at all, so the smallest gesture that shows it is
+        // one and a half: `Math.floor` turned that 1 step right and 2
+        // steps left. This is the shared contract now, not one
         // component's quirk.
         onHorizontal(Math.trunc(deltaX / DRAG_THRESHOLD_PX));
       }

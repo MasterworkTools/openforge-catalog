@@ -8,6 +8,7 @@ import {
   within,
 } from '@testing-library/react';
 import GuidePage from '../guide-page';
+import type { ResolvedGuide } from '@/services/guide-service';
 
 /**
  * The part-selection modal is the catalog's own, and it drags in the
@@ -32,12 +33,18 @@ jest.mock('../../part-selection-modal', () => ({
   },
 }));
 
-const RESOLVED = {
+const RESOLVED: ResolvedGuide = {
   steps: [
     {
       key: 'method',
       prompt: 'How do you want to build it?',
       selected: null,
+      // `resolve()` sets these on every question it returns, so the
+      // fixture does too — the annotation above is what makes that a
+      // compile error rather than a silent divergence from the API.
+      unavailable: [],
+      because: {},
+      recommended: null,
       options: [
         {
           key: 'separate-wall',
@@ -61,9 +68,9 @@ const RESOLVED = {
   refinements: [],
 };
 
-const EMPTY_RESOLVED = { steps: [], parts: [], refinements: [] };
+const EMPTY_RESOLVED: ResolvedGuide = { steps: [], parts: [], refinements: [] };
 
-const RESOLVED_WITH_PARTS = {
+const RESOLVED_WITH_PARTS: ResolvedGuide = {
   ...RESOLVED,
   steps: [{ ...RESOLVED.steps[0], selected: 'separate-wall' }],
   parts: [
@@ -73,16 +80,6 @@ const RESOLVED_WITH_PARTS = {
       under: null,
       query: {
         require: ['shape|wall', 'texture|dungeon_stone'],
-        deny: [],
-        accept: [],
-        deny_children: ['component|wall'],
-        allow: ['shape|square'],
-      },
-      // The same thing minus the texture, which is a preference
-      // rather than a fit — so a test can tell which one the dialog
-      // opened on.
-      browse: {
-        require: ['shape|wall'],
         deny: [],
         accept: [],
         deny_children: ['component|wall'],
@@ -129,7 +126,6 @@ const RESOLVED_WITH_PARTS = {
       title: 'Base for the wall',
       under: 'wall',
       query: { require: ['shape|base'] },
-      browse: { require: ['shape|base'] },
       relaxable: [],
       pinned: false,
       blueprint: {
@@ -169,7 +165,6 @@ const RESOLVED_WITH_PARTS = {
       title: 'Base for the floor',
       under: 'floor',
       query: { require: ['shape|base'] },
-      browse: { require: ['shape|base'] },
       relaxable: [],
       pinned: false,
       blueprint: null,
@@ -181,6 +176,9 @@ const RESOLVED_WITH_PARTS = {
       role: '*',
       prompt: 'Texture',
       from_namespace: 'texture',
+      unavailable: [],
+      because: {},
+      recommended: null,
       selected: null,
     },
     // A closed list, which is drawn as buttons rather than a text box.
@@ -195,6 +193,9 @@ const RESOLVED_WITH_PARTS = {
         // drop when this answer is not on offer.
         { tag: 'texture|cave', blurb: 'Lumpy and irregular.' },
       ],
+      unavailable: [],
+      because: {},
+      recommended: null,
       selected: null,
     },
     // A toggle rather than a namespace pick: the two arms of the
@@ -206,6 +207,9 @@ const RESOLVED_WITH_PARTS = {
       role: 'wall',
       prompt: 'Side locks',
       on_tags: ['connection|openlock'],
+      unavailable: [],
+      because: {},
+      recommended: null,
       selected: null,
     },
   ],
@@ -805,6 +809,42 @@ describe('GuidePage', () => {
       ).toBeNull();
     });
 
+    it('turns the same distance whichever way the drag goes', async () => {
+      // 45px is one and a half thresholds. `Math.floor` gave 1 step
+      // right and -2 left, so the same gesture turned further one way
+      // than the other; `Math.trunc` gives 1 either way. Both the
+      // existing page drags are rightward and whole multiples, where
+      // the two agree — which is why the fix was unpinned.
+      visit('?guide=wall&method=separate-wall');
+      mockFetch((url) =>
+        url.includes('/resolve') ? RESOLVED_WITH_PARTS : GUIDE_DOCUMENT
+      );
+
+      render(<GuidePage />);
+      const sprite = await screen.findByLabelText(
+        /a dungeon stone base, seen from the front/
+      );
+      const surface = sprite.closest('.guide-parts')!.querySelector('.select-none')!;
+
+      // On the side widget rather than a picture: it is keyed by
+      // angle name, so it reports the view the drag reached whether
+      // or not a given sheet has a frame for it.
+      expect(screen.getByRole('button', { name: 'front' })).toHaveAttribute(
+        'aria-pressed',
+        'true'
+      );
+
+      // One and a half thresholds to the LEFT: one step back, the
+      // same distance the identical rightward drag would travel.
+      fireEvent.mouseDown(surface, { button: 0, clientX: 100, clientY: 100 });
+      fireEvent.mouseMove(window, { clientX: 55, clientY: 100 });
+      fireEvent.mouseUp(window);
+
+      expect(
+        screen.getByRole('button', { name: 'front-left' })
+      ).toHaveAttribute('aria-pressed', 'true');
+    });
+
     it('does not open the tag search at the end of a drag', async () => {
       // The picture is also the button that opens the search, so
       // letting go after turning it must not count as a click.
@@ -954,6 +994,110 @@ describe('GuidePage', () => {
 
       expect(await screen.findByRole('button', { name: 'Cave' })).not.toBeDisabled();
       expect(await screen.findByText('a dungeon stone wall')).toBeInTheDocument();
+    });
+
+    it('does not apply one answer\'s dead-set to another answer\'s parts', async () => {
+      // Availability and resolve are separate round trips, so they can
+      // land out of order. The dead-set hides answers and drives the
+      // "N options" bar, so pairing it with the wrong resolution
+      // removes options that really are there. The pairing is by the
+      // selections each one answers, not by the URL — the resolution
+      // is deliberately allowed to lag.
+      visit('?guide=wall&method=separate-wall');
+      const seen: string[] = [];
+      global.fetch = jest.fn((url: string) => {
+        seen.push(url);
+        // Availability answers for the *new* selections; resolve
+        // fails, so the page keeps the parts for the old ones.
+        // Only the *second* availability — the one for the answered
+        // texture — carries a dead-set. The first must stay empty, or
+        // the assertion cannot tell a correctly paired bar from a
+        // mismatched one.
+        const answered = url.includes('texture=');
+        const body = url.includes('/availability')
+          ? answered
+            ? {
+                unavailable: { texture: ['texture|cave'] },
+                because: {},
+                options: { wall: 4 },
+              }
+            : { unavailable: {}, because: {}, options: {} }
+          : url.includes('/resolve')
+            ? RESOLVED_WITH_PARTS
+            : GUIDE_DOCUMENT;
+        const failing = url.includes('/resolve') && answered;
+        return Promise.resolve({
+          ok: !failing,
+          status: failing ? 500 : 200,
+          statusText: failing ? 'Server Error' : 'OK',
+          json: () => Promise.resolve(body),
+        });
+      }) as unknown as typeof fetch;
+
+      render(<GuidePage />);
+      await screen.findByRole('button', { name: 'Cave' });
+
+      // Answer the texture. Resolve 500s and the old parts are kept;
+      // availability succeeds for the new selections.
+      fireEvent.click(screen.getByRole('button', { name: 'Cave' }));
+
+      // Wait for the *error* rather than for the request to be sent:
+      // it proves the failed resolve was processed and the old parts
+      // kept, and the availability effect runs after it in the same
+      // tick, so its response has landed too. Asserting on the
+      // request alone let both arms of the mutation look identical.
+      await screen.findByText(/Server Error/);
+      await waitFor(() =>
+        expect(
+          seen.filter((u) => u.includes('/availability')).length
+        ).toBeGreaterThan(1)
+      );
+
+      // The new dead-set must not reach the old parts: Cave is still
+      // offered, and no options bar from the mismatched payload.
+      expect(screen.getByRole('button', { name: 'Cave' })).toBeInTheDocument();
+      expect(screen.queryByRole('button', { name: '4 options' })).toBeNull();
+    });
+
+    it('keeps the questions on screen when a later resolve fails', async () => {
+      // The selections live only in the URL, so dropping the last good
+      // resolution leaves a heading, a red line, and no control that
+      // can change the state that caused the failure.
+      visit('?guide=wall&method=separate-wall');
+      let calls = 0;
+      global.fetch = jest.fn((url: string) => {
+        if (!url.includes('/resolve')) {
+          return Promise.resolve({
+            ok: true,
+            status: 200,
+            json: () =>
+              Promise.resolve(
+                url.includes('/availability')
+                  ? { unavailable: {}, because: {}, options: {} }
+                  : GUIDE_DOCUMENT
+              ),
+          });
+        }
+        calls += 1;
+        // The first resolve succeeds; the second fails.
+        const failing = calls > 1;
+        return Promise.resolve({
+          ok: !failing,
+          status: failing ? 500 : 200,
+          statusText: failing ? 'Server Error' : 'OK',
+          json: () => Promise.resolve(failing ? {} : RESOLVED_WITH_PARTS),
+        });
+      }) as unknown as typeof fetch;
+
+      render(<GuidePage />);
+      await screen.findByRole('button', { name: 'Cave' });
+
+      fireEvent.click(screen.getByRole('button', { name: 'Cave' }));
+
+      // The error is shown, and the questions survive it, so the
+      // person can answer their way back out.
+      await screen.findByText(/500/);
+      expect(screen.getByRole('button', { name: 'Dungeon stone' })).toBeInTheDocument();
     });
 
     it('shows which option is the chosen one', async () => {
@@ -1330,6 +1474,27 @@ describe('GuidePage', () => {
       expect(
         await screen.findByText("No guide called 'nonesuch'.")
       ).toBeInTheDocument();
+    });
+
+    it('does not claim a guide is missing when the server merely failed', async () => {
+      // The side the distinction was added for, and the side that had
+      // no test: a 500 or a dropped connection told the person their
+      // guide did not exist and sent them off to check a URL that was
+      // fine.
+      visit('?guide=wall');
+      global.fetch = jest.fn(() =>
+        Promise.resolve({
+          ok: false,
+          status: 500,
+          statusText: 'Server Error',
+          json: () => Promise.resolve({}),
+        })
+      ) as unknown as typeof fetch;
+
+      render(<GuidePage />);
+
+      expect(await screen.findByText(/Could not load 'wall'/)).toBeInTheDocument();
+      expect(screen.queryByText("No guide called 'wall'.")).toBeNull();
     });
 
     it('shows the error when the selections do not describe a state', async () => {
@@ -1830,6 +1995,68 @@ describe('inspecting a part', () => {
     const search = decodeURIComponent(window.location.search);
     expect(search).toContain('floor-texture=texture|dungeon_stone');
     expect(search).toContain('part.wall=chosen-md5');
+  });
+
+  it('reads a toggle answer as words, not as machinery', async () => {
+    // A settled toggle folds to "Yes"/"No". Both arms of that were
+    // extracted into `answerLabel` and neither was covered before or
+    // after — restoring the raw "on"/"off" passed the suite.
+    visit('?guide=wall&method=separate-wall&side-locks=on');
+    mockFetch((url) =>
+      url.includes('/resolve')
+        ? {
+            ...RESOLVED_WITH_PARTS,
+            refinements: RESOLVED_WITH_PARTS.refinements.map((r) =>
+              r.key === 'side-locks' ? { ...r, selected: 'on' } : r
+            ),
+          }
+        : GUIDE_DOCUMENT
+    );
+
+    render(<GuidePage />);
+    await screen.findByText('a dungeon stone wall');
+
+    expect(screen.getByText('Yes')).toBeInTheDocument();
+    expect(screen.queryByText('on')).toBeNull();
+  });
+
+  it('marks the assumed answer differently from a chosen one', async () => {
+    // The dashed outline says "this is what the parts are built from,
+    // but nobody has said so" — `answerBorder`'s middle arm, which
+    // was removable green.
+    visit('?guide=wall&method=separate-wall');
+    mockFetch((url) =>
+      url.includes('/resolve')
+        ? {
+            ...RESOLVED_WITH_PARTS,
+            refinements: RESOLVED_WITH_PARTS.refinements.map((r) =>
+              r.key === 'texture'
+                ? {
+                    ...r,
+                    recommended: 'texture|dungeon_stone',
+                    choices: [
+                      { tag: 'texture|dungeon_stone', title: 'Dungeon stone' },
+                      { tag: 'texture|cave', title: 'Cave' },
+                    ],
+                  }
+                : r
+            ),
+          }
+        : GUIDE_DOCUMENT
+    );
+
+    render(<GuidePage />);
+    // Scoped to the wall texture: the floor texture offers a Dungeon
+    // stone of its own, and only this one has a recommendation.
+    const texture = await screen.findByRole('group', { name: 'Texture' });
+    const assumed = within(texture).getByRole('button', {
+      name: /Dungeon stone/,
+    });
+
+    expect(assumed.className).toContain('border-dashed');
+    expect(
+      within(texture).getByRole('button', { name: 'Cave' }).className
+    ).not.toContain('border-dashed');
   });
 
   it('never explains away the answer you actually gave', async () => {

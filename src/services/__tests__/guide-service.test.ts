@@ -268,6 +268,31 @@ describe('fetchAvailability', () => {
       'Failed to fetch availability: 503'
     );
   });
+
+  it('carries the status as a number, not only in the sentence', async () => {
+    // A caller deciding "no such guide" from "not right now" reads
+    // this rather than grepping the message, which is formatted here
+    // and read in another module.
+    respondWith({ ok: false, status: 503, statusText: 'Unavailable' });
+
+    await expect(fetchAvailability('wall', {})).rejects.toMatchObject({
+      status: 503,
+    });
+  });
+});
+
+describe('the status on a failed guide fetch', () => {
+  it('is 404 when the guide is not there', async () => {
+    respondWith({ ok: false, status: 404, statusText: 'Not Found' });
+
+    await expect(fetchGuide('wall')).rejects.toMatchObject({ status: 404 });
+  });
+
+  it('is the real status when the server merely failed', async () => {
+    respondWith({ ok: false, status: 500, statusText: 'Server Error' });
+
+    await expect(fetchGuide('wall')).rejects.toMatchObject({ status: 500 });
+  });
 });
 
 /** A refinement, with only the fields the function under test reads. */
@@ -339,6 +364,64 @@ describe('impliedBy', () => {
     );
   });
 
+  it('keeps the answer given when a substitution is many-to-one', () => {
+    // `substitute` is not injective: a stone brick facade and a
+    // mortar and stone wall both stand on a `texture|foundation`
+    // base. The reverse lookup therefore matches two choices, and
+    // picking either by position reported the wrong one — pinning a
+    // foundation base under a stone brick wall turned the wall into
+    // mortar and stone. The answer already given is the tiebreak.
+    const texture = refinement({
+      selected: 'texture|stone_brick',
+      choices: [
+        // Ordered as the real fixture is, with mortar and stone
+        // ahead of stone brick, which is what made position wrong.
+        { tag: 'texture|mortar_and_stone' },
+        { tag: 'texture|stone_brick' },
+      ],
+      substitute: {
+        'texture|stone_brick': { 'wall-base': 'texture|foundation' },
+        'texture|mortar_and_stone': { 'wall-base': 'texture|foundation' },
+      },
+    });
+
+    const changes = impliedBy(
+      { tags: ['shape|base', 'texture|foundation'] },
+      'wall-base',
+      [texture]
+    );
+
+    // No change at all: the piece agrees with what was already said.
+    expect(changes).toEqual({});
+  });
+
+  it('picks one when a many-to-one match does not include the answer', () => {
+    // Same collision, but the current answer is not among the
+    // matches, so there is no tiebreak and it has to choose. What it
+    // must not do is return nothing and clear a question the piece
+    // demonstrably answers.
+    const texture = refinement({
+      selected: 'texture|dungeon_stone',
+      choices: [
+        { tag: 'texture|mortar_and_stone' },
+        { tag: 'texture|stone_brick' },
+      ],
+      substitute: {
+        'texture|stone_brick': { 'wall-base': 'texture|foundation' },
+        'texture|mortar_and_stone': { 'wall-base': 'texture|foundation' },
+      },
+    });
+
+    const changes = impliedBy(
+      { tags: ['shape|base', 'texture|foundation'] },
+      'wall-base',
+      [texture]
+    );
+
+    expect(Object.keys(changes)).toEqual(['texture']);
+    expect(changes.texture).not.toBeNull();
+  });
+
   it('clears a question the piece answers with nothing', () => {
     const pegs = refinement({
       key: 'pegs',
@@ -348,6 +431,48 @@ describe('impliedBy', () => {
 
     expect(impliedBy({ tags: ['shape|wall'] }, 'wall', [pegs])).toEqual({
       pegs: null,
+    });
+  });
+
+  it('requires every tag of a combination, not merely one', () => {
+    // A combination answer is a set. A piece carrying half of it is
+    // not that answer, and reporting it would write an answer the
+    // piece does not have — `.every` rather than `.some`, which no
+    // test could tell apart while every fixture carried all the tags
+    // or none of them.
+    const clips = refinement({
+      key: 'base-clips',
+      from_combination: 'connection',
+      selected: null,
+      choices: [
+        { tag: 'connection|magnetic,connection|openlock|topless' },
+      ],
+    });
+
+    const changes = impliedBy(
+      // Magnets, but not topless: half the combination.
+      { tags: ['connection|magnetic'] },
+      'wall-base',
+      [clips]
+    );
+
+    expect(changes).toEqual({});
+  });
+
+  it('skips a role the question excepts', () => {
+    // `except_roles` is how a question says it does not speak for a
+    // part. Ignoring it let a pinned floor rewrite an answer that was
+    // never about the floor.
+    const texture = refinement({
+      selected: 'texture|cave',
+      except_roles: ['floor'],
+      choices: [{ tag: 'texture|cave' }, { tag: 'texture|towne' }],
+    });
+
+    expect(impliedBy({ tags: ['texture|towne'] }, 'floor', [texture])).toEqual({});
+    // And still speaks for a role it does not except.
+    expect(impliedBy({ tags: ['texture|towne'] }, 'wall', [texture])).toEqual({
+      texture: 'texture|towne',
     });
   });
 

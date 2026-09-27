@@ -253,12 +253,6 @@ function AnsweredStep({
 }
 
 /**
- * One answer to one question, whatever kind of question it is.
- *
- * Every answer drawn here is one you can pick. The ones the catalog
- * has nothing for never reach this — see `Missing`.
- */
-/**
  * How an answer is outlined: chosen, assumed, or neither.
  *
  * Dashed for assumed, not solid — that is what the parts are being
@@ -271,6 +265,12 @@ function answerBorder(chosen: boolean, assumed?: boolean): string {
   return 'border-gray-300';
 }
 
+/**
+ * One answer to one question, whatever kind of question it is.
+ *
+ * Every answer drawn here is one you can pick. The ones the catalog
+ * has nothing for never reach this — see `Missing`.
+ */
 function Answer({
   label,
   hint,
@@ -480,14 +480,6 @@ function RefinementGroup({
 }
 
 /**
- * A settled question, folded to its answer.
- *
- * The same shape as a settled step, and for the same reason: the
- * column grows as you go, and a question that is answered keeps only
- * what it answered. Clicking it opens it again, which is also how you
- * clear it — the answers inside toggle.
- */
-/**
  * What a settled refinement reads as, folded to one line.
  *
  * Three kinds of answer arrive here: a choice from a list, which
@@ -505,6 +497,14 @@ function answerLabel(
   return refinement.selected ?? '';
 }
 
+/**
+ * A settled question, folded to its answer.
+ *
+ * The same shape as a settled step, and for the same reason: the
+ * column grows as you go, and a question that is answered keeps only
+ * what it answered. Clicking it opens it again, which is also how you
+ * clear it — the answers inside toggle.
+ */
 function AnsweredRefinement({
   refinement,
   showPrompt,
@@ -681,11 +681,11 @@ function Toggle({
  *
  * The fallback, not the norm. The catalog *does* now answer "which of
  * these tags do the candidates carry" — `_derive_choices` does it for
- * every namespace refinement, and every one in the wall fixture comes
- * back with a list, which goes to `ChoicePicker` instead. This is
- * reached only when a derivation finds nothing at all, which means
- * the part it applies to matched nothing: a guide under construction,
- * or a catalog that lost the pieces.
+ * every namespace refinement, and the answer usually goes to
+ * `ChoicePicker` instead. Usually, not always: a derivation comes
+ * back empty when the parts it applies to match nothing, and the wall
+ * fixture reaches that — a one-piece wall with DragonLock side clips
+ * has no clip combinations to offer, because no such wall exists.
  *
  * So it is deliberately plain, and typing a tag here is a long shot
  * rather than the intended route. The backend rejects a tag from the

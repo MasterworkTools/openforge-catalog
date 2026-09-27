@@ -7,6 +7,7 @@ import {
 } from 'react';
 import {
   GuideDocument,
+  HttpError,
   ResolvedGuide,
   Selections,
   fetchGuide,
@@ -54,6 +55,13 @@ export function useGuideState(guideKey: string | null | undefined) {
   // was merely late; it now hides answers outright and drives the
   // "N options" bar, so applying one answer's dead-set to the next
   // answer's resolution removes options that are really there.
+  //
+  // Matched against the resolution's selections, not the URL's. The
+  // page draws the dead-set over `mine.resolved`, and that is allowed
+  // to lag — a failed resolve deliberately keeps the last good one —
+  // so comparing against the URL let the *new* dead-set land on the
+  // *old* parts. With a resolve error that pairing is not a flicker,
+  // it stays.
   const [dead, setDead] = useState<DeadAnswers | null>(null);
 
   // Only the parameters this guide defines. Everything else in the URL
@@ -74,7 +82,10 @@ export function useGuideState(guideKey: string | null | undefined) {
         : JSON.stringify(Object.entries(selections).sort()),
     [selections]
   );
-  const myDead = dead && dead.key === guideKey && dead.asked === asked ? dead : null;
+  const myDead =
+    dead && mine && dead.key === guideKey && dead.asked === mine.asked
+      ? dead
+      : null;
 
   useEffect(() => {
     // `selections === null` is also the lag guard: it is derived from
@@ -86,7 +97,7 @@ export function useGuideState(guideKey: string | null | undefined) {
     resolveGuide(guideKey, selections)
       .then((result) => {
         if (!current) return;
-        setAnswer({ key: guideKey, resolved: result, error: null });
+        setAnswer({ key: guideKey, asked, resolved: result, error: null });
       })
       .catch((e: Error) => {
         if (!current) return;
@@ -97,16 +108,24 @@ export function useGuideState(guideKey: string | null | undefined) {
         // line, and no control on screen that can change the state that
         // caused the failure. A stale shared link would be a dead end,
         // and so would one dropped connection on an ordinary click.
-        setAnswer((prev) => ({
-          key: guideKey,
-          resolved: prev?.key === guideKey ? prev.resolved : null,
-          error: e.message,
-        }));
+        setAnswer((prev) => {
+          const kept = prev?.key === guideKey ? prev : null;
+          return {
+            key: guideKey,
+            // The selections the *kept* parts answer, so a dead-set
+            // for the new ones is not applied to them.
+            asked: kept?.asked ?? asked,
+            resolved: kept?.resolved ?? null,
+            error: e.message,
+          };
+        });
       });
     return () => {
       current = false;
     };
-  }, [guideKey, selections]);
+    // `asked` is derived from `selections`, so it adds no re-runs; it
+    // is here because the effect stamps it onto the resolution.
+  }, [guideKey, selections, asked]);
 
   // Its own effect, and deliberately not awaited by the one above: a
   // second of narrowing the answers must not hold up the parts.
@@ -174,6 +193,8 @@ interface DeadAnswers extends Availability {
 
 interface ResolvedAnswer {
   key: string;
+  /** The selections these parts answer — see `myDead`. */
+  asked: string | null;
   resolved: ResolvedGuide | null;
   error: string | null;
 }
@@ -226,7 +247,12 @@ function useGuideDocument(guideKey: string | null | undefined) {
 
 /** Did this failure mean "no such guide", or merely "not right now"? */
 function missing(e: Error): boolean {
-  return e.message.includes('404') || /not found/i.test(e.message);
+  // The status, not the sentence. This used to grep the message that
+  // `guide-service` formats, which is a coupling across a module
+  // boundary with nothing holding the two ends in step — and the
+  // `/not found/i` arm it also carried could never match anything the
+  // 404 test had not already caught.
+  return (e as Partial<HttpError>).status === 404;
 }
 
 interface FetchedDocument {

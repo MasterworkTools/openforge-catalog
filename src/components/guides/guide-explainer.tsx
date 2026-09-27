@@ -182,6 +182,7 @@ interface Question {
 
 function asQuestion(q: GuideStep | GuideRefinement, dead: string[]): Question {
   const options = 'options' in q ? q.options : undefined;
+  const choices = 'choices' in q ? q.choices : undefined;
   const answers =
     options?.map((o) => ({
       key: o.key,
@@ -189,7 +190,7 @@ function asQuestion(q: GuideStep | GuideRefinement, dead: string[]): Question {
       blurb: o.blurb,
       links: o.links,
     })) ??
-    ('choices' in q ? q.choices : undefined)?.map((c) => ({
+    choices?.map((c) => ({
       key: c.tag,
       title: c.title ?? c.tag,
       blurb: c.blurb,
