@@ -1637,16 +1637,21 @@ def test_a_refused_length_says_how_long_it_was(client, wall_guide, catalog):
     assert "(5000 characters)" in got.get_json()["error"]
 
 
+@pytest.mark.parametrize("endpoint", ["resolve", "availability"])
 def test_a_refused_request_is_logged_where_it_can_be_seen(
-    client, wall_guide, catalog, caplog
+    client, wall_guide, catalog, caplog, endpoint
 ):
     """A 400 left no trace at all, which is where two bugs hid.
+
+    Both endpoints, because both bugs surfaced on `/availability` and
+    only `/resolve` was covered — the call the log exists for was the
+    one that could be deleted green.
 
     WARNING, because nothing sets `LOG_LEVEL` in the production Lambda
     and an INFO record would be evaluated and discarded.
     """
     with caplog.at_level(logging.WARNING):
-        client.get("/api/guides/wall/resolve?method=no-such-option")
+        client.get(f"/api/guides/wall/{endpoint}?method=no-such-option")
 
     refused = [r for r in caplog.records if "refused a request" in r.getMessage()]
     assert refused, "a refused request left no log record"
@@ -1662,11 +1667,47 @@ def test_a_refused_selection_cannot_forge_a_line_in_the_body(
     The key is attacker-supplied and comes straight back; `repr` is
     what stops a newline in it from looking like a second message.
     """
-    got = client.get("/api/guides/wall/resolve?a%0Ab=" + "x" * 300)
+    # A short value on purpose. With 300 characters the length check
+    # refuses it first and the escaping asserted below is the one in
+    # `_shown`, not the one in `_reject_unknown_selections` — the test
+    # read as coverage for a line it never reached.
+    got = client.get("/api/guides/wall/resolve?a%0Ab=x")
     assert got.status_code == 400
     error = got.get_json()["error"]
     assert "\\n" in error
     assert "\n" not in error
+
+
+def test_sixty_unknown_keys_do_not_make_a_fifteen_kilobyte_body(
+    client, wall_guide, catalog
+):
+    """One hand-edited URL used to be answered with its own contents.
+
+    Naming every offender meant sixty keys came back in full, in the
+    body and again in the log line. The first ten say everything the
+    eleventh would.
+    """
+    query = "&".join(f"{'z' * 200}{n}=x" for n in range(60))
+    got = client.get(f"/api/guides/wall/resolve?{query}")
+    assert got.status_code == 400
+    error = got.get_json()["error"]
+    assert "and 50 more" in error
+    assert len(error) < 1000, f"a 60-key URL was answered with {len(error)} characters"
+    # Cut keys say by how much, or every over-long one reads the same.
+    assert "(201 characters)" in error
+
+
+def test_a_value_of_exactly_the_cap_is_not_reported_as_cut(client, wall_guide, catalog):
+    """The boundary the length annotation is about.
+
+    At exactly the cap nothing was removed, so claiming a length would
+    describe a truncation that did not happen.
+    """
+    from openforge.app.routes.guides import SELECTION_CHARS
+
+    got = client.get("/api/guides/wall/resolve?method=" + "x" * SELECTION_CHARS)
+    assert got.status_code == 400
+    assert f"({SELECTION_CHARS} characters)" not in got.get_json()["error"]
 
 
 def test_the_pin_log_is_truncated_not_merely_escaped(
@@ -1712,7 +1753,7 @@ def test_a_rotted_recommendation_is_the_guide_s_fault_not_the_visitor_s(
             # that stopped matching its own options.
             guide_sql.upsert_guide(curs, document)
 
-    with pytest.raises(ValueError, match="guide is invalid"):
+    with pytest.raises(ValueError, match="is invalid"):
         client.get("/api/guides/wall/resolve")
 
 
@@ -1771,8 +1812,104 @@ def test_a_rotted_recommendation_on_an_unreached_branch_is_still_the_guide_s(
         with conn.cursor(row_factory=dict_row) as curs:
             guide_sql.upsert_guide(curs, document)
 
-    with pytest.raises(ValueError, match="guide is invalid"):
-        client.get("/api/guides/wall/availability?method=separate-wall")
+    # Both endpoints, because the point is that the fault is not
+    # branch-dependent. While the check ran per candidate answer, only
+    # the counterfactual ever walked the `on-tile` branch, so
+    # `/availability` raised and `/resolve` answered 200 — and the
+    # availability failure is caught and logged in the browser and
+    # nowhere else, so the page went on offering dead answers looking
+    # perfectly healthy.
+    for endpoint in ("resolve", "availability"):
+        with pytest.raises(ValueError, match="is invalid"):
+            client.get(f"/api/guides/wall/{endpoint}?method=separate-wall")
+
+
+@pytest.mark.parametrize(
+    "default,fault",
+    [
+        ("texture|not_a_real_texture", "is not one of its choices"),
+        ("cave", "is not under 'texture'"),
+    ],
+)
+def test_a_refinements_rotted_recommendation_is_the_guide_s_fault_too(
+    client, test_db, catalog, default, fault
+):
+    """The half the first backstop skipped.
+
+    It gated its membership check on `"options" in question`, which
+    only a step carries, so a refinement recommending a tag outside its
+    own `choices` — or outside its namespace — went through silently
+    and answered 200 with every part empty, while the identical value
+    typed by a visitor was a 400. A recommendation the person could not
+    have sent is a fault in the guide, not in the URL.
+    """
+    document = copy.deepcopy(WALL_GUIDE)
+    document["refinements"][0]["choices"] = [
+        {"tag": "texture|cave"},
+        {"tag": "texture|dungeon_stone"},
+    ]
+    document["refinements"][0]["default"] = default
+    with test_db.connection() as conn:
+        with conn.cursor(row_factory=dict_row) as curs:
+            guide_sql.upsert_guide(curs, document)
+
+    with pytest.raises(ValueError, match=fault):
+        client.get("/api/guides/wall/resolve")
+
+
+def test_blame_only_ever_names_a_question_they_answered(client, wall_guide, catalog):
+    """The invariant behind dropping the "whose answer was it" flag.
+
+    The counterfactual is derived from what the person sent, so
+    removing a question still sitting on its recommendation leaves the
+    map unchanged and the candidate can never hold. Blame therefore
+    names an answer of theirs or says nothing — which is what lets the
+    page write "your answer" without asking.
+
+    Asserted over several states rather than one, because the property
+    is about the mechanism and not about any particular guide.
+    """
+    for query in (
+        "",
+        "?method=separate-wall",
+        "?method=separate-wall&texture=texture|cave",
+    ):
+        got = client.get(f"/api/guides/wall/availability{query}")
+        assert got.status_code == 200
+        sent = {pair.split("=")[0] for pair in query.lstrip("?").split("&") if pair}
+        blamed = {
+            reason["question"]
+            for answers in got.json["because"].values()
+            for reason in answers.values()
+            if "question" in reason
+        }
+        assert (
+            blamed <= sent
+        ), f"{query!r} blamed {sorted(blamed - sent)}, which nobody answered"
+
+
+def test_availability_asks_only_about_the_questions_on_screen(
+    client, wall_guide, catalog
+):
+    """The sweep costs a catalog round trip per offered answer.
+
+    The page shows one question at a time, so asking about all of them
+    bought nothing: measured at 46 statements against 19 for a
+    byte-identical response. What it must not do is narrow the answer —
+    every question the response publishes still has to be swept.
+    """
+    got = client.get("/api/guides/wall/availability?method=separate-wall")
+    assert got.status_code == 200
+    shown = {step["key"] for step in got.json.get("steps", [])}
+    resolved = client.get("/api/guides/wall/resolve?method=separate-wall")
+    published = {step["key"] for step in resolved.json["steps"]}
+    published |= {r["key"] for r in resolved.json["refinements"]}
+
+    swept = set(got.json["unavailable"]) | set(got.json["because"])
+    assert (
+        swept <= published
+    ), f"swept {sorted(swept - published)}, which the page never shows"
+    assert shown <= published or not shown
 
 
 def test_a_recommendation_that_is_not_even_a_string_is_the_guide_s_fault(
@@ -1833,6 +1970,18 @@ def test_a_live_answer_is_not_reported_dead_by_a_stale_recommendation(
             "tags": {"require": ["build|on tile"]},
         }
     )
+    # A control for the absence assertion below. Without something that
+    # really is dead, the test passes just as well when nothing is
+    # reported at all — `if role is not None:` forced false, or `dead`
+    # hardcoded empty, both left it green.
+    document["steps"][0]["options"].append(
+        {
+            "key": "impossible",
+            "title": "Nothing builds this",
+            "roles": {"floor": None, "wall": None},
+            "tags": {"require": ["build|nothing has this"]},
+        }
+    )
     # The clip to recommend follows the method, which is exactly the
     # shape `wall.yaml` ships for `connectors`.
     document["refinements"] = [
@@ -1856,8 +2005,10 @@ def test_a_live_answer_is_not_reported_dead_by_a_stale_recommendation(
 
     answered = client.get("/api/guides/wall/availability?method=separate-wall")
     assert answered.status_code == 200
-    # Both ways of building are buildable, so neither is dead.
-    assert answered.json["unavailable"].get("method", []) == [], (
+    # Both ways of building are buildable, so neither is dead — and the
+    # one that genuinely is not still comes back, which is what says
+    # the sweep ran rather than returned nothing.
+    assert answered.json["unavailable"].get("method", []) == ["impossible"], (
         "the other method was reported dead while its own recommendation "
         "would have made it buildable"
     )
@@ -1945,6 +2096,90 @@ def test_blame_derives_the_counterfactual_rather_than_overlaying_it(
     assert reason["question"] == "size", (
         f"blamed {reason.get('question')!r}; the counterfactual has to be "
         "re-derived so the finish follows the size that would be in force"
+    )
+
+
+def test_blame_puts_the_candidate_in_before_the_defaults_are_derived(
+    client, test_db, catalog
+):
+    """The other half of the same rule, on the other line.
+
+    `test_blame_derives_the_counterfactual_rather_than_overlaying_it`
+    pins where `without` comes from. This pins *when* the candidate
+    answer goes in: before `_with_defaults` walks the questions, not
+    after. A question further down whose recommendation branches on the
+    answer under test is the only shape that can tell the two apart —
+    overlay it afterwards and that recommendation was computed for the
+    answer being replaced.
+
+    The polish recommended follows the texture, and rough stone exists
+    only in matte. Blaming the size means deriving the polish for the
+    texture that would then be in force; overlaying keeps the polish
+    derived for no texture at all, so rough stone matches nothing and
+    the blame is withheld.
+    """
+    for name, tags in (
+        ("i cave wall", ["texture|cave", "size|width|1", "polish|gloss"]),
+        ("j cave floor", ["texture|cave", "size|width|1", "polish|gloss"]),
+        ("k rough wall", ["texture|rough_stone", "size|width|4", "polish|matte"]),
+        ("l rough floor", ["texture|rough_stone", "size|width|4", "polish|matte"]),
+    ):
+        shape = "shape|wall" if "wall" in name else "shape|floor"
+        make_blueprint(test_db, name, ["build|separate wall", shape, *tags])
+
+    document = copy.deepcopy(WALL_GUIDE)
+    document["refinements"][0]["choices"] = [
+        {"tag": "texture|cave"},
+        {"tag": "texture|rough_stone"},
+    ]
+    document["steps"].append(
+        {
+            "key": "size",
+            "prompt": "How wide?",
+            "default": "four",
+            "options": [
+                {
+                    "key": "one",
+                    "title": "1 inch",
+                    "tags": {"require": ["size|width|1"]},
+                },
+                {
+                    "key": "four",
+                    "title": "4 inch",
+                    "tags": {"require": ["size|width|4"]},
+                },
+            ],
+        }
+    )
+    # Branches on the texture — the answer under test — which is what
+    # makes the order the candidate goes in observable.
+    document["refinements"].append(
+        {
+            "key": "polish",
+            "role": "*",
+            "prompt": "What polish?",
+            "from_namespace": "polish",
+            "default": [
+                {
+                    "when": {"selected": {"texture": ["texture|rough_stone"]}},
+                    "value": "polish|matte",
+                },
+                {"value": "polish|gloss"},
+            ],
+        }
+    )
+    with test_db.connection() as conn:
+        with conn.cursor(row_factory=dict_row) as curs:
+            guide_sql.upsert_guide(curs, document)
+
+    response = client.get("/api/guides/wall/availability?method=separate-wall&size=one")
+
+    assert response.status_code == 200
+    reason = response.json["because"]["texture"]["texture|rough_stone"]
+    assert reason["question"] == "size", (
+        f"blamed {reason.get('question')!r}; the candidate has to go in "
+        "before the defaults are derived, so the polish follows the "
+        "texture that would be in force"
     )
 
 

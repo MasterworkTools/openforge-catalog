@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
-import React from 'react';
+import React from "react";
 import {
   GuideChoice,
   GuideRefinement,
   GuideStep,
   MissingReason,
-} from '@/services/guide-service';
+} from "@/services/guide-service";
 
 /**
  * The questions. A step is a set of options, one of which is chosen; a
@@ -50,24 +50,29 @@ type Because = Record<string, Record<string, MissingReason>> | null;
  * label the answer is directly above, so repeating it reads as a
  * stutter. `space` is the one other difference between the callers.
  */
-function DeadAnswer({
-  why,
-  lead,
-  space,
-}: {
-  why?: MissingReason;
-  lead?: string;
-  space: string;
-}) {
+function DeadAnswer({ why, lead }: { why?: MissingReason; lead?: string }) {
   return (
-    <p className={`${space} text-xs text-red-700`}>
-      {lead ? `${lead} leaves` : 'Leaves'} no {why?.part ?? 'match'}
-      {why?.prompt
-        ? ` — it is ${why.theirs ? 'your' : 'the recommended'} "${why.prompt}" answer`
-        : ''}
-      .
+    <p className={`${lead ? "mt-2" : "mt-1"} text-xs text-red-700`}>
+      {lead ? `${lead} leaves` : "Leaves"} no {why?.part ?? "match"}
+      {blame(why, " — it is")}.
     </p>
   );
+}
+
+/**
+ * Which answer is responsible, when one is.
+ *
+ * Shared by the sentence above and the list below, which word it
+ * differently — "leaves no wall base — it is your ... answer" against
+ * "cave — no wall base for your ... answer" — but must not disagree
+ * about whose answer it was. It is always the person's: blame only
+ * ever names a question they answered themselves, because the
+ * counterfactual is derived from what they sent, so removing a
+ * question still sitting on its recommendation changes nothing and it
+ * can never be named. See `_blame` in `openforge/guides/resolve.py`.
+ */
+function blame(why: MissingReason | undefined, lead: string): string {
+  return why?.prompt ? `${lead} your "${why.prompt}" answer` : "";
 }
 
 function Missing({
@@ -102,7 +107,7 @@ function Missing({
   return (
     <>
       {chosen && (
-        <DeadAnswer why={why} lead={`Your answer, ${labels(chosen)},`} space="mt-2" />
+        <DeadAnswer why={why} lead={`Your answer, ${labels(chosen)},`} />
       )}
       {hidden.length > 0 && (
         <ul className="mt-2 text-xs text-gray-500 list-none">
@@ -110,8 +115,8 @@ function Missing({
             const reason = because?.[value];
             return (
               <li key={value}>
-                {labels(value)} — no {reason?.part ?? 'match'}
-                {reason?.prompt ? ` for your "${reason.prompt}" answer` : ''}
+                {labels(value)} — no {reason?.part ?? "match"}
+                {blame(reason, " for")}
               </li>
             );
           })}
@@ -251,7 +256,7 @@ function AnsweredStep({
   // thing this section is here to show, and hiding it would leave a
   // reopened question looking as though it was never answered.
   const live = step.options.filter(
-    (option) => option.key === step.selected || !dead.includes(option.key)
+    (option) => option.key === step.selected || !dead.includes(option.key),
   );
 
   if (open) {
@@ -316,7 +321,7 @@ function AnsweredStep({
           *other* question listed its absent answers and blamed
           something else. A step was the case actually reported. */}
       {step.selected && dead.includes(step.selected) && (
-        <DeadAnswer why={because?.[step.selected]} space="mt-1" />
+        <DeadAnswer why={because?.[step.selected]} />
       )}
     </section>
   );
@@ -330,9 +335,9 @@ function AnsweredStep({
  * choice someone made would be a lie about the state.
  */
 function answerBorder(chosen: boolean, assumed?: boolean): string {
-  if (chosen) return 'border-blue-600 bg-blue-50 font-semibold';
-  if (assumed) return 'border-blue-400 border-dashed bg-blue-50/40';
-  return 'border-gray-300';
+  if (chosen) return "border-blue-600 bg-blue-50 font-semibold";
+  if (assumed) return "border-blue-400 border-dashed bg-blue-50/40";
+  return "border-gray-300";
 }
 
 /**
@@ -381,10 +386,7 @@ function Answer({
  * For a question whose answer left more than one piece: how many, and
  * how to go and look at them. Keyed by question.
  */
-export type MoreOptions = Record<
-  string,
-  { count: number; onOpen: () => void }
->;
+export type MoreOptions = Record<string, { count: number; onOpen: () => void }>;
 
 interface GuideRefinementsProps {
   refinements: GuideRefinement[];
@@ -417,7 +419,7 @@ export function GuideRefinements({
     (refinement) =>
       !refinement.on_tags ||
       refinement.selected !== null ||
-      !deadFor(refinement).includes('on')
+      !deadFor(refinement).includes("on"),
   );
   if (asked.length === 0) return null;
   // A section each, in document order. A question is its own section
@@ -441,11 +443,13 @@ export function GuideRefinements({
     }
     sections.push({
       // Keyed by the first question in it, not by the heading: two
-      // groups can legitimately carry the same name — `wall.yaml` has
-      // "Other options" more than once — and two ungrouped questions
-      // can share a prompt. A name-keyed section meant a duplicate
-      // React key and a duplicate DOM id, so `aria-labelledby` pointed
-      // at whichever heading rendered first.
+      // groups can legitimately carry the same name, and two ungrouped
+      // questions can share a prompt. No shipped guide does either
+      // today — `wall.yaml` has one "Other options" — so the case
+      // lives in the fixtures rather than in a fixture file. A
+      // name-keyed section meant a duplicate React key and a duplicate
+      // DOM id, so `aria-labelledby` pointed at whichever heading
+      // rendered first.
       id: refinement.key,
       name: refinement.group ?? refinement.prompt,
       grouped: Boolean(refinement.group),
@@ -494,7 +498,7 @@ function RefinementGroup({
   refinements: GuideRefinement[];
   deadFor: (refinement: GuideRefinement) => string[];
   becauseFor: (
-    refinement: GuideRefinement
+    refinement: GuideRefinement,
   ) => Record<string, MissingReason> | undefined;
   more?: MoreOptions;
   opened?: string | null;
@@ -579,12 +583,12 @@ function RefinementGroup({
  */
 function answerLabel(
   refinement: GuideRefinement,
-  chosen: GuideChoice | undefined
+  chosen: GuideChoice | undefined,
 ): string {
   if (chosen) return labelFor(chosen);
-  if (refinement.selected === 'on') return 'Yes';
-  if (refinement.selected === 'off') return 'No';
-  return refinement.selected ?? '';
+  if (refinement.selected === "on") return "Yes";
+  if (refinement.selected === "off") return "No";
+  return refinement.selected ?? "";
 }
 
 /**
@@ -618,7 +622,7 @@ function AnsweredRefinement({
   onOpen: () => void;
 }) {
   const chosen = refinement.choices?.find(
-    (choice) => choice.tag === refinement.selected
+    (choice) => choice.tag === refinement.selected,
   );
   const answer = answerLabel(refinement, chosen);
   return (
@@ -636,7 +640,7 @@ function AnsweredRefinement({
         )}
         <span className="block font-semibold">{answer}</span>
       </button>
-      {why && <DeadAnswer why={why} space="mt-1" />}
+      {why && <DeadAnswer why={why} />}
       {/* Answering "towne" is where you find out there are six of
           them, so this is one of the two places to say so — the same
           bar as on the part, opening the same dialog. Its own button
@@ -686,7 +690,8 @@ function ChoicePicker({
   // copy of the same words, which a screen reader would read twice.
   const heading = showPrompt ? `refinement-${refinement.key}` : labelledBy;
   const live = (refinement.choices ?? []).filter(
-    (choice) => choice.tag === refinement.selected || !dead.includes(choice.tag)
+    (choice) =>
+      choice.tag === refinement.selected || !dead.includes(choice.tag),
   );
   return (
     <section aria-labelledby={heading}>
@@ -695,7 +700,11 @@ function ChoicePicker({
           {refinement.prompt}
         </h3>
       )}
-      <div role="group" aria-labelledby={heading} className="flex flex-col gap-1">
+      <div
+        role="group"
+        aria-labelledby={heading}
+        className="flex flex-col gap-1"
+      >
         {live.map((choice) => {
           const chosen = refinement.selected === choice.tag;
           return (
@@ -709,7 +718,9 @@ function ChoicePicker({
                 refinement.selected === null &&
                 refinement.recommended === choice.tag
               }
-              onPick={() => onSelect(refinement.key, chosen ? null : choice.tag)}
+              onPick={() =>
+                onSelect(refinement.key, chosen ? null : choice.tag)
+              }
             />
           );
         })}
@@ -746,7 +757,7 @@ function labelFor(choice: GuideChoice): string {
   // the first letter up. Not a brand's own capitalisation — a list of
   // those would be the stale thing deriving exists to avoid — but
   // enough that "openlock" does not read as a typo.
-  const name = (choice.tag.split('|').pop() ?? choice.tag).replace(/_/g, ' ');
+  const name = (choice.tag.split("|").pop() ?? choice.tag).replace(/_/g, " ");
   const pretty = name.charAt(0).toUpperCase() + name.slice(1);
   // The count is the difference between two answers that otherwise
   // look equally good: 135 pieces behind one and 46 behind another.
@@ -772,9 +783,9 @@ function Toggle({
       <input
         type="checkbox"
         aria-label={showPrompt ? undefined : refinement.prompt}
-        checked={refinement.selected === 'on'}
+        checked={refinement.selected === "on"}
         onChange={(e) =>
-          onSelect(refinement.key, e.target.checked ? 'on' : 'off')
+          onSelect(refinement.key, e.target.checked ? "on" : "off")
         }
       />
       {showPrompt && <span>{refinement.prompt}</span>}
@@ -818,8 +829,8 @@ function NamespacePicker({
       // here at all means its derivation found nothing — so the
       // placeholder read "undefined|..." on the one path where this
       // box is most likely to be seen.
-      placeholder={`${refinement.from_namespace ?? refinement.from_combination ?? 'tag'}|...`}
-      defaultValue={refinement.selected ?? ''}
+      placeholder={`${refinement.from_namespace ?? refinement.from_combination ?? "tag"}|...`}
+      defaultValue={refinement.selected ?? ""}
       onBlur={(e) => onSelect(refinement.key, e.target.value.trim() || null)}
     />
   );

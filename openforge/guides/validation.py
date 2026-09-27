@@ -33,6 +33,33 @@ def validate_guide_document(data: dict) -> dict:
     return data
 
 
+def reject_bad_recommendations(data: dict) -> None:
+    """Raise unless every recommendation names an answer that exists.
+
+    The same check `validate_guide_document` makes when a guide is
+    written, made again when one is read. The write is not guaranteed
+    to have gone through it: `guide_sql.upsert_guide` stores a document
+    without passing the loader, and the guide editor in
+    `openforge_catalog-kcm` will be a second way in. A recommendation
+    naming an option that was renamed away is otherwise a predicate
+    asking for a tag nothing has, on the first screen, with nothing on
+    the page to say that a default did it.
+
+    Asked once per request rather than once per candidate answer.
+    Whether a recommendation names something real is a property of the
+    document, not of the branch anyone happens to be standing on — and
+    while it was asked per candidate, a rotted clause under a `when`
+    nobody had reached was found by the counterfactual and by nothing
+    else, so `/resolve` answered 200 and only `/availability` faulted.
+    """
+    errors = _recommendation_type_errors(data) or _default_errors(data)
+    if not errors:
+        return
+    key = data.get("key", "<no key>")
+    joined = "; ".join(errors)
+    raise ValueError(f"guide {key!r} is invalid: {joined}")
+
+
 def _validate_shape(data: dict):
     try:
         validate_schema("guide.yaml", data)
@@ -220,6 +247,30 @@ def _recommended_values(question: dict) -> list:
     if isinstance(default, list):
         return [clause["value"] for clause in default]
     return [default]
+
+
+def _recommendation_type_errors(data: dict) -> list[str]:
+    """Recommendations the schema would have refused.
+
+    Checked before `_default_errors` and never beside it: that one
+    tests membership of a set and splits on commas, and both raise
+    rather than report on a value that is not a string.
+    `validate_guide_document` has `_validate_shape` in front of it for
+    this; a document read back out of the database has only this.
+    """
+    errors = []
+    for kind, questions in (
+        ("step", data["steps"]),
+        ("refinement", data.get("refinements", [])),
+    ):
+        for question in questions:
+            for value in _recommended_values(question):
+                if not isinstance(value, str):
+                    errors.append(
+                        f"{kind} {question['key']!r}: `default` recommends "
+                        f"{value!r}, which is not a string"
+                    )
+    return errors
 
 
 def _default_errors(data: dict) -> list[str]:

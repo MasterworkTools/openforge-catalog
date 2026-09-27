@@ -50,7 +50,13 @@ import openforge.db.sql.blueprints as blueprint_sql
 import openforge.db.sql.guides as guide_sql
 import openforge.db.sql.images as image_sql
 import openforge.db.sql.tags as tag_sql
-from openforge.guides.resolve import GuideSelectionError, resolve, to_tag_query
+from openforge.guides.resolve import (
+    GuideSelectionError,
+    listed,
+    quoted,
+    resolve,
+    to_tag_query,
+)
 
 
 def get_guides():
@@ -207,11 +213,13 @@ def _log_bad_request(guide_key: str, error: Exception) -> None:
 
     WARNING for the same reason `_pinned_finder` uses it: nothing sets
     `LOG_LEVEL` in the production Lambda, so INFO would be evaluated
-    and discarded. `%s` on the message is safe because everything that
-    reaches it has been through `_shown`.
+    and discarded. `%s` on the message is safe because every value
+    inside it went through `quoted` and the count of them through
+    `listed` — the key is quoted here for the same reason, rather than
+    sliced, which dropped the length the rest of the message states.
     """
     current_app.logger.warning(
-        "guide %r refused a request: %s", guide_key[:SELECTION_CHARS], error
+        "guide %s refused a request: %s", quoted(guide_key, SELECTION_CHARS), error
     )
 
 
@@ -268,7 +276,7 @@ def _selections_from_request() -> dict:
     repeated = sorted(key for key in request.args if len(request.args.getlist(key)) > 1)
     if repeated:
         raise GuideSelectionError(
-            f"answered more than once: {', '.join(_shown(key) for key in repeated)}"
+            f"answered more than once: {listed(repeated, SELECTION_CHARS)}"
         )
     selections = request.args.to_dict()
     for key, value in selections.items():
@@ -291,9 +299,7 @@ def _shown(text: str) -> str:
     rendered the same, which said nothing about which rule was broken
     or by how much.
     """
-    if len(text) <= SELECTION_CHARS:
-        return repr(text)
-    return f"{text[:SELECTION_CHARS]!r} ({len(text)} characters)"
+    return quoted(text, SELECTION_CHARS)
 
 
 def _reject_bad_selection(what: str, part: str) -> None:

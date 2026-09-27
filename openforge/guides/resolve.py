@@ -42,12 +42,53 @@ matters, the upgrade is one query per role that ranks in SQL, not a
 cache.
 """
 
+from openforge.guides.validation import reject_bad_recommendations
+
 PREDICATES = ("require", "deny", "accept", "allow", "deny_children")
 
 #: How a selection names a role rather than a question: `part.wall`.
 #: Its own part of the key space, which a question key cannot reach —
 #: a step or refinement key is a url_key and has no dot in it.
 PIN = "part."
+
+#: How much of a query-string key is worth quoting back. A key is a
+#: url_key or a pin; anything longer is a hand-edited URL.
+KEY_CHARS = 64
+
+#: How many offenders a message names before it summarises. Sixty
+#: unknown keys made a 15KB response body and a 15KB log line out of
+#: one URL.
+NAMED = 10
+
+
+def quoted(text: str, cap: int) -> str:
+    """A query-string value as it can safely appear in an error body.
+
+    `repr` so a newline or a NUL cannot run off the end of the line,
+    and capped so a 200KB key does not come back as a 200KB message.
+
+    The length is stated when it is cut, because the prefix alone is
+    identical for every over-long value: `cap` + 1 characters, 200,000
+    characters, and `cap` characters followed by something else all
+    rendered the same, which said nothing about which rule was broken
+    or by how much.
+    """
+    if len(text) <= cap:
+        return repr(text)
+    return f"{text[:cap]!r} ({len(text)} characters)"
+
+
+def listed(keys: list, cap: int) -> str:
+    """Several offenders, quoted and bounded in count as well as in
+    each item.
+
+    Naming all sixty made a 15KB body out of one hand-edited URL, and
+    the first ten say everything the eleventh would.
+    """
+    named = ", ".join(quoted(key, cap) for key in keys[:NAMED])
+    if len(keys) <= NAMED:
+        return named
+    return f"{named} and {len(keys) - NAMED} more"
 
 
 class GuideSelectionError(ValueError):
@@ -131,6 +172,9 @@ def resolve(
     # and drives the parts: the page shows a complete, buildable set
     # from the first screen rather than four empty boxes and an
     # instruction to keep clicking.
+    # Once, at the door. See `reject_bad_recommendations`: it is a
+    # property of the document, not of the branch anyone is on.
+    reject_bad_recommendations(document)
     assumed, recommended = _with_defaults(document, selections)
     steps, answered = _available_steps(document, assumed)
     chosen = _chosen_options(steps, answered)
@@ -168,8 +212,30 @@ def resolve(
         if facets is not None
         else {}
     )
+    # Only the questions the page is about to publish. The sweep asks
+    # the catalog about every answer of every question it is given, and
+    # the page shows one or two of them — measured at 46 statements and
+    # 4.9s against 19 and 1.6s for a byte-identical response. `offered`
+    # inside stays whole, because blame must still be able to name a
+    # question that is not on screen.
+    shown_steps = _up_to_first_unanswered(steps, given)
+    shown_refinements = (
+        []
+        if _unanswered(steps, given)
+        else _up_to_first_unanswered(refinements, selections)
+    )
+    on_screen = {q["key"] for q in [*shown_steps, *shown_refinements]}
     dead, because = (
-        _unavailable(document, steps, refinements, assumed, selections, parts, exists)
+        _unavailable(
+            document,
+            steps,
+            refinements,
+            on_screen,
+            assumed,
+            selections,
+            parts,
+            exists,
+        )
         if exists is not None
         else ({}, {})
     )
@@ -180,7 +246,7 @@ def resolve(
             # defaulted question is still being asked, and shows its
             # options with the recommendation marked.
             answered_with(step, given.get(step["key"]))
-            for step in _up_to_first_unanswered(steps, given)
+            for step in shown_steps
         ],
         "parts": parts,
         # Held back until the questions are done, for the same reason
@@ -190,15 +256,13 @@ def resolve(
         # is the person's answer whether or not its control is on
         # screen, and silently ignoring it would change the parts they
         # are looking at.
-        "refinements": []
-        if _unanswered(steps, given)
-        else [
+        "refinements": [
             answered_with(
                 refinement,
                 selections.get(refinement["key"]),
                 derived.get(refinement["key"]),
             )
-            for refinement in _up_to_first_unanswered(refinements, selections)
+            for refinement in shown_refinements
         ],
     }
 
@@ -228,6 +292,7 @@ def _unavailable(
     document: dict,
     steps: list,
     refinements: list,
+    on_screen: set,
     selections: dict,
     sent: dict,
     parts: list,
@@ -243,6 +308,11 @@ def _unavailable(
     attributed by removing one other answer at a time and seeing
     whether it comes back — the first removal that revives it is what
     is blamed.
+
+    `on_screen` is which questions to sweep; `steps` and `refinements`
+    stay whole because blame reaches past the screen. A question the
+    page is not publishing has nowhere to show a dead answer, and
+    asking the catalog about it anyway is most of what this costs.
 
     Optimistic where it is unsure. A role that copies a size from the
     part above it is not checked against that size, because knowing it
@@ -263,6 +333,8 @@ def _unavailable(
     # Questions are named to the person by their prompt, not their key.
     prompts = {q["key"]: q["prompt"] for q in [*steps, *refinements]}
     for question, values in offered:
+        if question not in on_screen:
+            continue
         empty = {}
         for value in values:
             # Derived, not overlaid. Putting the candidate on top of
@@ -281,11 +353,11 @@ def _unavailable(
                 find_candidates,
             )
             if role is not None:
-                empty[value] = role
+                empty[value] = (role, hypothetical)
         if not empty:
             continue
         dead[question] = list(empty)
-        for value, role in empty.items():
+        for value, (role, hypothetical) in empty.items():
             # What it would empty is always knowable and always useful:
             # "no wall base in that texture" says what is missing. Which
             # answer is responsible is knowable only when one answer is
@@ -295,6 +367,7 @@ def _unavailable(
                 document,
                 selections,
                 sent,
+                hypothetical,
                 question,
                 value,
                 [other for other, _ in offered if other != question],
@@ -305,11 +378,6 @@ def _unavailable(
             if blamed:
                 reason["question"] = blamed
                 reason["prompt"] = prompts.get(blamed, blamed)
-                # Whether they chose it or the guide recommended it. The
-                # page says "your answer", which is false of a question
-                # still sitting unanswered further down the column with
-                # its recommendation marked.
-                reason["theirs"] = blamed in sent
             because[f"{question}:{value}"] = reason
     return dead, because
 
@@ -318,6 +386,7 @@ def _blame(
     document: dict,
     selections: dict,
     sent: dict,
+    would: dict,
     question: str,
     value: str,
     others: list,
@@ -338,7 +407,10 @@ def _blame(
     # per candidate below, because a step is reachable only once every
     # step before it is answered — so dropping one key from the map can
     # silently drop every answer after it as well.
-    would, _ = _with_defaults(document, {**sent, question: value})
+    #
+    # `would` is the map the caller already derived for this candidate,
+    # passed in rather than derived a second time — the two were the
+    # same expression, and one of them was a line no test could see.
     _, would_answer = _available_steps(document, would)
     for other in others:
         if other not in selections:
@@ -641,42 +713,11 @@ def _with_defaults(document: dict, selections: dict) -> tuple[dict, dict]:
         key = question["key"]
         value = _recommendation(question, answered)
         if value is not None:
-            _reject_bad_recommendation(question, value)
             recommended[key] = value
             assumed.setdefault(key, value)
         if key in assumed:
             answered[key] = assumed[key]
     return assumed, recommended
-
-
-def _reject_bad_recommendation(question: dict, value) -> None:
-    """A recommendation the question cannot accept is the guide's fault.
-
-    Checked here, where the engine's own values enter the map, rather
-    than where they are read. `_chosen_options` and
-    `_reject_bad_refinement_value` see the person's answers and the
-    engine's merged together and cannot tell them apart, so guarding
-    one of their call sites left the others — and a counterfactual that
-    re-derives on a hypothetical branch can surface a recommendation
-    the real branch never walked, which is how a stored guide's own
-    `default` came back as a 400 on an empty query string. That
-    contradicts the rule `resolve_guide` states: a
-    `GuideSelectionError` means the selections are wrong, never that
-    the document is.
-
-    A plain `ValueError`, so it reaches the 500 it deserves. The type
-    check earns its place: a mapping is unhashable, so the membership
-    test below would raise `TypeError` rather than say what is wrong.
-    """
-    where = f"guide is invalid: {question['key']!r}"
-    if not isinstance(value, str):
-        raise ValueError(f"{where} recommends {value!r}, which is not a string")
-    if "options" in question:
-        options = {option["key"] for option in question["options"]}
-        if value not in options:
-            raise ValueError(
-                f"{where} recommends {value!r}, which is not one of its options"
-            )
 
 
 def _recommendation(question: dict, answered: dict):
@@ -891,11 +932,11 @@ def _reject_unknown_selections(
     if unknown:
         # `repr` and bounded, like every other message that echoes a
         # query-string key: this was the fourth and the only one still
-        # sending a real newline back in the body, and it names every
+        # sending a real newline back in the body, and it named every
         # offender at once, so sixty of them made a 15KB response.
-        named = ", ".join(repr(key[:64]) for key in unknown[:10])
-        more = "" if len(unknown) <= 10 else f" and {len(unknown) - 10} more"
-        raise GuideSelectionError(f"guide {document['key']!r} has no {named}{more}")
+        raise GuideSelectionError(
+            f"guide {document['key']!r} has no {listed(unknown, KEY_CHARS)}"
+        )
     for refinement in refinements:
         _reject_bad_refinement_value(refinement, selections)
 
