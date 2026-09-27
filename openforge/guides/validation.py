@@ -157,12 +157,24 @@ def _refinement_role_errors(data: dict) -> list[str]:
             for name in refinement.get("except_roles", [])
             if name not in roles
         ]
+        offered = {choice["tag"] for choice in refinement.get("choices", [])}
         for tag, by_role in (refinement.get("substitute") or {}).items():
             errors += [
                 f"{where}: `substitute` for {tag!r} names unknown role {name!r}"
                 for name in by_role
                 if name not in roles
             ]
+            # Keyed by the answer given, so an entry for an answer the
+            # question does not offer can never fire. Two of these
+            # survived a list that stopped offering the storeys of a
+            # stone brick facade separately, and nothing said so.
+            # Only checked against a closed list: a derived question
+            # has no `choices` here to check against.
+            if offered and tag not in offered:
+                errors.append(
+                    f"{where}: `substitute` for {tag!r}, which is not "
+                    f"one of its choices"
+                )
     return errors
 
 

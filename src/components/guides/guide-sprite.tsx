@@ -57,17 +57,23 @@ export function GuideSprite({ blueprint, view = 'front' }: GuideSpriteProps) {
     );
   }
 
-  const index =
-    sprite.angles?.find((angle) => angle.name === view)?.index ??
-    sprite.default_angle ??
-    0;
+  // A sheet that does not carry the angle being shown falls back to
+  // its default frame. The label has to fall back with it, or the page
+  // draws one side and tells a screen reader it is another — every
+  // sheet in the catalog carries all ten, so this is the sheet that
+  // has not been generated yet rather than a case anyone plans for.
+  const angle = sprite.angles?.find((a) => a.name === view);
+  const index = angle?.index ?? sprite.default_angle ?? 0;
+  const showing = angle
+    ? view
+    : (sprite.angles?.find((a) => a.index === index)?.name ?? 'default angle');
   const row = Math.floor(index / sprite.grid_cols);
   const col = index % sprite.grid_cols;
 
   return (
     <div
       role="img"
-      aria-label={`${blueprint?.blueprint_name ?? 'part'}, seen from the ${view}`}
+      aria-label={`${blueprint?.blueprint_name ?? 'part'}, seen from the ${showing}`}
       className="rounded"
       style={{
         width: SIZE,

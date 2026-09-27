@@ -45,12 +45,16 @@ export function useGuideState(guideKey: string | null | undefined) {
   // another's parts, with a working Download button under them.
   const [answer, setAnswer] = useState<ResolvedAnswer | null>(null);
   const mine = answer && answer.key === guideKey ? answer : null;
-  // Which answers would empty a part. Keyed like everything else here,
-  // and separate from the resolution because it arrives later: the
-  // buttons are all usable the whole time, and the ones that lead
-  // nowhere go away once this lands.
+  // Which answers would empty a part. Separate from the resolution
+  // because it arrives later: the buttons are all usable the whole
+  // time, and the ones that lead nowhere go away once this lands.
+  //
+  // Keyed by the *selections* as well as the guide, not just the
+  // guide. This started out greying buttons, where a stale payload
+  // was merely late; it now hides answers outright and drives the
+  // "N options" bar, so applying one answer's dead-set to the next
+  // answer's resolution removes options that are really there.
   const [dead, setDead] = useState<DeadAnswers | null>(null);
-  const myDead = dead && dead.key === guideKey ? dead : null;
 
   // Only the parameters this guide defines. Everything else in the URL
   // — `fbclid`, `utm_source`, another guide's leftover answers — is
@@ -60,6 +64,17 @@ export function useGuideState(guideKey: string | null | undefined) {
     () => (guide ? ownedBy(guide, search) : null),
     [guide, search]
   );
+  // The identity of a selection map, for deciding whether availability
+  // describes the answers now on screen. Sorted, because the URL's key
+  // order is not meaningful and two orderings are the same state.
+  const asked = useMemo(
+    () =>
+      selections === null
+        ? null
+        : JSON.stringify(Object.entries(selections).sort()),
+    [selections]
+  );
+  const myDead = dead && dead.key === guideKey && dead.asked === asked ? dead : null;
 
   useEffect(() => {
     // `selections === null` is also the lag guard: it is derived from
@@ -76,7 +91,17 @@ export function useGuideState(guideKey: string | null | undefined) {
       .catch((e: Error) => {
         if (!current) return;
         console.error('Error resolving guide:', e);
-        setAnswer({ key: guideKey, resolved: null, error: e.message });
+        // Keep the last good resolution alongside the error. The page
+        // renders its whole body behind `resolved`, and the selections
+        // live only in the URL — so dropping it leaves a heading, a red
+        // line, and no control on screen that can change the state that
+        // caused the failure. A stale shared link would be a dead end,
+        // and so would one dropped connection on an ordinary click.
+        setAnswer((prev) => ({
+          key: guideKey,
+          resolved: prev?.key === guideKey ? prev.resolved : null,
+          error: e.message,
+        }));
       });
     return () => {
       current = false;
@@ -90,7 +115,7 @@ export function useGuideState(guideKey: string | null | undefined) {
     let current = true;
     fetchAvailability(guideKey, selections)
       .then((result) => {
-        if (current) setDead({ key: guideKey, ...result });
+        if (current) setDead({ key: guideKey, asked, ...result });
       })
       .catch((e: Error) => {
         // Nothing to show the person: dropping dead answers is an
@@ -102,7 +127,7 @@ export function useGuideState(guideKey: string | null | undefined) {
     return () => {
       current = false;
     };
-  }, [guideKey, selections]);
+  }, [guideKey, selections, asked]);
 
   // Several answers at once, because some changes are not one answer.
   // Picking a part by hand settles the questions that part answers,
@@ -143,6 +168,8 @@ export function useGuideState(guideKey: string | null | undefined) {
 
 interface DeadAnswers extends Availability {
   key: string;
+  /** The selections this describes, so a stale one is not applied. */
+  asked: string | null;
 }
 
 interface ResolvedAnswer {
@@ -175,11 +202,17 @@ function useGuideDocument(guideKey: string | null | undefined) {
         // Without this the page renders its heading and nothing else,
         // so a dead `?guide=` link looks like a page that failed rather
         // than a guide that is not there.
+        //
+        // Only a 404 means the guide is not there, though. A 500 or a
+        // dropped connection told the person their guide did not
+        // exist, which sends them off to check a URL that was fine.
         console.error('Error fetching guide:', e);
         setFetched({
           key: guideKey,
           guide: null,
-          error: `No guide called '${guideKey}'.`,
+          error: missing(e)
+            ? `No guide called '${guideKey}'.`
+            : `Could not load '${guideKey}': ${e.message}`,
         });
       });
     return () => {
@@ -189,6 +222,11 @@ function useGuideDocument(guideKey: string | null | undefined) {
 
   const mine = fetched && fetched.key === guideKey ? fetched : null;
   return { guide: mine?.guide ?? null, guideError: mine?.error ?? null };
+}
+
+/** Did this failure mean "no such guide", or merely "not right now"? */
+function missing(e: Error): boolean {
+  return e.message.includes('404') || /not found/i.test(e.message);
 }
 
 interface FetchedDocument {

@@ -112,9 +112,17 @@ const ResultsContainer = ({ configValues, parentTags = [], siblingSelections = [
         const derivedRequire = Array.isArray(derivedTags.require) ? derivedTags.require : [];
         const derivedDeny = Array.isArray(derivedTags.deny) ? derivedTags.deny : [];
 
+        // `denyChildren` and `allow` come along. They are not merged
+        // with the user's tags — the tag tree cannot add or remove
+        // them — but leaving them out of this rebuild dropped them on
+        // every prop change after the first, which *widens* the
+        // result set: the guide's sweep is what keeps the arrow slits
+        // and curved corners out of a plain wall's dialog.
         const mergedTags = {
           require: [...derivedRequire, ...userAddedTags],
-          deny: derivedDeny
+          deny: derivedDeny,
+          ...(derivedTags.denyChildren ? { denyChildren: derivedTags.denyChildren } : {}),
+          ...(derivedTags.allow ? { allow: derivedTags.allow } : {})
         };
 
         // Compare arrays to prevent infinite loops

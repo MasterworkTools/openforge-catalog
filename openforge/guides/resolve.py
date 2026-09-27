@@ -173,22 +173,13 @@ def resolve(
         if exists is not None
         else ({}, {})
     )
+    answered_with = _answered_with(dead, because, recommended)
     return {
         "steps": [
-            {
-                **step,
-                # What they said, not what was assumed for them: a
-                # defaulted question is still being asked, and shows
-                # its options with the recommendation marked.
-                "selected": given.get(step["key"]),
-                "recommended": recommended.get(step["key"]),
-                "unavailable": dead.get(step["key"], []),
-                "because": {
-                    value: because[f"{step['key']}:{value}"]
-                    for value in dead.get(step["key"], [])
-                    if f"{step['key']}:{value}" in because
-                },
-            }
+            # What they said, not what was assumed for them: a
+            # defaulted question is still being asked, and shows its
+            # options with the recommendation marked.
+            answered_with(step, given.get(step["key"]))
             for step in _up_to_first_unanswered(steps, given)
         ],
         "parts": parts,
@@ -202,22 +193,11 @@ def resolve(
         "refinements": []
         if _unanswered(steps, given)
         else [
-            {
-                **refinement,
-                **(
-                    {"choices": derived[refinement["key"]]}
-                    if refinement["key"] in derived
-                    else {}
-                ),
-                "selected": selections.get(refinement["key"]),
-                "recommended": recommended.get(refinement["key"]),
-                "unavailable": dead.get(refinement["key"], []),
-                "because": {
-                    value: because[f"{refinement['key']}:{value}"]
-                    for value in dead.get(refinement["key"], [])
-                    if f"{refinement['key']}:{value}" in because
-                },
-            }
+            answered_with(
+                refinement,
+                selections.get(refinement["key"]),
+                derived.get(refinement["key"]),
+            )
             for refinement in _up_to_first_unanswered(refinements, selections)
         ],
     }
@@ -862,7 +842,6 @@ def _parts(
     find_pinned=None,
 ) -> list[dict]:
     in_play = _roles_in_play(chosen)
-    relax = _browsable(document)
     parts = {}
     for name in _resolution_order(in_play, document["roles"]):
         role = document["roles"][name]
@@ -876,47 +855,67 @@ def _parts(
             "title": role["title"],
             "under": role.get("under"),
             "query": predicate,
-            # The same predicate with the answers that are only a
-            # preference taken out, for opening the catalog on this
-            # part. Narrow enough that what you find still fits the
-            # build, wide enough to be worth browsing.
-            "browse": _union(
-                [
-                    _compose(
-                        role["query"],
-                        [o for o in chosen if o.get("step") not in relax],
-                        [r for r in refinements if r["key"] not in relax],
-                        selections,
-                        name,
-                    ),
-                    inherited or {},
-                ]
-            ),
-            # Which of those the dialog may take off again, so that
-            # browsing starts inside the family you chose.
+            # Which of those terms the catalog dialog may take off
+            # again, so that browsing starts inside the family you
+            # chose rather than outside it.
             "relaxable": _relaxable(document, chosen, refinements, selections, name),
             "pinned": pinned is not None,
-            # A part someone chose by hand wins over the search. They
-            # were looking at it when they chose it, so no predicate
-            # this guide composes is a better answer than the one they
-            # gave — and the piece beneath still matches its size,
-            # because `_matched` reads the tags of whatever landed
-            # here rather than what was asked for.
-            #
-            # A role matching against a part that resolved to nothing
-            # resolves to nothing too. Recommending here would mean
-            # sizing a base to fit a piece nobody has: the size it fell
-            # back on would be arbitrary, and a 1x1 base under an absent
-            # 3x1 floor reads as an answer rather than as the gap it is.
-            "blueprint": pinned
-            if pinned is not None
-            else None
-            if inherited is None
-            else _recommend(predicate, role.get("prefer", []), find_candidates),
+            "blueprint": _chosen_blueprint(
+                pinned, inherited, predicate, role, find_candidates
+            ),
         }
     # Reported in the order the options called for them, not the order
     # they had to be resolved in: a parts list reads floor, wall, base.
     return [parts[name] for name in in_play]
+
+
+def _answered_with(dead: dict, because: dict, recommended: dict):
+    """How a question is handed to the page, for both kinds of question.
+
+    Steps and refinements differ in what they narrow and not at all in
+    how they are reported, so the four fields the page reads are
+    assembled once here rather than twice in the response.
+    """
+
+    def described(question: dict, selected, choices=None) -> dict:
+        key = question["key"]
+        missing = dead.get(key, [])
+        return {
+            **question,
+            **({"choices": choices} if choices is not None else {}),
+            "selected": selected,
+            "recommended": recommended.get(key),
+            "unavailable": missing,
+            "because": {
+                value: because[f"{key}:{value}"]
+                for value in missing
+                if f"{key}:{value}" in because
+            },
+        }
+
+    return described
+
+
+def _chosen_blueprint(pinned, inherited, predicate, role, find_candidates):
+    """Which blueprint a role lands on, in order of who decided it.
+
+    A part someone chose by hand wins outright. They were looking at
+    it when they chose it, so no predicate this guide composes is a
+    better answer — and the piece beneath still matches its size,
+    because `_matched` reads the tags of whatever landed here rather
+    than what was asked for.
+
+    A role matching against a part that resolved to nothing resolves
+    to nothing too. Recommending here would mean sizing a base to fit
+    a piece nobody has: the size it fell back on would be arbitrary,
+    and a 1x1 base under an absent 3x1 floor reads as an answer rather
+    than as the gap it is.
+    """
+    if pinned is not None:
+        return pinned
+    if inherited is None:
+        return None
+    return _recommend(predicate, role.get("prefer", []), find_candidates)
 
 
 def _browsable(document: dict) -> set[str]:

@@ -1,6 +1,7 @@
 from psycopg.rows import dict_row
 
 import openforge.db.sql.blueprints as blueprint_sql
+import openforge.db.sql.tag_descriptions as tag_description_sql
 import openforge.db.sql.tags as tag_sql
 
 from .test_helpers import create_test_blueprint
@@ -464,3 +465,32 @@ def test_deny_children_ignores_an_entry_with_no_tag(test_db):
             )
 
             assert [b["id"] for b in found] == [plain["id"]]
+
+
+def test_namespace_facets_carry_the_tag_description(test_db):
+    """A derived answer shows the catalog's own words for the tag.
+
+    The `LEFT JOIN tag_descriptions` is what puts a blurb beside
+    "Magnets" in the guide's clip question. Nothing asserted it, so the
+    join could have been dropped and the answers would simply have
+    gone quiet.
+    """
+    with test_db.connection() as conn:
+        with conn.cursor(row_factory=dict_row) as curs:
+            _tagged(curs, "a base openlock", ["shape|base", "connection|openlock"])
+            _tagged(curs, "b base magnetic", ["shape|base", "connection|magnetic"])
+            tag_description_sql.insert_tag_description(
+                curs, ["connection", "magnetic"], "Spheres and cylinders, any polarity."
+            )
+
+            found = tag_sql.tag_search_namespace_facets(
+                curs, accept=[], require=["shape|base"], deny=[], namespace="connection"
+            )
+
+    by_tag = {f["tag"]: f for f in found}
+    assert by_tag["connection|magnetic"]["blurb"] == (
+        "Spheres and cylinders, any polarity."
+    )
+    assert by_tag["connection|magnetic"]["count"] == 1
+    # A tag nobody has described is still an answer, just a quiet one.
+    assert by_tag["connection|openlock"]["blurb"] is None

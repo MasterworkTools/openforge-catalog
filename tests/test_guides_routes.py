@@ -758,6 +758,87 @@ def test_availability_names_the_answers_that_would_empty_a_part(
     assert response.json["unavailable"]["texture"] == ["texture|towne"]
 
 
+def test_availability_says_which_part_a_missing_answer_would_empty(
+    client, choosy_guide, catalog
+):
+    """`because` is the other half of the answer, and it was untested.
+
+    Dropping an answer with no explanation reads as a bug in the page.
+    The part it would leave empty is always knowable, so it is always
+    said.
+    """
+    response = client.get("/api/guides/wall/availability?method=separate-wall")
+
+    assert response.status_code == 200
+    reason = response.json["because"]["texture"]["texture|towne"]
+    assert reason["part"] == "Floor"
+
+
+def test_availability_blames_an_answer_only_when_one_is_responsible(
+    client, choosy_guide, catalog
+):
+    """Attribution is a claim, and a wrong one is worse than none.
+
+    `_blame` works by removing one earlier answer at a time and seeing
+    whether the option comes back. A removal that changes which parts
+    are in play proves nothing — unbuilding the floor makes every
+    predicate about the floor hold trivially — so the guard exists to
+    refuse that evidence, and without it the first question is blamed
+    for everything.
+    """
+    response = client.get("/api/guides/wall/availability?method=separate-wall")
+
+    reason = response.json["because"]["texture"]["texture|towne"]
+    # `method` is the only other answer, and removing it unbuilds the
+    # very part being reported — so there is no honest blame to make
+    # and the reason says only what is empty.
+    assert "question" not in reason
+    assert "prompt" not in reason
+
+
+def test_availability_counts_the_pieces_behind_each_part(client, wall_guide, catalog):
+    """The "N options" bar reads this.
+
+    One means the guide decided; more than one means there is a choice
+    worth opening the catalog for. A part that resolved to nothing has
+    no count rather than a count of zero, because the page has nothing
+    to offer for it.
+    """
+    response = client.get("/api/guides/wall/availability?method=separate-wall")
+
+    assert response.status_code == 200
+    options = response.json["options"]
+    assert options["wall"] >= 1
+    parts = {
+        p["role"]: p
+        for p in client.get("/api/guides/wall/resolve?method=separate-wall").json[
+            "parts"
+        ]
+    }
+    for role, part in parts.items():
+        assert (role in options) == (part["blueprint"] is not None)
+
+
+def test_a_pinned_part_is_not_counted_as_a_choice(client, test_db, wall_guide, catalog):
+    """A pinned part is not a question, so it gets no "N options" bar.
+
+    Its count would be how many pieces the *guide* would have
+    considered, which is not what the person chose to look at.
+    """
+    odd = make_blueprint(
+        test_db, "an odd wall", ["shape|wall", "build|separate wall", "texture|cave"]
+    )
+
+    response = client.get(
+        f"/api/guides/wall/availability?method=separate-wall&part.wall={odd['file_md5']}"
+    )
+
+    assert response.status_code == 200
+    assert "wall" not in response.json["options"]
+    # The roles nobody pinned still carry theirs.
+    assert "floor" in response.json["options"]
+
+
 def test_availability_has_nothing_to_say_about_an_open_namespace(
     client, wall_guide, catalog
 ):

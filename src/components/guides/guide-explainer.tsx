@@ -189,7 +189,7 @@ function asQuestion(q: GuideStep | GuideRefinement, dead: string[]): Question {
       blurb: o.blurb,
       links: o.links,
     })) ??
-    (q as GuideRefinement).choices?.map((c) => ({
+    ('choices' in q ? q.choices : undefined)?.map((c) => ({
       key: c.tag,
       title: c.title ?? c.tag,
       blurb: c.blurb,

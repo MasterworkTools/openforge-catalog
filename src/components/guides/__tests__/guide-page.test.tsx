@@ -789,13 +789,20 @@ describe('GuidePage', () => {
       fireEvent.mouseMove(window, { clientX: 162, clientY: 100 });
       fireEvent.mouseUp(window);
 
-      expect(
-        screen.getByLabelText(/a dungeon stone wall, seen from the right/)
-      ).toBeInTheDocument();
-      // And the base above it moved with it, not just the one grabbed.
+      // The base has a `right` frame and turns to it.
       expect(
         screen.getByLabelText(/a dungeon stone base, seen from the right/)
       ).toBeInTheDocument();
+      // The wall's sheet declares only `back` and `front`, so it falls
+      // back to its default frame — and says which side that is. It
+      // used to claim "seen from the right" while drawing the back,
+      // which is the one thing a label must not do.
+      expect(
+        screen.getByLabelText(/a dungeon stone wall, seen from the back/)
+      ).toBeInTheDocument();
+      expect(
+        screen.queryByLabelText(/a dungeon stone wall, seen from the right/)
+      ).toBeNull();
     });
 
     it('does not open the tag search at the end of a drag', async () => {
@@ -1823,6 +1830,57 @@ describe('inspecting a part', () => {
     const search = decodeURIComponent(window.location.search);
     expect(search).toContain('floor-texture=texture|dungeon_stone');
     expect(search).toContain('part.wall=chosen-md5');
+  });
+
+  it('never explains away the answer you actually gave', async () => {
+    // An answer can be in the dead set and still be the selection —
+    // availability describes what the catalog has, not what the URL
+    // says. The chosen answer is always drawn, so listing it under
+    // "no Wall" as well would have the page contradict itself about
+    // the one thing the person definitely chose.
+    visit('?guide=wall&method=separate-wall&texture=texture|cave');
+    global.fetch = jest.fn((url: string) => {
+      const body = url.includes('/availability')
+        ? {
+            unavailable: { texture: ['texture|cave'] },
+            because: { texture: { 'texture|cave': { part: 'Wall' } } },
+            options: {},
+          }
+        : url.includes('/resolve')
+          ? {
+              ...RESOLVED_WITH_PARTS,
+              refinements: RESOLVED_WITH_PARTS.refinements.map((r) =>
+                r.key === 'texture'
+                  ? {
+                      ...r,
+                      selected: 'texture|cave',
+                      choices: [
+                        { tag: 'texture|dungeon_stone', title: 'Dungeon stone' },
+                        { tag: 'texture|cave', title: 'Cave' },
+                      ],
+                    }
+                  : r
+              ),
+            }
+          : GUIDE_DOCUMENT;
+      return Promise.resolve({
+        ok: true,
+        status: 200,
+        json: () => Promise.resolve(body),
+      });
+    }) as unknown as typeof fetch;
+
+    render(<GuidePage />);
+    await screen.findByText('a dungeon stone wall');
+    // Reopen the settled texture question, which is where the list
+    // and its "missing" note are drawn together. By the collapsed
+    // control, not by its label — the floor texture offers a Cave too.
+    const folded = screen
+      .getAllByRole('button', { name: /Cave/ })
+      .find((b) => b.getAttribute('aria-expanded') === 'false')!;
+    fireEvent.click(folded);
+
+    await waitFor(() => expect(screen.queryByText(/Cave — no Wall/)).toBeNull());
   });
 
   it('is closed until a part is clicked', async () => {

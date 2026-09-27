@@ -173,6 +173,35 @@ def find_candidates(predicate):
     return found
 
 
+def find_exists(predicate):
+    """Stand-in for tag_search_blueprint_exists.
+
+    The real one is an unordered `SELECT EXISTS`; here the distinction
+    that matters is only that it answers yes/no over the same
+    predicate `find_candidates` uses.
+    """
+    return bool(find_candidates(predicate))
+
+
+def find_facets(predicate, namespace):
+    """Stand-in for tag_search_namespace_facets.
+
+    The immediate children of `namespace` that the matching pieces
+    carry, with how many carry each — which is what a derived question
+    offers as its answers.
+    """
+    depth = len(namespace.split("|"))
+    counts: dict[str, int] = {}
+    for blueprint in find_candidates(predicate):
+        for tag in blueprint["tags"]:
+            parts = tag.split("|")
+            if len(parts) <= depth or parts[:depth] != namespace.split("|"):
+                continue
+            child = "|".join(parts[: depth + 1])
+            counts[child] = counts.get(child, 0) + 1
+    return [{"tag": tag, "count": n} for tag, n in sorted(counts.items())]
+
+
 @pytest.fixture
 def guide():
     return copy.deepcopy(GUIDE)
@@ -1371,50 +1400,28 @@ def test_a_default_only_applies_where_the_branch_reaches_it(guide):
     assert "size|width|2" not in wall["query"].get("require", [])
 
 
-def test_a_browsable_answer_comes_off_the_browsing_predicate(guide):
-    """Two predicates, and the difference is what you may go looking for.
-
-    `query` is what the guide resolved against. `browse` is what the
-    catalog dialog opens on: the same thing minus the answers that are
-    only a preference, so somebody after an odd texture can find one —
-    while the answers that decide whether a piece *fits* stay on, and
-    what they find still goes together.
-    """
-    guide["refinements"][0]["browsable"] = True
-
-    resolved = resolve(
-        guide,
-        {"method": "s2w-modular", "size": "two", "texture": "texture|cave"},
-        find_candidates,
-    )
-
-    wall = next(p for p in resolved["parts"] if p["role"] == "wall")
-    assert "texture|cave" in wall["query"]["require"]
-    assert "texture|cave" not in wall["browse"]["require"]
-    # Everything structural is still there: the method's own tag, and
-    # the size, which is what decides whether a piece fits at all.
-    assert "build|s2w" in wall["browse"]["require"]
-    assert "size|width|2" in wall["browse"]["require"]
-
-
-def test_a_browsable_step_comes_off_it_too(guide):
+def test_a_browsable_step_is_relaxable_too(guide):
     """Not only refinements. A step can be a preference as well — a low
-    wall stands on the same base as a tall one — and the engine should
-    not need to know which kind of question it was.
+    wall stands on the same base as a tall one — and the dialog should
+    offer to drop it without the engine needing to know which kind of
+    question it was.
     """
     guide["steps"][1]["browsable"] = True
 
     resolved = resolve(guide, {"method": "s2w-modular", "size": "two"}, find_candidates)
 
     wall = next(p for p in resolved["parts"] if p["role"] == "wall")
+    # In force, and droppable from inside the dialog.
     assert "size|width|2" in wall["query"]["require"]
-    assert "size|width|2" not in wall["browse"].get("require", [])
-    assert "build|s2w" in wall["browse"]["require"]
+    assert wall["relaxable"] == ["size|width|2"]
+    # The method is not a preference, so it stays.
+    assert "build|s2w" in wall["query"]["require"]
+    assert "build|s2w" not in wall["relaxable"]
 
 
-def test_nothing_browsable_means_the_two_predicates_agree(guide):
+def test_nothing_browsable_means_nothing_is_relaxable(guide):
     """A guide that marks nothing gets the behaviour it had: the dialog
-    opens on exactly what narrowed the part.
+    opens on exactly what narrowed the part, with no chips to take off.
     """
     resolved = resolve(
         guide,
@@ -1422,8 +1429,11 @@ def test_nothing_browsable_means_the_two_predicates_agree(guide):
         find_candidates,
     )
 
-    for part in resolved["parts"]:
-        assert part["browse"] == part["query"]
+    assert all(part["relaxable"] == [] for part in resolved["parts"])
+    # And no `browse` twin of `query`: the dialog opens on `query`
+    # itself, and a second predicate nobody read was shipped for two
+    # commits before anyone noticed.
+    assert all("browse" not in part for part in resolved["parts"])
 
 
 def test_relaxable_names_the_tags_the_dialog_can_drop(guide):
@@ -1492,3 +1502,120 @@ def test_an_answer_that_sweeps_is_not_offered_as_a_chip(guide):
     # It is in force — the sweep and all — and it is not droppable.
     assert "connection|openlock" in wall["query"]["require"]
     assert wall["relaxable"] == []
+
+
+def test_availability_is_worked_out_for_a_yes_no_question_too(guide):
+    """A toggle has two answers, and both can be impossible.
+
+    `_offered` yields "on"/"off" for a toggle, and that arm had never
+    run in a test — so nothing would have noticed if a toggle stopped
+    being asked about at all, and a peg question with no pegged wall
+    behind it would have stayed on the page.
+    """
+    # A yes nothing in the catalog can satisfy, so exactly one arm is
+    # dead and the test can tell the two apart.
+    guide["refinements"][1]["when"] = None
+    guide["refinements"][1]["on_tags"] = {"require": ["connection|side|nonesuch"]}
+    # Off this branch, so the questions are done and the refinements
+    # are offered — nothing in this catalog carries a size tag, so
+    # answering it would empty every part and make both arms dead for
+    # a reason that has nothing to do with the toggle.
+    guide["steps"][1]["when"] = {"selected": {"method": ["nonesuch"]}}
+
+    resolved = resolve(
+        guide,
+        # The texture answered too: refinements come one at a time and
+        # the toggle is the second of them.
+        {"method": "s2w-modular", "texture": "texture|cave"},
+        find_candidates,
+        exists=find_exists,
+    )
+
+    locks = {r["key"]: r for r in resolved["refinements"]}["side-locks"]
+    assert locks["unavailable"] == ["on"]
+
+
+def test_a_question_offers_nothing_when_the_part_above_is_missing(guide):
+    """Derivation reads the resolved part above, and there may not be one.
+
+    A base matches the footprint of the piece standing on it. If that
+    piece resolved to nothing the base has no footprint to inherit, so
+    offering it the tags every base in the catalog carries would be a
+    list of answers that fit nothing — the question comes back empty
+    instead.
+    """
+    # The base matches its floor's texture, and the floor is asked for
+    # one nothing has, so there is no part above to copy from.
+    guide["roles"]["base"]["match"] = ["texture"]
+    guide["roles"]["floor"]["query"] = {"require": ["texture|nonesuch"]}
+    guide["refinements"][0]["role"] = "base"
+    # Off this branch, so the questions are done and the refinement is
+    # actually offered rather than held back behind an open step.
+    guide["steps"][1]["when"] = {"selected": {"method": ["nonesuch"]}}
+
+    resolved = resolve(
+        guide,
+        {"method": "s2w-modular"},
+        find_candidates,
+        facets=find_facets,
+    )
+
+    floor = next(p for p in resolved["parts"] if p["role"] == "floor")
+    assert floor["blueprint"] is None
+    texture = {r["key"]: r for r in resolved["refinements"]}["texture"]
+    assert texture["choices"] == []
+
+
+def test_an_off_branch_recommendation_is_not_an_answer_to_read(guide):
+    """`_with_defaults` walks reachable questions only.
+
+    A recommendation on a step this branch never offers is not an
+    answer to anything, so a later conditional recommendation must not
+    see it. Without the `when` gate the unreachable question's default
+    lands in `answered`, and the next question is recommended off a
+    branch nobody is on.
+    """
+    guide["steps"][1]["when"] = {"selected": {"method": ["separate-wall"]}}
+    guide["steps"][1]["default"] = "two"
+    guide["refinements"][0]["default"] = [
+        # Reads the step that this branch never reaches.
+        {"when": {"selected": {"size": ["two"]}}, "value": "texture|dungeon_stone"},
+        {"value": "texture|cave"},
+    ]
+
+    resolved = resolve(guide, {"method": "s2w-modular"}, find_candidates)
+
+    texture = {r["key"]: r for r in resolved["refinements"]}["texture"]
+    assert texture["recommended"] == "texture|cave"
+
+
+def test_a_combination_answer_uses_the_titles_the_catalog_cannot_spell(guide):
+    """`titles` is how a tag becomes a product name.
+
+    The catalog says `openlock` and the product is OpenLOCK. The map is
+    used by the live fixture for three names and was asserted nowhere,
+    so a derived answer could have gone back to reading "Openlock"
+    without a test noticing.
+    """
+    guide["refinements"][0] = {
+        "key": "clips",
+        "role": "*",
+        "prompt": "Clips?",
+        "from_combination": "connection",
+        "titles": {"connection|openlock": "OpenLOCK"},
+    }
+    guide["steps"][1]["when"] = {"selected": {"method": ["nonesuch"]}}
+
+    def combinations(predicate, namespace, exclude):
+        return [{"tags": ["connection|openlock"], "count": 3}]
+
+    resolved = resolve(
+        guide,
+        {"method": "s2w-modular"},
+        find_candidates,
+        facets=find_facets,
+        combinations=combinations,
+    )
+
+    clips = {r["key"]: r for r in resolved["refinements"]}["clips"]
+    assert [c["title"] for c in clips["choices"]] == ["OpenLOCK"]

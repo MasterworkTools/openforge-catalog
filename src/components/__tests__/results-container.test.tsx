@@ -197,6 +197,36 @@ describe('ResultsContainer', () => {
     });
   });
 
+  it('keeps deny_children and allow when the props change after setup', () => {
+    // The sweep is what keeps arrow slits and curved corners out of a
+    // plain wall's dialog. It was passed on the initial setup and
+    // then dropped by the rebuild on every later prop change, which
+    // *widens* the result set — the one direction a restriction must
+    // never fail in.
+    const configValues = createMockConfigTags({
+      require: [{ tag: 'shape|wall' }],
+      deny: [],
+      deny_children: [{ tag: 'component' }],
+      allow: [{ tag: 'component|wall' }]
+    });
+    mockFunctions.fetchData.mockReturnValue(undefined);
+
+    const { rerender } = render(<ResultsContainer configValues={configValues} />);
+    mockFunctions.setTagState.mockClear();
+    // A second render with different props takes the update branch,
+    // which is the one that used to lose them.
+    rerender(
+      <ResultsContainer configValues={configValues} parentTags={['texture|cave']} />
+    );
+
+    expect(mockFunctions.setTagState).toHaveBeenCalledWith(
+      expect.objectContaining({
+        denyChildren: ['component'],
+        allow: ['component|wall']
+      })
+    );
+  });
+
   it('handles configValues with constrain logic integration', () => {
     const configValues = createMockConfigTags({
       require: [],

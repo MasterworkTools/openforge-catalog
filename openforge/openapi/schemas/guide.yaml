@@ -8,7 +8,9 @@ description: >
   Guides do not use the `constrain` predicate that blueprint slots carry:
   it has no Python implementation and its real semantics (parent,
   siblings, filter) are richer than a guide needs. A guide composes
-  require / deny / accept only.
+  require, deny, accept, deny_children and allow — the five terms
+  `PREDICATES` in resolve.py names, and the same vocabulary a blueprint
+  slot and the tag_query API schema use.
 type: object
 required:
   - key
@@ -243,7 +245,12 @@ $defs:
           pattern: "^https://"
       image:
         type: string
-        description: Path to an illustration, relative to the image host.
+        description: >
+          Path to an illustration, relative to the image host. Authored
+          for the three wall methods and not rendered anywhere yet —
+          the explainer shows prose. Kept because the paths are real
+          and the intent is to show them; a reviewer will otherwise
+          keep reporting it as an orphan.
       when:
         $ref: "#/$defs/when"
         description: >

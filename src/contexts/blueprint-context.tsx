@@ -74,16 +74,23 @@ export function BlueprintProvider({ children, autoload = false, initialMd5 = nul
     let current = true;
     store.getState().fetchBlueprintByMd5(initialMd5)
       .then(blueprint => {
-        // Not if the caller has moved on. Opening on a piece is a
-        // convenience; landing on it after the person has clicked
-        // something else would be the opposite of one.
-        if (current) store.getState().setSelectedBlueprint(blueprint);
+        // Only if nothing has been selected since. The cleanup alone
+        // does not cover this: it runs when `initialMd5` changes or
+        // the provider unmounts, and clicking a different result does
+        // neither — so a slow fetch used to land on top of the piece
+        // the person had just chosen. Reading the store is what
+        // actually answers "have they moved on".
+        if (!current || store.getState().selectedBlueprint) return;
+        store.getState().setSelectedBlueprint(blueprint);
       })
       .catch(error => {
-        // The list is still there to search. A part whose file has
-        // been replaced since the link was made is a reason to open
-        // on nothing, not to break the dialog.
-        console.error('Failed to open on blueprint:', error);
+        // Only the fetch. The list is still there to search, and a
+        // part whose file has been replaced since the link was made
+        // is a reason to open on nothing rather than to break the
+        // dialog. A failure inside `setSelectedBlueprint` is not that
+        // and must not be filed under it, hence the md5 in the
+        // message and the `.then` doing no work that can throw.
+        console.error(`Failed to open on blueprint ${initialMd5}:`, error);
       });
     return () => { current = false; };
   }, [initialMd5, store]);

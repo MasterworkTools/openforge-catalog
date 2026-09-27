@@ -23,10 +23,10 @@ import {
  * "nothing is" — so every answer stays clickable in the meantime and
  * the worst case is the honest "nothing matches" on the part itself.
  */
-export type Unavailable = Record<string, string[]> | null;
+type Unavailable = Record<string, string[]> | null;
 
 /** Why answers are missing, by question then by answer. */
-export type Because = Record<string, Record<string, MissingReason>> | null;
+type Because = Record<string, Record<string, MissingReason>> | null;
 
 /**
  * What is not on offer, and why.
@@ -258,6 +258,19 @@ function AnsweredStep({
  * Every answer drawn here is one you can pick. The ones the catalog
  * has nothing for never reach this — see `Missing`.
  */
+/**
+ * How an answer is outlined: chosen, assumed, or neither.
+ *
+ * Dashed for assumed, not solid — that is what the parts are being
+ * built from, but nobody has said so yet, and drawing it like a
+ * choice someone made would be a lie about the state.
+ */
+function answerBorder(chosen: boolean, assumed?: boolean): string {
+  if (chosen) return 'border-blue-600 bg-blue-50 font-semibold';
+  if (assumed) return 'border-blue-400 border-dashed bg-blue-50/40';
+  return 'border-gray-300';
+}
+
 function Answer({
   label,
   hint,
@@ -282,15 +295,7 @@ function Answer({
       aria-pressed={chosen}
       title={hint}
       onClick={onPick}
-      className={`border rounded p-3 text-left ${
-        chosen
-          ? 'border-blue-600 bg-blue-50 font-semibold'
-          : // Dashed, not solid: this is what the parts are being
-            // built from, but nobody has said so yet.
-            assumed
-            ? 'border-blue-400 border-dashed bg-blue-50/40'
-            : 'border-gray-300'
-      }`}
+      className={`border rounded p-3 text-left ${answerBorder(chosen, assumed)}`}
     >
       {label}
       {recommended && (
@@ -482,6 +487,24 @@ function RefinementGroup({
  * what it answered. Clicking it opens it again, which is also how you
  * clear it — the answers inside toggle.
  */
+/**
+ * What a settled refinement reads as, folded to one line.
+ *
+ * Three kinds of answer arrive here: a choice from a list, which
+ * carries its own label; a toggle, whose "on"/"off" is machinery
+ * rather than words; and a raw tag from the open namespace box, which
+ * is the best there is until that box is retired.
+ */
+function answerLabel(
+  refinement: GuideRefinement,
+  chosen: GuideChoice | undefined
+): string {
+  if (chosen) return labelFor(chosen);
+  if (refinement.selected === 'on') return 'Yes';
+  if (refinement.selected === 'off') return 'No';
+  return refinement.selected ?? '';
+}
+
 function AnsweredRefinement({
   refinement,
   showPrompt,
@@ -497,13 +520,7 @@ function AnsweredRefinement({
   const chosen = refinement.choices?.find(
     (choice) => choice.tag === refinement.selected
   );
-  const answer = chosen
-    ? labelFor(chosen)
-    : refinement.selected === 'on'
-      ? 'Yes'
-      : refinement.selected === 'off'
-        ? 'No'
-        : (refinement.selected ?? '');
+  const answer = answerLabel(refinement, chosen);
   return (
     <div>
       <button
@@ -660,10 +677,19 @@ function Toggle({
 }
 
 /**
- * A namespace refinement is a free tag within its namespace. Until the
- * catalog offers "which of these tags do the candidates carry", this is
- * a text entry rather than a menu — deliberately plain, and the backend
- * rejects a tag from the wrong namespace.
+ * A namespace refinement with no answers to show, as a text box.
+ *
+ * The fallback, not the norm. The catalog *does* now answer "which of
+ * these tags do the candidates carry" — `_derive_choices` does it for
+ * every namespace refinement, and every one in the wall fixture comes
+ * back with a list, which goes to `ChoicePicker` instead. This is
+ * reached only when a derivation finds nothing at all, which means
+ * the part it applies to matched nothing: a guide under construction,
+ * or a catalog that lost the pieces.
+ *
+ * So it is deliberately plain, and typing a tag here is a long shot
+ * rather than the intended route. The backend rejects a tag from the
+ * wrong namespace.
  */
 function NamespacePicker({
   refinement,
@@ -682,7 +708,11 @@ function NamespacePicker({
       // by a hidden copy of the heading above it.
       aria-label={showPrompt ? undefined : refinement.prompt}
       className="border border-gray-300 rounded px-2 py-1"
-      placeholder={`${refinement.from_namespace}|...`}
+      // A combination refinement has no `from_namespace`, and reaching
+      // here at all means its derivation found nothing — so the
+      // placeholder read "undefined|..." on the one path where this
+      // box is most likely to be seen.
+      placeholder={`${refinement.from_namespace ?? refinement.from_combination ?? 'tag'}|...`}
       defaultValue={refinement.selected ?? ''}
       onBlur={(e) => onSelect(refinement.key, e.target.value.trim() || null)}
     />

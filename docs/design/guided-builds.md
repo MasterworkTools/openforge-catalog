@@ -438,7 +438,8 @@ Three mechanics are required by the ask and must survive review:
 resolution is real logic: predicate composition, candidate ranking, and working out which
 steps are now reachable. It is also far easier to test there.
 
-Proposed endpoints:
+Proposed endpoints (four shipped — the fourth, `/availability`, was split out of
+`/resolve` after it was built; see below):
 
 - `GET /api/guides` — list.
 - `GET /api/guides/<key>` — the document, for rendering steps.
@@ -452,6 +453,13 @@ Proposed endpoints:
   TTLs to zero and ignores the origin's `Cache-Control`, so a header here collects
   browser caching and edge caching additionally needs a cache-policy change in
   openforge-infra-frontend. Still not an API change, which is the point.
+
+- `GET /api/guides/<key>/availability` — the same selections, answered with which
+  offered answers would leave a part empty, why, and how many pieces each part could
+  have been. Its own endpoint because it costs several times what the parts cost — it
+  re-composes every role for every offered answer — and the parts are what someone is
+  waiting to see. That it re-pays the whole of `/resolve` to do so is tracked as
+  `openforge_catalog-lrk`.
 
   A question answered twice (`?method=a&method=b`) is refused rather than resolved on
   one of its values — except behind the ALB, which collapses a repeated key to its last
@@ -504,7 +512,7 @@ selection resolve silently against the wrong state.
    offending step.
 2. **Resolution engine** — pure Python over a guide document and a selection map, unit
    tested against the real wall fixture. No HTTP.
-3. **API** — the three endpoints above.
+3. **API** — the endpoints above.
 4. **Author the wall guide** — content, with Devon. The three methods, their roles, the
    recommendations, the refinements, the prose.
 5. **Frontend** — the guide page: steps, recommended parts, change affordances, the parts

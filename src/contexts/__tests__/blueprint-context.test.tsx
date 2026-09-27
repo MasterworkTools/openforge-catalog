@@ -144,6 +144,97 @@ describe('BlueprintContext', () => {
     });
   });
 
+  describe('initialMd5', () => {
+    const fetched: Blueprint = {
+      id: 'pinned-id',
+      blueprint_name: 'a pinned wall',
+      blueprint_type: 'model',
+      blueprint_config: {},
+      file_md5: 'pinned-md5',
+      file_size: 1,
+      file_name: 'w.stl',
+      full_name: 'w',
+      file_modified_at: '2023-01-01T00:00:00Z',
+      storage_address: null,
+      signed_url: null,
+      created_at: '2023-01-01T00:00:00Z',
+      updated_at: '2023-01-01T00:00:00Z',
+      tags: [],
+      images: [],
+    } as unknown as Blueprint;
+
+    it('opens on the blueprint it was given', async () => {
+      // The guide opens the catalog on the part you clicked rather
+      // than on "No Blueprint Selected" beside a list you have to
+      // search for something you were already looking at.
+      mockState.fetchBlueprintByMd5.mockResolvedValue(fetched);
+
+      render(
+        <BlueprintProvider initialMd5="pinned-md5">
+          <div />
+        </BlueprintProvider>
+      );
+
+      await waitFor(() =>
+        expect(mockState.setSelectedBlueprint).toHaveBeenCalledWith(fetched)
+      );
+      expect(mockState.fetchBlueprintByMd5).toHaveBeenCalledWith('pinned-md5');
+    });
+
+    it('does not land on top of a piece chosen while it was loading', async () => {
+      // The cleanup alone does not cover this: it runs when the md5
+      // changes or the provider unmounts, and clicking a different
+      // result does neither. Without reading the store back, a slow
+      // fetch overwrote the choice the person had just made.
+      mockState.fetchBlueprintByMd5.mockImplementation(async () => {
+        mockState.selectedBlueprint = { id: 'clicked' } as unknown as Blueprint;
+        return fetched;
+      });
+
+      render(
+        <BlueprintProvider initialMd5="pinned-md5">
+          <div />
+        </BlueprintProvider>
+      );
+
+      await waitFor(() =>
+        expect(mockState.fetchBlueprintByMd5).toHaveBeenCalled()
+      );
+      expect(mockState.setSelectedBlueprint).not.toHaveBeenCalled();
+    });
+
+    it('leaves the dialog usable when the blueprint has gone', async () => {
+      // A part whose file was replaced since the link was made is a
+      // reason to open on nothing, not to break the list.
+      const logged = jest.spyOn(console, 'error').mockImplementation(() => {});
+      mockState.fetchBlueprintByMd5.mockRejectedValue(new Error('404'));
+
+      render(
+        <BlueprintProvider initialMd5="gone-md5">
+          <div data-testid="still-here" />
+        </BlueprintProvider>
+      );
+
+      await waitFor(() => expect(logged).toHaveBeenCalled());
+      expect(screen.getByTestId('still-here')).toBeInTheDocument();
+      expect(mockState.setSelectedBlueprint).not.toHaveBeenCalled();
+      // The md5 is in the message, so a caller passing a uuid by
+      // mistake is distinguishable from a genuinely stale link.
+      expect(logged.mock.calls[0][0]).toContain('gone-md5');
+      logged.mockRestore();
+    });
+
+    it('fetches nothing when it is not given one', () => {
+      render(
+        <BlueprintProvider>
+          <div />
+        </BlueprintProvider>
+      );
+
+      expect(mockState.fetchBlueprintByMd5).not.toHaveBeenCalled();
+    });
+  });
+
   describe('BlueprintProvider', () => {
     it('renders children without crashing', () => {
       render(

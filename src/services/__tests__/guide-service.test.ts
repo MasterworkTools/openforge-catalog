@@ -1,8 +1,13 @@
 import {
   GuideBlueprint,
   GuideDocument,
+  GuideRefinement,
+  fetchAvailability,
   fetchGuide,
   fetchGuides,
+  impliedBy,
+  narrows,
+  releasedBy,
   resolveGuide,
   selectionKeys,
   thumbnailOf,
@@ -210,5 +215,183 @@ describe('thumbnailOf', () => {
     expect(thumbnailOf(null)).toBeNull();
     expect(thumbnailOf(withImages(undefined))).toBeNull();
     expect(thumbnailOf(withImages([]))).toBeNull();
+  });
+});
+
+
+describe('fetchAvailability', () => {
+  it('asks about the selections it was given', async () => {
+    respondWith({ ok: true, status: 200, json: () => ({}) });
+
+    await fetchAvailability('wall', { method: 's2w', size: '2x2' });
+
+    // The whole point of the request: availability for *these*
+    // answers. Sending the bare path would describe a different build
+    // and the page would hide the wrong options.
+    expect(global.fetch).toHaveBeenCalledWith(
+      '/api/guides/wall/availability?method=s2w&size=2x2'
+    );
+  });
+
+  it('asks without a query string when nothing is answered', async () => {
+    respondWith({ ok: true, status: 200, json: () => ({}) });
+
+    await fetchAvailability('wall', {});
+
+    expect(global.fetch).toHaveBeenCalledWith('/api/guides/wall/availability');
+  });
+
+  it('throws when the request fails, rather than reporting nothing dead', async () => {
+    // Silently returning an empty map would read as "every answer
+    // works", which is the opposite of not knowing.
+    respondWith({ ok: false, status: 500, statusText: 'Server Error' });
+
+    await expect(fetchAvailability('wall', {})).rejects.toThrow('500');
+  });
+
+  it('fills in the three maps when the response omits them', async () => {
+    respondWith({ ok: true, status: 200, json: () => ({}) });
+
+    await expect(fetchAvailability('wall', {})).resolves.toEqual({
+      unavailable: {},
+      because: {},
+      options: {},
+    });
+  });
+
+  it('names the status when the server sends no reason phrase', async () => {
+    // HTTP/2 has no reason phrase, so `statusText` is empty there and
+    // the message used to end in a colon and nothing.
+    respondWith({ ok: false, status: 503, statusText: '' });
+
+    await expect(fetchAvailability('wall', {})).rejects.toThrow(
+      'Failed to fetch availability: 503'
+    );
+  });
+});
+
+/** A refinement, with only the fields the function under test reads. */
+function refinement(over: Partial<GuideRefinement>): GuideRefinement {
+  return {
+    key: 'texture',
+    role: '*',
+    prompt: 'Texture',
+    browsable: true,
+    selected: null,
+    unavailable: [],
+    because: {},
+    recommended: null,
+    ...over,
+  };
+}
+
+describe('impliedBy', () => {
+  it('reads the tag a role was substituted, not the answer own tag', () => {
+    // A towne wall stands on a wood base: the catalog has towne walls
+    // and no towne base at all. The base cannot carry `texture|towne`
+    // by construction, so matching on the answer's own tag found
+    // nothing and *cleared* the towne answer — on three of the eight
+    // textures, every time somebody pinned a base.
+    const texture = refinement({
+      selected: 'texture|dungeon_stone',
+      choices: [{ tag: 'texture|towne' }, { tag: 'texture|dungeon_stone' }],
+      substitute: { 'texture|towne': { 'wall-base': 'texture|wood' } },
+    });
+
+    const changes = impliedBy({ tags: ['shape|base', 'texture|wood'] }, 'wall-base', [
+      texture,
+    ]);
+
+    expect(changes).toEqual({ texture: 'texture|towne' });
+  });
+
+  it('takes the most specific combination the piece carries', () => {
+    // Combination answers are sets, and a topless base carries plain
+    // OpenLOCK too. Reporting the plain one turns into a predicate
+    // that *denies* topless, so the other base flips to non-topless
+    // and the label contradicts the piece that was pinned.
+    const clips = refinement({
+      key: 'base-clips',
+      from_combination: 'connection',
+      selected: null,
+      choices: [
+        { tag: 'connection|magnetic,connection|openlock' },
+        {
+          tag: 'connection|magnetic,connection|openlock,connection|openlock|topless',
+        },
+      ],
+    });
+
+    const changes = impliedBy(
+      {
+        tags: [
+          'connection|magnetic',
+          'connection|openlock',
+          'connection|openlock|topless',
+        ],
+      },
+      'wall-base',
+      [clips]
+    );
+
+    expect(changes['base-clips']).toBe(
+      'connection|magnetic,connection|openlock,connection|openlock|topless'
+    );
+  });
+
+  it('clears a question the piece answers with nothing', () => {
+    const pegs = refinement({
+      key: 'pegs',
+      selected: 'connection|pegs',
+      choices: [{ tag: 'connection|pegs' }],
+    });
+
+    expect(impliedBy({ tags: ['shape|wall'] }, 'wall', [pegs])).toEqual({
+      pegs: null,
+    });
+  });
+
+  it('leaves a question that is not a preference alone', () => {
+    const size = refinement({ key: 'size', browsable: false, selected: 'a' });
+
+    expect(impliedBy({ tags: ['size|width|2'] }, 'wall', [size])).toEqual({});
+  });
+});
+
+describe('narrows', () => {
+  it('counts a step option that names the role', () => {
+    const step = {
+      key: 'wall-print',
+      prompt: 'How should the wall print?',
+      selected: null,
+      unavailable: [],
+      because: {},
+      recommended: null,
+      options: [{ key: 'with-base', title: 'x', roles: { 'wall-base': {} } }],
+    };
+
+    expect(narrows(step, 'wall-base')).toBe(true);
+    expect(narrows(step, 'floor')).toBe(false);
+  });
+
+  it('counts an option with no roles of its own as narrowing everything', () => {
+    // "How wide?" narrows whatever the earlier answers put in play,
+    // which is how the engine reads it. Without this, answering the
+    // size step released no pin and the button looked dead.
+    const size = {
+      key: 'size',
+      prompt: 'What size tiles?',
+      selected: null,
+      unavailable: [],
+      because: {},
+      recommended: null,
+      options: [{ key: '2x2', title: '2x2' }],
+    };
+
+    expect(narrows(size, 'wall')).toBe(true);
+    expect(releasedBy(size, ['wall', 'floor'])).toEqual({
+      'part.wall': null,
+      'part.floor': null,
+    });
   });
 });

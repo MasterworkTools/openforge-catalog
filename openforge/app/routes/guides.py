@@ -24,6 +24,13 @@ max-age=...`, not an `ETag`: a conditional request still runs this
 function to compute the validator, so it would save egress, which R2
 already gives away, rather than invocations, which are the cost here.
 
+None of that is shipped. This paragraph is the reasoning for a change
+nobody has made, kept because the reasoning is the expensive part and
+the trap it names (`CachingDisabled` silently discarding the header)
+is the kind of thing that gets rediscovered the hard way. The work
+itself is `openforge_catalog-lrk`, alongside the rest of what these
+endpoints cost.
+
 A selection this API does not recognise is a 400, which makes the
 shareable URL a narrower thing than a browser URL: the guide page must
 build the query from the keys the guide document defines rather than
@@ -68,7 +75,7 @@ def _guide_or_404(curs, guide_key: str) -> dict:
     and a client that parses one has to special-case the other. An
     unhandled exception is still werkzeug's HTML 500; no app-wide JSON
     error handler exists, and adding one is a change to every route
-    rather than to these three.
+    rather than to these four.
     """
     try:
         return guide_sql.get_guide_by_key(curs, guide_key)
@@ -253,12 +260,18 @@ def _pinned_finder(curs):
     made from, and a pin whose file has been deleted or replaced
     should fall back to what the guide would have recommended anyway
     — a page of parts is a better answer to a stale link than a 404.
+
+    Logged all the same. The intended case — an old link to a file
+    that has since been rescanned — and a caller bug that sends a
+    uuid where an md5 belongs produce the identical silent `None`,
+    and only one of those is fine.
     """
 
     def find_pinned(md5: str) -> dict | None:
         try:
             found = blueprint_sql.get_blueprint_by_md5(curs, md5)
         except NotFound:
+            current_app.logger.info("guide pin %s matches no blueprint", md5)
             return None
         _attach_tags(curs, [found])
         return found

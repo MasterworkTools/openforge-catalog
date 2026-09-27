@@ -251,6 +251,28 @@ def test_the_design_documents_example_guide_is_a_valid_guide():
     validate_guide_document(yaml.safe_load(block.group(1)))
 
 
+def test_every_shipped_guide_fixture_is_a_valid_guide():
+    """The guides that actually ship, not just the doc's example.
+
+    Nothing validated them. Every other test in this file builds a
+    document by hand, and the loader is the only thing that would have
+    caught a malformed fixture — at load time, on someone's machine.
+    The wall guide is 850 lines and uses every term the format has, so
+    it is the one most able to drift away from the schema.
+    """
+    fixtures = sorted(Path("openforge/db/fixtures/guides").glob("*.yaml"))
+    if not fixtures:
+        pytest.skip("guide fixtures not in this checkout")
+
+    for path in fixtures:
+        try:
+            validate_guide_document(yaml.safe_load(path.read_text()))
+        except ValueError as e:
+            # The validator names the step or role; this names the file,
+            # which matters once there is more than one guide.
+            raise AssertionError(f"{path.name}: {e}") from e
+
+
 def test_an_option_need_not_name_any_role(guide):
     """A later step may narrow the build without adding to it."""
     guide["steps"].append(
@@ -493,3 +515,154 @@ def test_every_clause_of_a_conditional_default_names_a_real_answer(guide):
 
     assert "step 'method'" in str(excinfo.value)
     assert "s2w-modualr" in str(excinfo.value)
+
+
+def test_except_roles_must_name_a_role_the_guide_has(guide):
+    """A misspelled `except_roles` entry excepts nothing.
+
+    Which means the refinement is asked of a part that cannot answer
+    it, and that part comes back empty — a blank box on the page, with
+    nothing anywhere to say a typo caused it.
+    """
+    guide["refinements"][0]["except_roles"] = ["flor"]
+
+    with pytest.raises(ValueError) as excinfo:
+        validate_guide_document(guide)
+
+    assert "refinement 'texture'" in str(excinfo.value)
+    assert "flor" in str(excinfo.value)
+
+
+def test_substitute_must_name_a_role_the_guide_has(guide):
+    """A misspelled `substitute` role gets the chosen tag instead.
+
+    Which is precisely the bug substitution exists to prevent — a
+    towne base that does not exist — reappearing under a typo.
+    """
+    guide["refinements"][0]["substitute"] = {"texture|cave": {"wal": "texture|wood"}}
+
+    with pytest.raises(ValueError) as excinfo:
+        validate_guide_document(guide)
+
+    assert "refinement 'texture'" in str(excinfo.value)
+    assert "wal" in str(excinfo.value)
+
+
+def test_match_without_under_is_refused(guide):
+    """`match` copies from the role above, so there has to be one.
+
+    Without `under` the role takes no constraint at all, so a base
+    meant to match the footprint above it matches every footprint —
+    silently, and the parts list looks plausible.
+    """
+    guide["roles"]["wall"]["match"] = ["size|width"]
+    guide["roles"]["wall"].pop("under", None)
+
+    with pytest.raises(ValueError) as excinfo:
+        validate_guide_document(guide)
+
+    assert "role 'wall'" in str(excinfo.value)
+    assert "under" in str(excinfo.value)
+
+
+def test_a_toggle_default_takes_on_or_off(guide):
+    guide["refinements"].append(
+        {
+            "key": "pegs",
+            "role": "wall",
+            "prompt": "Pegs?",
+            "on_tags": {"require": ["connection|pegs"]},
+            "off_tags": {"deny": ["connection|pegs"]},
+            "default": "yes",
+        }
+    )
+
+    with pytest.raises(ValueError) as excinfo:
+        validate_guide_document(guide)
+
+    assert "refinement 'pegs'" in str(excinfo.value)
+    assert "'on' or 'off'" in str(excinfo.value)
+
+
+def test_a_namespace_default_must_be_under_its_namespace(guide):
+    guide["refinements"][0]["default"] = "shape|wall"
+
+    with pytest.raises(ValueError) as excinfo:
+        validate_guide_document(guide)
+
+    assert "is not under 'texture'" in str(excinfo.value)
+
+
+def test_a_default_must_be_one_of_the_choices_when_there_are_choices(guide):
+    guide["refinements"][0]["choices"] = [
+        {"tag": "texture|cave"},
+        {"tag": "texture|towne"},
+    ]
+    guide["refinements"][0]["default"] = "texture|dungeon_stone"
+
+    with pytest.raises(ValueError) as excinfo:
+        validate_guide_document(guide)
+
+    assert "is not one of its choices" in str(excinfo.value)
+
+
+def test_substitute_must_name_an_answer_the_question_offers(guide):
+    """`substitute` is keyed by the answer given, so an entry for an
+    answer the question does not offer can never fire.
+
+    Two of these survived in the wall guide after its texture list
+    stopped offering the storeys of a stone brick facade separately.
+    Nothing failed; the substitution simply never happened, which is
+    the bug substitution exists to prevent.
+    """
+    guide["refinements"][0]["choices"] = [
+        {"tag": "texture|cave"},
+        {"tag": "texture|towne"},
+    ]
+    guide["refinements"][0]["substitute"] = {
+        "texture|cave|damp": {"wall": "texture|wood"}
+    }
+
+    with pytest.raises(ValueError) as excinfo:
+        validate_guide_document(guide)
+
+    assert "refinement 'texture'" in str(excinfo.value)
+    assert "texture|cave|damp" in str(excinfo.value)
+
+
+def test_substitute_is_unchecked_when_the_answers_are_derived(guide):
+    """A question with no `choices` has its answers derived from the
+    catalog, so there is no list here to check a key against.
+    """
+    guide["refinements"][0].pop("choices", None)
+    guide["refinements"][0]["substitute"] = {"texture|cave": {"wall": "texture|wood"}}
+
+    validate_guide_document(guide)
+
+
+def test_an_option_when_must_name_an_option_that_exists(guide):
+    """An option carries a `when` of its own, read like a step's.
+
+    A misspelled one silently withholds the option on every branch —
+    the button is simply never there, with nothing to say why.
+    """
+    guide["steps"].append(
+        {
+            "key": "width",
+            "prompt": "How wide?",
+            "options": [
+                {
+                    "key": "two",
+                    "title": "2 inch",
+                    # Names the method step, which does come first —
+                    # but an option of it that does not exist.
+                    "when": {"selected": {"method": ["s2w-modlar"]}},
+                }
+            ],
+        }
+    )
+
+    with pytest.raises(ValueError) as excinfo:
+        validate_guide_document(guide)
+
+    assert "s2w-modlar" in str(excinfo.value)

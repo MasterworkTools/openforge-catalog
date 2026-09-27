@@ -5,14 +5,15 @@ import React from 'react';
 /**
  * The unwrapped cube: pick a side to look at.
  *
- * Shared by the blueprint sprite viewer and the guide's parts list.
+ * The guide's parts list uses this one. `sprite-viewer.tsx` keeps its
+ * own, keyed by frame index — the two were not unified, because the
+ * guide turns several sheets at once and can only address them by
+ * angle *name*, while the viewer turns one sheet and has indices to
+ * hand. `useDragRotation` is the part that is genuinely shared.
+ *
  * Its second job is the more important one — dragging to spin is not
  * discoverable, and a widget that plainly offers "front, left, top"
  * says the picture turns without anyone having to write it down.
- *
- * Keyed by angle *name* rather than frame index, because the guide
- * turns several sheets at once and the name is the only thing they
- * have in common. The viewer maps its own indices to names.
  */
 
 /** Where each side sits in the flattened cube, and its short label. */
@@ -33,19 +34,13 @@ interface SpriteControlsProps {
   /** The side currently shown, by name. */
   view: string;
   onView: (name: string) => void;
-  /**
-   * Which sides exist. Everything in the layout, when not given —
-   * every sheet in the catalog carries all ten, but a sheet that does
-   * not should offer the sides it has rather than buttons that do
-   * nothing.
-   */
-  available?: string[];
 }
 
-export function SpriteControls({ view, onView, available }: SpriteControlsProps) {
-  const offered = Object.entries(LAYOUT).filter(
-    ([name]) => !available || available.includes(name)
-  );
+export function SpriteControls({ view, onView }: SpriteControlsProps) {
+  // Every sheet in the catalog carries all ten sides, so the layout
+  // is the offer. A per-sheet subset was written for and never used;
+  // add it back the day a sheet ships with fewer.
+  const offered = Object.entries(LAYOUT);
 
   return (
     <div

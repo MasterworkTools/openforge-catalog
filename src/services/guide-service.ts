@@ -42,12 +42,16 @@ export interface GuideStep {
   /** What to know before answering, shown above the options. */
   blurb?: string;
   links?: Record<string, string>;
-  /** Option keys with no match, which are not offered at all. */
-  unavailable?: string[];
-  /** Why each is missing, keyed by option. */
-  because?: Record<string, MissingReason>;
+  /**
+   * Option keys with no match, which are not offered at all. Always
+   * present: `resolve()` sets it on every step it returns, empty when
+   * availability was not asked for.
+   */
+  unavailable: string[];
+  /** Why each is missing, keyed by option. Always present. */
+  because: Record<string, MissingReason>;
   /** The option recommended, and assumed until one is chosen. */
-  recommended?: string | null;
+  recommended: string | null;
   options: GuideOption[];
   selected: string | null;
 }
@@ -68,17 +72,31 @@ export interface GuideRefinement {
   choices?: GuideChoice[];
   /** Roles this question does not reach, out of the ones `role` names. */
   except_roles?: string[];
+  /**
+   * Roles this question asks for a *different* tag than the answer.
+   *
+   * A towne wall stands on a wood base: the catalog has towne walls
+   * and no towne base at all, so the guide substitutes the tag per
+   * role. Without this the frontend cannot tell that a piece which
+   * does not carry the answer's own tag may still be that answer.
+   */
+  substitute?: Record<string, Record<string, string>>;
+  /** Set when the answers are whole tag combinations, not single tags. */
+  from_combination?: string;
   /** True when the answer is a preference rather than a fit. */
   browsable?: boolean;
   /** Heading to file this question under, when it is not a main one. */
   group?: string;
   on_tags?: unknown;
-  /** Choice tags, or "on"/"off", with no match; not offered at all. */
-  unavailable?: string[];
-  /** Why each is missing, keyed by answer. */
-  because?: Record<string, MissingReason>;
+  /**
+   * Choice tags, or "on"/"off", with no match; not offered at all.
+   * Always present, as on a step.
+   */
+  unavailable: string[];
+  /** Why each is missing, keyed by answer. Always present. */
+  because: Record<string, MissingReason>;
   /** The answer recommended, and assumed until one is chosen. */
-  recommended?: string | null;
+  recommended: string | null;
   /** What to know before answering, as on a step. */
   blurb?: string;
   links?: Record<string, string>;
@@ -116,18 +134,24 @@ export interface GuideBlueprint {
   tags?: string[];
 }
 
+/**
+ * The predicate terms the engine composes, as `PREDICATES` in
+ * resolve.py names them. A closed union rather than a string index,
+ * so a typo is a compile error instead of a silent `undefined`.
+ */
+export type PredicateTerm =
+  | 'require'
+  | 'deny'
+  | 'accept'
+  | 'allow'
+  | 'deny_children';
+
 export interface GuidePart {
   role: string;
   title: string;
   under: string | null;
-  /** The resolved predicate: require, deny, accept, allow, deny_children. */
-  query: Partial<Record<string, string[]>>;
-  /**
-   * The same predicate with the merely-preferred answers taken out,
-   * for opening the catalog on this part: narrow enough that what you
-   * find still fits the build, wide enough to be worth browsing.
-   */
-  browse: Partial<Record<string, string[]>>;
+  /** The resolved predicate the part was found with. */
+  query: Partial<Record<PredicateTerm, string[]>>;
   /**
    * Tags of `query` the dialog will let you take off, one at a time.
    * The merely-preferred ones, so browsing starts inside the family
@@ -163,6 +187,21 @@ export interface ResolvedGuide {
 
 export type Selections = Record<string, string>;
 
+/**
+ * A failed response, in words, for a message someone will read.
+ *
+ * The status number and not only `statusText`, because HTTP/2 has no
+ * reason phrase: over it `statusText` is the empty string, and the
+ * one error the page shows rendered as "Failed to resolve: " with
+ * nothing after it. The number also lets a caller tell "no such
+ * guide" from "not right now".
+ */
+function describe(response: Response): string {
+  return response.statusText
+    ? `${response.status} ${response.statusText}`
+    : `${response.status}`;
+}
+
 export async function fetchGuides(): Promise<GuideSummary[]> {
   const response = await fetch('/api/guides');
   // An empty collection is a 404 here by house convention
@@ -171,7 +210,7 @@ export async function fetchGuides(): Promise<GuideSummary[]> {
     return [];
   }
   if (!response.ok) {
-    throw new Error(`Failed to fetch guides: ${response.statusText}`);
+    throw new Error(`Failed to fetch guides: ${describe(response)}`);
   }
   const body = await response.json();
   return body.guides;
@@ -187,7 +226,7 @@ export async function fetchGuides(): Promise<GuideSummary[]> {
 export async function fetchGuide(guideKey: string): Promise<GuideDocument> {
   const response = await fetch(`/api/guides/${encodeURIComponent(guideKey)}`);
   if (!response.ok) {
-    throw new Error(`Failed to fetch guide: ${response.statusText}`);
+    throw new Error(`Failed to fetch guide: ${describe(response)}`);
   }
   const body = await response.json();
   return body.document;
@@ -234,7 +273,7 @@ export async function resolveGuide(
   const response = await fetch(query ? `${path}?${query}` : path);
   if (!response.ok) {
     const body = await response.json().catch(() => ({}));
-    throw new Error(body.error || `Failed to resolve: ${response.statusText}`);
+    throw new Error(body.error || `Failed to resolve: ${describe(response)}`);
   }
   return response.json();
 }
@@ -284,7 +323,7 @@ export async function fetchAvailability(
     }`
   );
   if (!response.ok) {
-    throw new Error(`Failed to fetch availability: ${response.statusText}`);
+    throw new Error(`Failed to fetch availability: ${describe(response)}`);
   }
   const body = await response.json();
   return {
@@ -323,15 +362,39 @@ export function impliedBy(
   const changes: Record<string, string | null> = {};
   for (const refinement of refinements) {
     if (!refinement.browsable || !reaches(refinement, role)) continue;
-    // A combination answer is several tags at once, joined — it is
-    // that combination or it is not, so every part has to be there.
-    const answer =
-      refinement.choices?.find((choice) =>
-        choice.tag.split(',').every((tag) => carried.has(tag))
-      )?.tag ?? null;
+    const answer = answeredBy(refinement, role, carried);
     if (answer !== refinement.selected) changes[refinement.key] = answer;
   }
   return changes;
+}
+
+/**
+ * Which of a question's answers this piece is, or null for none.
+ *
+ * Two things make this more than a lookup. A role may have been asked
+ * for a substituted tag — a towne wall stands on a `texture|wood`
+ * base — so the tag to look for is the substitution where there is
+ * one, not the answer's own. And a combination answer is a *set*, so
+ * the piece has to carry all of it; where several match, the most
+ * specific wins, because a topless base carries plain OpenLOCK too
+ * and reporting the plain one would then deny the topless tag it
+ * actually has.
+ */
+function answeredBy(
+  refinement: GuideRefinement,
+  role: string,
+  carried: Set<string>
+): string | null {
+  const matched = (refinement.choices ?? []).filter((choice) => {
+    const substituted = refinement.substitute?.[choice.tag]?.[role];
+    const wanted = substituted ? [substituted] : choice.tag.split(',');
+    return wanted.every((tag) => carried.has(tag));
+  });
+  if (matched.length === 0) return null;
+  // Most tags first. A subset and its superset both match the piece
+  // carrying the superset, and only the superset describes it.
+  matched.sort((a, b) => b.tag.split(',').length - a.tag.split(',').length);
+  return matched[0].tag;
 }
 
 /** Does this question apply to that role? Same test the engine makes. */
