@@ -1557,6 +1557,43 @@ describe('inspecting a part', () => {
     expect(modalProps[modalProps.length - 1].partName).toBe('Wall (wall)');
   });
 
+  it('offers the other pieces on the answer that left them, too', async () => {
+    // Answering "towne" is where you find out there are six of them,
+    // so the count belongs beside the answer as well as on the part —
+    // and it opens the same dialog, on the part that question
+    // narrows rather than on whichever was clicked last.
+    visit('?guide=wall&method=separate-wall&texture=texture|cave');
+    mockFetch((url) =>
+      url.includes('/availability')
+        ? // Both the wall and the base under it still have a choice
+          // in them, and the texture question narrows both. The one
+          // worth offering is the one with the most left.
+          { unavailable: {}, because: {}, options: { wall: 6, 'wall-base': 3 } }
+        : url.includes('/resolve')
+          ? {
+              ...RESOLVED_WITH_PARTS,
+              refinements: RESOLVED_WITH_PARTS.refinements.map((r) =>
+                r.key === 'texture' ? { ...r, selected: 'texture|cave' } : r
+              ),
+            }
+          : GUIDE_DOCUMENT
+    );
+
+    render(<GuidePage />);
+    // Two of them: one on the part, one on the settled question.
+    const bars = await screen.findAllByRole('button', { name: '6 options' });
+    expect(bars).toHaveLength(2);
+
+    // The one in the question column opens the wall, which is the
+    // part that question narrows — not whichever part was clicked
+    // last, because nothing was.
+    const asked = bars.find((bar) => !bar.closest('.guide-parts'))!;
+    expect(asked).toBeDefined();
+    fireEvent.click(asked);
+    expect(await screen.findByTestId('part-modal')).toBeInTheDocument();
+    expect(modalProps[modalProps.length - 1].partName).toBe('Wall (wall)');
+  });
+
   it('opens showing the part that was clicked', async () => {
     // You were looking at it when you clicked it. Opening on "No
     // Blueprint Selected" and a list would make you go and find the

@@ -1,11 +1,14 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
+  GuidePart,
   GuideSummary,
   fetchGuides,
+  narrows,
   releasedBy,
 } from '@/services/guide-service';
+import { MoreOptions } from './guide-steps';
 import { useGuideKey, useGuideState } from '@/hooks/use-guide-state';
 import { GuideParts } from './guide-parts';
 import { GuideExplainer } from './guide-explainer';
@@ -32,6 +35,31 @@ export default function GuidePage() {
   // Which settled question has been reopened. Here rather than in the
   // section itself, because the explanation beside it follows.
   const [opened, setOpened] = useState<string | null>(null);
+  // The part whose catalog dialog is open. Here rather than in the
+  // parts list, because the questions on the left open it too.
+  const [inspecting, setInspecting] = useState<GuidePart | null>(null);
+
+  // Which questions left more than one piece, and which part to open
+  // when they say so. A question can narrow several roles — the wall
+  // texture narrows the wall and the base under it — and the one
+  // worth offering is whichever still has a choice in it.
+  const more: MoreOptions = useMemo(() => {
+    const found: MoreOptions = {};
+    if (!resolved || !options) return found;
+    for (const question of resolved.refinements) {
+      const choices = resolved.parts
+        .filter((part) => narrows(question, part.role))
+        .filter((part) => (options[part.role] ?? 0) > 1)
+        .sort((a, b) => (options[b.role] ?? 0) - (options[a.role] ?? 0));
+      if (choices.length > 0) {
+        found[question.key] = {
+          count: options[choices[0].role],
+          onOpen: () => setInspecting(choices[0]),
+        };
+      }
+    }
+    return found;
+  }, [resolved, options]);
 
   // Answering a question also lets go of the parts that question
   // decides. A pinned part outranks the questions — that is what
@@ -90,6 +118,7 @@ export default function GuidePage() {
               refinements={resolved.refinements}
               unavailable={unavailable}
               because={because}
+              more={more}
               opened={opened}
               onOpenChange={setOpened}
               onSelect={answer}
@@ -106,6 +135,8 @@ export default function GuidePage() {
               parts={resolved.parts}
               refinements={resolved.refinements}
               options={options}
+              inspecting={inspecting}
+              onInspect={setInspecting}
               onSelect={select}
               onSelectAll={selectAll}
             />

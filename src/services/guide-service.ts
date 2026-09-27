@@ -371,7 +371,7 @@ export function releasedBy(
  * and an option with no roles of its own — "how wide?" — narrows
  * whatever the earlier answers put in play, which is every role.
  */
-function narrows(question: GuideStep | GuideRefinement, role: string): boolean {
+export function narrows(question: GuideStep | GuideRefinement, role: string): boolean {
   if (!('options' in question)) return reaches(question, role);
   return question.options.some(
     (option) => !option.roles || role in option.roles

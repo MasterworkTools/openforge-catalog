@@ -302,10 +302,20 @@ function Answer({
   );
 }
 
+/**
+ * For a question whose answer left more than one piece: how many, and
+ * how to go and look at them. Keyed by question.
+ */
+export type MoreOptions = Record<
+  string,
+  { count: number; onOpen: () => void }
+>;
+
 interface GuideRefinementsProps {
   refinements: GuideRefinement[];
   unavailable?: Unavailable;
   because?: Because;
+  more?: MoreOptions;
   /** The one answered question reopened, shared with the steps. */
   opened?: string | null;
   onOpenChange?: (key: string | null) => void;
@@ -316,6 +326,7 @@ export function GuideRefinements({
   refinements,
   unavailable,
   because,
+  more,
   opened,
   onOpenChange,
   onSelect,
@@ -367,6 +378,7 @@ export function GuideRefinements({
           refinements={section.of}
           deadFor={deadFor}
           becauseFor={becauseFor}
+          more={more}
           opened={opened}
           onOpenChange={onOpenChange}
           onSelect={onSelect}
@@ -382,6 +394,7 @@ function RefinementGroup({
   refinements,
   deadFor,
   becauseFor,
+  more,
   opened,
   onOpenChange,
   onSelect,
@@ -393,6 +406,7 @@ function RefinementGroup({
   becauseFor: (
     refinement: GuideRefinement
   ) => Record<string, MissingReason> | undefined;
+  more?: MoreOptions;
   opened?: string | null;
   onOpenChange?: (key: string | null) => void;
   onSelect: (key: string, value: string | null) => void;
@@ -413,6 +427,7 @@ function RefinementGroup({
                 key={refinement.key}
                 refinement={refinement}
                 showPrompt={showPrompts}
+                more={more?.[refinement.key]}
                 onOpen={() => onOpenChange?.(refinement.key)}
               />
             );
@@ -470,10 +485,13 @@ function RefinementGroup({
 function AnsweredRefinement({
   refinement,
   showPrompt,
+  more,
   onOpen,
 }: {
   refinement: GuideRefinement;
   showPrompt: boolean;
+  /** How many pieces this answer left, when it left more than one. */
+  more?: { count: number; onOpen: () => void };
   onOpen: () => void;
 }) {
   const chosen = refinement.choices?.find(
@@ -487,19 +505,35 @@ function AnsweredRefinement({
         ? 'No'
         : (refinement.selected ?? '');
   return (
-    <button
-      type="button"
-      onClick={onOpen}
-      aria-expanded={false}
-      className="w-full text-left rounded border border-gray-200 px-3 py-2 hover:border-gray-400"
-    >
-      {showPrompt && (
-        <span className="block text-xs uppercase tracking-wide text-gray-500">
-          {refinement.prompt}
-        </span>
+    <div>
+      <button
+        type="button"
+        onClick={onOpen}
+        aria-expanded={false}
+        className="w-full text-left rounded border border-gray-200 px-3 py-2 hover:border-gray-400"
+      >
+        {showPrompt && (
+          <span className="block text-xs uppercase tracking-wide text-gray-500">
+            {refinement.prompt}
+          </span>
+        )}
+        <span className="block font-semibold">{answer}</span>
+      </button>
+      {/* Answering "towne" is where you find out there are six of
+          them, so this is one of the two places to say so — the same
+          bar as on the part, opening the same dialog. Its own button
+          rather than part of the one above, which reopens the
+          question instead. */}
+      {more && (
+        <button
+          type="button"
+          onClick={more.onOpen}
+          className="mt-1 w-full rounded border-2 border-red-600 bg-red-50 px-2 py-1 text-sm font-semibold text-red-700 hover:bg-red-100"
+        >
+          {more.count} options
+        </button>
       )}
-      <span className="block font-semibold">{answer}</span>
-    </button>
+    </div>
   );
 }
 

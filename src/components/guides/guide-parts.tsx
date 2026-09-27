@@ -26,6 +26,15 @@ interface GuidePartsProps {
    * Arrives with availability, a moment after the parts.
    */
   options?: Record<string, number> | null;
+  /**
+   * The part whose catalog dialog is open, if any.
+   *
+   * Held by the page rather than here, because the questions on the
+   * left open it too: answering "towne" is where you find out there
+   * are six of them, so that is one of the places to offer them.
+   */
+  inspecting?: GuidePart | null;
+  onInspect?: (part: GuidePart | null) => void;
   /** Same setter the questions use: a pin is a selection like any other. */
   onSelect?: (key: string, value: string | null) => void;
   /**
@@ -59,10 +68,11 @@ export function GuideParts({
   parts,
   refinements = [],
   options,
+  inspecting = null,
+  onInspect,
   onSelect,
   onSelectAll,
 }: GuidePartsProps) {
-  const [inspecting, setInspecting] = useState<GuidePart | null>(null);
   const [view, setView] = useState<string>('front');
   // Where the drag began, so each move is measured from there rather
   // than accumulating rounding as the pointer travels.
@@ -128,7 +138,7 @@ export function GuideParts({
                   part={part}
                   view={view}
                   options={options?.[part.role]}
-                  onInspect={setInspecting}
+                  onInspect={onInspect ?? (() => {})}
                   onUnpin={
                     onSelect ? () => onSelect(pinKey(part.role), null) : undefined
                   }
@@ -160,7 +170,7 @@ export function GuideParts({
       </div>
       <PartSelectionModal
         isOpen={inspecting !== null}
-        onClose={() => setInspecting(null)}
+        onClose={() => onInspect?.(null)}
         partName={inspecting ? `${inspecting.title} (${inspecting.role})` : ''}
         // What the guide actually resolved, not a wider set. Opening
         // on your own wall is the useful place to start looking for
@@ -181,7 +191,7 @@ export function GuideParts({
                   // wall beside the word "dungeon stone".
                   ...impliedBy(blueprint, inspecting.role, refinements),
                 });
-                setInspecting(null);
+                onInspect?.(null);
               }
             : undefined
         }
