@@ -104,6 +104,28 @@ describe('TabbedInterface', () => {
     expect(document.querySelectorAll('main')).toHaveLength(0);
   });
 
+  it('does not ask again when you come back to the guides tab', async () => {
+    // It is mounted lazily so an unopened tab costs nothing, and kept
+    // mounted afterwards — unmounting on every switch refetched the
+    // document, the resolution and the availability, and the options
+    // count rides on the slowest of those, so it visibly vanished and
+    // came back each time.
+    const fetch = noGuides();
+
+    render(<TabbedInterface />);
+    fireEvent.click(screen.getByRole('button', { name: 'Guided Builds' }));
+    await screen.findByRole('heading', { name: 'Guided builds' });
+    await waitFor(() => expect(guideRequests(fetch)).toHaveLength(1));
+
+    // Away and back.
+    fireEvent.click(screen.getByRole('button', { name: 'Part Search' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Guided Builds' }));
+    await screen.findByRole('heading', { name: 'Guided builds' });
+
+    // Still one. A remount would make it two.
+    await waitFor(() => expect(guideRequests(fetch)).toHaveLength(1));
+  });
+
   it('keeps Part Search mounted across a trip to another tab', async () => {
     // The guides tab is conditional so a hidden component does not spend
     // a Lambda invocation. Its neighbours must NOT be: `TabPartSearch`

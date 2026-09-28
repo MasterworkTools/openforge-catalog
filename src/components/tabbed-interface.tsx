@@ -31,6 +31,22 @@ const TabbedInterface = () => {
     }
   }, []);
 
+  // Mounted from the first time it is opened, and kept mounted after.
+  //
+  // Purely conditional was wrong in the other direction: leaving the
+  // tab unmounted the guide, so coming back refetched the document, the
+  // resolution and the availability, and the options count — which
+  // rides on the slowest of the three — visibly vanished and returned.
+  // Three requests and a flicker for a tab the person had already
+  // loaded.
+  const [guidesOpened, setGuidesOpened] = useState(false);
+  useEffect(() => {
+    if (activeTab === 'guides' && !guidesOpened) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setGuidesOpened(true);
+    }
+  }, [activeTab, guidesOpened]);
+
   useEffect(() => {
     // Load base generator URL from localStorage and app-config.json
     const savedUrl = localStorage.getItem('baseGeneratorUrl');
@@ -79,11 +95,12 @@ const TabbedInterface = () => {
             <TabPartSearch />
           </div>
           {/* Mounted only while it is the open tab, unlike its
-              neighbours. A hidden `GuidePage` still runs its effects, so
-              leaving it mounted would spend a Lambda invocation on
-              /api/guides for every visitor who never opens this tab.
-              Re-opening re-fetches, which is a small response and no
-              cache to get wrong. */}
+              neighbours until it has been opened once. A hidden
+              `GuidePage` still runs its effects, so mounting it up front
+              would spend a Lambda invocation on /api/guides for every
+              visitor who never opens this tab. After the first open it
+              stays, because unmounting on every tab switch refetched
+              everything and made the options count flicker. */}
           <div
             style={{
               display: activeTab === 'guides' ? 'block' : 'none',
@@ -102,7 +119,7 @@ const TabbedInterface = () => {
               overflowY: 'auto',
             }}
           >
-            {activeTab === 'guides' && <GuidePage />}
+            {guidesOpened && <GuidePage />}
           </div>
           <div style={{ display: activeTab === 'baseGenerator' ? 'block' : 'none', height: '100%' }}>
             <iframe src={baseGeneratorUrl} style={{ width: '100%', height: '100%', border: 'none', display: 'block' }} title="Base Generator" />
