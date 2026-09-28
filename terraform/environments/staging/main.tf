@@ -112,7 +112,6 @@ resource "aws_lambda_function" "api" {
     variables = {
       PGHOST                       = local.infra.db_cluster_endpoint
       DB_SECRET_ARN                = local.infra.db_secret_arn
-      PGCONNECT_TIMEOUT            = 10
       API_TOKEN                    = local.app_secret.API_TOKEN
       SECRET_KEY                   = local.app_secret.SECRET_KEY
       CLOUDFLARE_ENDPOINT          = local.app_secret.CLOUDFLARE_ENDPOINT
@@ -181,13 +180,21 @@ resource "aws_lambda_function" "migrate" {
 
   # Only what it needs to reach the database. No Cloudflare credentials and no
   # API_TOKEN: this function answers to nobody and writes no files.
-  # libpq reads PGCONNECT_TIMEOUT itself, so this needs no code change. db_url
-  # emits no connect_timeout, and libpq's default is 0 — wait forever — which
-  # turns an unreachable database into `Task timed out` with an *empty* log
-  # group: no exception, no traceback, the one failure this module's error
-  # strategy does not otherwise cover. The API gets 10 s to fit its 30 s budget;
-  # migrate gets 120 s because its normal case is a cluster resuming from
-  # min_capacity 0, which takes tens of seconds and must not be cut short.
+  # libpq reads PGCONNECT_TIMEOUT itself, so this needs no code change.
+  #
+  # Not because the alternative is waiting forever — that was this comment's first
+  # version and it was wrong. psycopg substitutes its own 130 s default when
+  # connect_timeout is absent or <= 0 (conninfo.py), so libpq's 0 never applies and
+  # the pre-existing bound was already 130 s, comfortably inside this function's 900.
+  #
+  # What 120 buys is a bound matched to the *measured* normal case: staging Aurora
+  # runs at min_capacity 0 with a one-hour auto-pause, and a resume from zero takes
+  # about 20 s. 120 is ~6x that, and each of the ~21 sequential connects gets its own
+  # budget inside 900 s. Only this function sets it: use_pool=False means
+  # psycopg.connect raises ConnectionTimeout straight out of the handler, whereas the
+  # API's pool catches it, logs a warning and reschedules — so there the value would
+  # never reach a caller, would burn aborted attempts on every idle cold start, and
+  # would diverge from production for nothing.
   environment {
     variables = {
       PGHOST            = local.infra.db_cluster_endpoint

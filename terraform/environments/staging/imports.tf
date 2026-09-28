@@ -20,21 +20,20 @@
 # for LastUpdateStatus=Successful. Minutes, on the adoption apply only, because that
 # is the one apply that creates the function.
 #
-# Still far better than the manual step this replaces (which took /api/* down before
-# an apply that could not succeed). If even that window is unwanted, the adoption
+# Still far better than the manual step this replaces. If even that window is unwanted, the adoption
 # apply can be split: `tofu apply -target=aws_lambda_permission.alb` creates the new
 # function and its permission first — a targeted plan processes its dependencies'
 # import blocks and silently prunes the rest — then a full apply swaps the target.
 #
-# That instruction was worse than redundant. It took `/api/*` down *before* an
-# apply that cannot currently succeed (the app secret is read as a data source and
-# is resolved at plan time, so a missing one fails the plan having changed
-# nothing), leaving staging broken with recovery by hand. It also told you to
-# remove a `AllowALBInvoke` statement that does not exist — the live statement id
-# is `AWS-ALB_Invoke-targetgroup-openforge-catalog-api-cd223d56e9899b78`, so the
-# command only ever raised into a `|| true`. Had it worked it would have broken the
-# rollback it was meant to preserve, because re-registering the old function needs
-# that permission.
+# The deleted instruction was worse than redundant: it took `/api/*` down *before* an
+# apply that cannot currently succeed, because the app secret is read as a data source
+# and resolved at plan time, so a missing one fails the plan having changed nothing —
+# staging broken, recovery by hand. It also told you to remove an `AllowALBInvoke`
+# statement that does not exist (the live id is
+# `AWS-ALB_Invoke-targetgroup-openforge-catalog-api-cd223d56e9899b78`, so the command
+# only ever raised into a `|| true`), and had it worked it would have broken the
+# rollback it was meant to preserve, since re-registering the old function needs that
+# permission.
 #
 # ─── The first apply widens the ALB ────────────────────────────────────────────
 #

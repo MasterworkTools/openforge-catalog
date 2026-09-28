@@ -300,13 +300,18 @@ release needing a new or changed fixture still wants `bin/upload_fixture` (or
 paragraph above describes.
 
 **Staging is adopted, not created.** It predates tofu, so `imports.tf` adopts the ALB,
-its port-80 listener and rule, the target group and the website bucket. Two things it
-cannot adopt: the function and its role are named `Openforge-Catalog-API` and
-`...-role-ogdz6ix0`, and `function_name` is ForceNew while the deploy role may only
+its port-80 listener and rule, the target group, its attachment and the website bucket.
+Two things it cannot adopt: the function and its role are named `Openforge-Catalog-API`
+and `...-role-ogdz6ix0`, and `function_name` is ForceNew while the deploy role may only
 touch IAM named `openforge-catalog-*` — so tofu creates `openforge-catalog-api` fresh
-and the old pair is deleted by hand afterwards (`openforge_catalog-rc2`). `imports.tf`
-also records the one manual step the first apply needs: deregistering the old function
-from the target group, which holds exactly one target.
+and the old pair is deleted by hand afterwards (`openforge_catalog-rc2`), which is the
+rollback until then.
+
+**There is no manual step.** An earlier version of this section said to deregister the
+old function from the target group first. Do not: the attachment is imported, so the
+apply swaps the target itself. `/api/*` is down from the deregister until the new
+function finishes being created, which is the adoption apply only — `imports.tf`
+explains it and offers a `-target` split for anyone who wants that window smaller.
 
 Prerequisites, once per account: the app secret `openforge-catalog/staging/app`
 (`scripts/create-app-secret.sh` — note it generates a **fresh** API_TOKEN and

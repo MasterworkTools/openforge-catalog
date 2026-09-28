@@ -1,5 +1,7 @@
-# Consumed by the Staging workflow (which function to invoke, which bucket to sync)
-# and by whoever is pointing CloudFront at the ALB.
+# Consumed by whoever is pointing CloudFront at the ALB, and useful for confirming
+# by hand what the deploy is talking to. The Staging workflow does NOT read
+# migrate_function_name: the apply that precedes the invoke is -target'ed, so its
+# outputs are not guaranteed refreshed, and the workflow uses the fixed name instead.
 
 output "api_alb_dns_name" {
   value = aws_lb.api.dns_name
