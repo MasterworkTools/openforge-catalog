@@ -4,13 +4,14 @@ terraform {
   required_providers {
     aws = {
       source = "hashicorp/aws"
-      # Pinned exactly, not "~> 6.0". No .terraform.lock.hcl is committed, so a
-      # range lets `tofu init` resolve the newest 6.x — which means the plan
-      # reviewed on a PR need not be the plan the merge applies. On an adoption
-      # apply that is the difference between "adopt" and "replace", because a
-      # provider minor can change a CustomizeDiff. A committed lockfile is the
-      # stronger fix and wants `tofu providers lock` (openforge_catalog-0ab).
-      version = "6.66.0"
+      # The range is safe because .terraform.lock.hcl is committed beside this
+      # file and every workflow inits with -lockfile=readonly, so the provider
+      # version AND its checksums are fixed: the plan reviewed on a PR is the
+      # plan the merge applies. Without that, `tofu init` would resolve the
+      # newest 6.x, and on an adoption apply a changed CustomizeDiff between
+      # minors is the difference between "adopt" and "replace".
+      # Upgrade deliberately with `tofu providers lock`, not by editing this.
+      version = "~> 6.0"
     }
   }
 

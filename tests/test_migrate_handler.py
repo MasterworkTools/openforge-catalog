@@ -206,3 +206,42 @@ def test_a_failing_migration_is_not_swallowed(test_db, monkeypatch):
 
     with pytest.raises(RuntimeError, match="migration 20 exploded"):
         migrate.lambda_handler({}, None)
+
+
+def test_a_failure_part_way_keeps_the_versions_that_landed(test_db, monkeypatch):
+    """The per-version commit, which nothing else pins.
+
+    `_apply` opens a connection per version so a failure rolls back only the
+    one in flight. Collapsing that to a single connection and a single commit
+    survived every other test in this file, because they only ever make one
+    version pending — with two, the earlier one has to still be recorded
+    after the later one raises.
+    """
+    versions = get_schema_versions()
+    head, prior = versions[-1], versions[-2]
+
+    with test_db.connection() as conn:
+        head(conn).down(0)
+        prior(conn).down(0)
+        conn.commit()
+    assert prior.version not in _recorded(test_db)
+
+    def explode(self, curs):
+        raise RuntimeError("version exploded half way")
+
+    monkeypatch.setattr(head, "up_impl", explode)
+
+    try:
+        with pytest.raises(RuntimeError, match="version exploded half way"):
+            migrate.lambda_handler({}, None)
+        recorded = _recorded(test_db)
+    finally:
+        monkeypatch.undo()
+        if head.version not in _recorded(test_db):
+            migrate._apply(test_db)
+
+    assert prior.version in recorded, (
+        "the version before the failure was rolled back too — "
+        "one connection for the whole loop, not one per version"
+    )
+    assert head.version not in recorded

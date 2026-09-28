@@ -12,6 +12,15 @@ name: Staging Plan
 on:
   pull_request:
     branches: [test]
+    # Only PRs that change infrastructure. This job assumes the deploy role,
+    # which carries PowerUserAccess, and runs `tofu plan` over the PR's own
+    # checkout — so PR-authored .tf executes with those credentials on a public
+    # repo. Bounded to people with push access (fork PRs get no secrets), but
+    # every unrelated feature PR handing a runner that role bought nothing.
+    # The real fix is a read-only plan role (openforge_catalog-4dh).
+    paths:
+      - 'terraform/**'
+      - '.github/workflows/staging*.yaml'
 
 permissions:
   contents: read
@@ -41,7 +50,7 @@ jobs:
       - name: tofu plan
         working-directory: terraform/environments/staging
         run: |
-          tofu init -input=false
+          tofu init -input=false -lockfile=readonly
           tofu validate
           tofu plan -input=false -no-color -lock=false -var image_tag=${{ github.event.pull_request.head.sha }} 2>&1 | tee plan-output.txt
           exit ${PIPESTATUS[0]}

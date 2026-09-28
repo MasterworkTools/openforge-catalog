@@ -189,7 +189,7 @@ jobs:
       - name: tofu apply — migration function only
         working-directory: terraform/environments/staging
         run: |
-          tofu init -input=false
+          tofu init -input=false -lockfile=readonly
           tofu apply -input=false -auto-approve \
             -var image_tag=${{ github.sha }} \
             -target=aws_lambda_function.migrate
@@ -288,7 +288,7 @@ jobs:
       - name: tofu apply
         working-directory: terraform/environments/staging
         run: |
-          tofu init -input=false
+          tofu init -input=false -lockfile=readonly
           tofu plan -input=false -no-color -var image_tag=${{ github.sha }} -out=tfplan
           tofu apply -input=false -auto-approve tfplan
 
