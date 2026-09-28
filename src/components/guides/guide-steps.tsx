@@ -388,20 +388,10 @@ function Answer({
   );
 }
 
-/**
- * For a question whose answer left more than one piece: how many, and
- * how to go and look at them. Keyed by question.
- */
-export type MoreOptions = Record<
-  string,
-  { count: number; onOpen: () => void }
->;
-
 interface GuideRefinementsProps {
   refinements: GuideRefinement[];
   unavailable?: Unavailable;
   because?: Because;
-  more?: MoreOptions;
   /** The one answered question reopened, shared with the steps. */
   opened?: string | null;
   onOpenChange?: (key: string | null) => void;
@@ -412,7 +402,6 @@ export function GuideRefinements({
   refinements,
   unavailable,
   because,
-  more,
   opened,
   onOpenChange,
   onSelect,
@@ -477,7 +466,6 @@ export function GuideRefinements({
           refinements={section.of}
           deadFor={deadFor}
           becauseFor={becauseFor}
-          more={more}
           opened={opened}
           onOpenChange={onOpenChange}
           onSelect={onSelect}
@@ -494,7 +482,6 @@ function RefinementGroup({
   refinements,
   deadFor,
   becauseFor,
-  more,
   opened,
   onOpenChange,
   onSelect,
@@ -508,7 +495,6 @@ function RefinementGroup({
   becauseFor: (
     refinement: GuideRefinement
   ) => Record<string, MissingReason> | undefined;
-  more?: MoreOptions;
   opened?: string | null;
   onOpenChange?: (key: string | null) => void;
   onSelect: (key: string, value: string | null) => void;
@@ -529,7 +515,6 @@ function RefinementGroup({
                 key={refinement.key}
                 refinement={refinement}
                 showPrompt={showPrompts}
-                more={more?.[refinement.key]}
                 why={
                   deadFor(refinement).includes(refinement.selected)
                     ? becauseFor(refinement)?.[refinement.selected]
@@ -610,14 +595,11 @@ function answerLabel(
 function AnsweredRefinement({
   refinement,
   showPrompt,
-  more,
   why,
   onOpen,
 }: {
   refinement: GuideRefinement;
   showPrompt: boolean;
-  /** How many pieces this answer left, when it left more than one. */
-  more?: { count: number; onOpen: () => void };
   /**
    * Why this answer empties a part, when it does.
    *
@@ -649,20 +631,6 @@ function AnsweredRefinement({
         <span className="block font-semibold">{answer}</span>
       </button>
       {why && <DeadAnswer why={why} />}
-      {/* Answering "towne" is where you find out there are six of
-          them, so this is one of the two places to say so — the same
-          bar as on the part, opening the same dialog. Its own button
-          rather than part of the one above, which reopens the
-          question instead. */}
-      {more && (
-        <button
-          type="button"
-          onClick={more.onOpen}
-          className="mt-1 w-full rounded border-2 border-red-600 bg-red-50 px-2 py-1 text-sm font-semibold text-red-700 hover:bg-red-100"
-        >
-          {more.count} options
-        </button>
-      )}
     </div>
   );
 }

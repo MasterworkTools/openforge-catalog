@@ -1,0 +1,43 @@
+/* The three-column part browser: tags, results, details.
+ *
+ * Named for the layout rather than for the Blueprints tab it was written
+ * for and outlived. `tab-part-search.tsx` uses all four of these
+ * classes, and these rules win over the same-named ones in
+ * `app/layout.css` — so this file is what Part Search looks like, and
+ * deleting it along with the tab would have quietly restyled a page
+ * nobody touched.
+ *
+ * The tab's own card styling went with the tab: twelve rules for
+ * `.blueprintCard`, `.blueprintDetails`, `.imageGrid` and friends that
+ * matched nothing in the live DOM on any route. One of them, `.tag`,
+ * was the only definition of that class anywhere in `src/` and was
+ * loaded globally on every Part Search page, so the next person to
+ * write `className="tag"` would have got a blue pill from a file with
+ * no apparent connection to them.
+ */
+.columnContainer {
+  display: flex;
+  height: calc(100vh - 40px);
+  overflow: hidden;
+}
+
+.tagContainerWrapper {
+  display: flex;
+  flex: 0 1 auto;
+  overflow-y: auto;
+  border-right: 1px solid #e1e4e8;
+}
+
+.modelsContainerWrapper {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+  min-width: 600px;
+}
+
+.modelDetailsContainerWrapper {
+  width: 400px;
+  padding: 20px;
+  overflow-y: auto;
+  border-left: 1px solid #e1e4e8;
+}

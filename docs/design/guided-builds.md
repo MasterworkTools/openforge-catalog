@@ -537,8 +537,14 @@ selection resolve silently against the wrong state.
    the 40 `blueprints.s2w.*.yaml` compositions rather than living beside them, so that
    s2w has one source. The guide's s2w content is copied from them first (slice 4), so
    this is a deprecation, not a rewrite.
-8. **Later slices** — the catalog-style landing page (Floor, Wall, Corner); feature slots
-   (doors, torches); an admin editor for guides; guide imagery into R2.
+8. **Later slices** — feature slots (doors, torches); an admin editor for guides.
+
+The catalog-style landing page has shipped, as a card per guide rather than the
+three fixed cards this list imagined — the card grid reads off whatever guides
+exist, so Floor and Corner appear when their guides do. It took the Blueprints
+tab's place in the nav. Guide imagery is half done with it: a guide carries a
+`hero_image` URL and the card draws it, but nothing uploads the file yet, which
+is the rest of `openforge_catalog-eul`.
 
 ## Beads
 
@@ -550,10 +556,10 @@ selection resolve silently against the wrong state.
 | `openforge_catalog-7ph` | Resolution engine in Python |
 | `openforge_catalog-anc` | Guide endpoints |
 | `openforge_catalog-z76` | Author the wall guide (content, with Devon) |
-| `openforge_catalog-0bz` | The guide page |
-| `openforge_catalog-faz` | Catalog-style landing page: Floor, Wall, Corner |
+| `openforge_catalog-0bz` | The guide page — **closed**, PR #241 |
+| `openforge_catalog-faz` | Catalog-style landing page — **closed**, PR #246; a card per guide rather than three fixed ones |
 | `openforge_catalog-cku` | Feature slots: doors, torches and the rest |
-| `openforge_catalog-eul` | Guide imagery into R2 |
+| `openforge_catalog-eul` | Guide imagery into R2 — the `hero_image` column and the card landed in PR #246; the upload has not |
 | `openforge_catalog-kcm` | Admin editor for guides |
 | `openforge_catalog-yan` | Retire the s2w composition blueprints once the guide covers them |
 | `openforge_catalog-hcm` | Audit which pieces carry a base slot and why — **closed**, answered above |

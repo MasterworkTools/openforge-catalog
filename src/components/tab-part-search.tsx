@@ -8,6 +8,7 @@ import InstructionsPartSearch from './instructions-part-search';
 import { BlueprintProvider } from '@/contexts/blueprint-context';
 import { TagProvider } from '@/contexts/tag-context';
 import { useBlueprintContext } from '@/contexts/blueprint-context';
+import './part-columns.css';
 
 const TabPartSearch: React.FC = () => {
   return (
