@@ -10,7 +10,11 @@ import GuidePage from "@/components/guides/guide-page";
  */
 export default function Guides() {
   return (
-    <main>
+    // The viewport height lives here too, for the same reason as the
+    // landmark: inside the tab the panel is already sized by
+    // `.tabContent`, and a component asking for `h-screen` in both
+    // places is taller than one of them.
+    <main className="lg:h-screen">
       <GuidePage />
     </main>
   );

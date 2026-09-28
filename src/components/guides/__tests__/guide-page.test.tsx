@@ -2796,6 +2796,35 @@ describe('inspecting a part', () => {
     ).not.toBeInTheDocument();
   });
 
+  it('does not claim the viewport it may not own', async () => {
+    // This renders as the whole of `/guides` and as a tab panel that is
+    // already sized by `.tabContent`. Asking for `h-screen` in both is
+    // taller than one of them, which gave the pane a scrollbar *and*
+    // the three columns their own — `src/app/guides/page.tsx` supplies
+    // the viewport height for the route instead.
+    //
+    // A class assertion, because jsdom computes no layout: the class
+    // string is the only observable carrier of this. It is the same
+    // bug as the nested `<main>`, one property along — a component
+    // that is both a route and a panel deciding something only its
+    // container knows.
+    visit('?guide=wall&method=separate-wall');
+    mockFetch((url) =>
+      url.includes('/availability')
+        ? { unavailable: {}, because: {}, options: {} }
+        : url.includes('/resolve')
+          ? RESOLVED_WITH_PARTS
+          : GUIDE_DOCUMENT
+    );
+
+    const { container } = render(<GuidePage />);
+    await screen.findByText('a dungeon stone wall');
+
+    const root = container.firstElementChild as HTMLElement;
+    expect(root.className).toContain('lg:h-full');
+    expect(root.className).not.toContain('h-screen');
+  });
+
   it('offers a way back to the cards from a guide that loaded fine', async () => {
     // The only exit. `All guides` appears on the error arm, which is
     // exactly when there is no guide to leave — so a guide that loaded
