@@ -2,7 +2,6 @@
 
 import React, { useEffect, useMemo, useState } from 'react';
 import {
-  GuidePart,
   GuideSummary,
   fetchGuides,
   narrows,
@@ -36,9 +35,16 @@ export default function GuidePage() {
   // Which settled question has been reopened. Here rather than in the
   // section itself, because the explanation beside it follows.
   const [opened, setOpened] = useState<string | null>(null);
-  // The part whose catalog dialog is open. Here rather than in the
-  // parts list, because the questions on the left open it too.
-  const [inspecting, setInspecting] = useState<GuidePart | null>(null);
+  // Whose catalog dialog is open, by role. The role rather than the
+  // part, because a part is a snapshot of one resolution and the
+  // dialog outlives it: `GuideParts` renders nothing when a resolution
+  // has no parts, so stepping back to the first screen unmounts the
+  // dialog without closing it, and stepping forward again reopened it
+  // holding the old part — a pick then wrote a pin against a predicate
+  // the questions no longer agreed to. A role is the same role in
+  // every resolution. Here rather than in the parts list, because the
+  // questions on the left open it too.
+  const [inspecting, setInspecting] = useState<string | null>(null);
 
   // Which questions left more than one piece, and which part to open
   // when they say so. A question can narrow several roles — the wall
@@ -55,7 +61,7 @@ export default function GuidePage() {
       if (choices.length > 0) {
         found[question.key] = {
           count: options[choices[0].role],
-          onOpen: () => setInspecting(choices[0]),
+          onOpen: () => setInspecting(choices[0].role),
         };
       }
     }
@@ -91,7 +97,14 @@ export default function GuidePage() {
     // you answer them, the parts stay about the same, and the prose
     // varies wildly. Scrolling them together means hunting for the
     // question you wanted while the pictures slide away.
-    <main className="p-6 h-screen flex flex-col">
+    //
+    // Only where there are columns, though. The columns are gated on
+    // `lg:` and the height was not, so on a phone this was one
+    // viewport holding three independent scrollers stacked down it —
+    // a few of the answers, a part and a half, a paragraph and a bit,
+    // and no way to scroll the page itself. Below `lg` it is an
+    // ordinary document again.
+    <main className="p-6 lg:h-screen flex flex-col">
       <h1 className="text-3xl font-bold mb-4 shrink-0">
         {guide?.title ?? 'Guided build'}
       </h1>
@@ -126,8 +139,10 @@ export default function GuidePage() {
               against serverless Postgres looks like, and there is no
               app-wide error handler to tell the two apart, so this arm
               sends a transient fault to the list. It costs the person
-              a link, not their answers: neither link retries and both
-              drop the selections. Telling them apart needs the
+              a link, not their answers: neither link retries the
+              request that failed, and both drop the selections — the
+              cost is one more click, since `?guide=X` is a full
+              navigation and does re-ask the API. Telling them apart needs the
               document fault to carry a JSON body the page can key on,
               which is its own change. */}
           {!resolved &&
@@ -155,7 +170,7 @@ export default function GuidePage() {
         // child refuses to shrink below its content and every
         // `overflow-y-auto` below is dead.
         <div className="flex flex-col lg:flex-row gap-8 flex-1 min-h-0">
-          <div className="lg:w-72 lg:shrink-0 overflow-y-auto min-h-0 pr-2">
+          <div className="lg:w-72 lg:shrink-0 lg:overflow-y-auto lg:min-h-0 pr-2">
             <GuideSteps
               steps={resolved.steps}
               unavailable={unavailable}
@@ -180,7 +195,7 @@ export default function GuidePage() {
               child will not shrink below its content otherwise, and a
               long filename under a part would push the text column
               off the side. */}
-          <div className="lg:flex-1 lg:min-w-0 overflow-y-auto min-h-0 pr-2">
+          <div className="lg:flex-1 lg:min-w-0 lg:overflow-y-auto lg:min-h-0 pr-2">
             <GuideParts
               parts={resolved.parts}
               refinements={resolved.refinements}
@@ -191,7 +206,7 @@ export default function GuidePage() {
               onSelectAll={selectAll}
             />
           </div>
-          <div className="lg:flex-1 lg:min-w-0 overflow-y-auto min-h-0 pr-2">
+          <div className="lg:flex-1 lg:min-w-0 lg:overflow-y-auto lg:min-h-0 pr-2">
             <GuideExplainer
               steps={resolved.steps}
               refinements={resolved.refinements}
@@ -228,12 +243,15 @@ function GuideList() {
     };
   }, []);
 
-  if (guides === null) return null;
-
   return (
     <main className="p-6 max-w-3xl">
+      {/* The heading first, then whatever the fetch turns out to say.
+          Returning null until the guides land made the feature's
+          landing page a blank document for the length of a cold start,
+          which reads as broken rather than as loading — and `GuidePage`
+          beside it already renders its frame first. */}
       <h1 className="text-3xl font-bold mb-6">Guided builds</h1>
-      {failed ? (
+      {guides === null ? null : failed ? (
         <p>Could not load the guides.</p>
       ) : guides.length === 0 ? (
         <p>No guides yet.</p>

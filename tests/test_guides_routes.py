@@ -1799,11 +1799,14 @@ def test_the_log_line_is_bounded_even_when_the_body_is_not(
     rather than on any of them, precisely so an eleventh cannot escape
     it.
 
-    The one that can still run long is `_reject_bad_selection`'s, which
-    is what this probe produces: once repeated keys are quoted at
-    `KEY_CHARS` their message is bounded well under the cap, so an
-    over-long *value* under `repr` is the only thing left that outruns
-    it. Astral characters because `repr` spends ten characters on each.
+    This probe produces `_reject_bad_selection`'s message, which can
+    still run long: once repeated keys are quoted at `KEY_CHARS` their
+    message is bounded well under the cap, so an over-long *value* under
+    `repr` is the readiest way past it. Not the only one —
+    `_reject_bad_refinement_value` embeds a bare `{value!r}` too, and at
+    the cap rather than over it — but the bound is on the sink for
+    exactly that reason, so any one of them will do to measure it.
+    Astral characters because `repr` spends ten on each.
     """
     # An over-long value of astral characters. `repr` spends ten
     # characters on each of them, so 257 of them is a 2.6KB message
@@ -1813,32 +1816,61 @@ def test_the_log_line_is_bounded_even_when_the_body_is_not(
 
     from openforge.app.routes.guides import MESSAGE_CHARS, SELECTION_CHARS
 
-    value = "\U0010ffff" * (SELECTION_CHARS + 1)
-    with caplog.at_level(logging.WARNING):
-        got = client.get("/api/guides/wall/resolve?method=" + quote(value))
+    def refuse(query):
+        caplog.clear()
+        with caplog.at_level(logging.WARNING):
+            got = client.get(f"/api/guides/wall/resolve?{query}")
+        assert got.status_code == 400
+        (refused,) = [
+            r for r in caplog.records if "refused a request" in r.getMessage()
+        ]
+        return got.get_json()["error"], refused.getMessage()
 
-    assert got.status_code == 400
-    body = got.get_json()["error"]
+    value = "\U0010ffff" * (SELECTION_CHARS + 1)
+    body, record = refuse("method=" + quote(value))
     assert len(body) > 2000, "the probe stopped producing a long message"
-    (refused,) = [r for r in caplog.records if "refused a request" in r.getMessage()]
-    record = refused.getMessage()
     assert len(record) < len(body), (
         f"a {len(body)}-character refusal reached CloudWatch as "
         f"{len(record)} characters — the sink is not bounding it"
     )
-    # And bounded by *the cap*, not by something that merely tracks the
-    # body. A ceiling alone cannot say that: anything smaller passes
-    # one, including a bound computed from the body, which is the thing
-    # being ruled out. What distinguishes them is that the cap is
-    # actually reached — the sink truncates to `MESSAGE_CHARS` and then
-    # `repr` inflates what is left, escaping the backslashes the inner
-    # `repr` already wrote, so the record lands a little *above* the
-    # cap. A body-proportional bound lands below it, and no bound at
-    # all lands at the whole 2,633.
-    assert MESSAGE_CHARS + 100 < len(record) < MESSAGE_CHARS + 300, (
-        f"the record is {len(record)} characters against a body of "
-        f"{len(body)}, which is not a {MESSAGE_CHARS}-character cap "
-        "doing the work"
+    # A ceiling, derived rather than fitted: `repr` can at most double
+    # a string, so a message truncated to `MESSAGE_CHARS` cannot come
+    # out longer than twice it however dense the escaping.
+    assert len(record) < 2 * MESSAGE_CHARS
+
+    # And the thing that actually distinguishes a cap from a bound that
+    # merely tracks the body: a cap does not move when the body does.
+    # Neither a ceiling nor a floor can say this on one measurement —
+    # an earlier version of this test used a window around
+    # `MESSAGE_CHARS`, which passed a `len(body) / 2.5` bound and
+    # *failed* for every payload whose escaping is less dense than
+    # astral, because the window was really measuring this probe's
+    # escape density.
+    # Twelve distinct over-long keys, each answered twice, also astral:
+    # a much bigger body through an entirely different message. It has
+    # to clear the cap too — a body under `MESSAGE_CHARS` is not
+    # truncated at all, so comparing against one would only show that
+    # short messages are short.
+    key = "\U0010ffff" * 64
+    bigger, record_again = refuse(
+        "&".join(f"{quote(key)}{n}=x&{quote(key)}{n}=y" for n in range(12))
+    )
+    assert len(bigger) > 2 * len(body), (
+        f"the second probe made a {len(bigger)}-character body against "
+        f"{len(body)}; it needs to be much bigger for this to mean anything"
+    )
+    # The rule survives the cut. `_reject_bad_selection` puts it before
+    # the offender for exactly this: the sink truncates from the end, so
+    # with the old order the record stopped at the value and an operator
+    # could not tell a NUL from an over-long one.
+    assert (
+        "is longer than" in record
+    ), f"the cut record does not say which check refused it: {record[:120]!r}"
+
+    assert abs(len(record) - len(record_again)) < 50, (
+        f"bodies of {len(body)} and {len(bigger)} gave records of "
+        f"{len(record)} and {len(record_again)} — the bound is tracking "
+        "the body rather than capping it"
     )
 
 
@@ -1861,6 +1893,16 @@ def test_ten_offenders_are_named_and_the_eleventh_is_counted(
     eleven = "&".join(f"nosuch{n}=x" for n in range(11))
     error = client.get(f"/api/guides/wall/resolve?{eleven}").get_json()["error"]
     assert "and 1 more" in error
+
+    # The *repeated*-key list is bounded the same way, per item as well
+    # as in count. It is the same kind of key, and it was capped at
+    # `SELECTION_CHARS` while its sibling four lines over used
+    # `KEY_CHARS` — ten long keys came back as a 2KB body.
+    long_keys = "&".join(f"{'z' * 200}{n}=x&{'z' * 200}{n}=y" for n in range(10))
+    error = client.get(f"/api/guides/wall/resolve?{long_keys}").get_json()["error"]
+    assert (
+        len(error) < 1000
+    ), f"ten repeated long keys came back as {len(error)} characters"
 
 
 def test_a_refused_selection_cannot_forge_a_line_in_the_body(
@@ -2273,6 +2315,45 @@ def test_an_unreachable_answer_is_ignored_by_both_endpoints_alike(
         "resolve": 400,
         "availability": 400,
     }, f"a bad answer on a reachable step gave {got}"
+
+    # A *valid* answer on an unreached branch is a different thing and
+    # has to survive. Agreeing on 200 is not enough to say so: the first
+    # version of this reconciliation dropped every unreached answer,
+    # which agreed on 200 and quietly emptied the sweep — so the page
+    # offered answers that emptied every part the moment they were
+    # taken, and said nothing until then. The answers stay in the URL
+    # and `selectAll` merges, so clicking a candidate carries this one
+    # along and the counterfactual has to reason with it.
+    # A second step, never reached until the method is answered, whose
+    # `wide` option nothing in the catalog satisfies. Answering it and
+    # nothing else is the shape a shared link takes after its first
+    # answer is renamed away.
+    document["steps"].append(
+        {
+            "key": "size",
+            "prompt": "How wide?",
+            "options": [
+                {"key": "narrow", "title": "Narrow", "tags": {}},
+                {
+                    "key": "wide",
+                    "title": "Wide",
+                    "tags": {"require": ["size|nothing has this"]},
+                },
+            ],
+        }
+    )
+    with test_db.connection() as conn:
+        with conn.cursor(row_factory=dict_row) as curs:
+            guide_sql.upsert_guide(curs, document)
+
+    swept = client.get("/api/guides/wall/availability?size=wide").json
+    assert swept["unavailable"].get("method") == ["separate-wall"], (
+        f"the sweep reported {swept['unavailable']!r}. `size=wide` is "
+        "carried into every method the person could click, so it is "
+        "what makes them dead — dropping it because this branch has "
+        "not reached it offers them all as live, and they find out by "
+        "clicking one and watching every part empty"
+    )
 
 
 def test_a_bad_answer_is_still_the_visitor_s_fault(client, wall_guide, catalog):

@@ -27,14 +27,18 @@ interface GuidePartsProps {
    */
   options?: Record<string, number> | null;
   /**
-   * The part whose catalog dialog is open, if any.
+   * Whose catalog dialog is open, by role.
    *
    * Held by the page rather than here, because the questions on the
    * left open it too: answering "towne" is where you find out there
    * are six of them, so that is one of the places to offer them.
+   *
+   * A role and not a part: the part is re-read from this list on every
+   * render, so the dialog cannot go on describing a resolution that
+   * has been replaced underneath it.
    */
-  inspecting?: GuidePart | null;
-  onInspect?: (part: GuidePart | null) => void;
+  inspecting?: string | null;
+  onInspect?: (role: string | null) => void;
   /** Same setter the questions use: a pin is a selection like any other. */
   onSelect?: (key: string, value: string | null) => void;
   /**
@@ -113,6 +117,9 @@ export function GuideParts({
   const urls = parts.flatMap((part) =>
     part.blueprint ? [downloadUrl(part.blueprint.id)] : []
   );
+  // Re-read every render, so the dialog describes the resolution on
+  // screen rather than the one it was opened on.
+  const inspected = parts.find((part) => part.role === inspecting) ?? null;
   if (parts.length === 0) return null;
 
   return (
@@ -172,27 +179,27 @@ export function GuideParts({
         </div>
       </div>
       <PartSelectionModal
-        isOpen={inspecting !== null}
+        isOpen={inspected !== null}
         onClose={() => onInspect?.(null)}
-        partName={inspecting ? `${inspecting.title} (${inspecting.role})` : ''}
+        partName={inspected ? `${inspected.title} (${inspected.role})` : ''}
         // What the guide actually resolved, not a wider set. Opening
         // on your own wall is the useful place to start looking for
         // another one — and the restrictions that are only a
         // preference come off from inside, a chip at a time.
-        configValues={inspecting ? asConfigTags(inspecting.query) : null}
-        removable={inspecting?.relaxable ?? []}
+        configValues={inspected ? asConfigTags(inspected.query) : null}
+        removable={inspected?.relaxable ?? []}
         // Open on the piece that was clicked. You were looking at it;
         // the dialog should not make you find it again.
-        initialMd5={inspecting?.blueprint?.file_md5 ?? null}
+        initialMd5={inspected?.blueprint?.file_md5 ?? null}
         onPartSelected={
-          onSelectAll && inspecting
+          onSelectAll && inspected
             ? (_name, blueprint) => {
                 onSelectAll({
-                  [pinKey(inspecting.role)]: blueprint.file_md5,
+                  [pinKey(inspected.role)]: blueprint.file_md5,
                   // What was picked is now the answer to the questions
                   // it answers, or the page would show a rough stone
                   // wall beside the word "dungeon stone".
-                  ...impliedBy(blueprint, inspecting.role, refinements),
+                  ...impliedBy(blueprint, inspected.role, refinements),
                 });
                 onInspect?.(null);
               }
@@ -262,7 +269,8 @@ function Part({
   view: string;
   /** How many pieces this role could have been, when it is known. */
   options?: number;
-  onInspect: (part: GuidePart) => void;
+  /** Opens the catalog dialog on this part's role. */
+  onInspect: (role: string) => void;
   /** Undoes a pin, putting the role back on the guide's own answer. */
   onUnpin?: () => void;
 }) {
@@ -276,7 +284,7 @@ function Part({
       {options !== undefined && options > 1 && (
         <button
           type="button"
-          onClick={() => onInspect(part)}
+          onClick={() => onInspect(part.role)}
           className="w-full mb-3 rounded border-2 border-red-600 bg-red-50 px-2 py-1 text-sm font-semibold text-red-700 hover:bg-red-100"
         >
           {options} options
@@ -288,7 +296,7 @@ function Part({
           question being asked over and over. */}
       <button
         type="button"
-        onClick={() => onInspect(part)}
+        onClick={() => onInspect(part.role)}
         title="Open the tag search for this part"
         className="block cursor-zoom-in"
       >

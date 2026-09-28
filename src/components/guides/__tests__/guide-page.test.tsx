@@ -492,11 +492,17 @@ describe('GuidePage', () => {
       expect(out).toHaveAttribute('href', '?guide=wall');
     });
 
-    it('sends you to the list when the document itself is broken', async () => {
-      // The third case the two arms did not cover. A 500 means the
-      // stored guide is at fault, so `?guide=wall` is the request that
-      // just failed — the same dead end the list arm exists to remove,
-      // reached by a different route.
+    it('sends you to the list on a 500, where the guide may be at fault', async () => {
+      // The third case the two arms did not cover. 500 is the only
+      // status a broken document can arrive as, so `?guide=wall` may
+      // be the request that just failed — the same dead end the list
+      // arm exists to remove, reached by a different route.
+      //
+      // Only *may*: a psycopg failure is also a 500 and is transient.
+      // The source says so at guide-page.tsx; this name used to say a
+      // 500 means the stored guide is at fault, which is the claim the
+      // source retracted, and a green test outranks a comment for
+      // whoever reads it next.
       visit('?guide=wall');
       global.fetch = jest.fn((url: string) =>
         Promise.resolve(
@@ -2276,6 +2282,45 @@ describe('inspecting a part', () => {
     // And the texture comes off from inside, so leaving the family is
     // a deliberate click rather than the default.
     expect(opened.removable).toEqual(['texture|dungeon_stone']);
+  });
+
+  it('describes the resolution on screen, not the one it opened on', async () => {
+    // The dialog is a role, not a part. It used to hold the whole part
+    // it was opened on, which is a snapshot of one resolution — so
+    // after a later answer resolved that role to a different piece,
+    // the dialog went on describing the old one, and picking in it
+    // wrote a pin against a predicate the questions no longer agreed
+    // to. Nothing caught that: every assertion about the dialog was
+    // made on the resolution that opened it.
+    visit('?guide=wall&method=separate-wall');
+    let title = 'Wall';
+    mockFetch((url) =>
+      url.includes('/availability')
+        ? { unavailable: {}, because: {}, options: { wall: 6, 'wall-base': 1 } }
+        : url.includes('/resolve')
+          ? {
+              ...RESOLVED_WITH_PARTS,
+              parts: RESOLVED_WITH_PARTS.parts.map((part) =>
+                part.role === 'wall' ? { ...part, title } : part
+              ),
+            }
+          : GUIDE_DOCUMENT
+    );
+
+    render(<GuidePage />);
+    fireEvent.click(await screen.findByRole('button', { name: '6 options' }));
+    expect(modalProps[modalProps.length - 1].partName).toBe('Wall (wall)');
+
+    // Answer something else. The same role resolves to a new piece,
+    // and the dialog is still open on that role.
+    title = 'Wall, cave';
+    fireEvent.click(screen.getByRole('button', { name: /Cave/ }));
+
+    await waitFor(() =>
+      expect(modalProps[modalProps.length - 1].partName).toBe(
+        'Wall, cave (wall)'
+      )
+    );
   });
 
   it('offers the other pieces when the answer left more than one', async () => {

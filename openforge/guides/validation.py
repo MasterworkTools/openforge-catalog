@@ -243,7 +243,7 @@ def _choice_errors(data: dict) -> list[str]:
     return errors
 
 
-def _recommended_values(question: dict) -> list:
+def _recommended_values(question: dict) -> list[str | None]:
     """Every value a `default` can recommend.
 
     One for a plain default, and one per clause for a conditional one.
@@ -278,15 +278,24 @@ def _recommendation_type_errors(data: dict) -> list[str]:
     """Recommendations the schema would have refused.
 
     Checked before `_default_errors` and never beside it, because what
-    that function does with a non-string depends on the shape and none
-    of it is any good. The namespace branch calls `value.split(",")`
-    and raises `AttributeError`. The two membership branches test
-    against a *set*, so an unhashable value — a mapping, a list — is a
-    `TypeError: unhashable type`, and a hashable one like an int is
-    quietly reported as an answer the question does not offer, which is
-    a confident statement about a value that was never an answer at
-    all. So this pass both stops an unnamed crash and makes the message
-    name the real fault, depending on which it was handed.
+    that function does with a non-string depends on which of its four
+    checks the value reaches, and none of the four does anything good.
+    Measured, against a mapping, a list, an int and `None`:
+
+    - the step check is `value not in keys` where `keys` is a **set**,
+      so a mapping or a list is a `TypeError: unhashable type` and an
+      int or `None` is reported as an unknown option
+    - the namespace check calls `value.split(",")`, so every one of
+      them is an `AttributeError`
+    - the toggle check tests a tuple and the choices check a list, so
+      neither ever raises: all four are reported as an answer the
+      question does not offer
+
+    So this pass stops two unnamed crashes and corrects two confident
+    statements about values that were never answers at all. Which of
+    the four a document reaches is not something the caller can know,
+    which is the argument for doing it first rather than tidying the
+    four.
 
     `validate_guide_document` has `_validate_shape` in front of it for
     this; a document read back out of the database has only this.

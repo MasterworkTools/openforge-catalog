@@ -7,7 +7,10 @@ import pytest
 import yaml
 
 import openforge.db.fixtures.guides as guide_fixtures
-from openforge.guides.validation import validate_guide_document
+from openforge.guides.validation import (
+    reject_bad_recommendations,
+    validate_guide_document,
+)
 
 WALL_GUIDE = {
     "key": "wall",
@@ -573,6 +576,33 @@ def test_match_without_under_is_refused(guide):
 
     assert "role 'wall'" in str(excinfo.value)
     assert "under" in str(excinfo.value)
+
+
+def test_a_malformed_default_clause_names_the_guide_rather_than_crashing(guide):
+    """The two shapes `_recommended_values` defends against.
+
+    This runs on documents the loader never saw — `guide_sql.upsert_guide`
+    writes whatever it is handed — so a `default` list whose clauses are
+    the wrong shape reaches it. A clause missing its `value` used to
+    escape as a bare `KeyError: 'value'`, and a clause that is a plain
+    string as an `AttributeError`, both out of the one function whose
+    whole job is to say which guide and which question are at fault.
+
+    Both arms were patched a round apart and neither had a test; the
+    line has been rewritten twice.
+    """
+    clause_without_value = [{"when": {"selected": {"method": ["s2w-modular"]}}}]
+    for default in (clause_without_value, ["s2w-modular"]):
+        document = copy.deepcopy(guide)
+        document["steps"][0]["default"] = default
+        with pytest.raises(ValueError) as caught:
+            reject_bad_recommendations(document)
+        # The point is the naming, not the refusal: an unnamed crash
+        # would also stop the request.
+        assert "'method'" in str(caught.value), (
+            f"{default!r} was refused as {caught.value!r}, which does not "
+            "say which question to go and look at"
+        )
 
 
 def test_a_toggle_default_takes_on_or_off(guide):

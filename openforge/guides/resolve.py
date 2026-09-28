@@ -184,7 +184,7 @@ def resolve(
     # branch does not offer counts as no answer — so it neither shows
     # as chosen nor opens the question after it.
     given = {key: value for key, value in answered.items() if key in selections}
-    _reject_unknown_selections(document, steps, refinements, selections)
+    _reject_unknown_selections(document, refinements, selections)
     parts = _parts(document, chosen, refinements, assumed, find_candidates, find_pinned)
     # Availability is opt-in, and the default is off.
     #
@@ -234,25 +234,38 @@ def resolve(
         else _up_to_first_unanswered(refinements, selections)
     )
     on_screen = {q["key"] for q in [*shown_steps, *shown_refinements]}
-    # What the resolution actually honoured. A step answer this branch
-    # never reached is ignored rather than refused — a shared URL whose
-    # first answer changed should lose the later ones, not break, which
-    # is what `_reject_unknown_selections` promises. But the sweep
-    # re-derives on hypothetical branches, and on one of those the
-    # ignored answer becomes reachable, so `_chosen_options` refused it
-    # out of the counterfactual: the same URL was 200 from `/resolve`
-    # and 400 from `/availability` on 75 of 1,125 selection maps, and
-    # the browser only logs an availability failure.
+    # The answers the sweep is allowed to reason from: everything the
+    # person sent except a step answer naming an option that step does
+    # not have.
     #
-    # Dropping it here reconciles the two the way the rule reads.
-    # Refusing it in both — which is what round 10 did — reconciles them
-    # the other way, and makes the first screen of a guide a 400 for
-    # anyone holding a link with a renamed answer in it.
-    step_keys = {step["key"] for step in document["steps"]}
+    # Only that kind. `resolve` ignores an answer this branch has not
+    # reached — a shared URL whose first answer changed should lose the
+    # later ones, not break — but the sweep re-derives on hypothetical
+    # branches, and on one of those the ignored answer becomes
+    # reachable, so `_chosen_options` refused it out of the
+    # counterfactual and the same URL was 200 from `/resolve` and 400
+    # from `/availability`.
+    #
+    # Two wrong ways to reconcile that, both shipped and both reverted.
+    # Refusing in both makes the first screen a 400 for anyone holding
+    # a link with a renamed answer. Dropping every *unreached* answer
+    # instead hides real warnings: `selectAll` merges, so clicking a
+    # candidate carries the unreached answer along, and judging the
+    # candidate without it offers answers that empty every part the
+    # moment they are taken. Measured on the fixture guide, 18 of 162
+    # maps lost a dead-answer warning and none gained one.
+    #
+    # Validity is the axis the fault was ever on. A list rather than a
+    # set on purpose: a repeated query parameter arrives as a list, and
+    # `value in {...}` is a `TypeError` where this merely keeps it.
+    options = {
+        step["key"]: [option["key"] for option in step["options"]]
+        for step in document["steps"]
+    }
     honoured = {
         key: value
         for key, value in selections.items()
-        if key in given or key not in step_keys
+        if key not in options or value in options[key]
     }
     dead, because = (
         _unavailable(document, steps, refinements, on_screen, honoured, parts, exists)
@@ -328,13 +341,19 @@ def _unavailable(
     whether it comes back — the first removal that revives it is what
     is blamed.
 
-    Takes only what the person sent. The defaulted map is derived here
-    rather than passed in: it used to arrive as `selections` while the
-    raw map arrived as `sent`, so `selections` meant the defaulted map
-    in this frame and the raw one in the caller — three names for two
-    maps, across the boundary between the two functions whose whole
-    subject is the difference between them. That is the confusion the
-    counterfactual bug grew in.
+    `sent` is what the person sent *minus what this branch ignored* —
+    `resolve` calls it `honoured` and builds it there. Not the raw map:
+    an answer this branch never reached is ignored rather than refused,
+    and the sweep re-derives on hypothetical branches where it would be
+    reachable, so handing it the raw map made the counterfactual refuse
+    what the resolution had let through. Not the defaulted map either;
+    that is derived here.
+
+    Three maps, then, and the names are load-bearing. They used to be
+    two names for three things — the defaulted map arrived as
+    `selections` while the raw map arrived as `sent`, so `selections`
+    meant one thing in this frame and another in the caller. Both bugs
+    this function has had grew in that confusion.
 
     `on_screen` is which questions to sweep; `steps` and `refinements`
     stay whole because blame reaches past the screen. A question the
@@ -348,12 +367,18 @@ def _unavailable(
     and the failure mode is an answer that is offered and turns out
     thin — not one that vanishes and should not have.
     """
-    # The same expression `resolve` computes, on the same input, rather
-    # than the parameter it used to arrive as — see the docstring. It
-    # is exact by construction and not by test: replacing it with
-    # `dict(sent)`, the very confusion this rename was to end, leaves
-    # the suite green, because every state the fixtures reach answers
-    # the questions that would differ.
+    # Derived here rather than arriving as a parameter — see the
+    # docstring. Not quite `resolve`'s own `assumed`: that one is
+    # derived from the raw selections and this one from `honoured`, so
+    # they differ exactly when an answer names an option its step does
+    # not have. `resolve` keeps such an answer and lets
+    # `_available_steps` stop at it; the sweep drops it, because the
+    # counterfactual would otherwise refuse what the resolution let
+    # through.
+    #
+    # Neither is pinned by the suite: replacing this with `dict(sent)`
+    # leaves everything green, because no fixture reaches a state where
+    # the two disagree.
     assumed, _ = _with_defaults(document, sent)
     baseline = {
         part["role"]: _predicate_key(part["query"])
@@ -441,6 +466,11 @@ def _blame(
     where "some combination of your five answers" is not. Two answers
     can be jointly responsible with neither one to blame, and then
     this says nothing rather than pick a scapegoat.
+
+    `sent` is `_unavailable`'s, which is what the person sent minus the
+    answers this branch ignored. Everything in it is still an answer of
+    theirs, which is what the page's "your answer" rests on; there is
+    just less of it than they typed.
     """
     in_play = _roles_in_play(_chosen_options(*_available_steps(document, assumed)))
     # Which step answers actually count if they picked this. Compared
@@ -978,7 +1008,7 @@ def _chosen_options(steps: list[dict], selections: dict) -> list[dict]:
 
 
 def _reject_unknown_selections(
-    document: dict, steps: list[dict], refinements: list[dict], selections: dict
+    document: dict, refinements: list[dict], selections: dict
 ) -> None:
     """Fail on a selection this guide has no key for.
 

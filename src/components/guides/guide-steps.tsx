@@ -836,6 +836,13 @@ function NamespacePicker({
       placeholder={`${refinement.from_namespace ?? refinement.from_combination ?? 'tag'}|...`}
       defaultValue={refinement.selected ?? ''}
       onBlur={(e) => onSelect(refinement.key, e.target.value.trim() || null)}
+      // Enter commits, by handing the work to the blur above. There is
+      // no form here to submit, so without this the only way to apply
+      // what you typed is to click somewhere else — which is not what
+      // a text box in a wizard leads you to expect.
+      onKeyDown={(e) => {
+        if (e.key === 'Enter') e.currentTarget.blur();
+      }}
     />
   );
   if (!showPrompt) return box;
