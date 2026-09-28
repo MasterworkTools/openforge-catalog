@@ -109,11 +109,15 @@ def test_applies_a_missing_version_and_names_it(test_db):
     prior = get_schema_versions()[-2].version
 
     head = _roll_back_head(test_db)
-    assert head not in _recorded(test_db)
-    rolled_back_shape = _schema_shape(test_db)
-    assert rolled_back_shape != full_shape, "down_impl recorded but undid nothing"
-
     try:
+        # Inside the try, not before it: these run against a rolled-back schema,
+        # so an assertion failing here must still reach the repair below or every
+        # later test in the session fails on a missing table instead of its own
+        # subject.
+        assert head not in _recorded(test_db)
+        rolled_back_shape = _schema_shape(test_db)
+        assert rolled_back_shape != full_shape, "down_impl recorded but undid nothing"
+
         result = migrate.lambda_handler({}, None)
         shape_after = _schema_shape(test_db)
         recorded_after = _recorded(test_db)
@@ -237,7 +241,6 @@ def test_a_failure_part_way_keeps_the_versions_that_landed(test_db, monkeypatch)
         head(conn).down(0)
         prior(conn).down(0)
         conn.commit()
-    assert prior.version not in _recorded(test_db)
 
     def explode(self, curs):
         raise RuntimeError("version exploded half way")
@@ -245,6 +248,10 @@ def test_a_failure_part_way_keeps_the_versions_that_landed(test_db, monkeypatch)
     monkeypatch.setattr(head, "up_impl", explode)
 
     try:
+        # Inside the try: this rollback dropped a table, so a failure here that
+        # skipped the repair would take the rest of the session with it.
+        assert prior.version not in _recorded(test_db)
+
         with pytest.raises(RuntimeError, match="version exploded half way"):
             migrate.lambda_handler({}, None)
         recorded = _recorded(test_db)
@@ -302,3 +309,57 @@ def test_a_version_reporting_failure_by_return_value_raises(test_db):
 
     with pytest.raises(RuntimeError, match="migration 999 reported failure"):
         migrate._apply(test_db, [Pretends])
+
+
+def test_an_image_without_the_schema_modules_says_so(test_db, monkeypatch):
+    """A packaging fault should not arrive looking like a database fault.
+
+    `get_schema_versions()` discovers migrations with `os.listdir`, so an image
+    built without `openforge/db/schema` finds none (openforge_catalog-bj5).
+    Before the explicit check, `max()` got there first and the log group — the
+    only forensics this function has — read `max() iterable argument is empty`.
+    """
+    monkeypatch.setattr(migrate, "get_schema_versions", lambda: [])
+
+    with pytest.raises(RuntimeError, match="no schema version modules"):
+        migrate.lambda_handler({}, None)
+
+
+def test_a_virgin_database_reports_no_prior_version(test_db, monkeypatch):
+    """The first-ever deploy, on a real empty database rather than a mock.
+
+    A scratch database costs a CREATE, a PGDATABASE override and a DROP, and
+    never touches the session database — I previously declined this test on the
+    grounds that it would have to tear down `test_db`, which was wrong. Three
+    mutants survive without it, all on the `if before` branches: `applied`
+    forced empty, `allow_missing` never passed, and `schema_version_before`
+    reported as 0 rather than None. That last one is what the deploy gate
+    prints.
+    """
+    import os
+
+    import psycopg
+
+    from openforge.db import db_url
+
+    scratch = "openforge_migrate_virgin"
+    admin_dsn = db_url(os.environ)
+
+    def _admin(statement):
+        with psycopg.connect(admin_dsn, autocommit=True) as conn:
+            conn.execute(statement)
+
+    _admin(f"DROP DATABASE IF EXISTS {scratch}")
+    _admin(f"CREATE DATABASE {scratch}")
+    try:
+        monkeypatch.setitem(os.environ, "PGDATABASE", scratch)
+        result = migrate.lambda_handler({}, None)
+    finally:
+        monkeypatch.undo()
+        _admin(f"DROP DATABASE IF EXISTS {scratch}")
+
+    every_version = sorted(schema.version for schema in get_schema_versions())
+    assert result["ok"] is True
+    assert result["schema_version_before"] is None
+    assert result["schema_version_after"] == max(every_version)
+    assert result["applied"] == every_version
