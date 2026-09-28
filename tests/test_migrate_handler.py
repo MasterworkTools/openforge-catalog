@@ -67,6 +67,34 @@ def _recorded(db):
             return {row[0] for row in curs.fetchall()}
 
 
+def _restore(db, wanted_shape):
+    """Put the schema back, and do not trust the bookkeeping to decide whether to.
+
+    Triggered on the *shape*, because the failures these tests exist to catch are
+    the ones that leave `schema_versions` claiming a version landed when its DDL
+    did not — so a repair guarded by the version row short-circuits precisely
+    when it is needed, `guides` stays dropped, and `conftest`'s autouse
+    `clean_tables` then errors every remaining test in the session on a missing
+    table. One real failure became a hundred that way.
+
+    An unconditional `_apply` does not help either: `up()` skips a version
+    `version_exists()` believes is applied. Dropping the schema takes
+    `schema_versions` with it, which is what leaves nothing to skip. The session
+    fixture's own teardown does the same thing, and `version_13` recreates the
+    `pg_trgm` extension the drop removes.
+    """
+    if _schema_shape(db) == wanted_shape:
+        return
+    with db.connection() as conn:
+        with conn.cursor() as curs:
+            curs.execute(sql.SQL("DROP SCHEMA public CASCADE; CREATE SCHEMA public"))
+        conn.commit()
+    for schema in get_schema_versions():
+        with db.connection() as conn:
+            schema(conn).up()
+            conn.commit()
+
+
 def _roll_back_head(db):
     """Undo the newest migration through its own `down_impl`.
 
@@ -122,10 +150,10 @@ def test_applies_a_missing_version_and_names_it(test_db):
         shape_after = _schema_shape(test_db)
         recorded_after = _recorded(test_db)
     finally:
-        # Never leave the session database behind head: every later test in
-        # this run would fail on something unrelated to what it asserts.
-        if head not in _recorded(test_db):
-            migrate._apply(test_db, get_schema_versions())
+        # Never leave the session database short of the shape every later test
+        # assumes: one real failure here would otherwise error the rest of the
+        # session on a missing table, and those errors are what you read first.
+        _restore(test_db, full_shape)
 
     assert result["ok"] is True
     assert result["schema_version_before"] == prior
@@ -189,11 +217,17 @@ def test_reading_the_versions_is_strict_by_default(test_db):
 def test_not_reaching_head_is_a_failure_not_a_quiet_no_op(test_db, monkeypatch):
     """The assertion that closes the silent-failure hole.
 
-    A migration that does nothing, an `os.listdir` that finds no version
-    modules, a read that fails — each leaves a payload shaped exactly like a
-    healthy no-op, and the deploy gate cannot tell them apart. So the handler
-    checks the end state instead of reporting it.
+    Two cases reach it: a migration that does nothing, and a version read that
+    fails. Each leaves a payload shaped exactly like a healthy no-op and the
+    deploy gate cannot tell them apart, so the handler checks the end state
+    instead of reporting it.
+
+    A third case does *not* reach it, and this docstring used to claim it did:
+    an `os.listdir` finding no version modules never gets here, because `max()`
+    raises first. That one belongs to
+    `test_an_image_without_the_schema_modules_says_so`.
     """
+    full_shape = _schema_shape(test_db)
     head = _roll_back_head(test_db)
 
     monkeypatch.setattr(migrate, "_apply", lambda db, versions: None)
@@ -203,8 +237,7 @@ def test_not_reaching_head_is_a_failure_not_a_quiet_no_op(test_db, monkeypatch):
             migrate.lambda_handler({}, None)
     finally:
         monkeypatch.undo()
-        if head not in _recorded(test_db):
-            migrate._apply(test_db, get_schema_versions())
+        _restore(test_db, full_shape)
 
 
 def test_a_failing_migration_is_not_swallowed(test_db, monkeypatch):
@@ -236,6 +269,7 @@ def test_a_failure_part_way_keeps_the_versions_that_landed(test_db, monkeypatch)
     """
     versions = get_schema_versions()
     head, prior = versions[-1], versions[-2]
+    full_shape = _schema_shape(test_db)
 
     with test_db.connection() as conn:
         head(conn).down(0)
@@ -257,8 +291,7 @@ def test_a_failure_part_way_keeps_the_versions_that_landed(test_db, monkeypatch)
         recorded = _recorded(test_db)
     finally:
         monkeypatch.undo()
-        if head.version not in _recorded(test_db):
-            migrate._apply(test_db, get_schema_versions())
+        _restore(test_db, full_shape)
 
     assert prior.version in recorded, (
         "the version before the failure was rolled back too — "
@@ -352,14 +385,15 @@ def test_a_virgin_database_reports_no_prior_version(test_db, monkeypatch):
     # constant name, two concurrent runs lose two ways: a CREATE DATABASE race, and
     # one run's `finally` dropping the database the other is migrating, which
     # surfaces as a missing table and reads as a schema bug.
-    scratch = f"openforge_migrate_virgin_{os.getpid()}"
+    scratch = f"{os.environ['PGDATABASE']}_virgin_{os.getpid()}"
     admin_dsn = db_url(os.environ)
 
     def _admin(statement):
         with psycopg.connect(admin_dsn, autocommit=True) as conn:
             conn.execute(statement)
 
-    _admin(f"DROP DATABASE IF EXISTS {scratch}")
+    # No leading DROP: the name is unique to this run, and a DROP is the one
+    # statement here that can fail with ObjectInUse against a concurrent holder.
     _admin(f"CREATE DATABASE {scratch}")
     try:
         monkeypatch.setitem(os.environ, "PGDATABASE", scratch)
