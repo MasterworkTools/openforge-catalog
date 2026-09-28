@@ -30,8 +30,7 @@ export default function GuidePage() {
     status,
     select,
     selectAll,
-  } =
-    useGuideState(guideKey);
+  } = useGuideState(guideKey);
   // Which settled question has been reopened. Here rather than in the
   // section itself, because the explanation beside it follows.
   const [opened, setOpened] = useState<string | null>(null);

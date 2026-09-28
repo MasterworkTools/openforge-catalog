@@ -77,7 +77,6 @@ function blame(why: MissingReason | undefined, lead: string): string {
  * obvious once you know which choice did it, so the list says what it
  * would have left empty and, where one answer is responsible, which.
  */
-
 function Missing({
   hidden,
   chosen,
