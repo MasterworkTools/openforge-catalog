@@ -366,12 +366,14 @@ def _unavailable(
     whether it comes back — the first removal that revives it is what
     is blamed.
 
-    `sent` is what the person sent *minus what this branch ignored* —
-    `resolve` calls it `honoured` and builds it there. Not the raw map:
-    an answer this branch never reached is ignored rather than refused,
-    and the sweep re-derives on hypothetical branches where it would be
+    `sent` is what the person sent *minus any step answer naming an
+    option its step does not have* — `resolve` calls it `honoured` and
+    builds it there. Not the raw map: the sweep re-derives on
+    hypothetical branches, and on one of those such an answer becomes
     reachable, so handing it the raw map made the counterfactual refuse
-    what the resolution had let through. Not the defaulted map either;
+    what the resolution had let through. An answer this branch has
+    merely not *reached* is kept, and has to be: `selectAll` merges, so
+    clicking a candidate carries it along. Not the defaulted map either;
     that is derived here.
 
     Three maps, then, and the names are load-bearing. They used to be
@@ -512,10 +514,10 @@ def _blame(
     can be jointly responsible with neither one to blame, and then
     this says nothing rather than pick a scapegoat.
 
-    `sent` is `_unavailable`'s, which is what the person sent minus the
-    answers this branch ignored. Everything in it is still an answer of
-    theirs, which is what the page's "your answer" rests on; there is
-    just less of it than they typed.
+    `sent` is `_unavailable`'s: what the person sent, minus any step
+    answer naming an option its step does not have. Everything in it is
+    still an answer of theirs, which is what the page's "your answer"
+    rests on.
     """
     in_play = _roles_in_play(_chosen_options(*_available_steps(document, assumed)))
     # Which step answers actually count if they picked this. Compared
