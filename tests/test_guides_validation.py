@@ -335,6 +335,48 @@ def test_every_shipped_guide_fixture_is_a_valid_guide():
             raise AssertionError(f"{path.name}: {e}") from e
 
 
+def test_a_shipped_guide_carries_a_card_illustration():
+    """The entry page's only real content, and nothing asserted it.
+
+    Nine tests reference `hero_image`; none of them reads the file that
+    populates it. `a_guide()` is a dict written by the tests, so it
+    agrees with the tests' beliefs by construction and carries no
+    illustration at all. Deleting the `hero_image:` line from
+    `wall.yaml` left 700 backend and 636 frontend tests green.
+
+    What makes that worth a test rather than a shrug is that the
+    regression is invisible in the running system. There is one guide,
+    so losing the line blanks the entry page entirely — and a blank card
+    is the *designed* appearance of an illustration that has not been
+    uploaded yet, argued for at length in `CardImage`. The fallback that
+    makes a missing upload look deliberate makes missing data look
+    deliberate too, so there is no state in which a person could tell
+    them apart.
+
+    `additionalProperties: false` catches a *typo'd* key. Deleting the
+    line, or commenting it out, is caught by nothing.
+
+    "At least one", not "every": a guide is authorable before anyone has
+    rendered it, which the column being nullable is the whole point of.
+    """
+    fixtures = [
+        entry
+        for entry in impresources.files(guide_fixtures).iterdir()
+        if entry.name.endswith(".yaml")
+    ]
+    assert fixtures, "no guide fixtures found — this test must not pass quietly"
+
+    with_art = {
+        entry.name: yaml.safe_load(entry.read_text()).get("hero_image")
+        for entry in fixtures
+    }
+
+    assert any(with_art.values()), (
+        "no shipped guide carries a `hero_image`, so the entry page has "
+        f"nothing to draw: {with_art}"
+    )
+
+
 def test_an_option_need_not_name_any_role(guide):
     """A later step may narrow the build without adding to it."""
     guide["steps"].append(

@@ -107,12 +107,22 @@ describe('TabbedInterface', () => {
 
     render(<TabbedInterface />);
     const search = screen.getByTestId('part-search');
+    const generator = screen.getByTitle('Base Generator');
 
     fireEvent.click(screen.getByRole('button', { name: 'Guided Builds' }));
     await screen.findByRole('heading', { name: 'Guided builds' });
     fireEvent.click(screen.getByRole('button', { name: 'Part Search' }));
 
     expect(screen.getByTestId('part-search')).toBe(search);
+    // And the Base Generator, where the loss is larger still: remounting
+    // that iframe reloads an external application and discards a base
+    // somebody was part-way through designing. It is also the sibling
+    // with a written argument for breaking it — the comment beside the
+    // guides tab says a hidden component costing a request is why that
+    // one is conditional, which applies more strongly to a document
+    // fetch than to anything else here. Pinning only one neighbour is
+    // the same mistake this test was added to fix.
+    expect(screen.getByTitle('Base Generator')).toBe(generator);
   });
 
   it('starts on Part Search', async () => {
