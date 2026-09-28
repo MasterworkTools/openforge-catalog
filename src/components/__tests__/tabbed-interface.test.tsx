@@ -80,6 +80,41 @@ describe('TabbedInterface', () => {
     ).toBeInTheDocument();
   });
 
+  it('does not nest a second landmark inside the page', async () => {
+    // The entry page is also the whole of `/guides`, where it needs a
+    // `main`. As a tab panel it is inside `MainContentWrapper`'s, and
+    // `main` forbids a `main` ancestor. Counted on the document rather
+    // than queried within the render result, because `getByRole('main')`
+    // would happily find the inner one and report success.
+    noGuides();
+
+    render(<TabbedInterface />);
+    fireEvent.click(screen.getByRole('button', { name: 'Guided Builds' }));
+    await screen.findByRole('heading', { name: 'Guided builds' });
+
+    expect(document.querySelectorAll('main')).toHaveLength(0);
+  });
+
+  it('keeps Part Search mounted across a trip to another tab', async () => {
+    // The guides tab is conditional so a hidden component does not spend
+    // a Lambda invocation. Its neighbours must NOT be: `TabPartSearch`
+    // owns the `TagProvider` and `BlueprintProvider`, so unmounting it
+    // throws away the visitor's tag selection and results every time
+    // they look at the guides and come back. Only a `style` prop says
+    // otherwise today, and a style prop fails no test — so this asserts
+    // on the identity of the node, not on its visibility.
+    noGuides();
+
+    render(<TabbedInterface />);
+    const search = screen.getByTestId('part-search');
+
+    fireEvent.click(screen.getByRole('button', { name: 'Guided Builds' }));
+    await screen.findByRole('heading', { name: 'Guided builds' });
+    fireEvent.click(screen.getByRole('button', { name: 'Part Search' }));
+
+    expect(screen.getByTestId('part-search')).toBe(search);
+  });
+
   it('starts on Part Search', async () => {
     noGuides();
 

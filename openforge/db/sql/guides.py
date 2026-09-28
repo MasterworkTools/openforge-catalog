@@ -16,9 +16,14 @@ def get_all_guides(curs: cursor) -> list[dict]:
 
     The list is what the entry page renders, so it carries what a card
     shows — title, summary, illustration — rather than every step of
-    every guide. `image` is null for a guide that has no illustration
-    yet, which the card has to survive: a guide is authorable without
-    one and the field is not required.
+    every guide.
+
+    `hero_image` is a column rather than a field of the document, so it
+    is selected rather than projected out of the JSONB — see
+    `version_19`. Null for a guide nobody has photographed, which the
+    card has to survive, and the only query that returns it:
+    `get_guide_by_key` deliberately does not, which `upsert_guide`'s
+    docstring warns a writer about.
     """
     query = sql.SQL(
         """
@@ -58,12 +63,24 @@ def upsert_guide(curs: cursor, document: dict, hero_image: str | None = None) ->
     caller does.
 
     `hero_image` is beside the document rather than in it — see
-    `version_19` — and defaults to None because most callers are tests
-    and the API that resolves a guide, none of which have a picture to
-    say anything about. It is written on conflict like the document, so
+    `version_19`. It is written on conflict like the document, so
     re-loading a fixture whose illustration changed updates it; a
     re-load that omits it clears it, which is what "the fixture is the
     authored state" means everywhere else in the loader.
+
+    The default is for tests. `load_guide_fixture` is the only caller
+    outside them and always passes it, and no route writes a guide at
+    all, so nothing clears a picture today.
+
+    **A writer must read `hero_image` from somewhere other than
+    `get_guide_by_key`.** That query selects the document and not this
+    column, so read-modify-write through it loses the URL: the row comes
+    back without a picture, and writing it back clears one. Before the
+    column existed the round trip was lossless because the URL rode
+    inside the document. The guide editor in `openforge_catalog-kcm` is
+    exactly the caller that will do this, and it is the reason the
+    constraint is written here, in the function that would silently
+    honour it, rather than left to be rediscovered.
     """
     query = sql.SQL(
         """

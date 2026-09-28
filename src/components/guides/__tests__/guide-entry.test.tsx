@@ -1,5 +1,6 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { computeAccessibleName } from 'dom-accessibility-api';
 import '@testing-library/jest-dom';
 import GuideEntry from '../guide-entry';
 
@@ -24,6 +25,11 @@ function served(guides: unknown[]) {
 
 function occurrences(haystack: string, needle: string): number {
   return haystack.split(needle).length - 1;
+}
+
+/** The square image area, picture or not. */
+function frameOf(card: HTMLElement): HTMLElement | null {
+  return card.querySelector('.aspect-square');
 }
 
 const WALL = {
@@ -58,11 +64,13 @@ describe('GuideEntry', () => {
     render(<GuideEntry />);
 
     const link = await screen.findByRole('link');
-    // The name is the card's whole text — title then summary — so the
-    // claim is that the title appears in it once. With `alt={title}` it
-    // appears twice, which is the mutant this kills.
-    const name = link.getAttribute('aria-label') ?? link.textContent ?? '';
-    expect(occurrences(name, WALL.title)).toBe(1);
+    // Computed, not read off `textContent`. An `img`'s `alt` is part of
+    // the accessible name and is *not* part of `textContent`, so the
+    // earlier version of this assertion passed against `alt={title}` —
+    // the exact mutant its comment claimed to kill. It died only
+    // incidentally, because a non-empty alt changes the role and the
+    // other tests query `presentation`.
+    expect(occurrences(computeAccessibleName(link), WALL.title)).toBe(1);
     expect(
       screen.getByRole('heading', { name: WALL.title, level: 2 })
     ).toBeInTheDocument();
@@ -74,7 +82,7 @@ describe('GuideEntry', () => {
     render(<GuideEntry />);
 
     const link = await screen.findByRole('link');
-    expect(link).toHaveAttribute('href', '/guides?guide=wall');
+    expect(link).toHaveAttribute('href', '/guides/?guide=wall');
     // The picture and the words are both inside it. A card whose title
     // alone is clickable has a large dead area that looks clickable.
     expect(link).toContainElement(screen.getByRole('presentation'));
@@ -95,6 +103,11 @@ describe('GuideEntry', () => {
     await waitFor(() =>
       expect(screen.queryByRole('presentation')).not.toBeInTheDocument()
     );
+    // The frame stays. Asserting only that the image is gone is equally
+    // true of a card that drops the whole image area, which is the
+    // version that reflows the grid as pictures arrive and is what this
+    // test is named for.
+    expect(frameOf(screen.getByRole('link'))).toBeInTheDocument();
     // And the card survives it — the title is still there to click.
     expect(screen.getByRole('link')).toContainElement(
       screen.getByRole('heading', { name: WALL.title, level: 2 })
@@ -112,6 +125,9 @@ describe('GuideEntry', () => {
       await screen.findByRole('heading', { name: WALL.title, level: 2 })
     ).toBeInTheDocument();
     expect(screen.queryByRole('presentation')).not.toBeInTheDocument();
+    // Still the same shape as a card that has one, so a grid of mostly
+    // unphotographed guides does not come out ragged.
+    expect(frameOf(screen.getByRole('link'))).toBeInTheDocument();
   });
 
   it('gives every guide its own card', async () => {

@@ -203,7 +203,17 @@ runs `tofu apply -var image_tag=<sha>` after the image push and before the S3 sy
 merge to `main` deploys the image it just built. The sync uploads the frontend to a
 per-sha prefix and then promotes it to `current/`, which is what CloudFront serves, so the
 deploy is live without touching openforge-infra-frontend. Release PRs get a plan comment from the
-`Production Plan` workflow. Runtime secrets live in Secrets Manager
+`Production Plan` workflow.
+
+**Nothing in the pipeline applies database migrations.** The workflow builds the
+image, applies tofu and syncs the frontend; it never runs `bin/db_update up`. So
+a release carrying a schema change deploys code that is newer than the database,
+and the endpoints touching the new schema return an unhandled 500 until someone
+migrates by hand on the bastion. The order is: `bin/db_update up`, then the
+fixtures if the release needs them, **then** merge to `main`. As of PR #246 the
+pending gap is schema 18 and 19 (`openforge_catalog-jag`), since `main` is still
+at 17. The wrong order fails loudly rather than corrupting anything — the loader
+raises `UndefinedColumn` and writes nothing — but it fails in production. Runtime secrets live in Secrets Manager
 (`openforge-catalog/production/app`, created once by `scripts/create-app-secret.sh`), never
 in the repo; the database password is read at cold start from `DB_SECRET_ARN` so the
 RDS-managed secret may rotate. Prerequisites, once per account: the app secret, and the

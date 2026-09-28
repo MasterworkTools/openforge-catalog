@@ -269,6 +269,13 @@ describe('GuidePage', () => {
     jest.spyOn(console, 'warn').mockImplementation(() => {});
   });
 
+  // These cover `GuideEntry`, which now lives in `guide-entry.tsx`.
+  // They stay here, and they are not redundant: they are the ONLY
+  // coverage of the loading, empty and failed states — mutate any of
+  // the three in `GuideEntry` and exactly one of these fails while
+  // `guide-entry.test.tsx` catches none of them. They belong here
+  // because they go through `GuidePage`'s routing, which is what
+  // decides the entry page is the thing that renders at all.
   describe('with no guide in the URL', () => {
     it('lists the guides', async () => {
       visit('');

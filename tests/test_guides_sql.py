@@ -146,6 +146,45 @@ def test_loading_a_fixture_lifts_the_hero_image_into_its_column(test_db):
             )
 
 
+def test_reloading_a_fixture_updates_the_hero_image(test_db):
+    """The second load, which is the only kind `bin/fixtures` ever does.
+
+    Every other test here writes once into an empty table, so the
+    `ON CONFLICT` branch of the new column is never taken — and that
+    branch is the whole working life of this field. A guide is
+    re-rendered and re-loaded; the row already exists. Deleting
+    `hero_image = EXCLUDED.hero_image` from the conflict clause leaves
+    the entire suite green without this.
+
+    Both directions, because the docstring claims both: a re-load with a
+    new picture replaces the old one, and a re-load with none clears it.
+    The second is what "the fixture is the authored state" means
+    everywhere else in the loader, and a `COALESCE` that kept the old
+    URL would also be green without it.
+    """
+    first = a_guide()
+    first["hero_image"] = "https://objects.openforge.tools/guides/old.webp"
+
+    with test_db.connection() as conn:
+        with conn.cursor(row_factory=dict_row) as curs:
+            load_guide_fixture(curs, first)
+
+            second = a_guide()
+            second["hero_image"] = "https://objects.openforge.tools/guides/new.webp"
+            load_guide_fixture(curs, second)
+
+            assert guide_sql.get_all_guides(curs)[0]["hero_image"] == (
+                "https://objects.openforge.tools/guides/new.webp"
+            )
+
+            # And re-authored without one, it goes.
+            load_guide_fixture(curs, a_guide())
+
+            assert guide_sql.get_all_guides(curs)[0]["hero_image"] is None
+            # Still one guide throughout: these are updates, not inserts.
+            assert len(guide_sql.get_all_guides(curs)) == 1
+
+
 def test_a_guide_without_a_hero_image_loads_and_lists(test_db):
     """The field is not required: a guide is authorable unphotographed."""
     with test_db.connection() as conn:

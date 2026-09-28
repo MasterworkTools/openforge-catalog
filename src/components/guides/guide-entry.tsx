@@ -38,7 +38,13 @@ export default function GuideEntry() {
   }, []);
 
   return (
-    <main className="p-6 mx-auto max-w-6xl">
+    // A `div`, not a `main`. This renders in two places — as the whole
+    // of `/guides`, where `guide-page.tsx` supplies the landmark, and as
+    // a tab panel inside `MainContentWrapper`'s `main`, where a second
+    // one would nest. `main` forbids a `main` ancestor and ARIA wants
+    // one per document, and the component cannot know which place it is
+    // in, so neither use declares it.
+    <div className="p-6 mx-auto max-w-6xl">
       {/* The heading first, then whatever the fetch turns out to say.
           Returning null until the guides land made the feature's
           landing page a blank document for the length of a cold start,
@@ -49,7 +55,7 @@ export default function GuideEntry() {
         parts list with the files to print.
       </p>
       {guides !== null && (failed ? <AskFailed /> : <Cards guides={guides} />)}
-    </main>
+    </div>
   );
 }
 
@@ -84,7 +90,7 @@ function Cards({ guides }: { guides: GuideSummary[] }) {
 function GuideCard({ guide }: { guide: GuideSummary }) {
   return (
     <a
-      href={`/guides?guide=${encodeURIComponent(guide.guide_key)}`}
+      href={`/guides/?guide=${encodeURIComponent(guide.guide_key)}`}
       // `h-full` and a column so every card in a row is the same height
       // whatever its summary runs to. Without it the grid is ragged
       // along the bottom, because a guide with two sentences makes a

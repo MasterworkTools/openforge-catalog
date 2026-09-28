@@ -59,7 +59,7 @@ ALTER TABLE guides ADD COLUMN hero_image TEXT
     def drop_hero_image(self, curs: cursor):
         query = sql.SQL(
             """
-ALTER TABLE guides DROP COLUMN hero_image
+ALTER TABLE guides DROP COLUMN IF EXISTS hero_image
 """
         )
         curs.execute(query)

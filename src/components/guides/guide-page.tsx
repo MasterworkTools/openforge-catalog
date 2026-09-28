@@ -84,7 +84,14 @@ export default function GuidePage() {
   if (guideKey === undefined) return null;
   // `?guide=` is a URL with no guide in it, not a guide named "".
   // Asking the API for that one only produces a 404 to show someone.
-  if (!guideKey) return <GuideEntry />;
+  // The landmark for this route. `GuideEntry` does not carry one,
+  // because it is also a tab panel inside another `main`.
+  if (!guideKey)
+    return (
+      <main>
+        <GuideEntry />
+      </main>
+    );
 
   return (
     // A fixed-height page rather than a scrolling one, because the
