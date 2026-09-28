@@ -110,6 +110,48 @@ def test_schema_error_names_the_offending_step(guide):
     assert "guide 'wall'" in str(excinfo.value)
 
 
+@pytest.mark.parametrize(
+    "questions, singular",
+    [("steps", "step"), ("refinements", "refinement")],
+)
+def test_a_question_may_not_take_the_page_s_own_query_key(guide, questions, singular):
+    """`guide` is the page's query key, not a question's.
+
+    The page's URL is `?guide=<key>&<question>=<answer>`, so a question
+    named `guide` is handed the guide's own key as its answer on first
+    load and the resolve call 400s before anything renders — the guide
+    cannot be opened at all, and "Start this guide over" links to the
+    same parameter that broke it. Nothing downstream can fix that, so it
+    is refused at authoring time.
+    """
+    guide[questions][0]["key"] = "guide"
+
+    with pytest.raises(ValueError) as excinfo:
+        validate_guide_document(guide)
+
+    assert f"{singular} 'guide'" in str(excinfo.value)
+    # And which guide: this comes out of `_validate_shape`, which embeds
+    # the name itself rather than going through `_raise_invalid`.
+    assert "guide 'wall'" in str(excinfo.value)
+
+
+def test_an_option_may_still_be_named_guide(guide):
+    """The constraint is on question keys only, and stops there.
+
+    An option key is an answer, not a query key — `?method=guide` is
+    fine — and a role reaches the URL as `part.guide`, whose dot no
+    url_key can spell. Pinning that here so the `guide` ban is not
+    widened to every key in the document by someone reading only the
+    test above.
+    """
+    guide["steps"][0]["options"][0]["key"] = "guide"
+    guide["refinements"][1]["when"] = {"selected": {"method": ["guide"]}}
+    guide["roles"]["guide"] = {"title": "Guide", "query": {"require": ["shape|wall"]}}
+    guide["steps"][0]["options"][0]["roles"]["guide"] = None
+
+    assert validate_guide_document(guide) is guide
+
+
 def test_schema_error_names_the_offending_role(guide):
     guide["roles"]["wall"]["query"] = {}
 

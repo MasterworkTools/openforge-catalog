@@ -65,6 +65,21 @@ $defs:
       full of them — an author naming an option after `wall_on_tile`
       or `dungeon_stone` should not have to respell it.
 
+  question_key:
+    description: >
+      A step or refinement key: a url_key, minus `guide`, which the
+      page's own query string already owns. The page writes
+      `?guide=<guide key>&<question key>=<answer>`, so a question named
+      `guide` is handed the guide's own key as its answer on first load
+      and 400s every time; answering it would overwrite the guide key
+      and lose the guide. Option keys and role names are exempt: an
+      option key is a value, and a role reaches the URL as
+      `part.<role>`, whose dot no url_key can spell.
+    allOf:
+      - $ref: "#/$defs/url_key"
+      - not:
+          const: guide
+
   predicate:
     type: object
     minProperties: 1
@@ -172,7 +187,7 @@ $defs:
     additionalProperties: false
     properties:
       key:
-        $ref: "#/$defs/url_key"
+        $ref: "#/$defs/question_key"
       prompt:
         type: string
         minLength: 1
@@ -371,7 +386,7 @@ $defs:
       YAML the fixtures are authored in.
     properties:
       key:
-        $ref: "#/$defs/url_key"
+        $ref: "#/$defs/question_key"
       role:
         type: string
         minLength: 1
