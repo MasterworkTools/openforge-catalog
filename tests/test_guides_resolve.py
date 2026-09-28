@@ -1199,6 +1199,14 @@ def test_refinements_are_offered_one_at_a_time_too(guide):
     The same rule as the steps, and the one I kept applying only to
     them: finishing the questions and being handed every refinement at
     once is the form this stopped being.
+
+    One kind does not queue. A toggle has a valid state before anyone
+    touches it, so it is never the thing somebody has not reached
+    yet — and holding the questions after it behind an untouched
+    checkbox is what this test used to assert. It also made "every
+    question is answered" uncomputable by the page: with a toggle that
+    is not last, an untouched one hid the questions after it while the
+    page, which is told to ignore toggles, called the guide finished.
     """
     guide["refinements"].append(
         {
@@ -1214,9 +1222,20 @@ def test_refinements_are_offered_one_at_a_time_too(guide):
     first = resolve(guide, answered, find_candidates)
     assert [r["key"] for r in first["refinements"]] == ["texture"]
 
+    # Answering the texture brings up the next question — and the one
+    # after it, because `side-locks` is a toggle and a toggle does not
+    # hold the queue. Off is an answer before anyone touches it, so
+    # waiting for one asks somebody to tick a box to be shown the next
+    # thing.
     second = resolve(guide, {**answered, "texture": "texture|cave"}, find_candidates)
-    assert [r["key"] for r in second["refinements"]] == ["texture", "side-locks"]
+    assert [r["key"] for r in second["refinements"]] == [
+        "texture",
+        "side-locks",
+        "colour",
+    ]
 
+    # And answering the toggle changes nothing about what is shown,
+    # which is the same statement from the other side.
     third = resolve(
         guide,
         {**answered, "texture": "texture|cave", "side-locks": "off"},
@@ -1227,6 +1246,41 @@ def test_refinements_are_offered_one_at_a_time_too(guide):
         "side-locks",
         "colour",
     ]
+
+
+def test_an_untouched_toggle_does_not_hide_the_questions_after_it(guide):
+    """The ordering trap the page's "all answered" rule rests on.
+
+    `resolve` reveals refinements one at a time, and the page decides
+    the build is finished when every non-toggle question it was given is
+    answered — because a checkbox has a valid state before anyone
+    touches it. Those two rules only compose if an untouched toggle does
+    not hide what comes after it.
+
+    On `wall.yaml` the toggle is last, so the whole arrangement was safe
+    by accident. Move it up and, before this rule, the page reported a
+    finished build with three questions still unasked — silently, on any
+    guide ordered differently from the one that ships.
+    """
+    # A toggle in the middle, which is the shape `wall.yaml` does not
+    # happen to have.
+    guide["refinements"].insert(
+        0,
+        {
+            "key": "pegs",
+            "role": "wall",
+            "prompt": "Multifloor pegs?",
+            "on_tags": ["connection|pegs"],
+        },
+    )
+
+    shown = resolve(guide, {"method": "separate-wall", "size": "two"}, find_candidates)
+
+    # The toggle is on screen, unanswered, and has not swallowed the
+    # question after it.
+    keys = [r["key"] for r in shown["refinements"]]
+    assert keys[0] == "pegs"
+    assert "texture" in keys, f"an untouched toggle hid the questions after it: {keys}"
 
 
 def test_a_hidden_refinement_still_applies(guide):

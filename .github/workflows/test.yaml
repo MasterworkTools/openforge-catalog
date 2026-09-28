@@ -91,3 +91,68 @@ jobs:
         run: ruff check .
       - name: Run ruff formatting check
         run: ruff format --check .
+
+  version-bump:
+    # Anything that reaches the built site has to come with a version
+    # bump. The header on every page shows that number, so "which build
+    # am I looking at" has an answer — and a release that changed the
+    # site without changing the version makes that answer a lie.
+    #
+    # Pull requests only. A push to `test` or `main` is a merge of work
+    # this already checked, and there is no base to compare it against.
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          # The whole history, because the check is a diff against the
+          # base branch and a shallow clone does not contain it.
+          fetch-depth: 0
+
+      - name: Require a version bump for changes that ship
+        env:
+          BASE: ${{ github.base_ref }}
+          LABELS: ${{ join(github.event.pull_request.labels.*.name, ',') }}
+        run: |
+          set -euo pipefail
+
+          if [[ ",$LABELS," == *",no-version-bump,"* ]]; then
+            echo "Skipped: the pull request carries the no-version-bump label."
+            exit 0
+          fi
+
+          changed=$(git diff --name-only "origin/$BASE...HEAD")
+
+          # What ships: the frontend sources and the things that build
+          # them. Tests are excluded deliberately — they do not reach
+          # the site, and making them count would mean bumping the
+          # version to fix a typo in an assertion, which teaches people
+          # to bump without meaning it.
+          shipped=$(echo "$changed" \
+            | grep -E '^(src/|public/|next\.config\.js|package\.json|package-lock\.json)' \
+            | grep -vE '(^src/.*__tests__/|\.test\.(ts|tsx|js|jsx)$|^src/test-utils/)' \
+            || true)
+
+          if [[ -z "$shipped" ]]; then
+            echo "No shipping changes; no bump needed."
+            exit 0
+          fi
+
+          before=$(git show "origin/$BASE:package.json" | python3 -c 'import json,sys; print(json.load(sys.stdin)["version"])')
+          after=$(python3 -c 'import json; print(json.load(open("package.json"))["version"])')
+
+          if [[ "$before" == "$after" ]]; then
+            echo "::error::These changes reach the site, but package.json is still $before."
+            echo
+            echo "Files that ship:"
+            echo "$shipped" | sed 's/^/  /'
+            echo
+            echo "Bump the version in package.json. The page header reads it from"
+            echo "there at build time, so there is nothing else to change."
+            echo
+            echo "If this genuinely should not carry a bump, add the no-version-bump"
+            echo "label to the pull request."
+            exit 1
+          fi
+
+          echo "Version $before -> $after, with shipping changes. Good."

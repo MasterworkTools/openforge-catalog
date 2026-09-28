@@ -151,6 +151,43 @@ def test_listing_guides_carries_titles(client, wall_guide):
     # And not the document: the list is a menu, and a guide's steps are
     # the bulk of it.
     assert "document" not in response.json["guides"][0]
+    # `WALL_GUIDE` has no illustration, and the field is not required, so
+    # the key is present and null rather than absent. The card reads it
+    # directly; an absent key and a null one are the same to JavaScript,
+    # but only one of them is what the projection promises.
+    assert response.json["guides"][0]["hero_image"] is None
+
+
+def test_listing_guides_carries_the_card_illustration(client, test_db):
+    """The entry page draws a card per guide, and the picture is data.
+
+    In its own column rather than in the document, so that changing a
+    guide's picture does not mean rewriting the document that says how to
+    build the thing — which is what the interface will be doing when
+    guides are authored there (`openforge_catalog-kcm`).
+
+    Passed beside the document, not inside it. A `hero_image` key left in
+    the document reaches the JSONB and no column, which is the mistake
+    this asserts against: the second half checks the document the API
+    hands back does not carry it, so a future loader that stops lifting
+    it out fails here rather than silently serving null.
+    """
+    with test_db.connection() as conn:
+        with conn.cursor(row_factory=dict_row) as curs:
+            guide_sql.upsert_guide(
+                curs, WALL_GUIDE, "https://objects.openforge.tools/guides/wall.webp"
+            )
+
+    response = client.get("/api/guides")
+
+    assert response.status_code == 200
+    assert (
+        response.json["guides"][0]["hero_image"]
+        == "https://objects.openforge.tools/guides/wall.webp"
+    )
+
+    document = client.get("/api/guides/wall").json["document"]
+    assert "hero_image" not in document
 
 
 def test_listing_no_guides_is_a_404(client):
