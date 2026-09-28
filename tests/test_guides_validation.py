@@ -377,6 +377,52 @@ def test_a_shipped_guide_carries_a_card_illustration():
     )
 
 
+def test_every_shipped_guide_carries_a_card_summary():
+    """The card's other optional field, and the same blind spot.
+
+    `GuideCard` renders exactly three fields — title, summary,
+    illustration — and the schema requires only the title. Round 2
+    pinned the illustration and left this one, which is the third time
+    on this PR that a fix covered some of a set while its comment
+    claimed the set. Deleting the `summary:` block from `wall.yaml`
+    leaves the whole backend suite green, including the illustration
+    test beside this one: that test covers one field of the card, not
+    the card.
+
+    Same reason it matters: `{guide.summary && (…)}` has no fallback, so
+    a card with no body text is a legitimate authored state and the
+    regression is indistinguishable from an authoring choice. The one
+    visible effect is that the entry page's card becomes a bare title
+    over a picture — and `GuideEntry`'s own docstring argues the
+    illustration earns its place *because* two guides "read identically
+    as two lines of text". This is the second of those lines.
+
+    `all`, where the illustration test says `any`, and the asymmetry is
+    the point rather than an inconsistency. A picture has a real "not
+    yet": it comes from a separate rendering pipeline and a separate
+    upload, so a guide legitimately exists before one. A summary is
+    authored in the same file at the same moment as the title, so its
+    absence is never "not yet" — it is a card nobody finished.
+    """
+    fixtures = [
+        entry
+        for entry in impresources.files(guide_fixtures).iterdir()
+        if entry.name.endswith(".yaml")
+    ]
+    # `all` is vacuously true of nothing, so the guard is load-bearing
+    # here in a way it is not for `any`.
+    assert fixtures, "no guide fixtures found — this test must not pass quietly"
+
+    summaries = {
+        entry.name: yaml.safe_load(entry.read_text()).get("summary")
+        for entry in fixtures
+    }
+
+    assert all(
+        summaries.values()
+    ), f"a shipped guide has no summary, so its card is a bare title: {summaries}"
+
+
 def test_an_option_need_not_name_any_role(guide):
     """A later step may narrow the build without adding to it."""
     guide["steps"].append(
