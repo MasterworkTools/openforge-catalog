@@ -549,10 +549,11 @@ def _blame(
     #
     # `if_taken` is the map the caller already derived for this
     # candidate — the answers as they would be if this one were taken —
-    # passed in rather than derived a second time. It keeps that name
-    # in both frames: `hypothetical` below is a *different*
-    # counterfactual, the one with `other` un-answered, and the two
-    # wore the same name across this boundary.
+    # passed in rather than derived a second time. Keep the two names
+    # apart when editing here: `hypothetical` below is a *different*
+    # counterfactual, the one with `other` un-answered. Naming them
+    # alike across this boundary is the mistake the distinct names are
+    # preventing.
     #
     # Only its *keys* are read below, so the defaulted map looks
     # identical here on any guide whose later questions do not move when
