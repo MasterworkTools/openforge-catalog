@@ -231,15 +231,7 @@ const RESOLVED_SETTLED: ResolvedGuide = {
   ...RESOLVED_WITH_PARTS,
   refinements: RESOLVED_WITH_PARTS.refinements.map((refinement) => ({
     ...refinement,
-    // `floor-texture` stays open on purpose. It is `role: 'floor'`, so
-    // it does not narrow the wall and leaving it unanswered does not
-    // unsettle it — and an answered question folds to its label, which
-    // would take the only list of choices off the screen. The tests
-    // here change an answer to check what the dialog then describes.
-    selected:
-      refinement.key === 'floor-texture'
-        ? refinement.selected
-        : (refinement.selected ?? 'texture|dungeon_stone'),
+    selected: refinement.selected ?? 'texture|dungeon_stone',
   })),
 };
 
@@ -2758,8 +2750,17 @@ describe('inspecting a part', () => {
 
     // Answer something else. The same role resolves to a new piece,
     // and the dialog is still open on that role.
+    //
+    // Reopening first, because every question is answered here — which
+    // is what the offer now waits for — and an answered question folds
+    // to its label. That is the real route to changing an answer.
     title = 'Wall, cave';
-    fireEvent.click(screen.getByRole('button', { name: /Cave/ }));
+    // The folded answer is named for the answer, not for the question —
+    // "Floor texture" is the heading above it. `Dungeon stone` is this
+    // refinement's curated title and is unique; the wall's texture
+    // folds to the raw tag, having no `choices` to give it a name.
+    fireEvent.click(screen.getByRole('button', { name: 'Dungeon stone' }));
+    fireEvent.click(await screen.findByRole('button', { name: /Cave/ }));
 
     await waitFor(() =>
       expect(modalProps[modalProps.length - 1].partName).toBe(
@@ -2768,15 +2769,111 @@ describe('inspecting a part', () => {
     );
   });
 
-  it('waits until the part is decided before offering the others', async () => {
-    // A count taken while a question that narrows this part is still
-    // open is about a half-built predicate: answering the next question
-    // changes it. So the offer waits until nothing left to answer
-    // narrows this role — "six towne walls" is only useful once the
-    // guide has stopped narrowing.
+  it('resets the build without leaving the guide', async () => {
+    // The answers are the address, so reloading keeps them and there is
+    // otherwise no way to start over short of editing the URL. This
+    // clears them and stays on the guide — distinct from `All guided
+    // builds`, which leaves it.
+    visit('?guide=wall&method=separate-wall&texture=texture|cave');
+    mockFetch((url) =>
+      url.includes('/availability')
+        ? { unavailable: {}, because: {}, options: {} }
+        : url.includes('/resolve')
+          ? RESOLVED_WITH_PARTS
+          : GUIDE_DOCUMENT
+    );
+
+    render(<GuidePage />);
+    await screen.findByText('a dungeon stone wall');
+    expect(window.location.search).toContain('texture=');
+
+    fireEvent.click(screen.getByRole('button', { name: 'Reset build' }));
+
+    await waitFor(() => expect(window.location.search).toBe('?guide=wall'));
+    // Still on the guide, not back at the cards.
+    expect(
+      screen.queryByRole('heading', { name: 'Guided builds' })
+    ).not.toBeInTheDocument();
+  });
+
+  it('offers a way back to the cards from a guide that loaded fine', async () => {
+    // The only exit. `All guides` appears on the error arm, which is
+    // exactly when there is no guide to leave — so a guide that loaded
+    // successfully had no way out at all inside the tab, where the tab
+    // strip switches tabs rather than clearing the guide.
+    visit('?guide=wall&method=separate-wall');
+    mockFetch((url) =>
+      url.includes('/availability')
+        ? { unavailable: {}, because: {}, options: {} }
+        : url.includes('/resolve')
+          ? RESOLVED_WITH_PARTS
+          : GUIDE_DOCUMENT
+    );
+
+    render(<GuidePage />);
+    // The guide really is on screen: this is not passing on an error arm.
+    await screen.findByText('a dungeon stone wall');
+
+    const back = screen.getByRole('link', { name: /All guided builds/ });
+    // A real link, so it can be opened in a new tab.
+    expect(back).toHaveAttribute('href', '/guides/');
+
+    fireEvent.click(back);
+
+    // Cleared in place: the guide is gone and the URL no longer names
+    // one, without a document navigation.
+    await waitFor(() =>
+      expect(window.location.search).not.toContain('guide=')
+    );
+  });
+
+  it('does not wait for a checkbox nobody has touched', async () => {
+    // A toggle has a valid state before anyone touches it — off is an
+    // answer. Counting it as unanswered means the offer never appears
+    // until you explicitly tick or untick "Multifloor pegs?", which
+    // nobody would think to do, so the shipped guide would never show
+    // an options count at all.
+    visit('?guide=wall&method=separate-wall');
+    mockFetch((url) =>
+      url.includes('/availability')
+        ? { unavailable: {}, because: {}, options: { wall: 6, 'wall-base': 1 } }
+        : url.includes('/resolve')
+          ? {
+              ...RESOLVED_SETTLED,
+              refinements: [
+                ...RESOLVED_SETTLED.refinements,
+                {
+                  key: 'pegs',
+                  role: '*',
+                  prompt: 'Multifloor pegs?',
+                  on_tags: ['connection|pegs'],
+                  unavailable: [],
+                  because: {},
+                  recommended: null,
+                  selected: null,
+                },
+              ],
+            }
+          : GUIDE_DOCUMENT
+    );
+
+    render(<GuidePage />);
+
+    expect(
+      await screen.findByRole('button', { name: '6 options' })
+    ).toBeInTheDocument();
+  });
+
+  it('waits for every question, not just the ones about this part', async () => {
+    // The offer waits for the whole question column. Not for the
+    // questions that narrow this part — being shown six walls while the
+    // guide is still asking how the pieces clip together invites you to
+    // pick one of six answers to a question it has not finished asking.
     //
-    // `RESOLVED_WITH_PARTS` is the same resolution with `texture` and
-    // `side-locks` unanswered, and both narrow the wall.
+    // `RESOLVED_WITH_PARTS` is the same resolution with its refinements
+    // unanswered. `wall-base` is not narrowed by any of them, so a
+    // per-part rule would offer its count here and a whole-column rule
+    // does not — which is the difference this test is named for.
     visit('?guide=wall&method=separate-wall');
     mockFetch((url) =>
       url.includes('/availability')
@@ -2808,13 +2905,12 @@ describe('inspecting a part', () => {
 
     render(<GuidePage />);
 
-    // Two, and exactly two: one on the part and one beside the answer
-    // that left them. Not three — the wall is narrowed by `texture` and
-    // by `side-locks`, and keying this by question used to put an
-    // identical button under each of them, two ways into one dialog
-    // about one piece.
+    // One, on the part. It used to appear in the question column too —
+    // once per question that narrowed the part, so a part narrowed by
+    // two questions got two identical buttons into one dialog about one
+    // piece. The column offer is gone; the part owns it.
     const offers = await screen.findAllByRole('button', { name: '6 options' });
-    expect(offers).toHaveLength(2);
+    expect(offers).toHaveLength(1);
     const more = offers[0];
 
     // One piece behind an answer is the guide having decided, and not
@@ -2826,42 +2922,6 @@ describe('inspecting a part', () => {
     expect(modalProps[modalProps.length - 1].partName).toBe('Wall (wall)');
   });
 
-  it('offers the other pieces on the answer that left them, too', async () => {
-    // Answering "towne" is where you find out there are six of them,
-    // so the count belongs beside the answer as well as on the part —
-    // and it opens the same dialog, on the part that question
-    // narrows rather than on whichever was clicked last.
-    visit('?guide=wall&method=separate-wall&texture=texture|cave');
-    mockFetch((url) =>
-      url.includes('/availability')
-        ? // Both the wall and the base under it still have a choice
-          // in them, and the texture question narrows both. The one
-          // worth offering is the one with the most left.
-          { unavailable: {}, because: {}, options: { wall: 6, 'wall-base': 3 } }
-        : url.includes('/resolve')
-          ? {
-              ...RESOLVED_SETTLED,
-              refinements: RESOLVED_SETTLED.refinements.map((r) =>
-                r.key === 'texture' ? { ...r, selected: 'texture|cave' } : r
-              ),
-            }
-          : GUIDE_DOCUMENT
-    );
-
-    render(<GuidePage />);
-    // Two of them: one on the part, one on the settled question.
-    const bars = await screen.findAllByRole('button', { name: '6 options' });
-    expect(bars).toHaveLength(2);
-
-    // The one in the question column opens the wall, which is the
-    // part that question narrows — not whichever part was clicked
-    // last, because nothing was.
-    const asked = bars.find((bar) => !bar.closest('.guide-parts'))!;
-    expect(asked).toBeDefined();
-    fireEvent.click(asked);
-    expect(await screen.findByTestId('part-modal')).toBeInTheDocument();
-    expect(modalProps[modalProps.length - 1].partName).toBe('Wall (wall)');
-  });
 
   it('opens showing the part that was clicked', async () => {
     // You were looking at it when you clicked it. Opening on "No

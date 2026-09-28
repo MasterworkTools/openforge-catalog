@@ -2,8 +2,7 @@
 
 import GuideEntry from './guide-entry';
 import React, { useMemo, useState } from 'react';
-import { narrows, releasedBy } from '@/services/guide-service';
-import { MoreOptions } from './guide-steps';
+import { releasedBy } from '@/services/guide-service';
 import {
   clearGuide,
   isPlainClick,
@@ -47,71 +46,39 @@ export default function GuidePage() {
   // questions on the left open it too.
   const [inspecting, setInspecting] = useState<string | null>(null);
 
-  // The roles every question has finished with.
+  // Every question answered, or not.
   //
-  // "Six towne walls" is only a useful thing to be told once the guide
-  // has stopped narrowing: while a question that touches this part is
-  // still unanswered the count is a number about a half-built
-  // predicate, and answering the next question changes it. So the
-  // offer waits until nothing left to answer narrows this role.
+  // The "n options" offer waits for the whole left column, not just the
+  // questions that narrow the part it sits on. A count taken while
+  // anything is still open is about a half-built guide, and the person
+  // has not finished telling it what they want — being offered six
+  // walls before you have said how the pieces clip together is an
+  // invitation to go and pick one of six answers to a question the
+  // guide is still asking.
   //
-  // Steps count as well as refinements — a part is not settled because
-  // its textures are chosen if the method is still open.
-  const settled: Set<string> = useMemo(() => {
-    const done = new Set<string>();
-    if (!resolved) return done;
-    const questions = [...resolved.steps, ...resolved.refinements];
-    for (const part of resolved.parts) {
-      const open = questions.filter(
-        (question) =>
-          narrows(question, part.role) && question.selected === null
-      );
-      if (open.length === 0) done.add(part.role);
-    }
-    return done;
+  // Steps and refinements alike: a part is not settled because its
+  // textures are chosen if the method is still open.
+  //
+  // Toggles do not count. A checkbox has a valid state before anyone
+  // touches it — off is an answer — so waiting for one means the offer
+  // never appears until you have explicitly ticked or unticked
+  // "Multifloor pegs?", which nobody would think to do. `on_tags` is
+  // the discriminator the question column already keys on.
+  const answered = useMemo(() => {
+    if (!resolved) return false;
+    const asked = [...resolved.steps, ...resolved.refinements].filter(
+      (question) => !('on_tags' in question && question.on_tags)
+    );
+    return asked.every((question) => question.selected !== null);
   }, [resolved]);
 
-  // How many pieces each settled role could have been. The parts list
-  // reads this to decide whether to offer the catalog, so filtering it
-  // here is what keeps an unsettled part from advertising a count that
-  // is about to change.
-  const settledOptions = useMemo(() => {
-    if (!options) return options;
-    return Object.fromEntries(
-      Object.entries(options).filter(([role]) => settled.has(role))
-    );
-  }, [options, settled]);
-
-  // The same offer in the question column, at most once per part.
-  //
-  // A part can be narrowed by several questions — the wall texture and
-  // the wall's clips both narrow the wall — and keying this by question
-  // put an identical button under each of them, two ways into one
-  // dialog about one piece. Each role is now claimed by a single
-  // question: the last one that narrows it, which is the answer the
-  // person just gave and so the one the count is news about.
-  const more: MoreOptions = useMemo(() => {
-    const found: MoreOptions = {};
-    if (!resolved || !settledOptions) return found;
-    const claimed = new Set<string>();
-    for (const question of [...resolved.refinements].reverse()) {
-      const role = resolved.parts
-        .filter((part) => narrows(question, part.role))
-        .filter((part) => !claimed.has(part.role))
-        .filter((part) => (settledOptions[part.role] ?? 0) > 1)
-        .sort(
-          (a, b) =>
-            (settledOptions[b.role] ?? 0) - (settledOptions[a.role] ?? 0)
-        )[0]?.role;
-      if (role === undefined) continue;
-      claimed.add(role);
-      found[question.key] = {
-        count: settledOptions[role],
-        onOpen: () => setInspecting(role),
-      };
-    }
-    return found;
-  }, [resolved, settledOptions]);
+  // How many pieces each role could have been, once there is nothing
+  // left to answer. The parts list reads this to decide whether to
+  // offer the catalog, so withholding it is what withholds the offer.
+  const settledOptions = useMemo(
+    () => (answered ? options : null),
+    [answered, options]
+  );
 
   // Answering a question also lets go of the parts that question
   // decides. A pinned part outranks the questions — that is what
@@ -154,6 +121,28 @@ export default function GuidePage() {
     // and no way to scroll the page itself. Below `lg` it is an
     // ordinary document again.
     <div className="p-6 lg:h-screen flex flex-col">
+      {/* The way back to the cards, and the only one when the guide
+          loads successfully — `All guides` below appears on the error
+          arm, which is exactly when there is no guide to leave. Inside
+          the tab there is no other exit: the tab strip switches tabs
+          rather than clearing the guide, and the browser's Back button
+          is not an affordance the page offers.
+
+          A real link to `/guides/` so it opens a page in a new tab,
+          with a plain click intercepted to clear in place — the same
+          shape as a card, in reverse. */}
+      <a
+        href="/guides/"
+        onClick={(e) => {
+          if (!isPlainClick(e)) return;
+          e.preventDefault();
+          clearGuide();
+        }}
+        className="shrink-0 mb-1 inline-block text-sm text-blue-700 underline
+                   hover:text-blue-900"
+      >
+        ← All guided builds
+      </a>
       <h1 className="text-3xl font-bold mb-4 shrink-0">
         {guide?.title ?? 'Guided build'}
       </h1>
@@ -256,11 +245,29 @@ export default function GuidePage() {
               refinements={resolved.refinements}
               unavailable={unavailable}
               because={because}
-              more={more}
               opened={opened}
               onOpenChange={setOpened}
               onSelect={answer}
             />
+            {/* Below the questions, because it undoes them. Clearing one
+                answer at a time is what the questions themselves are
+                for; this is for starting the build again without
+                leaving the guide, which the answers in the URL
+                otherwise make surprisingly hard — reloading keeps them,
+                since they *are* the address.
+
+                `selectGuide` with no selections is exactly that state,
+                and it pushes, so this is undoable with Back rather than
+                being a one-way loss of everything someone chose. */}
+            <button
+              type="button"
+              onClick={() => selectGuide(guideKey)}
+              className="mt-6 w-full rounded border border-gray-300 px-3 py-2
+                         text-sm text-gray-700 hover:border-gray-500
+                         hover:text-gray-900"
+            >
+              Reset build
+            </button>
           </div>
           {/* The questions keep a fixed width — they are a list of
               short labels and do not want more. The pieces and the
