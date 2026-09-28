@@ -2769,6 +2769,35 @@ describe('inspecting a part', () => {
     );
   });
 
+  it('moves focus to the new view instead of dropping it on the body', async () => {
+    // Following a link moves focus to the new document for free.
+    // Intercepting the click keeps the document, so focus stayed on an
+    // anchor that is no longer rendered and fell to `<body>` — which for
+    // anyone on a keyboard or a screen reader is losing their place.
+    visit('?guide=wall&method=separate-wall');
+    mockFetch((url) =>
+      url.includes('/availability')
+        ? { unavailable: {}, because: {}, options: {} }
+        : url.includes('/resolve')
+          ? RESOLVED_WITH_PARTS
+          : GUIDE_DOCUMENT
+    );
+
+    render(<GuidePage />);
+    await screen.findByText('a dungeon stone wall');
+    // Not stolen on a first load: a reader starts at the top of the
+    // document and chooses when to move.
+    expect(document.activeElement).toBe(document.body);
+
+    fireEvent.click(screen.getByRole('link', { name: 'Back' }));
+
+    await waitFor(() =>
+      expect(document.activeElement).toBe(
+        screen.getByRole('heading', { name: 'Guided builds', level: 1 })
+      )
+    );
+  });
+
   it('resets the build without leaving the guide', async () => {
     // The answers are the address, so reloading keeps them and there is
     // otherwise no way to start over short of editing the URL. This
@@ -2895,20 +2924,30 @@ describe('inspecting a part', () => {
 
   it('waits for every question, not just the ones about this part', async () => {
     // The offer waits for the whole question column. Not for the
-    // questions that narrow this part — being shown six walls while the
-    // guide is still asking how the pieces clip together invites you to
-    // pick one of six answers to a question it has not finished asking.
+    // questions that narrow this part — being shown three bases while
+    // the guide is still asking about the texture invites you to pick
+    // one of three answers to a question it has not finished asking.
     //
-    // `RESOLVED_WITH_PARTS` is the same resolution with its refinements
-    // unanswered. `wall-base` is not narrowed by any of them, so a
-    // per-part rule would offer its count here and a whole-column rule
-    // does not — which is the difference this test is named for.
+    // The fixture is built so the two rules disagree, which the first
+    // version of this test got wrong: it used the shipped counts, where
+    // `wall-base` is 1 (below the >1 the offer needs) and `wall` is
+    // narrowed by the unanswered `texture`, so *both* rules withheld
+    // both parts and it passed under the mutant it was named against.
+    //
+    // Here `texture` is scoped to the wall, so nothing unanswered
+    // narrows `wall-base` — a per-part rule offers its 3, and a
+    // whole-column rule does not.
     visit('?guide=wall&method=separate-wall');
     mockFetch((url) =>
       url.includes('/availability')
-        ? { unavailable: {}, because: {}, options: { wall: 6, 'wall-base': 1 } }
+        ? { unavailable: {}, because: {}, options: { wall: 1, 'wall-base': 3 } }
         : url.includes('/resolve')
-          ? RESOLVED_WITH_PARTS
+          ? {
+              ...RESOLVED_WITH_PARTS,
+              refinements: RESOLVED_WITH_PARTS.refinements.map((r) =>
+                r.key === 'texture' ? { ...r, role: 'wall' } : r
+              ),
+            }
           : GUIDE_DOCUMENT
     );
 
@@ -2916,7 +2955,7 @@ describe('inspecting a part', () => {
     // The part is on screen — this is not a test that nothing rendered.
     await screen.findByText('a dungeon stone wall');
 
-    expect(screen.queryByRole('button', { name: '6 options' })).toBeNull();
+    expect(screen.queryByRole('button', { name: '3 options' })).toBeNull();
   });
 
   it('offers the other pieces when the answer left more than one', async () => {

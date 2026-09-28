@@ -139,4 +139,18 @@ describe('GuideEntry', () => {
     expect(screen.getAllByRole('link')).toHaveLength(2);
     expect(screen.getAllByRole('listitem')).toHaveLength(2);
   });
+
+  it('does not steal focus when the cards are the page you opened', async () => {
+    // The other half of the focus rule, and the half the guide-page
+    // test cannot reach: there the cards mount only *after* a click, so
+    // an unconditional `focus()` passes. Loading the cards directly is
+    // the first-load case, where a reader expects to start at the top
+    // of the document and choose when to move.
+    served([WALL]);
+
+    render(<GuideEntry />);
+    await screen.findByRole('heading', { name: WALL.title, level: 2 });
+
+    expect(document.activeElement).toBe(document.body);
+  });
 });

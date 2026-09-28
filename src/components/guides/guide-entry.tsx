@@ -1,8 +1,12 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { fetchGuides, type GuideSummary } from '@/services/guide-service';
-import { isPlainClick, selectGuide } from '@/hooks/use-guide-state';
+import {
+  isPlainClick,
+  selectGuide,
+  takeInPageNav,
+} from '@/hooks/use-guide-state';
 
 /**
  * The page people arrive at: a card per thing they might want to build.
@@ -17,6 +21,14 @@ import { isPlainClick, selectGuide } from '@/hooks/use-guide-state';
  */
 export default function GuideEntry() {
   const [guides, setGuides] = useState<GuideSummary[] | null>(null);
+  // Focus the heading when `Back` brought us here. See the same effect
+  // in `guide-page.tsx`: intercepting a click keeps the document, so
+  // focus has to be moved deliberately, and only for our own
+  // navigations — never on a first load.
+  const heading = useRef<HTMLHeadingElement>(null);
+  useEffect(() => {
+    if (takeInPageNav()) heading.current?.focus();
+  }, []);
   const [failed, setFailed] = useState(false);
 
   useEffect(() => {
@@ -59,7 +71,9 @@ export default function GuideEntry() {
           route, and it is the one that turned out to be fine. If a tab
           is ever shown by another mechanism than `display`, this and
           that one start colliding. */}
-      <h1 className="text-3xl font-bold">Guided builds</h1>
+      <h1 ref={heading} tabIndex={-1} className="text-3xl font-bold">
+        Guided builds
+      </h1>
       <p className="mt-2 mb-6 max-w-2xl text-gray-700">
         Pick what you want to build and answer a few questions. You get a
         parts list with the files to print.

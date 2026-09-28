@@ -1,12 +1,13 @@
 'use client';
 
 import GuideEntry from './guide-entry';
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { releasedBy } from '@/services/guide-service';
 import {
   clearGuide,
   isPlainClick,
   selectGuide,
+  takeInPageNav,
   useGuideKey,
   useGuideState,
 } from '@/hooks/use-guide-state';
@@ -45,6 +46,19 @@ export default function GuidePage() {
   // every resolution. Here rather than in the parts list, because the
   // questions on the left open it too.
   const [inspecting, setInspecting] = useState<string | null>(null);
+
+  // Put focus on the heading when a click brought us here.
+  //
+  // Following a link moves focus to the new document; intercepting the
+  // click does not, so focus stayed on an anchor that is no longer
+  // rendered and fell to `<body>`. Only for our own navigations —
+  // `takeInPageNav` is false on a first load, where stealing focus
+  // would take a reader out of the top of the document they just
+  // opened.
+  const heading = useRef<HTMLHeadingElement>(null);
+  useEffect(() => {
+    if (guideKey && takeInPageNav()) heading.current?.focus();
+  }, [guideKey]);
 
   // Every question answered, or not.
   //
@@ -139,7 +153,9 @@ export default function GuidePage() {
           with a plain click intercepted to clear in place — the same
           shape as a card, in reverse. */}
       <div className="mb-4 shrink-0 flex items-baseline justify-between gap-4">
-        <h1 className="text-3xl font-bold">
+        {/* `tabIndex={-1}` so it can be focused deliberately without
+            entering the tab order. */}
+        <h1 ref={heading} tabIndex={-1} className="text-3xl font-bold">
           {guide?.title ?? 'Guided build'}
         </h1>
         <a
@@ -193,21 +209,21 @@ export default function GuidePage() {
               which is its own change. */}
           {!resolved &&
             (guide && status !== 500 ? (
+              // Not intercepted, unlike every other link here, and the
+              // interception it used to carry made it a dead control:
+              // `selectGuide` pushes `?guide=<key>`, and when the URL
+              // already *is* that — which it is whenever this arm shows
+              // with no answers — the search string does not change, so
+              // nothing re-renders and nothing re-asks the API. The
+              // click did nothing but add a history entry.
+              //
+              // A real navigation was always what this meant, and the
+              // reason for avoiding one stopped being true: a cold
+              // `GET /?guide=wall` now lands on the guides tab rather
+              // than on Part Search.
               <a
                 href={`?guide=${encodeURIComponent(guideKey)}`}
                 className="text-blue-700 underline"
-                // Both anchors in this ternary are doors out of the
-                // tab, and the first fix took only its sibling. A
-                // document load of `?guide=X` leaves the tabbed app and
-                // comes back on Part Search, losing the guide it was
-                // meant to restart. `selectGuide` is exactly what this
-                // href means — the guide, with no answers — and it
-                // depends on nothing but itself.
-                onClick={(e) => {
-                  if (!isPlainClick(e)) return;
-                  e.preventDefault();
-                  selectGuide(guideKey);
-                }}
               >
                 Start this guide over
               </a>

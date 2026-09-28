@@ -382,6 +382,7 @@ function ownedBy(guide: GuideDocument, search: string | undefined): Selections {
  */
 export function selectGuide(guideKey: string) {
   if (typeof window === 'undefined') return;
+  cameFromInPageNav = true;
   const params = new URLSearchParams({ guide: guideKey });
   window.history.pushState(
     {},
@@ -401,8 +402,31 @@ export function selectGuide(guideKey: string) {
  */
 export function clearGuide() {
   if (typeof window === 'undefined') return;
+  cameFromInPageNav = true;
   window.history.pushState({}, '', window.location.pathname);
   window.dispatchEvent(new Event(URL_CHANGED));
+}
+
+/**
+ * Whether the last URL change was ours rather than the browser's.
+ *
+ * A real navigation moves focus to the top of the new document for
+ * free. Intercepting the click keeps the document, so focus stays on an
+ * anchor that is no longer on screen and lands on `<body>` — which for
+ * anyone on a keyboard or a screen reader means losing their place
+ * entirely. The new view has to take focus deliberately.
+ *
+ * Only for our own changes: a first page load must not steal focus,
+ * because a reader expects to start at the top of the document and
+ * choose when to move.
+ */
+let cameFromInPageNav = false;
+
+/** True once, for the view that should take focus after a click. */
+export function takeInPageNav(): boolean {
+  const was = cameFromInPageNav;
+  cameFromInPageNav = false;
+  return was;
 }
 
 /** A left click with no modifier: the only kind we take over. */
