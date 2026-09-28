@@ -376,11 +376,8 @@ def _unavailable(
     clicking a candidate carries it along. Not the defaulted map either;
     that is derived here.
 
-    Three maps, then, and the names are load-bearing. They used to be
-    two names for three things — the defaulted map arrived as
-    `selections` while the raw map arrived as `sent`, so `selections`
-    meant one thing in this frame and another in the caller. Both bugs
-    this function has had grew in that confusion.
+    Three maps, then, and the names are load-bearing: confusing any two
+    of them is the shape both of this function's bugs have taken.
 
     `on_screen` is which questions to sweep; `steps` and `refinements`
     stay whole because blame reaches past the screen. A question the
@@ -532,16 +529,11 @@ def _blame(
     # counterfactual, the one with `other` un-answered, and the two
     # wore the same name across this boundary.
     #
-    # Only its *keys* are read, below, which for a long time made this
-    # indistinguishable from the defaulted map: handing it the wrong
-    # one left every test green, because no fixture had a later
-    # question that moved when the answer under test changed. One does
-    # now —
+    # Only its *keys* are read below, so the defaulted map looks
+    # identical here on any guide whose later questions do not move when
+    # an earlier answer changes — which is most of them.
     # `test_blame_reads_the_survivors_off_the_candidate_s_own_answers`
-    # gives the last step a recommendation that lapses on the candidate
-    # answer, so the candidate is what leaves that step unanswered and
-    # out of the count. Both the defaulted map and the defaulted map
-    # with the candidate pasted over it fail it.
+    # is the one that can tell them apart.
     _, would_answer = _available_steps(document, if_taken)
     for other in others:
         # Their own answers only. A question sitting on its
@@ -951,8 +943,7 @@ def _available_steps(document: dict, selections: dict):
         # rather than 400ing a URL the person reached by clicking.
         #
         # Anything else stays in `answered` so that `_chosen_options`
-        # can refuse it: a key no option has is still a bad request,
-        # and so is a repeated parameter, which arrives as a list.
+        # can refuse it: a value no option has is still a bad request.
         if _gated_off(selections[step["key"]], step, offered):
             # Answered with something this branch does not offer, which
             # counts as unanswered — so this is where the wizard stops.
@@ -1055,9 +1046,11 @@ def _chosen_options(steps: list[dict], selections: dict) -> list[dict]:
             continue
         options = {option["key"]: option for option in step["options"]}
         if not isinstance(selected, str):
-            # A repeated query parameter arrives as a list, and an
-            # unhashable value would raise TypeError from the lookup
-            # below — a 500 where the answer is "bad request".
+            # An unhashable value would raise TypeError from the lookup
+            # below — a 500 where the answer is "bad request". Not
+            # reachable through the route, which hands on
+            # `request.args.to_dict()`, so this is for a caller reaching
+            # `resolve` directly.
             raise GuideSelectionError(
                 f"step {step['key']!r} takes a string, not {selected!r}"
             )

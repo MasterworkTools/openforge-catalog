@@ -163,10 +163,9 @@ def guide_availability(guide_key: str):
                 # costs. `unavailable` and `because` come from `exists`
                 # and are unaffected.
                 #
-                # No absolute counts here on purpose: they were quoted
-                # and stale each time, because later
-                # commits kept moving them. The delta and the reason
-                # survive a rebase; `52 → 50` did not.
+                # No absolute counts here: they rot, and the note that
+                # says so should not quote one either. The delta and the
+                # reason survive a rebase.
                 resolved = resolve(
                     guide["document"],
                     _selections_from_request(),

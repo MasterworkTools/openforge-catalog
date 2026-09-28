@@ -32,11 +32,9 @@ type Because = Record<string, Record<string, MissingReason>> | null;
  * Why one dead answer is dead, in one sentence.
  *
  * Three places need it — the open list's chosen answer, a folded step,
- * and a folded refinement — and it existed in three copies with three
- * spellings until round 8. That was not only untidy: any test asserting
- * the sentence looked like coverage for all three, which is how two
- * rounds of "this is tested now" turned out to be false on this exact
- * feature. One renderer makes the coverage claim checkable.
+ * and a folded refinement. One renderer rather than three copies,
+ * because a test asserting the sentence looks like coverage for every
+ * copy of it, so the copies drift and the tests do not say so.
  *
  * `answer` is the answer's label, which only the open list needs —
  * beside a folded one the answer is directly above, so repeating it

@@ -101,6 +101,10 @@ def test_schema_error_names_the_offending_step(guide):
 
     assert "step 'method'" in str(excinfo.value)
     assert "option 's2w-modular'" in str(excinfo.value)
+    # And which guide. This is the other half of the pair that
+    # `_raise_invalid` carries: both messages name the document, and
+    # dropping the name from either one left the whole suite green.
+    assert "guide 'wall'" in str(excinfo.value)
 
 
 def test_schema_error_names_the_offending_role(guide):
