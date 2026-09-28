@@ -28,6 +28,28 @@ properties:
     minLength: 1
   summary:
     type: string
+  hero_image:
+    type: string
+    format: uri
+    pattern: "^https://"
+    description: >
+      The card illustration for the entry page: a render of the thing
+      this guide builds, square, served from the object host.
+
+      Authoring input, not part of the stored document. The loader
+      validates it here and then writes it to the `hero_image` column on
+      `guides`, so the URL is in the database once rather than in a JSONB
+      blob as well. A column is what the interface will update when
+      guides are authored there (`openforge_catalog-kcm`) — changing a
+      picture should not mean rewriting the document that says how to
+      build a wall.
+
+      Absolute, because production and staging share the object bucket:
+      one URL describes the object for both environments, so there is no
+      host to resolve per environment. Unlike the option-level `image`
+      beside it, which was authored as a relative path and is still
+      rendered nowhere; when those are finally shown the two should be
+      made to agree.
   steps:
     type: array
     minItems: 1

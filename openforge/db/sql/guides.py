@@ -14,14 +14,18 @@ from werkzeug.exceptions import NotFound
 def get_all_guides(curs: cursor) -> list[dict]:
     """List guides without their documents.
 
-    The list is what a landing page renders, so it carries only the
-    title and summary rather than every step of every guide.
+    The list is what the entry page renders, so it carries what a card
+    shows — title, summary, illustration — rather than every step of
+    every guide. `image` is null for a guide that has no illustration
+    yet, which the card has to survive: a guide is authorable without
+    one and the field is not required.
     """
     query = sql.SQL(
         """
 SELECT id, guide_key,
        document->>'title' AS title,
        document->>'summary' AS summary,
+       hero_image,
        created_at, updated_at
   FROM guides
   ORDER BY guide_key
@@ -46,23 +50,35 @@ SELECT id, guide_key, document, created_at, updated_at
     return dict(result)
 
 
-def upsert_guide(curs: cursor, document: dict) -> dict:
+def upsert_guide(curs: cursor, document: dict, hero_image: str | None = None) -> dict:
     """Write a guide, keyed by the key inside it.
 
     Nothing supplies `guide_key`: the column is generated from
     `document->>'key'`, so the two cannot disagree no matter what a
     caller does.
+
+    `hero_image` is beside the document rather than in it — see
+    `version_19` — and defaults to None because most callers are tests
+    and the API that resolves a guide, none of which have a picture to
+    say anything about. It is written on conflict like the document, so
+    re-loading a fixture whose illustration changed updates it; a
+    re-load that omits it clears it, which is what "the fixture is the
+    authored state" means everywhere else in the loader.
     """
     query = sql.SQL(
         """
-INSERT INTO guides (document)
-  VALUES ({document})
+INSERT INTO guides (document, hero_image)
+  VALUES ({document}, {hero_image})
   ON CONFLICT (guide_key) DO UPDATE SET
     document = EXCLUDED.document,
+    hero_image = EXCLUDED.hero_image,
     updated_at = CURRENT_TIMESTAMP
-  RETURNING id, guide_key, document, created_at, updated_at
+  RETURNING id, guide_key, document, hero_image, created_at, updated_at
 """
-    ).format(document=sql.Literal(Jsonb(document)))
+    ).format(
+        document=sql.Literal(Jsonb(document)),
+        hero_image=sql.Literal(hero_image),
+    )
     curs.execute(query)
     return dict(curs.fetchone())
 

@@ -2,13 +2,13 @@
 
 import React, { useState, useEffect } from 'react';
 import TabPartSearch from './tab-part-search';
-import TabBlueprints from './tab-blueprints';
+import GuideEntry from './guides/guide-entry';
 import TabAdmin from './tab-admin';
 import { useAdminContext } from '@/contexts/admin-context';
 import { loadAppConfig } from '@/utils/app-config';
 
 const TabbedInterface = () => {
-  const [activeTab, setActiveTab] = useState<'partSearch' | 'blueprints' | 'baseGenerator' | 'admin'>('partSearch');
+  const [activeTab, setActiveTab] = useState<'partSearch' | 'guides' | 'baseGenerator' | 'admin'>('partSearch');
   const [baseGeneratorUrl, setBaseGeneratorUrl] = useState(process.env.NEXT_PUBLIC_BASE_GENERATOR_URL || 'http://localhost:8000');
 
   const { state } = useAdminContext();
@@ -36,10 +36,10 @@ const TabbedInterface = () => {
             Part Search
           </button>
           <button
-            className={`tab ${activeTab === 'blueprints' ? 'active' : ''}`}
-            onClick={() => setActiveTab('blueprints')}
+            className={`tab ${activeTab === 'guides' ? 'active' : ''}`}
+            onClick={() => setActiveTab('guides')}
           >
-            Blueprints
+            Guided Builds
           </button>
           <button
             className={`tab ${activeTab === 'baseGenerator' ? 'active' : ''}`}
@@ -60,8 +60,14 @@ const TabbedInterface = () => {
           <div style={{ display: activeTab === 'partSearch' ? 'block' : 'none' }}>
             <TabPartSearch />
           </div>
-          <div style={{ display: activeTab === 'blueprints' ? 'block' : 'none' }}>
-            <TabBlueprints />
+          {/* Mounted only while it is the open tab, unlike its
+              neighbours. A hidden `GuideEntry` still runs its effect, so
+              leaving it mounted would spend a Lambda invocation on
+              /api/guides for every visitor who never opens this tab.
+              Re-opening re-fetches, which is a small response and no
+              cache to get wrong. */}
+          <div style={{ display: activeTab === 'guides' ? 'block' : 'none' }}>
+            {activeTab === 'guides' && <GuideEntry />}
           </div>
           <div style={{ display: activeTab === 'baseGenerator' ? 'block' : 'none', height: '100%' }}>
             <iframe src={baseGeneratorUrl} style={{ width: '100%', height: '100%', border: 'none', display: 'block' }} title="Base Generator" />

@@ -10,6 +10,17 @@ export interface GuideSummary {
   guide_key: string;
   title: string;
   summary: string | null;
+  /**
+   * The card illustration, absolute, or null for a guide without one.
+   *
+   * A column on `guides`, not a field of the document and not a repo
+   * asset: guides will be authored in the interface, and changing a
+   * picture should not mean rewriting the document that says how to
+   * build the thing. Nullable in earnest — a guide is authorable before
+   * anyone has rendered it, and the file a URL names may not be
+   * uploaded yet, so the card has to survive both.
+   */
+  hero_image: string | null;
 }
 
 /**

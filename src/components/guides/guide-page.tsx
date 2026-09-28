@@ -1,12 +1,8 @@
 'use client';
 
-import React, { useEffect, useMemo, useState } from 'react';
-import {
-  GuideSummary,
-  fetchGuides,
-  narrows,
-  releasedBy,
-} from '@/services/guide-service';
+import GuideEntry from './guide-entry';
+import React, { useMemo, useState } from 'react';
+import { narrows, releasedBy } from '@/services/guide-service';
 import { MoreOptions } from './guide-steps';
 import { useGuideKey, useGuideState } from '@/hooks/use-guide-state';
 import { GuideParts } from './guide-parts';
@@ -88,7 +84,7 @@ export default function GuidePage() {
   if (guideKey === undefined) return null;
   // `?guide=` is a URL with no guide in it, not a guide named "".
   // Asking the API for that one only produces a 404 to show someone.
-  if (!guideKey) return <GuideList />;
+  if (!guideKey) return <GuideEntry />;
 
   return (
     // A fixed-height page rather than a scrolling one, because the
@@ -215,61 +211,6 @@ export default function GuidePage() {
           </div>
         </div>
       )}
-    </main>
-  );
-}
-
-function GuideList() {
-  const [guides, setGuides] = useState<GuideSummary[] | null>(null);
-  const [failed, setFailed] = useState(false);
-
-  useEffect(() => {
-    let current = true;
-    fetchGuides()
-      .then((result) => {
-        if (current) setGuides(result);
-      })
-      .catch((e) => {
-        if (!current) return;
-        console.error('Error fetching guides:', e);
-        // Distinct from an empty list: "none yet" and "we could not
-        // ask" should not read the same to someone looking at it.
-        setFailed(true);
-        setGuides([]);
-      });
-    return () => {
-      current = false;
-    };
-  }, []);
-
-  return (
-    <main className="p-6 max-w-3xl">
-      {/* The heading first, then whatever the fetch turns out to say.
-          Returning null until the guides land made the feature's
-          landing page a blank document for the length of a cold start,
-          which reads as broken rather than as loading — and `GuidePage`
-          beside it already renders its frame first. */}
-      <h1 className="text-3xl font-bold mb-6">Guided builds</h1>
-      {guides !== null &&
-        (failed ? (
-          <p>Could not load the guides.</p>
-        ) : guides.length === 0 ? (
-          <p>No guides yet.</p>
-        ) : (
-          <ul className="flex flex-col gap-3">
-            {guides.map((guide) => (
-              <li key={guide.guide_key}>
-                <a
-                  href={`?guide=${encodeURIComponent(guide.guide_key)}`}
-                  className="text-blue-700 underline font-semibold"
-                >
-                  {guide.title}
-                </a>
-                {guide.summary && <p className="text-sm">{guide.summary}</p>}
-              </li>
-            ))}
-          </ul>
-        ))}
     </main>
   );
 }

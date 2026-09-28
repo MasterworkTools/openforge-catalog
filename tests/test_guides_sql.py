@@ -117,6 +117,44 @@ def test_loading_a_fixture_returns_the_key_it_loaded(test_db):
             assert len(guide_sql.get_all_guides(curs)) == 1
 
 
+def test_loading_a_fixture_lifts_the_hero_image_into_its_column(test_db):
+    """Authored in the fixture, stored in the column, gone from the JSONB.
+
+    Both halves matter. Left in the document it reaches no column and the
+    entry page draws nothing; written to the column but left in the
+    document too, the URL is in the database twice and an interface that
+    updates one leaves the other stale. So this asserts the column has it
+    and the document does not.
+    """
+    guide = a_guide()
+    guide["hero_image"] = "https://objects.openforge.tools/guides/wall.webp"
+
+    with test_db.connection() as conn:
+        with conn.cursor(row_factory=dict_row) as curs:
+            load_guide_fixture(curs, guide)
+
+            listed = guide_sql.get_all_guides(curs)[0]
+            assert listed["hero_image"] == (
+                "https://objects.openforge.tools/guides/wall.webp"
+            )
+            stored = guide_sql.get_guide_by_key(curs, "wall")["document"]
+            assert "hero_image" not in stored
+            # And the caller's dict is untouched, because `bin/fixtures`
+            # reuses it for the summary it prints.
+            assert guide["hero_image"] == (
+                "https://objects.openforge.tools/guides/wall.webp"
+            )
+
+
+def test_a_guide_without_a_hero_image_loads_and_lists(test_db):
+    """The field is not required: a guide is authorable unphotographed."""
+    with test_db.connection() as conn:
+        with conn.cursor(row_factory=dict_row) as curs:
+            load_guide_fixture(curs, a_guide())
+
+            assert guide_sql.get_all_guides(curs)[0]["hero_image"] is None
+
+
 def write_guide_fixture(tmp_path: Path, guide: dict) -> Path:
     """A guide fixture on disk, in the directory the loader keys on."""
     guides = tmp_path / "guides"

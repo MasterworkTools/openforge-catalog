@@ -378,7 +378,12 @@ def load_guide_fixture(curs: cursor, data: dict, source: str = "guide") -> str:
         str: The key of the guide that was loaded
     """
     check_guide_fixture(data, source)
-    guide = guide_sql.upsert_guide(curs, data)
+    # `hero_image` is authored in the fixture and stored in its own
+    # column, so it is validated as part of the document and then lifted
+    # out of it. Copied rather than popped: the caller's dict is its own,
+    # and `bin/fixtures` hands the same object to the summary it prints.
+    document = {k: v for k, v in data.items() if k != "hero_image"}
+    guide = guide_sql.upsert_guide(curs, document, data.get("hero_image"))
     return guide["guide_key"]
 
 
