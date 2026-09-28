@@ -101,8 +101,9 @@ def lambda_handler(event, context):
     # The package itself being absent is a different failure and cannot reach here:
     # this module imports `get_schema_versions` from it, so that is a
     # `Runtime.ImportModuleError` at cold start and the handler never runs. Hence
-    # the message below says the *modules*, not the directory — an operator sent
-    # looking for a directory that is plainly present is back to guessing.
+    # the message below is about what *registered*, not about the directory — an
+    # operator sent looking for a directory that is plainly present is back to
+    # guessing.
     versions = get_schema_versions()
     if not versions:
         raise RuntimeError(
