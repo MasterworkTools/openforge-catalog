@@ -21,9 +21,9 @@ def get_all_guides(curs: cursor) -> list[dict]:
     `hero_image` is a column rather than a field of the document, so it
     is selected rather than projected out of the JSONB — see
     `version_19`. Null for a guide nobody has photographed, which the
-    card has to survive, and the only query that returns it:
-    `get_guide_by_key` deliberately does not, which `upsert_guide`'s
-    docstring warns a writer about.
+    card has to survive. `get_guide_by_key` deliberately does not return
+    it, which `upsert_guide`'s docstring warns a writer about —
+    `upsert_guide`'s own `RETURNING` does.
     """
     query = sql.SQL(
         """
@@ -69,8 +69,20 @@ def upsert_guide(curs: cursor, document: dict, hero_image: str | None = None) ->
     authored state" means everywhere else in the loader.
 
     The default is for tests. `load_guide_fixture` is the only caller
-    outside them and always passes it, and no route writes a guide at
-    all, so nothing clears a picture today.
+    outside them and always passes it — but it is reachable from a
+    route: `POST /api/admin/fixtures` lands in `_process_guide_fixture`,
+    which is, by its own docstring, the only path a repo fixture has to
+    staging and production, since the deploy workflows do not run
+    `bin/fixtures`.
+
+    So a picture *can* be cleared, and quietly. Posting a `wall.yaml`
+    with no `hero_image:` line sets the column to NULL and answers
+    `Applied guide wall`. Uploading from a checkout older than the line
+    blanks the card with a success message. That is the rule working as
+    intended — the fixture is the authored state — but it is worth
+    knowing before a release, because the release ritual
+    (`openforge_catalog-jag`) is a human running `bin/upload_fixture` on
+    the bastion against whatever ref is checked out there.
 
     **A writer must read `hero_image` from somewhere other than
     `get_guide_by_key`.** That query selects the document and not this

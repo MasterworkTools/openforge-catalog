@@ -49,6 +49,15 @@ export default function GuideEntry() {
           Returning null until the guides land made the feature's
           landing page a blank document for the length of a cold start,
           which reads as broken rather than as loading. */}
+      {/* An `h1`, and there is another one on the same page:
+          `instructions-part-search.tsx` has its own. Not a conflict —
+          the inactive tab panel is `display: none`, which prunes it from
+          the accessibility tree, so exactly one is exposed at a time.
+          Recorded because it is the fourth thing about this component
+          that changed meaning when it became a panel as well as a whole
+          route, and it is the one that turned out to be fine. If a tab
+          is ever shown by another mechanism than `display`, this and
+          that one start colliding. */}
       <h1 className="text-3xl font-bold">Guided builds</h1>
       <p className="mt-2 mb-6 max-w-2xl text-gray-700">
         Pick what you want to build and answer a few questions. You get a

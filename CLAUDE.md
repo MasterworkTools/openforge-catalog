@@ -209,11 +209,19 @@ deploy is live without touching openforge-infra-frontend. Release PRs get a plan
 image, applies tofu and syncs the frontend; it never runs `bin/db_update up`. So
 a release carrying a schema change deploys code that is newer than the database,
 and the endpoints touching the new schema return an unhandled 500 until someone
-migrates by hand on the bastion. The order is: `bin/db_update up`, then the
-fixtures if the release needs them, **then** merge to `main`. As of PR #246 the
-pending gap is schema 18 and 19 (`openforge_catalog-jag`), since `main` is still
-at 17. The wrong order fails loudly rather than corrupting anything — the loader
-raises `UndefinedColumn` and writes nothing — but it fails in production. Runtime secrets live in Secrets Manager
+migrates by hand on the bastion. The order is **`bin/db_update up` on the bastion, then merge to
+`main`, then `bin/upload_fixture <fixture>` for any fixtures the release needs.**
+
+The fixtures go last, not in the middle: `bin/upload_fixture` POSTs to
+`${OPENFORGE_BASE_URL}/api/admin/fixtures`, which is the *deployed* app, so before
+the merge it is still `main`'s image — and an older image will misclassify a
+fixture format it does not know rather than reject it cleanly. The window between
+the migration and the fixture load is benign: the new image against an empty table
+answers `404 {"guides": []}`, which the page renders as "none yet" rather than as
+an error. As of PR #246 the pending gap is schema 18 and 19
+(`openforge_catalog-jag`), since `main` is still at 17.
+
+Runtime secrets live in Secrets Manager
 (`openforge-catalog/production/app`, created once by `scripts/create-app-secret.sh`), never
 in the repo; the database password is read at cold start from `DB_SECRET_ARN` so the
 RDS-managed secret may rotate. Prerequisites, once per account: the app secret, and the

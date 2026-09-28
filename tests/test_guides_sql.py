@@ -156,6 +156,11 @@ def test_reloading_a_fixture_updates_the_hero_image(test_db):
     `hero_image = EXCLUDED.hero_image` from the conflict clause leaves
     the entire suite green without this.
 
+    `bin/fixtures` does not empty the table first, which is why that
+    branch is reached at all: `clear_db` runs only under
+    `--full-replacement` and the default is incremental. Under full
+    replacement the conflict clause is unreachable by construction.
+
     Both directions, because the docstring claims both: a re-load with a
     new picture replaces the old one, and a re-load with none clears it.
     The second is what "the fixture is the authored state" means
