@@ -8,9 +8,15 @@
 # target group first, because a Lambda target group holds exactly one target and
 # `aws_lb_target_group_attachment` could not be imported. The first half is true;
 # the second stopped being true at provider v6.40.0, which documents a
-# comma-separated `target_group_arn,target_id` import. `~> 6.0` resolves well past
-# that, so the attachment is imported below and `target_id` — which is ForceNew —
-# makes the apply deregister the old function and register the new one itself.
+# comma-separated `target_group_arn,target_id` import. So the attachment is imported
+# below and `target_id` — which is ForceNew — makes the apply deregister the old
+# function and register the new one itself.
+#
+# What holds that v6.40.0 floor is `.terraform.lock.hcl` pinning 6.66.0, not the
+# `~> 6.0` range, which would happily resolve below it. Anyone re-locking the
+# provider downward takes this design away with it: without the attachment import,
+# the apply cannot swap a target group that holds only one target, and the manual
+# step this file exists to delete comes back.
 #
 # How long that takes, stated accurately because an earlier version of this comment
 # said "milliseconds" and that is wrong. Tofu orders a ForceNew replacement whose
@@ -21,9 +27,11 @@
 # is the one apply that creates the function.
 #
 # Still far better than the manual step this replaces. If even that window is unwanted, the adoption
-# apply can be split: `tofu apply -target=aws_lambda_permission.alb` creates the new
-# function and its permission first — a targeted plan processes its dependencies'
-# import blocks and silently prunes the rest — then a full apply swaps the target.
+# apply can be split: `tofu apply -var image_tag=<sha> -target=aws_lambda_permission.alb`
+# creates the new function and its permission first — a targeted plan processes its
+# dependencies' import blocks, including the target group's, and silently prunes the
+# rest — then a full apply swaps the target. `image_tag` has no default, so the
+# `-var` is not optional.
 #
 # The deleted instruction was worse than redundant: it took `/api/*` down *before* an
 # apply that cannot currently succeed, because the app secret is read as a data source

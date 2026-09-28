@@ -18,6 +18,11 @@ on:
     # repo. Bounded to people with push access (fork PRs get no secrets), but
     # every unrelated feature PR handing a runner that role bought nothing.
     # The real fix is a read-only plan role (openforge_catalog-4dh).
+    #
+    # If you ever make `Plan — staging` a required check on `test`: a job skipped by
+    # this filter reports neither success nor failure, so every PR that touches no
+    # terraform would sit pending forever. Require it through a job that always runs
+    # and skips internally, rather than by deleting the filter.
     paths:
       - 'terraform/**'
       - '.github/workflows/staging*.yaml'

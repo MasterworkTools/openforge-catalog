@@ -314,14 +314,19 @@ def test_a_version_reporting_failure_by_return_value_raises(test_db):
 def test_an_image_without_the_schema_modules_says_so(test_db, monkeypatch):
     """A packaging fault should not arrive looking like a database fault.
 
-    `get_schema_versions()` discovers migrations with `os.listdir`, so an image
-    built without `openforge/db/schema` finds none (openforge_catalog-bj5).
-    Before the explicit check, `max()` got there first and the log group — the
-    only forensics this function has — read `max() iterable argument is empty`.
+    `get_schema_versions()` discovers migrations with `os.listdir`, so a build
+    that ships the package but prunes its `version_*.py` finds none
+    (openforge_catalog-bj5). Before the explicit check, `max()` got there first
+    and the log group — the only forensics this function has — read
+    `max() iterable argument is empty`.
+
+    The package being absent entirely is a different failure and cannot reach
+    the handler: `migrate` imports from it, so that is an import error at cold
+    start.
     """
     monkeypatch.setattr(migrate, "get_schema_versions", lambda: [])
 
-    with pytest.raises(RuntimeError, match="no schema version modules"):
+    with pytest.raises(RuntimeError, match=r"no version_\*\.py modules found"):
         migrate.lambda_handler({}, None)
 
 
@@ -342,7 +347,12 @@ def test_a_virgin_database_reports_no_prior_version(test_db, monkeypatch):
 
     from openforge.db import db_url
 
-    scratch = "openforge_migrate_virgin"
+    # Per-process name. This is the only test in the suite that creates a
+    # *server-level* object, and several agents share one Postgres here — under a
+    # constant name, two concurrent runs lose two ways: a CREATE DATABASE race, and
+    # one run's `finally` dropping the database the other is migrating, which
+    # surfaces as a missing table and reads as a schema bug.
+    scratch = f"openforge_migrate_virgin_{os.getpid()}"
     admin_dsn = db_url(os.environ)
 
     def _admin(statement):

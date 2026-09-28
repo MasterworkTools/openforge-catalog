@@ -90,16 +90,23 @@ def lambda_handler(event, context):
     db = PgDB(os.environ, use_pool=False)
 
     # Checked before anything touches the database, and named for what it is.
-    # `get_schema_versions()` enumerates modules with `os.listdir`, so an image
-    # shipped without `openforge/db/schema` yields nothing — and then `max()`
+    #
+    # `get_schema_versions()` enumerates `version_*.py` with `os.listdir`, so a build
+    # that ships the package but prunes those files yields nothing — and then `max()`
     # would say "max() iterable argument is empty" while CloudWatch is the only
-    # forensics anyone has. That reads as a database fault; it is a packaging
-    # fault (openforge_catalog-bj5).
+    # forensics anyone has. That reads as a database fault; it is a packaging fault
+    # (openforge_catalog-bj5).
+    #
+    # The package itself being absent is a different failure and cannot reach here:
+    # this module imports `get_schema_versions` from it, so that is a
+    # `Runtime.ImportModuleError` at cold start and the handler never runs. Hence
+    # the message below says the *modules*, not the directory — an operator sent
+    # looking for a directory that is plainly present is back to guessing.
     versions = get_schema_versions()
     if not versions:
         raise RuntimeError(
-            "no schema version modules found: openforge/db/schema is missing "
-            "from the image, so there is nothing to apply"
+            "no version_*.py modules found under openforge/db/schema, "
+            "so there is nothing to apply"
         )
 
     before = _recorded_versions(db, allow_missing=True)

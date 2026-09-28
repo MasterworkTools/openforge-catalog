@@ -309,9 +309,10 @@ rollback until then.
 
 **There is no manual step.** An earlier version of this section said to deregister the
 old function from the target group first. Do not: the attachment is imported, so the
-apply swaps the target itself. `/api/*` is down from the deregister until the new
-function finishes being created, which is the adoption apply only — `imports.tf`
-explains it and offers a `-target` split for anyone who wants that window smaller.
+apply swaps the target itself. There is still a window, but it is the **apply's own**:
+it deregisters the old target before the new function exists, so `/api/*` is down for
+the length of that creation — minutes, on the adoption apply only. `imports.tf`
+explains it and offers a `-target` split for anyone who wants it smaller.
 
 Prerequisites, once per account: the app secret `openforge-catalog/staging/app`
 (`scripts/create-app-secret.sh` — note it generates a **fresh** API_TOKEN and
@@ -320,9 +321,14 @@ repo-level GitHub secret `AWS_ROLE_ARN_STAGING`, and openforge-infra adding
 `openforge-catalog` to staging's `deploy_roles` plus a Secrets Manager VPC endpoint
 (`openforge_catalog-44e`). Without that endpoint the Lambda cannot read its password:
 `_password_from_secret` sets `connect_timeout=3` with two attempts, so it gives up in
-seconds rather than outlasting the function. Both functions also set
-`PGCONNECT_TIMEOUT` — libpq's own default is wait-forever, which would turn an
-unreachable database into a function timeout with an empty log group.
+seconds rather than outlasting the function. The **migration** function also sets
+`PGCONNECT_TIMEOUT = 120`, matched to a measured ~20 s Aurora resume from
+`min_capacity 0`; `use_pool=False` means `psycopg.connect` raises
+`ConnectionTimeout` straight out of the handler there. The API sets none, and should
+not: its pool catches that exception, logs and reschedules, so the value never reaches
+a caller — and psycopg already substitutes its own 130 s default when
+`connect_timeout` is absent, so there was never a wait-forever to bound
+(`openforge_catalog-15r` covers bounding the API's pool instead).
 
 ### Code Review Process
 1. **Initial development**: Written in Cursor
