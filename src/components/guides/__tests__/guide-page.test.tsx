@@ -219,6 +219,31 @@ const RESOLVED_WITH_PARTS: ResolvedGuide = {
 };
 
 /**
+ * The same resolution with every question answered.
+ *
+ * The "n options" offer waits until nothing still to answer narrows the
+ * part — see `settled` in `guide-page.tsx`. A count taken while a
+ * question is open is about a half-built predicate and changes when it
+ * is answered, so the fixtures that assert the offer have to be in the
+ * state a person reaches by finishing, not by starting.
+ */
+const RESOLVED_SETTLED: ResolvedGuide = {
+  ...RESOLVED_WITH_PARTS,
+  refinements: RESOLVED_WITH_PARTS.refinements.map((refinement) => ({
+    ...refinement,
+    // `floor-texture` stays open on purpose. It is `role: 'floor'`, so
+    // it does not narrow the wall and leaving it unanswered does not
+    // unsettle it — and an answered question folds to its label, which
+    // would take the only list of choices off the screen. The tests
+    // here change an answer to check what the dialog then describes.
+    selected:
+      refinement.key === 'floor-texture'
+        ? refinement.selected
+        : (refinement.selected ?? 'texture|dungeon_stone'),
+  })),
+};
+
+/**
  * The guide document endpoint, which every guide page fetches first.
  *
  * The whole document, because the page reads the keys it defines to
@@ -2629,8 +2654,8 @@ describe('inspecting a part', () => {
     // Both answered, because the control is only drawn on a question
     // that is folded to its answer.
     const answered = {
-      ...RESOLVED_WITH_PARTS,
-      refinements: RESOLVED_WITH_PARTS.refinements.map((r) =>
+      ...RESOLVED_SETTLED,
+      refinements: RESOLVED_SETTLED.refinements.map((r) =>
         r.key === 'texture'
           ? { ...r, selected: 'texture|dungeon_stone' }
           : r.key === 'floor-texture'
@@ -2713,8 +2738,8 @@ describe('inspecting a part', () => {
         ? { unavailable: {}, because: {}, options: { wall: 6, 'wall-base': 1 } }
         : url.includes('/resolve')
           ? {
-              ...RESOLVED_WITH_PARTS,
-              parts: RESOLVED_WITH_PARTS.parts.map((part) =>
+              ...RESOLVED_SETTLED,
+              parts: RESOLVED_SETTLED.parts.map((part) =>
                 part.role === 'wall' ? { ...part, title } : part
               ),
             }
@@ -2722,7 +2747,13 @@ describe('inspecting a part', () => {
     );
 
     render(<GuidePage />);
-    fireEvent.click(await screen.findByRole('button', { name: '6 options' }));
+    // Either of the two offers opens the same dialog on the same role;
+    // this test is about what the dialog then describes, so it takes
+    // the first.
+    const [offer] = await screen.findAllByRole('button', {
+      name: '6 options',
+    });
+    fireEvent.click(offer);
     expect(modalProps[modalProps.length - 1].partName).toBe('Wall (wall)');
 
     // Answer something else. The same role resolves to a new piece,
@@ -2737,10 +2768,15 @@ describe('inspecting a part', () => {
     );
   });
 
-  it('offers the other pieces when the answer left more than one', async () => {
-    // "Towne" is six walls and "dungeon stone" is one, and nothing on
-    // the page said so. The count is how many pieces the part's own
-    // predicate matches, so it is also what the dialog will show.
+  it('waits until the part is decided before offering the others', async () => {
+    // A count taken while a question that narrows this part is still
+    // open is about a half-built predicate: answering the next question
+    // changes it. So the offer waits until nothing left to answer
+    // narrows this role — "six towne walls" is only useful once the
+    // guide has stopped narrowing.
+    //
+    // `RESOLVED_WITH_PARTS` is the same resolution with `texture` and
+    // `side-locks` unanswered, and both narrow the wall.
     visit('?guide=wall&method=separate-wall');
     mockFetch((url) =>
       url.includes('/availability')
@@ -2751,7 +2787,35 @@ describe('inspecting a part', () => {
     );
 
     render(<GuidePage />);
-    const more = await screen.findByRole('button', { name: '6 options' });
+    // The part is on screen — this is not a test that nothing rendered.
+    await screen.findByText('a dungeon stone wall');
+
+    expect(screen.queryByRole('button', { name: '6 options' })).toBeNull();
+  });
+
+  it('offers the other pieces when the answer left more than one', async () => {
+    // "Towne" is six walls and "dungeon stone" is one, and nothing on
+    // the page said so. The count is how many pieces the part's own
+    // predicate matches, so it is also what the dialog will show.
+    visit('?guide=wall&method=separate-wall');
+    mockFetch((url) =>
+      url.includes('/availability')
+        ? { unavailable: {}, because: {}, options: { wall: 6, 'wall-base': 1 } }
+        : url.includes('/resolve')
+          ? RESOLVED_SETTLED
+          : GUIDE_DOCUMENT
+    );
+
+    render(<GuidePage />);
+
+    // Two, and exactly two: one on the part and one beside the answer
+    // that left them. Not three — the wall is narrowed by `texture` and
+    // by `side-locks`, and keying this by question used to put an
+    // identical button under each of them, two ways into one dialog
+    // about one piece.
+    const offers = await screen.findAllByRole('button', { name: '6 options' });
+    expect(offers).toHaveLength(2);
+    const more = offers[0];
 
     // One piece behind an answer is the guide having decided, and not
     // worth a control.
@@ -2776,8 +2840,8 @@ describe('inspecting a part', () => {
           { unavailable: {}, because: {}, options: { wall: 6, 'wall-base': 3 } }
         : url.includes('/resolve')
           ? {
-              ...RESOLVED_WITH_PARTS,
-              refinements: RESOLVED_WITH_PARTS.refinements.map((r) =>
+              ...RESOLVED_SETTLED,
+              refinements: RESOLVED_SETTLED.refinements.map((r) =>
                 r.key === 'texture' ? { ...r, selected: 'texture|cave' } : r
               ),
             }

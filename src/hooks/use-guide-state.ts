@@ -361,16 +361,6 @@ function ownedBy(guide: GuideDocument, search: string | undefined): Selections {
 }
 
 /**
- * Write the selections to the URL, and tell the store we did.
- *
- * `replaceState` fires nothing — `popstate` is for someone moving
- * through history, not for us writing to it — so a store reading
- * `window.location.search` would not see our own write. Announcing it
- * on our own event is what lets the URL be the single source of truth
- * rather than one of two copies that can disagree. Why our own and not
- * `popstate`: see `URL_CHANGED` below.
- */
-/**
  * Open a guide without leaving the page.
  *
  * The entry page is two things: the whole of `/guides`, and the Guided
@@ -422,6 +412,16 @@ export function isPlainClick(e: MouseEvent): boolean {
   );
 }
 
+/**
+ * Write the selections to the URL, and tell the store we did.
+ *
+ * `replaceState` fires nothing — `popstate` is for someone moving
+ * through history, not for us writing to it — so a store reading
+ * `window.location.search` would not see our own write. Announcing it
+ * on our own event is what lets the URL be the single source of truth
+ * rather than one of two copies that can disagree. Why our own and not
+ * `popstate`: see `URL_CHANGED` below.
+ */
 function writeUrl(guideKey: string | null, selections: Selections) {
   if (typeof window === 'undefined' || !guideKey) return;
   const params = new URLSearchParams({ guide: guideKey, ...selections });

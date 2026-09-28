@@ -7,6 +7,7 @@ import { MoreOptions } from './guide-steps';
 import {
   clearGuide,
   isPlainClick,
+  selectGuide,
   useGuideKey,
   useGuideState,
 } from '@/hooks/use-guide-state';
@@ -46,27 +47,71 @@ export default function GuidePage() {
   // questions on the left open it too.
   const [inspecting, setInspecting] = useState<string | null>(null);
 
-  // Which questions left more than one piece, and which part to open
-  // when they say so. A question can narrow several roles — the wall
-  // texture narrows the wall and the base under it — and the one
-  // worth offering is whichever still has a choice in it.
+  // The roles every question has finished with.
+  //
+  // "Six towne walls" is only a useful thing to be told once the guide
+  // has stopped narrowing: while a question that touches this part is
+  // still unanswered the count is a number about a half-built
+  // predicate, and answering the next question changes it. So the
+  // offer waits until nothing left to answer narrows this role.
+  //
+  // Steps count as well as refinements — a part is not settled because
+  // its textures are chosen if the method is still open.
+  const settled: Set<string> = useMemo(() => {
+    const done = new Set<string>();
+    if (!resolved) return done;
+    const questions = [...resolved.steps, ...resolved.refinements];
+    for (const part of resolved.parts) {
+      const open = questions.filter(
+        (question) =>
+          narrows(question, part.role) && question.selected === null
+      );
+      if (open.length === 0) done.add(part.role);
+    }
+    return done;
+  }, [resolved]);
+
+  // How many pieces each settled role could have been. The parts list
+  // reads this to decide whether to offer the catalog, so filtering it
+  // here is what keeps an unsettled part from advertising a count that
+  // is about to change.
+  const settledOptions = useMemo(() => {
+    if (!options) return options;
+    return Object.fromEntries(
+      Object.entries(options).filter(([role]) => settled.has(role))
+    );
+  }, [options, settled]);
+
+  // The same offer in the question column, at most once per part.
+  //
+  // A part can be narrowed by several questions — the wall texture and
+  // the wall's clips both narrow the wall — and keying this by question
+  // put an identical button under each of them, two ways into one
+  // dialog about one piece. Each role is now claimed by a single
+  // question: the last one that narrows it, which is the answer the
+  // person just gave and so the one the count is news about.
   const more: MoreOptions = useMemo(() => {
     const found: MoreOptions = {};
-    if (!resolved || !options) return found;
-    for (const question of resolved.refinements) {
-      const choices = resolved.parts
+    if (!resolved || !settledOptions) return found;
+    const claimed = new Set<string>();
+    for (const question of [...resolved.refinements].reverse()) {
+      const role = resolved.parts
         .filter((part) => narrows(question, part.role))
-        .filter((part) => (options[part.role] ?? 0) > 1)
-        .sort((a, b) => (options[b.role] ?? 0) - (options[a.role] ?? 0));
-      if (choices.length > 0) {
-        found[question.key] = {
-          count: options[choices[0].role],
-          onOpen: () => setInspecting(choices[0].role),
-        };
-      }
+        .filter((part) => !claimed.has(part.role))
+        .filter((part) => (settledOptions[part.role] ?? 0) > 1)
+        .sort(
+          (a, b) =>
+            (settledOptions[b.role] ?? 0) - (settledOptions[a.role] ?? 0)
+        )[0]?.role;
+      if (role === undefined) continue;
+      claimed.add(role);
+      found[question.key] = {
+        count: settledOptions[role],
+        onOpen: () => setInspecting(role),
+      };
     }
     return found;
-  }, [resolved, options]);
+  }, [resolved, settledOptions]);
 
   // Answering a question also lets go of the parts that question
   // decides. A pinned part outranks the questions — that is what
@@ -154,6 +199,18 @@ export default function GuidePage() {
               <a
                 href={`?guide=${encodeURIComponent(guideKey)}`}
                 className="text-blue-700 underline"
+                // Both anchors in this ternary are doors out of the
+                // tab, and the first fix took only its sibling. A
+                // document load of `?guide=X` leaves the tabbed app and
+                // comes back on Part Search, losing the guide it was
+                // meant to restart. `selectGuide` is exactly what this
+                // href means — the guide, with no answers — and it
+                // depends on nothing but itself.
+                onClick={(e) => {
+                  if (!isPlainClick(e)) return;
+                  e.preventDefault();
+                  selectGuide(guideKey);
+                }}
               >
                 Start this guide over
               </a>
@@ -215,7 +272,7 @@ export default function GuidePage() {
             <GuideParts
               parts={resolved.parts}
               refinements={resolved.refinements}
-              options={options}
+              options={settledOptions}
               inspecting={inspecting}
               onInspect={setInspecting}
               onSelect={select}

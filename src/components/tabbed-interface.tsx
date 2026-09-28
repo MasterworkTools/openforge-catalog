@@ -8,21 +8,28 @@ import { useAdminContext } from '@/contexts/admin-context';
 import { loadAppConfig } from '@/utils/app-config';
 
 const TabbedInterface = () => {
-  // A guide in the URL means the person is looking at a guide, so open
-  // on that tab rather than dropping them on Part Search with a
-  // parameter nothing on screen explains. This is what makes a card's
-  // in-place selection survive a reload and makes `/?guide=wall`
-  // shareable from inside the tab.
-  const [activeTab, setActiveTab] = useState<'partSearch' | 'guides' | 'baseGenerator' | 'admin'>(
-    () =>
-      typeof window !== 'undefined' &&
-      new URLSearchParams(window.location.search).get('guide')
-        ? 'guides'
-        : 'partSearch'
-  );
+  const [activeTab, setActiveTab] = useState<'partSearch' | 'guides' | 'baseGenerator' | 'admin'>('partSearch');
   const [baseGeneratorUrl, setBaseGeneratorUrl] = useState(process.env.NEXT_PUBLIC_BASE_GENERATOR_URL || 'http://localhost:8000');
 
   const { state } = useAdminContext();
+
+  // A guide in the URL means the person is looking at a guide, so open
+  // on that tab rather than dropping them on Part Search holding a
+  // parameter nothing on screen explains. This is what makes a card's
+  // in-place selection survive a reload and `/?guide=wall` shareable
+  // from inside the tab.
+  //
+  // In an effect, not a `useState` initialiser. This is a static
+  // export: the HTML is prerendered with no `window`, so an initialiser
+  // reading `location.search` picks `partSearch` at build time and the
+  // real page loads on the wrong tab — which it did, while the jsdom
+  // test passed, because jsdom never prerenders.
+  useEffect(() => {
+    if (new URLSearchParams(window.location.search).get('guide')) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setActiveTab('guides');
+    }
+  }, []);
 
   useEffect(() => {
     // Load base generator URL from localStorage and app-config.json
