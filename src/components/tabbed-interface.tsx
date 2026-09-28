@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import TabPartSearch from './tab-part-search';
 import GuidePage from './guides/guide-page';
 import TabAdmin from './tab-admin';
@@ -13,24 +13,6 @@ const TabbedInterface = () => {
 
   const { state } = useAdminContext();
 
-  // A guide in the URL means the person is looking at a guide, so open
-  // on that tab rather than dropping them on Part Search holding a
-  // parameter nothing on screen explains. This is what makes a card's
-  // in-place selection survive a reload and `/?guide=wall` shareable
-  // from inside the tab.
-  //
-  // In an effect, not a `useState` initialiser. This is a static
-  // export: the HTML is prerendered with no `window`, so an initialiser
-  // reading `location.search` picks `partSearch` at build time and the
-  // real page loads on the wrong tab — which it did, while the jsdom
-  // test passed, because jsdom never prerenders.
-  useEffect(() => {
-    if (new URLSearchParams(window.location.search).get('guide')) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setActiveTab('guides');
-    }
-  }, []);
-
   // Mounted from the first time it is opened, and kept mounted after.
   //
   // Purely conditional was wrong in the other direction: leaving the
@@ -40,12 +22,55 @@ const TabbedInterface = () => {
   // Three requests and a flicker for a tab the person had already
   // loaded.
   const [guidesOpened, setGuidesOpened] = useState(false);
+
+  // Opening the tab and latching the mount are one act, so they are one
+  // function. Latching in an effect instead cost a render: the pane
+  // committed visible and empty before the guide existed, and on the
+  // URL path it was worse — two effects in a chain, the second closed
+  // over the first's stale value, so three renders to show anything.
+  const openGuides = useCallback(() => {
+    setActiveTab('guides');
+    setGuidesOpened(true);
+  }, []);
+
+  // A guide in the URL means the person is looking at a guide, so open
+  // on that tab rather than dropping them on Part Search holding a
+  // parameter nothing on screen explains. This is what makes a card's
+  // in-place selection survive a reload and `/?guide=wall` shareable
+  // from inside the tab.
+  //
+  // On `popstate` as well as on mount. Back and forward move the URL
+  // without remounting anything, so a mount-only check left the address
+  // bar saying `?guide=wall` while the strip still showed Part Search
+  // active — and the hidden guides pane fetched the guide for a tab
+  // nobody was looking at.
+  //
+  // Only ever *into* the guides tab. Going back to a URL with no guide
+  // in it means the cards, which is still this tab; switching away
+  // would take someone off a tab they are using.
+  //
+  // In an effect, not a `useState` initialiser. This is a static
+  // export: the HTML is prerendered with no `window`, so an initialiser
+  // reading `location.search` picks `partSearch` at build time and the
+  // real page loads on the wrong tab — which it did, while the jsdom
+  // test passed, because jsdom never prerenders.
+  //
+  // `react-hooks/set-state-in-effect` no longer fires here, and that is
+  // indirection rather than absolution: the state is still set from an
+  // effect, one call deep. The rule's actual complaint — a cascading
+  // render — is answered for the latch, which now moves with the tab
+  // instead of chasing it, and is unavoidable for the URL read, which
+  // cannot happen before mount in a prerendered page.
   useEffect(() => {
-    if (activeTab === 'guides' && !guidesOpened) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setGuidesOpened(true);
-    }
-  }, [activeTab, guidesOpened]);
+    const follow = () => {
+      if (new URLSearchParams(window.location.search).get('guide')) {
+        openGuides();
+      }
+    };
+    follow();
+    window.addEventListener('popstate', follow);
+    return () => window.removeEventListener('popstate', follow);
+  }, [openGuides]);
 
   useEffect(() => {
     // Load base generator URL from localStorage and app-config.json
@@ -71,7 +96,7 @@ const TabbedInterface = () => {
           </button>
           <button
             className={`tab ${activeTab === 'guides' ? 'active' : ''}`}
-            onClick={() => setActiveTab('guides')}
+            onClick={openGuides}
           >
             Guided Builds
           </button>

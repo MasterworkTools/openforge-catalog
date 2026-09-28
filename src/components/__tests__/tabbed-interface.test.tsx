@@ -126,6 +126,43 @@ describe('TabbedInterface', () => {
     await waitFor(() => expect(guideRequests(fetch)).toHaveLength(1));
   });
 
+  it('follows the URL on back and forward, not only on mount', async () => {
+    // Back and forward move the URL without remounting anything, so a
+    // mount-only check left the address bar saying `?guide=wall` while
+    // the strip still showed Part Search active — and the hidden guides
+    // pane fetched a guide for a tab nobody was looking at.
+    noGuides();
+    window.history.replaceState({}, '', '/');
+
+    render(<TabbedInterface />);
+    expect(
+      screen.getByRole('button', { name: 'Part Search' }).className
+    ).toContain('active');
+
+    // A back/forward landing on a guide.
+    window.history.replaceState({}, '', '/?guide=wall');
+    fireEvent.popState(window);
+
+    await waitFor(() =>
+      expect(
+        screen.getByRole('button', { name: 'Guided Builds' }).className
+      ).toContain('active')
+    );
+
+    // And going back to a URL with no guide keeps you on the tab: that
+    // is the card list, which is still this tab. Switching away would
+    // take someone off a tab they are using.
+    window.history.replaceState({}, '', '/');
+    fireEvent.popState(window);
+    await waitFor(() =>
+      expect(
+        screen.getByRole('button', { name: 'Guided Builds' }).className
+      ).toContain('active')
+    );
+
+    window.history.replaceState({}, '', '/');
+  });
+
   it('keeps Part Search mounted across a trip to another tab', async () => {
     // The guides tab is conditional so a hidden component does not spend
     // a Lambda invocation. Its neighbours must NOT be: `TabPartSearch`
