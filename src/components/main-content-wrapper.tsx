@@ -13,7 +13,7 @@ export default function MainContentWrapper() {
           <div className='pageHeaderWrapper'>
             OpenForge Catalog
             <div className='pageHeaderRight'>
-              Version 0.7.0 |&nbsp;
+              Version 0.8.0 |&nbsp;
               <a className='visibleLink' href='https://masterworktools.github.io/openforge-tutorials/' target="_blank" rel="noreferrer">Wiki</a> |&nbsp;
               <a className='visibleLink' href='https://www.patreon.com/masterworktools' target="_blank" rel="noreferrer">Support us on Patreon</a>
               <AdminHeader />
