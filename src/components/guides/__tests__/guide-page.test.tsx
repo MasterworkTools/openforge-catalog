@@ -856,6 +856,14 @@ describe('GuidePage', () => {
       expect(document.body.textContent).toContain(
         'Your answer, Cave, leaves no Floor — it is your "How do you want to build it?" answer'
       );
+      // And the answer is still a button you can press again, which is
+      // the only way to clear it. `live` filters the dead out and keeps
+      // the one in force; without that half it is explained and cannot
+      // be undone.
+      expect(screen.getByRole('button', { name: /Cave/ })).toHaveAttribute(
+        'aria-pressed',
+        'true'
+      );
     });
 
     it('folds grouped questions into one section and leaves others alone', async () => {
@@ -1175,6 +1183,51 @@ describe('GuidePage', () => {
       // severed.
       expect(links[0]).toHaveAttribute('target', '_blank');
       expect(links[0]).toHaveAttribute('rel', expect.stringContaining('noopener'));
+    });
+
+    it('links the longest name that fits, and one with brackets in it', async () => {
+      // Two properties of `linked`, neither held: the phrases are
+      // matched longest-first so a longer name wins over a shorter one
+      // it contains, and each is escaped before it goes into the
+      // alternation — an unescaped `(` is a capture group, which both
+      // stops the name matching itself and splits the prose wrong.
+      visit('?guide=wall&method=separate-wall');
+      const withBrackets = {
+        ...RESOLVED_WITH_PARTS,
+        steps: [
+          {
+            ...RESOLVED_WITH_PARTS.steps[0],
+            selected: null,
+            options: [
+              {
+                key: 'separate-wall',
+                title: 'Separate wall',
+                blurb: 'Others include Fat Dragon Games (FDG), or Fat Dragon.',
+                // Shortest first on purpose: insertion order is what
+                // the sort has to override, so listing them already
+                // sorted would make it a no-op.
+                links: {
+                  'Fat Dragon': 'https://example.invalid/short',
+                  'Fat Dragon Games (FDG)': 'https://www.fatdragongames.com',
+                },
+                roles: {},
+              },
+            ],
+          },
+        ],
+      };
+      mockFetch((url) =>
+        url.includes('/resolve') ? withBrackets : GUIDE_DOCUMENT
+      );
+
+      render(<GuidePage />);
+
+      expect(
+        await screen.findByRole('link', { name: 'Fat Dragon Games (FDG)' })
+      ).toHaveAttribute('href', 'https://www.fatdragongames.com');
+      expect(
+        screen.getByRole('link', { name: 'Fat Dragon' })
+      ).toHaveAttribute('href', 'https://example.invalid/short');
     });
 
     it('explains a question that carries prose of its own', async () => {
@@ -2430,6 +2483,172 @@ describe('moving between guides', () => {
 });
 
 describe('inspecting a part', () => {
+  it('turns every part to a side the ring cannot reach', async () => {
+    // The side widget's other job. A drag only walks the horizontal
+    // ring, so `top` and `bottom` are reachable by a decisive vertical
+    // drag or by this button and nothing else — and the widget is a
+    // readout in every other test, so its handler is what is unheld
+    // rather than its rendering.
+    visit('?guide=wall&method=separate-wall');
+    mockFetch((url) =>
+      url.includes('/resolve') ? RESOLVED_WITH_PARTS : GUIDE_DOCUMENT
+    );
+
+    render(<GuidePage />);
+    await screen.findByLabelText(/a dungeon stone base, seen from the front/);
+
+    fireEvent.click(screen.getByRole('button', { name: 'top' }));
+
+    expect(
+      await screen.findByLabelText(/a dungeon stone base, seen from the top/)
+    ).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'top' })).toHaveAttribute(
+      'aria-pressed',
+      'true'
+    );
+  });
+
+  it('closes the tag search when the dialog asks to close', async () => {
+    visit('?guide=wall&method=separate-wall');
+    mockFetch((url) =>
+      url.includes('/resolve') ? RESOLVED_WITH_PARTS : GUIDE_DOCUMENT
+    );
+
+    render(<GuidePage />);
+    fireEvent.click(await screen.findByLabelText(/a dungeon stone wall, seen/));
+    // Open first: the absence below is true of a page that never
+    // opened it, so it has to be shown shut *after* being shown open.
+    expect(await screen.findByTestId('part-modal')).toBeInTheDocument();
+
+    const close = modalProps[modalProps.length - 1].onClose as () => void;
+    await act(async () => {
+      close();
+    });
+
+    expect(screen.queryByTestId('part-modal')).toBeNull();
+  });
+
+  it('commits the free-text box on Enter', async () => {
+    // There is no form here to submit, so without the keydown the only
+    // way to apply what you typed is to click somewhere else.
+    visit('?guide=wall&method=separate-wall');
+    const urls: string[] = [];
+    mockFetch((url) => {
+      urls.push(url);
+      return url.includes('/resolve') ? RESOLVED_WITH_PARTS : GUIDE_DOCUMENT;
+    });
+
+    render(<GuidePage />);
+    const picker = await screen.findByLabelText('Texture');
+
+    // Focused, because committing is `blur()` and jsdom fires no blur
+    // for an element that never had focus.
+    (picker as HTMLInputElement).focus();
+    fireEvent.change(picker, { target: { value: 'texture|cave' } });
+    fireEvent.keyDown(picker, { key: 'Enter' });
+
+    await waitFor(() =>
+      expect(urls).toContain(
+        '/api/guides/wall/resolve?method=separate-wall&texture=texture%7Ccave'
+      )
+    );
+  });
+
+  it('names a derived answer by its count, and a curated one by its title', async () => {
+    // `labelFor`'s other two arms. The fixture's own titles happen to
+    // equal what deriving them would produce, so nothing told the
+    // curated arm from the derived one; and no choice anywhere carried
+    // a count, which `resolve` sends on every derived choice and is
+    // the whole difference between two answers that otherwise look
+    // equally good.
+    visit('?guide=wall&method=separate-wall');
+    mockFetch((url) =>
+      url.includes('/resolve')
+        ? {
+            ...RESOLVED_WITH_PARTS,
+            refinements: RESOLVED_WITH_PARTS.refinements.map((r) =>
+              r.key === 'floor-texture'
+                ? {
+                    ...r,
+                    choices: [
+                      { tag: 'connection|openlock', count: 135 },
+                      {
+                        tag: 'connection|dragonlock',
+                        title: 'DragonLock',
+                        count: 46,
+                      },
+                    ],
+                  }
+                : r
+            ),
+          }
+        : GUIDE_DOCUMENT
+    );
+
+    render(<GuidePage />);
+
+    expect(
+      await screen.findByRole('button', { name: 'Openlock (135)' })
+    ).toBeInTheDocument();
+    // Curated, and deliberately spelled differently from the tag, so
+    // the derived fallback cannot produce it. No count either: a
+    // curated title is the whole label, which is what the arm order
+    // says and nothing held.
+    expect(
+      screen.getByRole('button', { name: 'DragonLock' })
+    ).toBeInTheDocument();
+  });
+
+  it('offers no control for a question whose own pieces are decided', async () => {
+    // The `> 1` boundary. `1 options` being absent while the wall has
+    // six cannot see it, because the count shown is the busiest
+    // narrowed role's — widening the predicate changes nothing while
+    // any of them has more than one. What separates them is a
+    // *question* all of whose roles sit at one: `floor-texture`
+    // narrows the floor alone.
+    visit(
+      '?guide=wall&method=separate-wall&texture=texture%7Cdungeon_stone&floor-texture=texture%7Cdungeon_stone'
+    );
+    // Both answered, because the control is only drawn on a question
+    // that is folded to its answer.
+    const answered = {
+      ...RESOLVED_WITH_PARTS,
+      refinements: RESOLVED_WITH_PARTS.refinements.map((r) =>
+        r.key === 'texture'
+          ? { ...r, selected: 'texture|dungeon_stone' }
+          : r.key === 'floor-texture'
+            ? // Pointed at the one role that has a part here, and that
+              // part is the only thing it narrows — so this is the
+              // question whose every piece is decided.
+              {
+                ...r,
+                role: 'floor-base',
+                selected: 'texture|dungeon_stone',
+              }
+            : r
+      ),
+    };
+    mockFetch((url) =>
+      url.includes('/availability')
+        ? {
+            unavailable: {},
+            because: {},
+            options: { wall: 6, 'floor-base': 1, 'wall-base': 1 },
+          }
+        : url.includes('/resolve')
+          ? answered
+          : GUIDE_DOCUMENT
+    );
+
+    render(<GuidePage />);
+    // The wall's control proves the sweep landed and `more` was built,
+    // so the absence below is an answer rather than a page that has
+    // not got there yet.
+    await screen.findAllByRole('button', { name: '6 options' });
+
+    expect(screen.queryByRole('button', { name: '1 options' })).toBeNull();
+  });
+
   it('opens the tag search on this part, with its preferences droppable', async () => {
     visit('?guide=wall&method=separate-wall');
     mockFetch((url) =>

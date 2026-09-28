@@ -47,6 +47,46 @@ function dragBoth(
 }
 
 describe('useDragRotation step counting', () => {
+  it('stops turning once the button comes up', () => {
+    // The listeners are registered together and removed together, so
+    // the gesture has to be shown live before it is shown dead: with
+    // no mouseup listener the hook stays dragging and the pieces keep
+    // spinning as the pointer crosses the page.
+    const steps: number[] = [];
+    const { result } = renderHook(() =>
+      useDragRotation({ onHorizontal: (n) => steps.push(n) })
+    );
+    act(() => {
+      result.current.handleMouseDown({
+        button: 0,
+        clientX: 200,
+        clientY: 200,
+      } as React.MouseEvent);
+    });
+    act(() => {
+      window.dispatchEvent(
+        new MouseEvent('mousemove', {
+          clientX: 200 + DRAG_THRESHOLD_PX,
+          clientY: 200,
+        })
+      );
+    });
+    expect(steps).toEqual([1]);
+    act(() => {
+      window.dispatchEvent(new MouseEvent('mouseup'));
+    });
+    expect(result.current.isDragging).toBe(false);
+    act(() => {
+      window.dispatchEvent(
+        new MouseEvent('mousemove', {
+          clientX: 200 + DRAG_THRESHOLD_PX * 3,
+          clientY: 200,
+        })
+      );
+    });
+    expect(steps).toEqual([1]);
+  });
+
   it('truncates toward zero, so a leftward drag turns as far as a rightward one', () => {
     // Any drag between one threshold and two shows it, since below one
     // nothing is reported at all: `floor(-1.5)` is -2, one step further
