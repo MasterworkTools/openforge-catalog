@@ -101,9 +101,12 @@ def test_schema_error_names_the_offending_step(guide):
 
     assert "step 'method'" in str(excinfo.value)
     assert "option 's2w-modular'" in str(excinfo.value)
-    # And which guide. This is the other half of the pair that
-    # `_raise_invalid` carries: both messages name the document, and
-    # dropping the name from either one left the whole suite green.
+    # And which guide. Two functions embed the guide name in a message
+    # independently — `_validate_shape`, which raises this one, and
+    # `_raise_invalid`, which raises the cross-reference and
+    # recommendation ones. Neither calls the other, so pinning this
+    # message says nothing about that one; it is pinned separately in
+    # `test_a_malformed_default_clause_names_the_guide_rather_than_crashing`.
     assert "guide 'wall'" in str(excinfo.value)
 
 
@@ -606,6 +609,15 @@ def test_a_malformed_default_clause_names_the_guide_rather_than_crashing(guide):
         assert "'method'" in str(caught.value), (
             f"{default!r} was refused as {caught.value!r}, which does not "
             "say which question to go and look at"
+        )
+        # And which guide, which is the other half of what the docstring
+        # above claims this function's whole job is. `_raise_invalid`
+        # carries the name for this path; `_validate_shape` carries its
+        # own for the shape path. Dropping it here left all 49 tests
+        # green until this line.
+        assert "guide 'wall'" in str(caught.value), (
+            f"{default!r} was refused as {caught.value!r}, which does not "
+            "say which guide to go and look in"
         )
 
 

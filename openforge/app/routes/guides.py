@@ -378,6 +378,27 @@ def _pinned_finder(curs):
     should fall back to what the guide would have recommended anyway
     — a page of parts is a better answer to a stale link than a 404.
 
+    `get_current_version_by_md5`, not `get_blueprint_by_md5`, and that
+    is the whole of *replaced*. A rescan does not delete the old row:
+    `mark_blueprint_deprecated` leaves it in place with `deprecated`
+    set and `successor_id` pointing at what replaced it. The plain md5
+    lookup is the only one in the app that does not skip a retired row
+    — the engine's search path opens with `bp2.deprecated = false`
+    unconditionally — so a pin was the one way to be served a piece
+    the guide's own search would never offer, while the catalog dialog
+    the same page opens follows the successor chain and showed the
+    replacement. The two halves of one screen disagreed, and nothing
+    said so.
+
+    A retired piece with no successor is still served, and logged. It
+    is the case where falling back costs the person their own choice
+    and buys nothing — there is no replacement to show them — but it
+    is still not what the guide would offer, so it does not pass
+    quietly. The page has no way to say "this one is retired":
+    `deprecated` and `successor_id` both reach the payload and
+    `GuideBlueprint` declares neither. That is `openforge_catalog-url`,
+    not this route.
+
     Logged all the same. The intended case — an old link to a file
     that has since been rescanned — and a caller bug that sends a
     uuid where an md5 belongs produce the identical silent `None`,
@@ -397,12 +418,17 @@ def _pinned_finder(curs):
 
     def find_pinned(md5: str) -> dict | None:
         try:
-            found = blueprint_sql.get_blueprint_by_md5(curs, md5)
+            found = blueprint_sql.get_current_version_by_md5(curs, md5)
         except NotFound:
             current_app.logger.warning(
                 "guide pin %r matches no blueprint", md5[:MD5_CHARS]
             )
             return None
+        if found["deprecated"]:
+            current_app.logger.warning(
+                "guide pin %r resolves to a retired blueprint with no successor",
+                md5[:MD5_CHARS],
+            )
         _attach_tags(curs, [found])
         return found
 

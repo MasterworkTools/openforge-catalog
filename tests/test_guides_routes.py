@@ -793,6 +793,64 @@ def test_a_pinned_role_is_never_what_makes_an_answer_dead(
     )
 
 
+def test_a_pin_follows_the_piece_that_replaced_it(
+    client, choosy_guide, catalog, test_db
+):
+    """A rescan retires the old row. It does not delete it.
+
+    `mark_blueprint_deprecated` is what `incremental.py` calls when a
+    file has been re-cut: the old row stays, with `deprecated` set and
+    `successor_id` pointing at what replaced it. So the state a stale
+    shared link arrives in is *found, but superseded* — not missing —
+    and `NotFound` never fires.
+
+    `get_blueprint_by_md5` was the only md5 lookup in the app that does
+    not skip a retired row, and the pin was the only caller of it, so a
+    pin was the one way to be served a piece the guide's own search
+    would never offer: `_query_tags_basics` opens with
+    `bp2.deprecated = false` unconditionally. The catalog dialog the
+    same page opens follows the successor chain and showed the
+    replacement, so one screen gave two answers with nothing to account
+    for the difference — and no exception, so nothing in the log either.
+
+    The pair is the test. Before the rescan the pin must serve the
+    piece it names, or this passes on a pin that is ignored outright.
+    """
+    retired = catalog["floor"]
+    pin = f"part.floor={retired['file_md5']}"
+    query = f"method=separate-wall&{pin}"
+
+    def pinned_floor():
+        built = client.get(f"/api/guides/wall/resolve?{query}").json
+        floor = next(p for p in built["parts"] if p["role"] == "floor")
+        return floor["blueprint"]
+
+    # Before: the pin names a live piece and is honoured.
+    assert pinned_floor()["file_md5"] == retired["file_md5"], (
+        "the pin did not reach the part at all, so the assertion below "
+        "would hold for a pin that was being ignored"
+    )
+
+    successor = make_blueprint(
+        test_db,
+        "c floor v2",
+        ["build|separate wall", "shape|floor", "texture|cave"],
+    )
+    with test_db.connection() as conn:
+        with conn.cursor(row_factory=dict_row) as curs:
+            blueprint_sql.mark_blueprint_deprecated(
+                curs, retired["id"], successor_id=successor["id"]
+            )
+
+    # After: the same URL follows the chain to the replacement.
+    served = pinned_floor()
+    assert served["file_md5"] == successor["file_md5"], (
+        f"a stale pin was served {served['file_name']!r} "
+        f"(deprecated={served['deprecated']}), which the guide's own "
+        "search would never offer"
+    )
+
+
 def test_availability_names_the_answers_that_would_empty_a_part(
     client, choosy_guide, catalog
 ):

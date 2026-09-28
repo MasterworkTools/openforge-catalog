@@ -410,12 +410,13 @@ def _unavailable(
     # predicate anyway reported the one piece they had chosen as
     # missing, which is the opposite of what pinning is for.
     #
-    # Read from `sent` and through `_pinned`, not from
-    # `parts[*]["pinned"]`: on the first screen nothing has resolved,
-    # so no role is in play and the parts say nothing — and going
-    # through the finder keeps a pin whose md5 the catalog cannot find
-    # swept, which is the case that has to fall back to the
-    # recommendation.
+    # Read from `sent` over every role the document has, not from
+    # `parts[*]["pinned"]`: `parts` holds only the roles in play for
+    # these answers, and a hypothetical answer can put one in play that
+    # the baseline never resolved. `wall-base` is the live case — in
+    # play under `wall-print: with-base`, absent under `single-piece` —
+    # so a pin on it would be invisible here exactly when the sweep is
+    # asking what `with-base` would do.
     held = frozenset(
         name
         for name in document["roles"]
@@ -637,8 +638,12 @@ def _first_empty_role(
     predicate the guide composes — that is what pinning is, and
     `_chosen_blueprint` honours it — so composing one anyway and
     finding nothing said the piece they had nailed down was missing.
-    On the first screen `baseline` cannot stand in for this: nothing
-    has resolved yet, so it is empty and every predicate looks new.
+    `baseline` cannot stand in for it: it records the predicate a part
+    resolved under, not who chose it. A pinned part carries the
+    composed predicate in `query` like any other — the pin replaces
+    only the blueprint — so as soon as a hypothetical answer changes
+    that predicate, the baseline entry stops matching and the pin is
+    invisible.
     """
     steps, answered = _available_steps(document, selections)
     chosen = _chosen_options(steps, answered)
