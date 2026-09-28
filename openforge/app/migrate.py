@@ -96,7 +96,7 @@ def lambda_handler(event, context):
     # ships the package but prunes the version modules yields nothing — and `max()`
     # would say "max() iterable argument is empty" while CloudWatch is the only
     # forensics anyone has. That reads as a database fault; it is a packaging fault
-    # (openforge_catalog-bj5).
+    # (openforge_catalog-li2).
     #
     # The package itself being absent is a different failure and cannot reach here:
     # this module imports `get_schema_versions` from it, so that is a

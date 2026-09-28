@@ -369,7 +369,7 @@ def test_an_image_without_the_schema_modules_says_so(test_db, monkeypatch):
     `get_schema_versions()` imports every `.py` under that package and collects
     whatever registered through the decorator, so a build that ships the package
     but prunes the version modules registers none
-    (openforge_catalog-bj5). Before the explicit check, `max()` got there first
+    (openforge_catalog-li2). Before the explicit check, `max()` got there first
     and the log group — the only forensics this function has — read
     `max() iterable argument is empty`.
 
