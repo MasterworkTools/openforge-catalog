@@ -793,10 +793,14 @@ def test_filename_with_path_components():
 
     parse_file_tags(file_info, tags, None)
 
-    # Should add shape tags from path (components get transformed)
+    # Should add shape tags from path (components get transformed).
+    # This path names a floor directory and a wall directory, so the
+    # piece is a floor that takes a wall rather than both at once —
+    # see test_nothing_is_both_a_floor_and_a_wall.
     assert ("shape", "base") in tags
     assert ("shape", "floor") in tags
-    assert ("shape", "wall") in tags
+    assert ("shape", "floor", "wall") in tags
+    assert ("shape", "wall") not in tags
 
 
 def test_filename_with_curved_paths():
@@ -810,10 +814,13 @@ def test_filename_with_curved_paths():
 
     parse_file_tags(file_info, tags, None)
 
-    # Should add curved shape tags
+    # Should add curved shape tags. Both curved_floors and
+    # curved_walls are named, so this resolves to a floor that takes a
+    # wall rather than to both shapes.
     assert ("shape", "floor") in tags
     assert ("shape", "curved") in tags
-    assert ("shape", "wall") in tags
+    assert ("shape", "floor", "wall") in tags
+    assert ("shape", "wall") not in tags
 
 
 def test_filename_with_primary_paths():
@@ -827,10 +834,12 @@ def test_filename_with_primary_paths():
 
     parse_file_tags(file_info, tags, None)
 
-    # Should add primary shape tags
+    # Should add primary shape tags. primary_floors and primary_walls
+    # are both named, so the same rule applies.
     assert ("shape", "floor") in tags
     assert ("shape", "square") in tags
-    assert ("shape", "wall") in tags
+    assert ("shape", "floor", "wall") in tags
+    assert ("shape", "wall") not in tags
 
 
 def test_filename_with_texture_variants():
@@ -1592,3 +1601,292 @@ def test_incremental_processing_with_metadata_after_fix():
     assert ("another", "tag") in result["tags"]
     assert "config" in result
     assert result["config"] == {"key": "value"}
+
+
+def test_a_plural_build_directory_is_the_same_build():
+    """`separate_walls` and `separate_wall` are one system, spelled twice.
+
+    These are hand-made directory names and both spellings reached the
+    collection: 3,312 files under the singular, 227 under the plural.
+    Matching only the singular left all 248 aztlan walls with no `build`
+    tag at all, which kept them out of the wall guide entirely — it asks
+    for `build|separate wall` because every method now takes the same
+    wall part.
+
+    The plural directory is being renamed. This is the backstop, and it
+    is worth having because the failure was silent: no file was
+    rejected, no warning was printed, the tags were simply thinner than
+    they should have been.
+    """
+    plural = (
+        "tiles/aztlan/separate_walls/primary_walls/snakehole/"
+        "openlock+unsupported/side/aztlan#snakehole.BA.openlock+unsupported,side.stl"
+    )
+    singular = (
+        "tiles/building_facades/stone_brick/separate_wall/chimney/"
+        "stone_brick#wall+upper,chimney.D.openlock,side.stl"
+    )
+
+    for full_name in (plural, singular):
+        tags = set()
+        parse_file_tags(
+            {
+                "file": full_name.split("/")[-1],
+                "full_name": full_name,
+                "path": full_name.split("/")[:-1],
+            },
+            tags,
+            None,
+        )
+        assert ("build", "separate wall") in tags, full_name
+
+
+def test_a_directory_that_merely_starts_the_same_is_not_a_build():
+    """The plural is one letter, not a prefix match.
+
+    `s2w` is a real build and `s2world` would not be; matching loosely
+    would tag files by accident, and a wrong build tag is worse than a
+    missing one because nothing looks broken.
+    """
+    full_name = "tiles/s2world/decor/plain#floor.1x1.openforge.stl"
+    tags = set()
+    parse_file_tags(
+        {
+            "file": full_name.split("/")[-1],
+            "full_name": full_name,
+            "path": full_name.split("/")[:-1],
+        },
+        tags,
+        None,
+    )
+
+    assert not [tag for tag in tags if tag[0] == "build"]
+
+
+def test_where_a_wall_sits_is_a_texture_not_a_component():
+    """A storey is how a wall looks, so it rides on the texture.
+
+    These were named `stone_brick#wall+upper...`, which made the storey
+    a child of `component|wall` and cost the piece the bare
+    `component|wall` that says it is a wall at all — 50 walls lost it
+    that way. They are `stone_brick%upper#wall...` now, the same shape
+    as `dungeon_stone%block`: the ground floor is brick on a
+    foundation, the upper storey is timber-framed and stands on
+    timber, and that is a difference in appearance.
+
+    A chimney or an arrow slit still disqualifies a wall, because
+    those change what it is for rather than how it looks.
+    """
+    cases = {
+        "stone_brick%upper#wall.D.openlock,side.stl": True,
+        "stone_brick%ground#wall.D.openlock,side.stl": True,
+        "stone_brick%upper#wall,chimney.D.openlock,side.stl": False,
+        "dungeon_stone#arrow_slit.A.openforge.stl": False,
+    }
+    for filename, expected in cases.items():
+        full_name = f"tiles/building_facades/stone_brick/separate_wall/x/{filename}"
+        tags = set()
+        parse_file_tags(
+            {
+                "file": filename,
+                "full_name": full_name,
+                "path": full_name.split("/")[:-1],
+            },
+            tags,
+            None,
+        )
+        assert (("component", "wall") in tags) is expected, filename
+
+
+def test_a_carving_does_not_stop_a_wall_being_a_wall():
+    """A dragon skull is not a second component, it is the same wall.
+
+    The parser already separates appearance from function: 15 component
+    names move into the `decoration` namespace. But that ran *after*
+    the check that asks "is this only a wall?", so all 33 decorated
+    walls in the collection lost `component|wall` — the tag that says a
+    piece is a wall at all — and dropped out of the wall guide.
+
+    An archway is still a special: it changes what the wall does.
+    """
+    cases = {
+        "dungeon_stone#wall,fire.2x.openforge.stl": True,
+        "cut-stone#wall,beezlebub.2x.openforge.stl": True,
+        "cut-stone#wall,archway,fire.2x.openforge.stl": False,
+    }
+    for filename, expected in cases.items():
+        full_name = f"tiles/dungeon_stone/separate_wall/primary_walls/{filename}"
+        tags = set()
+        parse_file_tags(
+            {
+                "file": filename,
+                "full_name": full_name,
+                "path": full_name.split("/")[:-1],
+            },
+            tags,
+            None,
+        )
+        assert (("component", "wall") in tags) is expected, filename
+        # The decoration itself survives either way, in its own
+        # namespace rather than as a component.
+        assert [tag for tag in tags if tag[0] == "decoration"], filename
+
+
+def test_timber_and_corbels_are_how_a_wall_looks_not_what_it_does():
+    """Half-timbering does not stop a wall being a plain wall.
+
+    A chimney or a fireplace does: those change what the wall is for,
+    and the wall guide is trying to keep them out. Timber framing and
+    stone corbels are appearance, the same call as a celtic knot.
+
+    Corbels arrive two ways depending on the filename — as a sibling in
+    `wall+ground,corbels` and as the wall's own child in
+    `wall+corbels` — so both have to land in the decoration namespace.
+    """
+    keeps_it = [
+        "stone_brick%ground#wall,timber_a.D.openlock,side.stl",
+        "stone_brick%upper#wall,corbels,timber_a.D.openlock,side.stl",
+        "stone_brick#wall,corbels.D.openlock,side.stl",
+    ]
+    loses_it = [
+        "stone_brick%upper#wall,chimney.D.openlock,side.stl",
+        "stone_brick%ground#wall,fireplace.A.openforge,side.stl",
+    ]
+    for filename, expected in [(f, True) for f in keeps_it] + [
+        (f, False) for f in loses_it
+    ]:
+        full_name = f"tiles/building_facades/stone_brick/separate_wall/x/{filename}"
+        tags = set()
+        parse_file_tags(
+            {
+                "file": filename,
+                "full_name": full_name,
+                "path": full_name.split("/")[:-1],
+            },
+            tags,
+            None,
+        )
+        assert (("component", "wall") in tags) is expected, filename
+        # Nothing is lost: the decoration is recorded, just not as a
+        # component that argues about what the piece is.
+        if expected:
+            assert [tag for tag in tags if tag[0] == "decoration"], filename
+
+
+def test_nothing_is_both_a_floor_and_a_wall():
+    """A piece carrying both is a floor that *takes* a wall.
+
+    176 pieces in the collection carried `shape|floor` and `shape|wall`
+    together, which is not a thing a piece can be. The tag for a floor
+    a wall stands on is `shape|floor|wall`.
+
+    `shape|wall` reaches them from four unrelated places, which is why
+    the rule is applied at the end rather than at any one of them:
+
+    - the filename, in `#wall,floor`
+    - a `wall` directory in the path
+    - the size table, where 40 of 163 codes assert a shape. `AS` is a
+      length a wall or a floor edge can have, so on a floor it means
+      the floor takes a wall, not that the floor is one.
+    - `_copy_base_shapes`, which gives a `shape|base|wall` piece the
+      plain `shape|wall` beside it — and which runs inside
+      `filter_shape` rather than before it. That fourth source is what
+      makes "at the end" mean *after that copy* and not merely late:
+      the last case below comes out right only in that order.
+    """
+    cases = {
+        # Already correct; only the spurious bare tag goes.
+        "tiles/aztlan/s2w/wall/floor/aztlan#floor+s2w+wall.2x2.openforge.stl": {
+            ("shape", "floor"),
+            ("shape", "floor", "s2w"),
+            ("shape", "floor", "wall"),
+        },
+        # The one-piece wall-on-tile tile, from the filename.
+        "tiles/dungeon_stone/wall_on_tile/wall/floor%block/"
+        "dungeon_stone%block#wall,floor.1x1.openforge.stl": {
+            ("shape", "floor"),
+            ("shape", "floor", "wall"),
+        },
+        # An ordinary floor whose *size code* claimed it was a wall.
+        "tiles/aztlan/floors/floor/openforge/aztlan#floor.AS.openforge.stl": {
+            ("shape", "floor"),
+            ("shape", "floor", "wall"),
+        },
+        # The fourth source, and the one that pins the ordering: no
+        # `wall` appears in the path and no size code asserts one, so
+        # the bare `shape|wall` here can only have come from
+        # `_copy_base_shapes` a few lines above the rule. Run the rule
+        # before that copy and this comes out carrying `shape|floor`
+        # and `shape|wall` together — exactly the state the rule
+        # exists to prevent.
+        "tiles/dungeon_stone/s2w/bases/"
+        "dungeon_stone#base+wall,floor.2x2.openforge.stl": {
+            ("shape", "base"),
+            ("shape", "base", "wall"),
+            ("shape", "floor"),
+            ("shape", "floor", "wall"),
+        },
+    }
+    for full_name, expected_shapes in cases.items():
+        tags = set()
+        parse_file_tags(
+            {
+                "file": full_name.split("/")[-1],
+                "full_name": full_name,
+                "path": full_name.split("/")[:-1],
+            },
+            tags,
+            None,
+        )
+        assert {tag for tag in tags if tag[0] == "shape"} == expected_shapes, full_name
+
+
+def test_a_wall_that_is_not_a_floor_keeps_its_shape():
+    """The rule only fires when both are present.
+
+    A plain wall must come out of this untouched, or the fix for the
+    floors would empty the wall guide.
+    """
+    full_name = "tiles/aztlan/separate_wall/primary_walls/aztlan#wall.A.openforge.stl"
+    tags = set()
+    parse_file_tags(
+        {
+            "file": full_name.split("/")[-1],
+            "full_name": full_name,
+            "path": full_name.split("/")[:-1],
+        },
+        tags,
+        None,
+    )
+
+    assert ("shape", "wall") in tags
+    assert ("shape", "floor") not in tags
+    assert ("shape", "floor", "wall") not in tags
+
+
+def test_a_wall_with_no_other_component_keeps_component_wall():
+    """The arm that *grants* the tag, which reads dead and is not.
+
+    `component|wall` is what the wall guide requires, so a piece that
+    loses it here becomes unreachable. Deleting the `else` strips it
+    from 75 files across five texture families — these cave thick-wall
+    corners among them, which carry a corner component and no wall
+    component of their own until this puts one there.
+    """
+    full_name = (
+        "tiles/cave/thick_wall/wall/corner/openforge/"
+        "cave%aggregate+2#corner.IL+corner,270.openforge.stl"
+    )
+    tags = set()
+    parse_file_tags(
+        {
+            "file": full_name.split("/")[-1],
+            "full_name": full_name,
+            "path": full_name.split("/")[:-1],
+        },
+        tags,
+        None,
+    )
+
+    assert ("shape", "wall") in tags
+    assert ("component", "wall") in tags

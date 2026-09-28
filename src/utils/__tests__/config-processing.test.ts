@@ -469,6 +469,43 @@ describe('config-processing', () => {
         deny: []
       });
     });
+
+    it('carries deny_children and allow through untouched', () => {
+      // The middle of a contract asserted at both ends: the modal's
+      // props are checked in guide-page.test.tsx and the SQL is
+      // checked in test_tags_sql.py, and nothing checked the step
+      // between. These two are the guide's sweep — what keeps the
+      // arrow slits out of a plain wall's dialog — so losing them
+      // here widens the result set without any error.
+      const configValues: ConfigTags = {
+        require: [{ tag: 'shape|wall' }],
+        deny: [],
+        deny_children: [{ tag: 'component' }],
+        allow: [{ tag: 'component|wall' }]
+      };
+
+      expect(processConfigValues(configValues)).toEqual({
+        require: ['shape|wall'],
+        deny: [],
+        denyChildren: ['component'],
+        allow: ['component|wall']
+      });
+    });
+
+    it('omits them when they are not asked for', () => {
+      // Every other caller of this function is unaware of them, and
+      // an empty array is not the same as absent to the store.
+      const configValues: ConfigTags = {
+        require: [{ tag: 'shape|wall' }],
+        deny: [],
+        deny_children: [],
+        allow: []
+      };
+
+      const result = processConfigValues(configValues);
+      expect(result).not.toHaveProperty('denyChildren');
+      expect(result).not.toHaveProperty('allow');
+    });
   });
 
   describe('createDeepLink', () => {

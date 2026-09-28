@@ -1,3 +1,13 @@
+# Configuration
+
+```json
+{"bots": {"gemini": false, "cursor": false}}
+```
+
+Neither Gemini Code Assist nor Cursor Bugbot is installed on this repository.
+The agent pack below is the whole review, so the loop must not trigger either
+bot or wait for one.
+
 # Agents
 
 Each H2 below names a reviewer. The one-line summary tells the main loop **what the reviewer checks and when to spawn it** — use it to decide whether the PR diff is in scope. The body points at `.reviewers/<name>.md`, which the spawned Task reads as its complete specification.
@@ -123,7 +133,9 @@ Read `.reviewers/js-async-reviewer.md` and follow it as your complete review spe
 ## credentials-hygiene-reviewer
 
 **What it checks:** literal secrets/JWTs committed anywhere (P1), HAR/traffic captures with live tokens in the diff (P1 — this project uses HAR captures for Thingiverse reverse-engineering; they carry live credentials and stay out of the repo), tokens in URLs when a header works, tokens echoed to output, insecure persistence of refresh tokens, realistic credentials in test fixtures.
-**When to spawn:** PR touches auth/token code, adds fixtures or data files, adds `*.har`/capture artifacts, modifies `.gitignore`/env handling, or touches the Thingiverse integration. Cheap to run — when in doubt, spawn it.
+**When to spawn:** PR touches auth/token code, adds fixtures or data files, adds `*.har`/capture artifacts, modifies `.gitignore`/env handling, or touches the Thingiverse integration.
+
+**Not on a PR that only moves request-echo code.** Retired from PR #241 after four consecutive clean rounds, on its own argument: the two things it was asked about there were pure self-echo of query-string input under `repr` and a hard cap, there is no credential anywhere in the guides subsystem, and guides are public. Re-summon it when a PR moves auth code, tokens, captures or env handling — not to keep a streak going.
 
 Read `.reviewers/credentials-hygiene-reviewer.md` and follow it as your complete review specification.
 

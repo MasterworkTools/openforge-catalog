@@ -100,6 +100,11 @@ function checkPartRequirements(
   return true;
 }
 
+/** Where a blueprint's file is downloaded from. */
+export function downloadUrl(blueprintId: string): string {
+  return `/api/blueprints/${blueprintId}/download`;
+}
+
 /**
  * Collects all download URLs for a blueprint and its selected parts
  * @param blueprint - The main blueprint
@@ -115,14 +120,14 @@ export function collectDownloadUrls(
 
   // Add main blueprint download if it has a file_name
   if (blueprint.file_name) {
-    urls.push(`/api/blueprints/${blueprint.id}/download`);
+    urls.push(downloadUrl(blueprint.id));
     processedBlueprints.add(blueprint.id);
   }
 
   // Add downloads for each selected part and its nested parts
   const processBlueprint = (bp: Blueprint) => {
     if (bp.file_name && !processedBlueprints.has(bp.id)) {
-      urls.push(`/api/blueprints/${bp.id}/download`);
+      urls.push(downloadUrl(bp.id));
       processedBlueprints.add(bp.id);
     }
   };

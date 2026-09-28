@@ -1,11 +1,16 @@
 import copy
+import importlib.resources as impresources
 import re
 from pathlib import Path
 
 import pytest
 import yaml
 
-from openforge.guides.validation import validate_guide_document
+import openforge.db.fixtures.guides as guide_fixtures
+from openforge.guides.validation import (
+    reject_bad_recommendations,
+    validate_guide_document,
+)
 
 WALL_GUIDE = {
     "key": "wall",
@@ -96,6 +101,55 @@ def test_schema_error_names_the_offending_step(guide):
 
     assert "step 'method'" in str(excinfo.value)
     assert "option 's2w-modular'" in str(excinfo.value)
+    # And which guide. Two functions embed the guide name in a message
+    # independently — `_validate_shape`, which raises this one, and
+    # `_raise_invalid`, which raises the cross-reference and
+    # recommendation ones. Neither calls the other, so pinning this
+    # message says nothing about that one; it is pinned separately in
+    # `test_a_malformed_default_clause_names_the_guide_rather_than_crashing`.
+    assert "guide 'wall'" in str(excinfo.value)
+
+
+@pytest.mark.parametrize(
+    "questions, singular",
+    [("steps", "step"), ("refinements", "refinement")],
+)
+def test_a_question_may_not_take_the_page_s_own_query_key(guide, questions, singular):
+    """`guide` is the page's query key, not a question's.
+
+    The page's URL is `?guide=<key>&<question>=<answer>`, so a question
+    named `guide` is handed the guide's own key as its answer on first
+    load and the resolve call 400s before anything renders — the guide
+    cannot be opened at all, and "Start this guide over" links to the
+    same parameter that broke it. Nothing downstream can fix that, so it
+    is refused at authoring time.
+    """
+    guide[questions][0]["key"] = "guide"
+
+    with pytest.raises(ValueError) as excinfo:
+        validate_guide_document(guide)
+
+    assert f"{singular} 'guide'" in str(excinfo.value)
+    # And which guide: this comes out of `_validate_shape`, which embeds
+    # the name itself rather than going through `_raise_invalid`.
+    assert "guide 'wall'" in str(excinfo.value)
+
+
+def test_an_option_may_still_be_named_guide(guide):
+    """The constraint is on question keys only, and stops there.
+
+    An option key is an answer, not a query key — `?method=guide` is
+    fine — and a role reaches the URL as `part.guide`, whose dot no
+    url_key can spell. Pinning that here so the `guide` ban is not
+    widened to every key in the document by someone reading only the
+    test above.
+    """
+    guide["steps"][0]["options"][0]["key"] = "guide"
+    guide["refinements"][1]["when"] = {"selected": {"method": ["guide"]}}
+    guide["roles"]["guide"] = {"title": "Guide", "query": {"require": ["shape|wall"]}}
+    guide["steps"][0]["options"][0]["roles"]["guide"] = None
+
+    assert validate_guide_document(guide) is guide
 
 
 def test_schema_error_names_the_offending_role(guide):
@@ -249,6 +303,36 @@ def test_the_design_documents_example_guide_is_a_valid_guide():
     assert block, "the design document no longer contains a guide example"
 
     validate_guide_document(yaml.safe_load(block.group(1)))
+
+
+def test_every_shipped_guide_fixture_is_a_valid_guide():
+    """The guides that actually ship, not just the doc's example.
+
+    Nothing validated them. Every other test in this file builds a
+    document by hand, and the loader is the only thing that would have
+    caught a malformed fixture — at load time, on someone's machine.
+    The wall guide is 850 lines and uses every term the format has, so
+    it is the one most able to drift away from the schema.
+    """
+    # Located as a package resource, not by a path relative to the
+    # working directory. The first version of this globbed
+    # `openforge/db/fixtures/guides` and skipped on an empty result,
+    # so run from anywhere but the repo root it reported a green
+    # SKIPPED and validated nothing — a guard that guarded nothing.
+    fixtures = [
+        entry
+        for entry in impresources.files(guide_fixtures).iterdir()
+        if entry.name.endswith(".yaml")
+    ]
+    assert fixtures, "no guide fixtures found — this test must not pass quietly"
+
+    for path in fixtures:
+        try:
+            validate_guide_document(yaml.safe_load(path.read_text()))
+        except ValueError as e:
+            # The validator names the step or role; this names the file,
+            # which matters once there is more than one guide.
+            raise AssertionError(f"{path.name}: {e}") from e
 
 
 def test_an_option_need_not_name_any_role(guide):
@@ -419,3 +503,291 @@ def test_prefer_holds_tags_like_every_other_list(guide):
         validate_guide_document(guide)
 
     assert "role 'wall'" in str(excinfo.value)
+
+
+def test_a_choice_must_sit_inside_the_namespace_it_offers(guide):
+    """Otherwise it is a button that raises the moment it is clicked.
+
+    Resolve refuses a value from outside `from_namespace`, so a choice
+    outside it is offered and then rejected — a fault the author can
+    only find by trying every option.
+    """
+    guide["refinements"][0]["choices"] = [
+        {"tag": "texture|cave"},
+        {"tag": "connection|pegs"},
+    ]
+
+    with pytest.raises(ValueError) as excinfo:
+        validate_guide_document(guide)
+
+    assert "refinement 'texture'" in str(excinfo.value)
+    assert "connection|pegs" in str(excinfo.value)
+
+
+def test_choices_need_a_namespace_to_be_choices_of(guide):
+    """A toggle already names its own tags, so a list on one reads
+    nothing."""
+    guide["refinements"][1]["choices"] = [
+        {"tag": "connection|pegs"},
+        {"tag": "connection|side|openlock"},
+    ]
+
+    with pytest.raises(ValueError) as excinfo:
+        validate_guide_document(guide)
+
+    assert "`choices` needs `from_namespace`" in str(excinfo.value)
+
+
+def test_the_same_choice_may_not_be_offered_twice(guide):
+    guide["refinements"][0]["choices"] = [
+        {"tag": "texture|cave"},
+        {"tag": "texture|cave"},
+    ]
+
+    with pytest.raises(ValueError) as excinfo:
+        validate_guide_document(guide)
+
+    assert "duplicate" in str(excinfo.value)
+
+
+def test_a_sound_choice_list_validates(guide):
+    guide["refinements"][0]["choices"] = [
+        {"tag": "texture|cave", "title": "Cave", "blurb": "Rough rock."},
+        {"tag": "texture|dungeon_stone"},
+    ]
+
+    assert validate_guide_document(guide) is guide
+
+
+def test_every_clause_of_a_conditional_default_names_a_real_answer(guide):
+    """A recommendation is used before anyone clicks anything.
+
+    A conditional one hides its mistakes better than a plain one: the
+    misspelled clause is on a branch, so the guide looks right until
+    somebody reaches that branch and the parts empty for no visible
+    reason. So each clause is checked, not just the first.
+    """
+    guide["steps"][0]["default"] = [
+        {"when": {"selected": {"method": ["separate-wall"]}}, "value": "separate-wall"},
+        {"value": "s2w-modualr"},
+    ]
+
+    with pytest.raises(ValueError) as excinfo:
+        validate_guide_document(guide)
+
+    assert "step 'method'" in str(excinfo.value)
+    assert "s2w-modualr" in str(excinfo.value)
+
+
+def test_except_roles_must_name_a_role_the_guide_has(guide):
+    """A misspelled `except_roles` entry excepts nothing.
+
+    Which means the refinement is asked of a part that cannot answer
+    it, and that part comes back empty — a blank box on the page, with
+    nothing anywhere to say a typo caused it.
+    """
+    guide["refinements"][0]["except_roles"] = ["flor"]
+
+    with pytest.raises(ValueError) as excinfo:
+        validate_guide_document(guide)
+
+    assert "refinement 'texture'" in str(excinfo.value)
+    assert "flor" in str(excinfo.value)
+
+
+def test_substitute_must_name_a_role_the_guide_has(guide):
+    """A misspelled `substitute` role gets the chosen tag instead.
+
+    Which is precisely the bug substitution exists to prevent — a
+    towne base that does not exist — reappearing under a typo.
+    """
+    guide["refinements"][0]["substitute"] = {"texture|cave": {"wal": "texture|wood"}}
+
+    with pytest.raises(ValueError) as excinfo:
+        validate_guide_document(guide)
+
+    assert "refinement 'texture'" in str(excinfo.value)
+    assert "wal" in str(excinfo.value)
+
+
+def test_match_without_under_is_refused(guide):
+    """`match` copies from the role above, so there has to be one.
+
+    Without `under` the role takes no constraint at all, so a base
+    meant to match the footprint above it matches every footprint —
+    silently, and the parts list looks plausible.
+    """
+    guide["roles"]["wall"]["match"] = ["size|width"]
+    guide["roles"]["wall"].pop("under", None)
+
+    with pytest.raises(ValueError) as excinfo:
+        validate_guide_document(guide)
+
+    assert "role 'wall'" in str(excinfo.value)
+    assert "under" in str(excinfo.value)
+
+
+def test_a_malformed_default_clause_names_the_guide_rather_than_crashing(guide):
+    """The two shapes `_recommended_values` defends against.
+
+    This runs on documents the loader never saw — `guide_sql.upsert_guide`
+    writes whatever it is handed — so a `default` list whose clauses are
+    the wrong shape reaches it. A clause missing its `value` used to
+    escape as a bare `KeyError: 'value'`, and a clause that is a plain
+    string as an `AttributeError`, both out of the one function whose
+    whole job is to say which guide and which question are at fault.
+
+    Both arms are defences against a document the loader never saw,
+    and neither had a test.
+    """
+    clause_without_value = [{"when": {"selected": {"method": ["s2w-modular"]}}}]
+    for default in (clause_without_value, ["s2w-modular"]):
+        document = copy.deepcopy(guide)
+        document["steps"][0]["default"] = default
+        with pytest.raises(ValueError) as caught:
+            reject_bad_recommendations(document)
+        # The point is the naming, not the refusal: an unnamed crash
+        # would also stop the request.
+        assert "'method'" in str(caught.value), (
+            f"{default!r} was refused as {caught.value!r}, which does not "
+            "say which question to go and look at"
+        )
+        # And which guide, which is the other half of what the docstring
+        # above claims this function's whole job is. `_raise_invalid`
+        # carries the name for this path; `_validate_shape` carries its
+        # own for the shape path. Dropping it here left all 49 tests
+        # green until this line.
+        assert "guide 'wall'" in str(caught.value), (
+            f"{default!r} was refused as {caught.value!r}, which does not "
+            "say which guide to go and look in"
+        )
+
+
+def test_a_toggle_default_takes_on_or_off(guide):
+    guide["refinements"].append(
+        {
+            "key": "pegs",
+            "role": "wall",
+            "prompt": "Pegs?",
+            "on_tags": {"require": ["connection|pegs"]},
+            "off_tags": {"deny": ["connection|pegs"]},
+            "default": "yes",
+        }
+    )
+
+    with pytest.raises(ValueError) as excinfo:
+        validate_guide_document(guide)
+
+    assert "refinement 'pegs'" in str(excinfo.value)
+    assert "'on' or 'off'" in str(excinfo.value)
+
+
+def test_a_namespace_default_must_be_under_its_namespace(guide):
+    guide["refinements"][0]["default"] = "shape|wall"
+
+    with pytest.raises(ValueError) as excinfo:
+        validate_guide_document(guide)
+
+    assert "is not under 'texture'" in str(excinfo.value)
+
+
+def test_a_default_must_be_one_of_the_choices_when_there_are_choices(guide):
+    guide["refinements"][0]["choices"] = [
+        {"tag": "texture|cave"},
+        {"tag": "texture|towne"},
+    ]
+    guide["refinements"][0]["default"] = "texture|dungeon_stone"
+
+    with pytest.raises(ValueError) as excinfo:
+        validate_guide_document(guide)
+
+    assert "is not one of its choices" in str(excinfo.value)
+
+
+def test_a_valid_default_is_let_through(guide):
+    """The other side of the three rules above, which all assert refusal.
+
+    Without this, a validator that started refusing legitimate
+    recommendations would ship green and break `bin/fixtures` on a file
+    that was always correct — and `wall.yaml` carries a default on both
+    kinds of refinement.
+    """
+    guide["refinements"][0]["choices"] = [
+        {"tag": "texture|cave"},
+        {"tag": "texture|dungeon_stone"},
+    ]
+    guide["refinements"][0]["default"] = "texture|dungeon_stone"
+    guide["refinements"].append(
+        {
+            "key": "peg-holes",
+            "role": "*",
+            "prompt": "Peg holes",
+            "on_tags": {"require": ["connection|pegs"]},
+            "off_tags": {"deny": ["connection|pegs"]},
+            "default": "off",
+        }
+    )
+
+    validate_guide_document(guide)
+
+
+def test_substitute_must_name_an_answer_the_question_offers(guide):
+    """`substitute` is keyed by the answer given, so an entry for an
+    answer the question does not offer can never fire.
+
+    Two of these survived in the wall guide after its texture list
+    stopped offering the storeys of a stone brick facade separately.
+    Nothing failed; the substitution simply never happened, which is
+    the bug substitution exists to prevent.
+    """
+    guide["refinements"][0]["choices"] = [
+        {"tag": "texture|cave"},
+        {"tag": "texture|towne"},
+    ]
+    guide["refinements"][0]["substitute"] = {
+        "texture|cave|damp": {"wall": "texture|wood"}
+    }
+
+    with pytest.raises(ValueError) as excinfo:
+        validate_guide_document(guide)
+
+    assert "refinement 'texture'" in str(excinfo.value)
+    assert "texture|cave|damp" in str(excinfo.value)
+
+
+def test_substitute_is_unchecked_when_the_answers_are_derived(guide):
+    """A question with no `choices` has its answers derived from the
+    catalog, so there is no list here to check a key against.
+    """
+    guide["refinements"][0].pop("choices", None)
+    guide["refinements"][0]["substitute"] = {"texture|cave": {"wall": "texture|wood"}}
+
+    validate_guide_document(guide)
+
+
+def test_an_option_when_must_name_an_option_that_exists(guide):
+    """An option carries a `when` of its own, read like a step's.
+
+    A misspelled one silently withholds the option on every branch —
+    the button is simply never there, with nothing to say why.
+    """
+    guide["steps"].append(
+        {
+            "key": "width",
+            "prompt": "How wide?",
+            "options": [
+                {
+                    "key": "two",
+                    "title": "2 inch",
+                    # Names the method step, which does come first —
+                    # but an option of it that does not exist.
+                    "when": {"selected": {"method": ["s2w-modlar"]}},
+                }
+            ],
+        }
+    )
+
+    with pytest.raises(ValueError) as excinfo:
+        validate_guide_document(guide)
+
+    assert "s2w-modlar" in str(excinfo.value)

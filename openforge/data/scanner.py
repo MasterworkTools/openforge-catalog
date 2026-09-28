@@ -198,7 +198,13 @@ def parse_path(file, tags):
         ("thick_wall", "thick wall"),
     ]
     for build in builds:
-        if build[0] in path:
+        # Singular or plural. These are hand-made directory names and
+        # both spellings reached the collection: 3,312 files under
+        # `separate_wall`, 227 under `separate_walls`. The plural
+        # directories have since been renamed, and this stays as the
+        # backstop Devon asked for — matching only the singular left all
+        # 227 with no build tag at all, and nothing said so.
+        if build[0] in path or f"{build[0]}s" in path:
             tags.add(("build", build[1]))
     _component_filter(builds, tags)
 
@@ -209,10 +215,12 @@ def parse_path(file, tags):
 
     if "floor" in path:
         tags.add(("shape", "floor"))
-    if "floor+special" in path:
-        tags.add(("shape", "floor"))
     if "wall" in path:
         tags.add(("shape", "wall"))
+    # Only the wall has a `+special` spelling. Two directories use it
+    # (dungeon_stone and cut-stone, both under wall_on_tile); no
+    # `floor+special` has ever existed, and the symmetrical branch
+    # that used to sit above changed nothing across all 10,696 files.
     if "wall+special" in path:
         tags.add(("shape", "wall"))
     if "curved_floors" in path:
@@ -251,15 +259,6 @@ def filter_shape(tags):
                 if tag != ("component", "wall"):
                     count += 1
         if count == 0:
-            return True
-        return False
-
-    def _check_floor_alone(tags):
-        count = 0
-        for tag in tags:
-            if tag[0] == "component":
-                count += 1
-        if count == 1:
             return True
         return False
 
@@ -329,6 +328,22 @@ def filter_shape(tags):
         return tags
 
     def _handle_decorations(tags):
+        # Timber framing and corbels are how a wall looks, not what it
+        # does — the same call as a celtic knot. A chimney or a
+        # fireplace stays a component, because those change what the
+        # wall is for. Corbels arrive both as a sibling and as the
+        # wall's own child, depending on whether the filename says
+        # `wall+corbels` or `wall+ground,corbels`.
+        for letter in ("a", "b", "c", "d"):
+            _move_tag_chain(
+                tags,
+                ["component", f"timber_{letter}"],
+                ["decoration", "timber", letter],
+            )
+        _move_tag_chain(tags, ["component", "corbels"], ["decoration", "corbels"])
+        _move_tag_chain(
+            tags, ["component", "wall", "corbels"], ["decoration", "corbels"]
+        )
         _move_tag_chain(tags, ["component", "air"], ["decoration", "symbol", "air"])
         _move_tag_chain(
             tags, ["component", "air_symbol"], ["decoration", "symbol", "air"]
@@ -398,16 +413,26 @@ def filter_shape(tags):
         )
 
     _move_tag_chain(tags, ["component", "corner"], ["shape", "corner"])
+    # Before the wall and floor checks, not after. Those checks ask
+    # "is this only a wall?" by counting component tags, and a carving
+    # is not a second component — it is the same wall with a dragon
+    # skull on it. Running afterwards meant all 33 decorated walls lost
+    # `component|wall`, which is the tag that says a piece is a wall at
+    # all. None of these 15 sources collides with the shape moves
+    # below, so this is only a question of when.
+    _handle_decorations(tags)
     if ("shape", "wall") in tags:
         if not _check_wall_alone(tags):
             tags.discard(("component", "wall"))
         else:
             tags.add(("component", "wall"))
-    if ("shape", "floor") in tags:
-        if not _check_floor_alone(tags):
-            tags.discard(("component", "floor"))
-        else:
-            tags.add(("component", "floor"))
+    # No floor counterpart to the wall block above, and not an
+    # omission: whatever it did to `component|floor`, the move on the
+    # next line erased — it turns `component|floor` into `shape|floor`,
+    # which the guard would have already proved present. Removing it
+    # changes 0 of 8,802 parsed files. The wall block survives because
+    # `component|wall` has no such move, so what it decides sticks:
+    # deleting only its `else` loses `component|wall` on 75 files.
     _move_tag_chain(tags, ["component", "floor"], ["shape", "floor"])
     _move_tag_chain(tags, ["component", "curved"], ["shape", "curved"])
     _move_tag_chain(tags, ["component", "base"], ["shape", "base"])
@@ -415,13 +440,32 @@ def filter_shape(tags):
     _move_tag_chain(tags, ["component", "riser"], ["shape", "riser"])
     _move_tag_chain(tags, ["component", "stairs"], ["shape", "stairs"])
     _move_tag_chain(tags, ["component", "column"], ["shape", "column"])
-    _handle_decorations(tags)
     if ("shape", "column") in tags:
         _check_columns(tags)
     _check_wall_low(tags)
     if ("shape", "base") in tags:
         _copy_base_shapes(tags)
     _check_floor_shapes(tags)
+    # Nothing is both a floor and a wall. A piece carrying both is a
+    # floor that takes a wall — an s2w tile, a wall-on-tile tile — and
+    # the tag for that is `shape|floor|wall`.
+    #
+    # Last, deliberately, because `shape|wall` arrives from four
+    # unrelated places and no earlier point sees them all: the filename
+    # (`#wall,floor`), a `wall` directory in the path, the size table,
+    # where 40 of the 163 codes assert a shape, and `_copy_base_shapes`
+    # just above, which gives a `shape|base|wall` piece the plain
+    # `shape|wall` beside it. `AS` is a length that a wall or a floor
+    # edge can have, so on a floor it means the floor takes a wall
+    # rather than that the floor is one.
+    #
+    # The fourth is why "last" means after `_copy_base_shapes` and not
+    # merely late: run it earlier and `#base+wall,floor` comes out
+    # carrying shape|floor and shape|wall together, which is the state
+    # this rule exists to prevent.
+    if ("shape", "floor") in tags and ("shape", "wall") in tags:
+        tags.discard(("shape", "wall"))
+        tags.add(("shape", "floor", "wall"))
 
 
 def parse_file_tags(file_info, tags, metadata):

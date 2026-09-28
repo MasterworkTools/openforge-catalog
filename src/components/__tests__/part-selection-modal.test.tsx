@@ -2,8 +2,12 @@ import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import PartSelectionModal from '../part-selection-modal';
 
+const providerProps: Record<string, unknown>[] = [];
 jest.mock('@/contexts/blueprint-context', () => ({
-  BlueprintProvider: ({ children }: { children: React.ReactNode }) => <div data-testid="blueprint-provider">{children}</div>,
+  BlueprintProvider: ({ children, ...rest }: { children: React.ReactNode }) => {
+    providerProps.push(rest);
+    return <div data-testid="blueprint-provider">{children}</div>;
+  },
 }));
 jest.mock('@/contexts/tag-context', () => ({
   TagProvider: ({ children }: { children: React.ReactNode }) => <div data-testid="tag-provider">{children}</div>,
@@ -13,8 +17,12 @@ jest.mock('../tag-container', () => {
   TagContainer.displayName = 'TagContainer';
   return TagContainer;
 });
+const resultsProps: Record<string, unknown>[] = [];
 jest.mock('../results-container', () => {
-  const ResultsContainer = () => <div data-testid="results-container">ResultsContainer</div>;
+  const ResultsContainer = (props: Record<string, unknown>) => {
+    resultsProps.push(props);
+    return <div data-testid="results-container">ResultsContainer</div>;
+  };
   ResultsContainer.displayName = 'ResultsContainer';
   return ResultsContainer;
 });
@@ -50,6 +58,18 @@ describe('PartSelectionModal', () => {
     expect(screen.getByTestId('tag-container')).toBeInTheDocument();
     expect(screen.getByTestId('results-container')).toBeInTheDocument();
     expect(screen.getByTestId('blueprint-container')).toBeInTheDocument();
+  });
+
+  it('opens the blueprint provider on the piece it was given', () => {
+    providerProps.length = 0;
+    render(<PartSelectionModal {...baseProps} initialMd5="abc123" />);
+    expect(providerProps[0]).toMatchObject({ initialMd5: 'abc123' });
+  });
+
+  it('hands the droppable tags down to the results column', () => {
+    resultsProps.length = 0;
+    render(<PartSelectionModal {...baseProps} removable={['build|s2w']} />);
+    expect(resultsProps[0]).toMatchObject({ removable: ['build|s2w'] });
   });
 
   it('does not render when isOpen is false', () => {

@@ -27,10 +27,46 @@ def validate_guide_document(data: dict) -> dict:
     _validate_shape(data)
     errors = _cross_reference_errors(data)
     if errors:
-        key = data.get("key", "<no key>")
-        joined = "\n  ".join(errors)
-        raise ValueError(f"guide {key!r} is invalid:\n  {joined}")
+        _raise_invalid(data, errors)
     return data
+
+
+def reject_bad_recommendations(data: dict) -> None:
+    """Raise unless every recommendation names an answer that exists.
+
+    The same check `validate_guide_document` makes when a guide is
+    written, made again when one is read. The write is not guaranteed
+    to have gone through it: `guide_sql.upsert_guide` stores a document
+    without passing the loader, and the guide editor in
+    `openforge_catalog-kcm` will be a second way in. A recommendation
+    naming an option that was renamed away is otherwise a predicate
+    asking for a tag nothing has, on the first screen, with nothing on
+    the page to say that a default did it.
+
+    Asked once per request rather than once per candidate answer.
+    Whether a recommendation names something real is a property of the
+    document, not of the branch anyone happens to be standing on — and
+    while it was asked per candidate, a rotted clause under a `when`
+    nobody had reached was found by the counterfactual and by nothing
+    else, so `/resolve` answered 200 and only `/availability` faulted.
+    """
+    errors = _recommendation_type_errors(data) or _default_errors(data)
+    if errors:
+        _raise_invalid(data, errors)
+
+
+def _raise_invalid(data: dict, errors: list[str]) -> None:
+    """One wording for one fault, whoever finds it.
+
+    Both entry points report the same kind of problem about the same
+    document, and they used to join their lines differently — so the
+    same rotted `default` read one way from the loader and another from
+    a request, which is exactly the sort of thing that gets grepped for
+    and missed.
+    """
+    key = data.get("key", "<no key>")
+    joined = "\n  ".join(errors)
+    raise ValueError(f"guide {key!r} is invalid:\n  {joined}")
 
 
 def _validate_shape(data: dict):
@@ -70,7 +106,15 @@ def _describe_path(data: dict, path) -> str:
 
 
 def _cross_reference_errors(data: dict) -> list[str]:
-    return _duplicate_errors(data) + _role_reference_errors(data) + _when_errors(data)
+    return (
+        _duplicate_errors(data)
+        + _role_reference_errors(data)
+        + _refinement_role_errors(data)
+        + _choice_errors(data)
+        + _default_errors(data)
+        + _match_errors(data)
+        + _when_errors(data)
+    )
 
 
 def _duplicate_errors(data: dict) -> list[str]:
@@ -128,6 +172,200 @@ def _role_reference_errors(data: dict) -> list[str]:
     errors += _under_cycle_errors(roles)
     errors += _orphan_role_errors(data, roles)
     return errors
+
+
+def _refinement_role_errors(data: dict) -> list[str]:
+    """`except_roles` and `substitute` name roles too.
+
+    `role` was already checked; these two were not, and both fail
+    silently rather than loudly. A misspelled `except_roles` entry
+    excepts nothing, so the refinement is asked of a part that cannot
+    answer it and the part comes back empty. A misspelled `substitute`
+    role gets the chosen tag instead of its exception — which is the
+    bug the substitution exists to prevent, reappearing under a typo.
+    """
+    roles = data["roles"]
+    errors = []
+    for refinement in data.get("refinements", []):
+        where = f"refinement {refinement['key']!r}"
+        errors += [
+            f"{where}: `except_roles` names unknown role {name!r}"
+            for name in refinement.get("except_roles", [])
+            if name not in roles
+        ]
+        offered = {choice["tag"] for choice in refinement.get("choices", [])}
+        for tag, by_role in (refinement.get("substitute") or {}).items():
+            errors += [
+                f"{where}: `substitute` for {tag!r} names unknown role {name!r}"
+                for name in by_role
+                if name not in roles
+            ]
+            # Keyed by the answer given, so an entry for an answer the
+            # question does not offer can never fire. Two of these
+            # survived a list that stopped offering the storeys of a
+            # stone brick facade separately, and nothing said so.
+            # Only checked against a closed list: a derived question
+            # has no `choices` here to check against.
+            if offered and tag not in offered:
+                errors.append(
+                    f"{where}: `substitute` for {tag!r}, which is not "
+                    f"one of its choices"
+                )
+    return errors
+
+
+def _choice_errors(data: dict) -> list[str]:
+    """A refinement's `choices` have to be answers it can accept.
+
+    The namespace check at resolve time refuses a tag from outside
+    `from_namespace`, so a choice outside it is an option that raises
+    the moment someone clicks it. And a toggle has no namespace to sit
+    in, so `choices` on one is a list nothing would ever read.
+    """
+    errors = []
+    for refinement in data.get("refinements", []):
+        choices = refinement.get("choices") or []
+        if not choices:
+            continue
+        where = f"refinement {refinement['key']!r}"
+        namespace = refinement.get("from_namespace")
+        if not namespace:
+            errors.append(f"{where}: `choices` needs `from_namespace`")
+            continue
+        errors += [
+            f"{where}: choice {choice['tag']!r} is not under {namespace!r}"
+            for choice in choices
+            if not choice["tag"].startswith(f"{namespace}|")
+        ]
+        errors += _duplicates(
+            f"choice in {where}", [choice["tag"] for choice in choices]
+        )
+    return errors
+
+
+def _recommended_values(question: dict) -> list[str | None]:
+    """Every value a `default` can recommend.
+
+    One for a plain default, and one per clause for a conditional one.
+    Each is checked the same way: which branch recommends it does not
+    change whether it names an answer that exists.
+    """
+    default = question.get("default")
+    if default is None:
+        return []
+    if isinstance(default, list):
+        # Defensive on both counts, because this runs on documents the
+        # loader never saw. A clause missing its `value` used to escape
+        # as a bare `KeyError: 'value'`, and a clause that is a bare
+        # string rather than a mapping as an `AttributeError` — both
+        # from the one function whose whole job is to name the guide
+        # and the question at fault.
+        #
+        # Both come back as `None`, which the type pass then reports as
+        # "recommends None". That names the guide and the question but
+        # not the clause fault, so a missing `value`, a bare string and
+        # an explicit `"value": None` all read alike. Telling those
+        # three apart would mean reporting the shape here rather than
+        # flattening it.
+        return [
+            clause.get("value") if isinstance(clause, dict) else None
+            for clause in default
+        ]
+    return [default]
+
+
+def _recommendation_type_errors(data: dict) -> list[str]:
+    """Recommendations the schema would have refused.
+
+    Checked before `_default_errors` and never beside it, because what
+    that function does with a non-string depends on which of its four
+    checks the value reaches, and none of the four does anything good.
+    Measured, against a mapping, a list, an int and `None`:
+
+    - the step check is `value not in keys` where `keys` is a **set**,
+      so a mapping or a list is a `TypeError: unhashable type` and an
+      int or `None` is reported as an unknown option
+    - the namespace check calls `value.split(",")`, so every one of
+      them is an `AttributeError`
+    - the toggle check tests a tuple and the choices check a list, so
+      neither ever raises: all four are reported as an answer the
+      question does not offer
+
+    So this pass stops two unnamed crashes and corrects two confident
+    statements about values that were never answers at all. Which of
+    the four a document reaches is not something the caller can know,
+    which is the argument for doing it first rather than tidying the
+    four.
+
+    `validate_guide_document` has `_validate_shape` in front of it for
+    this; a document read back out of the database has only this.
+    """
+    return [
+        f"{kind} {question['key']!r}: `default` recommends {value!r}, "
+        "which is not a string"
+        for kind, questions in (
+            ("step", data["steps"]),
+            ("refinement", data.get("refinements", [])),
+        )
+        for question in questions
+        for value in _recommended_values(question)
+        if not isinstance(value, str)
+    ]
+
+
+def _default_errors(data: dict) -> list[str]:
+    """A recommendation has to name an answer that exists.
+
+    It is used before anyone clicks anything, so a misspelled one is
+    not a button that misbehaves — it is a predicate asking for a tag
+    nothing has, on the first screen, with no way to tell from the
+    page that a default is what did it.
+    """
+    errors = []
+    for step in data["steps"]:
+        keys = {option["key"] for option in step["options"]}
+        errors += [
+            f"step {step['key']!r}: `default` names unknown option {value!r}"
+            for value in _recommended_values(step)
+            if value not in keys
+        ]
+    for refinement in data.get("refinements", []):
+        where = f"refinement {refinement['key']!r}"
+        for value in _recommended_values(refinement):
+            errors += _refinement_default_errors(refinement, where, value)
+    return errors
+
+
+def _refinement_default_errors(refinement: dict, where: str, value: str) -> list[str]:
+    """One recommended value, against the answers this refinement has."""
+    if "on_tags" in refinement:
+        if value not in ("on", "off"):
+            return [f"{where}: `default` takes 'on' or 'off', not {value!r}"]
+        return []
+    errors = []
+    namespace = refinement.get("from_namespace") or refinement.get("from_combination")
+    if namespace and not all(
+        part.startswith(f"{namespace}|") for part in value.split(",")
+    ):
+        errors.append(f"{where}: `default` {value!r} is not under {namespace!r}")
+    choices = [choice["tag"] for choice in refinement.get("choices", [])]
+    if choices and value not in choices:
+        errors.append(f"{where}: `default` {value!r} is not one of its choices")
+    return errors
+
+
+def _match_errors(data: dict) -> list[str]:
+    """`match` copies from the role above, so there has to be one.
+
+    Without `under` there is nothing to copy from and the role silently
+    takes no constraint at all — a base that was meant to match the
+    footprint above it matches every footprint instead.
+    """
+    return [
+        f"role {name!r}: `match` requires `under`, which it does not have"
+        for name, role in data["roles"].items()
+        if role.get("match") and "under" not in role
+    ]
 
 
 def _under_cycle_errors(roles: dict) -> list[str]:
@@ -198,6 +436,17 @@ def _when_errors(data: dict) -> list[str]:
             options_by_step,
             earlier=[s["key"] for s in steps[:position]],
         )
+        # An option carries a `when` of its own, read by the same
+        # helper the step's is, and gating one option of eight rather
+        # than the whole step. It answers to the same rule: the step it
+        # reads has to come before the step the option belongs to.
+        for option in step["options"]:
+            errors += _when_clause_errors(
+                f"step {step['key']!r} option {option['key']!r}",
+                option.get("when"),
+                options_by_step,
+                earlier=[s["key"] for s in steps[:position]],
+            )
     for refinement in data.get("refinements", []):
         errors += _when_clause_errors(
             f"refinement {refinement['key']!r}",

@@ -19,6 +19,13 @@ export interface ConfigTags {
   require?: ConfigTag[];
   deny?: ConfigTag[];
   constrain?: ConstrainTag[];
+  /**
+   * "This tag and nothing else beneath it", and the children spared
+   * from that sweep. Guides use them to ask for a plain wall without
+   * naming every variant that is not one.
+   */
+  deny_children?: ConfigTag[];
+  allow?: ConfigTag[];
 }
 
 export interface ConfigPart {

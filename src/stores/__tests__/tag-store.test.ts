@@ -326,6 +326,48 @@ describe('TagStore', () => {
       expect(store.getState().data.tag2.__count).toBe(3);
     });
 
+    it('sends deny_children and allow when the guide has set them', async () => {
+      // The sweep the guide's dialog opens with. Asserted at the modal
+      // boundary and again in the SQL, with nothing checking that the
+      // store actually puts it on the wire between them.
+      store.getState().setTagState({
+        require: ['shape|wall'],
+        deny: [],
+        denyChildren: ['component'],
+        allow: ['component|wall']
+      });
+      (fetch as jest.Mock).mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ tag_counts: {} })
+      });
+
+      await store.getState().fetchData();
+
+      expect(JSON.parse((fetch as jest.Mock).mock.calls[0][1].body)).toEqual({
+        require: [{ tag: 'shape|wall' }],
+        deny: [],
+        deny_children: [{ tag: 'component' }],
+        allow: [{ tag: 'component|wall' }]
+      });
+    });
+
+    it('omits them entirely for an ordinary search', async () => {
+      // An ordinary catalog search must send exactly the body it
+      // always sent — an empty array is not the same as absent to a
+      // backend that branches on presence.
+      store.getState().setTagState({ require: ['shape|wall'], deny: [] });
+      (fetch as jest.Mock).mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ tag_counts: {} })
+      });
+
+      await store.getState().fetchData();
+
+      const body = JSON.parse((fetch as jest.Mock).mock.calls[0][1].body);
+      expect(body).not.toHaveProperty('deny_children');
+      expect(body).not.toHaveProperty('allow');
+    });
+
     it('should include search parameters when not defaults', async () => {
       store = createTagStore(false, false, true); // search_blueprints = true
       (fetch as jest.Mock).mockResolvedValueOnce({
