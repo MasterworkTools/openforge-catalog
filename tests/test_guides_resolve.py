@@ -1702,6 +1702,227 @@ def test_two_answers_jointly_to_blame_are_not_blamed_one_at_a_time(guide):
     ), f"a scapegoat for a joint failure: {rough.get('prompt')}"
 
 
+#: Two roles, one of which the catalog cannot serve at all, so the only
+#: way it has a part is by hand. `BLAME_CATALOG` has no wall in it.
+BLAME_GUIDE = {
+    "key": "wall",
+    "title": "How do I make a wall?",
+    "steps": [
+        {
+            "key": "method",
+            "prompt": "How?",
+            "options": [
+                {
+                    "key": "m",
+                    "title": "Wall and floor",
+                    "roles": {"wall": None, "floor": None},
+                }
+            ],
+        },
+        # Names one role and not the other, so answering it re-decides
+        # the floor and leaves a wall pin standing — the shape in which
+        # a step's exemption differs from a refinement's.
+        {
+            "key": "finish",
+            "prompt": "Finish",
+            "options": [
+                {"key": "smooth", "title": "Smooth", "roles": {"floor": None}},
+                {
+                    "key": "rough",
+                    "title": "Rough",
+                    "roles": {"floor": {"require": ["detail|rough"]}},
+                },
+            ],
+        },
+        # Last, and deliberately: blame clears one answer at a time and
+        # discards a revival that truncated the answers after it, so a
+        # step with anything behind it is never the one named.
+        {
+            "key": "size",
+            "prompt": "Width",
+            # Neither option names a role, which is how "how wide?"
+            # narrows whatever the earlier answers put in play — the
+            # wall included, pinned or not.
+            "options": [
+                {
+                    "key": "four",
+                    "title": "4 inch",
+                    "tags": {"require": ["size|width|4"]},
+                },
+                {
+                    "key": "two",
+                    "title": "2 inch",
+                    "tags": {"require": ["size|width|2"]},
+                },
+            ],
+        },
+    ],
+    "roles": {
+        "wall": {"title": "Wall", "query": {"require": ["shape|wall"]}},
+        "floor": {"title": "Floor", "query": {"require": ["shape|floor"]}},
+    },
+    "refinements": [
+        {
+            "key": "texture",
+            "role": "*",
+            # The whole point: this question decides the floor and not
+            # the wall, so the page keeps a wall pin across it —
+            # `releasedBy` in `guide-service.ts` releases only the pins
+            # the question `narrows`.
+            "except_roles": ["wall"],
+            "prompt": "Texture",
+            "from_namespace": "texture",
+            "choices": [{"tag": "texture|stone"}, {"tag": "texture|towne"}],
+        }
+    ],
+}
+
+BLAME_CATALOG = [
+    {
+        "id": "1",
+        "blueprint_name": "wide stone floor",
+        "tags": ["shape|floor", "size|width|4", "texture|stone"],
+    },
+    # Towne at the wrong width, so the width is the single answer
+    # responsible for towne being dead and there is something to name.
+    {
+        "id": "2",
+        "blueprint_name": "narrow towne floor",
+        "tags": ["shape|floor", "size|width|2", "texture|towne"],
+    },
+    # A floor at the other width, so that the *wall* is the only thing
+    # the narrow answer would empty.
+    {
+        "id": "3",
+        "blueprint_name": "narrow stone floor",
+        "tags": ["shape|floor", "size|width|2", "texture|stone"],
+    },
+    # Rough at the wrong width too, so the width is again the single
+    # answer responsible — this time for a dead answer to a step.
+    {
+        "id": "4",
+        "blueprint_name": "narrow rough stone floor",
+        "tags": ["shape|floor", "size|width|2", "texture|stone", "detail|rough"],
+    },
+]
+
+
+def test_the_sweep_holds_a_pin_only_where_the_click_would_keep_it():
+    """Which pins stand is a question per answer, not per request.
+
+    Answering a question releases the pins on the parts it decides
+    (`releasedBy` in `guide-service.ts`; `docs/design/guided-builds.md`),
+    so the sweep has to ask about the pins each answer would *leave*,
+    and it has to give the same answer to both of the things that read
+    it. Four questions, one pin, the wall the catalog cannot serve:
+
+    - `texture` reaches the floor and not the wall, so the wall pin
+      stands and blame can see past it to the width;
+    - the same, unpinned, where the wall is what every answer empties
+      and there is no honest single answer to name;
+    - `size` reaches the wall — neither width option names a role — so
+      taking the other width is also what lets that pin go, and the
+      answer stays dead;
+    - `finish` names the floor and not the wall, the step-shaped version
+      of the first case.
+
+    `_blame` is where this bites hardest. Its counterfactual is the
+    *same click* as the answer it explains, so it needs the same pins.
+
+    Without that, the pinned wall — the one role whose composed
+    predicate can never be satisfied, and the one the person settled
+    themselves — comes back empty in the counterfactual, every removal
+    looks like no revival at all, and the page prints "Leaves no Floor."
+    with nothing after it. The pin they made to settle one part silences
+    the explanation of another.
+
+    Which is why the assertions are on `because` and in both
+    directions. With the pin in place `unavailable` is the same list
+    whether or not the pins reach blame — the pin puts the wall in
+    `baseline`, so the sweep's own pass skips it either way — and a test
+    that asserted on the dead list alone would pass with the exemption
+    deleted from `_blame` entirely.
+
+    No database: the property is `_blame`'s and `resolve` is the
+    smallest thing that reaches it.
+    """
+    find = matching_finder(BLAME_CATALOG)
+    answered = {
+        "method": "m",
+        "finish": "smooth",
+        "size": "four",
+        "texture": "texture|stone",
+    }
+    handpicked = {"id": "h", "blueprint_name": "a wall they found", "tags": []}
+
+    def swept(selections, find_pinned=None):
+        resolved = resolve(
+            BLAME_GUIDE, selections, find, exists=find, find_pinned=find_pinned
+        )
+        questions = [*resolved["steps"], *resolved["refinements"]]
+        return {question["key"]: question for question in questions}
+
+    # The control: nothing pinned, and the catalog has no wall, so the
+    # wall is what *every* answer would leave empty and there is no
+    # honest single answer to blame for it — clearing the width does not
+    # conjure a wall.
+    unpinned = swept(answered)["texture"]
+    assert unpinned["unavailable"] == ["texture|stone", "texture|towne"], (
+        "with no wall in the catalog and none pinned, every answer is "
+        "dead over the wall, which is what the pin below clears out of "
+        "the way"
+    )
+    bare = unpinned["because"]["texture|towne"]
+    assert bare["part"] == "Wall"
+    assert "question" not in bare, (
+        "the wall is empty in every counterfactual, so no removal can "
+        f"revive the build: {bare.get('prompt')}"
+    )
+
+    # Pinned, and the wall stops being in the way: the floor is what
+    # towne would empty, and the width is why.
+    asked = swept(
+        {**answered, "part.wall": "a" * 32}, find_pinned=lambda md5: handpicked
+    )
+    pinned = asked["texture"]
+    assert pinned["unavailable"] == ["texture|towne"], (
+        "the fixture no longer has one texture the floor can serve and "
+        "one it cannot, so there is nothing for blame to explain"
+    )
+    reason = pinned["because"]["texture|towne"]
+    assert reason["part"] == "Floor"
+    assert reason.get("question") == "size", (
+        "the pinned wall came back empty in the counterfactual, so the "
+        f"removal that revives the floor did not look like one: {reason}"
+    )
+    assert reason.get("prompt") == "Width"
+
+    # And the pin is no help to the question that would re-decide it.
+    # Neither width option names a role, so both narrow the wall, so
+    # taking the other one is also what lets the wall pin go — and
+    # nothing in the catalog is a wall at any width.
+    width = asked["size"]
+    assert width["unavailable"] == ["two"], (
+        "the narrow answer is offered over a pinned wall, and the click "
+        "that takes it releases that very pin"
+    )
+    assert width["because"]["two"]["part"] == "Wall"
+
+    # And a step that names one role and not the other: answering the
+    # finish re-decides the floor and says nothing about the wall, so
+    # the wall pin stands and the explanation stands with it.
+    detail = asked["finish"]
+    assert detail["unavailable"] == [
+        "rough"
+    ], "the fixture no longer has a finish the floor cannot serve at this width"
+    rough = detail["because"]["rough"]
+    assert rough["part"] == "Floor"
+    assert rough.get("question") == "size", (
+        "a step that decides nothing about the wall released its pin "
+        f"anyway, and the counterfactual came back empty: {rough}"
+    )
+
+
 def test_a_question_offers_nothing_when_the_part_above_is_missing(guide):
     """Derivation reads the resolved part above, and there may not be one.
 

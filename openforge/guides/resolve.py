@@ -410,6 +410,16 @@ def _unavailable(
     # predicate anyway reported the one piece they had chosen as
     # missing, which is the opposite of what pinning is for.
     #
+    # True only of an answer that leaves the pin alone, which is why
+    # this is cut down per question below rather than applied whole:
+    # answering a question releases the pins on the parts that question
+    # decides (`releasedBy` in `guide-service.ts`, and the contract in
+    # `docs/design/guided-builds.md`), or the answer would appear to do
+    # nothing. Held whole, the sweep judges a state the click cannot
+    # produce, and judges it optimistically — offering an answer
+    # because a pin props a role up when taking that answer is what
+    # drops the pin.
+    #
     # Read from `sent` over every role the document has, not from
     # `parts[*]["pinned"]`: `parts` holds only the roles in play for
     # these answers, and a hypothetical answer can put one in play that
@@ -417,11 +427,18 @@ def _unavailable(
     # play under `wall-print: with-base`, absent under `single-piece` —
     # so a pin on it would be invisible here exactly when the sweep is
     # asking what `with-base` would do.
-    held = frozenset(
+    nailed = frozenset(
         name
         for name in document["roles"]
         if _pinned(name, sent, find_pinned) is not None
     )
+    # The pins the page can release are the pins the page can see, and
+    # it reads them off `resolved.parts` (`guide-page.tsx`), which holds
+    # only the roles in play. A pin on a role that is not in play
+    # reaches no click, so nothing releases it and the sweep goes on
+    # holding it — `wall-base` again, and any guide whose first step has
+    # no `default`.
+    in_play_now = [part["role"] for part in parts]
     baseline = {
         part["role"]: _predicate_key(part["query"])
         for part in parts
@@ -431,17 +448,24 @@ def _unavailable(
     dead: dict = {}
     because: dict = {}
     offered = list(_offered(steps, refinements))
-    # Questions are named to the person by their prompt, not their key.
-    # As tolerant as the reader below, which already falls back to the
-    # key — a strict build here made a question with no `prompt` a 500
-    # from the sweep and a 200 from `/resolve`, which is the endpoint
-    # disagreement `_honoured` exists to prevent, arriving by another
-    # door. A key is a worse name than a prompt and a better one than a
-    # blank page.
-    prompts = {q["key"]: q.get("prompt", q["key"]) for q in [*steps, *refinements]}
+    # The questions themselves, to ask which roles each one narrows and
+    # what to call it. Named to the person by their prompt, not their
+    # key, and as tolerant as the reader below — a strict build here
+    # made a question with no `prompt` a 500 from the sweep and a 200
+    # from `/resolve`, which is the endpoint disagreement `_honoured`
+    # exists to prevent, arriving by another door. A key is a worse name
+    # than a prompt and a better one than a blank page.
+    by_key = {q["key"]: q for q in [*steps, *refinements]}
     for question, values in offered:
         if question not in on_screen:
             continue
+        # The pins this question's answers would leave standing. Both
+        # consumers below get the same one: `_blame`'s `hypothetical` is
+        # `{**without, question: value}`, the same click as the
+        # candidate it is explaining, so it releases the same pins.
+        held = nailed - {
+            name for name in in_play_now if _narrows(by_key[question], name)
+        }
         empty = {}
         for value in values:
             # Derived, not overlaid. Putting the candidate on top of
@@ -486,7 +510,7 @@ def _unavailable(
             )
             if blamed:
                 reason["question"] = blamed
-                reason["prompt"] = prompts.get(blamed, blamed)
+                reason["prompt"] = by_key[blamed].get("prompt", blamed)
             because[f"{question}:{value}"] = reason
     return dead, because
 
@@ -502,7 +526,7 @@ def _blame(
     baseline: dict,
     cache: dict,
     find_candidates,
-    held: frozenset[str] = frozenset(),
+    held: frozenset[str],
 ) -> str | None:
     """Which other answer is stopping this one, if any single one is.
 
@@ -603,7 +627,7 @@ def _holds(
     baseline: dict,
     cache: dict,
     find_candidates,
-    held: frozenset[str] = frozenset(),
+    held: frozenset[str],
 ) -> bool:
     """Whether every part has something. See `_first_empty_role`."""
     return (
@@ -618,7 +642,7 @@ def _first_empty_role(
     baseline: dict,
     cache: dict,
     find_candidates,
-    held: frozenset[str] = frozenset(),
+    held: frozenset[str],
 ) -> str | None:
     """The first part these answers would leave with nothing.
 
@@ -634,16 +658,24 @@ def _first_empty_role(
     - identical predicates are asked once, and most answers leave most
       roles untouched, so the same few recur constantly
 
-    `held` is the roles someone pinned by hand. A pin beats every
-    predicate the guide composes — that is what pinning is, and
-    `_chosen_blueprint` honours it — so composing one anyway and
-    finding nothing said the piece they had nailed down was missing.
+    `held` is the roles someone pinned by hand that *these* answers
+    would leave pinned — `_unavailable` cuts it down per question,
+    because answering a question releases the pins on the parts it
+    decides. A pin beats every predicate the guide composes — that is
+    what pinning is, and `_chosen_blueprint` honours it — so composing
+    one anyway and finding nothing said the piece they had nailed down
+    was missing. Required rather than defaulted: every caller has one to
+    pass, and a default made dropping it at a call site silent, which is
+    how it came to be passed to `_blame` and never read there.
+
     `baseline` cannot stand in for it: it records the predicate a part
     resolved under, not who chose it. A pinned part carries the
     composed predicate in `query` like any other — the pin replaces
     only the blueprint — so as soon as a hypothetical answer changes
     that predicate, the baseline entry stops matching and the pin is
-    invisible.
+    invisible. Which is why most of the work `held` does is in the
+    counterfactuals: on the sweep's own pass the predicate usually has
+    not changed, and `baseline` skips the role first.
     """
     steps, answered = _available_steps(document, selections)
     chosen = _chosen_options(steps, answered)
@@ -712,12 +744,7 @@ def _derive_choices(
         # say so, while asking which combination you want cannot
         # express it in the first place.
         whole = "from_combination" in refinement
-        roles = [
-            name
-            for name in in_play
-            if refinement["role"] in ("*", name)
-            and name not in refinement.get("except_roles", [])
-        ]
+        roles = [name for name in in_play if _reaches(refinement, name)]
         # Defensive, and known to be: `_available_refinements` has
         # already dropped every refinement that reaches no in-play
         # role, using this same test. Deleting it passes the suite.
@@ -798,9 +825,7 @@ def _answer_key(answer: dict, whole: bool) -> str:
     return ",".join(sorted(answer["tags"])) if whole else answer["tag"]
 
 
-def _combination_title(
-    tags: list[str], namespace: str, titles: dict | None = None
-) -> str:
+def _combination_title(tags: list[str], namespace: str, titles: dict) -> str:
     """A combination, said out loud.
 
     A tag whose child is also in the set is dropped, because the child
@@ -811,7 +836,7 @@ def _combination_title(
     `openlock` and the product is OpenLOCK; a tag with no entry falls
     back to its own words, so a new sibling still appears.
     """
-    names = titles or {}
+    names = titles
     kept = [t for t in tags if not any(o.startswith(f"{t}|") for o in tags)]
     depth = len(namespace.split("|"))
     words = []
@@ -990,7 +1015,7 @@ def _with_available_options(step: dict, answered: dict) -> dict:
 
 
 def _available_refinements(
-    document: dict, answered: dict, in_play: list[str] | None = None
+    document: dict, answered: dict, in_play: list[str]
 ) -> list[dict]:
     """The refinements worth asking about, given what is being built.
 
@@ -1006,8 +1031,6 @@ def _available_refinements(
         for refinement in document.get("refinements", [])
         if _when_holds(refinement.get("when"), answered)
     ]
-    if in_play is None:
-        return offered
     return [r for r in offered if _applies_to_any(r, in_play)]
 
 
@@ -1016,10 +1039,39 @@ def _applies_to_any(refinement: dict, in_play: list[str]) -> bool:
 
     Same test `_compose` applies per role, asked across all of them.
     """
-    except_roles = refinement.get("except_roles", [])
+    return any(_reaches(refinement, name) for name in in_play)
+
+
+def _reaches(refinement: dict, role_name: str) -> bool:
+    """Does this refinement ask anything of that role?
+
+    `reaches` in `guide-service.ts` is the same test, and the page's is
+    the contract: it decides which pins a click lets go of, so a
+    disagreement here offers an answer the click cannot deliver.
+    """
+    if refinement["role"] not in ("*", role_name):
+        return False
+    return role_name not in refinement.get("except_roles", [])
+
+
+def _narrows(question: dict, role_name: str) -> bool:
+    """Does this question narrow that role — step or refinement?
+
+    `narrows` in `guide-service.ts`, and the page's is the contract: it
+    is what decides which pins answering a question releases, so the
+    sweep has to ask it exactly the same way.
+
+    A step says it per option, and `None` rather than falsy for the
+    same reason `_option_predicates` reads it that way: an option with
+    no `roles` of its own — "how wide?" — narrows whatever the earlier
+    answers put in play, while an option that names roles says nothing
+    about the ones it leaves out.
+    """
+    if "options" not in question:
+        return _reaches(question, role_name)
     return any(
-        refinement["role"] in ("*", name) and name not in except_roles
-        for name in in_play
+        option.get("roles") is None or role_name in option["roles"]
+        for option in question["options"]
     )
 
 
@@ -1265,8 +1317,7 @@ def _relaxable(
         for refinement in refinements
         if refinement["key"] in relax
         and refinement["key"] in selections
-        and refinement["role"] in ("*", role_name)
-        and role_name not in refinement.get("except_roles", [])
+        and _reaches(refinement, role_name)
     ]
     for predicate in predicates:
         if any(predicate.get(name) for name in ("deny_children", "allow", "accept")):
@@ -1323,8 +1374,7 @@ def _resolution_order(in_play: list[str], roles: dict) -> list[str]:
         above = role.get("under") if role else None
         if role and role.get("match") and above in in_play:
             visit(above, seen | {name})
-        if name not in ordered:
-            ordered.append(name)
+        ordered.append(name)
 
     for name in in_play:
         visit(name, frozenset())
@@ -1414,8 +1464,7 @@ def _compose(
         for refinement in refinements
         if refinement["key"] in selections
         and refinement["key"] != without
-        and refinement["role"] in ("*", role_name)
-        and role_name not in refinement.get("except_roles", [])
+        and _reaches(refinement, role_name)
     ]
     return _union(predicates)
 

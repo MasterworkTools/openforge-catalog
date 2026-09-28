@@ -745,51 +745,123 @@ def choosy_guide(test_db):
             return guide_sql.upsert_guide(curs, document)
 
 
-def test_a_pinned_role_is_never_what_makes_an_answer_dead(
-    client, choosy_guide, catalog
+def test_an_answer_is_judged_against_the_request_the_page_would_send(
+    client, test_db, catalog
 ):
-    """A pin outranks every predicate the guide composes.
+    """A pin outranks every predicate the guide composes — until the
+    click lets go of it.
 
-    That is what pinning is, and `_chosen_blueprint` honours it — so a
-    pinned role cannot be the reason an answer is unavailable. The sweep
-    composed its predicate anyway, found nothing, and greyed the answer
-    out with "no Floor" beside it: about the one piece they had chosen by
-    hand. Reached by the ordinary flow rather than a hand-edited URL —
-    `part.<role>` is what picking a piece in the catalog dialog writes.
+    `_chosen_blueprint` honours a pin, so a pinned role cannot be the
+    reason an answer is unavailable. But the page does not send the pin
+    with every click: `releasedBy` in `guide-service.ts` drops
+    `part.<role>` for every pinned role the question `narrows`, because
+    answering a question that decides a part and watching nothing happen
+    reads as a broken button. `docs/design/guided-builds.md` is the
+    contract: *"Answering a question releases the pins on the parts that
+    question decides."*
 
-    The pair is the test. Without the pin, towne really is dead and the
-    sweep should say so; with it, the same answer is live. Asserting
-    only the second half would pass on a sweep that reports nothing at
-    all, which is how the first version of this test passed — its loop
-    over the dead answers ran zero times.
+    So the sweep has to ask about the pins each question's answers would
+    leave standing, not about every pin in the request. Round 12 read
+    this as a whole-request exemption and its own test performed the
+    click the page never makes — it kept `&{pin}` in the query where the
+    page removes it — so the finding it recorded does not survive the
+    corrected model: `texture` here is `role: '*'`, it narrows the floor,
+    the towne click releases the floor pin, and greying towne out was
+    **right**.
+
+    Three things, then, and the pin is the same one throughout:
+
+    - a question that reaches the pinned role (`texture`) stays greyed
+      out when that role is pinned, and the page's own request for that
+      click really does empty the part — so the greying was honest;
+    - the request the old test performed, with the pin kept, fills every
+      part, which is why this shipped green;
+    - a question that does not reach it (`wall-clips`, `role: wall`)
+      keeps the pin, and the part comes back still pinned.
+
+    The pin names the towne *wall* for the floor role deliberately: a
+    pin outranks the predicate, so the floor's own search would never
+    offer it, and every assertion below can tell "the pin was honoured"
+    apart from "the guide found a floor anyway".
     """
-    pin = f"part.floor={catalog['floor']['file_md5']}"
+    document = copy.deepcopy(WALL_GUIDE)
+    document["refinements"][0]["choices"] = [
+        {"tag": "texture|cave"},
+        {"tag": "texture|towne"},
+    ]
+    # Role-scoped, so it reaches the wall and not the floor — the shape
+    # in which a pin genuinely survives a click. `wall.yaml` ships four
+    # of these (`floor-texture`, `wall-clips`, `floor-clips`, `pegs`)
+    # and the test fixture had none, which is why nothing here could
+    # tell a per-question exemption from a per-request one.
+    document["refinements"].append(
+        {
+            "key": "wall-clips",
+            "role": "wall",
+            "prompt": "Clips on the wall ends?",
+            "on_tags": {"require": ["connection|openforge"]},
+            "off_tags": {"deny": ["connection|openforge"]},
+        }
+    )
+    with test_db.connection() as conn:
+        with conn.cursor(row_factory=dict_row) as curs:
+            guide_sql.upsert_guide(curs, document)
+
+    pinned_md5 = catalog["towne"]["file_md5"]
+    pin = f"part.floor={pinned_md5}"
     answered = "method=separate-wall"
 
-    def dead(query):
+    def dead(question, query):
         got = client.get(f"/api/guides/wall/availability?{query}").json
-        return got["unavailable"].get("texture", [])
+        return got["unavailable"].get(question, [])
+
+    def floor(query):
+        built = client.get(f"/api/guides/wall/resolve?{query}").json
+        return next(p for p in built["parts"] if p["role"] == "floor")
 
     # The control: unpinned, the guide has to find a towne floor itself,
     # and there is not one.
-    assert dead(answered) == ["texture|towne"], (
+    assert dead("texture", answered) == ["texture|towne"], (
         "the fixture no longer has a texture the guide cannot satisfy, "
-        "so there is nothing for the pin to rescue"
+        "so there is nothing for a pin to be asked about"
     )
 
-    # Pinned, the floor is settled and towne is back on offer.
-    assert dead(f"{answered}&{pin}") == [], (
-        "the sweep called an answer dead over a role that was pinned, "
-        "which a pin outranks by definition"
+    # Pinned, and still dead — `texture` is `role: '*'`, so clicking
+    # towne is also what lets the floor pin go. A whole-request
+    # exemption reports `[]` here and offers an answer that empties the
+    # part.
+    assert dead("texture", f"{answered}&{pin}") == ["texture|towne"], (
+        "towne is offered as live because the floor is pinned, but the "
+        "click that takes it releases that very pin"
     )
 
-    # And it really is live: taking it fills every part.
-    built = client.get(
-        f"/api/guides/wall/resolve?{answered}&{pin}&texture=texture|towne"
-    ).json
-    assert all(part["blueprint"] for part in built["parts"]), (
-        "towne is offered as live but taking it empties "
-        f"{[p['role'] for p in built['parts'] if p['blueprint'] is None]}"
+    # The page's own request for that click: the pin is gone, and so is
+    # the floor. The greying was honest.
+    released = floor(f"{answered}&texture=texture|towne")
+    assert released["blueprint"] is None and not released["pinned"], (
+        "the request the page issues for this click keeps the pin, so "
+        "there is nothing for the release rule to be about"
+    )
+    # And the click the old version of this test performed, four
+    # characters apart, which is why it passed: keep the pin and the
+    # floor is filled.
+    assert floor(f"{answered}&{pin}&texture=texture|towne")[
+        "blueprint"
+    ], "a pin in the query no longer reaches the part at all"
+
+    # A question that does not reach the floor. Reachable in this state
+    # because the dialog can pin a part after the texture is answered.
+    kept = f"{answered}&texture=texture|cave&{pin}"
+    assert dead("wall-clips", kept) == [], (
+        "the wall has both an openforge and a plain piece in cave, so "
+        "neither arm of this toggle should be dead"
+    )
+    # The page keeps the pin for this click, and the part comes back
+    # pinned to the piece its own search would never have found.
+    stood = floor(f"{kept}&wall-clips=on")
+    assert stood["pinned"] and stood["blueprint"]["file_md5"] == pinned_md5, (
+        "a click that decides nothing about the floor dropped the "
+        f"floor pin: {stood['blueprint'] and stood['blueprint']['file_name']!r}"
     )
 
 
