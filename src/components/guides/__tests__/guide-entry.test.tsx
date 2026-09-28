@@ -153,4 +153,65 @@ describe('GuideEntry', () => {
 
     expect(document.activeElement).toBe(document.body);
   });
+
+  it('opens the guide in place on a plain click', async () => {
+    // The central behaviour of this PR, and it had no test: deleting
+    // the card's whole `onClick` left the entire suite green. Following
+    // the href is a document navigation out of the tabbed app.
+    served([WALL]);
+    window.history.replaceState({}, '', '/');
+
+    render(<GuideEntry />);
+    const card = await screen.findByRole('link');
+
+    fireEvent.click(card, { button: 0 });
+
+    await waitFor(() =>
+      expect(window.location.search).toBe('?guide=wall')
+    );
+    window.history.replaceState({}, '', '/');
+  });
+
+  it('adds a history entry, so opening a guide is undoable', async () => {
+    // Two comments promise this — `pushState` for choosing a guide,
+    // `replaceState` for answering a question, so Back steps between
+    // guides rather than un-answering one press at a time — and nothing
+    // asserted it. Swapping either to the other left the suite green.
+    served([WALL]);
+    window.history.replaceState({}, '', '/');
+    const before = window.history.length;
+
+    render(<GuideEntry />);
+    fireEvent.click(await screen.findByRole('link'), { button: 0 });
+
+    await waitFor(() => expect(window.location.search).toBe('?guide=wall'));
+    expect(window.history.length).toBe(before + 1);
+
+    window.history.replaceState({}, '', '/');
+  });
+
+  it('leaves a modified click to the browser', async () => {
+    // ctrl/cmd/shift/middle must still open the standalone route in a
+    // new tab or window, which is why the card stays a real link. With
+    // `isPlainClick` returning true unconditionally, every one of these
+    // is swallowed and the URL changes instead.
+    served([WALL]);
+    window.history.replaceState({}, '', '/');
+
+    render(<GuideEntry />);
+    const card = await screen.findByRole('link');
+
+    for (const modifier of [
+      { ctrlKey: true },
+      { metaKey: true },
+      { shiftKey: true },
+      { altKey: true },
+      { button: 1 },
+    ]) {
+      fireEvent.click(card, { button: 0, ...modifier });
+    }
+
+    // Untouched: the browser was left to do its thing every time.
+    expect(window.location.search).toBe('');
+  });
 });

@@ -23,18 +23,37 @@ describe('withoutConsumed', () => {
   });
 
   it('removes every parameter it does consume', () => {
-    // Asserted against `CONSUMED` rather than a hand-written list, so
-    // adding a parameter to the hook without removing it here cannot
-    // pass quietly.
-    const search =
-      '?' + CONSUMED.map((name) => `${name}=x`).join('&') + '&guide=wall';
+    // Named literally, not looped over `CONSUMED`. Building the input
+    // *and* the expectation from the same constant is true whatever is
+    // in it — dropping `search` from the list passed that version,
+    // because the input stopped containing `search` too.
+    //
+    // These four are what `useUrlParameters` reads. If it learns a
+    // fifth, this fails and should: leaving a consumed parameter on the
+    // URL is the bug in the other direction.
+    const kept = new URLSearchParams(
+      withoutConsumed(
+        '?tag=shape%7Cwall&deny=texture%7Ccave&search=wall' +
+          '&blueprint_id=abc&md5=deadbeef&guide=wall'
+      )
+    );
 
-    const kept = new URLSearchParams(withoutConsumed(search));
-
-    for (const name of CONSUMED) {
-      expect(kept.get(name)).toBeNull();
-    }
+    expect(kept.get('tag')).toBeNull();
+    expect(kept.get('deny')).toBeNull();
+    expect(kept.get('search')).toBeNull();
+    expect(kept.get('blueprint_id')).toBeNull();
+    // The other blueprint deep link, stripped for the same reason.
+    expect(kept.get('md5')).toBeNull();
     expect(kept.get('guide')).toBe('wall');
+    // And the list itself is those four, so the hook and this test
+    // cannot drift apart silently.
+    expect([...CONSUMED].sort()).toEqual([
+      'blueprint_id',
+      'deny',
+      'md5',
+      'search',
+      'tag',
+    ]);
   });
 
   it('puts back the blueprint it is still using', () => {

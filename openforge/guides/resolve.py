@@ -336,11 +336,24 @@ def _up_to_first_unanswered(refinements: list, selections: dict) -> list:
     because a texture in the URL is the person's answer whether or not
     its control is on screen — a shared link has to resolve to the
     parts it was shared for.
+
+    A toggle does not stop the queue. It has a valid state before anyone
+    touches it — off is an answer — so leaving one alone is not the same
+    as not having reached it, and holding the rest of the questions
+    behind an untouched checkbox asks someone to tick a box to be shown
+    the next thing. Steps have no toggles, so this only ever affects
+    refinements.
+
+    That is also what makes "every question is answered" computable by
+    the page. It reads the questions it was given, and if an untouched
+    toggle hid the ones after it, a guide whose toggle is not last would
+    report itself finished while three questions were still unasked —
+    silently, and only on guides ordered differently from `wall.yaml`.
     """
     shown = []
     for refinement in refinements:
         shown.append(refinement)
-        if refinement["key"] not in selections:
+        if refinement["key"] not in selections and not refinement.get("on_tags"):
             break
     return shown
 

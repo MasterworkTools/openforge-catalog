@@ -9,8 +9,17 @@ import { useTagContext } from '@/contexts/tag-context';
  * The query-string parameters `useUrlParameters` consumes and removes.
  *
  * Everything else on the URL belongs to somebody else and survives.
+ *
+ * `md5` is here although this hook never reads it: it is the other
+ * blueprint deep link, consumed on mount by `BlueprintProviderInner`
+ * beside `blueprint_id`, and the old whitelist removed it as collateral
+ * along with everything else. Leaving it out would have quietly changed
+ * that — the parameter would outlive the load it is for and re-select
+ * the same blueprint on any later read. Restoring a behaviour rather
+ * than adding one, which is why it is listed even though the name does
+ * not appear anywhere else in this file.
  */
-export const CONSUMED = ['tag', 'deny', 'search', 'blueprint_id'] as const;
+export const CONSUMED = ['tag', 'deny', 'search', 'blueprint_id', 'md5'] as const;
 
 /**
  * The query string with this hook's own parameters taken out.
