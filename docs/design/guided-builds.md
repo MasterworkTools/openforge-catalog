@@ -485,9 +485,11 @@ guide refinement would have failed in production while every test passed, becaus
 Flask test client hands values over already decoded. `lambda_handler` now decodes both
 before the adapter runs.
 
-`resolve` keeps payloads small, which matters: `GET /api/blueprints` already exceeds the
-ALB's 1 MB cap for Lambda targets and 502s (`openforge_catalog-i7c`). Do not build the
-guide on top of an endpoint that returns the whole catalog.
+`resolve` keeps payloads small, which matters: `GET /api/blueprints` already 502s on its
+own response size (`openforge_catalog-9sx`). Not the ALB's 1 MB cap, as this said before —
+the observed signature is `Http response code: 413` against Lambda's **6 MB** limit, so the
+payload is over 6 MB and a function URL would not rescue it either. Do not build the guide
+on top of an endpoint that returns the whole catalog.
 
 **How a guide reaches a deployed environment.** Neither deploy workflow runs
 `bin/fixtures`, so a repo fixture gets to staging and production exactly one way:

@@ -36,7 +36,7 @@ jobs:
       - name: tofu plan
         working-directory: terraform/environments/production
         run: |
-          tofu init -input=false
+          tofu init -input=false -lockfile=readonly
           tofu validate
           tofu plan -input=false -no-color -lock=false -var image_tag=${{ github.event.pull_request.head.sha }} 2>&1 | tee plan-output.txt
           exit ${PIPESTATUS[0]}

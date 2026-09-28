@@ -171,7 +171,7 @@ jobs:
       - name: tofu apply
         working-directory: terraform/environments/production
         run: |
-          tofu init -input=false
+          tofu init -input=false -lockfile=readonly
           tofu plan -input=false -no-color -var image_tag=${{ github.sha }} -out=tfplan
           tofu apply -input=false -auto-approve tfplan
 

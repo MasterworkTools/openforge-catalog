@@ -18,8 +18,8 @@ terraform {
   # The baseline's state bucket; apps write under their own prefix
   # (the deploy role's boundary denies infra/* and infra-frontend/*).
   backend "s3" {
-    bucket         = "openforge-infra-tfstate-908027381953"
-    key            = "openforge-catalog/production/terraform.tfstate"
+    bucket         = "openforge-infra-tfstate-682033461796"
+    key            = "openforge-catalog/staging/terraform.tfstate"
     region         = "us-east-1"
     dynamodb_table = "openforge-infra-tfstate-lock"
     encrypt        = true
@@ -32,7 +32,7 @@ provider "aws" {
   default_tags {
     tags = {
       Project     = "openforge-catalog"
-      Environment = "production"
+      Environment = "staging"
       ManagedBy   = "opentofu"
       Repo        = "MasterworkTools/openforge-catalog"
     }
