@@ -2843,7 +2843,7 @@ describe('inspecting a part', () => {
     // The guide really is on screen: this is not passing on an error arm.
     await screen.findByText('a dungeon stone wall');
 
-    const back = screen.getByRole('link', { name: /All guided builds/ });
+    const back = screen.getByRole('link', { name: 'Back' });
     // A real link, so it can be opened in a new tab.
     expect(back).toHaveAttribute('href', '/guides/');
 

@@ -128,9 +128,32 @@ export default function GuidePage() {
     // inside it. `src/app/guides/page.tsx` supplies the viewport
     // height for the route, the same way it supplies the landmark.
     <div className="p-6 lg:h-full flex flex-col">
-      <h1 className="text-3xl font-bold mb-4 shrink-0">
-        {guide?.title ?? 'Guided build'}
-      </h1>
+      {/* Title and the way out on one line, the exit pushed right.
+          It is the only way back when a guide loads successfully — the
+          `All guides` link below appears on the error arm, which is
+          exactly when there is no guide to leave. Inside the tab there
+          is no other exit: the tab strip switches tabs rather than
+          clearing the guide.
+
+          A real link to `/guides/`, so it opens a page in a new tab,
+          with a plain click intercepted to clear in place — the same
+          shape as a card, in reverse. */}
+      <div className="mb-4 shrink-0 flex items-baseline justify-between gap-4">
+        <h1 className="text-3xl font-bold">
+          {guide?.title ?? 'Guided build'}
+        </h1>
+        <a
+          href="/guides/"
+          onClick={(e) => {
+            if (!isPlainClick(e)) return;
+            e.preventDefault();
+            clearGuide();
+          }}
+          className="shrink-0 text-sm text-blue-700 underline hover:text-blue-900"
+        >
+          Back
+        </a>
+      </div>
       {error && (
         <div className="mb-4 shrink-0">
           <p className="text-red-700">{error}</p>
@@ -218,28 +241,6 @@ export default function GuidePage() {
         // `overflow-y-auto` below is dead.
         <div className="flex flex-col lg:flex-row gap-8 flex-1 min-h-0">
           <div className="lg:w-72 lg:shrink-0 lg:overflow-y-auto lg:min-h-0 pr-2">
-            {/* The way back to the cards, and the only one when the guide
-                loads successfully — `All guides` below appears on the error
-                arm, which is exactly when there is no guide to leave. Inside
-                the tab there is no other exit: the tab strip switches tabs
-                rather than clearing the guide, and the browser's Back button
-                is not an affordance the page offers.
-
-                A real link to `/guides/` so it opens a page in a new tab,
-                with a plain click intercepted to clear in place — the same
-                shape as a card, in reverse. */}
-            <a
-              href="/guides/"
-              onClick={(e) => {
-                if (!isPlainClick(e)) return;
-                e.preventDefault();
-                clearGuide();
-              }}
-              className="mb-3 inline-block text-sm text-blue-700 underline
-                         hover:text-blue-900"
-            >
-              ← All guided builds
-            </a>
             <GuideSteps
               steps={resolved.steps}
               unavailable={unavailable}
