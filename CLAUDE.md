@@ -205,7 +205,10 @@ per-sha prefix and then promotes it to `current/`, which is what CloudFront serv
 deploy is live without touching openforge-infra-frontend. Release PRs get a plan comment from the
 `Production Plan` workflow.
 
-**Nothing in the pipeline applies database migrations.** The workflow builds the
+**Nothing in the production pipeline applies database migrations yet.** Staging
+does it automatically (see below); production is the same two resources and the
+same job, to be copied across once staging has run it a few times
+(`openforge_catalog-jag`). Until then, for production, the workflow builds the
 image, applies tofu and syncs the frontend; it never runs `bin/db_update up`. So
 a release carrying a schema change deploys code that is newer than the database,
 and the endpoints touching the new schema return an unhandled 500 until someone
@@ -232,7 +235,100 @@ in the repo; the database password is read at cold start from `DB_SECRET_ARN` so
 RDS-managed secret may rotate. Prerequisites, once per account: the app secret, and the
 repo-level GitHub secret `AWS_ROLE_ARN_PRODUCTION` = openforge-infra's
 `deploy_role_arns["openforge-catalog"]` (read by both the `production` and `production-plan`
-environments). Staging's hand-built Lambda and ALB are not yet under tofu.
+environments).
+
+### Staging infrastructure (`terraform/environments/staging`)
+
+A merge to `test` deploys staging the whole way:
+**docker-build → tofu-apply (migration function) → migrate → tofu-apply → frontend-deploy**,
+each gated on the last, so neither the API image nor the frontend is ever promoted
+in front of a schema that cannot serve it.
+
+**Why the apply is split in two.** `aws_lambda_function` waits for
+`LastUpdateStatus=Successful`, so a single apply puts the new API image live *before*
+the migration runs — `/api/*` serving new code against the old schema, which is the
+unhandled 500 `openforge_catalog-jag` exists to describe. The first apply is
+`-target`ed at the migration function alone; the second promotes everything else.
+The chicken-and-egg (the function must exist before it can be invoked) is why it
+cannot be one apply with the migration first.
+
+**The one-time adoption apply is done by hand**, as a full apply, because
+`imports.tf` adopts live resources and the app secret must exist first. The split
+above is the steady state after that.
+
+**The split moves which side is ahead, it does not remove the window.** Between the
+migration and the second apply, the *database* is ahead and the **old** API image is
+still serving. Every migration in the tree today is additive, so that is free — but a
+`DROP COLUMN` or a `RENAME` would break the code that was working a moment ago, which
+is harder to spot than a new column the old code ignores. So schema changes want
+expand/contract: add and backfill in one release, stop using the old shape, remove it
+in a later one. This matters beyond staging, because the plan is to copy this job to
+production. Layered on openforge-infra's staging state exactly as production is, and
+kept diffable against `../production` — the two should differ only in account,
+environment name, bucket prefix, and the migration function.
+
+It did not always work this way, and the failure was quiet: until this, `staging.yaml`
+pushed the image to ECR and never pointed the function at it, while the frontend job
+in the same workflow deployed on every merge. Staging served a current site against a
+backend from nine months earlier, and nothing failed to say so.
+
+**Migrations run in a Lambda, not on the runner.** Aurora only accepts connections
+from inside the VPC — its security group admits the application and bastion groups
+and nothing else — and a GitHub runner is outside it. (Not because the subnets are
+private: staging is the *default* VPC and all six subnets are
+`MapPublicIpOnLaunch`. The security group is what closes the door.)
+`openforge-catalog-migrate` is the *same image* as the API with
+`image_config.command` pointing at `openforge/app/migrate.py`, so it is already
+inside and already reads `DB_SECRET_ARN` — no second image to keep in step.
+Reserved concurrency is 1, so two deploys landing together cannot interleave DDL;
+the second is throttled and that deploy fails. The job fails on a `FunctionError`
+or any payload without `ok: true`, because `aws lambda invoke` exits 0 for a
+function that raised — and it passes `--cli-read-timeout 0`, because botocore's
+default 60 s read timeout is well under the function's budget and would fail a
+deploy whose migration had actually succeeded.
+
+The handler asserts the schema reached head rather than reporting what it saw. Every
+other failure — a migration that does nothing, an empty `get_schema_versions()`, a
+version read that fails — produces a payload shaped exactly like a healthy no-op, and
+the gate cannot tell them apart. It reports the *set* of versions that landed, because
+a before/after maximum cannot describe a version arriving below the head and the
+series already has a hole at 15.
+
+**Nothing loads fixtures.** The pipeline deploys schema and code, never data, so a
+release needing a new or changed fixture still wants `bin/upload_fixture` (or
+`bin/fixtures` from the bastion) by hand afterwards — the same gap the production
+paragraph above describes.
+
+**Staging is adopted, not created.** It predates tofu, so `imports.tf` adopts the ALB,
+its port-80 listener and rule, the target group, its attachment and the website bucket.
+Two things it cannot adopt: the function and its role are named `Openforge-Catalog-API`
+and `...-role-ogdz6ix0`, and `function_name` is ForceNew while the deploy role may only
+touch IAM named `openforge-catalog-*` — so tofu creates `openforge-catalog-api` fresh
+and the old pair is deleted by hand afterwards (`openforge_catalog-rc2`), which is the
+rollback until then.
+
+**There is no manual step.** An earlier version of this section said to deregister the
+old function from the target group first. Do not: the attachment is imported, so the
+apply swaps the target itself. There is still a window, but it is the **apply's own**:
+it deregisters the old target before the new function exists, so `/api/*` is down for
+the length of that creation — minutes, on the adoption apply only. `imports.tf`
+explains it and offers a `-target` split for anyone who wants it smaller.
+
+Prerequisites, once per account: the app secret `openforge-catalog/staging/app`
+(`scripts/create-app-secret.sh` — note it generates a **fresh** API_TOKEN and
+SECRET_KEY, so decide deliberately whether to preserve the current ones), the
+repo-level GitHub secret `AWS_ROLE_ARN_STAGING`, and openforge-infra adding
+`openforge-catalog` to staging's `deploy_roles` plus a Secrets Manager VPC endpoint
+(`openforge_catalog-44e`). Without that endpoint the Lambda cannot read its password:
+`_password_from_secret` sets `connect_timeout=3` with two attempts, so it gives up in
+seconds rather than outlasting the function. The **migration** function also sets
+`PGCONNECT_TIMEOUT = 120`, matched to a measured ~20 s Aurora resume from
+`min_capacity 0`; `use_pool=False` means `psycopg.connect` raises
+`ConnectionTimeout` straight out of the handler there. The API sets none, and should
+not: its pool catches that exception, logs and reschedules, so the value never reaches
+a caller — and psycopg already substitutes its own 130 s default when
+`connect_timeout` is absent, so there was never a wait-forever to bound
+(`openforge_catalog-15r` covers bounding the API's pool instead).
 
 ### Code Review Process
 1. **Initial development**: Written in Cursor
