@@ -38,650 +38,6 @@
             ]
         },
         "file_metadata": {
-            "file": "rough_stone#floor+a.2x2.openforge.stl",
-            "file_modified_at": "2020-07-30T20:33:49.147675",
-            "full_name": "tiles/rough_stone/floors/floor/openforge/rough_stone#floor+a.2x2.openforge.stl",
-            "md5": "8fbacbfae7735516f1ea0c0d7234d4fc",
-            "size": 20301984,
-            "storage_address": "https://objects.openforge.tools/models/8fbacb/8fbacbfae7735516f1ea0c0d7234d4fc.stl"
-        },
-        "images": [
-            {
-                "image_name": "thumbnail",
-                "image_url": "https://objects.openforge.tools/sprites/8fbacb/8fbacbfae7735516f1ea0c0d7234d4fc.png",
-                "sprite_metadata": {
-                    "angles": [
-                        {
-                            "camera_pos": [
-                                -4,
-                                0,
-                                2
-                            ],
-                            "index": 0,
-                            "name": "front"
-                        },
-                        {
-                            "camera_pos": [
-                                -3,
-                                2,
-                                3
-                            ],
-                            "index": 1,
-                            "name": "front-right"
-                        },
-                        {
-                            "camera_pos": [
-                                0,
-                                2,
-                                4
-                            ],
-                            "index": 2,
-                            "name": "right"
-                        },
-                        {
-                            "camera_pos": [
-                                2,
-                                3,
-                                3
-                            ],
-                            "index": 3,
-                            "name": "back-right"
-                        },
-                        {
-                            "camera_pos": [
-                                0,
-                                2,
-                                4
-                            ],
-                            "index": 4,
-                            "name": "back"
-                        },
-                        {
-                            "camera_pos": [
-                                -3,
-                                2,
-                                3
-                            ],
-                            "index": 5,
-                            "name": "back-left"
-                        },
-                        {
-                            "camera_pos": [
-                                -4,
-                                0,
-                                2
-                            ],
-                            "index": 6,
-                            "name": "left"
-                        },
-                        {
-                            "camera_pos": [
-                                -3,
-                                -3,
-                                2
-                            ],
-                            "index": 7,
-                            "name": "front-left"
-                        },
-                        {
-                            "camera_pos": [
-                                -2,
-                                0,
-                                5
-                            ],
-                            "index": 8,
-                            "name": "top"
-                        },
-                        {
-                            "camera_pos": [
-                                -2,
-                                -3,
-                                0
-                            ],
-                            "index": 9,
-                            "name": "bottom"
-                        }
-                    ],
-                    "default_angle": 0,
-                    "grid_cols": 5,
-                    "grid_rows": 2,
-                    "tile_size": 512
-                }
-            }
-        ],
-        "metadata": false,
-        "tags": [
-            "connection|openforge",
-            "shape|floor",
-            "shape|floor|a",
-            "size|depth|2",
-            "size|width|2",
-            "texture|rough_stone"
-        ],
-        "type": "model"
-    },
-    {
-        "config": {
-            "parts": [
-                {
-                    "name": "base",
-                    "optional": true,
-                    "tags": {
-                        "constrain": [
-                            {
-                                "filter": "shape|floor"
-                            },
-                            {
-                                "filter": "shape|wall"
-                            },
-                            {
-                                "tag": "shape"
-                            },
-                            {
-                                "tag": "size|depth"
-                            },
-                            {
-                                "tag": "size|width"
-                            }
-                        ],
-                        "deny": [
-                            {
-                                "tag": "build|s2w"
-                            }
-                        ],
-                        "require": [
-                            {
-                                "tag": "shape|base"
-                            }
-                        ]
-                    }
-                }
-            ]
-        },
-        "file_metadata": {
-            "file": "rough_stone#floor+b.2x2.openforge.stl",
-            "file_modified_at": "2020-07-30T20:34:04.028256",
-            "full_name": "tiles/rough_stone/floors/floor/openforge/rough_stone#floor+b.2x2.openforge.stl",
-            "md5": "a2ab5b75a1cbc9d82a088032db6b2f49",
-            "size": 18106984,
-            "storage_address": "https://objects.openforge.tools/models/a2ab5b/a2ab5b75a1cbc9d82a088032db6b2f49.stl"
-        },
-        "images": [
-            {
-                "image_name": "thumbnail",
-                "image_url": "https://objects.openforge.tools/sprites/a2ab5b/a2ab5b75a1cbc9d82a088032db6b2f49.png",
-                "sprite_metadata": {
-                    "angles": [
-                        {
-                            "camera_pos": [
-                                -4,
-                                0,
-                                2
-                            ],
-                            "index": 0,
-                            "name": "front"
-                        },
-                        {
-                            "camera_pos": [
-                                -3,
-                                2,
-                                3
-                            ],
-                            "index": 1,
-                            "name": "front-right"
-                        },
-                        {
-                            "camera_pos": [
-                                0,
-                                2,
-                                4
-                            ],
-                            "index": 2,
-                            "name": "right"
-                        },
-                        {
-                            "camera_pos": [
-                                2,
-                                3,
-                                3
-                            ],
-                            "index": 3,
-                            "name": "back-right"
-                        },
-                        {
-                            "camera_pos": [
-                                0,
-                                2,
-                                4
-                            ],
-                            "index": 4,
-                            "name": "back"
-                        },
-                        {
-                            "camera_pos": [
-                                -3,
-                                2,
-                                3
-                            ],
-                            "index": 5,
-                            "name": "back-left"
-                        },
-                        {
-                            "camera_pos": [
-                                -4,
-                                0,
-                                2
-                            ],
-                            "index": 6,
-                            "name": "left"
-                        },
-                        {
-                            "camera_pos": [
-                                -3,
-                                -3,
-                                2
-                            ],
-                            "index": 7,
-                            "name": "front-left"
-                        },
-                        {
-                            "camera_pos": [
-                                -2,
-                                0,
-                                5
-                            ],
-                            "index": 8,
-                            "name": "top"
-                        },
-                        {
-                            "camera_pos": [
-                                -2,
-                                -3,
-                                0
-                            ],
-                            "index": 9,
-                            "name": "bottom"
-                        }
-                    ],
-                    "default_angle": 0,
-                    "grid_cols": 5,
-                    "grid_rows": 2,
-                    "tile_size": 512
-                }
-            }
-        ],
-        "metadata": false,
-        "tags": [
-            "connection|openforge",
-            "shape|floor",
-            "shape|floor|b",
-            "size|depth|2",
-            "size|width|2",
-            "texture|rough_stone"
-        ],
-        "type": "model"
-    },
-    {
-        "config": {
-            "parts": [
-                {
-                    "name": "base",
-                    "optional": true,
-                    "tags": {
-                        "constrain": [
-                            {
-                                "filter": "shape|floor"
-                            },
-                            {
-                                "filter": "shape|wall"
-                            },
-                            {
-                                "tag": "shape"
-                            },
-                            {
-                                "tag": "size|depth"
-                            },
-                            {
-                                "tag": "size|width"
-                            }
-                        ],
-                        "deny": [
-                            {
-                                "tag": "build|s2w"
-                            }
-                        ],
-                        "require": [
-                            {
-                                "tag": "shape|base"
-                            }
-                        ]
-                    }
-                }
-            ]
-        },
-        "file_metadata": {
-            "file": "rough_stone#floor+c.2x2.openforge.stl",
-            "file_modified_at": "2020-07-30T20:34:18.686297",
-            "full_name": "tiles/rough_stone/floors/floor/openforge/rough_stone#floor+c.2x2.openforge.stl",
-            "md5": "b427248eaa662f23393b806079756ec0",
-            "size": 15454884,
-            "storage_address": "https://objects.openforge.tools/models/b42724/b427248eaa662f23393b806079756ec0.stl"
-        },
-        "images": [
-            {
-                "image_name": "thumbnail",
-                "image_url": "https://objects.openforge.tools/sprites/b42724/b427248eaa662f23393b806079756ec0.png",
-                "sprite_metadata": {
-                    "angles": [
-                        {
-                            "camera_pos": [
-                                -4,
-                                0,
-                                2
-                            ],
-                            "index": 0,
-                            "name": "front"
-                        },
-                        {
-                            "camera_pos": [
-                                -3,
-                                2,
-                                3
-                            ],
-                            "index": 1,
-                            "name": "front-right"
-                        },
-                        {
-                            "camera_pos": [
-                                0,
-                                2,
-                                4
-                            ],
-                            "index": 2,
-                            "name": "right"
-                        },
-                        {
-                            "camera_pos": [
-                                2,
-                                3,
-                                3
-                            ],
-                            "index": 3,
-                            "name": "back-right"
-                        },
-                        {
-                            "camera_pos": [
-                                0,
-                                2,
-                                4
-                            ],
-                            "index": 4,
-                            "name": "back"
-                        },
-                        {
-                            "camera_pos": [
-                                -3,
-                                2,
-                                3
-                            ],
-                            "index": 5,
-                            "name": "back-left"
-                        },
-                        {
-                            "camera_pos": [
-                                -4,
-                                0,
-                                2
-                            ],
-                            "index": 6,
-                            "name": "left"
-                        },
-                        {
-                            "camera_pos": [
-                                -3,
-                                -3,
-                                2
-                            ],
-                            "index": 7,
-                            "name": "front-left"
-                        },
-                        {
-                            "camera_pos": [
-                                -2,
-                                0,
-                                5
-                            ],
-                            "index": 8,
-                            "name": "top"
-                        },
-                        {
-                            "camera_pos": [
-                                -2,
-                                -3,
-                                0
-                            ],
-                            "index": 9,
-                            "name": "bottom"
-                        }
-                    ],
-                    "default_angle": 0,
-                    "grid_cols": 5,
-                    "grid_rows": 2,
-                    "tile_size": 512
-                }
-            }
-        ],
-        "metadata": false,
-        "tags": [
-            "connection|openforge",
-            "shape|floor",
-            "shape|floor|c",
-            "size|depth|2",
-            "size|width|2",
-            "texture|rough_stone"
-        ],
-        "type": "model"
-    },
-    {
-        "config": {
-            "parts": [
-                {
-                    "name": "base",
-                    "optional": true,
-                    "tags": {
-                        "constrain": [
-                            {
-                                "filter": "shape|floor"
-                            },
-                            {
-                                "filter": "shape|wall"
-                            },
-                            {
-                                "tag": "shape"
-                            },
-                            {
-                                "tag": "size|depth"
-                            },
-                            {
-                                "tag": "size|width"
-                            }
-                        ],
-                        "deny": [
-                            {
-                                "tag": "build|s2w"
-                            }
-                        ],
-                        "require": [
-                            {
-                                "tag": "shape|base"
-                            }
-                        ]
-                    }
-                }
-            ]
-        },
-        "file_metadata": {
-            "file": "rough_stone#floor+d.2x2.openforge.stl",
-            "file_modified_at": "2020-07-30T20:34:36.475528",
-            "full_name": "tiles/rough_stone/floors/floor/openforge/rough_stone#floor+d.2x2.openforge.stl",
-            "md5": "55cd0e30ca5aeb64e322f0a64b79fb72",
-            "size": 20014484,
-            "storage_address": "https://objects.openforge.tools/models/55cd0e/55cd0e30ca5aeb64e322f0a64b79fb72.stl"
-        },
-        "images": [
-            {
-                "image_name": "thumbnail",
-                "image_url": "https://objects.openforge.tools/sprites/55cd0e/55cd0e30ca5aeb64e322f0a64b79fb72.png",
-                "sprite_metadata": {
-                    "angles": [
-                        {
-                            "camera_pos": [
-                                -4,
-                                0,
-                                2
-                            ],
-                            "index": 0,
-                            "name": "front"
-                        },
-                        {
-                            "camera_pos": [
-                                -3,
-                                2,
-                                3
-                            ],
-                            "index": 1,
-                            "name": "front-right"
-                        },
-                        {
-                            "camera_pos": [
-                                0,
-                                2,
-                                4
-                            ],
-                            "index": 2,
-                            "name": "right"
-                        },
-                        {
-                            "camera_pos": [
-                                2,
-                                3,
-                                3
-                            ],
-                            "index": 3,
-                            "name": "back-right"
-                        },
-                        {
-                            "camera_pos": [
-                                0,
-                                2,
-                                4
-                            ],
-                            "index": 4,
-                            "name": "back"
-                        },
-                        {
-                            "camera_pos": [
-                                -3,
-                                2,
-                                3
-                            ],
-                            "index": 5,
-                            "name": "back-left"
-                        },
-                        {
-                            "camera_pos": [
-                                -4,
-                                0,
-                                2
-                            ],
-                            "index": 6,
-                            "name": "left"
-                        },
-                        {
-                            "camera_pos": [
-                                -3,
-                                -3,
-                                2
-                            ],
-                            "index": 7,
-                            "name": "front-left"
-                        },
-                        {
-                            "camera_pos": [
-                                -2,
-                                0,
-                                5
-                            ],
-                            "index": 8,
-                            "name": "top"
-                        },
-                        {
-                            "camera_pos": [
-                                -2,
-                                -3,
-                                0
-                            ],
-                            "index": 9,
-                            "name": "bottom"
-                        }
-                    ],
-                    "default_angle": 0,
-                    "grid_cols": 5,
-                    "grid_rows": 2,
-                    "tile_size": 512
-                }
-            }
-        ],
-        "metadata": false,
-        "tags": [
-            "connection|openforge",
-            "shape|floor",
-            "shape|floor|d",
-            "size|depth|2",
-            "size|width|2",
-            "texture|rough_stone"
-        ],
-        "type": "model"
-    },
-    {
-        "config": {
-            "parts": [
-                {
-                    "name": "base",
-                    "optional": true,
-                    "tags": {
-                        "constrain": [
-                            {
-                                "filter": "shape|floor"
-                            },
-                            {
-                                "filter": "shape|wall"
-                            },
-                            {
-                                "tag": "shape"
-                            },
-                            {
-                                "tag": "size|depth"
-                            },
-                            {
-                                "tag": "size|width"
-                            }
-                        ],
-                        "deny": [
-                            {
-                                "tag": "build|s2w"
-                            }
-                        ],
-                        "require": [
-                            {
-                                "tag": "shape|base"
-                            }
-                        ]
-                    }
-                }
-            ]
-        },
-        "file_metadata": {
             "file": "rough_stone#floor.1x1.openforge.stl",
             "file_modified_at": "2020-07-30T20:33:12.789028",
             "full_name": "tiles/rough_stone/floors/floor/openforge/rough_stone#floor.1x1.openforge.stl",
@@ -1933,18 +1289,55 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "base",
+                    "optional": true,
+                    "tags": {
+                        "constrain": [
+                            {
+                                "filter": "shape|floor"
+                            },
+                            {
+                                "filter": "shape|wall"
+                            },
+                            {
+                                "tag": "shape"
+                            },
+                            {
+                                "tag": "size|depth"
+                            },
+                            {
+                                "tag": "size|width"
+                            }
+                        ],
+                        "deny": [
+                            {
+                                "tag": "build|s2w"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "shape|base"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
-            "file": "rough_stone#floor+a.2x2.openlock.stl",
-            "file_modified_at": "2020-07-31T10:45:54.382585",
-            "full_name": "tiles/rough_stone/floors/floor/openlock/rough_stone#floor+a.2x2.openlock.stl",
-            "md5": "bc974b091852053679e67a4510646cd7",
-            "size": 20458984,
-            "storage_address": "https://objects.openforge.tools/models/bc974b/bc974b091852053679e67a4510646cd7.stl"
+            "file": "rough_stone%a#floor.2x2.openforge.stl",
+            "file_modified_at": "2020-07-30T20:33:49.147675",
+            "full_name": "tiles/rough_stone/floors/floor/openforge/rough_stone%a#floor.2x2.openforge.stl",
+            "md5": "8fbacbfae7735516f1ea0c0d7234d4fc",
+            "size": 20301984,
+            "storage_address": "https://objects.openforge.tools/models/8fbacb/8fbacbfae7735516f1ea0c0d7234d4fc.stl"
         },
         "images": [
             {
                 "image_name": "thumbnail",
-                "image_url": "https://objects.openforge.tools/sprites/bc974b/bc974b091852053679e67a4510646cd7.png",
+                "image_url": "https://objects.openforge.tools/sprites/8fbacb/8fbacbfae7735516f1ea0c0d7234d4fc.png",
                 "sprite_metadata": {
                     "angles": [
                         {
@@ -2047,28 +1440,66 @@
         ],
         "metadata": false,
         "tags": [
-            "connection|openlock",
+            "connection|openforge",
             "shape|floor",
-            "shape|floor|a",
+            "shape|square",
             "size|depth|2",
             "size|width|2",
-            "texture|rough_stone"
+            "texture|rough_stone",
+            "texture|rough_stone|a"
         ],
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "base",
+                    "optional": true,
+                    "tags": {
+                        "constrain": [
+                            {
+                                "filter": "shape|floor"
+                            },
+                            {
+                                "filter": "shape|wall"
+                            },
+                            {
+                                "tag": "shape"
+                            },
+                            {
+                                "tag": "size|depth"
+                            },
+                            {
+                                "tag": "size|width"
+                            }
+                        ],
+                        "deny": [
+                            {
+                                "tag": "build|s2w"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "shape|base"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
-            "file": "rough_stone#floor+b.2x2.openlock.stl",
-            "file_modified_at": "2020-07-31T10:46:43.150355",
-            "full_name": "tiles/rough_stone/floors/floor/openlock/rough_stone#floor+b.2x2.openlock.stl",
-            "md5": "62f1e7df7f049d15b9dc354682fe647e",
-            "size": 18263884,
-            "storage_address": "https://objects.openforge.tools/models/62f1e7/62f1e7df7f049d15b9dc354682fe647e.stl"
+            "file": "rough_stone%b#floor.2x2.openforge.stl",
+            "file_modified_at": "2020-07-30T20:34:04.028256",
+            "full_name": "tiles/rough_stone/floors/floor/openforge/rough_stone%b#floor.2x2.openforge.stl",
+            "md5": "a2ab5b75a1cbc9d82a088032db6b2f49",
+            "size": 18106984,
+            "storage_address": "https://objects.openforge.tools/models/a2ab5b/a2ab5b75a1cbc9d82a088032db6b2f49.stl"
         },
         "images": [
             {
                 "image_name": "thumbnail",
-                "image_url": "https://objects.openforge.tools/sprites/62f1e7/62f1e7df7f049d15b9dc354682fe647e.png",
+                "image_url": "https://objects.openforge.tools/sprites/a2ab5b/a2ab5b75a1cbc9d82a088032db6b2f49.png",
                 "sprite_metadata": {
                     "angles": [
                         {
@@ -2171,28 +1602,66 @@
         ],
         "metadata": false,
         "tags": [
-            "connection|openlock",
+            "connection|openforge",
             "shape|floor",
-            "shape|floor|b",
+            "shape|square",
             "size|depth|2",
             "size|width|2",
-            "texture|rough_stone"
+            "texture|rough_stone",
+            "texture|rough_stone|b"
         ],
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "base",
+                    "optional": true,
+                    "tags": {
+                        "constrain": [
+                            {
+                                "filter": "shape|floor"
+                            },
+                            {
+                                "filter": "shape|wall"
+                            },
+                            {
+                                "tag": "shape"
+                            },
+                            {
+                                "tag": "size|depth"
+                            },
+                            {
+                                "tag": "size|width"
+                            }
+                        ],
+                        "deny": [
+                            {
+                                "tag": "build|s2w"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "shape|base"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
-            "file": "rough_stone#floor+c.2x2.openlock.stl",
-            "file_modified_at": "2020-07-31T10:47:32.548376",
-            "full_name": "tiles/rough_stone/floors/floor/openlock/rough_stone#floor+c.2x2.openlock.stl",
-            "md5": "a1f9a21aee927768e83c636318eb87e0",
-            "size": 15611884,
-            "storage_address": "https://objects.openforge.tools/models/a1f9a2/a1f9a21aee927768e83c636318eb87e0.stl"
+            "file": "rough_stone%c#floor.2x2.openforge.stl",
+            "file_modified_at": "2020-07-30T20:34:18.686297",
+            "full_name": "tiles/rough_stone/floors/floor/openforge/rough_stone%c#floor.2x2.openforge.stl",
+            "md5": "b427248eaa662f23393b806079756ec0",
+            "size": 15454884,
+            "storage_address": "https://objects.openforge.tools/models/b42724/b427248eaa662f23393b806079756ec0.stl"
         },
         "images": [
             {
                 "image_name": "thumbnail",
-                "image_url": "https://objects.openforge.tools/sprites/a1f9a2/a1f9a21aee927768e83c636318eb87e0.png",
+                "image_url": "https://objects.openforge.tools/sprites/b42724/b427248eaa662f23393b806079756ec0.png",
                 "sprite_metadata": {
                     "angles": [
                         {
@@ -2295,28 +1764,66 @@
         ],
         "metadata": false,
         "tags": [
-            "connection|openlock",
+            "connection|openforge",
             "shape|floor",
-            "shape|floor|c",
+            "shape|square",
             "size|depth|2",
             "size|width|2",
-            "texture|rough_stone"
+            "texture|rough_stone",
+            "texture|rough_stone|c"
         ],
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "base",
+                    "optional": true,
+                    "tags": {
+                        "constrain": [
+                            {
+                                "filter": "shape|floor"
+                            },
+                            {
+                                "filter": "shape|wall"
+                            },
+                            {
+                                "tag": "shape"
+                            },
+                            {
+                                "tag": "size|depth"
+                            },
+                            {
+                                "tag": "size|width"
+                            }
+                        ],
+                        "deny": [
+                            {
+                                "tag": "build|s2w"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "shape|base"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
-            "file": "rough_stone#floor+d.2x2.openlock.stl",
-            "file_modified_at": "2020-07-31T10:48:47.388039",
-            "full_name": "tiles/rough_stone/floors/floor/openlock/rough_stone#floor+d.2x2.openlock.stl",
-            "md5": "7c22f16816f479e5566bab890214353c",
-            "size": 20171484,
-            "storage_address": "https://objects.openforge.tools/models/7c22f1/7c22f16816f479e5566bab890214353c.stl"
+            "file": "rough_stone%d#floor.2x2.openforge.stl",
+            "file_modified_at": "2020-07-30T20:34:36.475528",
+            "full_name": "tiles/rough_stone/floors/floor/openforge/rough_stone%d#floor.2x2.openforge.stl",
+            "md5": "55cd0e30ca5aeb64e322f0a64b79fb72",
+            "size": 20014484,
+            "storage_address": "https://objects.openforge.tools/models/55cd0e/55cd0e30ca5aeb64e322f0a64b79fb72.stl"
         },
         "images": [
             {
                 "image_name": "thumbnail",
-                "image_url": "https://objects.openforge.tools/sprites/7c22f1/7c22f16816f479e5566bab890214353c.png",
+                "image_url": "https://objects.openforge.tools/sprites/55cd0e/55cd0e30ca5aeb64e322f0a64b79fb72.png",
                 "sprite_metadata": {
                     "angles": [
                         {
@@ -2419,12 +1926,13 @@
         ],
         "metadata": false,
         "tags": [
-            "connection|openlock",
+            "connection|openforge",
             "shape|floor",
-            "shape|floor|d",
+            "shape|square",
             "size|depth|2",
             "size|width|2",
-            "texture|rough_stone"
+            "texture|rough_stone",
+            "texture|rough_stone|d"
         ],
         "type": "model"
     },
@@ -3418,6 +2926,506 @@
             "size|openlock|AS",
             "size|width|2",
             "texture|rough_stone"
+        ],
+        "type": "model"
+    },
+    {
+        "file_metadata": {
+            "file": "rough_stone%a#floor.2x2.openlock.stl",
+            "file_modified_at": "2020-07-31T10:45:54.382585",
+            "full_name": "tiles/rough_stone/floors/floor/openlock/rough_stone%a#floor.2x2.openlock.stl",
+            "md5": "bc974b091852053679e67a4510646cd7",
+            "size": 20458984,
+            "storage_address": "https://objects.openforge.tools/models/bc974b/bc974b091852053679e67a4510646cd7.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/bc974b/bc974b091852053679e67a4510646cd7.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "connection|openlock",
+            "shape|floor",
+            "shape|square",
+            "size|depth|2",
+            "size|width|2",
+            "texture|rough_stone",
+            "texture|rough_stone|a"
+        ],
+        "type": "model"
+    },
+    {
+        "file_metadata": {
+            "file": "rough_stone%b#floor.2x2.openlock.stl",
+            "file_modified_at": "2020-07-31T10:46:43.150355",
+            "full_name": "tiles/rough_stone/floors/floor/openlock/rough_stone%b#floor.2x2.openlock.stl",
+            "md5": "62f1e7df7f049d15b9dc354682fe647e",
+            "size": 18263884,
+            "storage_address": "https://objects.openforge.tools/models/62f1e7/62f1e7df7f049d15b9dc354682fe647e.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/62f1e7/62f1e7df7f049d15b9dc354682fe647e.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "connection|openlock",
+            "shape|floor",
+            "shape|square",
+            "size|depth|2",
+            "size|width|2",
+            "texture|rough_stone",
+            "texture|rough_stone|b"
+        ],
+        "type": "model"
+    },
+    {
+        "file_metadata": {
+            "file": "rough_stone%c#floor.2x2.openlock.stl",
+            "file_modified_at": "2020-07-31T10:47:32.548376",
+            "full_name": "tiles/rough_stone/floors/floor/openlock/rough_stone%c#floor.2x2.openlock.stl",
+            "md5": "a1f9a21aee927768e83c636318eb87e0",
+            "size": 15611884,
+            "storage_address": "https://objects.openforge.tools/models/a1f9a2/a1f9a21aee927768e83c636318eb87e0.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/a1f9a2/a1f9a21aee927768e83c636318eb87e0.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "connection|openlock",
+            "shape|floor",
+            "shape|square",
+            "size|depth|2",
+            "size|width|2",
+            "texture|rough_stone",
+            "texture|rough_stone|c"
+        ],
+        "type": "model"
+    },
+    {
+        "file_metadata": {
+            "file": "rough_stone%d#floor.2x2.openlock.stl",
+            "file_modified_at": "2020-07-31T10:48:47.388039",
+            "full_name": "tiles/rough_stone/floors/floor/openlock/rough_stone%d#floor.2x2.openlock.stl",
+            "md5": "7c22f16816f479e5566bab890214353c",
+            "size": 20171484,
+            "storage_address": "https://objects.openforge.tools/models/7c22f1/7c22f16816f479e5566bab890214353c.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/7c22f1/7c22f16816f479e5566bab890214353c.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "connection|openlock",
+            "shape|floor",
+            "shape|square",
+            "size|depth|2",
+            "size|width|2",
+            "texture|rough_stone",
+            "texture|rough_stone|d"
         ],
         "type": "model"
     },
@@ -12224,9 +12232,9 @@
             ]
         },
         "file_metadata": {
-            "file": "rough_stone#floor+corner.1x1.openforge.stl",
+            "file": "rough_stone#corner,floor.1x1.openforge.stl",
             "file_modified_at": "2020-11-30T16:52:02.109576",
-            "full_name": "tiles/rough_stone/wall_on_tile/corner/floor/rough_stone#floor+corner.1x1.openforge.stl",
+            "full_name": "tiles/rough_stone/wall_on_tile/corner/floor/rough_stone#corner,floor.1x1.openforge.stl",
             "md5": "6026c5022fdb16f98afd159abd4ed6ff",
             "size": 2637584,
             "storage_address": "https://objects.openforge.tools/models/6026c5/6026c5022fdb16f98afd159abd4ed6ff.stl"
@@ -12339,8 +12347,8 @@
         "tags": [
             "build|wall on tile",
             "connection|openforge",
+            "shape|corner",
             "shape|floor",
-            "shape|floor|corner",
             "size|depth|1",
             "size|width|1",
             "texture|rough_stone"
@@ -12386,9 +12394,9 @@
             ]
         },
         "file_metadata": {
-            "file": "rough_stone#floor+corner.2x2.openforge.stl",
+            "file": "rough_stone#corner,floor.2x2.openforge.stl",
             "file_modified_at": "2020-11-30T16:52:16.486421",
-            "full_name": "tiles/rough_stone/wall_on_tile/corner/floor/rough_stone#floor+corner.2x2.openforge.stl",
+            "full_name": "tiles/rough_stone/wall_on_tile/corner/floor/rough_stone#corner,floor.2x2.openforge.stl",
             "md5": "a301d4bc0ad7aa0843a128ed37956d5a",
             "size": 16861884,
             "storage_address": "https://objects.openforge.tools/models/a301d4/a301d4bc0ad7aa0843a128ed37956d5a.stl"
@@ -12501,8 +12509,8 @@
         "tags": [
             "build|wall on tile",
             "connection|openforge",
+            "shape|corner",
             "shape|floor",
-            "shape|floor|corner",
             "size|depth|2",
             "size|width|2",
             "texture|rough_stone"
@@ -12548,9 +12556,9 @@
             ]
         },
         "file_metadata": {
-            "file": "rough_stone#floor+corner.3x3.openforge.stl",
+            "file": "rough_stone#corner,floor.3x3.openforge.stl",
             "file_modified_at": "2020-11-30T16:52:33.299558",
-            "full_name": "tiles/rough_stone/wall_on_tile/corner/floor/rough_stone#floor+corner.3x3.openforge.stl",
+            "full_name": "tiles/rough_stone/wall_on_tile/corner/floor/rough_stone#corner,floor.3x3.openforge.stl",
             "md5": "11ed2b5419b8144c11942b2dfdc6ac2d",
             "size": 40911884,
             "storage_address": "https://objects.openforge.tools/models/11ed2b/11ed2b5419b8144c11942b2dfdc6ac2d.stl"
@@ -12663,8 +12671,8 @@
         "tags": [
             "build|wall on tile",
             "connection|openforge",
+            "shape|corner",
             "shape|floor",
-            "shape|floor|corner",
             "size|depth|3",
             "size|width|3",
             "texture|rough_stone"
@@ -12710,9 +12718,9 @@
             ]
         },
         "file_metadata": {
-            "file": "rough_stone#floor+corner.4x4.openforge.stl",
+            "file": "rough_stone#corner,floor.4x4.openforge.stl",
             "file_modified_at": "2020-11-30T16:52:51.330702",
-            "full_name": "tiles/rough_stone/wall_on_tile/corner/floor/rough_stone#floor+corner.4x4.openforge.stl",
+            "full_name": "tiles/rough_stone/wall_on_tile/corner/floor/rough_stone#corner,floor.4x4.openforge.stl",
             "md5": "53124dca932f790b584c815502aafcf4",
             "size": 74212284,
             "storage_address": "https://objects.openforge.tools/models/53124d/53124dca932f790b584c815502aafcf4.stl"
@@ -12825,8 +12833,8 @@
         "tags": [
             "build|wall on tile",
             "connection|openforge",
+            "shape|corner",
             "shape|floor",
-            "shape|floor|corner",
             "size|depth|4",
             "size|width|4",
             "texture|rough_stone"
@@ -13380,9 +13388,9 @@
             ]
         },
         "file_metadata": {
-            "file": "rough_stone#floor+curved+concave.1x1.openforge.stl",
+            "file": "rough_stone#curved+concave,floor.1x1.openforge.stl",
             "file_modified_at": "2020-11-30T17:00:34.108345",
-            "full_name": "tiles/rough_stone/wall_on_tile/curved/floor+concave/rough_stone#floor+curved+concave.1x1.openforge.stl",
+            "full_name": "tiles/rough_stone/wall_on_tile/curved/floor+concave/rough_stone#curved+concave,floor.1x1.openforge.stl",
             "md5": "42dfce00f9e25e348fbf18c664ff29b2",
             "size": 3384984,
             "storage_address": "https://objects.openforge.tools/models/42dfce/42dfce00f9e25e348fbf18c664ff29b2.stl"
@@ -13495,9 +13503,9 @@
         "tags": [
             "build|wall on tile",
             "connection|openforge",
+            "shape|curved",
+            "shape|curved|concave",
             "shape|floor",
-            "shape|floor|concave",
-            "shape|floor|curved",
             "size|depth|1",
             "size|width|1",
             "texture|rough_stone"
@@ -13543,9 +13551,9 @@
             ]
         },
         "file_metadata": {
-            "file": "rough_stone#floor+curved+concave.2x2.openforge.stl",
+            "file": "rough_stone#curved+concave,floor.2x2.openforge.stl",
             "file_modified_at": "2020-11-30T17:00:45.072357",
-            "full_name": "tiles/rough_stone/wall_on_tile/curved/floor+concave/rough_stone#floor+curved+concave.2x2.openforge.stl",
+            "full_name": "tiles/rough_stone/wall_on_tile/curved/floor+concave/rough_stone#curved+concave,floor.2x2.openforge.stl",
             "md5": "bd265f0c8de4c1daf8a6c51142fb29e1",
             "size": 8808584,
             "storage_address": "https://objects.openforge.tools/models/bd265f/bd265f0c8de4c1daf8a6c51142fb29e1.stl"
@@ -13658,9 +13666,9 @@
         "tags": [
             "build|wall on tile",
             "connection|openforge",
+            "shape|curved",
+            "shape|curved|concave",
             "shape|floor",
-            "shape|floor|concave",
-            "shape|floor|curved",
             "size|depth|2",
             "size|width|2",
             "texture|rough_stone"
@@ -13706,9 +13714,9 @@
             ]
         },
         "file_metadata": {
-            "file": "rough_stone#floor+curved+concave.2x4.openforge.stl",
+            "file": "rough_stone#curved+concave,floor.2x4.openforge.stl",
             "file_modified_at": "2020-11-30T17:01:01.008688",
-            "full_name": "tiles/rough_stone/wall_on_tile/curved/floor+concave/rough_stone#floor+curved+concave.2x4.openforge.stl",
+            "full_name": "tiles/rough_stone/wall_on_tile/curved/floor+concave/rough_stone#curved+concave,floor.2x4.openforge.stl",
             "md5": "5478e4fcd0f1958cec84bc704448896f",
             "size": 13165384,
             "storage_address": "https://objects.openforge.tools/models/5478e4/5478e4fcd0f1958cec84bc704448896f.stl"
@@ -13821,9 +13829,9 @@
         "tags": [
             "build|wall on tile",
             "connection|openforge",
+            "shape|curved",
+            "shape|curved|concave",
             "shape|floor",
-            "shape|floor|concave",
-            "shape|floor|curved",
             "size|depth|4",
             "size|width|2",
             "texture|rough_stone"
@@ -13869,9 +13877,9 @@
             ]
         },
         "file_metadata": {
-            "file": "rough_stone#floor+curved+concave.3x3.openforge.stl",
+            "file": "rough_stone#curved+concave,floor.3x3.openforge.stl",
             "file_modified_at": "2020-11-30T17:01:11.844167",
-            "full_name": "tiles/rough_stone/wall_on_tile/curved/floor+concave/rough_stone#floor+curved+concave.3x3.openforge.stl",
+            "full_name": "tiles/rough_stone/wall_on_tile/curved/floor+concave/rough_stone#curved+concave,floor.3x3.openforge.stl",
             "md5": "7c25e24065c50a7b6cf9cb351305c3fc",
             "size": 9885584,
             "storage_address": "https://objects.openforge.tools/models/7c25e2/7c25e24065c50a7b6cf9cb351305c3fc.stl"
@@ -13984,9 +13992,9 @@
         "tags": [
             "build|wall on tile",
             "connection|openforge",
+            "shape|curved",
+            "shape|curved|concave",
             "shape|floor",
-            "shape|floor|concave",
-            "shape|floor|curved",
             "size|depth|3",
             "size|width|3",
             "texture|rough_stone"
@@ -14032,9 +14040,9 @@
             ]
         },
         "file_metadata": {
-            "file": "rough_stone#floor+curved+concave.4x2.openforge.stl",
+            "file": "rough_stone#curved+concave,floor.4x2.openforge.stl",
             "file_modified_at": "2020-11-30T17:01:21.817104",
-            "full_name": "tiles/rough_stone/wall_on_tile/curved/floor+concave/rough_stone#floor+curved+concave.4x2.openforge.stl",
+            "full_name": "tiles/rough_stone/wall_on_tile/curved/floor+concave/rough_stone#curved+concave,floor.4x2.openforge.stl",
             "md5": "d37e3a7a953d44303d54ee461cc885d8",
             "size": 16782284,
             "storage_address": "https://objects.openforge.tools/models/d37e3a/d37e3a7a953d44303d54ee461cc885d8.stl"
@@ -14147,9 +14155,9 @@
         "tags": [
             "build|wall on tile",
             "connection|openforge",
+            "shape|curved",
+            "shape|curved|concave",
             "shape|floor",
-            "shape|floor|concave",
-            "shape|floor|curved",
             "size|depth|2",
             "size|width|4",
             "texture|rough_stone"
@@ -14195,9 +14203,9 @@
             ]
         },
         "file_metadata": {
-            "file": "rough_stone#floor+curved+concave.4x4.openforge.stl",
+            "file": "rough_stone#curved+concave,floor.4x4.openforge.stl",
             "file_modified_at": "2020-11-30T17:01:34.437279",
-            "full_name": "tiles/rough_stone/wall_on_tile/curved/floor+concave/rough_stone#floor+curved+concave.4x4.openforge.stl",
+            "full_name": "tiles/rough_stone/wall_on_tile/curved/floor+concave/rough_stone#curved+concave,floor.4x4.openforge.stl",
             "md5": "b74d397a45c2831bfa8917773f7d1980",
             "size": 36060034,
             "storage_address": "https://objects.openforge.tools/models/b74d39/b74d397a45c2831bfa8917773f7d1980.stl"
@@ -14310,9 +14318,9 @@
         "tags": [
             "build|wall on tile",
             "connection|openforge",
+            "shape|curved",
+            "shape|curved|concave",
             "shape|floor",
-            "shape|floor|concave",
-            "shape|floor|curved",
             "size|depth|4",
             "size|width|4",
             "texture|rough_stone"
@@ -14358,9 +14366,9 @@
             ]
         },
         "file_metadata": {
-            "file": "rough_stone#floor+curved.1x1.openforge.stl",
+            "file": "rough_stone#curved,floor.1x1.openforge.stl",
             "file_modified_at": "2020-11-30T16:58:18.509443",
-            "full_name": "tiles/rough_stone/wall_on_tile/curved/floor/rough_stone#floor+curved.1x1.openforge.stl",
+            "full_name": "tiles/rough_stone/wall_on_tile/curved/floor/rough_stone#curved,floor.1x1.openforge.stl",
             "md5": "67c001fb3a5fd3d30887cbee59b2d5a3",
             "size": 2971184,
             "storage_address": "https://objects.openforge.tools/models/67c001/67c001fb3a5fd3d30887cbee59b2d5a3.stl"
@@ -14473,8 +14481,8 @@
         "tags": [
             "build|wall on tile",
             "connection|openforge",
+            "shape|curved",
             "shape|floor",
-            "shape|floor|curved",
             "size|depth|1",
             "size|width|1",
             "texture|rough_stone"
@@ -14520,9 +14528,9 @@
             ]
         },
         "file_metadata": {
-            "file": "rough_stone#floor+curved.2x2.openforge.stl",
+            "file": "rough_stone#curved,floor.2x2.openforge.stl",
             "file_modified_at": "2020-11-30T16:58:30.685168",
-            "full_name": "tiles/rough_stone/wall_on_tile/curved/floor/rough_stone#floor+curved.2x2.openforge.stl",
+            "full_name": "tiles/rough_stone/wall_on_tile/curved/floor/rough_stone#curved,floor.2x2.openforge.stl",
             "md5": "0c9e5dbf3ed3951dbe6ef86b1a4567c6",
             "size": 12083784,
             "storage_address": "https://objects.openforge.tools/models/0c9e5d/0c9e5dbf3ed3951dbe6ef86b1a4567c6.stl"
@@ -14635,8 +14643,8 @@
         "tags": [
             "build|wall on tile",
             "connection|openforge",
+            "shape|curved",
             "shape|floor",
-            "shape|floor|curved",
             "size|depth|2",
             "size|width|2",
             "texture|rough_stone"
@@ -14682,9 +14690,9 @@
             ]
         },
         "file_metadata": {
-            "file": "rough_stone#floor+curved.2x4.openforge.stl",
+            "file": "rough_stone#curved,floor.2x4.openforge.stl",
             "file_modified_at": "2020-11-30T16:58:40.490405",
-            "full_name": "tiles/rough_stone/wall_on_tile/curved/floor/rough_stone#floor+curved.2x4.openforge.stl",
+            "full_name": "tiles/rough_stone/wall_on_tile/curved/floor/rough_stone#curved,floor.2x4.openforge.stl",
             "md5": "f2ea9a183974e22a5c5c69bd9fa0b945",
             "size": 20398984,
             "storage_address": "https://objects.openforge.tools/models/f2ea9a/f2ea9a183974e22a5c5c69bd9fa0b945.stl"
@@ -14797,8 +14805,8 @@
         "tags": [
             "build|wall on tile",
             "connection|openforge",
+            "shape|curved",
             "shape|floor",
-            "shape|floor|curved",
             "size|depth|4",
             "size|width|2",
             "texture|rough_stone"
@@ -14844,9 +14852,9 @@
             ]
         },
         "file_metadata": {
-            "file": "rough_stone#floor+curved.3x3.openforge.stl",
+            "file": "rough_stone#curved,floor.3x3.openforge.stl",
             "file_modified_at": "2020-11-30T16:58:52.658205",
-            "full_name": "tiles/rough_stone/wall_on_tile/curved/floor/rough_stone#floor+curved.3x3.openforge.stl",
+            "full_name": "tiles/rough_stone/wall_on_tile/curved/floor/rough_stone#curved,floor.3x3.openforge.stl",
             "md5": "2b8fffc4549df7e8826a6e432ba1a961",
             "size": 42041084,
             "storage_address": "https://objects.openforge.tools/models/2b8fff/2b8fffc4549df7e8826a6e432ba1a961.stl"
@@ -14959,8 +14967,8 @@
         "tags": [
             "build|wall on tile",
             "connection|openforge",
+            "shape|curved",
             "shape|floor",
-            "shape|floor|curved",
             "size|depth|3",
             "size|width|3",
             "texture|rough_stone"
@@ -15006,9 +15014,9 @@
             ]
         },
         "file_metadata": {
-            "file": "rough_stone#floor+curved.4x2.openforge.stl",
+            "file": "rough_stone#curved,floor.4x2.openforge.stl",
             "file_modified_at": "2020-11-30T16:59:03.638254",
-            "full_name": "tiles/rough_stone/wall_on_tile/curved/floor/rough_stone#floor+curved.4x2.openforge.stl",
+            "full_name": "tiles/rough_stone/wall_on_tile/curved/floor/rough_stone#curved,floor.4x2.openforge.stl",
             "md5": "2745084bfc7e0917446670187339be47",
             "size": 19470384,
             "storage_address": "https://objects.openforge.tools/models/274508/2745084bfc7e0917446670187339be47.stl"
@@ -15121,8 +15129,8 @@
         "tags": [
             "build|wall on tile",
             "connection|openforge",
+            "shape|curved",
             "shape|floor",
-            "shape|floor|curved",
             "size|depth|2",
             "size|width|4",
             "texture|rough_stone"
@@ -15168,9 +15176,9 @@
             ]
         },
         "file_metadata": {
-            "file": "rough_stone#floor+curved.4x4.openforge.stl",
+            "file": "rough_stone#curved,floor.4x4.openforge.stl",
             "file_modified_at": "2020-11-30T16:59:19.541142",
-            "full_name": "tiles/rough_stone/wall_on_tile/curved/floor/rough_stone#floor+curved.4x4.openforge.stl",
+            "full_name": "tiles/rough_stone/wall_on_tile/curved/floor/rough_stone#curved,floor.4x4.openforge.stl",
             "md5": "9ffd0848608ce8eadae7af4964759ed1",
             "size": 72507984,
             "storage_address": "https://objects.openforge.tools/models/9ffd08/9ffd0848608ce8eadae7af4964759ed1.stl"
@@ -15283,8 +15291,8 @@
         "tags": [
             "build|wall on tile",
             "connection|openforge",
+            "shape|curved",
             "shape|floor",
-            "shape|floor|curved",
             "size|depth|4",
             "size|width|4",
             "texture|rough_stone"
@@ -16206,9 +16214,9 @@
             ]
         },
         "file_metadata": {
-            "file": "rough_stone#floor+diagonal+a.1x1.openforge.stl",
+            "file": "rough_stone#diagonal+a,floor.1x1.openforge.stl",
             "file_modified_at": "2020-11-30T16:54:09.286231",
-            "full_name": "tiles/rough_stone/wall_on_tile/diagonal/floor/rough_stone#floor+diagonal+a.1x1.openforge.stl",
+            "full_name": "tiles/rough_stone/wall_on_tile/diagonal/floor/rough_stone#diagonal+a,floor.1x1.openforge.stl",
             "md5": "cb4270cc32b6b5819370347949ed8cf5",
             "size": 2718434,
             "storage_address": "https://objects.openforge.tools/models/cb4270/cb4270cc32b6b5819370347949ed8cf5.stl"
@@ -16321,9 +16329,9 @@
         "tags": [
             "build|wall on tile",
             "connection|openforge",
+            "shape|diagonal",
+            "shape|diagonal|a",
             "shape|floor",
-            "shape|floor|a",
-            "shape|floor|diagonal",
             "size|depth|1",
             "size|width|1",
             "texture|rough_stone"
@@ -16369,9 +16377,9 @@
             ]
         },
         "file_metadata": {
-            "file": "rough_stone#floor+diagonal+a.2x2.openforge.stl",
+            "file": "rough_stone#diagonal+a,floor.2x2.openforge.stl",
             "file_modified_at": "2020-11-30T16:54:43.822585",
-            "full_name": "tiles/rough_stone/wall_on_tile/diagonal/floor/rough_stone#floor+diagonal+a.2x2.openforge.stl",
+            "full_name": "tiles/rough_stone/wall_on_tile/diagonal/floor/rough_stone#diagonal+a,floor.2x2.openforge.stl",
             "md5": "dbebe26476f73b3b549e23e4c90e2642",
             "size": 8058384,
             "storage_address": "https://objects.openforge.tools/models/dbebe2/dbebe26476f73b3b549e23e4c90e2642.stl"
@@ -16484,9 +16492,9 @@
         "tags": [
             "build|wall on tile",
             "connection|openforge",
+            "shape|diagonal",
+            "shape|diagonal|a",
             "shape|floor",
-            "shape|floor|a",
-            "shape|floor|diagonal",
             "size|depth|2",
             "size|width|2",
             "texture|rough_stone"
@@ -16532,9 +16540,9 @@
             ]
         },
         "file_metadata": {
-            "file": "rough_stone#floor+diagonal+a.2x4.openforge.stl",
+            "file": "rough_stone#diagonal+a,floor.2x4.openforge.stl",
             "file_modified_at": "2020-11-30T16:55:01.166540",
-            "full_name": "tiles/rough_stone/wall_on_tile/diagonal/floor/rough_stone#floor+diagonal+a.2x4.openforge.stl",
+            "full_name": "tiles/rough_stone/wall_on_tile/diagonal/floor/rough_stone#diagonal+a,floor.2x4.openforge.stl",
             "md5": "5c9577ae8f4b54cf9a648dda5c51aef2",
             "size": 18226684,
             "storage_address": "https://objects.openforge.tools/models/5c9577/5c9577ae8f4b54cf9a648dda5c51aef2.stl"
@@ -16647,9 +16655,9 @@
         "tags": [
             "build|wall on tile",
             "connection|openforge",
+            "shape|diagonal",
+            "shape|diagonal|a",
             "shape|floor",
-            "shape|floor|a",
-            "shape|floor|diagonal",
             "size|depth|4",
             "size|width|2",
             "texture|rough_stone"
@@ -16695,9 +16703,9 @@
             ]
         },
         "file_metadata": {
-            "file": "rough_stone#floor+diagonal+a.3x3.openforge.stl",
+            "file": "rough_stone#diagonal+a,floor.3x3.openforge.stl",
             "file_modified_at": "2020-11-30T16:55:39.795404",
-            "full_name": "tiles/rough_stone/wall_on_tile/diagonal/floor/rough_stone#floor+diagonal+a.3x3.openforge.stl",
+            "full_name": "tiles/rough_stone/wall_on_tile/diagonal/floor/rough_stone#diagonal+a,floor.3x3.openforge.stl",
             "md5": "08662100eb90f1fe18daba5e0262ccc3",
             "size": 22072534,
             "storage_address": "https://objects.openforge.tools/models/086621/08662100eb90f1fe18daba5e0262ccc3.stl"
@@ -16810,9 +16818,9 @@
         "tags": [
             "build|wall on tile",
             "connection|openforge",
+            "shape|diagonal",
+            "shape|diagonal|a",
             "shape|floor",
-            "shape|floor|a",
-            "shape|floor|diagonal",
             "size|depth|3",
             "size|width|3",
             "texture|rough_stone"
@@ -16858,9 +16866,9 @@
             ]
         },
         "file_metadata": {
-            "file": "rough_stone#floor+diagonal+a.4x2.openforge.stl",
+            "file": "rough_stone#diagonal+a,floor.4x2.openforge.stl",
             "file_modified_at": "2020-11-30T16:56:08.162241",
-            "full_name": "tiles/rough_stone/wall_on_tile/diagonal/floor/rough_stone#floor+diagonal+a.4x2.openforge.stl",
+            "full_name": "tiles/rough_stone/wall_on_tile/diagonal/floor/rough_stone#diagonal+a,floor.4x2.openforge.stl",
             "md5": "debc913496dba41c90001ba555589f03",
             "size": 18055984,
             "storage_address": "https://objects.openforge.tools/models/debc91/debc913496dba41c90001ba555589f03.stl"
@@ -16973,9 +16981,9 @@
         "tags": [
             "build|wall on tile",
             "connection|openforge",
+            "shape|diagonal",
+            "shape|diagonal|a",
             "shape|floor",
-            "shape|floor|a",
-            "shape|floor|diagonal",
             "size|depth|2",
             "size|width|4",
             "texture|rough_stone"
@@ -17021,9 +17029,9 @@
             ]
         },
         "file_metadata": {
-            "file": "rough_stone#floor+diagonal+a.4x4.openforge.stl",
+            "file": "rough_stone#diagonal+a,floor.4x4.openforge.stl",
             "file_modified_at": "2020-11-30T16:56:49.064615",
-            "full_name": "tiles/rough_stone/wall_on_tile/diagonal/floor/rough_stone#floor+diagonal+a.4x4.openforge.stl",
+            "full_name": "tiles/rough_stone/wall_on_tile/diagonal/floor/rough_stone#diagonal+a,floor.4x4.openforge.stl",
             "md5": "4a3e1556a47cfa4202c0257ebc99e8b5",
             "size": 39042184,
             "storage_address": "https://objects.openforge.tools/models/4a3e15/4a3e1556a47cfa4202c0257ebc99e8b5.stl"
@@ -17136,9 +17144,9 @@
         "tags": [
             "build|wall on tile",
             "connection|openforge",
+            "shape|diagonal",
+            "shape|diagonal|a",
             "shape|floor",
-            "shape|floor|a",
-            "shape|floor|diagonal",
             "size|depth|4",
             "size|width|4",
             "texture|rough_stone"
@@ -17184,9 +17192,9 @@
             ]
         },
         "file_metadata": {
-            "file": "rough_stone#floor+diagonal+b.1x1.openforge.stl",
+            "file": "rough_stone#diagonal+b,floor.1x1.openforge.stl",
             "file_modified_at": "2020-11-30T16:54:20.527219",
-            "full_name": "tiles/rough_stone/wall_on_tile/diagonal/floor/rough_stone#floor+diagonal+b.1x1.openforge.stl",
+            "full_name": "tiles/rough_stone/wall_on_tile/diagonal/floor/rough_stone#diagonal+b,floor.1x1.openforge.stl",
             "md5": "6d0654a7e3c44caf8fdf57e707ef66cb",
             "size": 2653984,
             "storage_address": "https://objects.openforge.tools/models/6d0654/6d0654a7e3c44caf8fdf57e707ef66cb.stl"
@@ -17299,9 +17307,9 @@
         "tags": [
             "build|wall on tile",
             "connection|openforge",
+            "shape|diagonal",
+            "shape|diagonal|b",
             "shape|floor",
-            "shape|floor|b",
-            "shape|floor|diagonal",
             "size|depth|1",
             "size|width|1",
             "texture|rough_stone"
@@ -17347,9 +17355,9 @@
             ]
         },
         "file_metadata": {
-            "file": "rough_stone#floor+diagonal+b.2x2.openforge.stl",
+            "file": "rough_stone#diagonal+b,floor.2x2.openforge.stl",
             "file_modified_at": "2020-11-30T16:54:35.550429",
-            "full_name": "tiles/rough_stone/wall_on_tile/diagonal/floor/rough_stone#floor+diagonal+b.2x2.openforge.stl",
+            "full_name": "tiles/rough_stone/wall_on_tile/diagonal/floor/rough_stone#diagonal+b,floor.2x2.openforge.stl",
             "md5": "109a793ef032dc737457e4c1ba77cc6d",
             "size": 7558784,
             "storage_address": "https://objects.openforge.tools/models/109a79/109a793ef032dc737457e4c1ba77cc6d.stl"
@@ -17462,9 +17470,9 @@
         "tags": [
             "build|wall on tile",
             "connection|openforge",
+            "shape|diagonal",
+            "shape|diagonal|b",
             "shape|floor",
-            "shape|floor|b",
-            "shape|floor|diagonal",
             "size|depth|2",
             "size|width|2",
             "texture|rough_stone"
@@ -17510,9 +17518,9 @@
             ]
         },
         "file_metadata": {
-            "file": "rough_stone#floor+diagonal+b.2x4.openforge.stl",
+            "file": "rough_stone#diagonal+b,floor.2x4.openforge.stl",
             "file_modified_at": "2020-11-30T16:55:12.267589",
-            "full_name": "tiles/rough_stone/wall_on_tile/diagonal/floor/rough_stone#floor+diagonal+b.2x4.openforge.stl",
+            "full_name": "tiles/rough_stone/wall_on_tile/diagonal/floor/rough_stone#diagonal+b,floor.2x4.openforge.stl",
             "md5": "f06b63915a5c1d1d98185053f7779c40",
             "size": 17513084,
             "storage_address": "https://objects.openforge.tools/models/f06b63/f06b63915a5c1d1d98185053f7779c40.stl"
@@ -17625,9 +17633,9 @@
         "tags": [
             "build|wall on tile",
             "connection|openforge",
+            "shape|diagonal",
+            "shape|diagonal|b",
             "shape|floor",
-            "shape|floor|b",
-            "shape|floor|diagonal",
             "size|depth|4",
             "size|width|2",
             "texture|rough_stone"
@@ -17673,9 +17681,9 @@
             ]
         },
         "file_metadata": {
-            "file": "rough_stone#floor+diagonal+b.3x3.openforge.stl",
+            "file": "rough_stone#diagonal+b,floor.3x3.openforge.stl",
             "file_modified_at": "2020-11-30T16:55:29.311283",
-            "full_name": "tiles/rough_stone/wall_on_tile/diagonal/floor/rough_stone#floor+diagonal+b.3x3.openforge.stl",
+            "full_name": "tiles/rough_stone/wall_on_tile/diagonal/floor/rough_stone#diagonal+b,floor.3x3.openforge.stl",
             "md5": "f73b6bdb9f19354316413989888d0964",
             "size": 19462584,
             "storage_address": "https://objects.openforge.tools/models/f73b6b/f73b6bdb9f19354316413989888d0964.stl"
@@ -17788,9 +17796,9 @@
         "tags": [
             "build|wall on tile",
             "connection|openforge",
+            "shape|diagonal",
+            "shape|diagonal|b",
             "shape|floor",
-            "shape|floor|b",
-            "shape|floor|diagonal",
             "size|depth|3",
             "size|width|3",
             "texture|rough_stone"
@@ -17836,9 +17844,9 @@
             ]
         },
         "file_metadata": {
-            "file": "rough_stone#floor+diagonal+b.4x2.openforge.stl",
+            "file": "rough_stone#diagonal+b,floor.4x2.openforge.stl",
             "file_modified_at": "2020-11-30T16:56:18.167924",
-            "full_name": "tiles/rough_stone/wall_on_tile/diagonal/floor/rough_stone#floor+diagonal+b.4x2.openforge.stl",
+            "full_name": "tiles/rough_stone/wall_on_tile/diagonal/floor/rough_stone#diagonal+b,floor.4x2.openforge.stl",
             "md5": "0fda87109fae7021387dcbd23f6787bd",
             "size": 18966284,
             "storage_address": "https://objects.openforge.tools/models/0fda87/0fda87109fae7021387dcbd23f6787bd.stl"
@@ -17951,9 +17959,9 @@
         "tags": [
             "build|wall on tile",
             "connection|openforge",
+            "shape|diagonal",
+            "shape|diagonal|b",
             "shape|floor",
-            "shape|floor|b",
-            "shape|floor|diagonal",
             "size|depth|2",
             "size|width|4",
             "texture|rough_stone"
@@ -17999,9 +18007,9 @@
             ]
         },
         "file_metadata": {
-            "file": "rough_stone#floor+diagonal+b.4x4.openforge.stl",
+            "file": "rough_stone#diagonal+b,floor.4x4.openforge.stl",
             "file_modified_at": "2020-11-30T16:56:37.513307",
-            "full_name": "tiles/rough_stone/wall_on_tile/diagonal/floor/rough_stone#floor+diagonal+b.4x4.openforge.stl",
+            "full_name": "tiles/rough_stone/wall_on_tile/diagonal/floor/rough_stone#diagonal+b,floor.4x4.openforge.stl",
             "md5": "a9f6a4760e7b5fc488bd242caee6b26d",
             "size": 35476284,
             "storage_address": "https://objects.openforge.tools/models/a9f6a4/a9f6a4760e7b5fc488bd242caee6b26d.stl"
@@ -18114,9 +18122,9 @@
         "tags": [
             "build|wall on tile",
             "connection|openforge",
+            "shape|diagonal",
+            "shape|diagonal|b",
             "shape|floor",
-            "shape|floor|b",
-            "shape|floor|diagonal",
             "size|depth|4",
             "size|width|4",
             "texture|rough_stone"
@@ -18239,10 +18247,10 @@
         "metadata": false,
         "tags": [
             "build|wall on tile",
-            "component|diagonal",
-            "component|diagonal|low",
-            "component|diagonal|wall",
             "connection|openforge",
+            "shape|diagonal",
+            "shape|diagonal|low",
+            "shape|diagonal|wall",
             "size|depth|4",
             "size|width|4",
             "texture|rough_stone"
@@ -18365,9 +18373,10 @@
         "metadata": false,
         "tags": [
             "build|wall on tile",
-            "component|diagonal",
-            "component|diagonal|wall",
+            "component|wall",
             "connection|openforge",
+            "shape|diagonal",
+            "shape|diagonal|wall",
             "shape|wall",
             "size|depth|1",
             "size|width|1",
@@ -18491,9 +18500,10 @@
         "metadata": false,
         "tags": [
             "build|wall on tile",
-            "component|diagonal",
-            "component|diagonal|wall",
+            "component|wall",
             "connection|openforge",
+            "shape|diagonal",
+            "shape|diagonal|wall",
             "shape|wall",
             "size|depth|2",
             "size|width|2",
@@ -18617,9 +18627,10 @@
         "metadata": false,
         "tags": [
             "build|wall on tile",
-            "component|diagonal",
-            "component|diagonal|wall",
+            "component|wall",
             "connection|openforge",
+            "shape|diagonal",
+            "shape|diagonal|wall",
             "shape|wall",
             "size|depth|4",
             "size|width|2",
@@ -18743,9 +18754,10 @@
         "metadata": false,
         "tags": [
             "build|wall on tile",
-            "component|diagonal",
-            "component|diagonal|wall",
+            "component|wall",
             "connection|openforge",
+            "shape|diagonal",
+            "shape|diagonal|wall",
             "shape|wall",
             "size|depth|3",
             "size|width|3",
@@ -18869,9 +18881,10 @@
         "metadata": false,
         "tags": [
             "build|wall on tile",
-            "component|diagonal",
-            "component|diagonal|wall",
+            "component|wall",
             "connection|openforge",
+            "shape|diagonal",
+            "shape|diagonal|wall",
             "shape|wall",
             "size|depth|2",
             "size|width|4",
@@ -18995,9 +19008,10 @@
         "metadata": false,
         "tags": [
             "build|wall on tile",
-            "component|diagonal",
-            "component|diagonal|wall",
+            "component|wall",
             "connection|openforge",
+            "shape|diagonal",
+            "shape|diagonal|wall",
             "shape|wall",
             "size|depth|4",
             "size|width|4",
@@ -19933,9 +19947,9 @@
             ]
         },
         "file_metadata": {
-            "file": "rough_stone#wall+floor.1x1.openforge.stl",
+            "file": "rough_stone#wall,floor.1x1.openforge.stl",
             "file_modified_at": "2020-11-30T17:03:49.603042",
-            "full_name": "tiles/rough_stone/wall_on_tile/wall/floor/rough_stone#wall+floor.1x1.openforge.stl",
+            "full_name": "tiles/rough_stone/wall_on_tile/wall/floor/rough_stone#wall,floor.1x1.openforge.stl",
             "md5": "c550d5ad585b8fed31bb27e008cbf579",
             "size": 5110384,
             "storage_address": "https://objects.openforge.tools/models/c550d5/c550d5ad585b8fed31bb27e008cbf579.stl"
@@ -20047,7 +20061,6 @@
         "metadata": false,
         "tags": [
             "build|wall on tile",
-            "component|wall|floor",
             "connection|openforge",
             "shape|floor",
             "shape|floor|wall",
@@ -20096,9 +20109,9 @@
             ]
         },
         "file_metadata": {
-            "file": "rough_stone#wall+floor.2x1.openforge.stl",
+            "file": "rough_stone#wall,floor.2x1.openforge.stl",
             "file_modified_at": "2020-11-30T17:03:59.449013",
-            "full_name": "tiles/rough_stone/wall_on_tile/wall/floor/rough_stone#wall+floor.2x1.openforge.stl",
+            "full_name": "tiles/rough_stone/wall_on_tile/wall/floor/rough_stone#wall,floor.2x1.openforge.stl",
             "md5": "cbe340ce92337ed44d8ee9bff2f44c4b",
             "size": 4419984,
             "storage_address": "https://objects.openforge.tools/models/cbe340/cbe340ce92337ed44d8ee9bff2f44c4b.stl"
@@ -20210,7 +20223,6 @@
         "metadata": false,
         "tags": [
             "build|wall on tile",
-            "component|wall|floor",
             "connection|openforge",
             "shape|floor",
             "shape|floor|wall",
@@ -20259,9 +20271,9 @@
             ]
         },
         "file_metadata": {
-            "file": "rough_stone#wall+floor.2x2.openforge.stl",
+            "file": "rough_stone#wall,floor.2x2.openforge.stl",
             "file_modified_at": "2020-11-30T17:04:09.422052",
-            "full_name": "tiles/rough_stone/wall_on_tile/wall/floor/rough_stone#wall+floor.2x2.openforge.stl",
+            "full_name": "tiles/rough_stone/wall_on_tile/wall/floor/rough_stone#wall,floor.2x2.openforge.stl",
             "md5": "444e1f80564efef4937d8dff164a35f4",
             "size": 16234184,
             "storage_address": "https://objects.openforge.tools/models/444e1f/444e1f80564efef4937d8dff164a35f4.stl"
@@ -20373,7 +20385,6 @@
         "metadata": false,
         "tags": [
             "build|wall on tile",
-            "component|wall|floor",
             "connection|openforge",
             "shape|floor",
             "shape|floor|wall",
@@ -20422,9 +20433,9 @@
             ]
         },
         "file_metadata": {
-            "file": "rough_stone#wall+floor.2x4.openforge.stl",
+            "file": "rough_stone#wall,floor.2x4.openforge.stl",
             "file_modified_at": "2020-11-30T17:04:20.782167",
-            "full_name": "tiles/rough_stone/wall_on_tile/wall/floor/rough_stone#wall+floor.2x4.openforge.stl",
+            "full_name": "tiles/rough_stone/wall_on_tile/wall/floor/rough_stone#wall,floor.2x4.openforge.stl",
             "md5": "7fe0172fbda8f0db4aa9837a73588377",
             "size": 36918484,
             "storage_address": "https://objects.openforge.tools/models/7fe017/7fe0172fbda8f0db4aa9837a73588377.stl"
@@ -20536,7 +20547,6 @@
         "metadata": false,
         "tags": [
             "build|wall on tile",
-            "component|wall|floor",
             "connection|openforge",
             "shape|floor",
             "shape|floor|wall",
@@ -20585,9 +20595,9 @@
             ]
         },
         "file_metadata": {
-            "file": "rough_stone#wall+floor.3x1.openforge.stl",
+            "file": "rough_stone#wall,floor.3x1.openforge.stl",
             "file_modified_at": "2020-11-30T17:04:32.131166",
-            "full_name": "tiles/rough_stone/wall_on_tile/wall/floor/rough_stone#wall+floor.3x1.openforge.stl",
+            "full_name": "tiles/rough_stone/wall_on_tile/wall/floor/rough_stone#wall,floor.3x1.openforge.stl",
             "md5": "c0929a3d9005c4d605c4a382d9926cc1",
             "size": 8899884,
             "storage_address": "https://objects.openforge.tools/models/c0929a/c0929a3d9005c4d605c4a382d9926cc1.stl"
@@ -20699,7 +20709,6 @@
         "metadata": false,
         "tags": [
             "build|wall on tile",
-            "component|wall|floor",
             "connection|openforge",
             "shape|floor",
             "shape|floor|wall",
@@ -20748,9 +20757,9 @@
             ]
         },
         "file_metadata": {
-            "file": "rough_stone#wall+floor.3x3.openforge.stl",
+            "file": "rough_stone#wall,floor.3x3.openforge.stl",
             "file_modified_at": "2020-11-30T17:04:49.742202",
-            "full_name": "tiles/rough_stone/wall_on_tile/wall/floor/rough_stone#wall+floor.3x3.openforge.stl",
+            "full_name": "tiles/rough_stone/wall_on_tile/wall/floor/rough_stone#wall,floor.3x3.openforge.stl",
             "md5": "932aea56fca4f272ed709ac2af03af44",
             "size": 39346184,
             "storage_address": "https://objects.openforge.tools/models/932aea/932aea56fca4f272ed709ac2af03af44.stl"
@@ -20862,7 +20871,6 @@
         "metadata": false,
         "tags": [
             "build|wall on tile",
-            "component|wall|floor",
             "connection|openforge",
             "shape|floor",
             "shape|floor|wall",
@@ -20911,9 +20919,9 @@
             ]
         },
         "file_metadata": {
-            "file": "rough_stone#wall+floor.4x1.openforge.stl",
+            "file": "rough_stone#wall,floor.4x1.openforge.stl",
             "file_modified_at": "2020-11-30T17:05:01.390016",
-            "full_name": "tiles/rough_stone/wall_on_tile/wall/floor/rough_stone#wall+floor.4x1.openforge.stl",
+            "full_name": "tiles/rough_stone/wall_on_tile/wall/floor/rough_stone#wall,floor.4x1.openforge.stl",
             "md5": "52a2224483baab108d446418804060d9",
             "size": 13621184,
             "storage_address": "https://objects.openforge.tools/models/52a222/52a2224483baab108d446418804060d9.stl"
@@ -21025,7 +21033,6 @@
         "metadata": false,
         "tags": [
             "build|wall on tile",
-            "component|wall|floor",
             "connection|openforge",
             "shape|floor",
             "shape|floor|wall",
@@ -21074,9 +21081,9 @@
             ]
         },
         "file_metadata": {
-            "file": "rough_stone#wall+floor.4x2.openforge.stl",
+            "file": "rough_stone#wall,floor.4x2.openforge.stl",
             "file_modified_at": "2020-11-30T17:05:13.691092",
-            "full_name": "tiles/rough_stone/wall_on_tile/wall/floor/rough_stone#wall+floor.4x2.openforge.stl",
+            "full_name": "tiles/rough_stone/wall_on_tile/wall/floor/rough_stone#wall,floor.4x2.openforge.stl",
             "md5": "255840718afd8e2c90f56ee8b31063f6",
             "size": 34314684,
             "storage_address": "https://objects.openforge.tools/models/255840/255840718afd8e2c90f56ee8b31063f6.stl"
@@ -21188,7 +21195,6 @@
         "metadata": false,
         "tags": [
             "build|wall on tile",
-            "component|wall|floor",
             "connection|openforge",
             "shape|floor",
             "shape|floor|wall",
@@ -21237,9 +21243,9 @@
             ]
         },
         "file_metadata": {
-            "file": "rough_stone#wall+floor.4x4.openforge.stl",
+            "file": "rough_stone#wall,floor.4x4.openforge.stl",
             "file_modified_at": "2020-11-30T17:05:28.465347",
-            "full_name": "tiles/rough_stone/wall_on_tile/wall/floor/rough_stone#wall+floor.4x4.openforge.stl",
+            "full_name": "tiles/rough_stone/wall_on_tile/wall/floor/rough_stone#wall,floor.4x4.openforge.stl",
             "md5": "bafe77d3ae2c0380b8a3165350b03490",
             "size": 70612984,
             "storage_address": "https://objects.openforge.tools/models/bafe77/bafe77d3ae2c0380b8a3165350b03490.stl"
@@ -21351,7 +21357,6 @@
         "metadata": false,
         "tags": [
             "build|wall on tile",
-            "component|wall|floor",
             "connection|openforge",
             "shape|floor",
             "shape|floor|wall",

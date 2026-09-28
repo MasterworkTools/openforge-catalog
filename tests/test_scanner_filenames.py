@@ -318,6 +318,9 @@ def test_parse_filename_curved_wall():
         ("texture", "towne"),
         ("texture", "towne", "stone"),
         ("shape", "wall"),
+        # Curved is a shape, not a second component, so the wall
+        # stays a wall.
+        ("component", "wall"),
         ("shape", "curved", "concave"),
         ("shape", "curved"),
         ("size", "radius", 2),
@@ -399,6 +402,9 @@ def test_parse_filename_curved_wall_with_filter_shape():
         ("texture", "towne"),
         ("texture", "towne", "stone"),
         ("shape", "wall"),
+        # Curved is a shape, not a second component, so the wall
+        # stays a wall.
+        ("component", "wall"),
         ("shape", "curved", "concave"),
         ("shape", "curved"),
         ("size", "radius", 2),
@@ -639,6 +645,58 @@ def test_filename_with_wall_alone():
 
     # Should keep component wall when it's alone
     assert ("component", "wall") in tags
+
+
+def _wall_on_tile_tags(filename):
+    path = ["tiles", "rough_stone+ruined", "wall_on_tile", "wall", "wall"]
+    tags = set()
+    parse_file_tags(
+        {"full_name": "/".join(path + [filename]), "file": filename, "path": path},
+        tags,
+        None,
+    )
+    return tags
+
+
+def test_collapsed_wall_keeps_component_wall():
+    """Collapsed is how much of the wall stands, not a second component."""
+    tags = _wall_on_tile_tags("rough_stone+ruined#wall,collapsed+low.1x.openforge.stl")
+
+    assert ("component", "wall") in tags
+    assert ("component", "collapsed", "low") in tags
+
+
+def test_collapsed_is_the_only_exception_to_wall_alone():
+    """A real second component still takes component|wall away."""
+    tags = _wall_on_tile_tags(
+        "rough_stone+ruined#wall,window,collapsed+low.2x.openforge.stl"
+    )
+
+    assert ("component", "wall") not in tags
+    assert ("component", "window") in tags
+
+
+@pytest.mark.parametrize("shape", ["curved", "diagonal"])
+def test_shaped_wall_keeps_component_wall(shape):
+    """A curved or diagonal wall is one wall, not a wall plus a part."""
+    tags = _wall_on_tile_tags(
+        f"rough_stone+ruined#{shape}+wall,collapsed+low.1x1.openforge.stl"
+    )
+
+    assert ("component", "wall") in tags
+    assert ("shape", shape) in tags
+    assert ("shape", shape, "wall") in tags
+    assert not any(t[0] == "component" and t[1] == shape for t in tags)
+
+
+def test_diagonal_floor_is_a_shape_not_a_square():
+    """Diagonal is a shape beside the floor, so the floor is not square."""
+    tags = _wall_on_tile_tags("rough_stone#diagonal+a,floor.1x1.openforge.stl")
+
+    assert ("shape", "diagonal") in tags
+    assert ("shape", "diagonal", "a") in tags
+    assert ("shape", "floor") in tags
+    assert ("shape", "square") not in tags
 
 
 def test_filename_with_wall_and_other_components():

@@ -30697,6 +30697,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openforge",
             "connection|pegs",
             "shape|curved",
@@ -30851,6 +30852,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openforge",
             "connection|pegs",
             "shape|curved",
@@ -31005,6 +31007,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openforge",
             "connection|pegs",
             "shape|curved",
@@ -31159,6 +31162,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openforge",
             "connection|pegs",
             "shape|curved",
@@ -31313,6 +31317,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openforge",
             "connection|pegs",
             "connection|side",
@@ -31469,6 +31474,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openforge",
             "connection|pegs",
             "connection|side",
@@ -31625,6 +31631,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openforge",
             "connection|pegs",
             "connection|side",
@@ -31781,6 +31788,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openforge",
             "connection|pegs",
             "connection|side",
@@ -31937,6 +31945,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openforge",
             "connection|side",
             "connection|side|openlock",
@@ -32092,6 +32101,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openforge",
             "connection|side",
             "connection|side|openlock",
@@ -32247,6 +32257,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openforge",
             "connection|side",
             "connection|side|openlock",
@@ -32402,6 +32413,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openforge",
             "connection|side",
             "connection|side|openlock",
@@ -32557,6 +32569,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openforge",
             "shape|curved",
             "shape|curved|concave",
@@ -32710,6 +32723,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openforge",
             "shape|curved",
             "shape|curved|concave",
@@ -32863,6 +32877,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openforge",
             "shape|curved",
             "shape|curved|concave",
@@ -33016,6 +33031,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openforge",
             "shape|curved",
             "shape|curved|concave",
@@ -33143,6 +33159,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openlock",
             "connection|pegs",
             "shape|curved",
@@ -33271,6 +33288,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openlock",
             "connection|pegs",
             "shape|curved",
@@ -33399,6 +33417,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openlock",
             "connection|pegs",
             "shape|curved",
@@ -33527,6 +33546,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openlock",
             "connection|pegs",
             "shape|curved",
@@ -33655,6 +33675,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openlock",
             "connection|pegs",
             "connection|side",
@@ -33785,6 +33806,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openlock",
             "connection|pegs",
             "connection|side",
@@ -33915,6 +33937,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openlock",
             "connection|pegs",
             "connection|side",
@@ -34045,6 +34068,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openlock",
             "connection|pegs",
             "connection|side",
@@ -34175,6 +34199,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openlock",
             "connection|side",
             "connection|side|openlock",
@@ -34304,6 +34329,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openlock",
             "connection|side",
             "connection|side|openlock",
@@ -34433,6 +34459,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openlock",
             "connection|side",
             "connection|side|openlock",
@@ -34562,6 +34589,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openlock",
             "connection|side",
             "connection|side|openlock",
@@ -34691,6 +34719,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openlock",
             "shape|curved",
             "shape|curved|concave",
@@ -34818,6 +34847,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openlock",
             "shape|curved",
             "shape|curved|concave",
@@ -34945,6 +34975,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openlock",
             "shape|curved",
             "shape|curved|concave",
@@ -35072,6 +35103,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openlock",
             "shape|curved",
             "shape|curved|concave",
@@ -90757,9 +90789,9 @@
             ]
         },
         "file_metadata": {
-            "file": "towne%wood#corner+internal,floor+a.2x2.openforge.stl",
+            "file": "towne%wood#corner+internal+a,floor.2x2.openforge.stl",
             "file_modified_at": "2019-04-09T10:47:37",
-            "full_name": "tiles/towne/wall_on_tile/corner+internal/floor/towne%wood#corner+internal,floor+a.2x2.openforge.stl",
+            "full_name": "tiles/towne/wall_on_tile/corner+internal/floor/towne%wood#corner+internal+a,floor.2x2.openforge.stl",
             "md5": "3b1e922200242c24c680b55b526cbef6",
             "size": 8145584,
             "storage_address": "https://objects.openforge.tools/models/3b1e92/3b1e922200242c24c680b55b526cbef6.stl"
@@ -90873,9 +90905,9 @@
             "build|wall on tile",
             "connection|openforge",
             "shape|corner",
+            "shape|corner|a",
             "shape|corner|internal",
             "shape|floor",
-            "shape|floor|a",
             "size|depth|2",
             "size|width|2",
             "texture|towne",
@@ -90922,9 +90954,9 @@
             ]
         },
         "file_metadata": {
-            "file": "towne%wood#corner+internal,floor+ab.2x2.openforge.stl",
+            "file": "towne%wood#corner+internal+ab,floor.2x2.openforge.stl",
             "file_modified_at": "2019-04-09T10:47:32",
-            "full_name": "tiles/towne/wall_on_tile/corner+internal/floor/towne%wood#corner+internal,floor+ab.2x2.openforge.stl",
+            "full_name": "tiles/towne/wall_on_tile/corner+internal/floor/towne%wood#corner+internal+ab,floor.2x2.openforge.stl",
             "md5": "b470db52a527581dfaa26bc33ebe5f76",
             "size": 7840684,
             "storage_address": "https://objects.openforge.tools/models/b470db/b470db52a527581dfaa26bc33ebe5f76.stl"
@@ -91038,9 +91070,9 @@
             "build|wall on tile",
             "connection|openforge",
             "shape|corner",
+            "shape|corner|ab",
             "shape|corner|internal",
             "shape|floor",
-            "shape|floor|ab",
             "size|depth|2",
             "size|width|2",
             "texture|towne",
@@ -91087,9 +91119,9 @@
             ]
         },
         "file_metadata": {
-            "file": "towne%wood#corner+internal,floor+abc.2x2.openforge.stl",
+            "file": "towne%wood#corner+internal+abc,floor.2x2.openforge.stl",
             "file_modified_at": "2019-04-09T10:47:30",
-            "full_name": "tiles/towne/wall_on_tile/corner+internal/floor/towne%wood#corner+internal,floor+abc.2x2.openforge.stl",
+            "full_name": "tiles/towne/wall_on_tile/corner+internal/floor/towne%wood#corner+internal+abc,floor.2x2.openforge.stl",
             "md5": "070acd25a7603c85f1d5bda33f6c597e",
             "size": 7497784,
             "storage_address": "https://objects.openforge.tools/models/070acd/070acd25a7603c85f1d5bda33f6c597e.stl"
@@ -91203,9 +91235,9 @@
             "build|wall on tile",
             "connection|openforge",
             "shape|corner",
+            "shape|corner|abc",
             "shape|corner|internal",
             "shape|floor",
-            "shape|floor|abc",
             "size|depth|2",
             "size|width|2",
             "texture|towne",
@@ -91252,9 +91284,9 @@
             ]
         },
         "file_metadata": {
-            "file": "towne%wood#corner+internal,floor+abcd.2x2.openforge.stl",
+            "file": "towne%wood#corner+internal+abcd,floor.2x2.openforge.stl",
             "file_modified_at": "2019-04-09T10:47:27",
-            "full_name": "tiles/towne/wall_on_tile/corner+internal/floor/towne%wood#corner+internal,floor+abcd.2x2.openforge.stl",
+            "full_name": "tiles/towne/wall_on_tile/corner+internal/floor/towne%wood#corner+internal+abcd,floor.2x2.openforge.stl",
             "md5": "5df77dd7c2897ebc86f2ef1c273c34cb",
             "size": 7152584,
             "storage_address": "https://objects.openforge.tools/models/5df77d/5df77dd7c2897ebc86f2ef1c273c34cb.stl"
@@ -91368,9 +91400,9 @@
             "build|wall on tile",
             "connection|openforge",
             "shape|corner",
+            "shape|corner|abcd",
             "shape|corner|internal",
             "shape|floor",
-            "shape|floor|abcd",
             "size|depth|2",
             "size|width|2",
             "texture|towne",
@@ -91417,9 +91449,9 @@
             ]
         },
         "file_metadata": {
-            "file": "towne%wood#corner+internal,floor+ad.2x2.openforge.stl",
+            "file": "towne%wood#corner+internal+ad,floor.2x2.openforge.stl",
             "file_modified_at": "2019-04-09T10:47:34",
-            "full_name": "tiles/towne/wall_on_tile/corner+internal/floor/towne%wood#corner+internal,floor+ad.2x2.openforge.stl",
+            "full_name": "tiles/towne/wall_on_tile/corner+internal/floor/towne%wood#corner+internal+ad,floor.2x2.openforge.stl",
             "md5": "5d72f70a631ce96311192d618e945a29",
             "size": 7800384,
             "storage_address": "https://objects.openforge.tools/models/5d72f7/5d72f70a631ce96311192d618e945a29.stl"
@@ -91533,9 +91565,9 @@
             "build|wall on tile",
             "connection|openforge",
             "shape|corner",
+            "shape|corner|ad",
             "shape|corner|internal",
             "shape|floor",
-            "shape|floor|ad",
             "size|depth|2",
             "size|width|2",
             "texture|towne",
@@ -91831,9 +91863,9 @@
             ]
         },
         "file_metadata": {
-            "file": "towne%wood#floor+concave+a.1x1.openforge.stl",
+            "file": "towne%wood#curved+concave+a,floor.1x1.openforge.stl",
             "file_modified_at": "2020-06-19T12:17:27",
-            "full_name": "tiles/towne/wall_on_tile/curved/floor+concave/towne%wood#floor+concave+a.1x1.openforge.stl",
+            "full_name": "tiles/towne/wall_on_tile/curved/floor+concave/towne%wood#curved+concave+a,floor.1x1.openforge.stl",
             "md5": "8056578b40eaa2e62ff2a96a66b0d500",
             "size": 1482384,
             "storage_address": "https://objects.openforge.tools/models/805657/8056578b40eaa2e62ff2a96a66b0d500.stl"
@@ -91946,9 +91978,10 @@
         "tags": [
             "build|wall on tile",
             "connection|openforge",
+            "shape|curved",
+            "shape|curved|a",
+            "shape|curved|concave",
             "shape|floor",
-            "shape|floor|a",
-            "shape|floor|concave",
             "size|depth|1",
             "size|width|1",
             "texture|towne",
@@ -91995,9 +92028,9 @@
             ]
         },
         "file_metadata": {
-            "file": "towne%wood#floor+concave+b.1x1.openforge.stl",
+            "file": "towne%wood#curved+concave+b,floor.1x1.openforge.stl",
             "file_modified_at": "2020-06-19T12:17:31",
-            "full_name": "tiles/towne/wall_on_tile/curved/floor+concave/towne%wood#floor+concave+b.1x1.openforge.stl",
+            "full_name": "tiles/towne/wall_on_tile/curved/floor+concave/towne%wood#curved+concave+b,floor.1x1.openforge.stl",
             "md5": "1bbef949554835218f880c144f9059bf",
             "size": 1482384,
             "storage_address": "https://objects.openforge.tools/models/1bbef9/1bbef949554835218f880c144f9059bf.stl"
@@ -92110,9 +92143,10 @@
         "tags": [
             "build|wall on tile",
             "connection|openforge",
+            "shape|curved",
+            "shape|curved|b",
+            "shape|curved|concave",
             "shape|floor",
-            "shape|floor|b",
-            "shape|floor|concave",
             "size|depth|1",
             "size|width|1",
             "texture|towne",
@@ -92159,9 +92193,9 @@
             ]
         },
         "file_metadata": {
-            "file": "towne%wood#floor+concave.2x2.openforge.stl",
+            "file": "towne%wood#curved+concave,floor.2x2.openforge.stl",
             "file_modified_at": "2020-06-19T12:17:37",
-            "full_name": "tiles/towne/wall_on_tile/curved/floor+concave/towne%wood#floor+concave.2x2.openforge.stl",
+            "full_name": "tiles/towne/wall_on_tile/curved/floor+concave/towne%wood#curved+concave,floor.2x2.openforge.stl",
             "md5": "ba8832c50b7c2a9aaed2cda84cc30545",
             "size": 1920884,
             "storage_address": "https://objects.openforge.tools/models/ba8832/ba8832c50b7c2a9aaed2cda84cc30545.stl"
@@ -92274,8 +92308,9 @@
         "tags": [
             "build|wall on tile",
             "connection|openforge",
+            "shape|curved",
+            "shape|curved|concave",
             "shape|floor",
-            "shape|floor|concave",
             "size|depth|2",
             "size|width|2",
             "texture|towne",
@@ -92322,9 +92357,9 @@
             ]
         },
         "file_metadata": {
-            "file": "towne%wood#floor+concave.2x4.openforge.stl",
+            "file": "towne%wood#curved+concave,floor.2x4.openforge.stl",
             "file_modified_at": "2020-06-19T12:18:31",
-            "full_name": "tiles/towne/wall_on_tile/curved/floor+concave/towne%wood#floor+concave.2x4.openforge.stl",
+            "full_name": "tiles/towne/wall_on_tile/curved/floor+concave/towne%wood#curved+concave,floor.2x4.openforge.stl",
             "md5": "d8bcf36911f2d577ffecfb6a0bf62193",
             "size": 13066334,
             "storage_address": "https://objects.openforge.tools/models/d8bcf3/d8bcf36911f2d577ffecfb6a0bf62193.stl"
@@ -92437,8 +92472,9 @@
         "tags": [
             "build|wall on tile",
             "connection|openforge",
+            "shape|curved",
+            "shape|curved|concave",
             "shape|floor",
-            "shape|floor|concave",
             "size|depth|4",
             "size|width|2",
             "texture|towne",
@@ -92485,9 +92521,9 @@
             ]
         },
         "file_metadata": {
-            "file": "towne%wood#floor+concave.3x3.openforge.stl",
+            "file": "towne%wood#curved+concave,floor.3x3.openforge.stl",
             "file_modified_at": "2020-06-19T12:19:49",
-            "full_name": "tiles/towne/wall_on_tile/curved/floor+concave/towne%wood#floor+concave.3x3.openforge.stl",
+            "full_name": "tiles/towne/wall_on_tile/curved/floor+concave/towne%wood#curved+concave,floor.3x3.openforge.stl",
             "md5": "23147d34dc4a9acb109d87103f7a5eb8",
             "size": 4320084,
             "storage_address": "https://objects.openforge.tools/models/23147d/23147d34dc4a9acb109d87103f7a5eb8.stl"
@@ -92600,8 +92636,9 @@
         "tags": [
             "build|wall on tile",
             "connection|openforge",
+            "shape|curved",
+            "shape|curved|concave",
             "shape|floor",
-            "shape|floor|concave",
             "size|depth|3",
             "size|width|3",
             "texture|towne",
@@ -92648,9 +92685,9 @@
             ]
         },
         "file_metadata": {
-            "file": "towne%wood#floor+concave.4x2.openforge.stl",
+            "file": "towne%wood#curved+concave,floor.4x2.openforge.stl",
             "file_modified_at": "2020-06-19T12:21:33",
-            "full_name": "tiles/towne/wall_on_tile/curved/floor+concave/towne%wood#floor+concave.4x2.openforge.stl",
+            "full_name": "tiles/towne/wall_on_tile/curved/floor+concave/towne%wood#curved+concave,floor.4x2.openforge.stl",
             "md5": "7e23582fab19c69a922c12e503473a2e",
             "size": 13066334,
             "storage_address": "https://objects.openforge.tools/models/7e2358/7e23582fab19c69a922c12e503473a2e.stl"
@@ -92763,8 +92800,9 @@
         "tags": [
             "build|wall on tile",
             "connection|openforge",
+            "shape|curved",
+            "shape|curved|concave",
             "shape|floor",
-            "shape|floor|concave",
             "size|depth|2",
             "size|width|4",
             "texture|towne",
@@ -92811,9 +92849,9 @@
             ]
         },
         "file_metadata": {
-            "file": "towne%wood#floor+concave.4x4.openforge.stl",
+            "file": "towne%wood#curved+concave,floor.4x4.openforge.stl",
             "file_modified_at": "2020-06-19T12:23:28",
-            "full_name": "tiles/towne/wall_on_tile/curved/floor+concave/towne%wood#floor+concave.4x4.openforge.stl",
+            "full_name": "tiles/towne/wall_on_tile/curved/floor+concave/towne%wood#curved+concave,floor.4x4.openforge.stl",
             "md5": "3b52d53e15062c49c48cfe4467acaaeb",
             "size": 19961334,
             "storage_address": "https://objects.openforge.tools/models/3b52d5/3b52d53e15062c49c48cfe4467acaaeb.stl"
@@ -92926,8 +92964,9 @@
         "tags": [
             "build|wall on tile",
             "connection|openforge",
+            "shape|curved",
+            "shape|curved|concave",
             "shape|floor",
-            "shape|floor|concave",
             "size|depth|4",
             "size|width|4",
             "texture|towne",
@@ -92974,9 +93013,9 @@
             ]
         },
         "file_metadata": {
-            "file": "towne%wood#floor+a.1x1.openforge.stl",
+            "file": "towne%wood#curved+a,floor.1x1.openforge.stl",
             "file_modified_at": "2020-06-19T12:17:18",
-            "full_name": "tiles/towne/wall_on_tile/curved/floor/towne%wood#floor+a.1x1.openforge.stl",
+            "full_name": "tiles/towne/wall_on_tile/curved/floor/towne%wood#curved+a,floor.1x1.openforge.stl",
             "md5": "341e31460894350d8a0eb8b16179eba1",
             "size": 1127034,
             "storage_address": "https://objects.openforge.tools/models/341e31/341e31460894350d8a0eb8b16179eba1.stl"
@@ -93089,8 +93128,9 @@
         "tags": [
             "build|wall on tile",
             "connection|openforge",
+            "shape|curved",
+            "shape|curved|a",
             "shape|floor",
-            "shape|floor|a",
             "size|depth|1",
             "size|width|1",
             "texture|towne",
@@ -93137,9 +93177,9 @@
             ]
         },
         "file_metadata": {
-            "file": "towne%wood#floor+b.1x1.openforge.stl",
+            "file": "towne%wood#curved+b,floor.1x1.openforge.stl",
             "file_modified_at": "2020-06-19T12:17:21",
-            "full_name": "tiles/towne/wall_on_tile/curved/floor/towne%wood#floor+b.1x1.openforge.stl",
+            "full_name": "tiles/towne/wall_on_tile/curved/floor/towne%wood#curved+b,floor.1x1.openforge.stl",
             "md5": "0c3eebf69a99afa05b4724ca4ddaa726",
             "size": 1127034,
             "storage_address": "https://objects.openforge.tools/models/0c3eeb/0c3eebf69a99afa05b4724ca4ddaa726.stl"
@@ -93252,8 +93292,9 @@
         "tags": [
             "build|wall on tile",
             "connection|openforge",
+            "shape|curved",
+            "shape|curved|b",
             "shape|floor",
-            "shape|floor|b",
             "size|depth|1",
             "size|width|1",
             "texture|towne",
@@ -93300,9 +93341,9 @@
             ]
         },
         "file_metadata": {
-            "file": "towne%wood#floor.2x2.openforge.stl",
+            "file": "towne%wood#curved,floor.2x2.openforge.stl",
             "file_modified_at": "2020-06-19T12:17:51",
-            "full_name": "tiles/towne/wall_on_tile/curved/floor/towne%wood#floor.2x2.openforge.stl",
+            "full_name": "tiles/towne/wall_on_tile/curved/floor/towne%wood#curved,floor.2x2.openforge.stl",
             "md5": "a66104a898e2a01df9a4d63f9a558594",
             "size": 4393584,
             "storage_address": "https://objects.openforge.tools/models/a66104/a66104a898e2a01df9a4d63f9a558594.stl"
@@ -93415,8 +93456,8 @@
         "tags": [
             "build|wall on tile",
             "connection|openforge",
+            "shape|curved",
             "shape|floor",
-            "shape|square",
             "size|depth|2",
             "size|width|2",
             "texture|towne",
@@ -93463,9 +93504,9 @@
             ]
         },
         "file_metadata": {
-            "file": "towne%wood#floor.2x4.openforge.stl",
+            "file": "towne%wood#curved,floor.2x4.openforge.stl",
             "file_modified_at": "2020-06-19T12:19:33",
-            "full_name": "tiles/towne/wall_on_tile/curved/floor/towne%wood#floor.2x4.openforge.stl",
+            "full_name": "tiles/towne/wall_on_tile/curved/floor/towne%wood#curved,floor.2x4.openforge.stl",
             "md5": "62d62e4263c3c6e635fdd20cd2d38a8a",
             "size": 21263634,
             "storage_address": "https://objects.openforge.tools/models/62d62e/62d62e4263c3c6e635fdd20cd2d38a8a.stl"
@@ -93578,8 +93619,8 @@
         "tags": [
             "build|wall on tile",
             "connection|openforge",
+            "shape|curved",
             "shape|floor",
-            "shape|square",
             "size|depth|4",
             "size|width|2",
             "texture|towne",
@@ -93626,9 +93667,9 @@
             ]
         },
         "file_metadata": {
-            "file": "towne%wood#floor.3x3.openforge.stl",
+            "file": "towne%wood#curved,floor.3x3.openforge.stl",
             "file_modified_at": "2020-06-19T12:20:52",
-            "full_name": "tiles/towne/wall_on_tile/curved/floor/towne%wood#floor.3x3.openforge.stl",
+            "full_name": "tiles/towne/wall_on_tile/curved/floor/towne%wood#curved,floor.3x3.openforge.stl",
             "md5": "883de9c0ee0e735011dc75d325a970af",
             "size": 21212134,
             "storage_address": "https://objects.openforge.tools/models/883de9/883de9c0ee0e735011dc75d325a970af.stl"
@@ -93741,8 +93782,8 @@
         "tags": [
             "build|wall on tile",
             "connection|openforge",
+            "shape|curved",
             "shape|floor",
-            "shape|square",
             "size|depth|3",
             "size|width|3",
             "texture|towne",
@@ -93789,9 +93830,9 @@
             ]
         },
         "file_metadata": {
-            "file": "towne%wood#floor.4x2.openforge.stl",
+            "file": "towne%wood#curved,floor.4x2.openforge.stl",
             "file_modified_at": "2020-06-19T12:22:30",
-            "full_name": "tiles/towne/wall_on_tile/curved/floor/towne%wood#floor.4x2.openforge.stl",
+            "full_name": "tiles/towne/wall_on_tile/curved/floor/towne%wood#curved,floor.4x2.openforge.stl",
             "md5": "f847fbfe54a83e221ffbd2657fd57cfc",
             "size": 21263634,
             "storage_address": "https://objects.openforge.tools/models/f847fb/f847fbfe54a83e221ffbd2657fd57cfc.stl"
@@ -93904,8 +93945,8 @@
         "tags": [
             "build|wall on tile",
             "connection|openforge",
+            "shape|curved",
             "shape|floor",
-            "shape|square",
             "size|depth|2",
             "size|width|4",
             "texture|towne",
@@ -93952,9 +93993,9 @@
             ]
         },
         "file_metadata": {
-            "file": "towne%wood#floor.4x4.openforge.stl",
+            "file": "towne%wood#curved,floor.4x4.openforge.stl",
             "file_modified_at": "2020-06-19T12:26:17",
-            "full_name": "tiles/towne/wall_on_tile/curved/floor/towne%wood#floor.4x4.openforge.stl",
+            "full_name": "tiles/towne/wall_on_tile/curved/floor/towne%wood#curved,floor.4x4.openforge.stl",
             "md5": "8dc21fe7894e89e470ae81215f0b6407",
             "size": 41347434,
             "storage_address": "https://objects.openforge.tools/models/8dc21f/8dc21fe7894e89e470ae81215f0b6407.stl"
@@ -94067,8 +94108,8 @@
         "tags": [
             "build|wall on tile",
             "connection|openforge",
+            "shape|curved",
             "shape|floor",
-            "shape|square",
             "size|depth|4",
             "size|width|4",
             "texture|towne",

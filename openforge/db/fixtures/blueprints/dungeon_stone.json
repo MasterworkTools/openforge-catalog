@@ -241544,6 +241544,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openforge",
             "shape|curved",
             "shape|curved|interface",
@@ -241698,6 +241699,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openforge",
             "shape|curved",
             "shape|curved|interface",
@@ -241852,6 +241854,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openforge",
             "shape|curved",
             "shape|curved|interface",
@@ -242477,6 +242480,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openforge",
             "connection|side",
             "connection|side|openlock",
@@ -242633,6 +242637,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openforge",
             "connection|side",
             "connection|side|openlock",
@@ -242789,6 +242794,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openforge",
             "connection|side",
             "connection|side|openlock",
@@ -243306,6 +243312,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openlock",
             "shape|curved",
             "shape|curved|interface",
@@ -243434,6 +243441,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openlock",
             "shape|curved",
             "shape|curved|interface",
@@ -243562,6 +243570,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openlock",
             "shape|curved",
             "shape|curved|interface",
@@ -244083,6 +244092,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openlock",
             "connection|side",
             "connection|side|openlock",
@@ -244213,6 +244223,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openlock",
             "connection|side",
             "connection|side|openlock",
@@ -244343,6 +244354,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openlock",
             "connection|side",
             "connection|side|openlock",
@@ -253390,6 +253402,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openforge",
             "connection|side",
             "connection|side|dragonlock",
@@ -253544,6 +253557,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openforge",
             "connection|side",
             "connection|side|dragonlock",
@@ -253698,6 +253712,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openforge",
             "connection|side",
             "connection|side|dragonlock",
@@ -253852,6 +253867,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openforge",
             "connection|side",
             "connection|side|dragonlock",
@@ -254006,6 +254022,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openforge",
             "connection|side",
             "connection|side|dragonlock",
@@ -254160,6 +254177,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openforge",
             "connection|side",
             "connection|side|dragonlock",
@@ -254314,6 +254332,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openforge",
             "connection|side",
             "connection|side|dragonlock",
@@ -254468,6 +254487,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openforge",
             "connection|side",
             "connection|side|dragonlock",
@@ -254622,6 +254642,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openforge",
             "connection|side",
             "connection|side|dragonlock",
@@ -254776,6 +254797,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openforge",
             "connection|side",
             "connection|side|dragonlock",
@@ -254930,6 +254952,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openforge",
             "shape|curved",
             "shape|curved|concave",
@@ -255082,6 +255105,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openforge",
             "shape|curved",
             "shape|curved|concave",
@@ -255234,6 +255258,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openforge",
             "shape|curved",
             "shape|curved|concave",
@@ -255386,6 +255411,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openforge",
             "shape|curved",
             "shape|curved|concave",
@@ -255538,6 +255564,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openforge",
             "shape|curved",
             "shape|curved|concave",
@@ -255690,6 +255717,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openforge",
             "shape|curved",
             "shape|curved|concave",
@@ -255842,6 +255870,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openforge",
             "shape|curved",
             "shape|curved|convex",
@@ -255994,6 +256023,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openforge",
             "shape|curved",
             "shape|curved|convex",
@@ -256146,6 +256176,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openforge",
             "shape|curved",
             "shape|curved|convex",
@@ -256298,6 +256329,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openforge",
             "shape|curved",
             "shape|curved|convex",
@@ -256450,6 +256482,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openforge",
             "shape|curved",
             "shape|curved|convex",
@@ -256602,6 +256635,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openforge",
             "connection|side",
             "connection|side|openlock",
@@ -256756,6 +256790,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openforge",
             "connection|side",
             "connection|side|openlock",
@@ -256910,6 +256945,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openforge",
             "connection|side",
             "connection|side|openlock",
@@ -257064,6 +257100,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openforge",
             "connection|side",
             "connection|side|openlock",
@@ -257218,6 +257255,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openforge",
             "connection|side",
             "connection|side|openlock",
@@ -257372,6 +257410,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openforge",
             "connection|side",
             "connection|side|openlock",
@@ -257526,6 +257565,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openforge",
             "connection|side",
             "connection|side|openlock",
@@ -257680,6 +257720,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openforge",
             "connection|side",
             "connection|side|openlock",
@@ -257834,6 +257875,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openforge",
             "connection|side",
             "connection|side|openlock",
@@ -257988,6 +258030,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openforge",
             "connection|side",
             "connection|side|openlock",
@@ -258142,6 +258185,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openforge",
             "connection|side",
             "connection|side|openlock",
@@ -258270,6 +258314,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openlock",
             "shape|curved",
             "shape|curved|concave",
@@ -258396,6 +258441,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openlock",
             "shape|curved",
             "shape|curved|concave",
@@ -258522,6 +258568,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openlock",
             "shape|curved",
             "shape|curved|concave",
@@ -258648,6 +258695,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openlock",
             "shape|curved",
             "shape|curved|concave",
@@ -258774,6 +258822,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openlock",
             "shape|curved",
             "shape|curved|concave",
@@ -258900,6 +258949,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openlock",
             "shape|curved",
             "shape|curved|concave",
@@ -259026,6 +259076,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openlock",
             "shape|curved",
             "shape|curved|convex",
@@ -259152,6 +259203,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openlock",
             "shape|curved",
             "shape|curved|convex",
@@ -259278,6 +259330,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openlock",
             "shape|curved",
             "shape|curved|convex",
@@ -259404,6 +259457,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openlock",
             "shape|curved",
             "shape|curved|convex",
@@ -259530,6 +259584,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openlock",
             "shape|curved",
             "shape|curved|convex",
@@ -259656,6 +259711,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openlock",
             "connection|side",
             "connection|side|openlock",
@@ -259784,6 +259840,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openlock",
             "connection|side",
             "connection|side|openlock",
@@ -259912,6 +259969,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openlock",
             "connection|side",
             "connection|side|openlock",
@@ -260040,6 +260098,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openlock",
             "connection|side",
             "connection|side|openlock",
@@ -260168,6 +260227,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openlock",
             "connection|side",
             "connection|side|openlock",
@@ -260296,6 +260356,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openlock",
             "connection|side",
             "connection|side|openlock",
@@ -260424,6 +260485,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openlock",
             "connection|side",
             "connection|side|openlock",
@@ -260552,6 +260614,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openlock",
             "connection|side",
             "connection|side|openlock",
@@ -260680,6 +260743,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openlock",
             "connection|side",
             "connection|side|openlock",
@@ -260808,6 +260872,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openlock",
             "connection|side",
             "connection|side|openlock",
@@ -260936,6 +261001,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openlock",
             "connection|side",
             "connection|side|openlock",
@@ -261064,6 +261130,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openlock",
             "connection|openlock|unsupported",
             "connection|side",
@@ -261193,6 +261260,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openlock",
             "connection|openlock|unsupported",
             "connection|side",
@@ -261322,6 +261390,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openlock",
             "connection|openlock|unsupported",
             "connection|side",
@@ -261451,6 +261520,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openlock",
             "connection|openlock|unsupported",
             "connection|side",
@@ -261580,6 +261650,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openlock",
             "connection|openlock|unsupported",
             "connection|side",
@@ -261709,6 +261780,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openlock",
             "connection|openlock|unsupported",
             "connection|side",
@@ -261838,6 +261910,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openlock",
             "connection|openlock|unsupported",
             "shape|curved",
@@ -261965,6 +262038,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openlock",
             "connection|openlock|unsupported",
             "shape|curved",
@@ -262092,6 +262166,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openlock",
             "connection|openlock|unsupported",
             "shape|curved",
@@ -262219,6 +262294,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openlock",
             "connection|openlock|unsupported",
             "shape|curved",
@@ -262346,6 +262422,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openlock",
             "connection|openlock|unsupported",
             "shape|curved",
@@ -262473,6 +262550,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openlock",
             "connection|openlock|unsupported",
             "shape|curved",
@@ -291110,6 +291188,316 @@
         "config": {
             "parts": [
                 {
+                    "name": "base",
+                    "optional": true,
+                    "tags": {
+                        "constrain": [
+                            {
+                                "tag": "shape"
+                            },
+                            {
+                                "tag": "size|width"
+                            },
+                            {
+                                "tag": "texture"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "shape|base"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        "file_metadata": {
+            "file": "dungeon_stone%eroded#wall,door+rectangular+wide.D.openforge.stl",
+            "file_modified_at": "2022-07-21T12:47:48.840221",
+            "full_name": "tiles/dungeon_stone/separate_wall/primary_walls/door+rectangular/openforge/dungeon_stone%eroded#wall,door+rectangular+wide.D.openforge.stl",
+            "md5": "22623867d97f569345cfccd271fee7b8",
+            "size": 17414984,
+            "storage_address": "https://objects.openforge.tools/models/226238/22623867d97f569345cfccd271fee7b8.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/226238/22623867d97f569345cfccd271fee7b8.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "build|separate wall",
+            "component|door",
+            "component|door|rectangular",
+            "component|door|wide",
+            "connection|openforge",
+            "shape|square",
+            "shape|wall",
+            "size|openlock|D",
+            "size|width|3",
+            "texture|dungeon_stone",
+            "texture|dungeon_stone|eroded"
+        ],
+        "type": "model"
+    },
+    {
+        "config": {
+            "parts": [
+                {
+                    "name": "base",
+                    "optional": true,
+                    "tags": {
+                        "constrain": [
+                            {
+                                "tag": "shape"
+                            },
+                            {
+                                "tag": "size|width"
+                            },
+                            {
+                                "tag": "texture"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "shape|base"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        "file_metadata": {
+            "file": "dungeon_stone%eroded#wall,door+rectangular+wide.Q.openforge.stl",
+            "file_modified_at": "2022-07-21T12:33:59",
+            "full_name": "tiles/dungeon_stone/separate_wall/primary_walls/door+rectangular/openforge/dungeon_stone%eroded#wall,door+rectangular+wide.Q.openforge.stl",
+            "md5": "e9fc100205186c294347aca7dd32c5b1",
+            "size": 12750384,
+            "storage_address": "https://objects.openforge.tools/models/e9fc10/e9fc100205186c294347aca7dd32c5b1.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/e9fc10/e9fc100205186c294347aca7dd32c5b1.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "build|separate wall",
+            "component|door",
+            "component|door|rectangular",
+            "component|door|wide",
+            "connection|openforge",
+            "shape|square",
+            "shape|wall",
+            "size|openlock|Q",
+            "size|width|4",
+            "texture|dungeon_stone",
+            "texture|dungeon_stone|eroded"
+        ],
+        "type": "model"
+    },
+    {
+        "config": {
+            "parts": [
+                {
                     "name": "door",
                     "tags": {
                         "require": [
@@ -291287,378 +291675,6 @@
             "shape|wall",
             "size|openlock|A",
             "size|width|2",
-            "texture|dungeon_stone",
-            "texture|dungeon_stone|eroded"
-        ],
-        "type": "model"
-    },
-    {
-        "config": {
-            "parts": [
-                {
-                    "name": "door",
-                    "tags": {
-                        "require": [
-                            {
-                                "tag": "interface|door|rectangular"
-                            },
-                            {
-                                "tag": "size|double"
-                            }
-                        ]
-                    }
-                },
-                {
-                    "name": "lintel",
-                    "tags": {
-                        "require": [
-                            {
-                                "tag": "interface|lintel"
-                            },
-                            {
-                                "tag": "shape|square"
-                            },
-                            {
-                                "tag": "size|double"
-                            },
-                            {
-                                "tag": "size|width|sw"
-                            }
-                        ]
-                    }
-                },
-                {
-                    "name": "base",
-                    "optional": true,
-                    "tags": {
-                        "constrain": [
-                            {
-                                "tag": "shape"
-                            },
-                            {
-                                "tag": "size|width"
-                            },
-                            {
-                                "tag": "texture"
-                            }
-                        ],
-                        "require": [
-                            {
-                                "tag": "shape|base"
-                            }
-                        ]
-                    }
-                }
-            ]
-        },
-        "file_metadata": {
-            "file": "dungeon_stone%eroded#wall,door+rectangular.D.openforge.stl",
-            "file_modified_at": "2022-07-21T12:47:48.840221",
-            "full_name": "tiles/dungeon_stone/separate_wall/primary_walls/door+rectangular/openforge/dungeon_stone%eroded#wall,door+rectangular.D.openforge.stl",
-            "md5": "22623867d97f569345cfccd271fee7b8",
-            "size": 17414984,
-            "storage_address": "https://objects.openforge.tools/models/226238/22623867d97f569345cfccd271fee7b8.stl"
-        },
-        "images": [
-            {
-                "image_name": "thumbnail",
-                "image_url": "https://objects.openforge.tools/sprites/226238/22623867d97f569345cfccd271fee7b8.png",
-                "sprite_metadata": {
-                    "angles": [
-                        {
-                            "camera_pos": [
-                                -4,
-                                0,
-                                2
-                            ],
-                            "index": 0,
-                            "name": "front"
-                        },
-                        {
-                            "camera_pos": [
-                                -3,
-                                2,
-                                3
-                            ],
-                            "index": 1,
-                            "name": "front-right"
-                        },
-                        {
-                            "camera_pos": [
-                                0,
-                                2,
-                                4
-                            ],
-                            "index": 2,
-                            "name": "right"
-                        },
-                        {
-                            "camera_pos": [
-                                2,
-                                3,
-                                3
-                            ],
-                            "index": 3,
-                            "name": "back-right"
-                        },
-                        {
-                            "camera_pos": [
-                                0,
-                                2,
-                                4
-                            ],
-                            "index": 4,
-                            "name": "back"
-                        },
-                        {
-                            "camera_pos": [
-                                -3,
-                                2,
-                                3
-                            ],
-                            "index": 5,
-                            "name": "back-left"
-                        },
-                        {
-                            "camera_pos": [
-                                -4,
-                                0,
-                                2
-                            ],
-                            "index": 6,
-                            "name": "left"
-                        },
-                        {
-                            "camera_pos": [
-                                -3,
-                                -3,
-                                2
-                            ],
-                            "index": 7,
-                            "name": "front-left"
-                        },
-                        {
-                            "camera_pos": [
-                                -2,
-                                0,
-                                5
-                            ],
-                            "index": 8,
-                            "name": "top"
-                        },
-                        {
-                            "camera_pos": [
-                                -2,
-                                -3,
-                                0
-                            ],
-                            "index": 9,
-                            "name": "bottom"
-                        }
-                    ],
-                    "default_angle": 0,
-                    "grid_cols": 5,
-                    "grid_rows": 2,
-                    "tile_size": 512
-                }
-            }
-        ],
-        "metadata": true,
-        "tags": [
-            "build|separate wall",
-            "component|door",
-            "component|door|rectangular",
-            "connection|openforge",
-            "shape|square",
-            "shape|wall",
-            "size|openlock|D",
-            "size|width|3",
-            "texture|dungeon_stone",
-            "texture|dungeon_stone|eroded"
-        ],
-        "type": "model"
-    },
-    {
-        "config": {
-            "parts": [
-                {
-                    "name": "door",
-                    "tags": {
-                        "require": [
-                            {
-                                "tag": "interface|door|rectangular"
-                            },
-                            {
-                                "tag": "size|double"
-                            }
-                        ]
-                    }
-                },
-                {
-                    "name": "lintel",
-                    "tags": {
-                        "require": [
-                            {
-                                "tag": "interface|lintel"
-                            },
-                            {
-                                "tag": "shape|square"
-                            },
-                            {
-                                "tag": "size|double"
-                            },
-                            {
-                                "tag": "size|width|sw"
-                            }
-                        ]
-                    }
-                },
-                {
-                    "name": "base",
-                    "optional": true,
-                    "tags": {
-                        "constrain": [
-                            {
-                                "tag": "shape"
-                            },
-                            {
-                                "tag": "size|width"
-                            },
-                            {
-                                "tag": "texture"
-                            }
-                        ],
-                        "require": [
-                            {
-                                "tag": "shape|base"
-                            }
-                        ]
-                    }
-                }
-            ]
-        },
-        "file_metadata": {
-            "file": "dungeon_stone%eroded#wall,door+rectangular.Q.openforge.stl",
-            "file_modified_at": "2022-07-21T12:33:59",
-            "full_name": "tiles/dungeon_stone/separate_wall/primary_walls/door+rectangular/openforge/dungeon_stone%eroded#wall,door+rectangular.Q.openforge.stl",
-            "md5": "e9fc100205186c294347aca7dd32c5b1",
-            "size": 12750384,
-            "storage_address": "https://objects.openforge.tools/models/e9fc10/e9fc100205186c294347aca7dd32c5b1.stl"
-        },
-        "images": [
-            {
-                "image_name": "thumbnail",
-                "image_url": "https://objects.openforge.tools/sprites/e9fc10/e9fc100205186c294347aca7dd32c5b1.png",
-                "sprite_metadata": {
-                    "angles": [
-                        {
-                            "camera_pos": [
-                                -4,
-                                0,
-                                2
-                            ],
-                            "index": 0,
-                            "name": "front"
-                        },
-                        {
-                            "camera_pos": [
-                                -3,
-                                2,
-                                3
-                            ],
-                            "index": 1,
-                            "name": "front-right"
-                        },
-                        {
-                            "camera_pos": [
-                                0,
-                                2,
-                                4
-                            ],
-                            "index": 2,
-                            "name": "right"
-                        },
-                        {
-                            "camera_pos": [
-                                2,
-                                3,
-                                3
-                            ],
-                            "index": 3,
-                            "name": "back-right"
-                        },
-                        {
-                            "camera_pos": [
-                                0,
-                                2,
-                                4
-                            ],
-                            "index": 4,
-                            "name": "back"
-                        },
-                        {
-                            "camera_pos": [
-                                -3,
-                                2,
-                                3
-                            ],
-                            "index": 5,
-                            "name": "back-left"
-                        },
-                        {
-                            "camera_pos": [
-                                -4,
-                                0,
-                                2
-                            ],
-                            "index": 6,
-                            "name": "left"
-                        },
-                        {
-                            "camera_pos": [
-                                -3,
-                                -3,
-                                2
-                            ],
-                            "index": 7,
-                            "name": "front-left"
-                        },
-                        {
-                            "camera_pos": [
-                                -2,
-                                0,
-                                5
-                            ],
-                            "index": 8,
-                            "name": "top"
-                        },
-                        {
-                            "camera_pos": [
-                                -2,
-                                -3,
-                                0
-                            ],
-                            "index": 9,
-                            "name": "bottom"
-                        }
-                    ],
-                    "default_angle": 0,
-                    "grid_cols": 5,
-                    "grid_rows": 2,
-                    "tile_size": 512
-                }
-            }
-        ],
-        "metadata": true,
-        "tags": [
-            "build|separate wall",
-            "component|door",
-            "component|door|rectangular",
-            "connection|openforge",
-            "shape|square",
-            "shape|wall",
-            "size|openlock|Q",
-            "size|width|4",
             "texture|dungeon_stone",
             "texture|dungeon_stone|eroded"
         ],
@@ -295883,9 +295899,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone#wall,drain.A.openforge,side+dragonlock.stl",
+            "file": "dungeon_stone#drain.A.openforge,side+dragonlock.stl",
             "file_modified_at": "2022-07-24T13:28:57.234829",
-            "full_name": "tiles/dungeon_stone/separate_wall/primary_walls/drain/openforge/dragonlock,side/dungeon_stone#wall,drain.A.openforge,side+dragonlock.stl",
+            "full_name": "tiles/dungeon_stone/separate_wall/primary_walls/drain/openforge/dragonlock,side/dungeon_stone#drain.A.openforge,side+dragonlock.stl",
             "md5": "50ac6b20d671b44f758168ddc2d25bb3",
             "size": 17612284,
             "storage_address": "https://objects.openforge.tools/models/50ac6b/50ac6b20d671b44f758168ddc2d25bb3.stl"
@@ -296037,9 +296053,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone#wall,drain.BA.openforge,side+dragonlock.stl",
+            "file": "dungeon_stone#drain.BA.openforge,side+dragonlock.stl",
             "file_modified_at": "2022-07-24T13:59:42.546596",
-            "full_name": "tiles/dungeon_stone/separate_wall/primary_walls/drain/openforge/dragonlock,side/dungeon_stone#wall,drain.BA.openforge,side+dragonlock.stl",
+            "full_name": "tiles/dungeon_stone/separate_wall/primary_walls/drain/openforge/dragonlock,side/dungeon_stone#drain.BA.openforge,side+dragonlock.stl",
             "md5": "30ed29f632732c66cecddf6df4f142ed",
             "size": 14437784,
             "storage_address": "https://objects.openforge.tools/models/30ed29/30ed29f632732c66cecddf6df4f142ed.stl"
@@ -296191,9 +296207,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone#wall,drain.D.openforge,side+dragonlock.stl",
+            "file": "dungeon_stone#drain.D.openforge,side+dragonlock.stl",
             "file_modified_at": "2022-07-26T11:17:21.334192",
-            "full_name": "tiles/dungeon_stone/separate_wall/primary_walls/drain/openforge/dragonlock,side/dungeon_stone#wall,drain.D.openforge,side+dragonlock.stl",
+            "full_name": "tiles/dungeon_stone/separate_wall/primary_walls/drain/openforge/dragonlock,side/dungeon_stone#drain.D.openforge,side+dragonlock.stl",
             "md5": "94511139ee0bacb439d09e43ab30a2bc",
             "size": 24226884,
             "storage_address": "https://objects.openforge.tools/models/945111/94511139ee0bacb439d09e43ab30a2bc.stl"
@@ -296345,9 +296361,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone#wall,drain.IA.openforge,side+dragonlock.stl",
+            "file": "dungeon_stone#drain.IA.openforge,side+dragonlock.stl",
             "file_modified_at": "2022-07-26T12:16:27.589961",
-            "full_name": "tiles/dungeon_stone/separate_wall/primary_walls/drain/openforge/dragonlock,side/dungeon_stone#wall,drain.IA.openforge,side+dragonlock.stl",
+            "full_name": "tiles/dungeon_stone/separate_wall/primary_walls/drain/openforge/dragonlock,side/dungeon_stone#drain.IA.openforge,side+dragonlock.stl",
             "md5": "19eecad7c14efa4e212ecec652a83f65",
             "size": 10815684,
             "storage_address": "https://objects.openforge.tools/models/19eeca/19eecad7c14efa4e212ecec652a83f65.stl"
@@ -296499,9 +296515,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone#wall,drain.Q.openforge,side+dragonlock.stl",
+            "file": "dungeon_stone#drain.Q.openforge,side+dragonlock.stl",
             "file_modified_at": "2022-07-27T18:15:43.837701",
-            "full_name": "tiles/dungeon_stone/separate_wall/primary_walls/drain/openforge/dragonlock,side/dungeon_stone#wall,drain.Q.openforge,side+dragonlock.stl",
+            "full_name": "tiles/dungeon_stone/separate_wall/primary_walls/drain/openforge/dragonlock,side/dungeon_stone#drain.Q.openforge,side+dragonlock.stl",
             "md5": "d796d55f805756df0e7993a0828183fa",
             "size": 28155684,
             "storage_address": "https://objects.openforge.tools/models/d796d5/d796d55f805756df0e7993a0828183fa.stl"
@@ -353628,9 +353644,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone%block#floor+curved+concave.1x1.openforge.stl",
+            "file": "dungeon_stone%block#curved+concave,floor.1x1.openforge.stl",
             "file_modified_at": "2025-07-30T16:28:19.514596",
-            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+concave/dungeon_stone%block#floor+curved+concave.1x1.openforge.stl",
+            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+concave/dungeon_stone%block#curved+concave,floor.1x1.openforge.stl",
             "md5": "5922911dc8ea89205895df547c302af6",
             "size": 429134,
             "storage_address": "https://objects.openforge.tools/models/592291/5922911dc8ea89205895df547c302af6.stl"
@@ -353743,9 +353759,9 @@
         "tags": [
             "build|wall on tile",
             "connection|openforge",
+            "shape|curved",
+            "shape|curved|concave",
             "shape|floor",
-            "shape|floor|concave",
-            "shape|floor|curved",
             "size|depth|1",
             "size|width|1",
             "texture|dungeon_stone",
@@ -353792,9 +353808,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone%block#floor+curved+concave.2x2.openforge.stl",
+            "file": "dungeon_stone%block#curved+concave,floor.2x2.openforge.stl",
             "file_modified_at": "2025-07-30T16:28:30.472454",
-            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+concave/dungeon_stone%block#floor+curved+concave.2x2.openforge.stl",
+            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+concave/dungeon_stone%block#curved+concave,floor.2x2.openforge.stl",
             "md5": "fdb0d527664eeaa6f9f242a366ae70a4",
             "size": 1516734,
             "storage_address": "https://objects.openforge.tools/models/fdb0d5/fdb0d527664eeaa6f9f242a366ae70a4.stl"
@@ -353907,9 +353923,9 @@
         "tags": [
             "build|wall on tile",
             "connection|openforge",
+            "shape|curved",
+            "shape|curved|concave",
             "shape|floor",
-            "shape|floor|concave",
-            "shape|floor|curved",
             "size|depth|2",
             "size|width|2",
             "texture|dungeon_stone",
@@ -353956,9 +353972,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone%block#floor+curved+concave.2x4.openforge.stl",
+            "file": "dungeon_stone%block#curved+concave,floor.2x4.openforge.stl",
             "file_modified_at": "2025-07-30T16:28:41.129191",
-            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+concave/dungeon_stone%block#floor+curved+concave.2x4.openforge.stl",
+            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+concave/dungeon_stone%block#curved+concave,floor.2x4.openforge.stl",
             "md5": "61f0190a54b91b27a3ac64b1bd0e187d",
             "size": 3002584,
             "storage_address": "https://objects.openforge.tools/models/61f019/61f0190a54b91b27a3ac64b1bd0e187d.stl"
@@ -354071,9 +354087,9 @@
         "tags": [
             "build|wall on tile",
             "connection|openforge",
+            "shape|curved",
+            "shape|curved|concave",
             "shape|floor",
-            "shape|floor|concave",
-            "shape|floor|curved",
             "size|depth|4",
             "size|width|2",
             "texture|dungeon_stone",
@@ -354120,9 +354136,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone%block#floor+curved+concave.3x3.openforge.stl",
+            "file": "dungeon_stone%block#curved+concave,floor.3x3.openforge.stl",
             "file_modified_at": "2025-07-30T16:29:18.965634",
-            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+concave/dungeon_stone%block#floor+curved+concave.3x3.openforge.stl",
+            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+concave/dungeon_stone%block#curved+concave,floor.3x3.openforge.stl",
             "md5": "1028ba5a8390e335c9c4000458aa39be",
             "size": 3399234,
             "storage_address": "https://objects.openforge.tools/models/1028ba/1028ba5a8390e335c9c4000458aa39be.stl"
@@ -354235,9 +354251,9 @@
         "tags": [
             "build|wall on tile",
             "connection|openforge",
+            "shape|curved",
+            "shape|curved|concave",
             "shape|floor",
-            "shape|floor|concave",
-            "shape|floor|curved",
             "size|depth|3",
             "size|width|3",
             "texture|dungeon_stone",
@@ -354284,9 +354300,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone%block#floor+curved+concave.4x2.openforge.stl",
+            "file": "dungeon_stone%block#curved+concave,floor.4x2.openforge.stl",
             "file_modified_at": "2025-07-30T16:29:09.407760",
-            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+concave/dungeon_stone%block#floor+curved+concave.4x2.openforge.stl",
+            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+concave/dungeon_stone%block#curved+concave,floor.4x2.openforge.stl",
             "md5": "bf7e9117213d18f8059e2fcde9be5e8f",
             "size": 3004334,
             "storage_address": "https://objects.openforge.tools/models/bf7e91/bf7e9117213d18f8059e2fcde9be5e8f.stl"
@@ -354399,9 +354415,9 @@
         "tags": [
             "build|wall on tile",
             "connection|openforge",
+            "shape|curved",
+            "shape|curved|concave",
             "shape|floor",
-            "shape|floor|concave",
-            "shape|floor|curved",
             "size|depth|2",
             "size|width|4",
             "texture|dungeon_stone",
@@ -354448,9 +354464,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone%block#floor+curved+concave.4x4+a.openforge.stl",
+            "file": "dungeon_stone%block#curved+concave,floor.4x4+a.openforge.stl",
             "file_modified_at": "2025-07-30T16:29:48.065321",
-            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+concave/dungeon_stone%block#floor+curved+concave.4x4+a.openforge.stl",
+            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+concave/dungeon_stone%block#curved+concave,floor.4x4+a.openforge.stl",
             "md5": "ef60ed60705bac7265585475416f5c05",
             "size": 1283084,
             "storage_address": "https://objects.openforge.tools/models/ef60ed/ef60ed60705bac7265585475416f5c05.stl"
@@ -354564,9 +354580,8 @@
             "build|wall on tile",
             "connection|openforge",
             "shape|curved",
+            "shape|curved|concave",
             "shape|floor",
-            "shape|floor|concave",
-            "shape|floor|curved",
             "size|depth|4",
             "size|segment|a",
             "size|width|4",
@@ -354614,9 +354629,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone%block#floor+curved+concave.4x4+b.openforge.stl",
+            "file": "dungeon_stone%block#curved+concave,floor.4x4+b.openforge.stl",
             "file_modified_at": "2025-07-30T16:30:01.696074",
-            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+concave/dungeon_stone%block#floor+curved+concave.4x4+b.openforge.stl",
+            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+concave/dungeon_stone%block#curved+concave,floor.4x4+b.openforge.stl",
             "md5": "b8382e8c16da5ff9cc6ecd556d3cf4a8",
             "size": 5333134,
             "storage_address": "https://objects.openforge.tools/models/b8382e/b8382e8c16da5ff9cc6ecd556d3cf4a8.stl"
@@ -354730,9 +354745,8 @@
             "build|wall on tile",
             "connection|openforge",
             "shape|curved",
+            "shape|curved|concave",
             "shape|floor",
-            "shape|floor|concave",
-            "shape|floor|curved",
             "size|depth|4",
             "size|segment|b",
             "size|width|4",
@@ -354780,9 +354794,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone%block#floor+curved+concave.4x4+c.openforge.stl",
+            "file": "dungeon_stone%block#curved+concave,floor.4x4+c.openforge.stl",
             "file_modified_at": "2025-07-30T16:30:14.052229",
-            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+concave/dungeon_stone%block#floor+curved+concave.4x4+c.openforge.stl",
+            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+concave/dungeon_stone%block#curved+concave,floor.4x4+c.openforge.stl",
             "md5": "ae1e97446d65087be77838924b727de4",
             "size": 5348334,
             "storage_address": "https://objects.openforge.tools/models/ae1e97/ae1e97446d65087be77838924b727de4.stl"
@@ -354896,9 +354910,8 @@
             "build|wall on tile",
             "connection|openforge",
             "shape|curved",
+            "shape|curved|concave",
             "shape|floor",
-            "shape|floor|concave",
-            "shape|floor|curved",
             "size|depth|4",
             "size|segment|c",
             "size|width|4",
@@ -354946,9 +354959,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone%block#floor+curved+concave.4x4.openforge.stl",
+            "file": "dungeon_stone%block#curved+concave,floor.4x4.openforge.stl",
             "file_modified_at": "2025-07-30T16:29:34.645779",
-            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+concave/dungeon_stone%block#floor+curved+concave.4x4.openforge.stl",
+            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+concave/dungeon_stone%block#curved+concave,floor.4x4.openforge.stl",
             "md5": "24c6bc23fc021e72a529267880f28482",
             "size": 6014834,
             "storage_address": "https://objects.openforge.tools/models/24c6bc/24c6bc23fc021e72a529267880f28482.stl"
@@ -355061,9 +355074,9 @@
         "tags": [
             "build|wall on tile",
             "connection|openforge",
+            "shape|curved",
+            "shape|curved|concave",
             "shape|floor",
-            "shape|floor|concave",
-            "shape|floor|curved",
             "size|depth|4",
             "size|width|4",
             "texture|dungeon_stone",
@@ -355110,9 +355123,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone%block#floor+curved+concave.6x6+a.openforge.stl",
+            "file": "dungeon_stone%block#curved+concave,floor.6x6+a.openforge.stl",
             "file_modified_at": "2025-07-30T16:30:30.702034",
-            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+concave/dungeon_stone%block#floor+curved+concave.6x6+a.openforge.stl",
+            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+concave/dungeon_stone%block#curved+concave,floor.6x6+a.openforge.stl",
             "md5": "a5643a74fec4109731275f17be759568",
             "size": 1383734,
             "storage_address": "https://objects.openforge.tools/models/a5643a/a5643a74fec4109731275f17be759568.stl"
@@ -355226,9 +355239,8 @@
             "build|wall on tile",
             "connection|openforge",
             "shape|curved",
+            "shape|curved|concave",
             "shape|floor",
-            "shape|floor|concave",
-            "shape|floor|curved",
             "size|depth|6",
             "size|segment|a",
             "size|width|6",
@@ -355276,9 +355288,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone%block#floor+curved+concave.6x6+b.openforge.stl",
+            "file": "dungeon_stone%block#curved+concave,floor.6x6+b.openforge.stl",
             "file_modified_at": "2025-07-30T16:30:46.292750",
-            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+concave/dungeon_stone%block#floor+curved+concave.6x6+b.openforge.stl",
+            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+concave/dungeon_stone%block#curved+concave,floor.6x6+b.openforge.stl",
             "md5": "de160914fc9cba9a756cd730a205e83c",
             "size": 10780784,
             "storage_address": "https://objects.openforge.tools/models/de1609/de160914fc9cba9a756cd730a205e83c.stl"
@@ -355392,9 +355404,8 @@
             "build|wall on tile",
             "connection|openforge",
             "shape|curved",
+            "shape|curved|concave",
             "shape|floor",
-            "shape|floor|concave",
-            "shape|floor|curved",
             "size|depth|6",
             "size|segment|b",
             "size|width|6",
@@ -355442,9 +355453,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone%block#floor+curved+concave.6x6+c.openforge.stl",
+            "file": "dungeon_stone%block#curved+concave,floor.6x6+c.openforge.stl",
             "file_modified_at": "2025-07-30T16:31:15.861808",
-            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+concave/dungeon_stone%block#floor+curved+concave.6x6+c.openforge.stl",
+            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+concave/dungeon_stone%block#curved+concave,floor.6x6+c.openforge.stl",
             "md5": "558194a9f456e8a5e00d83237513fc26",
             "size": 1405034,
             "storage_address": "https://objects.openforge.tools/models/558194/558194a9f456e8a5e00d83237513fc26.stl"
@@ -355558,9 +355569,8 @@
             "build|wall on tile",
             "connection|openforge",
             "shape|curved",
+            "shape|curved|concave",
             "shape|floor",
-            "shape|floor|concave",
-            "shape|floor|curved",
             "size|depth|6",
             "size|segment|c",
             "size|width|6",
@@ -355608,9 +355618,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone%block#floor+curved+concave.8x8+a.openforge.stl",
+            "file": "dungeon_stone%block#curved+concave,floor.8x8+a.openforge.stl",
             "file_modified_at": "2025-07-30T16:31:28.401088",
-            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+concave/dungeon_stone%block#floor+curved+concave.8x8+a.openforge.stl",
+            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+concave/dungeon_stone%block#curved+concave,floor.8x8+a.openforge.stl",
             "md5": "f39450eacee9f53b75539aabaf8355a2",
             "size": 2388384,
             "storage_address": "https://objects.openforge.tools/models/f39450/f39450eacee9f53b75539aabaf8355a2.stl"
@@ -355724,9 +355734,8 @@
             "build|wall on tile",
             "connection|openforge",
             "shape|curved",
+            "shape|curved|concave",
             "shape|floor",
-            "shape|floor|concave",
-            "shape|floor|curved",
             "size|depth|8",
             "size|segment|a",
             "size|width|8",
@@ -355774,9 +355783,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone%block#floor+curved+concave.8x8+ac.openforge.stl",
+            "file": "dungeon_stone%block#curved+concave,floor.8x8+ac.openforge.stl",
             "file_modified_at": "2025-07-30T16:32:34.139330",
-            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+concave/dungeon_stone%block#floor+curved+concave.8x8+ac.openforge.stl",
+            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+concave/dungeon_stone%block#curved+concave,floor.8x8+ac.openforge.stl",
             "md5": "c5681228fb95e1778969cb6f8a42d092",
             "size": 616284,
             "storage_address": "https://objects.openforge.tools/models/c56812/c5681228fb95e1778969cb6f8a42d092.stl"
@@ -355890,9 +355899,8 @@
             "build|wall on tile",
             "connection|openforge",
             "shape|curved",
+            "shape|curved|concave",
             "shape|floor",
-            "shape|floor|concave",
-            "shape|floor|curved",
             "size|depth|8",
             "size|segment|ac",
             "size|width|8",
@@ -355940,9 +355948,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone%block#floor+curved+concave.8x8+ax.openforge.stl",
+            "file": "dungeon_stone%block#curved+concave,floor.8x8+ax.openforge.stl",
             "file_modified_at": "2025-07-30T16:32:24.205375",
-            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+concave/dungeon_stone%block#floor+curved+concave.8x8+ax.openforge.stl",
+            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+concave/dungeon_stone%block#curved+concave,floor.8x8+ax.openforge.stl",
             "md5": "22691fd58ff9a9806eb0caa2c5b8e1e4",
             "size": 2089184,
             "storage_address": "https://objects.openforge.tools/models/22691f/22691fd58ff9a9806eb0caa2c5b8e1e4.stl"
@@ -356056,9 +356064,8 @@
             "build|wall on tile",
             "connection|openforge",
             "shape|curved",
+            "shape|curved|concave",
             "shape|floor",
-            "shape|floor|concave",
-            "shape|floor|curved",
             "size|depth|8",
             "size|segment|ax",
             "size|width|8",
@@ -356106,9 +356113,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone%block#floor+curved+concave.8x8+b.openforge.stl",
+            "file": "dungeon_stone%block#curved+concave,floor.8x8+b.openforge.stl",
             "file_modified_at": "2025-07-30T16:31:45.163019",
-            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+concave/dungeon_stone%block#floor+curved+concave.8x8+b.openforge.stl",
+            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+concave/dungeon_stone%block#curved+concave,floor.8x8+b.openforge.stl",
             "md5": "23c193c4b5279e1435e4e481fd46df39",
             "size": 19208284,
             "storage_address": "https://objects.openforge.tools/models/23c193/23c193c4b5279e1435e4e481fd46df39.stl"
@@ -356222,9 +356229,8 @@
             "build|wall on tile",
             "connection|openforge",
             "shape|curved",
+            "shape|curved|concave",
             "shape|floor",
-            "shape|floor|concave",
-            "shape|floor|curved",
             "size|depth|8",
             "size|segment|b",
             "size|width|8",
@@ -356272,9 +356278,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone%block#floor+curved+concave.8x8+c.openforge.stl",
+            "file": "dungeon_stone%block#curved+concave,floor.8x8+c.openforge.stl",
             "file_modified_at": "2025-07-30T16:31:58.241701",
-            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+concave/dungeon_stone%block#floor+curved+concave.8x8+c.openforge.stl",
+            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+concave/dungeon_stone%block#curved+concave,floor.8x8+c.openforge.stl",
             "md5": "3210dc365783406be6f481bc6eca1cec",
             "size": 2389284,
             "storage_address": "https://objects.openforge.tools/models/3210dc/3210dc365783406be6f481bc6eca1cec.stl"
@@ -356388,9 +356394,8 @@
             "build|wall on tile",
             "connection|openforge",
             "shape|curved",
+            "shape|curved|concave",
             "shape|floor",
-            "shape|floor|concave",
-            "shape|floor|curved",
             "size|depth|8",
             "size|segment|c",
             "size|width|8",
@@ -356438,9 +356443,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone%block#floor+curved+concave.8x8+cx.openforge.stl",
+            "file": "dungeon_stone%block#curved+concave,floor.8x8+cx.openforge.stl",
             "file_modified_at": "2025-07-30T16:32:10.131920",
-            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+concave/dungeon_stone%block#floor+curved+concave.8x8+cx.openforge.stl",
+            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+concave/dungeon_stone%block#curved+concave,floor.8x8+cx.openforge.stl",
             "md5": "47c0d86bdde48fc1ce9f920098729a84",
             "size": 2085884,
             "storage_address": "https://objects.openforge.tools/models/47c0d8/47c0d86bdde48fc1ce9f920098729a84.stl"
@@ -356554,9 +356559,8 @@
             "build|wall on tile",
             "connection|openforge",
             "shape|curved",
+            "shape|curved|concave",
             "shape|floor",
-            "shape|floor|concave",
-            "shape|floor|curved",
             "size|depth|8",
             "size|segment|cx",
             "size|width|8",
@@ -356604,9 +356608,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone%eroded#floor+curved+concave.1x1.openforge.stl",
+            "file": "dungeon_stone%eroded#curved+concave,floor.1x1.openforge.stl",
             "file_modified_at": "2018-09-23T09:44:31",
-            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+concave/dungeon_stone%eroded#floor+curved+concave.1x1.openforge.stl",
+            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+concave/dungeon_stone%eroded#curved+concave,floor.1x1.openforge.stl",
             "md5": "a91a98b76978d6da9f36a6a1c93f4e3b",
             "size": 182784,
             "storage_address": "https://objects.openforge.tools/models/a91a98/a91a98b76978d6da9f36a6a1c93f4e3b.stl"
@@ -356719,9 +356723,9 @@
         "tags": [
             "build|wall on tile",
             "connection|openforge",
+            "shape|curved",
+            "shape|curved|concave",
             "shape|floor",
-            "shape|floor|concave",
-            "shape|floor|curved",
             "size|depth|1",
             "size|width|1",
             "texture|dungeon_stone",
@@ -356768,9 +356772,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone%eroded#floor+curved+concave.2x2.openforge.stl",
+            "file": "dungeon_stone%eroded#curved+concave,floor.2x2.openforge.stl",
             "file_modified_at": "2018-09-23T09:44:31",
-            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+concave/dungeon_stone%eroded#floor+curved+concave.2x2.openforge.stl",
+            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+concave/dungeon_stone%eroded#curved+concave,floor.2x2.openforge.stl",
             "md5": "bf892f422dedb42fa969598ac7e9c774",
             "size": 539284,
             "storage_address": "https://objects.openforge.tools/models/bf892f/bf892f422dedb42fa969598ac7e9c774.stl"
@@ -356883,9 +356887,9 @@
         "tags": [
             "build|wall on tile",
             "connection|openforge",
+            "shape|curved",
+            "shape|curved|concave",
             "shape|floor",
-            "shape|floor|concave",
-            "shape|floor|curved",
             "size|depth|2",
             "size|width|2",
             "texture|dungeon_stone",
@@ -356932,9 +356936,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone%eroded#floor+curved+concave.2x4.openforge.stl",
+            "file": "dungeon_stone%eroded#curved+concave,floor.2x4.openforge.stl",
             "file_modified_at": "2018-09-23T09:44:31",
-            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+concave/dungeon_stone%eroded#floor+curved+concave.2x4.openforge.stl",
+            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+concave/dungeon_stone%eroded#curved+concave,floor.2x4.openforge.stl",
             "md5": "49935e90aa85f057bee5b75d9a5c5e37",
             "size": 1047084,
             "storage_address": "https://objects.openforge.tools/models/49935e/49935e90aa85f057bee5b75d9a5c5e37.stl"
@@ -357047,9 +357051,9 @@
         "tags": [
             "build|wall on tile",
             "connection|openforge",
+            "shape|curved",
+            "shape|curved|concave",
             "shape|floor",
-            "shape|floor|concave",
-            "shape|floor|curved",
             "size|depth|4",
             "size|width|2",
             "texture|dungeon_stone",
@@ -357096,9 +357100,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone%eroded#floor+curved+concave.3x3.openforge.stl",
+            "file": "dungeon_stone%eroded#curved+concave,floor.3x3.openforge.stl",
             "file_modified_at": "2025-07-30T16:30:56.106644",
-            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+concave/dungeon_stone%eroded#floor+curved+concave.3x3.openforge.stl",
+            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+concave/dungeon_stone%eroded#curved+concave,floor.3x3.openforge.stl",
             "md5": "e110adc49c77fd867ce9de8630b5848b",
             "size": 1143484,
             "storage_address": "https://objects.openforge.tools/models/e110ad/e110adc49c77fd867ce9de8630b5848b.stl"
@@ -357211,9 +357215,9 @@
         "tags": [
             "build|wall on tile",
             "connection|openforge",
+            "shape|curved",
+            "shape|curved|concave",
             "shape|floor",
-            "shape|floor|concave",
-            "shape|floor|curved",
             "size|depth|3",
             "size|width|3",
             "texture|dungeon_stone",
@@ -357260,9 +357264,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone%eroded#floor+curved+concave.4x2.openforge.stl",
+            "file": "dungeon_stone%eroded#curved+concave,floor.4x2.openforge.stl",
             "file_modified_at": "2018-09-23T09:44:32",
-            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+concave/dungeon_stone%eroded#floor+curved+concave.4x2.openforge.stl",
+            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+concave/dungeon_stone%eroded#curved+concave,floor.4x2.openforge.stl",
             "md5": "b1b9ae8bd96375db4d2582cbd8ede927",
             "size": 1047084,
             "storage_address": "https://objects.openforge.tools/models/b1b9ae/b1b9ae8bd96375db4d2582cbd8ede927.stl"
@@ -357375,9 +357379,9 @@
         "tags": [
             "build|wall on tile",
             "connection|openforge",
+            "shape|curved",
+            "shape|curved|concave",
             "shape|floor",
-            "shape|floor|concave",
-            "shape|floor|curved",
             "size|depth|2",
             "size|width|4",
             "texture|dungeon_stone",
@@ -357424,9 +357428,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone%eroded#floor+curved+concave.4x4+a.openforge.stl",
+            "file": "dungeon_stone%eroded#curved+concave,floor.4x4+a.openforge.stl",
             "file_modified_at": "2019-01-25T10:22:36",
-            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+concave/dungeon_stone%eroded#floor+curved+concave.4x4+a.openforge.stl",
+            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+concave/dungeon_stone%eroded#curved+concave,floor.4x4+a.openforge.stl",
             "md5": "041bf0e1e2558645a282419fcc58f57d",
             "size": 502184,
             "storage_address": "https://objects.openforge.tools/models/041bf0/041bf0e1e2558645a282419fcc58f57d.stl"
@@ -357540,9 +357544,8 @@
             "build|wall on tile",
             "connection|openforge",
             "shape|curved",
+            "shape|curved|concave",
             "shape|floor",
-            "shape|floor|concave",
-            "shape|floor|curved",
             "size|depth|4",
             "size|segment|a",
             "size|width|4",
@@ -357590,9 +357593,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone%eroded#floor+curved+concave.4x4+b.openforge.stl",
+            "file": "dungeon_stone%eroded#curved+concave,floor.4x4+b.openforge.stl",
             "file_modified_at": "2019-01-25T10:22:41",
-            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+concave/dungeon_stone%eroded#floor+curved+concave.4x4+b.openforge.stl",
+            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+concave/dungeon_stone%eroded#curved+concave,floor.4x4+b.openforge.stl",
             "md5": "5e34a0574e4e286c191423a57d288212",
             "size": 1666984,
             "storage_address": "https://objects.openforge.tools/models/5e34a0/5e34a0574e4e286c191423a57d288212.stl"
@@ -357706,9 +357709,8 @@
             "build|wall on tile",
             "connection|openforge",
             "shape|curved",
+            "shape|curved|concave",
             "shape|floor",
-            "shape|floor|concave",
-            "shape|floor|curved",
             "size|depth|4",
             "size|segment|b",
             "size|width|4",
@@ -357756,9 +357758,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone%eroded#floor+curved+concave.4x4+c.openforge.stl",
+            "file": "dungeon_stone%eroded#curved+concave,floor.4x4+c.openforge.stl",
             "file_modified_at": "2019-01-25T10:22:44",
-            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+concave/dungeon_stone%eroded#floor+curved+concave.4x4+c.openforge.stl",
+            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+concave/dungeon_stone%eroded#curved+concave,floor.4x4+c.openforge.stl",
             "md5": "45602900220275e15dfc73b3543c00d2",
             "size": 1674484,
             "storage_address": "https://objects.openforge.tools/models/456029/45602900220275e15dfc73b3543c00d2.stl"
@@ -357872,9 +357874,8 @@
             "build|wall on tile",
             "connection|openforge",
             "shape|curved",
+            "shape|curved|concave",
             "shape|floor",
-            "shape|floor|concave",
-            "shape|floor|curved",
             "size|depth|4",
             "size|segment|c",
             "size|width|4",
@@ -357922,9 +357923,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone%eroded#floor+curved+concave.4x4.openforge.stl",
+            "file": "dungeon_stone%eroded#curved+concave,floor.4x4.openforge.stl",
             "file_modified_at": "2018-09-23T09:44:34",
-            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+concave/dungeon_stone%eroded#floor+curved+concave.4x4.openforge.stl",
+            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+concave/dungeon_stone%eroded#curved+concave,floor.4x4.openforge.stl",
             "md5": "787f9dd9aa2d5fe010349b5a6c149b45",
             "size": 2038284,
             "storage_address": "https://objects.openforge.tools/models/787f9d/787f9dd9aa2d5fe010349b5a6c149b45.stl"
@@ -358037,9 +358038,9 @@
         "tags": [
             "build|wall on tile",
             "connection|openforge",
+            "shape|curved",
+            "shape|curved|concave",
             "shape|floor",
-            "shape|floor|concave",
-            "shape|floor|curved",
             "size|depth|4",
             "size|width|4",
             "texture|dungeon_stone",
@@ -358086,9 +358087,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone%eroded#floor+curved+concave.6x6+a.openforge.stl",
+            "file": "dungeon_stone%eroded#curved+concave,floor.6x6+a.openforge.stl",
             "file_modified_at": "2018-09-23T09:44:34",
-            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+concave/dungeon_stone%eroded#floor+curved+concave.6x6+a.openforge.stl",
+            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+concave/dungeon_stone%eroded#curved+concave,floor.6x6+a.openforge.stl",
             "md5": "435e1fc565d2874d38d0fa2cd440d08d",
             "size": 461184,
             "storage_address": "https://objects.openforge.tools/models/435e1f/435e1fc565d2874d38d0fa2cd440d08d.stl"
@@ -358202,9 +358203,8 @@
             "build|wall on tile",
             "connection|openforge",
             "shape|curved",
+            "shape|curved|concave",
             "shape|floor",
-            "shape|floor|concave",
-            "shape|floor|curved",
             "size|depth|6",
             "size|segment|a",
             "size|width|6",
@@ -358252,9 +358252,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone%eroded#floor+curved+concave.6x6+b.openforge.stl",
+            "file": "dungeon_stone%eroded#curved+concave,floor.6x6+b.openforge.stl",
             "file_modified_at": "2018-09-23T09:44:36",
-            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+concave/dungeon_stone%eroded#floor+curved+concave.6x6+b.openforge.stl",
+            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+concave/dungeon_stone%eroded#curved+concave,floor.6x6+b.openforge.stl",
             "md5": "78084179b5ee640d91d7c0211ae8ad8a",
             "size": 3517084,
             "storage_address": "https://objects.openforge.tools/models/780841/78084179b5ee640d91d7c0211ae8ad8a.stl"
@@ -358368,9 +358368,8 @@
             "build|wall on tile",
             "connection|openforge",
             "shape|curved",
+            "shape|curved|concave",
             "shape|floor",
-            "shape|floor|concave",
-            "shape|floor|curved",
             "size|depth|6",
             "size|segment|b",
             "size|width|6",
@@ -358418,9 +358417,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone%eroded#floor+curved+concave.6x6+c.openforge.stl",
+            "file": "dungeon_stone%eroded#curved+concave,floor.6x6+c.openforge.stl",
             "file_modified_at": "2018-09-23T09:44:36",
-            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+concave/dungeon_stone%eroded#floor+curved+concave.6x6+c.openforge.stl",
+            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+concave/dungeon_stone%eroded#curved+concave,floor.6x6+c.openforge.stl",
             "md5": "030a9bdaedf70b5c8d85a3895b4d1fb9",
             "size": 487684,
             "storage_address": "https://objects.openforge.tools/models/030a9b/030a9bdaedf70b5c8d85a3895b4d1fb9.stl"
@@ -358534,9 +358533,8 @@
             "build|wall on tile",
             "connection|openforge",
             "shape|curved",
+            "shape|curved|concave",
             "shape|floor",
-            "shape|floor|concave",
-            "shape|floor|curved",
             "size|depth|6",
             "size|segment|c",
             "size|width|6",
@@ -358584,9 +358582,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone%eroded#floor+curved+concave.8x8+a.openforge.stl",
+            "file": "dungeon_stone%eroded#curved+concave,floor.8x8+a.openforge.stl",
             "file_modified_at": "2018-09-23T09:44:37",
-            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+concave/dungeon_stone%eroded#floor+curved+concave.8x8+a.openforge.stl",
+            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+concave/dungeon_stone%eroded#curved+concave,floor.8x8+a.openforge.stl",
             "md5": "8d4795251d4183ce9a2d999ef27743d8",
             "size": 916584,
             "storage_address": "https://objects.openforge.tools/models/8d4795/8d4795251d4183ce9a2d999ef27743d8.stl"
@@ -358700,9 +358698,8 @@
             "build|wall on tile",
             "connection|openforge",
             "shape|curved",
+            "shape|curved|concave",
             "shape|floor",
-            "shape|floor|concave",
-            "shape|floor|curved",
             "size|depth|8",
             "size|segment|a",
             "size|width|8",
@@ -358750,9 +358747,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone%eroded#floor+curved+concave.8x8+ac.openforge.stl",
+            "file": "dungeon_stone%eroded#curved+concave,floor.8x8+ac.openforge.stl",
             "file_modified_at": "2021-04-29T18:31:35.847682",
-            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+concave/dungeon_stone%eroded#floor+curved+concave.8x8+ac.openforge.stl",
+            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+concave/dungeon_stone%eroded#curved+concave,floor.8x8+ac.openforge.stl",
             "md5": "d41677db5ccf4d9da0d4cf7ac1432ff9",
             "size": 1753784,
             "storage_address": "https://objects.openforge.tools/models/d41677/d41677db5ccf4d9da0d4cf7ac1432ff9.stl"
@@ -358866,9 +358863,8 @@
             "build|wall on tile",
             "connection|openforge",
             "shape|curved",
+            "shape|curved|concave",
             "shape|floor",
-            "shape|floor|concave",
-            "shape|floor|curved",
             "size|depth|8",
             "size|segment|ac",
             "size|width|8",
@@ -358916,9 +358912,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone%eroded#floor+curved+concave.8x8+ax.openforge.stl",
+            "file": "dungeon_stone%eroded#curved+concave,floor.8x8+ax.openforge.stl",
             "file_modified_at": "2021-04-29T18:31:44.684105",
-            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+concave/dungeon_stone%eroded#floor+curved+concave.8x8+ax.openforge.stl",
+            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+concave/dungeon_stone%eroded#curved+concave,floor.8x8+ax.openforge.stl",
             "md5": "89b4ff94cdb91c1cfe961cf21c204655",
             "size": 2901334,
             "storage_address": "https://objects.openforge.tools/models/89b4ff/89b4ff94cdb91c1cfe961cf21c204655.stl"
@@ -359032,9 +359028,8 @@
             "build|wall on tile",
             "connection|openforge",
             "shape|curved",
+            "shape|curved|concave",
             "shape|floor",
-            "shape|floor|concave",
-            "shape|floor|curved",
             "size|depth|8",
             "size|segment|ax",
             "size|width|8",
@@ -359082,9 +359077,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone%eroded#floor+curved+concave.8x8+b.openforge.stl",
+            "file": "dungeon_stone%eroded#curved+concave,floor.8x8+b.openforge.stl",
             "file_modified_at": "2018-09-23T09:44:45",
-            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+concave/dungeon_stone%eroded#floor+curved+concave.8x8+b.openforge.stl",
+            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+concave/dungeon_stone%eroded#curved+concave,floor.8x8+b.openforge.stl",
             "md5": "ff33b2ae2d509e04dedd1349bd6957d2",
             "size": 6428384,
             "storage_address": "https://objects.openforge.tools/models/ff33b2/ff33b2ae2d509e04dedd1349bd6957d2.stl"
@@ -359198,9 +359193,8 @@
             "build|wall on tile",
             "connection|openforge",
             "shape|curved",
+            "shape|curved|concave",
             "shape|floor",
-            "shape|floor|concave",
-            "shape|floor|curved",
             "size|depth|8",
             "size|segment|b",
             "size|width|8",
@@ -359248,9 +359242,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone%eroded#floor+curved+concave.8x8+c.openforge.stl",
+            "file": "dungeon_stone%eroded#curved+concave,floor.8x8+c.openforge.stl",
             "file_modified_at": "2018-09-23T09:44:47",
-            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+concave/dungeon_stone%eroded#floor+curved+concave.8x8+c.openforge.stl",
+            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+concave/dungeon_stone%eroded#curved+concave,floor.8x8+c.openforge.stl",
             "md5": "e3e76ce116cbd25eae922496826b5441",
             "size": 831184,
             "storage_address": "https://objects.openforge.tools/models/e3e76c/e3e76ce116cbd25eae922496826b5441.stl"
@@ -359364,9 +359358,8 @@
             "build|wall on tile",
             "connection|openforge",
             "shape|curved",
+            "shape|curved|concave",
             "shape|floor",
-            "shape|floor|concave",
-            "shape|floor|curved",
             "size|depth|8",
             "size|segment|c",
             "size|width|8",
@@ -359414,9 +359407,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone%eroded#floor+curved+concave.8x8+cx.openforge.stl",
+            "file": "dungeon_stone%eroded#curved+concave,floor.8x8+cx.openforge.stl",
             "file_modified_at": "2021-04-29T18:31:51.817664",
-            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+concave/dungeon_stone%eroded#floor+curved+concave.8x8+cx.openforge.stl",
+            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+concave/dungeon_stone%eroded#curved+concave,floor.8x8+cx.openforge.stl",
             "md5": "df20dd661188ef06f02a58e857fe6525",
             "size": 2901334,
             "storage_address": "https://objects.openforge.tools/models/df20dd/df20dd661188ef06f02a58e857fe6525.stl"
@@ -359530,9 +359523,8 @@
             "build|wall on tile",
             "connection|openforge",
             "shape|curved",
+            "shape|curved|concave",
             "shape|floor",
-            "shape|floor|concave",
-            "shape|floor|curved",
             "size|depth|8",
             "size|segment|cx",
             "size|width|8",
@@ -359580,9 +359572,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone%block#floor+curved,pentacle.4x4+a.openforge.stl",
+            "file": "dungeon_stone%block#curved,floor,pentacle.4x4+a.openforge.stl",
             "file_modified_at": "2025-07-30T16:47:26.943662",
-            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+encounter/dungeon_stone%block#floor+curved,pentacle.4x4+a.openforge.stl",
+            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+encounter/dungeon_stone%block#curved,floor,pentacle.4x4+a.openforge.stl",
             "md5": "d18eda1b0b793a44d444e6877b060b91",
             "size": 10085084,
             "storage_address": "https://objects.openforge.tools/models/d18eda/d18eda1b0b793a44d444e6877b060b91.stl"
@@ -359698,7 +359690,6 @@
             "connection|openforge",
             "shape|curved",
             "shape|floor",
-            "shape|floor|curved",
             "size|depth|4",
             "size|segment|a",
             "size|width|4",
@@ -359746,9 +359737,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone%block#floor+curved,pentacle.4x4+b.openforge.stl",
+            "file": "dungeon_stone%block#curved,floor,pentacle.4x4+b.openforge.stl",
             "file_modified_at": "2025-07-30T16:47:58.090517",
-            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+encounter/dungeon_stone%block#floor+curved,pentacle.4x4+b.openforge.stl",
+            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+encounter/dungeon_stone%block#curved,floor,pentacle.4x4+b.openforge.stl",
             "md5": "34205e00627c921d03e7ada1209baf5f",
             "size": 6268084,
             "storage_address": "https://objects.openforge.tools/models/34205e/34205e00627c921d03e7ada1209baf5f.stl"
@@ -359864,7 +359855,6 @@
             "connection|openforge",
             "shape|curved",
             "shape|floor",
-            "shape|floor|curved",
             "size|depth|4",
             "size|segment|b",
             "size|width|4",
@@ -359912,9 +359902,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone%block#floor+curved,pentacle.4x4+c.openforge.stl",
+            "file": "dungeon_stone%block#curved,floor,pentacle.4x4+c.openforge.stl",
             "file_modified_at": "2025-07-30T16:48:11.092241",
-            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+encounter/dungeon_stone%block#floor+curved,pentacle.4x4+c.openforge.stl",
+            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+encounter/dungeon_stone%block#curved,floor,pentacle.4x4+c.openforge.stl",
             "md5": "0c4225c546f22a1960a8c761efc72036",
             "size": 6064484,
             "storage_address": "https://objects.openforge.tools/models/0c4225/0c4225c546f22a1960a8c761efc72036.stl"
@@ -360030,7 +360020,6 @@
             "connection|openforge",
             "shape|curved",
             "shape|floor",
-            "shape|floor|curved",
             "size|depth|4",
             "size|segment|c",
             "size|width|4",
@@ -360078,9 +360067,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone%block#floor+curved,pentacle2.4x4+a.openforge.stl",
+            "file": "dungeon_stone%block#curved,floor,pentacle2.4x4+a.openforge.stl",
             "file_modified_at": "2025-07-30T16:47:43.390366",
-            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+encounter/dungeon_stone%block#floor+curved,pentacle2.4x4+a.openforge.stl",
+            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+encounter/dungeon_stone%block#curved,floor,pentacle2.4x4+a.openforge.stl",
             "md5": "89bafbe7bc5979a876720e6981bdc43f",
             "size": 10349684,
             "storage_address": "https://objects.openforge.tools/models/89bafb/89bafbe7bc5979a876720e6981bdc43f.stl"
@@ -360196,7 +360185,6 @@
             "connection|openforge",
             "shape|curved",
             "shape|floor",
-            "shape|floor|curved",
             "size|depth|4",
             "size|segment|a",
             "size|width|4",
@@ -360409,9 +360397,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone%eroded#floor+curved,pentacle.4x4+a.openforge.stl",
+            "file": "dungeon_stone%eroded#curved,floor,pentacle.4x4+a.openforge.stl",
             "file_modified_at": "2019-01-25T10:22:39",
-            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+encounter/dungeon_stone%eroded#floor+curved,pentacle.4x4+a.openforge.stl",
+            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+encounter/dungeon_stone%eroded#curved,floor,pentacle.4x4+a.openforge.stl",
             "md5": "ba82e647195b478589746ad8e2d3098c",
             "size": 3216134,
             "storage_address": "https://objects.openforge.tools/models/ba82e6/ba82e647195b478589746ad8e2d3098c.stl"
@@ -360527,7 +360515,6 @@
             "connection|openforge",
             "shape|curved",
             "shape|floor",
-            "shape|floor|curved",
             "size|depth|4",
             "size|segment|a",
             "size|width|4",
@@ -360575,9 +360562,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone%eroded#floor+curved,pentacle.4x4+b.openforge.stl",
+            "file": "dungeon_stone%eroded#curved,floor,pentacle.4x4+b.openforge.stl",
             "file_modified_at": "2019-01-25T10:22:42",
-            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+encounter/dungeon_stone%eroded#floor+curved,pentacle.4x4+b.openforge.stl",
+            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+encounter/dungeon_stone%eroded#curved,floor,pentacle.4x4+b.openforge.stl",
             "md5": "4bcdf867546e2f00bbcac6ea6c773512",
             "size": 1760884,
             "storage_address": "https://objects.openforge.tools/models/4bcdf8/4bcdf867546e2f00bbcac6ea6c773512.stl"
@@ -360693,7 +360680,6 @@
             "connection|openforge",
             "shape|curved",
             "shape|floor",
-            "shape|floor|curved",
             "size|depth|4",
             "size|segment|b",
             "size|width|4",
@@ -360741,9 +360727,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone%eroded#floor+curved,pentacle.4x4+c.openforge.stl",
+            "file": "dungeon_stone%eroded#curved,floor,pentacle.4x4+c.openforge.stl",
             "file_modified_at": "2019-01-25T10:22:44",
-            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+encounter/dungeon_stone%eroded#floor+curved,pentacle.4x4+c.openforge.stl",
+            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+encounter/dungeon_stone%eroded#curved,floor,pentacle.4x4+c.openforge.stl",
             "md5": "e45ab9d0bfcd65291961f77485798383",
             "size": 1629634,
             "storage_address": "https://objects.openforge.tools/models/e45ab9/e45ab9d0bfcd65291961f77485798383.stl"
@@ -360859,7 +360845,6 @@
             "connection|openforge",
             "shape|curved",
             "shape|floor",
-            "shape|floor|curved",
             "size|depth|4",
             "size|segment|c",
             "size|width|4",
@@ -360907,9 +360892,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone%eroded#floor+curved,pentacle2.4x4+a.openforge.stl",
+            "file": "dungeon_stone%eroded#curved,floor,pentacle2.4x4+a.openforge.stl",
             "file_modified_at": "2019-01-25T10:22:37",
-            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+encounter/dungeon_stone%eroded#floor+curved,pentacle2.4x4+a.openforge.stl",
+            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+encounter/dungeon_stone%eroded#curved,floor,pentacle2.4x4+a.openforge.stl",
             "md5": "b2b87aeab4877d45a338af28fe60bdf9",
             "size": 3323934,
             "storage_address": "https://objects.openforge.tools/models/b2b87a/b2b87aeab4877d45a338af28fe60bdf9.stl"
@@ -361025,7 +361010,6 @@
             "connection|openforge",
             "shape|curved",
             "shape|floor",
-            "shape|floor|curved",
             "size|depth|4",
             "size|segment|a",
             "size|width|4",
@@ -361238,9 +361222,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone%block#floor+curved,orthagonal+a.6x6+a.openforge.stl",
+            "file": "dungeon_stone%block#curved,floor,orthagonal+a.6x6+a.openforge.stl",
             "file_modified_at": "2025-07-30T17:42:04.427683",
-            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+orthogonal/dungeon_stone%block#floor+curved,orthagonal+a.6x6+a.openforge.stl",
+            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+orthogonal/dungeon_stone%block#curved,floor,orthagonal+a.6x6+a.openforge.stl",
             "md5": "1b1bfa26c9ac4ccf4fc66a09df54fe36",
             "size": 4539584,
             "storage_address": "https://objects.openforge.tools/models/1b1bfa/1b1bfa26c9ac4ccf4fc66a09df54fe36.stl"
@@ -361357,7 +361341,6 @@
             "connection|openforge",
             "shape|curved",
             "shape|floor",
-            "shape|floor|curved",
             "size|depth|6",
             "size|segment|a",
             "size|width|6",
@@ -361405,9 +361388,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone%block#floor+curved,orthagonal+a.6x6+b.openforge.stl",
+            "file": "dungeon_stone%block#curved,floor,orthagonal+a.6x6+b.openforge.stl",
             "file_modified_at": "2025-07-30T17:42:20.510139",
-            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+orthogonal/dungeon_stone%block#floor+curved,orthagonal+a.6x6+b.openforge.stl",
+            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+orthogonal/dungeon_stone%block#curved,floor,orthagonal+a.6x6+b.openforge.stl",
             "md5": "0ae5dbbe3336dc5fe839c803cf1bd4cc",
             "size": 1676884,
             "storage_address": "https://objects.openforge.tools/models/0ae5db/0ae5dbbe3336dc5fe839c803cf1bd4cc.stl"
@@ -361524,7 +361507,6 @@
             "connection|openforge",
             "shape|curved",
             "shape|floor",
-            "shape|floor|curved",
             "size|depth|6",
             "size|segment|b",
             "size|width|6",
@@ -361572,9 +361554,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone%block#floor+curved,orthagonal+a.6x6+c.openforge.stl",
+            "file": "dungeon_stone%block#curved,floor,orthagonal+a.6x6+c.openforge.stl",
             "file_modified_at": "2025-07-30T17:42:32.018581",
-            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+orthogonal/dungeon_stone%block#floor+curved,orthagonal+a.6x6+c.openforge.stl",
+            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+orthogonal/dungeon_stone%block#curved,floor,orthagonal+a.6x6+c.openforge.stl",
             "md5": "7d2daa04e17383c6330cda7772c3a2dc",
             "size": 4518784,
             "storage_address": "https://objects.openforge.tools/models/7d2daa/7d2daa04e17383c6330cda7772c3a2dc.stl"
@@ -361691,7 +361673,6 @@
             "connection|openforge",
             "shape|curved",
             "shape|floor",
-            "shape|floor|curved",
             "size|depth|6",
             "size|segment|c",
             "size|width|6",
@@ -361739,9 +361720,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone%block#floor+curved,orthagonal+a.8x8+a.openforge.stl",
+            "file": "dungeon_stone%block#curved,floor,orthagonal+a.8x8+a.openforge.stl",
             "file_modified_at": "2025-07-30T17:54:49.772374",
-            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+orthogonal/dungeon_stone%block#floor+curved,orthagonal+a.8x8+a.openforge.stl",
+            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+orthogonal/dungeon_stone%block#curved,floor,orthagonal+a.8x8+a.openforge.stl",
             "md5": "931c7ef9c2e4483eaed08c2c69f7c867",
             "size": 7959534,
             "storage_address": "https://objects.openforge.tools/models/931c7e/931c7ef9c2e4483eaed08c2c69f7c867.stl"
@@ -361858,7 +361839,6 @@
             "connection|openforge",
             "shape|curved",
             "shape|floor",
-            "shape|floor|curved",
             "size|depth|8",
             "size|segment|a",
             "size|width|8",
@@ -361906,9 +361886,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone%block#floor+curved,orthagonal+a.8x8+b.openforge.stl",
+            "file": "dungeon_stone%block#curved,floor,orthagonal+a.8x8+b.openforge.stl",
             "file_modified_at": "2025-07-30T17:55:02.201126",
-            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+orthogonal/dungeon_stone%block#floor+curved,orthagonal+a.8x8+b.openforge.stl",
+            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+orthogonal/dungeon_stone%block#curved,floor,orthagonal+a.8x8+b.openforge.stl",
             "md5": "94976a7fa7caa1115e624dc17c029037",
             "size": 4790684,
             "storage_address": "https://objects.openforge.tools/models/94976a/94976a7fa7caa1115e624dc17c029037.stl"
@@ -362025,7 +362005,6 @@
             "connection|openforge",
             "shape|curved",
             "shape|floor",
-            "shape|floor|curved",
             "size|depth|8",
             "size|segment|b",
             "size|width|8",
@@ -362073,9 +362052,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone%block#floor+curved,orthagonal+a.8x8+c.openforge.stl",
+            "file": "dungeon_stone%block#curved,floor,orthagonal+a.8x8+c.openforge.stl",
             "file_modified_at": "2025-07-30T17:55:14.282984",
-            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+orthogonal/dungeon_stone%block#floor+curved,orthagonal+a.8x8+c.openforge.stl",
+            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+orthogonal/dungeon_stone%block#curved,floor,orthagonal+a.8x8+c.openforge.stl",
             "md5": "72d72f9760d5510f0a24dff168560455",
             "size": 7963284,
             "storage_address": "https://objects.openforge.tools/models/72d72f/72d72f9760d5510f0a24dff168560455.stl"
@@ -362192,7 +362171,6 @@
             "connection|openforge",
             "shape|curved",
             "shape|floor",
-            "shape|floor|curved",
             "size|depth|8",
             "size|segment|c",
             "size|width|8",
@@ -362240,9 +362218,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone%block#floor+curved,orthagonal+ab.6x6+a.openforge.stl",
+            "file": "dungeon_stone%block#curved,floor,orthagonal+ab.6x6+a.openforge.stl",
             "file_modified_at": "2025-07-30T17:54:11.162561",
-            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+orthogonal/dungeon_stone%block#floor+curved,orthagonal+ab.6x6+a.openforge.stl",
+            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+orthogonal/dungeon_stone%block#curved,floor,orthagonal+ab.6x6+a.openforge.stl",
             "md5": "5635a1c07d032e4ee977b4c6ae94e5d6",
             "size": 3108084,
             "storage_address": "https://objects.openforge.tools/models/5635a1/5635a1c07d032e4ee977b4c6ae94e5d6.stl"
@@ -362359,7 +362337,6 @@
             "connection|openforge",
             "shape|curved",
             "shape|floor",
-            "shape|floor|curved",
             "size|depth|6",
             "size|segment|a",
             "size|width|6",
@@ -362407,9 +362384,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone%block#floor+curved,orthagonal+ab.6x6+c.openforge.stl",
+            "file": "dungeon_stone%block#curved,floor,orthagonal+ab.6x6+c.openforge.stl",
             "file_modified_at": "2025-07-30T17:54:24.098379",
-            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+orthogonal/dungeon_stone%block#floor+curved,orthagonal+ab.6x6+c.openforge.stl",
+            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+orthogonal/dungeon_stone%block#curved,floor,orthagonal+ab.6x6+c.openforge.stl",
             "md5": "eedce3d6ba3aa411e9e0329996c6e8cd",
             "size": 3203984,
             "storage_address": "https://objects.openforge.tools/models/eedce3/eedce3d6ba3aa411e9e0329996c6e8cd.stl"
@@ -362526,7 +362503,6 @@
             "connection|openforge",
             "shape|curved",
             "shape|floor",
-            "shape|floor|curved",
             "size|depth|6",
             "size|segment|c",
             "size|width|6",
@@ -362574,9 +362550,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone%block#floor+curved,orthagonal+ab.8x8+a.openforge.stl",
+            "file": "dungeon_stone%block#curved,floor,orthagonal+ab.8x8+a.openforge.stl",
             "file_modified_at": "2025-07-30T17:55:33.773558",
-            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+orthogonal/dungeon_stone%block#floor+curved,orthagonal+ab.8x8+a.openforge.stl",
+            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+orthogonal/dungeon_stone%block#curved,floor,orthagonal+ab.8x8+a.openforge.stl",
             "md5": "ebf4f7c92d027030ddbfad74bfda6113",
             "size": 7517334,
             "storage_address": "https://objects.openforge.tools/models/ebf4f7/ebf4f7c92d027030ddbfad74bfda6113.stl"
@@ -362693,7 +362669,6 @@
             "connection|openforge",
             "shape|curved",
             "shape|floor",
-            "shape|floor|curved",
             "size|depth|8",
             "size|segment|a",
             "size|width|8",
@@ -362741,9 +362716,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone%block#floor+curved,orthagonal+ab.8x8+c.openforge.stl",
+            "file": "dungeon_stone%block#curved,floor,orthagonal+ab.8x8+c.openforge.stl",
             "file_modified_at": "2025-07-30T17:55:45.614799",
-            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+orthogonal/dungeon_stone%block#floor+curved,orthagonal+ab.8x8+c.openforge.stl",
+            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+orthogonal/dungeon_stone%block#curved,floor,orthagonal+ab.8x8+c.openforge.stl",
             "md5": "e34cf3fc4815ece6069b42504f493b92",
             "size": 7410784,
             "storage_address": "https://objects.openforge.tools/models/e34cf3/e34cf3fc4815ece6069b42504f493b92.stl"
@@ -362860,7 +362835,6 @@
             "connection|openforge",
             "shape|curved",
             "shape|floor",
-            "shape|floor|curved",
             "size|depth|8",
             "size|segment|c",
             "size|width|8",
@@ -362908,9 +362882,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone%block#floor+curved,orthagonal+b.6x6+a.openforge.stl",
+            "file": "dungeon_stone%block#curved,floor,orthagonal+b.6x6+a.openforge.stl",
             "file_modified_at": "2025-07-30T17:42:47.419080",
-            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+orthogonal/dungeon_stone%block#floor+curved,orthagonal+b.6x6+a.openforge.stl",
+            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+orthogonal/dungeon_stone%block#curved,floor,orthagonal+b.6x6+a.openforge.stl",
             "md5": "bfa02922faabf370600608dd50362005",
             "size": 3549884,
             "storage_address": "https://objects.openforge.tools/models/bfa029/bfa02922faabf370600608dd50362005.stl"
@@ -363027,7 +363001,6 @@
             "connection|openforge",
             "shape|curved",
             "shape|floor",
-            "shape|floor|curved",
             "size|depth|6",
             "size|segment|a",
             "size|width|6",
@@ -363075,9 +363048,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone%block#floor+curved,orthagonal+b.6x6+b.openforge.stl",
+            "file": "dungeon_stone%block#curved,floor,orthagonal+b.6x6+b.openforge.stl",
             "file_modified_at": "2025-07-30T17:43:01.966035",
-            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+orthogonal/dungeon_stone%block#floor+curved,orthagonal+b.6x6+b.openforge.stl",
+            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+orthogonal/dungeon_stone%block#curved,floor,orthagonal+b.6x6+b.openforge.stl",
             "md5": "c816fe8b8ee790efc4e5e396adedc127",
             "size": 1588984,
             "storage_address": "https://objects.openforge.tools/models/c816fe/c816fe8b8ee790efc4e5e396adedc127.stl"
@@ -363194,7 +363167,6 @@
             "connection|openforge",
             "shape|curved",
             "shape|floor",
-            "shape|floor|curved",
             "size|depth|6",
             "size|segment|b",
             "size|width|6",
@@ -363242,9 +363214,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone%block#floor+curved,orthagonal+b.6x6+c.openforge.stl",
+            "file": "dungeon_stone%block#curved,floor,orthagonal+b.6x6+c.openforge.stl",
             "file_modified_at": "2025-07-30T17:43:14.648720",
-            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+orthogonal/dungeon_stone%block#floor+curved,orthagonal+b.6x6+c.openforge.stl",
+            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+orthogonal/dungeon_stone%block#curved,floor,orthagonal+b.6x6+c.openforge.stl",
             "md5": "dea772928b61127259c0ed19c059ab86",
             "size": 3650784,
             "storage_address": "https://objects.openforge.tools/models/dea772/dea772928b61127259c0ed19c059ab86.stl"
@@ -363361,7 +363333,6 @@
             "connection|openforge",
             "shape|curved",
             "shape|floor",
-            "shape|floor|curved",
             "size|depth|6",
             "size|segment|c",
             "size|width|6",
@@ -363409,9 +363380,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone%block#floor+curved,orthagonal+b.8x8+a.openforge.stl",
+            "file": "dungeon_stone%block#curved,floor,orthagonal+b.8x8+a.openforge.stl",
             "file_modified_at": "2025-07-30T17:56:00.269652",
-            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+orthogonal/dungeon_stone%block#floor+curved,orthagonal+b.8x8+a.openforge.stl",
+            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+orthogonal/dungeon_stone%block#curved,floor,orthagonal+b.8x8+a.openforge.stl",
             "md5": "8e9a354d31f25f44209f488f1c7e27e6",
             "size": 8917234,
             "storage_address": "https://objects.openforge.tools/models/8e9a35/8e9a354d31f25f44209f488f1c7e27e6.stl"
@@ -363528,7 +363499,6 @@
             "connection|openforge",
             "shape|curved",
             "shape|floor",
-            "shape|floor|curved",
             "size|depth|8",
             "size|segment|a",
             "size|width|8",
@@ -363576,9 +363546,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone%block#floor+curved,orthagonal+b.8x8+b.openforge.stl",
+            "file": "dungeon_stone%block#curved,floor,orthagonal+b.8x8+b.openforge.stl",
             "file_modified_at": "2025-07-30T17:56:10.898190",
-            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+orthogonal/dungeon_stone%block#floor+curved,orthagonal+b.8x8+b.openforge.stl",
+            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+orthogonal/dungeon_stone%block#curved,floor,orthagonal+b.8x8+b.openforge.stl",
             "md5": "d60419ac10975733f111e83b30e50e68",
             "size": 4818034,
             "storage_address": "https://objects.openforge.tools/models/d60419/d60419ac10975733f111e83b30e50e68.stl"
@@ -363695,7 +363665,6 @@
             "connection|openforge",
             "shape|curved",
             "shape|floor",
-            "shape|floor|curved",
             "size|depth|8",
             "size|segment|b",
             "size|width|8",
@@ -363743,9 +363712,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone%block#floor+curved,orthagonal+b.8x8+c.openforge.stl",
+            "file": "dungeon_stone%block#curved,floor,orthagonal+b.8x8+c.openforge.stl",
             "file_modified_at": "2025-07-30T17:56:22.150549",
-            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+orthogonal/dungeon_stone%block#floor+curved,orthagonal+b.8x8+c.openforge.stl",
+            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+orthogonal/dungeon_stone%block#curved,floor,orthagonal+b.8x8+c.openforge.stl",
             "md5": "b517ab8f6e190d898b8b689147ee19db",
             "size": 8783584,
             "storage_address": "https://objects.openforge.tools/models/b517ab/b517ab8f6e190d898b8b689147ee19db.stl"
@@ -363862,7 +363831,6 @@
             "connection|openforge",
             "shape|curved",
             "shape|floor",
-            "shape|floor|curved",
             "size|depth|8",
             "size|segment|c",
             "size|width|8",
@@ -363910,9 +363878,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone%block#floor+curved,orthagonal+c.8x8+b.openforge.stl",
+            "file": "dungeon_stone%block#curved,floor,orthagonal+c.8x8+b.openforge.stl",
             "file_modified_at": "2025-07-30T17:56:34.962282",
-            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+orthogonal/dungeon_stone%block#floor+curved,orthagonal+c.8x8+b.openforge.stl",
+            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+orthogonal/dungeon_stone%block#curved,floor,orthagonal+c.8x8+b.openforge.stl",
             "md5": "8209cda79737f725f362145cda10597f",
             "size": 5202084,
             "storage_address": "https://objects.openforge.tools/models/8209cd/8209cda79737f725f362145cda10597f.stl"
@@ -364029,7 +363997,6 @@
             "connection|openforge",
             "shape|curved",
             "shape|floor",
-            "shape|floor|curved",
             "size|depth|8",
             "size|segment|b",
             "size|width|8",
@@ -364077,9 +364044,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone%block#floor+curved,orthagonal+x.6x6+b.openforge.stl",
+            "file": "dungeon_stone%block#curved,floor,orthagonal+x.6x6+b.openforge.stl",
             "file_modified_at": "2025-07-30T17:43:42.972198",
-            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+orthogonal/dungeon_stone%block#floor+curved,orthagonal+x.6x6+b.openforge.stl",
+            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+orthogonal/dungeon_stone%block#curved,floor,orthagonal+x.6x6+b.openforge.stl",
             "md5": "dd6aa8749f2303b1a7c44044e66c4341",
             "size": 2044884,
             "storage_address": "https://objects.openforge.tools/models/dd6aa8/dd6aa8749f2303b1a7c44044e66c4341.stl"
@@ -364196,7 +364163,6 @@
             "connection|openforge",
             "shape|curved",
             "shape|floor",
-            "shape|floor|curved",
             "size|depth|6",
             "size|segment|b",
             "size|width|6",
@@ -364244,9 +364210,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone%eroded#floor+curved,orthagonal+a.6x6+a.openforge.stl",
+            "file": "dungeon_stone%eroded#curved,floor,orthagonal+a.6x6+a.openforge.stl",
             "file_modified_at": "2019-05-19T19:58:36",
-            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+orthogonal/dungeon_stone%eroded#floor+curved,orthagonal+a.6x6+a.openforge.stl",
+            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+orthogonal/dungeon_stone%eroded#curved,floor,orthagonal+a.6x6+a.openforge.stl",
             "md5": "84712c9f99f87a579d6db5650a505e2b",
             "size": 4421684,
             "storage_address": "https://objects.openforge.tools/models/84712c/84712c9f99f87a579d6db5650a505e2b.stl"
@@ -364363,7 +364329,6 @@
             "connection|openforge",
             "shape|curved",
             "shape|floor",
-            "shape|floor|curved",
             "size|depth|6",
             "size|segment|a",
             "size|width|6",
@@ -364411,9 +364376,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone%eroded#floor+curved,orthagonal+a.6x6+b.openforge.stl",
+            "file": "dungeon_stone%eroded#curved,floor,orthagonal+a.6x6+b.openforge.stl",
             "file_modified_at": "2019-05-19T19:58:42",
-            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+orthogonal/dungeon_stone%eroded#floor+curved,orthagonal+a.6x6+b.openforge.stl",
+            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+orthogonal/dungeon_stone%eroded#curved,floor,orthagonal+a.6x6+b.openforge.stl",
             "md5": "a69780d1484307f1ea4a9dfae16bc79a",
             "size": 1620684,
             "storage_address": "https://objects.openforge.tools/models/a69780/a69780d1484307f1ea4a9dfae16bc79a.stl"
@@ -364530,7 +364495,6 @@
             "connection|openforge",
             "shape|curved",
             "shape|floor",
-            "shape|floor|curved",
             "size|depth|6",
             "size|segment|b",
             "size|width|6",
@@ -364578,9 +364542,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone%eroded#floor+curved,orthagonal+a.6x6+c.openforge.stl",
+            "file": "dungeon_stone%eroded#curved,floor,orthagonal+a.6x6+c.openforge.stl",
             "file_modified_at": "2019-05-19T19:58:53",
-            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+orthogonal/dungeon_stone%eroded#floor+curved,orthagonal+a.6x6+c.openforge.stl",
+            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+orthogonal/dungeon_stone%eroded#curved,floor,orthagonal+a.6x6+c.openforge.stl",
             "md5": "800c852d1c054774365cd61a1a702041",
             "size": 4421684,
             "storage_address": "https://objects.openforge.tools/models/800c85/800c852d1c054774365cd61a1a702041.stl"
@@ -364697,7 +364661,6 @@
             "connection|openforge",
             "shape|curved",
             "shape|floor",
-            "shape|floor|curved",
             "size|depth|6",
             "size|segment|c",
             "size|width|6",
@@ -364745,9 +364708,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone%eroded#floor+curved,orthagonal+a.8x8+a.openforge.stl",
+            "file": "dungeon_stone%eroded#curved,floor,orthagonal+a.8x8+a.openforge.stl",
             "file_modified_at": "2019-05-19T19:59:10",
-            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+orthogonal/dungeon_stone%eroded#floor+curved,orthagonal+a.8x8+a.openforge.stl",
+            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+orthogonal/dungeon_stone%eroded#curved,floor,orthagonal+a.8x8+a.openforge.stl",
             "md5": "935620871e3aa31e714970a257997ab5",
             "size": 7458784,
             "storage_address": "https://objects.openforge.tools/models/935620/935620871e3aa31e714970a257997ab5.stl"
@@ -364864,7 +364827,6 @@
             "connection|openforge",
             "shape|curved",
             "shape|floor",
-            "shape|floor|curved",
             "size|depth|8",
             "size|segment|a",
             "size|width|8",
@@ -364912,9 +364874,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone%eroded#floor+curved,orthagonal+a.8x8+b.openforge.stl",
+            "file": "dungeon_stone%eroded#curved,floor,orthagonal+a.8x8+b.openforge.stl",
             "file_modified_at": "2019-05-19T19:59:25",
-            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+orthogonal/dungeon_stone%eroded#floor+curved,orthagonal+a.8x8+b.openforge.stl",
+            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+orthogonal/dungeon_stone%eroded#curved,floor,orthagonal+a.8x8+b.openforge.stl",
             "md5": "7f166cb4c6dd4ea813b8b0aa8e1a6875",
             "size": 4369484,
             "storage_address": "https://objects.openforge.tools/models/7f166c/7f166cb4c6dd4ea813b8b0aa8e1a6875.stl"
@@ -365031,7 +364993,6 @@
             "connection|openforge",
             "shape|curved",
             "shape|floor",
-            "shape|floor|curved",
             "size|depth|8",
             "size|segment|b",
             "size|width|8",
@@ -365079,9 +365040,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone%eroded#floor+curved,orthagonal+a.8x8+c.openforge.stl",
+            "file": "dungeon_stone%eroded#curved,floor,orthagonal+a.8x8+c.openforge.stl",
             "file_modified_at": "2019-05-19T19:59:47",
-            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+orthogonal/dungeon_stone%eroded#floor+curved,orthagonal+a.8x8+c.openforge.stl",
+            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+orthogonal/dungeon_stone%eroded#curved,floor,orthagonal+a.8x8+c.openforge.stl",
             "md5": "3fdfb42c1005e35f521855bb753d92a2",
             "size": 7458784,
             "storage_address": "https://objects.openforge.tools/models/3fdfb4/3fdfb42c1005e35f521855bb753d92a2.stl"
@@ -365198,7 +365159,6 @@
             "connection|openforge",
             "shape|curved",
             "shape|floor",
-            "shape|floor|curved",
             "size|depth|8",
             "size|segment|c",
             "size|width|8",
@@ -365246,9 +365206,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone%eroded#floor+curved,orthagonal+ab.6x6+a.openforge.stl",
+            "file": "dungeon_stone%eroded#curved,floor,orthagonal+ab.6x6+a.openforge.stl",
             "file_modified_at": "2019-05-19T19:58:32",
-            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+orthogonal/dungeon_stone%eroded#floor+curved,orthagonal+ab.6x6+a.openforge.stl",
+            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+orthogonal/dungeon_stone%eroded#curved,floor,orthagonal+ab.6x6+a.openforge.stl",
             "md5": "eb1950915c78cdd4679b078fc3958a8a",
             "size": 3071184,
             "storage_address": "https://objects.openforge.tools/models/eb1950/eb1950915c78cdd4679b078fc3958a8a.stl"
@@ -365365,7 +365325,6 @@
             "connection|openforge",
             "shape|curved",
             "shape|floor",
-            "shape|floor|curved",
             "size|depth|6",
             "size|segment|a",
             "size|width|6",
@@ -365413,9 +365372,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone%eroded#floor+curved,orthagonal+ab.6x6+c.openforge.stl",
+            "file": "dungeon_stone%eroded#curved,floor,orthagonal+ab.6x6+c.openforge.stl",
             "file_modified_at": "2019-05-19T19:58:49",
-            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+orthogonal/dungeon_stone%eroded#floor+curved,orthagonal+ab.6x6+c.openforge.stl",
+            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+orthogonal/dungeon_stone%eroded#curved,floor,orthagonal+ab.6x6+c.openforge.stl",
             "md5": "8b93dedafdbc4343e0dcf74694a9d75f",
             "size": 3071184,
             "storage_address": "https://objects.openforge.tools/models/8b93de/8b93dedafdbc4343e0dcf74694a9d75f.stl"
@@ -365532,7 +365491,6 @@
             "connection|openforge",
             "shape|curved",
             "shape|floor",
-            "shape|floor|curved",
             "size|depth|6",
             "size|segment|c",
             "size|width|6",
@@ -365580,9 +365538,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone%eroded#floor+curved,orthagonal+ab.8x8+a.openforge.stl",
+            "file": "dungeon_stone%eroded#curved,floor,orthagonal+ab.8x8+a.openforge.stl",
             "file_modified_at": "2019-05-19T19:59:04",
-            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+orthogonal/dungeon_stone%eroded#floor+curved,orthagonal+ab.8x8+a.openforge.stl",
+            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+orthogonal/dungeon_stone%eroded#curved,floor,orthagonal+ab.8x8+a.openforge.stl",
             "md5": "847240c3ed1e2ec87a5281799a4e7818",
             "size": 7016134,
             "storage_address": "https://objects.openforge.tools/models/847240/847240c3ed1e2ec87a5281799a4e7818.stl"
@@ -365699,7 +365657,6 @@
             "connection|openforge",
             "shape|curved",
             "shape|floor",
-            "shape|floor|curved",
             "size|depth|8",
             "size|segment|a",
             "size|width|8",
@@ -365747,9 +365704,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone%eroded#floor+curved,orthagonal+ab.8x8+c.openforge.stl",
+            "file": "dungeon_stone%eroded#curved,floor,orthagonal+ab.8x8+c.openforge.stl",
             "file_modified_at": "2019-05-19T19:59:41",
-            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+orthogonal/dungeon_stone%eroded#floor+curved,orthagonal+ab.8x8+c.openforge.stl",
+            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+orthogonal/dungeon_stone%eroded#curved,floor,orthagonal+ab.8x8+c.openforge.stl",
             "md5": "f58cfd3e998ca3d7e73a293f03f5db51",
             "size": 7016134,
             "storage_address": "https://objects.openforge.tools/models/f58cfd/f58cfd3e998ca3d7e73a293f03f5db51.stl"
@@ -365866,7 +365823,6 @@
             "connection|openforge",
             "shape|curved",
             "shape|floor",
-            "shape|floor|curved",
             "size|depth|8",
             "size|segment|c",
             "size|width|8",
@@ -365914,9 +365870,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone%eroded#floor+curved,orthagonal+b.6x6+a.openforge.stl",
+            "file": "dungeon_stone%eroded#curved,floor,orthagonal+b.6x6+a.openforge.stl",
             "file_modified_at": "2019-05-19T19:58:40",
-            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+orthogonal/dungeon_stone%eroded#floor+curved,orthagonal+b.6x6+a.openforge.stl",
+            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+orthogonal/dungeon_stone%eroded#curved,floor,orthagonal+b.6x6+a.openforge.stl",
             "md5": "11d0a62760fda7f48059624ae2ab0d1a",
             "size": 3498484,
             "storage_address": "https://objects.openforge.tools/models/11d0a6/11d0a62760fda7f48059624ae2ab0d1a.stl"
@@ -366033,7 +365989,6 @@
             "connection|openforge",
             "shape|curved",
             "shape|floor",
-            "shape|floor|curved",
             "size|depth|6",
             "size|segment|a",
             "size|width|6",
@@ -366081,9 +366036,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone%eroded#floor+curved,orthagonal+b.6x6+b.openforge.stl",
+            "file": "dungeon_stone%eroded#curved,floor,orthagonal+b.6x6+b.openforge.stl",
             "file_modified_at": "2019-05-19T19:58:44",
-            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+orthogonal/dungeon_stone%eroded#floor+curved,orthagonal+b.6x6+b.openforge.stl",
+            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+orthogonal/dungeon_stone%eroded#curved,floor,orthagonal+b.6x6+b.openforge.stl",
             "md5": "d1f7ba9d0993552dc2c846ad146cc5e3",
             "size": 1672584,
             "storage_address": "https://objects.openforge.tools/models/d1f7ba/d1f7ba9d0993552dc2c846ad146cc5e3.stl"
@@ -366200,7 +366155,6 @@
             "connection|openforge",
             "shape|curved",
             "shape|floor",
-            "shape|floor|curved",
             "size|depth|6",
             "size|segment|b",
             "size|width|6",
@@ -366248,9 +366202,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone%eroded#floor+curved,orthagonal+b.6x6+c.openforge.stl",
+            "file": "dungeon_stone%eroded#curved,floor,orthagonal+b.6x6+c.openforge.stl",
             "file_modified_at": "2019-05-19T19:58:57",
-            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+orthogonal/dungeon_stone%eroded#floor+curved,orthagonal+b.6x6+c.openforge.stl",
+            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+orthogonal/dungeon_stone%eroded#curved,floor,orthagonal+b.6x6+c.openforge.stl",
             "md5": "85fe89a9ba5c3e6a07a102d9dd291169",
             "size": 3498484,
             "storage_address": "https://objects.openforge.tools/models/85fe89/85fe89a9ba5c3e6a07a102d9dd291169.stl"
@@ -366367,7 +366321,6 @@
             "connection|openforge",
             "shape|curved",
             "shape|floor",
-            "shape|floor|curved",
             "size|depth|6",
             "size|segment|c",
             "size|width|6",
@@ -366415,9 +366368,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone%eroded#floor+curved,orthagonal+b.8x8+a.openforge.stl",
+            "file": "dungeon_stone%eroded#curved,floor,orthagonal+b.8x8+a.openforge.stl",
             "file_modified_at": "2019-05-19T19:59:20",
-            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+orthogonal/dungeon_stone%eroded#floor+curved,orthagonal+b.8x8+a.openforge.stl",
+            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+orthogonal/dungeon_stone%eroded#curved,floor,orthagonal+b.8x8+a.openforge.stl",
             "md5": "b6c5d172ff68161c6ce13c03b9015a8c",
             "size": 8291234,
             "storage_address": "https://objects.openforge.tools/models/b6c5d1/b6c5d172ff68161c6ce13c03b9015a8c.stl"
@@ -366534,7 +366487,6 @@
             "connection|openforge",
             "shape|curved",
             "shape|floor",
-            "shape|floor|curved",
             "size|depth|8",
             "size|segment|a",
             "size|width|8",
@@ -366582,9 +366534,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone%eroded#floor+curved,orthagonal+b.8x8+b.openforge.stl",
+            "file": "dungeon_stone%eroded#curved,floor,orthagonal+b.8x8+b.openforge.stl",
             "file_modified_at": "2019-05-19T19:59:29",
-            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+orthogonal/dungeon_stone%eroded#floor+curved,orthagonal+b.8x8+b.openforge.stl",
+            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+orthogonal/dungeon_stone%eroded#curved,floor,orthagonal+b.8x8+b.openforge.stl",
             "md5": "4798d4cfa277e9993f59f5ac37acc249",
             "size": 4380384,
             "storage_address": "https://objects.openforge.tools/models/4798d4/4798d4cfa277e9993f59f5ac37acc249.stl"
@@ -366701,7 +366653,6 @@
             "connection|openforge",
             "shape|curved",
             "shape|floor",
-            "shape|floor|curved",
             "size|depth|8",
             "size|segment|b",
             "size|width|8",
@@ -366749,9 +366700,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone%eroded#floor+curved,orthagonal+b.8x8+c.openforge.stl",
+            "file": "dungeon_stone%eroded#curved,floor,orthagonal+b.8x8+c.openforge.stl",
             "file_modified_at": "2019-05-19T19:59:57",
-            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+orthogonal/dungeon_stone%eroded#floor+curved,orthagonal+b.8x8+c.openforge.stl",
+            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+orthogonal/dungeon_stone%eroded#curved,floor,orthagonal+b.8x8+c.openforge.stl",
             "md5": "5e039b1928f78c84c7b5950e90f7fa9c",
             "size": 8291234,
             "storage_address": "https://objects.openforge.tools/models/5e039b/5e039b1928f78c84c7b5950e90f7fa9c.stl"
@@ -366868,7 +366819,6 @@
             "connection|openforge",
             "shape|curved",
             "shape|floor",
-            "shape|floor|curved",
             "size|depth|8",
             "size|segment|c",
             "size|width|8",
@@ -366916,9 +366866,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone%eroded#floor+curved,orthagonal+c.6x6+b.openforge.stl",
+            "file": "dungeon_stone%eroded#curved,floor,orthagonal+c.6x6+b.openforge.stl",
             "file_modified_at": "2019-05-19T19:58:46",
-            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+orthogonal/dungeon_stone%eroded#floor+curved,orthagonal+c.6x6+b.openforge.stl",
+            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+orthogonal/dungeon_stone%eroded#curved,floor,orthagonal+c.6x6+b.openforge.stl",
             "md5": "e9bbeab96dfcd999538853221c921925",
             "size": 1948084,
             "storage_address": "https://objects.openforge.tools/models/e9bbea/e9bbeab96dfcd999538853221c921925.stl"
@@ -367035,7 +366985,6 @@
             "connection|openforge",
             "shape|curved",
             "shape|floor",
-            "shape|floor|curved",
             "size|depth|6",
             "size|segment|b",
             "size|width|6",
@@ -367083,9 +367032,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone%eroded#floor+curved,orthagonal+c.8x8+b.openforge.stl",
+            "file": "dungeon_stone%eroded#curved,floor,orthagonal+c.8x8+b.openforge.stl",
             "file_modified_at": "2019-05-19T19:59:33",
-            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+orthogonal/dungeon_stone%eroded#floor+curved,orthagonal+c.8x8+b.openforge.stl",
+            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor+orthogonal/dungeon_stone%eroded#curved,floor,orthagonal+c.8x8+b.openforge.stl",
             "md5": "ee6ff1807ccae566ddfe02a07982b760",
             "size": 4771784,
             "storage_address": "https://objects.openforge.tools/models/ee6ff1/ee6ff1807ccae566ddfe02a07982b760.stl"
@@ -367202,7 +367151,6 @@
             "connection|openforge",
             "shape|curved",
             "shape|floor",
-            "shape|floor|curved",
             "size|depth|8",
             "size|segment|b",
             "size|width|8",
@@ -367250,9 +367198,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone%block#floor+curved.3x3.openforge.stl",
+            "file": "dungeon_stone%block#curved,floor.3x3.openforge.stl",
             "file_modified_at": "2025-07-30T14:35:30.787844",
-            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor/dungeon_stone%block#floor+curved.3x3.openforge.stl",
+            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor/dungeon_stone%block#curved,floor.3x3.openforge.stl",
             "md5": "7934037eb48253298f8dc11af5166bf4",
             "size": 9088734,
             "storage_address": "https://objects.openforge.tools/models/793403/7934037eb48253298f8dc11af5166bf4.stl"
@@ -367365,8 +367313,8 @@
         "tags": [
             "build|wall on tile",
             "connection|openforge",
+            "shape|curved",
             "shape|floor",
-            "shape|floor|curved",
             "size|depth|3",
             "size|width|3",
             "texture|dungeon_stone",
@@ -367413,9 +367361,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone%block#floor+curved.4x4+a.openforge.stl",
+            "file": "dungeon_stone%block#curved,floor.4x4+a.openforge.stl",
             "file_modified_at": "2025-07-30T14:36:58.280027",
-            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor/dungeon_stone%block#floor+curved.4x4+a.openforge.stl",
+            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor/dungeon_stone%block#curved,floor.4x4+a.openforge.stl",
             "md5": "62358bc44382329561689066d511d4ae",
             "size": 9601584,
             "storage_address": "https://objects.openforge.tools/models/62358b/62358bc44382329561689066d511d4ae.stl"
@@ -367530,7 +367478,6 @@
             "connection|openforge",
             "shape|curved",
             "shape|floor",
-            "shape|floor|curved",
             "size|depth|4",
             "size|segment|a",
             "size|width|4",
@@ -367578,9 +367525,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone%block#floor+curved.4x4+b.openforge.stl",
+            "file": "dungeon_stone%block#curved,floor.4x4+b.openforge.stl",
             "file_modified_at": "2025-07-30T14:37:08.284971",
-            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor/dungeon_stone%block#floor+curved.4x4+b.openforge.stl",
+            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor/dungeon_stone%block#curved,floor.4x4+b.openforge.stl",
             "md5": "e7167c327c50d26c8104e0a330b4af6d",
             "size": 5699584,
             "storage_address": "https://objects.openforge.tools/models/e7167c/e7167c327c50d26c8104e0a330b4af6d.stl"
@@ -367695,7 +367642,6 @@
             "connection|openforge",
             "shape|curved",
             "shape|floor",
-            "shape|floor|curved",
             "size|depth|4",
             "size|segment|b",
             "size|width|4",
@@ -367743,9 +367689,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone%block#floor+curved.4x4+c.openforge.stl",
+            "file": "dungeon_stone%block#curved,floor.4x4+c.openforge.stl",
             "file_modified_at": "2025-07-30T14:36:47.204129",
-            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor/dungeon_stone%block#floor+curved.4x4+c.openforge.stl",
+            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor/dungeon_stone%block#curved,floor.4x4+c.openforge.stl",
             "md5": "b436d0726b69a82bd6212699e18337fd",
             "size": 5670434,
             "storage_address": "https://objects.openforge.tools/models/b436d0/b436d0726b69a82bd6212699e18337fd.stl"
@@ -367860,7 +367806,6 @@
             "connection|openforge",
             "shape|curved",
             "shape|floor",
-            "shape|floor|curved",
             "size|depth|4",
             "size|segment|c",
             "size|width|4",
@@ -367908,9 +367853,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone%block#floor+curved.4x4+notch.openforge.stl",
+            "file": "dungeon_stone%block#curved,floor.4x4+notch.openforge.stl",
             "file_modified_at": "2025-07-30T14:37:22.222001",
-            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor/dungeon_stone%block#floor+curved.4x4+notch.openforge.stl",
+            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor/dungeon_stone%block#curved,floor.4x4+notch.openforge.stl",
             "md5": "50ecaec70a912561c973a2490126e48a",
             "size": 10367734,
             "storage_address": "https://objects.openforge.tools/models/50ecae/50ecaec70a912561c973a2490126e48a.stl"
@@ -368023,8 +367968,8 @@
         "tags": [
             "build|wall on tile",
             "connection|openforge",
+            "shape|curved",
             "shape|floor",
-            "shape|floor|curved",
             "shape|option|notch",
             "size|depth|4",
             "size|width|4",
@@ -368072,9 +368017,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone%block#floor+curved.4x4.openforge.stl",
+            "file": "dungeon_stone%block#curved,floor.4x4.openforge.stl",
             "file_modified_at": "2025-07-30T14:35:48.993829",
-            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor/dungeon_stone%block#floor+curved.4x4.openforge.stl",
+            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor/dungeon_stone%block#curved,floor.4x4.openforge.stl",
             "md5": "a1a466d7bbf043e89fd1964980f7f354",
             "size": 17463884,
             "storage_address": "https://objects.openforge.tools/models/a1a466/a1a466d7bbf043e89fd1964980f7f354.stl"
@@ -368187,8 +368132,8 @@
         "tags": [
             "build|wall on tile",
             "connection|openforge",
+            "shape|curved",
             "shape|floor",
-            "shape|floor|curved",
             "size|depth|4",
             "size|width|4",
             "texture|dungeon_stone",
@@ -368235,9 +368180,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone%block#floor+curved.6x6+a.openforge.stl",
+            "file": "dungeon_stone%block#curved,floor.6x6+a.openforge.stl",
             "file_modified_at": "2025-07-30T14:37:52.172622",
-            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor/dungeon_stone%block#floor+curved.6x6+a.openforge.stl",
+            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor/dungeon_stone%block#curved,floor.6x6+a.openforge.stl",
             "md5": "20e25b3388f33f8124c1f48b39017655",
             "size": 4981284,
             "storage_address": "https://objects.openforge.tools/models/20e25b/20e25b3388f33f8124c1f48b39017655.stl"
@@ -368352,7 +368297,6 @@
             "connection|openforge",
             "shape|curved",
             "shape|floor",
-            "shape|floor|curved",
             "size|depth|6",
             "size|segment|a",
             "size|width|6",
@@ -368400,9 +368344,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone%block#floor+curved.6x6+b.openforge.stl",
+            "file": "dungeon_stone%block#curved,floor.6x6+b.openforge.stl",
             "file_modified_at": "2025-07-30T14:38:05.805408",
-            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor/dungeon_stone%block#floor+curved.6x6+b.openforge.stl",
+            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor/dungeon_stone%block#curved,floor.6x6+b.openforge.stl",
             "md5": "4f30b7c8ec5f0a34f727b7f65cfb5b41",
             "size": 2915384,
             "storage_address": "https://objects.openforge.tools/models/4f30b7/4f30b7c8ec5f0a34f727b7f65cfb5b41.stl"
@@ -368517,7 +368461,6 @@
             "connection|openforge",
             "shape|curved",
             "shape|floor",
-            "shape|floor|curved",
             "size|depth|6",
             "size|segment|b",
             "size|width|6",
@@ -368565,9 +368508,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone%block#floor+curved.6x6+c.openforge.stl",
+            "file": "dungeon_stone%block#curved,floor.6x6+c.openforge.stl",
             "file_modified_at": "2025-07-30T14:38:16.458999",
-            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor/dungeon_stone%block#floor+curved.6x6+c.openforge.stl",
+            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor/dungeon_stone%block#curved,floor.6x6+c.openforge.stl",
             "md5": "06050bfc7f47f787640b09e42985e9f1",
             "size": 4966384,
             "storage_address": "https://objects.openforge.tools/models/06050b/06050bfc7f47f787640b09e42985e9f1.stl"
@@ -368682,7 +368625,6 @@
             "connection|openforge",
             "shape|curved",
             "shape|floor",
-            "shape|floor|curved",
             "size|depth|6",
             "size|segment|c",
             "size|width|6",
@@ -368730,9 +368672,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone%block#floor+curved.8x8+a.openforge.stl",
+            "file": "dungeon_stone%block#curved,floor.8x8+a.openforge.stl",
             "file_modified_at": "2025-07-30T14:41:32.155400",
-            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor/dungeon_stone%block#floor+curved.8x8+a.openforge.stl",
+            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor/dungeon_stone%block#curved,floor.8x8+a.openforge.stl",
             "md5": "296f951ad1d1fb5c6d0a16fec6c26865",
             "size": 9359434,
             "storage_address": "https://objects.openforge.tools/models/296f95/296f951ad1d1fb5c6d0a16fec6c26865.stl"
@@ -368847,7 +368789,6 @@
             "connection|openforge",
             "shape|curved",
             "shape|floor",
-            "shape|floor|curved",
             "size|depth|8",
             "size|segment|a",
             "size|width|8",
@@ -368895,9 +368836,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone%block#floor+curved.8x8+ac.openforge.stl",
+            "file": "dungeon_stone%block#curved,floor.8x8+ac.openforge.stl",
             "file_modified_at": "2025-07-30T14:43:26.489232",
-            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor/dungeon_stone%block#floor+curved.8x8+ac.openforge.stl",
+            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor/dungeon_stone%block#curved,floor.8x8+ac.openforge.stl",
             "md5": "27acbc07f6190bf56121e920675b043b",
             "size": 11207884,
             "storage_address": "https://objects.openforge.tools/models/27acbc/27acbc07f6190bf56121e920675b043b.stl"
@@ -369012,7 +368953,6 @@
             "connection|openforge",
             "shape|curved",
             "shape|floor",
-            "shape|floor|curved",
             "size|depth|8",
             "size|segment|ac",
             "size|width|8",
@@ -369060,9 +369000,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone%block#floor+curved.8x8+ax.openforge.stl",
+            "file": "dungeon_stone%block#curved,floor.8x8+ax.openforge.stl",
             "file_modified_at": "2025-07-30T14:43:37.914554",
-            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor/dungeon_stone%block#floor+curved.8x8+ax.openforge.stl",
+            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor/dungeon_stone%block#curved,floor.8x8+ax.openforge.stl",
             "md5": "5419ef8b4a420f0df082173d9cf5b9e0",
             "size": 3790884,
             "storage_address": "https://objects.openforge.tools/models/5419ef/5419ef8b4a420f0df082173d9cf5b9e0.stl"
@@ -369177,7 +369117,6 @@
             "connection|openforge",
             "shape|curved",
             "shape|floor",
-            "shape|floor|curved",
             "size|depth|8",
             "size|segment|ax",
             "size|width|8",
@@ -369225,9 +369164,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone%block#floor+curved.8x8+b.openforge.stl",
+            "file": "dungeon_stone%block#curved,floor.8x8+b.openforge.stl",
             "file_modified_at": "2025-07-30T14:43:00.011190",
-            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor/dungeon_stone%block#floor+curved.8x8+b.openforge.stl",
+            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor/dungeon_stone%block#curved,floor.8x8+b.openforge.stl",
             "md5": "b328f3ad4bc8d24c5ea9e92ba13becf1",
             "size": 6871684,
             "storage_address": "https://objects.openforge.tools/models/b328f3/b328f3ad4bc8d24c5ea9e92ba13becf1.stl"
@@ -369342,7 +369281,6 @@
             "connection|openforge",
             "shape|curved",
             "shape|floor",
-            "shape|floor|curved",
             "size|depth|8",
             "size|segment|b",
             "size|width|8",
@@ -369390,9 +369328,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone%block#floor+curved.8x8+c.openforge.stl",
+            "file": "dungeon_stone%block#curved,floor.8x8+c.openforge.stl",
             "file_modified_at": "2025-07-30T14:43:11.637221",
-            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor/dungeon_stone%block#floor+curved.8x8+c.openforge.stl",
+            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor/dungeon_stone%block#curved,floor.8x8+c.openforge.stl",
             "md5": "7b576c6fd626575b02c8f1cdad4b26a5",
             "size": 9336184,
             "storage_address": "https://objects.openforge.tools/models/7b576c/7b576c6fd626575b02c8f1cdad4b26a5.stl"
@@ -369507,7 +369445,6 @@
             "connection|openforge",
             "shape|curved",
             "shape|floor",
-            "shape|floor|curved",
             "size|depth|8",
             "size|segment|c",
             "size|width|8",
@@ -369555,9 +369492,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone%block#floor+curved.8x8+cx.openforge.stl",
+            "file": "dungeon_stone%block#curved,floor.8x8+cx.openforge.stl",
             "file_modified_at": "2025-07-30T14:43:52.363329",
-            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor/dungeon_stone%block#floor+curved.8x8+cx.openforge.stl",
+            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor/dungeon_stone%block#curved,floor.8x8+cx.openforge.stl",
             "md5": "76dba7858f6fd3b5e3b2118539b6e90d",
             "size": 3790084,
             "storage_address": "https://objects.openforge.tools/models/76dba7/76dba7858f6fd3b5e3b2118539b6e90d.stl"
@@ -369672,7 +369609,6 @@
             "connection|openforge",
             "shape|curved",
             "shape|floor",
-            "shape|floor|curved",
             "size|depth|8",
             "size|segment|cx",
             "size|width|8",
@@ -369720,9 +369656,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone%eroded#floor+curved.3x3.openforge.stl",
+            "file": "dungeon_stone%eroded#curved,floor.3x3.openforge.stl",
             "file_modified_at": "2018-09-23T09:51:33",
-            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor/dungeon_stone%eroded#floor+curved.3x3.openforge.stl",
+            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor/dungeon_stone%eroded#curved,floor.3x3.openforge.stl",
             "md5": "458ac1bd569c8ecc0467933050a3fb56",
             "size": 20676384,
             "storage_address": "https://objects.openforge.tools/models/458ac1/458ac1bd569c8ecc0467933050a3fb56.stl"
@@ -369835,8 +369771,8 @@
         "tags": [
             "build|wall on tile",
             "connection|openforge",
+            "shape|curved",
             "shape|floor",
-            "shape|floor|curved",
             "size|depth|3",
             "size|width|3",
             "texture|dungeon_stone",
@@ -369883,9 +369819,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone%eroded#floor+curved.4x4+a.openforge.stl",
+            "file": "dungeon_stone%eroded#curved,floor.4x4+a.openforge.stl",
             "file_modified_at": "2019-01-25T10:22:41",
-            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor/dungeon_stone%eroded#floor+curved.4x4+a.openforge.stl",
+            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor/dungeon_stone%eroded#curved,floor.4x4+a.openforge.stl",
             "md5": "0c5a177d8cbf0a6b24a0d5e542af9900",
             "size": 3515284,
             "storage_address": "https://objects.openforge.tools/models/0c5a17/0c5a177d8cbf0a6b24a0d5e542af9900.stl"
@@ -370000,7 +369936,6 @@
             "connection|openforge",
             "shape|curved",
             "shape|floor",
-            "shape|floor|curved",
             "size|depth|4",
             "size|segment|a",
             "size|width|4",
@@ -370048,9 +369983,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone%eroded#floor+curved.4x4+b.openforge.stl",
+            "file": "dungeon_stone%eroded#curved,floor.4x4+b.openforge.stl",
             "file_modified_at": "2019-01-25T10:22:43",
-            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor/dungeon_stone%eroded#floor+curved.4x4+b.openforge.stl",
+            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor/dungeon_stone%eroded#curved,floor.4x4+b.openforge.stl",
             "md5": "74c5b7dfbf1ac556ae6f0415a98eaf5e",
             "size": 1963384,
             "storage_address": "https://objects.openforge.tools/models/74c5b7/74c5b7dfbf1ac556ae6f0415a98eaf5e.stl"
@@ -370165,7 +370100,6 @@
             "connection|openforge",
             "shape|curved",
             "shape|floor",
-            "shape|floor|curved",
             "size|depth|4",
             "size|segment|b",
             "size|width|4",
@@ -370213,9 +370147,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone%eroded#floor+curved.4x4+c.openforge.stl",
+            "file": "dungeon_stone%eroded#curved,floor.4x4+c.openforge.stl",
             "file_modified_at": "2019-01-25T10:22:45",
-            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor/dungeon_stone%eroded#floor+curved.4x4+c.openforge.stl",
+            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor/dungeon_stone%eroded#curved,floor.4x4+c.openforge.stl",
             "md5": "70b969e01f9d48cb4b29c05b44da0d7c",
             "size": 1882284,
             "storage_address": "https://objects.openforge.tools/models/70b969/70b969e01f9d48cb4b29c05b44da0d7c.stl"
@@ -370330,7 +370264,6 @@
             "connection|openforge",
             "shape|curved",
             "shape|floor",
-            "shape|floor|curved",
             "size|depth|4",
             "size|segment|c",
             "size|width|4",
@@ -370378,9 +370311,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone%eroded#floor+curved.4x4+notch.openforge.stl",
+            "file": "dungeon_stone%eroded#curved,floor.4x4+notch.openforge.stl",
             "file_modified_at": "2018-09-23T09:51:45",
-            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor/dungeon_stone%eroded#floor+curved.4x4+notch.openforge.stl",
+            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor/dungeon_stone%eroded#curved,floor.4x4+notch.openforge.stl",
             "md5": "029bb211257f07bfc28efa4a7545f022",
             "size": 10965584,
             "storage_address": "https://objects.openforge.tools/models/029bb2/029bb211257f07bfc28efa4a7545f022.stl"
@@ -370493,8 +370426,8 @@
         "tags": [
             "build|wall on tile",
             "connection|openforge",
+            "shape|curved",
             "shape|floor",
-            "shape|floor|curved",
             "shape|option|notch",
             "size|depth|4",
             "size|width|4",
@@ -370542,9 +370475,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone%eroded#floor+curved.4x4.openforge.stl",
+            "file": "dungeon_stone%eroded#curved,floor.4x4.openforge.stl",
             "file_modified_at": "2018-09-23T09:51:59",
-            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor/dungeon_stone%eroded#floor+curved.4x4.openforge.stl",
+            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor/dungeon_stone%eroded#curved,floor.4x4.openforge.stl",
             "md5": "73200f9a66e6f3dd70c170751863fe90",
             "size": 18221684,
             "storage_address": "https://objects.openforge.tools/models/73200f/73200f9a66e6f3dd70c170751863fe90.stl"
@@ -370657,8 +370590,8 @@
         "tags": [
             "build|wall on tile",
             "connection|openforge",
+            "shape|curved",
             "shape|floor",
-            "shape|floor|curved",
             "size|depth|4",
             "size|width|4",
             "texture|dungeon_stone",
@@ -370705,9 +370638,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone%eroded#floor+curved.6x6+a.openforge.stl",
+            "file": "dungeon_stone%eroded#curved,floor.6x6+a.openforge.stl",
             "file_modified_at": "2018-09-23T09:52:04",
-            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor/dungeon_stone%eroded#floor+curved.6x6+a.openforge.stl",
+            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor/dungeon_stone%eroded#curved,floor.6x6+a.openforge.stl",
             "md5": "38f3f90d9e0551599c09c16812e34aab",
             "size": 4848984,
             "storage_address": "https://objects.openforge.tools/models/38f3f9/38f3f90d9e0551599c09c16812e34aab.stl"
@@ -370822,7 +370755,6 @@
             "connection|openforge",
             "shape|curved",
             "shape|floor",
-            "shape|floor|curved",
             "size|depth|6",
             "size|segment|a",
             "size|width|6",
@@ -370870,9 +370802,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone%eroded#floor+curved.6x6+b.openforge.stl",
+            "file": "dungeon_stone%eroded#curved,floor.6x6+b.openforge.stl",
             "file_modified_at": "2018-09-23T09:52:11",
-            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor/dungeon_stone%eroded#floor+curved.6x6+b.openforge.stl",
+            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor/dungeon_stone%eroded#curved,floor.6x6+b.openforge.stl",
             "md5": "9f3c07cb66f4ca9b3eb4eb860a22f273",
             "size": 2853584,
             "storage_address": "https://objects.openforge.tools/models/9f3c07/9f3c07cb66f4ca9b3eb4eb860a22f273.stl"
@@ -370987,7 +370919,6 @@
             "connection|openforge",
             "shape|curved",
             "shape|floor",
-            "shape|floor|curved",
             "size|depth|6",
             "size|segment|b",
             "size|width|6",
@@ -371035,9 +370966,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone%eroded#floor+curved.6x6+c.openforge.stl",
+            "file": "dungeon_stone%eroded#curved,floor.6x6+c.openforge.stl",
             "file_modified_at": "2018-09-23T09:52:17",
-            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor/dungeon_stone%eroded#floor+curved.6x6+c.openforge.stl",
+            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor/dungeon_stone%eroded#curved,floor.6x6+c.openforge.stl",
             "md5": "240e9b21c7de3548fabc7d06237aae6b",
             "size": 4848984,
             "storage_address": "https://objects.openforge.tools/models/240e9b/240e9b21c7de3548fabc7d06237aae6b.stl"
@@ -371152,7 +371083,6 @@
             "connection|openforge",
             "shape|curved",
             "shape|floor",
-            "shape|floor|curved",
             "size|depth|6",
             "size|segment|c",
             "size|width|6",
@@ -371200,9 +371130,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone%eroded#floor+curved.8x8+a.openforge.stl",
+            "file": "dungeon_stone%eroded#curved,floor.8x8+a.openforge.stl",
             "file_modified_at": "2018-09-23T09:52:28",
-            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor/dungeon_stone%eroded#floor+curved.8x8+a.openforge.stl",
+            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor/dungeon_stone%eroded#curved,floor.8x8+a.openforge.stl",
             "md5": "cbac8cbe7a85c09bba3d6c3e6fc00b64",
             "size": 8733884,
             "storage_address": "https://objects.openforge.tools/models/cbac8c/cbac8cbe7a85c09bba3d6c3e6fc00b64.stl"
@@ -371317,7 +371247,6 @@
             "connection|openforge",
             "shape|curved",
             "shape|floor",
-            "shape|floor|curved",
             "size|depth|8",
             "size|segment|a",
             "size|width|8",
@@ -371365,9 +371294,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone%eroded#floor+curved.8x8+ac.openforge.stl",
+            "file": "dungeon_stone%eroded#curved,floor.8x8+ac.openforge.stl",
             "file_modified_at": "2021-04-29T18:30:36.163918",
-            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor/dungeon_stone%eroded#floor+curved.8x8+ac.openforge.stl",
+            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor/dungeon_stone%eroded#curved,floor.8x8+ac.openforge.stl",
             "md5": "b7d231b34a0df788a26efecdd6856bc7",
             "size": 3488734,
             "storage_address": "https://objects.openforge.tools/models/b7d231/b7d231b34a0df788a26efecdd6856bc7.stl"
@@ -371482,7 +371411,6 @@
             "connection|openforge",
             "shape|curved",
             "shape|floor",
-            "shape|floor|curved",
             "size|depth|8",
             "size|segment|ac",
             "size|width|8",
@@ -371530,9 +371458,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone%eroded#floor+curved.8x8+ax.openforge.stl",
+            "file": "dungeon_stone%eroded#curved,floor.8x8+ax.openforge.stl",
             "file_modified_at": "2021-04-29T18:30:45.859341",
-            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor/dungeon_stone%eroded#floor+curved.8x8+ax.openforge.stl",
+            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor/dungeon_stone%eroded#curved,floor.8x8+ax.openforge.stl",
             "md5": "ae1578caf5532ec083840da11398464f",
             "size": 14317484,
             "storage_address": "https://objects.openforge.tools/models/ae1578/ae1578caf5532ec083840da11398464f.stl"
@@ -371647,7 +371575,6 @@
             "connection|openforge",
             "shape|curved",
             "shape|floor",
-            "shape|floor|curved",
             "size|depth|8",
             "size|segment|ax",
             "size|width|8",
@@ -371695,9 +371622,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone%eroded#floor+curved.8x8+b.openforge.stl",
+            "file": "dungeon_stone%eroded#curved,floor.8x8+b.openforge.stl",
             "file_modified_at": "2025-07-30T14:42:28.715540",
-            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor/dungeon_stone%eroded#floor+curved.8x8+b.openforge.stl",
+            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor/dungeon_stone%eroded#curved,floor.8x8+b.openforge.stl",
             "md5": "64b5a3fd7d079460cb5b922376992199",
             "size": 6293084,
             "storage_address": "https://objects.openforge.tools/models/64b5a3/64b5a3fd7d079460cb5b922376992199.stl"
@@ -371812,7 +371739,6 @@
             "connection|openforge",
             "shape|curved",
             "shape|floor",
-            "shape|floor|curved",
             "size|depth|8",
             "size|segment|b",
             "size|width|8",
@@ -371860,9 +371786,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone%eroded#floor+curved.8x8+c.openforge.stl",
+            "file": "dungeon_stone%eroded#curved,floor.8x8+c.openforge.stl",
             "file_modified_at": "2025-07-30T14:42:43.378183",
-            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor/dungeon_stone%eroded#floor+curved.8x8+c.openforge.stl",
+            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor/dungeon_stone%eroded#curved,floor.8x8+c.openforge.stl",
             "md5": "20faf4ae0ca32e3104677ab9163a1aec",
             "size": 8733884,
             "storage_address": "https://objects.openforge.tools/models/20faf4/20faf4ae0ca32e3104677ab9163a1aec.stl"
@@ -371977,7 +371903,6 @@
             "connection|openforge",
             "shape|curved",
             "shape|floor",
-            "shape|floor|curved",
             "size|depth|8",
             "size|segment|c",
             "size|width|8",
@@ -372025,9 +371950,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone%eroded#floor+curved.8x8+cx.openforge.stl",
+            "file": "dungeon_stone%eroded#curved,floor.8x8+cx.openforge.stl",
             "file_modified_at": "2021-04-29T18:30:54.940552",
-            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor/dungeon_stone%eroded#floor+curved.8x8+cx.openforge.stl",
+            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/floor/dungeon_stone%eroded#curved,floor.8x8+cx.openforge.stl",
             "md5": "883209ccb05717f6a8aa39e3c69411be",
             "size": 14317484,
             "storage_address": "https://objects.openforge.tools/models/883209/883209ccb05717f6a8aa39e3c69411be.stl"
@@ -372142,7 +372067,6 @@
             "connection|openforge",
             "shape|curved",
             "shape|floor",
-            "shape|floor|curved",
             "size|depth|8",
             "size|segment|cx",
             "size|width|8",
@@ -375659,9 +375583,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone%block#floor+cuved,niche.2x2.openforge.stl",
+            "file": "dungeon_stone%block#curved,floor,niche.2x2.openforge.stl",
             "file_modified_at": "2025-08-25T14:36:27.187308",
-            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/niche/dungeon_stone%block#floor+cuved,niche.2x2.openforge.stl",
+            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/niche/dungeon_stone%block#curved,floor,niche.2x2.openforge.stl",
             "md5": "e4803f34cebf613becb5a26a5ce35067",
             "size": 33364784,
             "storage_address": "https://objects.openforge.tools/models/e4803f/e4803f34cebf613becb5a26a5ce35067.stl"
@@ -375775,8 +375699,8 @@
             "build|wall on tile",
             "component|niche",
             "connection|openforge",
+            "shape|curved",
             "shape|floor",
-            "shape|floor|cuved",
             "size|depth|2",
             "size|width|2",
             "texture|dungeon_stone",
@@ -375823,9 +375747,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone%eroded#floor+cuved,niche.2x2.openforge.stl",
+            "file": "dungeon_stone%eroded#curved,floor,niche.2x2.openforge.stl",
             "file_modified_at": "2018-12-15T18:46:49",
-            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/niche/dungeon_stone%eroded#floor+cuved,niche.2x2.openforge.stl",
+            "full_name": "tiles/dungeon_stone/wall_on_tile/curved/niche/dungeon_stone%eroded#curved,floor,niche.2x2.openforge.stl",
             "md5": "522400cb79c870bad317cc4aadc889f9",
             "size": 7068084,
             "storage_address": "https://objects.openforge.tools/models/522400/522400cb79c870bad317cc4aadc889f9.stl"
@@ -375939,8 +375863,8 @@
             "build|wall on tile",
             "component|niche",
             "connection|openforge",
+            "shape|curved",
             "shape|floor",
-            "shape|floor|cuved",
             "size|depth|2",
             "size|width|2",
             "texture|dungeon_stone",
@@ -382110,9 +382034,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone%block#floor+diagonal.1x1.openforge.stl",
+            "file": "dungeon_stone%block#diagonal,floor.1x1.openforge.stl",
             "file_modified_at": "2025-08-26T13:04:22.693513",
-            "full_name": "tiles/dungeon_stone/wall_on_tile/diagonal/floor/dungeon_stone%block#floor+diagonal.1x1.openforge.stl",
+            "full_name": "tiles/dungeon_stone/wall_on_tile/diagonal/floor/dungeon_stone%block#diagonal,floor.1x1.openforge.stl",
             "md5": "71232dfc357a5b83a4840fbd84d805ed",
             "size": 840984,
             "storage_address": "https://objects.openforge.tools/models/71232d/71232dfc357a5b83a4840fbd84d805ed.stl"
@@ -382225,8 +382149,8 @@
         "tags": [
             "build|wall on tile",
             "connection|openforge",
+            "shape|diagonal",
             "shape|floor",
-            "shape|floor|diagonal",
             "size|depth|1",
             "size|width|1",
             "texture|dungeon_stone",
@@ -382273,9 +382197,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone%block#floor+diagonal.2x2.openforge.stl",
+            "file": "dungeon_stone%block#diagonal,floor.2x2.openforge.stl",
             "file_modified_at": "2025-08-26T13:09:04.212017",
-            "full_name": "tiles/dungeon_stone/wall_on_tile/diagonal/floor/dungeon_stone%block#floor+diagonal.2x2.openforge.stl",
+            "full_name": "tiles/dungeon_stone/wall_on_tile/diagonal/floor/dungeon_stone%block#diagonal,floor.2x2.openforge.stl",
             "md5": "fe4be7d5cc7f3d7efc603dd9cbc10c31",
             "size": 2566484,
             "storage_address": "https://objects.openforge.tools/models/fe4be7/fe4be7d5cc7f3d7efc603dd9cbc10c31.stl"
@@ -382388,8 +382312,8 @@
         "tags": [
             "build|wall on tile",
             "connection|openforge",
+            "shape|diagonal",
             "shape|floor",
-            "shape|floor|diagonal",
             "size|depth|2",
             "size|width|2",
             "texture|dungeon_stone",
@@ -382436,9 +382360,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone%block#floor+diagonal.2x4.openforge.stl",
+            "file": "dungeon_stone%block#diagonal,floor.2x4.openforge.stl",
             "file_modified_at": "2025-08-26T13:30:15.645234",
-            "full_name": "tiles/dungeon_stone/wall_on_tile/diagonal/floor/dungeon_stone%block#floor+diagonal.2x4.openforge.stl",
+            "full_name": "tiles/dungeon_stone/wall_on_tile/diagonal/floor/dungeon_stone%block#diagonal,floor.2x4.openforge.stl",
             "md5": "93df0846b2dc0b632949ce1af800f7b1",
             "size": 5549284,
             "storage_address": "https://objects.openforge.tools/models/93df08/93df0846b2dc0b632949ce1af800f7b1.stl"
@@ -382551,8 +382475,8 @@
         "tags": [
             "build|wall on tile",
             "connection|openforge",
+            "shape|diagonal",
             "shape|floor",
-            "shape|floor|diagonal",
             "size|depth|4",
             "size|width|2",
             "texture|dungeon_stone",
@@ -382599,9 +382523,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone%block#floor+diagonal.3x3.openforge.stl",
+            "file": "dungeon_stone%block#diagonal,floor.3x3.openforge.stl",
             "file_modified_at": "2025-08-26T13:39:40.077551",
-            "full_name": "tiles/dungeon_stone/wall_on_tile/diagonal/floor/dungeon_stone%block#floor+diagonal.3x3.openforge.stl",
+            "full_name": "tiles/dungeon_stone/wall_on_tile/diagonal/floor/dungeon_stone%block#diagonal,floor.3x3.openforge.stl",
             "md5": "ab5a5dc862d2ff4518a64c60b3f7c190",
             "size": 6540884,
             "storage_address": "https://objects.openforge.tools/models/ab5a5d/ab5a5dc862d2ff4518a64c60b3f7c190.stl"
@@ -382714,8 +382638,8 @@
         "tags": [
             "build|wall on tile",
             "connection|openforge",
+            "shape|diagonal",
             "shape|floor",
-            "shape|floor|diagonal",
             "size|depth|3",
             "size|width|3",
             "texture|dungeon_stone",
@@ -382762,9 +382686,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone%block#floor+diagonal.4x2.openforge.stl",
+            "file": "dungeon_stone%block#diagonal,floor.4x2.openforge.stl",
             "file_modified_at": "2025-08-26T13:32:08.269796",
-            "full_name": "tiles/dungeon_stone/wall_on_tile/diagonal/floor/dungeon_stone%block#floor+diagonal.4x2.openforge.stl",
+            "full_name": "tiles/dungeon_stone/wall_on_tile/diagonal/floor/dungeon_stone%block#diagonal,floor.4x2.openforge.stl",
             "md5": "7ee3fd16b68f3f1f74496a2c4944fb6d",
             "size": 5637284,
             "storage_address": "https://objects.openforge.tools/models/7ee3fd/7ee3fd16b68f3f1f74496a2c4944fb6d.stl"
@@ -382877,8 +382801,8 @@
         "tags": [
             "build|wall on tile",
             "connection|openforge",
+            "shape|diagonal",
             "shape|floor",
-            "shape|floor|diagonal",
             "size|depth|2",
             "size|width|4",
             "texture|dungeon_stone",
@@ -382925,9 +382849,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone%block#floor+diagonal.4x4.openforge.stl",
+            "file": "dungeon_stone%block#diagonal,floor.4x4.openforge.stl",
             "file_modified_at": "2025-08-26T13:54:57.553787",
-            "full_name": "tiles/dungeon_stone/wall_on_tile/diagonal/floor/dungeon_stone%block#floor+diagonal.4x4.openforge.stl",
+            "full_name": "tiles/dungeon_stone/wall_on_tile/diagonal/floor/dungeon_stone%block#diagonal,floor.4x4.openforge.stl",
             "md5": "141e2c752dd96038da9e470e65224bad",
             "size": 12218784,
             "storage_address": "https://objects.openforge.tools/models/141e2c/141e2c752dd96038da9e470e65224bad.stl"
@@ -383040,8 +382964,8 @@
         "tags": [
             "build|wall on tile",
             "connection|openforge",
+            "shape|diagonal",
             "shape|floor",
-            "shape|floor|diagonal",
             "size|depth|4",
             "size|width|4",
             "texture|dungeon_stone",
@@ -383088,9 +383012,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone%eroded#floor+diagonal.1x1.openforge.stl",
+            "file": "dungeon_stone%eroded#diagonal,floor.1x1.openforge.stl",
             "file_modified_at": "2018-09-23T09:57:12",
-            "full_name": "tiles/dungeon_stone/wall_on_tile/diagonal/floor/dungeon_stone%eroded#floor+diagonal.1x1.openforge.stl",
+            "full_name": "tiles/dungeon_stone/wall_on_tile/diagonal/floor/dungeon_stone%eroded#diagonal,floor.1x1.openforge.stl",
             "md5": "b479d56eb85be8669285d48521020d0a",
             "size": 177884,
             "storage_address": "https://objects.openforge.tools/models/b479d5/b479d56eb85be8669285d48521020d0a.stl"
@@ -383203,8 +383127,8 @@
         "tags": [
             "build|wall on tile",
             "connection|openforge",
+            "shape|diagonal",
             "shape|floor",
-            "shape|floor|diagonal",
             "size|depth|1",
             "size|width|1",
             "texture|dungeon_stone",
@@ -383251,9 +383175,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone%eroded#floor+diagonal.2x2.openforge.stl",
+            "file": "dungeon_stone%eroded#diagonal,floor.2x2.openforge.stl",
             "file_modified_at": "2018-09-23T09:57:12",
-            "full_name": "tiles/dungeon_stone/wall_on_tile/diagonal/floor/dungeon_stone%eroded#floor+diagonal.2x2.openforge.stl",
+            "full_name": "tiles/dungeon_stone/wall_on_tile/diagonal/floor/dungeon_stone%eroded#diagonal,floor.2x2.openforge.stl",
             "md5": "c1ab1b7d5874ed84bb63db398098777d",
             "size": 1011684,
             "storage_address": "https://objects.openforge.tools/models/c1ab1b/c1ab1b7d5874ed84bb63db398098777d.stl"
@@ -383366,8 +383290,8 @@
         "tags": [
             "build|wall on tile",
             "connection|openforge",
+            "shape|diagonal",
             "shape|floor",
-            "shape|floor|diagonal",
             "size|depth|2",
             "size|width|2",
             "texture|dungeon_stone",
@@ -383414,9 +383338,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone%eroded#floor+diagonal.2x4.openforge.stl",
+            "file": "dungeon_stone%eroded#diagonal,floor.2x4.openforge.stl",
             "file_modified_at": "2018-09-23T09:57:13",
-            "full_name": "tiles/dungeon_stone/wall_on_tile/diagonal/floor/dungeon_stone%eroded#floor+diagonal.2x4.openforge.stl",
+            "full_name": "tiles/dungeon_stone/wall_on_tile/diagonal/floor/dungeon_stone%eroded#diagonal,floor.2x4.openforge.stl",
             "md5": "17c2761c7b4d825c46a49b337f7c5bf9",
             "size": 1769384,
             "storage_address": "https://objects.openforge.tools/models/17c276/17c2761c7b4d825c46a49b337f7c5bf9.stl"
@@ -383529,8 +383453,8 @@
         "tags": [
             "build|wall on tile",
             "connection|openforge",
+            "shape|diagonal",
             "shape|floor",
-            "shape|floor|diagonal",
             "size|depth|4",
             "size|width|2",
             "texture|dungeon_stone",
@@ -383577,9 +383501,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone%eroded#floor+diagonal.3x3.openforge.stl",
+            "file": "dungeon_stone%eroded#diagonal,floor.3x3.openforge.stl",
             "file_modified_at": "2018-09-23T09:57:14",
-            "full_name": "tiles/dungeon_stone/wall_on_tile/diagonal/floor/dungeon_stone%eroded#floor+diagonal.3x3.openforge.stl",
+            "full_name": "tiles/dungeon_stone/wall_on_tile/diagonal/floor/dungeon_stone%eroded#diagonal,floor.3x3.openforge.stl",
             "md5": "ae1cfdd423e49f5555323bdd929ab00b",
             "size": 2323384,
             "storage_address": "https://objects.openforge.tools/models/ae1cfd/ae1cfdd423e49f5555323bdd929ab00b.stl"
@@ -383692,8 +383616,8 @@
         "tags": [
             "build|wall on tile",
             "connection|openforge",
+            "shape|diagonal",
             "shape|floor",
-            "shape|floor|diagonal",
             "size|depth|3",
             "size|width|3",
             "texture|dungeon_stone",
@@ -383740,9 +383664,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone%eroded#floor+diagonal.4x2.openforge.stl",
+            "file": "dungeon_stone%eroded#diagonal,floor.4x2.openforge.stl",
             "file_modified_at": "2018-09-23T09:57:16",
-            "full_name": "tiles/dungeon_stone/wall_on_tile/diagonal/floor/dungeon_stone%eroded#floor+diagonal.4x2.openforge.stl",
+            "full_name": "tiles/dungeon_stone/wall_on_tile/diagonal/floor/dungeon_stone%eroded#diagonal,floor.4x2.openforge.stl",
             "md5": "369f7f5188282cb7b2a1de241db7c6d7",
             "size": 2019384,
             "storage_address": "https://objects.openforge.tools/models/369f7f/369f7f5188282cb7b2a1de241db7c6d7.stl"
@@ -383855,8 +383779,8 @@
         "tags": [
             "build|wall on tile",
             "connection|openforge",
+            "shape|diagonal",
             "shape|floor",
-            "shape|floor|diagonal",
             "size|depth|2",
             "size|width|4",
             "texture|dungeon_stone",
@@ -383903,9 +383827,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone%eroded#floor+diagonal.4x4.openforge.stl",
+            "file": "dungeon_stone%eroded#diagonal,floor.4x4.openforge.stl",
             "file_modified_at": "2018-09-23T09:57:18",
-            "full_name": "tiles/dungeon_stone/wall_on_tile/diagonal/floor/dungeon_stone%eroded#floor+diagonal.4x4.openforge.stl",
+            "full_name": "tiles/dungeon_stone/wall_on_tile/diagonal/floor/dungeon_stone%eroded#diagonal,floor.4x4.openforge.stl",
             "md5": "78eeb4f44fcec66706015717620432d7",
             "size": 4158284,
             "storage_address": "https://objects.openforge.tools/models/78eeb4/78eeb4f44fcec66706015717620432d7.stl"
@@ -384018,8 +383942,8 @@
         "tags": [
             "build|wall on tile",
             "connection|openforge",
+            "shape|diagonal",
             "shape|floor",
-            "shape|floor|diagonal",
             "size|depth|4",
             "size|width|4",
             "texture|dungeon_stone",
@@ -384948,9 +384872,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone%eroded#floor+diagonal,niche.2x2.openforge.stl",
+            "file": "dungeon_stone%eroded#diagonal,floor,niche.2x2.openforge.stl",
             "file_modified_at": "2018-12-15T18:51:00",
-            "full_name": "tiles/dungeon_stone/wall_on_tile/diagonal/niche/dungeon_stone%eroded#floor+diagonal,niche.2x2.openforge.stl",
+            "full_name": "tiles/dungeon_stone/wall_on_tile/diagonal/niche/dungeon_stone%eroded#diagonal,floor,niche.2x2.openforge.stl",
             "md5": "7b60f1cfcd45525ea16e8c3eaeec4f2e",
             "size": 1009084,
             "storage_address": "https://objects.openforge.tools/models/7b60f1/7b60f1cfcd45525ea16e8c3eaeec4f2e.stl"
@@ -385064,8 +384988,8 @@
             "build|wall on tile",
             "component|niche",
             "connection|openforge",
+            "shape|diagonal",
             "shape|floor",
-            "shape|floor|diagonal",
             "size|depth|2",
             "size|width|2",
             "texture|dungeon_stone",

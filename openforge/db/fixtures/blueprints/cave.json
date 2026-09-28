@@ -7139,9 +7139,9 @@
     },
     {
         "file_metadata": {
-            "file": "cave#cave_entrance+squares.6x2.openlock+side.stl",
+            "file": "cave#cave_entrance+squares.6x2.openlock,side.stl",
             "file_modified_at": "2019-08-23T16:55:48",
-            "full_name": "tiles/cave/thick_wall/cave_entrance/cave#cave_entrance+squares.6x2.openlock+side.stl",
+            "full_name": "tiles/cave/thick_wall/cave_entrance/cave#cave_entrance+squares.6x2.openlock,side.stl",
             "md5": "262f176ca7e55cfc988407ffb8c91cc9",
             "size": 36300684,
             "storage_address": "https://objects.openforge.tools/models/262f17/262f176ca7e55cfc988407ffb8c91cc9.stl"
@@ -7256,7 +7256,8 @@
             "component|cave_entrance",
             "component|cave_entrance|squares",
             "connection|openlock",
-            "connection|openlock|side",
+            "connection|side",
+            "connection|side|openlock",
             "size|depth|2",
             "size|width|6",
             "texture|cave"
@@ -7638,9 +7639,9 @@
     },
     {
         "file_metadata": {
-            "file": "cave#cave_entrance.6x2.openlock+side.stl",
+            "file": "cave#cave_entrance.6x2.openlock,side.stl",
             "file_modified_at": "2019-08-23T16:57:27",
-            "full_name": "tiles/cave/thick_wall/cave_entrance/cave#cave_entrance.6x2.openlock+side.stl",
+            "full_name": "tiles/cave/thick_wall/cave_entrance/cave#cave_entrance.6x2.openlock,side.stl",
             "md5": "97074011f030ba88387e5bc46f4ffcb9",
             "size": 26330784,
             "storage_address": "https://objects.openforge.tools/models/970740/97074011f030ba88387e5bc46f4ffcb9.stl"
@@ -7754,7 +7755,8 @@
             "build|thick wall",
             "component|cave_entrance",
             "connection|openlock",
-            "connection|openlock|side",
+            "connection|side",
+            "connection|side|openlock",
             "size|depth|2",
             "size|width|6",
             "texture|cave"

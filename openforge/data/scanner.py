@@ -256,6 +256,12 @@ def filter_shape(tags):
         count = 0
         for tag in tags:
             if tag[0] == "component":
+                # A collapsed wall is still only a wall: `collapsed+low`
+                # says how much of it is left standing, not that a
+                # second piece is attached. Counting it cost every
+                # ruined wall its `component|wall`.
+                if tag[1] == "collapsed":
+                    continue
                 if tag != ("component", "wall"):
                     count += 1
         if count == 0:
@@ -412,7 +418,13 @@ def filter_shape(tags):
             tags, ["shape", "floor", "water_symbol"], ["decoration", "symbol", "water"]
         )
 
+    # Shapes before the wall check, for the reason decorations go there:
+    # a curved or diagonal wall is one wall, and while these are still
+    # components the check counts them as a second one and takes
+    # `component|wall` away.
     _move_tag_chain(tags, ["component", "corner"], ["shape", "corner"])
+    _move_tag_chain(tags, ["component", "curved"], ["shape", "curved"])
+    _move_tag_chain(tags, ["component", "diagonal"], ["shape", "diagonal"])
     # Before the wall and floor checks, not after. Those checks ask
     # "is this only a wall?" by counting component tags, and a carving
     # is not a second component — it is the same wall with a dragon
@@ -434,7 +446,6 @@ def filter_shape(tags):
     # `component|wall` has no such move, so what it decides sticks:
     # deleting only its `else` loses `component|wall` on 75 files.
     _move_tag_chain(tags, ["component", "floor"], ["shape", "floor"])
-    _move_tag_chain(tags, ["component", "curved"], ["shape", "curved"])
     _move_tag_chain(tags, ["component", "base"], ["shape", "base"])
     _move_tag_chain(tags, ["component", "angled"], ["shape", "angled"])
     _move_tag_chain(tags, ["component", "riser"], ["shape", "riser"])
