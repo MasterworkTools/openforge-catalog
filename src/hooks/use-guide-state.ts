@@ -401,6 +401,20 @@ export function selectGuide(guideKey: string) {
   window.dispatchEvent(new Event(URL_CHANGED));
 }
 
+/**
+ * Go back to the cards without leaving the page.
+ *
+ * The counterpart to `selectGuide`, for the "All guides" recovery link.
+ * Its `href` is `./`, which from `/?guide=wall` resolves to `/` — a
+ * document navigation that reloads onto Part Search and strands the
+ * person exactly the way following a card's href used to.
+ */
+export function clearGuide() {
+  if (typeof window === 'undefined') return;
+  window.history.pushState({}, '', window.location.pathname);
+  window.dispatchEvent(new Event(URL_CHANGED));
+}
+
 /** A left click with no modifier: the only kind we take over. */
 export function isPlainClick(e: MouseEvent): boolean {
   return (

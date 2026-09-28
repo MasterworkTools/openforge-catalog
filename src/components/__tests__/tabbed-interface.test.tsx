@@ -134,6 +134,26 @@ describe('TabbedInterface', () => {
     expect(screen.getByTitle('Base Generator')).toBe(generator);
   });
 
+  it('opens on the guides tab when the URL names a guide', async () => {
+    // What makes a card's in-place selection survive a reload, and what
+    // makes `/?guide=wall` shareable from inside the tab. Without it the
+    // person lands on Part Search holding a parameter nothing on screen
+    // explains.
+    noGuides();
+    window.history.replaceState({}, '', '/?guide=wall');
+
+    render(<TabbedInterface />);
+
+    expect(
+      screen.getByRole('button', { name: 'Guided Builds' }).className
+    ).toContain('active');
+    expect(
+      screen.getByRole('button', { name: 'Part Search' }).className
+    ).not.toContain('active');
+
+    window.history.replaceState({}, '', '/');
+  });
+
   it('starts on Part Search', async () => {
     noGuides();
 

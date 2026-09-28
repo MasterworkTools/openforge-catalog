@@ -4,7 +4,12 @@ import GuideEntry from './guide-entry';
 import React, { useMemo, useState } from 'react';
 import { narrows, releasedBy } from '@/services/guide-service';
 import { MoreOptions } from './guide-steps';
-import { useGuideKey, useGuideState } from '@/hooks/use-guide-state';
+import {
+  clearGuide,
+  isPlainClick,
+  useGuideKey,
+  useGuideState,
+} from '@/hooks/use-guide-state';
 import { GuideParts } from './guide-parts';
 import { GuideExplainer } from './guide-explainer';
 import { GuideRefinements, GuideSteps } from './guide-steps';
@@ -153,7 +158,19 @@ export default function GuidePage() {
                 Start this guide over
               </a>
             ) : (
-              <a href="./" className="text-blue-700 underline">
+              <a
+                href="./"
+                className="text-blue-700 underline"
+                // Same reason the cards intercept: inside the tab this
+                // href is a document navigation to `/`, which reloads
+                // onto Part Search. Clearing the guide in place returns
+                // the panel to the cards and keeps the tab.
+                onClick={(e) => {
+                  if (!isPlainClick(e)) return;
+                  e.preventDefault();
+                  clearGuide();
+                }}
+              >
                 All guides
               </a>
             ))}
