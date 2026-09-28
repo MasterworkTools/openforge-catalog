@@ -2,25 +2,36 @@
 # exist and are adopted rather than created. Safe to delete after the first apply
 # has recorded them in state.
 #
-# ─── ONE MANUAL STEP BEFORE THE FIRST APPLY ───────────────────────────────────
+# ─── There is no manual step ───────────────────────────────────────────────────
 #
-# The target group below still has the OLD function registered:
+# An earlier version of this file told you to deregister the old function from the
+# target group first, because a Lambda target group holds exactly one target and
+# `aws_lb_target_group_attachment` could not be imported. The first half is true;
+# the second stopped being true at provider v6.40.0, which documents a
+# comma-separated `target_group_arn,target_id` import. `~> 6.0` resolves well past
+# that, so the attachment is imported below and `target_id` — which is ForceNew —
+# makes the apply deregister the old function and register the new one itself, in
+# milliseconds.
 #
-#   arn:aws:lambda:us-east-1:682033461796:function:Openforge-Catalog-API
+# That instruction was worse than redundant. It took `/api/*` down *before* an
+# apply that cannot currently succeed (the app secret is read as a data source and
+# is resolved at plan time, so a missing one fails the plan having changed
+# nothing), leaving staging broken with recovery by hand. It also told you to
+# remove a `AllowALBInvoke` statement that does not exist — the live statement id
+# is `AWS-ALB_Invoke-targetgroup-openforge-catalog-api-cd223d56e9899b78`, so the
+# command only ever raised into a `|| true`. Had it worked it would have broken the
+# rollback it was meant to preserve, because re-registering the old function needs
+# that permission.
 #
-# A Lambda target group holds exactly one target, and aws_lb_target_group_attachment
-# has no import, so the apply cannot swap it — it would try to register the new
-# function into a full target group and fail. Deregister the old one first:
+# ─── The first apply widens the ALB ────────────────────────────────────────────
 #
-#   aws lambda remove-permission --profile staging \
-#     --function-name Openforge-Catalog-API --statement-id AllowALBInvoke || true
-#   aws elbv2 deregister-targets --profile staging \
-#     --target-group-arn arn:aws:elasticloadbalancing:us-east-1:682033461796:targetgroup/openforge-catalog-api/cd223d56e9899b78 \
-#     --targets Id=arn:aws:lambda:us-east-1:682033461796:function:Openforge-Catalog-API
-#
-# Staging's /api/* is down from that command until the apply finishes. That is the
-# whole outage, it is staging, and the old function stays in place as the rollback
-# until openforge_catalog-rc2 removes it.
+# One adopted attribute does not match live, deliberately. The ALB spans 2 subnets
+# today; `main.tf` declares `local.infra.subnet_ids`, which is all six default-VPC
+# subnets, because that is the expression production uses and this environment is
+# meant to be diffable against it. `subnets` is not ForceNew on an ALB — the
+# provider's `ForceNew(subnets)` only applies to network load balancers — so this
+# is an in-place `SetSubnets` that adds four AZs and detaches nothing. The DNS name
+# is unchanged, so CloudFront's origin is unaffected.
 #
 # ─── What is NOT imported, and why ────────────────────────────────────────────
 #
@@ -28,9 +39,13 @@
 # Openforge-Catalog-API-role-ogdz6ix0 (service-role path). function_name is
 # ForceNew, and the deploy role may only touch IAM named openforge-catalog-*, so
 # neither can become the production-shaped resource. Tofu creates
-# openforge-catalog-api fresh; the old pair is deleted by hand afterwards.
+# openforge-catalog-api fresh; the old pair is deleted by hand once staging serves
+# from the new one (openforge_catalog-rc2), and until then it is the rollback.
 #
-# The port 443 listener on the ALB: unused, CloudFront is http-only on port 80.
+# The port 443 listener: unused, and CloudFront reaches the ALB http-only on port
+# 80. Tofu cannot prune a listener it does not model, so leaving it out is safe.
+# Note it forwards to the target group below, so after this apply that listener
+# invokes the new function too.
 
 import {
   to = aws_lb.api
@@ -40,6 +55,13 @@ import {
 import {
   to = aws_lb_target_group.api
   id = "arn:aws:elasticloadbalancing:us-east-1:682033461796:targetgroup/openforge-catalog-api/cd223d56e9899b78"
+}
+
+# The old function, so the apply swaps it for the new one rather than trying to add
+# a second target to a group that can only hold one.
+import {
+  to = aws_lb_target_group_attachment.api
+  id = "arn:aws:elasticloadbalancing:us-east-1:682033461796:targetgroup/openforge-catalog-api/cd223d56e9899b78,arn:aws:lambda:us-east-1:682033461796:function:Openforge-Catalog-API"
 }
 
 import {

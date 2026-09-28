@@ -8,7 +8,8 @@
 # (openforge_catalog-jag).
 #
 # Staging predates tofu, so most of this is adopting what is already running. See
-# imports.tf, which also records the one thing tofu cannot adopt on its own.
+# imports.tf for what is adopted, and for the one adopted attribute that does not
+# match live (the ALB's subnet set, widened on purpose).
 
 data "terraform_remote_state" "infra" {
   backend = "s3"
@@ -95,7 +96,7 @@ resource "aws_lambda_function" "api" {
   package_type  = "Image"
   image_uri     = "${local.infra.ecr_repository_urls["openforge_catalog/api"]}:${var.image_tag}"
   architectures = ["x86_64"]
-  memory_size   = 128
+  memory_size   = 128 # openforge_catalog-gvw: tune after Power Tuning
   timeout       = 30
 
   # Each warm container holds a 4-connection pool; 50 containers is 200 sessions,
@@ -111,6 +112,7 @@ resource "aws_lambda_function" "api" {
     variables = {
       PGHOST                       = local.infra.db_cluster_endpoint
       DB_SECRET_ARN                = local.infra.db_secret_arn
+      PGCONNECT_TIMEOUT            = 10
       API_TOKEN                    = local.app_secret.API_TOKEN
       SECRET_KEY                   = local.app_secret.SECRET_KEY
       CLOUDFLARE_ENDPOINT          = local.app_secret.CLOUDFLARE_ENDPOINT
@@ -128,10 +130,16 @@ resource "aws_lambda_function" "api" {
 }
 
 # ─── Migration Lambda ─────────────────────────────────────────────────────────
-# The same image with a different command. Aurora is in private subnets and a
-# GitHub runner has no route in, which is why migrations were manual; this
-# function is already in those subnets, so it is the way in. The deploy invokes
-# it between this apply and the frontend sync.
+# The same image with a different command. Aurora only accepts connections from
+# inside the VPC — its security group admits the application and bastion groups
+# and nothing else — and a GitHub runner is outside it, which is why migrations
+# were manual. This function is inside, so it is the way in.
+#
+# (Not because the subnets are private: staging is the default VPC and all six
+# subnets are MapPublicIpOnLaunch. The security group is what closes the door.)
+#
+# The deploy invokes it between the apply that creates it and the apply that
+# promotes the API image, so the schema is ahead of the code that needs it.
 
 resource "aws_cloudwatch_log_group" "migrate" {
   name              = "/aws/lambda/${local.name}-migrate"
@@ -146,9 +154,13 @@ resource "aws_lambda_function" "migrate" {
   architectures = ["x86_64"]
 
   # A migration is not a request: DDL on a table with data can take minutes, and
-  # there is no client waiting on a 30 s budget.
+  # there is no client waiting on a 30 s budget. The ceiling rather than a guess —
+  # Lambda bills actual duration, so a larger budget costs nothing, and a statement
+  # that outran a smaller one would restart from zero on every retry and wedge
+  # every merge to test at this gate. Bound lock waits with SET lock_timeout, not
+  # with the function timeout.
   memory_size = 512
-  timeout     = 300
+  timeout     = 900
 
   # Exactly one at a time. Two deploys landing together would otherwise run DDL
   # concurrently; the second invoke is throttled instead, which fails that
@@ -166,10 +178,18 @@ resource "aws_lambda_function" "migrate" {
 
   # Only what it needs to reach the database. No Cloudflare credentials and no
   # API_TOKEN: this function answers to nobody and writes no files.
+  # libpq reads PGCONNECT_TIMEOUT itself, so this needs no code change. db_url
+  # emits no connect_timeout, and libpq's default is 0 — wait forever — which
+  # turns an unreachable database into `Task timed out` with an *empty* log
+  # group: no exception, no traceback, the one failure this module's error
+  # strategy does not otherwise cover. The API gets 10 s to fit its 30 s budget;
+  # migrate gets 120 s because its normal case is a cluster resuming from
+  # min_capacity 0, which takes tens of seconds and must not be cut short.
   environment {
     variables = {
-      PGHOST        = local.infra.db_cluster_endpoint
-      DB_SECRET_ARN = local.infra.db_secret_arn
+      PGHOST            = local.infra.db_cluster_endpoint
+      DB_SECRET_ARN     = local.infra.db_secret_arn
+      PGCONNECT_TIMEOUT = 120
     }
   }
 

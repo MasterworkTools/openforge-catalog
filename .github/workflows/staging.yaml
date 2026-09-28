@@ -143,8 +143,8 @@ jobs:
           provenance: false
           tags: "682033461796.dkr.ecr.us-east-1.amazonaws.com/openforge_catalog/api:${{ github.sha }}"
 
-  tofu-apply:
-    name: Staging Tofu Apply
+  tofu-apply-migrate:
+    name: Staging Tofu Apply — migration function
     needs: docker-build
     if: ${{ needs.docker-build.result == 'success' }}
     runs-on: ubuntu-latest
@@ -152,8 +152,6 @@ jobs:
     permissions:
       id-token: write
       contents: read
-    outputs:
-      migrate_function: ${{ steps.tofu.outputs.migrate_function }}
     steps:
       - uses: actions/checkout@v6
 
@@ -169,22 +167,37 @@ jobs:
           tofu_version: "1.9.0"
           tofu_wrapper: false
 
-      # Deploys the image this run just pushed: the Lambda's image_uri is the git sha.
-      # Until this job existed, nothing ever pointed the staging function at a new
-      # image, so staging served a current frontend against a nine-month-old backend.
-      - name: tofu apply
-        id: tofu
+      # Two applies, and the split is the whole point of the ordering.
+      #
+      # `aws_lambda_function` waits for LastUpdateStatus=Successful, so a single
+      # apply would put the new API image live *before* the migrate job ran —
+      # /api/* serving new code against the old schema, which is exactly the
+      # unhandled 500 openforge_catalog-jag measured. The frontend was gated; the
+      # API image never was.
+      #
+      # So: move only the migration function first (-target pulls in its role and
+      # log group), let the migrate job run against it, then apply everything else
+      # including the API image. The chicken-and-egg — migrate must exist before it
+      # can be invoked — is why this cannot be one apply with the migrate job first.
+      #
+      # `-target` is normally a smell. Here it is the mechanism: it is scoped to one
+      # resource and the full apply follows two jobs later, before anything ships.
+      #
+      # The one-time *adoption* apply is not this. imports.tf adopts live resources
+      # and the app secret must exist first, so the first apply is run by hand as a
+      # full apply; these two stages are the steady state after that.
+      - name: tofu apply — migration function only
         working-directory: terraform/environments/staging
         run: |
           tofu init -input=false
-          tofu plan -input=false -no-color -var image_tag=${{ github.sha }} -out=tfplan
-          tofu apply -input=false -auto-approve tfplan
-          echo "migrate_function=$(tofu output -raw migrate_function_name)" >> "$GITHUB_OUTPUT"
+          tofu apply -input=false -auto-approve \
+            -var image_tag=${{ github.sha }} \
+            -target=aws_lambda_function.migrate
 
   migrate:
     name: Staging Migrate
-    needs: tofu-apply
-    if: ${{ needs.tofu-apply.result == 'success' }}
+    needs: tofu-apply-migrate
+    if: ${{ needs.tofu-apply-migrate.result == 'success' }}
     runs-on: ubuntu-latest
     environment: staging
     permissions:
@@ -198,14 +211,25 @@ jobs:
           role-session-name: staging-migrate
           aws-region: us-east-1
 
-      # The schema goes first and the frontend last, so the site is never promoted
-      # in front of a database that cannot serve it. The runner has no route into
-      # the VPC; this invokes the function that does (openforge/app/migrate.py).
+      # The schema goes first, then the API image, then the frontend — so neither the
+      # code nor the site is ever promoted in front of a database that cannot serve
+      # it. The runner cannot reach Aurora (its security group admits the application
+      # and bastion groups only); this invokes the function that can.
+      #
+      # --cli-read-timeout 0: botocore's default read timeout is 60 s, well under the
+      # function's 900 s budget, so a long migration would fail the deploy it had
+      # actually completed — and botocore's retry would then land on a function with
+      # reserved concurrency 1 and throttle.
+      #
+      # The name is the fixed one from terraform (local.name + "-migrate") rather than
+      # a tofu output, because the preceding apply is -target'd and its outputs are
+      # not guaranteed to be refreshed. A wrong name fails loudly at invoke.
       - name: Apply database migrations
         env:
-          FUNCTION: ${{ needs.tofu-apply.outputs.migrate_function }}
+          FUNCTION: openforge-catalog-migrate
         run: |
           aws lambda invoke --function-name "$FUNCTION" \
+            --cli-read-timeout 0 \
             --cli-binary-format raw-in-base64-out --payload '{}' \
             response.json > invoke.json
 
@@ -228,13 +252,50 @@ jobs:
               sys.exit(f"migration did not report ok: {payload}")
 
           before, after = payload["schema_version_before"], payload["schema_version_after"]
-          print(f"schema {before} -> {after} (applied={payload['applied']})")
+          applied = payload["applied"]
+          print(f"schema {before} -> {after}; applied {applied or 'nothing'}")
           PY
+
+  tofu-apply:
+    name: Staging Tofu Apply
+    needs: migrate
+    if: ${{ needs.migrate.result == 'success' }}
+    runs-on: ubuntu-latest
+    environment: staging
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Configure Staging deploy role
+        uses: aws-actions/configure-aws-credentials@v5
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN_STAGING }}
+          role-session-name: staging-tofu
+          aws-region: us-east-1
+
+      - uses: opentofu/setup-opentofu@v1
+        with:
+          tofu_version: "1.9.0"
+          tofu_wrapper: false
+
+      # Everything, including promoting the API image to this run's sha. It happens
+      # after the migration, so the code that needs the new schema never runs against
+      # the old one. Until this pipeline existed nothing pointed the staging function
+      # at a new image at all, so staging served a current frontend against a
+      # nine-month-old backend.
+      - name: tofu apply
+        working-directory: terraform/environments/staging
+        run: |
+          tofu init -input=false
+          tofu plan -input=false -no-color -var image_tag=${{ github.sha }} -out=tfplan
+          tofu apply -input=false -auto-approve tfplan
 
   frontend-deploy:
     name: Staging Frontend Deploy
-    needs: migrate
-    if: ${{ needs.migrate.result == 'success' }}
+    needs: tofu-apply
+    if: ${{ needs.tofu-apply.result == 'success' }}
     runs-on: ubuntu-latest
     permissions:
       id-token: write
