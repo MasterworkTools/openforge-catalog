@@ -2055,6 +2055,38 @@ describe('GuidePage', () => {
       );
     });
 
+    it('commits the typed tag on Enter, not only on clicking away', async () => {
+      // There is no form here to submit, so `onKeyDown` handing the
+      // work to the blur above is the whole of what makes Enter apply
+      // what you typed. Deleting that handler left every other test in
+      // this file green, including the blur one directly above.
+      visit('?guide=wall&method=separate-wall');
+      const urls: string[] = [];
+      mockFetch((url) => {
+        urls.push(url);
+        return url.includes('/resolve') ? RESOLVED_WITH_PARTS : GUIDE_DOCUMENT;
+      });
+
+      render(<GuidePage />);
+      const picker = await screen.findByLabelText('Texture');
+      picker.focus();
+      fireEvent.change(picker, { target: { value: 'texture|towne' } });
+
+      // The control for the assertion below: typing alone commits
+      // nothing, so what passes afterwards is Enter's doing and not
+      // the change event's.
+      expect(urls.filter((url) => url.includes('texture'))).toEqual([]);
+
+      fireEvent.keyDown(picker, { key: 'Enter' });
+
+      await waitFor(() =>
+        expect(urls).toContain(
+          '/api/guides/wall/resolve?method=separate-wall&texture=texture%7Ctowne'
+        )
+      );
+      expect(window.location.search).toContain('texture=texture%7Ctowne');
+    });
+
     it('drops a refinement from the URL when it is cleared', async () => {
       // The null branch of `select`: writing the empty string instead
       // would send `?texture=` and the API would refuse it.

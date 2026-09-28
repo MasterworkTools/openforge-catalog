@@ -305,8 +305,13 @@ def _honoured(document: dict, selections: dict) -> dict:
     steps; this map covers every step in the document, so it is the one
     place an odd value for an unreached key arrives unchecked.
 
-    Nothing pins the list: swapping it for a set leaves the suite
-    green.
+    Only step keys, note. An odd value under a refinement key is not a
+    step answer, so it passes through untouched and reaches
+    `_refinement_predicate`, where it raises. Not reachable from either
+    endpoint today — this is about what the filter does and does not
+    promise, not a live fault.
+
+    Nothing pins the list: swapping it for a set leaves the suite green.
     """
     options = {
         step["key"]: [option["key"] for option in step["options"]]

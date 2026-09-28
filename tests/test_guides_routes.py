@@ -2055,7 +2055,10 @@ def test_a_rotted_recommendation_is_the_guide_s_fault_not_the_visitor_s(
             # that stopped matching its own options.
             guide_sql.upsert_guide(curs, document)
 
-    with pytest.raises(ValueError, match="is invalid"):
+    # Named, not just refused. This path is uncaught on purpose, so the
+    # traceback is the whole report — and "a guide is invalid" does not
+    # say which of N stored guides rotted.
+    with pytest.raises(ValueError, match="guide 'wall' is invalid"):
         client.get("/api/guides/wall/resolve")
 
 
