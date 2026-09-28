@@ -56,8 +56,14 @@ def _schema_shape(db):
     index or a constraint would leave the column set identical. That would both
     accuse its `down_impl` of doing nothing and make `_restore` return early,
     skipping the repair rather than short-circuiting it — the one way the repair
-    can be silently missed. Indexes and constraints cover every migration in the
-    tree today.
+    can be silently missed.
+
+    Covered: columns, indexes (by definition, so a same-named index that changes
+    shape counts), constraints, and extensions — which is every migration in the
+    tree today, `version_13` included. **Not** covered, so a head consisting only
+    of one of these still needs a thought: triggers, sequences, views' contents, a
+    column type or default change, and a generated-column expression. Widen this
+    rather than assume it if the next migration is one of those.
     """
     with db.connection() as conn:
         with conn.cursor() as curs:
@@ -67,13 +73,16 @@ def _schema_shape(db):
                   FROM information_schema.columns
                  WHERE table_schema = current_schema()
                 UNION ALL
-                SELECT 'index', tablename, indexname
+                SELECT 'index', tablename, indexdef
                   FROM pg_indexes
                  WHERE schemaname = current_schema()
                 UNION ALL
                 SELECT 'constraint', conrelid::regclass::text, conname
                   FROM pg_constraint
                  WHERE connamespace = current_schema()::regnamespace
+                UNION ALL
+                SELECT 'extension', extname, extversion
+                  FROM pg_extension
                 """
             )
             return set(curs.fetchall())
