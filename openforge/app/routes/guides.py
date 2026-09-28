@@ -314,12 +314,12 @@ def _reject_bad_selection(*, what: str, part: str) -> None:
     "'part.wall' is longer than 256 characters" about a nine-character
     key.
 
-    The rule comes before the offender. These are the only two of the
-    ten refusal messages that put an unbounded value in the middle and
-    the rule at the end, and the log sink cuts from the end — so a NUL
-    and an over-long value were indistinguishable in CloudWatch, and
-    the only length left in the line was the message's own rather than
-    the value's.
+    The rule comes before the offender. These used to be the only two
+    of the ten refusal messages that put an unbounded value in the
+    middle and the rule at the end, and the log sink cuts from the
+    end — so a NUL and an over-long value were indistinguishable in
+    CloudWatch, and the only length left in the line was the message's
+    own rather than the value's.
     """
     if "\x00" in part:
         raise GuideSelectionError(f"{what} contains a NUL byte: {_shown(part)}")

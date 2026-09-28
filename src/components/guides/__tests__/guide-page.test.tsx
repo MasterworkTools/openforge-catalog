@@ -80,7 +80,10 @@ const RESOLVED_WITH_PARTS: ResolvedGuide = {
       under: null,
       query: {
         require: ['shape|wall', 'texture|dungeon_stone'],
-        deny: [],
+        // Non-empty on purpose: the shipped wall.yaml denies
+        // `connection|side` on this role, and an empty list here
+        // cannot tell a forwarded deny from a dropped one.
+        deny: ['connection|side'],
         accept: [],
         deny_children: ['component|wall'],
         allow: ['shape|square'],
@@ -339,6 +342,16 @@ describe('GuidePage', () => {
       // The same options are explained in the other column, which is
       // where the difference between them actually lives.
       expect(screen.getByRole('heading', { name: 'What these mean' })).toBeInTheDocument();
+      // And nothing has resolved yet, so the parts column is not
+      // there at all. Without its empty guard the first screen of
+      // every guide offers a heading, a turntable and an invitation
+      // to drag the pieces, above no pieces.
+      expect(
+        screen.queryByRole('heading', { name: 'What to print' })
+      ).toBeNull();
+      expect(
+        screen.queryByText(/Pick a side, or drag the pieces/)
+      ).toBeNull();
     });
 
     it('heads the page with the guide title from the API', async () => {
@@ -2249,6 +2262,119 @@ describe('moving between guides', () => {
     ).not.toBeInTheDocument();
     expect(screen.queryByText('a dungeon stone wall')).not.toBeInTheDocument();
   });
+
+  /** The URL changes underneath a mounted page, as back/forward does it. */
+  async function navigate(search: string) {
+    await act(async () => {
+      window.history.replaceState({}, '', `/guides/${search}`);
+      window.dispatchEvent(new PopStateEvent('popstate'));
+    });
+  }
+
+  it("does not keep the last guide's parts when the next one fails", async () => {
+    // The failure arm of the same hazard. A failed resolve deliberately
+    // keeps the last good one, and the updater that does it reads the
+    // previous answer — which can belong to the guide just left. Unkeyed,
+    // the wall's parts are restamped with the floor's key and render
+    // under the floor's title with a working Download button.
+    visit('?guide=wall&method=separate-wall');
+    const floorDocument = {
+      guide_key: 'floor',
+      document: {
+        key: 'floor',
+        title: 'How do I make a floor?',
+        steps: [{ key: 'style', prompt: 'Which style?', options: [] }],
+        refinements: [],
+        roles: {},
+      },
+    };
+    global.fetch = jest.fn((url: string) => {
+      const failing = url.includes('/floor/resolve');
+      const body = url.includes('/api/guides/floor')
+        ? floorDocument
+        : url.includes('/resolve')
+          ? RESOLVED_WITH_PARTS
+          : GUIDE_DOCUMENT;
+      return Promise.resolve({
+        ok: !failing,
+        status: failing ? 500 : 200,
+        statusText: failing ? 'Server Error' : 'OK',
+        json: () => Promise.resolve(failing ? {} : body),
+      });
+    }) as unknown as typeof fetch;
+
+    render(<GuidePage />);
+    await screen.findByText('a dungeon stone wall');
+
+    await navigate('?guide=floor');
+
+    // Wait for the failure to have been *processed*, not merely sent:
+    // the absences below are true of a page that has not rendered yet,
+    // so asserting them first would pass under the mutation too.
+    await screen.findByText('Failed to resolve: 500 Server Error');
+    expect(
+      screen.getByRole('heading', { name: 'How do I make a floor?' })
+    ).toBeInTheDocument();
+    expect(screen.queryByText('a dungeon stone wall')).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /^Download/ })).toBeNull();
+  });
+
+  it("does not apply one guide's dead-set to the next guide's questions", async () => {
+    // The key half of the dead-set pairing, whose `asked` half is
+    // "does not apply one answer's dead-set to another answer's parts".
+    // `asked` is the selections alone, so two guides with nothing
+    // answered both stamp "[]" and only the key tells them apart.
+    visit('?guide=wall');
+    const floorDocument = {
+      guide_key: 'floor',
+      document: {
+        key: 'floor',
+        title: 'How do I make a floor?',
+        steps: [{ key: 'style', prompt: 'Which style?', options: [] }],
+        refinements: [],
+        roles: {},
+      },
+    };
+    global.fetch = jest.fn((url: string) => {
+      let body: unknown;
+      if (url.includes('/floor/availability')) {
+        // Held open for the length of the test, so the only dead-set
+        // in hand is the wall's.
+        body = new Promise(() => {});
+      } else if (url.includes('/availability')) {
+        body = Promise.resolve({
+          unavailable: { method: ['s2w'] },
+          because: {},
+          options: {},
+        });
+      } else if (url.includes('/resolve')) {
+        body = Promise.resolve(RESOLVED);
+      } else if (url.includes('/api/guides/floor')) {
+        body = Promise.resolve(floorDocument);
+      } else {
+        body = Promise.resolve(GUIDE_DOCUMENT);
+      }
+      return Promise.resolve({ ok: true, status: 200, json: () => body });
+    }) as unknown as typeof fetch;
+
+    render(<GuidePage />);
+    // The wall's dead-set has landed and is doing its job — without
+    // this the test would pass on a page where no dead-set exists.
+    await screen.findByRole('button', { name: /Separate wall/ });
+    await waitFor(() =>
+      expect(screen.queryByRole('button', { name: /Modular/ })).toBeNull()
+    );
+
+    await navigate('?guide=floor');
+
+    // Same question key, nothing answered either side. The floor has
+    // its own answer and no availability of its own, so every option
+    // it offers stays on offer.
+    await screen.findByRole('heading', { name: 'How do I make a floor?' });
+    expect(
+      await screen.findByRole('button', { name: /Modular/ })
+    ).toBeInTheDocument();
+  });
 });
 
 describe('inspecting a part', () => {
@@ -2274,7 +2400,7 @@ describe('inspecting a part', () => {
     // catch.
     expect(opened.configValues).toEqual({
       require: [{ tag: 'shape|wall' }, { tag: 'texture|dungeon_stone' }],
-      deny: [],
+      deny: [{ tag: 'connection|side' }],
       deny_children: [{ tag: 'component|wall' }],
       allow: [{ tag: 'shape|square' }],
     });

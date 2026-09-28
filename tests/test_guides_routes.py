@@ -2126,12 +2126,18 @@ def test_blame_only_ever_names_a_question_they_answered(client, test_db, catalog
     nothing, which is what lets the page write "your answer" without
     asking whose it was.
 
-    Note which line that is. `_blame` also *skips* anything outside
-    `sent` before it gets there, and that skip is unobservable — it is
-    a round-trip saving, equivalent by construction, and no
-    output-level test can kill it. What this test can see is `without`
-    being derived from `sent`, and the two tests named for the
-    counterfactual see it too.
+    Note which line that is, because it is not the obvious one.
+    `_blame` also *skips* anything outside `sent` before it gets there,
+    and that skip changes no output: the candidate it drops could never
+    have held anyway, so removing the guard is an equivalent mutant and
+    nothing can kill it. It is not free, though — the cache is shared,
+    so the cost it saves is Python rather than catalog trips, measured
+    at 2 candidates in 25 on these fixtures.
+
+    Nor can this test see `without` being derived from `sent`: mutate
+    that and it still passes. The two tests named for the counterfactual
+    are what hold that line. What this one holds is the property in its
+    own name, over the two states below.
 
     The culprit here is a refinement further down the column than the
     one being explained — the finish decides which texture exists, and
