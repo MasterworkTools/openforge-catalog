@@ -1598,6 +1598,110 @@ def test_availability_does_not_ask_about_questions_it_will_not_publish(guide):
     )
 
 
+def test_two_answers_jointly_to_blame_are_not_blamed_one_at_a_time(guide):
+    """Blame names one answer or it names none. Never a scapegoat.
+
+    The sweep attributes a dead answer by clearing one other answer at
+    a time and seeing whether the part comes back. Two answers can be
+    jointly responsible with neither one of them individually to blame,
+    and there is no honest single name for that — so the reason comes
+    back with the part it would empty and no question attached, and the
+    page says only what is missing rather than «it is your "Pegs?"
+    answer» about an answer that is not the reason.
+
+    Nothing pinned that. Forcing the revival check to pass — `if True:`
+    on `_blame`'s `_holds` line — makes it return the first candidate it
+    tries, so every dead answer anywhere in the guide acquires a
+    scapegoat, and the whole guide suite stayed green.
+
+    No database here on purpose: the property is `_blame`'s, and
+    `resolve` is the smallest thing that reaches it. The blame tests
+    next door in `test_guides_routes.py` each upsert a guide and a
+    handful of blueprints to say the same kind of thing; this one writes
+    nothing and needs nothing written.
+    """
+    catalog = [
+        {"id": "f", "blueprint_name": "a floor", "tags": ["build|s2w", "shape|floor"]},
+        {"id": "b", "blueprint_name": "b base", "tags": ["shape|base"]},
+        # The build they are standing on: pegged and runed, untextured.
+        {
+            "id": "w1",
+            "blueprint_name": "c wall pegged runed",
+            "tags": ["build|s2w", "shape|wall", "connection|peg", "detail|rune"],
+        },
+        # Rough exists and carries neither peg nor rune, so clearing
+        # either answer on its own leaves the other one unsatisfied:
+        # both are responsible and neither is to blame.
+        {
+            "id": "w2",
+            "blueprint_name": "d wall rough",
+            "tags": ["build|s2w", "shape|wall", "texture|rough"],
+        },
+        # Slick is runed and unpegged, so clearing the pegs alone
+        # revives it. That is the one-culprit case beside the joint one,
+        # and it is what makes the `None` below evidence.
+        {
+            "id": "w3",
+            "blueprint_name": "e wall slick runed",
+            "tags": ["build|s2w", "shape|wall", "detail|rune", "texture|slick"],
+        },
+    ]
+    # The same finder for the parts and for the sweep: the sweep only
+    # reads whether the list it gets back is empty.
+    find = matching_finder(catalog)
+    # Off this branch, so the steps are done and the refinements are
+    # actually offered — and nothing here carries a size tag anyway.
+    guide["steps"][1]["when"] = {"selected": {"method": ["nonesuch"]}}
+    # Two answers of theirs to be tried and rejected, then the question
+    # under test. Both are toggles: clearing a step can truncate the
+    # steps after it, which `_blame` discards as collateral, and that
+    # would hide the thing being tested behind a different guard.
+    guide["refinements"] = [
+        {
+            "key": "pegs",
+            "role": "wall",
+            "prompt": "Pegs?",
+            "on_tags": {"require": ["connection|peg"]},
+        },
+        {
+            "key": "runes",
+            "role": "wall",
+            "prompt": "Runes?",
+            "on_tags": {"require": ["detail|rune"]},
+        },
+        {
+            "key": "texture",
+            "role": "wall",
+            "prompt": "Texture",
+            "from_namespace": "texture",
+            "choices": [{"tag": "texture|rough"}, {"tag": "texture|slick"}],
+        },
+    ]
+
+    resolved = resolve(
+        guide,
+        {"method": "s2w-modular", "pegs": "on", "runes": "on"},
+        find,
+        exists=find,
+    )
+
+    texture = {r["key"]: r for r in resolved["refinements"]}["texture"]
+    # Both answers are dead, and both are reported. This is the presence
+    # side: without it "no question was blamed" would also pass on a
+    # sweep that found nothing at all.
+    assert texture["unavailable"] == ["texture|rough", "texture|slick"]
+    # The control. One answer is to blame here and it is named, so blame
+    # demonstrably works on this fixture.
+    assert texture["because"]["texture|slick"]["question"] == "pegs"
+    assert texture["because"]["texture|slick"]["prompt"] == "Pegs?"
+    # And the property: the part is still named, the question is not.
+    rough = texture["because"]["texture|rough"]
+    assert rough["part"] == "Wall"
+    assert (
+        "question" not in rough
+    ), f"a scapegoat for a joint failure: {rough.get('prompt')}"
+
+
 def test_a_question_offers_nothing_when_the_part_above_is_missing(guide):
     """Derivation reads the resolved part above, and there may not be one.
 
