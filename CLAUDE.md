@@ -205,7 +205,10 @@ per-sha prefix and then promotes it to `current/`, which is what CloudFront serv
 deploy is live without touching openforge-infra-frontend. Release PRs get a plan comment from the
 `Production Plan` workflow.
 
-**Nothing in the pipeline applies database migrations.** The workflow builds the
+**Nothing in the production pipeline applies database migrations yet.** Staging
+does it automatically (see below); production is the same two resources and the
+same job, to be copied across once staging has run it a few times
+(`openforge_catalog-jag`). Until then, for production: The workflow builds the
 image, applies tofu and syncs the frontend; it never runs `bin/db_update up`. So
 a release carrying a schema change deploys code that is newer than the database,
 and the endpoints touching the new schema return an unhandled 500 until someone
@@ -232,7 +235,47 @@ in the repo; the database password is read at cold start from `DB_SECRET_ARN` so
 RDS-managed secret may rotate. Prerequisites, once per account: the app secret, and the
 repo-level GitHub secret `AWS_ROLE_ARN_PRODUCTION` = openforge-infra's
 `deploy_role_arns["openforge-catalog"]` (read by both the `production` and `production-plan`
-environments). Staging's hand-built Lambda and ALB are not yet under tofu.
+environments).
+
+### Staging infrastructure (`terraform/environments/staging`)
+
+A merge to `test` deploys staging the whole way:
+**docker-build → tofu-apply → migrate → frontend-deploy**, each gated on the last,
+so the frontend is never promoted in front of a backend or a schema that cannot
+serve it. Layered on openforge-infra's staging state exactly as production is, and
+kept diffable against `../production` — the two should differ only in account,
+environment name, bucket prefix, and the migration function.
+
+It did not always work this way, and the failure was quiet: until this, `staging.yaml`
+pushed the image to ECR and never pointed the function at it, while the frontend job
+in the same workflow deployed on every merge. Staging served a current site against a
+backend from nine months earlier, and nothing failed to say so.
+
+**Migrations run in a Lambda, not on the runner.** Aurora is in private subnets and a
+GitHub runner has no route in. `openforge-catalog-migrate` is the *same image* as the
+API with `image_config.command` pointing at `openforge/app/migrate.py`, so it is
+already in those subnets and already reads `DB_SECRET_ARN` — no second image to keep
+in step. Reserved concurrency is 1, so two deploys landing together cannot interleave
+DDL; the second is throttled and that deploy fails. The job fails on a `FunctionError`
+or any payload without `ok: true`, because `aws lambda invoke` exits 0 for a function
+that raised.
+
+**Staging is adopted, not created.** It predates tofu, so `imports.tf` adopts the ALB,
+its port-80 listener and rule, the target group and the website bucket. Two things it
+cannot adopt: the function and its role are named `Openforge-Catalog-API` and
+`...-role-ogdz6ix0`, and `function_name` is ForceNew while the deploy role may only
+touch IAM named `openforge-catalog-*` — so tofu creates `openforge-catalog-api` fresh
+and the old pair is deleted by hand afterwards (`openforge_catalog-rc2`). `imports.tf`
+also records the one manual step the first apply needs: deregistering the old function
+from the target group, which holds exactly one target.
+
+Prerequisites, once per account: the app secret `openforge-catalog/staging/app`
+(`scripts/create-app-secret.sh` — note it generates a **fresh** API_TOKEN and
+SECRET_KEY, so decide deliberately whether to preserve the current ones), the
+repo-level GitHub secret `AWS_ROLE_ARN_STAGING`, and openforge-infra adding
+`openforge-catalog` to staging's `deploy_roles` plus a Secrets Manager VPC endpoint
+(`openforge_catalog-44e`). Without that endpoint the Lambda cannot read its password:
+`_password_from_secret` fails fast at 3 s by design.
 
 ### Code Review Process
 1. **Initial development**: Written in Cursor

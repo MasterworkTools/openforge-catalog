@@ -5,7 +5,7 @@ on:
     branches: [test]
 concurrency:
   group: ${{ github.head_ref || github.ref_name }}
-  cancel-in-progress: true
+  cancel-in-progress: false # a cancelled tofu apply leaves a half-applied state and a held lock
 permissions:
   id-token: write
   contents: read
@@ -143,10 +143,98 @@ jobs:
           provenance: false
           tags: "682033461796.dkr.ecr.us-east-1.amazonaws.com/openforge_catalog/api:${{ github.sha }}"
 
-  frontend-deploy:
-    name: Staging Frontend Deploy
+  tofu-apply:
+    name: Staging Tofu Apply
     needs: docker-build
     if: ${{ needs.docker-build.result == 'success' }}
+    runs-on: ubuntu-latest
+    environment: staging
+    permissions:
+      id-token: write
+      contents: read
+    outputs:
+      migrate_function: ${{ steps.tofu.outputs.migrate_function }}
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Configure Staging deploy role
+        uses: aws-actions/configure-aws-credentials@v5
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN_STAGING }}
+          role-session-name: staging-tofu
+          aws-region: us-east-1
+
+      - uses: opentofu/setup-opentofu@v1
+        with:
+          tofu_version: "1.9.0"
+          tofu_wrapper: false
+
+      # Deploys the image this run just pushed: the Lambda's image_uri is the git sha.
+      # Until this job existed, nothing ever pointed the staging function at a new
+      # image, so staging served a current frontend against a nine-month-old backend.
+      - name: tofu apply
+        id: tofu
+        working-directory: terraform/environments/staging
+        run: |
+          tofu init -input=false
+          tofu plan -input=false -no-color -var image_tag=${{ github.sha }} -out=tfplan
+          tofu apply -input=false -auto-approve tfplan
+          echo "migrate_function=$(tofu output -raw migrate_function_name)" >> "$GITHUB_OUTPUT"
+
+  migrate:
+    name: Staging Migrate
+    needs: tofu-apply
+    if: ${{ needs.tofu-apply.result == 'success' }}
+    runs-on: ubuntu-latest
+    environment: staging
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - name: Configure Staging deploy role
+        uses: aws-actions/configure-aws-credentials@v5
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN_STAGING }}
+          role-session-name: staging-migrate
+          aws-region: us-east-1
+
+      # The schema goes first and the frontend last, so the site is never promoted
+      # in front of a database that cannot serve it. The runner has no route into
+      # the VPC; this invokes the function that does (openforge/app/migrate.py).
+      - name: Apply database migrations
+        env:
+          FUNCTION: ${{ needs.tofu-apply.outputs.migrate_function }}
+        run: |
+          aws lambda invoke --function-name "$FUNCTION" \
+            --cli-binary-format raw-in-base64-out --payload '{}' \
+            response.json > invoke.json
+
+          echo "--- invoke metadata"; cat invoke.json; echo
+          echo "--- payload";         cat response.json; echo
+
+          # `aws lambda invoke` exits 0 for a function that raised, so the metadata
+          # has to be read. A throttle is different: reserved concurrency is 1, so a
+          # second deploy's invoke is rejected outright and the CLI exits non-zero
+          # above rather than reaching this.
+          python3 - <<'PY'
+          import json, sys
+
+          meta = json.load(open("invoke.json"))
+          if meta.get("FunctionError"):
+              sys.exit(f"migration failed ({meta['FunctionError']}); see the payload above")
+
+          payload = json.load(open("response.json"))
+          if payload.get("ok") is not True:
+              sys.exit(f"migration did not report ok: {payload}")
+
+          before, after = payload["schema_version_before"], payload["schema_version_after"]
+          print(f"schema {before} -> {after} (applied={payload['applied']})")
+          PY
+
+  frontend-deploy:
+    name: Staging Frontend Deploy
+    needs: migrate
+    if: ${{ needs.migrate.result == 'success' }}
     runs-on: ubuntu-latest
     permissions:
       id-token: write

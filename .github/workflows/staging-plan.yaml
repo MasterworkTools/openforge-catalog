@@ -1,0 +1,63 @@
+name: Staging Plan
+
+# PRs into test get a staging plan posted, so the apply that runs on merge has
+# been read first. image_tag is the PR head sha: the image does not exist yet,
+# so the plan shows the Lambda image change it will make.
+#
+# This matters more than usual for the first few runs, because staging is being
+# adopted rather than created — terraform/environments/staging/imports.tf names
+# resources that already exist, and the plan is where you check that tofu is
+# adopting them instead of replacing them.
+
+on:
+  pull_request:
+    branches: [test]
+
+permissions:
+  contents: read
+  pull-requests: write
+  id-token: write
+
+jobs:
+  plan:
+    name: Plan — staging
+    runs-on: ubuntu-latest
+    environment: staging-plan
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Configure Staging deploy role
+        uses: aws-actions/configure-aws-credentials@v5
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN_STAGING }}
+          role-session-name: staging-tofu-plan
+          aws-region: us-east-1
+
+      - uses: opentofu/setup-opentofu@v1
+        with:
+          tofu_version: "1.9.0"
+          tofu_wrapper: false
+
+      - name: tofu plan
+        working-directory: terraform/environments/staging
+        run: |
+          tofu init -input=false
+          tofu validate
+          tofu plan -input=false -no-color -lock=false -var image_tag=${{ github.event.pull_request.head.sha }} 2>&1 | tee plan-output.txt
+          exit ${PIPESTATUS[0]}
+
+      - name: Post plan to PR
+        uses: actions/github-script@v8
+        if: always()
+        with:
+          script: |
+            const fs = require('fs');
+            const file = 'terraform/environments/staging/plan-output.txt';
+            const out = fs.existsSync(file) ? fs.readFileSync(file, 'utf8') : 'plan did not run (init or credentials failed) — see the job log';
+            const text = out.length > 60000 ? out.substring(0, 60000) + '\n\n...(truncated)' : out;
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `## Tofu Plan — staging\n\n<details>\n<summary>Show Plan</summary>\n\n\`\`\`\n${text}\n\`\`\`\n</details>`,
+            });
