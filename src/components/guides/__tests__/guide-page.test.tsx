@@ -2130,6 +2130,16 @@ describe('GuidePage', () => {
       // the change event's.
       expect(urls.filter((url) => url.includes('texture'))).toEqual([]);
 
+      // And an ordinary keystroke commits nothing either. Without this
+      // arm, making the blur unconditional — so every character you type
+      // fires a resolve and an availability — passes: the assertion
+      // above runs before any key is pressed, so there is nothing for it
+      // to trip on. The `act` is load-bearing; the requests would
+      // otherwise land after the assertion.
+      fireEvent.keyDown(picker, { key: 'a' });
+      await act(async () => {});
+      expect(urls.filter((url) => url.includes('texture'))).toEqual([]);
+
       fireEvent.keyDown(picker, { key: 'Enter' });
 
       await waitFor(() =>
