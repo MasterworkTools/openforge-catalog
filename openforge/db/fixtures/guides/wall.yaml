@@ -8,17 +8,21 @@
 # name once prefer runs out. That, and whether a "method" should be a
 # build tag at all, is Devon's call (openforge_catalog-z76).
 key: wall
-title: How do I make a wall?
+# Named for the thing you build, not for the question the guide asks:
+# the entry page is a catalog of cards, and "Wall" sits beside "Floor"
+# and "Corner" the way `openforge_catalog-faz` describes.
+title: Wall
 # A wall-on-tile build, drybrushed, rendered square at 640 so the entry
-# page card can draw it at half size on a 2x display. Authored here and
+# page card draws it well above 1x on a 2x display. Authored here and
 # stored in the `hero_image` column rather than in the document — see
-# `version_19`. Lives under `guides/` in the object bucket alongside
-# `sprites/` and `thumbnails/`.
-hero_image: https://objects.openforge.tools/guides/wall-on-tile-drybrush-640.webp
-summary: |
-  Three ways to build one, and the difference is where the wall meets the
-  floor. Pick a method and you get a printable set; change anything
-  afterwards.
+# `version_19`. Keyed by what it illustrates rather than by the shot it
+# came from, so re-rendering the picture replaces the object instead of
+# leaving a second one behind and a URL to update.
+hero_image: https://objects.openforge.tools/guides/guide.wall.webp
+# The card's blurb, under the title. One line, because the card is a
+# way in rather than a place to read: it says which of Floor, Wall and
+# Corner this is, and the guide itself explains the three methods.
+summary: A standard wall
 
 steps:
   - key: method

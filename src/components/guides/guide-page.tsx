@@ -84,14 +84,11 @@ export default function GuidePage() {
   if (guideKey === undefined) return null;
   // `?guide=` is a URL with no guide in it, not a guide named "".
   // Asking the API for that one only produces a 404 to show someone.
-  // The landmark for this route. `GuideEntry` does not carry one,
-  // because it is also a tab panel inside another `main`.
-  if (!guideKey)
-    return (
-      <main>
-        <GuideEntry />
-      </main>
-    );
+  // No landmark here either. This component is the whole of `/guides`
+  // *and* the Guided Builds tab panel, so whichever element it picks is
+  // wrong in one of them. `src/app/guides/page.tsx` supplies the `main`
+  // for the route; inside the tab, `MainContentWrapper` already has one.
+  if (!guideKey) return <GuideEntry />;
 
   return (
     // A fixed-height page rather than a scrolling one, because the
@@ -106,7 +103,7 @@ export default function GuidePage() {
     // a few of the answers, a part and a half, a paragraph and a bit,
     // and no way to scroll the page itself. Below `lg` it is an
     // ordinary document again.
-    <main className="p-6 lg:h-screen flex flex-col">
+    <div className="p-6 lg:h-screen flex flex-col">
       <h1 className="text-3xl font-bold mb-4 shrink-0">
         {guide?.title ?? 'Guided build'}
       </h1>
@@ -218,6 +215,6 @@ export default function GuidePage() {
           </div>
         </div>
       )}
-    </main>
+    </div>
   );
 }

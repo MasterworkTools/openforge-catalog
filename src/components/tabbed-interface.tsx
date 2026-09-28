@@ -2,13 +2,24 @@
 
 import React, { useState, useEffect } from 'react';
 import TabPartSearch from './tab-part-search';
-import GuideEntry from './guides/guide-entry';
+import GuidePage from './guides/guide-page';
 import TabAdmin from './tab-admin';
 import { useAdminContext } from '@/contexts/admin-context';
 import { loadAppConfig } from '@/utils/app-config';
 
 const TabbedInterface = () => {
-  const [activeTab, setActiveTab] = useState<'partSearch' | 'guides' | 'baseGenerator' | 'admin'>('partSearch');
+  // A guide in the URL means the person is looking at a guide, so open
+  // on that tab rather than dropping them on Part Search with a
+  // parameter nothing on screen explains. This is what makes a card's
+  // in-place selection survive a reload and makes `/?guide=wall`
+  // shareable from inside the tab.
+  const [activeTab, setActiveTab] = useState<'partSearch' | 'guides' | 'baseGenerator' | 'admin'>(
+    () =>
+      typeof window !== 'undefined' &&
+      new URLSearchParams(window.location.search).get('guide')
+        ? 'guides'
+        : 'partSearch'
+  );
   const [baseGeneratorUrl, setBaseGeneratorUrl] = useState(process.env.NEXT_PUBLIC_BASE_GENERATOR_URL || 'http://localhost:8000');
 
   const { state } = useAdminContext();
@@ -61,7 +72,7 @@ const TabbedInterface = () => {
             <TabPartSearch />
           </div>
           {/* Mounted only while it is the open tab, unlike its
-              neighbours. A hidden `GuideEntry` still runs its effect, so
+              neighbours. A hidden `GuidePage` still runs its effects, so
               leaving it mounted would spend a Lambda invocation on
               /api/guides for every visitor who never opens this tab.
               Re-opening re-fetches, which is a small response and no
@@ -84,7 +95,7 @@ const TabbedInterface = () => {
               overflowY: 'auto',
             }}
           >
-            {activeTab === 'guides' && <GuideEntry />}
+            {activeTab === 'guides' && <GuidePage />}
           </div>
           <div style={{ display: activeTab === 'baseGenerator' ? 'block' : 'none', height: '100%' }}>
             <iframe src={baseGeneratorUrl} style={{ width: '100%', height: '100%', border: 'none', display: 'block' }} title="Base Generator" />

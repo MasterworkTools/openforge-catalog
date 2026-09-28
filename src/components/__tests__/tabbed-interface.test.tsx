@@ -11,6 +11,15 @@ import TabbedInterface from '../tabbed-interface';
  * first alone passes while both exist.
  */
 
+// The guides tab now renders `GuidePage`, which reaches
+// `part-selection-modal` -> `blueprint-container` and a dependency jest
+// cannot parse. `guide-page.test.tsx` mocks the same boundary for the
+// same reason. Without it this suite fails to load, which `Tests: N
+// passed` does not show — only the suite count does.
+jest.mock('../part-selection-modal', () => ({
+  __esModule: true,
+  default: () => null,
+}));
 jest.mock('../tab-part-search', () => ({
   __esModule: true,
   default: () => <div data-testid="part-search" />,

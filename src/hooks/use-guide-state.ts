@@ -1,4 +1,5 @@
 import {
+  type MouseEvent,
   useCallback,
   useEffect,
   useMemo,
@@ -369,6 +370,44 @@ function ownedBy(guide: GuideDocument, search: string | undefined): Selections {
  * rather than one of two copies that can disagree. Why our own and not
  * `popstate`: see `URL_CHANGED` below.
  */
+/**
+ * Open a guide without leaving the page.
+ *
+ * The entry page is two things: the whole of `/guides`, and the Guided
+ * Builds tab panel. In the tab, following a card's `href` would be a
+ * document navigation out of the tabbed app into a route with no tab
+ * strip — so picking a guide writes the URL in place instead, and
+ * `useGuideKey` re-reads it through the same subscription an answer
+ * uses.
+ *
+ * `pushState`, where answering a question uses `replaceState`: choosing
+ * a guide is a step you should be able to come back from, and a
+ * question you should not have to un-answer one press at a time.
+ * `popstate` is already subscribed, so Back returns to the cards with
+ * no extra wiring.
+ *
+ * The cards stay real links, so middle-click and open-in-new-tab still
+ * work and land on the standalone route. Only a plain left click is
+ * intercepted.
+ */
+export function selectGuide(guideKey: string) {
+  if (typeof window === 'undefined') return;
+  const params = new URLSearchParams({ guide: guideKey });
+  window.history.pushState(
+    {},
+    '',
+    `${window.location.pathname}?${params.toString()}`
+  );
+  window.dispatchEvent(new Event(URL_CHANGED));
+}
+
+/** A left click with no modifier: the only kind we take over. */
+export function isPlainClick(e: MouseEvent): boolean {
+  return (
+    e.button === 0 && !e.metaKey && !e.ctrlKey && !e.shiftKey && !e.altKey
+  );
+}
+
 function writeUrl(guideKey: string | null, selections: Selections) {
   if (typeof window === 'undefined' || !guideKey) return;
   const params = new URLSearchParams({ guide: guideKey, ...selections });

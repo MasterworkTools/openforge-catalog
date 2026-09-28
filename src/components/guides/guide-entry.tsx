@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { fetchGuides, type GuideSummary } from '@/services/guide-service';
+import { isPlainClick, selectGuide } from '@/hooks/use-guide-state';
 
 /**
  * The page people arrive at: a card per thing they might want to build.
@@ -99,7 +100,19 @@ function Cards({ guides }: { guides: GuideSummary[] }) {
 function GuideCard({ guide }: { guide: GuideSummary }) {
   return (
     <a
+      // A real link to the standalone route, so middle-click and
+      // open-in-new-tab give a whole page — but a plain left click is
+      // taken over, because in the Guided Builds tab following it would
+      // navigate out of the tabbed app into a route with no tab strip.
+      // Picking a guide writes the URL in place instead and the panel
+      // swaps to it; on `/guides` the two are the same destination and
+      // this just avoids a reload.
       href={`/guides/?guide=${encodeURIComponent(guide.guide_key)}`}
+      onClick={(e) => {
+        if (!isPlainClick(e)) return;
+        e.preventDefault();
+        selectGuide(guide.guide_key);
+      }}
       // `h-full` and a column so every card in a row is the same height
       // whatever its summary runs to. Without it the grid is ragged
       // along the bottom, because a guide with two sentences makes a
