@@ -250,25 +250,26 @@ function GuideList() {
           which reads as broken rather than as loading — and `GuidePage`
           beside it already renders its frame first. */}
       <h1 className="text-3xl font-bold mb-6">Guided builds</h1>
-      {guides === null ? null : failed ? (
-        <p>Could not load the guides.</p>
-      ) : guides.length === 0 ? (
-        <p>No guides yet.</p>
-      ) : (
-        <ul className="flex flex-col gap-3">
-          {guides.map((guide) => (
-            <li key={guide.guide_key}>
-              <a
-                href={`?guide=${encodeURIComponent(guide.guide_key)}`}
-                className="text-blue-700 underline font-semibold"
-              >
-                {guide.title}
-              </a>
-              {guide.summary && <p className="text-sm">{guide.summary}</p>}
-            </li>
-          ))}
-        </ul>
-      )}
+      {guides !== null &&
+        (failed ? (
+          <p>Could not load the guides.</p>
+        ) : guides.length === 0 ? (
+          <p>No guides yet.</p>
+        ) : (
+          <ul className="flex flex-col gap-3">
+            {guides.map((guide) => (
+              <li key={guide.guide_key}>
+                <a
+                  href={`?guide=${encodeURIComponent(guide.guide_key)}`}
+                  className="text-blue-700 underline font-semibold"
+                >
+                  {guide.title}
+                </a>
+                {guide.summary && <p className="text-sm">{guide.summary}</p>}
+              </li>
+            ))}
+          </ul>
+        ))}
     </main>
   );
 }

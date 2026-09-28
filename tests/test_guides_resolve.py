@@ -1591,7 +1591,7 @@ def test_availability_does_not_ask_about_questions_it_will_not_publish(guide):
     # predicate, so sweeping them would multiply this several times
     # over — no figure here, for the reason the trim comment in
     # `resolve.py` gives: the ones quoted for the last optimisation
-    # went stale three times.
+    # rot across refactors.
     assert len(lookups) <= 8, (
         f"{len(lookups)} catalog lookups for three published questions — "
         "the sweep is asking about answers the page will not show"

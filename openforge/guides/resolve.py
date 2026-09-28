@@ -224,7 +224,7 @@ def resolve(
     # all on one whose refinements are all bare `from_namespace`,
     # because those are the two kinds `_offered` yields. No absolute
     # figures here: the ones quoted for the older optimisation thirty
-    # lines down went stale three times.
+    # lines down rot across refactors.
     # `offered` inside stays whole, because blame must still be able to
     # name a question that is not on screen.
     shown_steps = _up_to_first_unanswered(steps, given)
@@ -234,41 +234,18 @@ def resolve(
         else _up_to_first_unanswered(refinements, selections)
     )
     on_screen = {q["key"] for q in [*shown_steps, *shown_refinements]}
-    # The answers the sweep is allowed to reason from: everything the
-    # person sent except a step answer naming an option that step does
-    # not have.
-    #
-    # Only that kind. `resolve` ignores an answer this branch has not
-    # reached — a shared URL whose first answer changed should lose the
-    # later ones, not break — but the sweep re-derives on hypothetical
-    # branches, and on one of those the ignored answer becomes
-    # reachable, so `_chosen_options` refused it out of the
-    # counterfactual and the same URL was 200 from `/resolve` and 400
-    # from `/availability`.
-    #
-    # Two wrong ways to reconcile that, both shipped and both reverted.
-    # Refusing in both makes the first screen a 400 for anyone holding
-    # a link with a renamed answer. Dropping every *unreached* answer
-    # instead hides real warnings: `selectAll` merges, so clicking a
-    # candidate carries the unreached answer along, and judging the
-    # candidate without it offers answers that empty every part the
-    # moment they are taken. Measured on the fixture guide, 18 of 162
-    # maps lost a dead-answer warning and none gained one.
-    #
-    # Validity is the axis the fault was ever on. A list rather than a
-    # set on purpose: a repeated query parameter arrives as a list, and
-    # `value in {...}` is a `TypeError` where this merely keeps it.
-    options = {
-        step["key"]: [option["key"] for option in step["options"]]
-        for step in document["steps"]
-    }
-    honoured = {
-        key: value
-        for key, value in selections.items()
-        if key not in options or value in options[key]
-    }
+    honoured = _honoured(document, selections)
     dead, because = (
-        _unavailable(document, steps, refinements, on_screen, honoured, parts, exists)
+        _unavailable(
+            document,
+            steps,
+            refinements,
+            on_screen,
+            honoured,
+            parts,
+            exists,
+            find_pinned,
+        )
         if exists is not None
         else ({}, {})
     )
@@ -297,6 +274,48 @@ def resolve(
             )
             for refinement in shown_refinements
         ],
+    }
+
+
+def _honoured(document: dict, selections: dict) -> dict:
+    """What the availability sweep is allowed to reason from.
+
+    Everything the person sent, except a step answer naming an option
+    that step does not have.
+
+    Validity, not reachability, and the difference is the whole of it.
+    `resolve` ignores an answer this branch has not reached — a shared
+    URL whose first answer changed should lose the later ones, not
+    break. The sweep re-derives on hypothetical branches, though, and on
+    one of those the ignored answer becomes reachable, so passing the
+    raw map let the counterfactual refuse what the resolution had
+    allowed. Dropping every unreached answer instead is the opposite
+    mistake and the quieter one: `selectAll` merges, so clicking a
+    candidate carries that answer along, and judging the candidate
+    without it offers answers that empty every part the moment they are
+    taken.
+
+    A list rather than a set, and the reason is narrower than it looks.
+    Nothing from the route can be unhashable — `to_dict()` yields
+    strings and a repeated parameter is refused before this — so it is
+    direct callers of `resolve` that matter, and for them
+    `value in {...}` would be a `TypeError` where a list treats the
+    value as an answer no step offers. `_chosen_options` has the same
+    guard for the same reason, but it only ever sees the *reachable*
+    steps; this map covers every step in the document, so it is the one
+    place an odd value for an unreached key arrives unchecked.
+
+    Nothing pins the list: swapping it for a set leaves the suite
+    green.
+    """
+    options = {
+        step["key"]: [option["key"] for option in step["options"]]
+        for step in document["steps"]
+    }
+    return {
+        key: value
+        for key, value in selections.items()
+        if key not in options or value in options[key]
     }
 
 
@@ -329,6 +348,7 @@ def _unavailable(
     sent: dict,
     parts: list,
     find_candidates,
+    find_pinned=None,
 ) -> dict:
     """For each question, the answers that would empty a part — and
     which earlier answer is responsible for each.
@@ -380,6 +400,23 @@ def _unavailable(
     # leaves everything green, because no fixture reaches a state where
     # the two disagree.
     assumed, _ = _with_defaults(document, sent)
+    # The roles someone nailed down by hand. A pin outranks every
+    # predicate the guide composes, so a pinned role is never what
+    # makes an answer dead — and asking the catalog about its composed
+    # predicate anyway reported the one piece they had chosen as
+    # missing, which is the opposite of what pinning is for.
+    #
+    # Read from `sent` and through `_pinned`, not from
+    # `parts[*]["pinned"]`: on the first screen nothing has resolved,
+    # so no role is in play and the parts say nothing — and going
+    # through the finder keeps a pin whose md5 the catalog cannot find
+    # swept, which is the case that has to fall back to the
+    # recommendation.
+    held = frozenset(
+        name
+        for name in document["roles"]
+        if _pinned(name, sent, find_pinned) is not None
+    )
     baseline = {
         part["role"]: _predicate_key(part["query"])
         for part in parts
@@ -391,10 +428,10 @@ def _unavailable(
     offered = list(_offered(steps, refinements))
     # Questions are named to the person by their prompt, not their key.
     # As tolerant as the reader below, which already falls back to the
-    # key — a strict build here meant a question with no `prompt` was
-    # a 500 from the sweep and a 200 from `/resolve`, the same
-    # endpoint disagreement `_reject_unknown_selections` was just fixed
-    # for. A key is a worse name than a prompt and a better one than a
+    # key — a strict build here made a question with no `prompt` a 500
+    # from the sweep and a 200 from `/resolve`, which is the endpoint
+    # disagreement `_honoured` exists to prevent, arriving by another
+    # door. A key is a worse name than a prompt and a better one than a
     # blank page.
     prompts = {q["key"]: q.get("prompt", q["key"]) for q in [*steps, *refinements]}
     for question, values in offered:
@@ -416,6 +453,7 @@ def _unavailable(
                 baseline,
                 cache,
                 find_candidates,
+                held,
             )
             if role is not None:
                 empty[value] = (role, if_taken)
@@ -439,6 +477,7 @@ def _unavailable(
                 baseline,
                 cache,
                 find_candidates,
+                held,
             )
             if blamed:
                 reason["question"] = blamed
@@ -458,6 +497,7 @@ def _blame(
     baseline: dict,
     cache: dict,
     find_candidates,
+    held: frozenset[str] = frozenset(),
 ) -> str | None:
     """Which other answer is stopping this one, if any single one is.
 
@@ -483,7 +523,7 @@ def _blame(
     # passed in rather than derived a second time. It keeps that name
     # in both frames: `hypothetical` below is a *different*
     # counterfactual, the one with `other` un-answered, and the two
-    # wore the same name across this boundary until round 10.
+    # wore the same name across this boundary.
     #
     # Only its *keys* are read, below, which for a long time made this
     # indistinguishable from the defaulted map: handing it the wrong
@@ -541,7 +581,7 @@ def _blame(
         # recommendation that replaces `other` is one.
         if not set(would_answer) - {other} <= set(answered_after):
             continue
-        if _holds(document, hypothetical, baseline, cache, find_candidates):
+        if _holds(document, hypothetical, baseline, cache, find_candidates, held):
             return other
     return None
 
@@ -558,17 +598,27 @@ def _offered(steps: list, refinements: list):
 
 
 def _holds(
-    document: dict, selections: dict, baseline: dict, cache: dict, find_candidates
+    document: dict,
+    selections: dict,
+    baseline: dict,
+    cache: dict,
+    find_candidates,
+    held: frozenset[str] = frozenset(),
 ) -> bool:
     """Whether every part has something. See `_first_empty_role`."""
     return (
-        _first_empty_role(document, selections, baseline, cache, find_candidates)
+        _first_empty_role(document, selections, baseline, cache, find_candidates, held)
         is None
     )
 
 
 def _first_empty_role(
-    document: dict, selections: dict, baseline: dict, cache: dict, find_candidates
+    document: dict,
+    selections: dict,
+    baseline: dict,
+    cache: dict,
+    find_candidates,
+    held: frozenset[str] = frozenset(),
 ) -> str | None:
     """The first part these answers would leave with nothing.
 
@@ -583,12 +633,21 @@ def _first_empty_role(
       used, and already found something for, is not asked again
     - identical predicates are asked once, and most answers leave most
       roles untouched, so the same few recur constantly
+
+    `held` is the roles someone pinned by hand. A pin beats every
+    predicate the guide composes — that is what pinning is, and
+    `_chosen_blueprint` honours it — so composing one anyway and
+    finding nothing said the piece they had nailed down was missing.
+    On the first screen `baseline` cannot stand in for this: nothing
+    has resolved yet, so it is empty and every predicate looks new.
     """
     steps, answered = _available_steps(document, selections)
     chosen = _chosen_options(steps, answered)
     in_play = _roles_in_play(chosen)
     refinements = _available_refinements(document, answered, in_play)
     for name in in_play:
+        if name in held:
+            continue
         role = document["roles"][name]
         predicate = _compose(role["query"], chosen, refinements, selections, name)
         key = _predicate_key(predicate)

@@ -745,6 +745,54 @@ def choosy_guide(test_db):
             return guide_sql.upsert_guide(curs, document)
 
 
+def test_a_pinned_role_is_never_what_makes_an_answer_dead(
+    client, choosy_guide, catalog
+):
+    """A pin outranks every predicate the guide composes.
+
+    That is what pinning is, and `_chosen_blueprint` honours it — so a
+    pinned role cannot be the reason an answer is unavailable. The sweep
+    composed its predicate anyway, found nothing, and greyed the answer
+    out with "no Floor" beside it: about the one piece they had chosen by
+    hand. Reached by the ordinary flow rather than a hand-edited URL —
+    `part.<role>` is what picking a piece in the catalog dialog writes.
+
+    The pair is the test. Without the pin, towne really is dead and the
+    sweep should say so; with it, the same answer is live. Asserting
+    only the second half would pass on a sweep that reports nothing at
+    all, which is how the first version of this test passed — its loop
+    over the dead answers ran zero times.
+    """
+    pin = f"part.floor={catalog['floor']['file_md5']}"
+    answered = "method=separate-wall"
+
+    def dead(query):
+        got = client.get(f"/api/guides/wall/availability?{query}").json
+        return got["unavailable"].get("texture", [])
+
+    # The control: unpinned, the guide has to find a towne floor itself,
+    # and there is not one.
+    assert dead(answered) == ["texture|towne"], (
+        "the fixture no longer has a texture the guide cannot satisfy, "
+        "so there is nothing for the pin to rescue"
+    )
+
+    # Pinned, the floor is settled and towne is back on offer.
+    assert dead(f"{answered}&{pin}") == [], (
+        "the sweep called an answer dead over a role that was pinned, "
+        "which a pin outranks by definition"
+    )
+
+    # And it really is live: taking it fills every part.
+    built = client.get(
+        f"/api/guides/wall/resolve?{answered}&{pin}&texture=texture|towne"
+    ).json
+    assert all(part["blueprint"] for part in built["parts"]), (
+        "towne is offered as live but taking it empties "
+        f"{[p['role'] for p in built['parts'] if p['blueprint'] is None]}"
+    )
+
+
 def test_availability_names_the_answers_that_would_empty_a_part(
     client, choosy_guide, catalog
 ):
@@ -892,9 +940,7 @@ def test_blame_reads_the_survivors_off_the_candidate_s_own_answers(client, test_
     and not off that map with the candidate pasted over it afterwards:
     those two agree with it on every guide whose later questions do not
     move when an earlier answer changes, which is why handing this the
-    wrong map left the whole suite green through two rewrites and the
-    comment in `_blame` had to admit the line was right by construction
-    and not by evidence.
+    wrong map can leave the whole suite green.
 
     Here the three maps differ. `trim` recommends nothing once the size
     is 4 inch, so choosing 4 inch is what leaves it standing unanswered

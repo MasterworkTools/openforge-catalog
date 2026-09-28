@@ -588,8 +588,8 @@ def test_a_malformed_default_clause_names_the_guide_rather_than_crashing(guide):
     string as an `AttributeError`, both out of the one function whose
     whole job is to say which guide and which question are at fault.
 
-    Both arms were patched a round apart and neither had a test; the
-    line has been rewritten twice.
+    Both arms are defences against a document the loader never saw,
+    and neither had a test.
     """
     clause_without_value = [{"when": {"selected": {"method": ["s2w-modular"]}}}]
     for default in (clause_without_value, ["s2w-modular"]):

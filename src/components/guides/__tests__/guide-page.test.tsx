@@ -286,6 +286,26 @@ describe('GuidePage', () => {
       expect(screen.getByText('Three ways.')).toBeInTheDocument();
     });
 
+    it('shows the heading before the guides arrive', async () => {
+      // The landing page for the whole feature. Returning null until
+      // the fetch lands made it a blank document for the length of a
+      // cold start, which reads as broken rather than as loading.
+      //
+      // Asserted synchronously, with no `await`: every other test here
+      // uses `findBy`, which waits past the loading state, so all of
+      // them pass with the frame gone.
+      visit('');
+      global.fetch = jest.fn(
+        () => new Promise(() => {})
+      ) as unknown as typeof fetch;
+
+      render(<GuidePage />);
+
+      expect(
+        screen.getByRole('heading', { name: 'Guided builds' })
+      ).toBeInTheDocument();
+    });
+
     it('says so when there are none', async () => {
       visit('');
       global.fetch = jest.fn(() =>

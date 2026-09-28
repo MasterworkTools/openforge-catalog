@@ -141,7 +141,11 @@ export function useGuideState(guideKey: string | null | undefined) {
     let current = true;
     fetchAvailability(guideKey, selections)
       .then((result) => {
-        if (current) setDead({ key: guideKey, asked, ...result });
+        // Stamp last. `DeadAnswers extends Availability`, so a field
+        // named `key` or `asked` added to that endpoint would compile
+        // and silently overwrite the pairing — leaving `myDead`
+        // comparing the payload against itself.
+        if (current) setDead({ ...result, key: guideKey, asked });
       })
       .catch((e: Error) => {
         // Nothing to show the person: dropping dead answers is an

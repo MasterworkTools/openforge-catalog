@@ -164,7 +164,7 @@ def guide_availability(guide_key: str):
                 # and are unaffected.
                 #
                 # No absolute counts here on purpose: they were quoted
-                # three times and stale three times, because later
+                # and stale each time, because later
                 # commits kept moving them. The delta and the reason
                 # survive a rebase; `52 → 50` did not.
                 resolved = resolve(
