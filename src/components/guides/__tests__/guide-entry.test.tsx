@@ -115,7 +115,7 @@ describe('GuideEntry', () => {
   });
 
   it('carries a guide that has no illustration at all', async () => {
-    // `image` is nullable in earnest: it is not a required field, so a
+    // `hero_image` is nullable in earnest: it is not a required field, so a
     // guide is authorable without one and this must not throw.
     served([{ ...WALL, hero_image: null }]);
 

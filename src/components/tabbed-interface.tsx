@@ -66,7 +66,24 @@ const TabbedInterface = () => {
               /api/guides for every visitor who never opens this tab.
               Re-opening re-fetches, which is a small response and no
               cache to get wrong. */}
-          <div style={{ display: activeTab === 'guides' ? 'block' : 'none' }}>
+          <div
+            style={{
+              display: activeTab === 'guides' ? 'block' : 'none',
+              // `.tabContent` is a fixed height with `overflow: hidden`,
+              // so a pane that does not handle its own overflow has its
+              // content cut off and unreachable — the document does not
+              // scroll either. Every sibling handles it: Part Search on
+              // its three column wrappers, the Base Generator with
+              // `height: 100%` on the div below. This one is plain flow
+              // content, so it needs both.
+              //
+              // Invisible today because one guide fits at every
+              // viewport. It becomes a bug the moment a second guide
+              // ships, which is a data change with no code change.
+              height: '100%',
+              overflowY: 'auto',
+            }}
+          >
             {activeTab === 'guides' && <GuideEntry />}
           </div>
           <div style={{ display: activeTab === 'baseGenerator' ? 'block' : 'none', height: '100%' }}>

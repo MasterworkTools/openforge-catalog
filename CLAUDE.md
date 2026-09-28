@@ -209,14 +209,19 @@ deploy is live without touching openforge-infra-frontend. Release PRs get a plan
 image, applies tofu and syncs the frontend; it never runs `bin/db_update up`. So
 a release carrying a schema change deploys code that is newer than the database,
 and the endpoints touching the new schema return an unhandled 500 until someone
-migrates by hand on the bastion. The order is **`bin/db_update up` on the bastion, then merge to
+migrates by hand on the bastion. The order is **`bin/db_update up` on the bastion, from a checkout of the ref
+being released, then merge to
 `main`, then `bin/upload_fixture <fixture>` for any fixtures the release needs.**
 
 The fixtures go last, not in the middle: `bin/upload_fixture` POSTs to
 `${OPENFORGE_BASE_URL}/api/admin/fixtures`, which is the *deployed* app, so before
 the merge it is still `main`'s image — and an older image will misclassify a
-fixture format it does not know rather than reject it cleanly. The window between
-the migration and the fixture load is benign: the new image against an empty table
+fixture format it does not know rather than reject it cleanly. The ref matters and fails silently if you get it wrong:
+`bin/db_update up` iterates the schema versions **in the checkout**, so from a
+`main` checkout today it finds no `version_18`/`version_19`, applies nothing,
+prints nothing and exits 0 — after which the merge lands in exactly the 500 this
+paragraph exists to prevent. The window between the migration and the fixture
+load is benign: the new image against an empty table
 answers `404 {"guides": []}`, which the page renders as "none yet" rather than as
 an error. As of PR #246 the pending gap is schema 18 and 19
 (`openforge_catalog-jag`), since `main` is still at 17.
