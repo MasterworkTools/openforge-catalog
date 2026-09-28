@@ -91,8 +91,9 @@ def lambda_handler(event, context):
 
     # Checked before anything touches the database, and named for what it is.
     #
-    # `get_schema_versions()` enumerates `version_*.py` with `os.listdir`, so a build
-    # that ships the package but prunes those files yields nothing — and then `max()`
+    # `get_schema_versions()` imports every `.py` it finds with `os.listdir` and
+    # collects whatever registered through `@SchemaVersionDecorator`, so a build that
+    # ships the package but prunes the version modules yields nothing — and `max()`
     # would say "max() iterable argument is empty" while CloudWatch is the only
     # forensics anyone has. That reads as a database fault; it is a packaging fault
     # (openforge_catalog-bj5).
@@ -105,7 +106,7 @@ def lambda_handler(event, context):
     versions = get_schema_versions()
     if not versions:
         raise RuntimeError(
-            "no version_*.py modules found under openforge/db/schema, "
+            "no schema versions registered from openforge/db/schema, "
             "so there is nothing to apply"
         )
 

@@ -347,8 +347,9 @@ def test_a_version_reporting_failure_by_return_value_raises(test_db):
 def test_an_image_without_the_schema_modules_says_so(test_db, monkeypatch):
     """A packaging fault should not arrive looking like a database fault.
 
-    `get_schema_versions()` discovers migrations with `os.listdir`, so a build
-    that ships the package but prunes its `version_*.py` finds none
+    `get_schema_versions()` imports every `.py` under that package and collects
+    whatever registered through the decorator, so a build that ships the package
+    but prunes the version modules registers none
     (openforge_catalog-bj5). Before the explicit check, `max()` got there first
     and the log group — the only forensics this function has — read
     `max() iterable argument is empty`.
@@ -359,7 +360,7 @@ def test_an_image_without_the_schema_modules_says_so(test_db, monkeypatch):
     """
     monkeypatch.setattr(migrate, "get_schema_versions", lambda: [])
 
-    with pytest.raises(RuntimeError, match=r"no version_\*\.py modules found"):
+    with pytest.raises(RuntimeError, match="no schema versions registered"):
         migrate.lambda_handler({}, None)
 
 

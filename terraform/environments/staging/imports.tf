@@ -13,10 +13,14 @@
 # function and register the new one itself.
 #
 # What holds that v6.40.0 floor is `.terraform.lock.hcl` pinning 6.66.0, not the
-# `~> 6.0` range, which would happily resolve below it. Anyone re-locking the
-# provider downward takes this design away with it: without the attachment import,
-# the apply cannot swap a target group that holds only one target, and the manual
-# step this file exists to delete comes back.
+# `~> 6.0` range. Not because the range would resolve below the floor — it resolves
+# to the newest matching version, so a bare init lands well above it — but because
+# the range *admits* anything from 6.0.0 up and therefore guarantees nothing. The
+# lockfile is what makes the plan a human read on the PR and the plan the merge
+# applies the same provider, which is what decides adopt-versus-replace across
+# minors. Anyone re-locking downward takes this design with them: without the
+# attachment import the apply cannot swap a target group holding one target, and
+# the manual step this file exists to delete comes back.
 #
 # How long that takes, stated accurately because an earlier version of this comment
 # said "milliseconds" and that is wrong. Tofu orders a ForceNew replacement whose
@@ -26,12 +30,15 @@
 # for LastUpdateStatus=Successful. Minutes, on the adoption apply only, because that
 # is the one apply that creates the function.
 #
-# Still far better than the manual step this replaces. If even that window is unwanted, the adoption
-# apply can be split: `tofu apply -var image_tag=<sha> -target=aws_lambda_permission.alb`
-# creates the new function and its permission first — a targeted plan processes its
-# dependencies' import blocks, including the target group's, and silently prunes the
-# rest — then a full apply swaps the target. `image_tag` has no default, so the
-# `-var` is not optional.
+# Still far better than the manual step this replaces. If even that window is
+# unwanted, the adoption apply can be split. Run
+#
+#   tofu apply -var image_tag=<sha> -target=aws_lambda_permission.alb
+#
+# to create the new function and its permission first — a targeted plan processes
+# its dependencies' import blocks, including the target group's, and silently prunes
+# the rest — then a full apply swaps the target. `image_tag` has no default, so pass
+# the `-var` or tofu will stop and prompt for it.
 #
 # The deleted instruction was worse than redundant: it took `/api/*` down *before* an
 # apply that cannot currently succeed, because the app secret is read as a data source
