@@ -126,7 +126,10 @@ resource "aws_lambda_function" "api" {
     log_group  = aws_cloudwatch_log_group.api.name
   }
 
-  depends_on = [aws_iam_role_policy_attachment.api_vpc]
+  depends_on = [
+    aws_iam_role_policy_attachment.api_vpc,
+    aws_iam_role_policy.api_db_secret,
+  ]
 }
 
 # ─── Migration Lambda ─────────────────────────────────────────────────────────
@@ -198,7 +201,17 @@ resource "aws_lambda_function" "migrate" {
     log_group  = aws_cloudwatch_log_group.migrate.name
   }
 
-  depends_on = [aws_iam_role_policy_attachment.api_vpc]
+  # api_db_secret is named explicitly, not just implied. The deploy's first apply
+  # is `-target`ed at this function, and -target walks dependencies rather than
+  # dependents: this policy is attached *to* aws_iam_role.api rather than
+  # referenced *by* it, so without this edge a change to the only grant of
+  # secretsmanager:GetSecretValue would be skipped by the one apply that runs
+  # before the migration is invoked — and the invoke would fail to read its
+  # password for a reason nothing in the plan mentioned.
+  depends_on = [
+    aws_iam_role_policy_attachment.api_vpc,
+    aws_iam_role_policy.api_db_secret,
+  ]
 }
 
 # ─── ALB ──────────────────────────────────────────────────────────────────────

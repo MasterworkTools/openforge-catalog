@@ -254,7 +254,16 @@ cannot be one apply with the migration first.
 
 **The one-time adoption apply is done by hand**, as a full apply, because
 `imports.tf` adopts live resources and the app secret must exist first. The split
-above is the steady state after that. Layered on openforge-infra's staging state exactly as production is, and
+above is the steady state after that.
+
+**The split moves which side is ahead, it does not remove the window.** Between the
+migration and the second apply, the *database* is ahead and the **old** API image is
+still serving. Every migration in the tree today is additive, so that is free — but a
+`DROP COLUMN` or a `RENAME` would break the code that was working a moment ago, which
+is harder to spot than a new column the old code ignores. So schema changes want
+expand/contract: add and backfill in one release, stop using the old shape, remove it
+in a later one. This matters beyond staging, because the plan is to copy this job to
+production. Layered on openforge-infra's staging state exactly as production is, and
 kept diffable against `../production` — the two should differ only in account,
 environment name, bucket prefix, and the migration function.
 

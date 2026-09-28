@@ -63,7 +63,7 @@ def _recorded_versions(db, allow_missing=False):
             return {row[0] for row in curs.fetchall()}
 
 
-def _apply(db):
+def _apply(db, versions):
     """Run the pending migrations, committing each on its own.
 
     The same loop as `bin/db_update up`, and the per-version commit is the
@@ -77,7 +77,7 @@ def _apply(db):
     exit, so the one thing a version could do to signal "I did not finish"
     would commit its half-finished work.
     """
-    for schema in get_schema_versions():
+    for schema in versions:
         with db.connection() as conn:
             if not schema(conn).up():
                 raise RuntimeError(
@@ -89,17 +89,28 @@ def _apply(db):
 def lambda_handler(event, context):
     db = PgDB(os.environ, use_pool=False)
 
+    # Checked before anything touches the database, and named for what it is.
+    # `get_schema_versions()` enumerates modules with `os.listdir`, so an image
+    # shipped without `openforge/db/schema` yields nothing — and then `max()`
+    # would say "max() iterable argument is empty" while CloudWatch is the only
+    # forensics anyone has. That reads as a database fault; it is a packaging
+    # fault (openforge_catalog-bj5).
+    versions = get_schema_versions()
+    if not versions:
+        raise RuntimeError(
+            "no schema version modules found: openforge/db/schema is missing "
+            "from the image, so there is nothing to apply"
+        )
+
     before = _recorded_versions(db, allow_missing=True)
-    _apply(db)
+    _apply(db, versions)
     after = _recorded_versions(db)
 
-    # The end state, asserted rather than reported. Every other way this
-    # can go wrong produces a payload that looks like a healthy no-op:
-    # a migration that silently does nothing, an empty `get_schema_versions()`
-    # (its `os.listdir` needs the modules unzipped on disk), a version read
-    # that fails. All of them leave the head unrecorded, and the deploy must
-    # not proceed on any of them.
-    head = max(schema.version for schema in get_schema_versions())
+    # The end state, asserted rather than reported. The other ways this can go
+    # wrong produce a payload that looks like a healthy no-op — a migration
+    # that silently does nothing, a version read that fails — and the deploy
+    # must not proceed on any of them.
+    head = max(schema.version for schema in versions)
     if head not in after:
         raise RuntimeError(
             f"migrations did not reach head {head}; recorded: {sorted(after)}"

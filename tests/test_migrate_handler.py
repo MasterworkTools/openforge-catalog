@@ -9,6 +9,7 @@ exercise the `down_impl` they stand in for.
 
 import logging
 
+import psycopg
 import pytest
 from psycopg import sql
 
@@ -41,15 +42,22 @@ def restore_db_log_level():
     logger.setLevel(before)
 
 
-def _column_exists(db, table, column):
+def _schema_shape(db):
+    """Every (table, column) in the schema.
+
+    Named nothing in particular on purpose. Asserting on `guides.hero_image`
+    would pin this file to whichever version happens to be head, so the next
+    schema PR would have to edit it — and comparing shapes additionally kills a
+    `down_impl` that records its version without undoing anything, which
+    checking one known column cannot.
+    """
     with db.connection() as conn:
         with conn.cursor() as curs:
             curs.execute(
-                "SELECT 1 FROM information_schema.columns "
-                "WHERE table_name = %s AND column_name = %s",
-                (table, column),
+                "SELECT table_name, column_name FROM information_schema.columns "
+                "WHERE table_schema = current_schema()"
             )
-            return curs.fetchone() is not None
+            return set(curs.fetchall())
 
 
 def _recorded(db):
@@ -63,9 +71,8 @@ def _roll_back_head(db):
     """Undo the newest migration through its own `down_impl`.
 
     Hand-rolled `ALTER TABLE` would pin this file to whatever the head
-    version happens to be, so every future schema PR would have to edit it —
-    and it would skip the `down_impl` it is standing in for, which nothing
-    else in the suite asserts on.
+    version happens to be, and would skip the `down_impl` it is standing in
+    for, which nothing else in the suite asserts on.
     """
     head = get_schema_versions()[-1]
     with db.connection() as conn:
@@ -98,25 +105,31 @@ def test_applies_a_missing_version_and_names_it(test_db):
     had already put it back, so an `_apply` that only inserted
     `schema_versions` rows and executed no DDL passed it.
     """
+    full_shape = _schema_shape(test_db)
+    prior = get_schema_versions()[-2].version
+
     head = _roll_back_head(test_db)
     assert head not in _recorded(test_db)
-    assert not _column_exists(test_db, "guides", "hero_image")
+    rolled_back_shape = _schema_shape(test_db)
+    assert rolled_back_shape != full_shape, "down_impl recorded but undid nothing"
 
     try:
         result = migrate.lambda_handler({}, None)
-        column_after = _column_exists(test_db, "guides", "hero_image")
+        shape_after = _schema_shape(test_db)
         recorded_after = _recorded(test_db)
     finally:
         # Never leave the session database behind head: every later test in
         # this run would fail on something unrelated to what it asserts.
         if head not in _recorded(test_db):
-            migrate._apply(test_db)
+            migrate._apply(test_db, get_schema_versions())
 
     assert result["ok"] is True
-    assert result["schema_version_before"] == head - 1
+    assert result["schema_version_before"] == prior
     assert result["schema_version_after"] == head
     assert result["applied"] == [head]
-    assert column_after, "the migration recorded its version but ran no DDL"
+    assert (
+        shape_after == full_shape
+    ), "the migration recorded its version but did not restore the schema"
     assert head in recorded_after
 
 
@@ -179,7 +192,7 @@ def test_not_reaching_head_is_a_failure_not_a_quiet_no_op(test_db, monkeypatch):
     """
     head = _roll_back_head(test_db)
 
-    monkeypatch.setattr(migrate, "_apply", lambda db: None)
+    monkeypatch.setattr(migrate, "_apply", lambda db, versions: None)
 
     try:
         with pytest.raises(RuntimeError, match=f"did not reach head {head}"):
@@ -187,7 +200,7 @@ def test_not_reaching_head_is_a_failure_not_a_quiet_no_op(test_db, monkeypatch):
     finally:
         monkeypatch.undo()
         if head not in _recorded(test_db):
-            migrate._apply(test_db)
+            migrate._apply(test_db, get_schema_versions())
 
 
 def test_a_failing_migration_is_not_swallowed(test_db, monkeypatch):
@@ -199,7 +212,7 @@ def test_a_failing_migration_is_not_swallowed(test_db, monkeypatch):
     fails.
     """
 
-    def boom(db):
+    def boom(db, versions):
         raise RuntimeError("migration 20 exploded")
 
     monkeypatch.setattr(migrate, "_apply", boom)
@@ -238,10 +251,54 @@ def test_a_failure_part_way_keeps_the_versions_that_landed(test_db, monkeypatch)
     finally:
         monkeypatch.undo()
         if head.version not in _recorded(test_db):
-            migrate._apply(test_db)
+            migrate._apply(test_db, get_schema_versions())
 
     assert prior.version in recorded, (
         "the version before the failure was rolled back too — "
         "one connection for the whole loop, not one per version"
     )
     assert head.version not in recorded
+
+
+def test_the_guard_catches_only_a_missing_table(test_db):
+    """The narrowing itself, which nothing else pinned.
+
+    Reverting `except psycopg.errors.UndefinedTable` to `except Exception`
+    left the whole file green, so the original P1 could be reintroduced in
+    silence. A present table with the wrong shape is the cheapest way to
+    reach the guard with something it must *not* swallow.
+    """
+    with test_db.connection() as conn:
+        with conn.cursor() as curs:
+            curs.execute(sql.SQL("ALTER TABLE schema_versions RENAME version TO v"))
+        conn.commit()
+
+    try:
+        with pytest.raises(psycopg.errors.UndefinedColumn):
+            migrate._recorded_versions(test_db, allow_missing=True)
+    finally:
+        with test_db.connection() as conn:
+            with conn.cursor() as curs:
+                curs.execute(sql.SQL("ALTER TABLE schema_versions RENAME v TO version"))
+            conn.commit()
+
+
+def test_a_version_reporting_failure_by_return_value_raises(test_db):
+    """`break` there would have committed the half-finished version.
+
+    Unreachable today — no `up()` in the tree returns falsy — but reverting the
+    raise to `break` also left the file green, so the reason the branch exists
+    was unpinned.
+    """
+
+    class Pretends:
+        version = 999
+
+        def __init__(self, conn):
+            pass
+
+        def up(self):
+            return False
+
+    with pytest.raises(RuntimeError, match="migration 999 reported failure"):
+        migrate._apply(test_db, [Pretends])

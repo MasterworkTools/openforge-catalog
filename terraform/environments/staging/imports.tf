@@ -10,8 +10,21 @@
 # the second stopped being true at provider v6.40.0, which documents a
 # comma-separated `target_group_arn,target_id` import. `~> 6.0` resolves well past
 # that, so the attachment is imported below and `target_id` — which is ForceNew —
-# makes the apply deregister the old function and register the new one itself, in
-# milliseconds.
+# makes the apply deregister the old function and register the new one itself.
+#
+# How long that takes, stated accurately because an earlier version of this comment
+# said "milliseconds" and that is wrong. Tofu orders a ForceNew replacement whose
+# resource depends on something being created as destroy-old, create-dependency,
+# create-new — so the deregister lands in the first wave and the target group is
+# empty until `openforge-catalog-api` exists: an image pull, VPC ENIs, and the wait
+# for LastUpdateStatus=Successful. Minutes, on the adoption apply only, because that
+# is the one apply that creates the function.
+#
+# Still far better than the manual step this replaces (which took /api/* down before
+# an apply that could not succeed). If even that window is unwanted, the adoption
+# apply can be split: `tofu apply -target=aws_lambda_permission.alb` creates the new
+# function and its permission first — a targeted plan processes its dependencies'
+# import blocks and silently prunes the rest — then a full apply swaps the target.
 #
 # That instruction was worse than redundant. It took `/api/*` down *before* an
 # apply that cannot currently succeed (the app secret is read as a data source and
