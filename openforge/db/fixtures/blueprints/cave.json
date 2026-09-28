@@ -38,1302 +38,6 @@
             ]
         },
         "file_metadata": {
-            "file": "cave%aggregate#floor+squares.1x1.openforge.stl",
-            "file_modified_at": "2020-02-25T13:12:03.136785",
-            "full_name": "tiles/cave/floors/floor%aggregate/openforge/cave%aggregate#floor+squares.1x1.openforge.stl",
-            "md5": "0805ce8aae75eb8b2c8b95be3eab15d9",
-            "size": 2397384,
-            "storage_address": "https://objects.openforge.tools/models/0805ce/0805ce8aae75eb8b2c8b95be3eab15d9.stl"
-        },
-        "images": [
-            {
-                "image_name": "thumbnail",
-                "image_url": "https://objects.openforge.tools/sprites/0805ce/0805ce8aae75eb8b2c8b95be3eab15d9.png",
-                "sprite_metadata": {
-                    "angles": [
-                        {
-                            "camera_pos": [
-                                -4,
-                                0,
-                                2
-                            ],
-                            "index": 0,
-                            "name": "front"
-                        },
-                        {
-                            "camera_pos": [
-                                -3,
-                                2,
-                                3
-                            ],
-                            "index": 1,
-                            "name": "front-right"
-                        },
-                        {
-                            "camera_pos": [
-                                0,
-                                2,
-                                4
-                            ],
-                            "index": 2,
-                            "name": "right"
-                        },
-                        {
-                            "camera_pos": [
-                                2,
-                                3,
-                                3
-                            ],
-                            "index": 3,
-                            "name": "back-right"
-                        },
-                        {
-                            "camera_pos": [
-                                0,
-                                2,
-                                4
-                            ],
-                            "index": 4,
-                            "name": "back"
-                        },
-                        {
-                            "camera_pos": [
-                                -3,
-                                2,
-                                3
-                            ],
-                            "index": 5,
-                            "name": "back-left"
-                        },
-                        {
-                            "camera_pos": [
-                                -4,
-                                0,
-                                2
-                            ],
-                            "index": 6,
-                            "name": "left"
-                        },
-                        {
-                            "camera_pos": [
-                                -3,
-                                -3,
-                                2
-                            ],
-                            "index": 7,
-                            "name": "front-left"
-                        },
-                        {
-                            "camera_pos": [
-                                -2,
-                                0,
-                                5
-                            ],
-                            "index": 8,
-                            "name": "top"
-                        },
-                        {
-                            "camera_pos": [
-                                -2,
-                                -3,
-                                0
-                            ],
-                            "index": 9,
-                            "name": "bottom"
-                        }
-                    ],
-                    "default_angle": 0,
-                    "grid_cols": 5,
-                    "grid_rows": 2,
-                    "tile_size": 512
-                }
-            }
-        ],
-        "metadata": false,
-        "tags": [
-            "connection|openforge",
-            "shape|floor",
-            "shape|floor|squares",
-            "size|depth|1",
-            "size|width|1",
-            "texture|cave",
-            "texture|cave|aggregate"
-        ],
-        "type": "model"
-    },
-    {
-        "config": {
-            "parts": [
-                {
-                    "name": "base",
-                    "optional": true,
-                    "tags": {
-                        "constrain": [
-                            {
-                                "filter": "shape|floor"
-                            },
-                            {
-                                "filter": "shape|wall"
-                            },
-                            {
-                                "tag": "shape"
-                            },
-                            {
-                                "tag": "size|depth"
-                            },
-                            {
-                                "tag": "size|width"
-                            }
-                        ],
-                        "deny": [
-                            {
-                                "tag": "build|s2w"
-                            }
-                        ],
-                        "require": [
-                            {
-                                "tag": "shape|base"
-                            }
-                        ]
-                    }
-                }
-            ]
-        },
-        "file_metadata": {
-            "file": "cave%aggregate#floor+squares.2x1.openforge.stl",
-            "file_modified_at": "2020-02-25T13:14:56.109778",
-            "full_name": "tiles/cave/floors/floor%aggregate/openforge/cave%aggregate#floor+squares.2x1.openforge.stl",
-            "md5": "688aca2c5e97bfde92eb2318f5ddadf1",
-            "size": 3891584,
-            "storage_address": "https://objects.openforge.tools/models/688aca/688aca2c5e97bfde92eb2318f5ddadf1.stl"
-        },
-        "images": [
-            {
-                "image_name": "thumbnail",
-                "image_url": "https://objects.openforge.tools/sprites/688aca/688aca2c5e97bfde92eb2318f5ddadf1.png",
-                "sprite_metadata": {
-                    "angles": [
-                        {
-                            "camera_pos": [
-                                -4,
-                                0,
-                                2
-                            ],
-                            "index": 0,
-                            "name": "front"
-                        },
-                        {
-                            "camera_pos": [
-                                -3,
-                                2,
-                                3
-                            ],
-                            "index": 1,
-                            "name": "front-right"
-                        },
-                        {
-                            "camera_pos": [
-                                0,
-                                2,
-                                4
-                            ],
-                            "index": 2,
-                            "name": "right"
-                        },
-                        {
-                            "camera_pos": [
-                                2,
-                                3,
-                                3
-                            ],
-                            "index": 3,
-                            "name": "back-right"
-                        },
-                        {
-                            "camera_pos": [
-                                0,
-                                2,
-                                4
-                            ],
-                            "index": 4,
-                            "name": "back"
-                        },
-                        {
-                            "camera_pos": [
-                                -3,
-                                2,
-                                3
-                            ],
-                            "index": 5,
-                            "name": "back-left"
-                        },
-                        {
-                            "camera_pos": [
-                                -4,
-                                0,
-                                2
-                            ],
-                            "index": 6,
-                            "name": "left"
-                        },
-                        {
-                            "camera_pos": [
-                                -3,
-                                -3,
-                                2
-                            ],
-                            "index": 7,
-                            "name": "front-left"
-                        },
-                        {
-                            "camera_pos": [
-                                -2,
-                                0,
-                                5
-                            ],
-                            "index": 8,
-                            "name": "top"
-                        },
-                        {
-                            "camera_pos": [
-                                -2,
-                                -3,
-                                0
-                            ],
-                            "index": 9,
-                            "name": "bottom"
-                        }
-                    ],
-                    "default_angle": 0,
-                    "grid_cols": 5,
-                    "grid_rows": 2,
-                    "tile_size": 512
-                }
-            }
-        ],
-        "metadata": false,
-        "tags": [
-            "connection|openforge",
-            "shape|floor",
-            "shape|floor|squares",
-            "size|depth|1",
-            "size|width|2",
-            "texture|cave",
-            "texture|cave|aggregate"
-        ],
-        "type": "model"
-    },
-    {
-        "config": {
-            "parts": [
-                {
-                    "name": "base",
-                    "optional": true,
-                    "tags": {
-                        "constrain": [
-                            {
-                                "filter": "shape|floor"
-                            },
-                            {
-                                "filter": "shape|wall"
-                            },
-                            {
-                                "tag": "shape"
-                            },
-                            {
-                                "tag": "size|depth"
-                            },
-                            {
-                                "tag": "size|width"
-                            }
-                        ],
-                        "deny": [
-                            {
-                                "tag": "build|s2w"
-                            }
-                        ],
-                        "require": [
-                            {
-                                "tag": "shape|base"
-                            }
-                        ]
-                    }
-                }
-            ]
-        },
-        "file_metadata": {
-            "file": "cave%aggregate#floor+squares.2x2.openforge.stl",
-            "file_modified_at": "2020-02-25T14:46:38.946647",
-            "full_name": "tiles/cave/floors/floor%aggregate/openforge/cave%aggregate#floor+squares.2x2.openforge.stl",
-            "md5": "3a4fc90afc3d5b10c3ae87cfe55e27b3",
-            "size": 10400784,
-            "storage_address": "https://objects.openforge.tools/models/3a4fc9/3a4fc90afc3d5b10c3ae87cfe55e27b3.stl"
-        },
-        "images": [
-            {
-                "image_name": "thumbnail",
-                "image_url": "https://objects.openforge.tools/sprites/3a4fc9/3a4fc90afc3d5b10c3ae87cfe55e27b3.png",
-                "sprite_metadata": {
-                    "angles": [
-                        {
-                            "camera_pos": [
-                                -4,
-                                0,
-                                2
-                            ],
-                            "index": 0,
-                            "name": "front"
-                        },
-                        {
-                            "camera_pos": [
-                                -3,
-                                2,
-                                3
-                            ],
-                            "index": 1,
-                            "name": "front-right"
-                        },
-                        {
-                            "camera_pos": [
-                                0,
-                                2,
-                                4
-                            ],
-                            "index": 2,
-                            "name": "right"
-                        },
-                        {
-                            "camera_pos": [
-                                2,
-                                3,
-                                3
-                            ],
-                            "index": 3,
-                            "name": "back-right"
-                        },
-                        {
-                            "camera_pos": [
-                                0,
-                                2,
-                                4
-                            ],
-                            "index": 4,
-                            "name": "back"
-                        },
-                        {
-                            "camera_pos": [
-                                -3,
-                                2,
-                                3
-                            ],
-                            "index": 5,
-                            "name": "back-left"
-                        },
-                        {
-                            "camera_pos": [
-                                -4,
-                                0,
-                                2
-                            ],
-                            "index": 6,
-                            "name": "left"
-                        },
-                        {
-                            "camera_pos": [
-                                -3,
-                                -3,
-                                2
-                            ],
-                            "index": 7,
-                            "name": "front-left"
-                        },
-                        {
-                            "camera_pos": [
-                                -2,
-                                0,
-                                5
-                            ],
-                            "index": 8,
-                            "name": "top"
-                        },
-                        {
-                            "camera_pos": [
-                                -2,
-                                -3,
-                                0
-                            ],
-                            "index": 9,
-                            "name": "bottom"
-                        }
-                    ],
-                    "default_angle": 0,
-                    "grid_cols": 5,
-                    "grid_rows": 2,
-                    "tile_size": 512
-                }
-            }
-        ],
-        "metadata": false,
-        "tags": [
-            "connection|openforge",
-            "shape|floor",
-            "shape|floor|squares",
-            "size|depth|2",
-            "size|width|2",
-            "texture|cave",
-            "texture|cave|aggregate"
-        ],
-        "type": "model"
-    },
-    {
-        "config": {
-            "parts": [
-                {
-                    "name": "base",
-                    "optional": true,
-                    "tags": {
-                        "constrain": [
-                            {
-                                "filter": "shape|floor"
-                            },
-                            {
-                                "filter": "shape|wall"
-                            },
-                            {
-                                "tag": "shape"
-                            },
-                            {
-                                "tag": "size|depth"
-                            },
-                            {
-                                "tag": "size|width"
-                            }
-                        ],
-                        "deny": [
-                            {
-                                "tag": "build|s2w"
-                            }
-                        ],
-                        "require": [
-                            {
-                                "tag": "shape|base"
-                            }
-                        ]
-                    }
-                }
-            ]
-        },
-        "file_metadata": {
-            "file": "cave%aggregate#floor+squares.3x1.openforge.stl",
-            "file_modified_at": "2020-02-25T13:21:17.662700",
-            "full_name": "tiles/cave/floors/floor%aggregate/openforge/cave%aggregate#floor+squares.3x1.openforge.stl",
-            "md5": "ff38885514e7e84fd543f143d73e7b32",
-            "size": 6154684,
-            "storage_address": "https://objects.openforge.tools/models/ff3888/ff38885514e7e84fd543f143d73e7b32.stl"
-        },
-        "images": [
-            {
-                "image_name": "thumbnail",
-                "image_url": "https://objects.openforge.tools/sprites/ff3888/ff38885514e7e84fd543f143d73e7b32.png",
-                "sprite_metadata": {
-                    "angles": [
-                        {
-                            "camera_pos": [
-                                -4,
-                                0,
-                                2
-                            ],
-                            "index": 0,
-                            "name": "front"
-                        },
-                        {
-                            "camera_pos": [
-                                -3,
-                                2,
-                                3
-                            ],
-                            "index": 1,
-                            "name": "front-right"
-                        },
-                        {
-                            "camera_pos": [
-                                0,
-                                2,
-                                4
-                            ],
-                            "index": 2,
-                            "name": "right"
-                        },
-                        {
-                            "camera_pos": [
-                                2,
-                                3,
-                                3
-                            ],
-                            "index": 3,
-                            "name": "back-right"
-                        },
-                        {
-                            "camera_pos": [
-                                0,
-                                2,
-                                4
-                            ],
-                            "index": 4,
-                            "name": "back"
-                        },
-                        {
-                            "camera_pos": [
-                                -3,
-                                2,
-                                3
-                            ],
-                            "index": 5,
-                            "name": "back-left"
-                        },
-                        {
-                            "camera_pos": [
-                                -4,
-                                0,
-                                2
-                            ],
-                            "index": 6,
-                            "name": "left"
-                        },
-                        {
-                            "camera_pos": [
-                                -3,
-                                -3,
-                                2
-                            ],
-                            "index": 7,
-                            "name": "front-left"
-                        },
-                        {
-                            "camera_pos": [
-                                -2,
-                                0,
-                                5
-                            ],
-                            "index": 8,
-                            "name": "top"
-                        },
-                        {
-                            "camera_pos": [
-                                -2,
-                                -3,
-                                0
-                            ],
-                            "index": 9,
-                            "name": "bottom"
-                        }
-                    ],
-                    "default_angle": 0,
-                    "grid_cols": 5,
-                    "grid_rows": 2,
-                    "tile_size": 512
-                }
-            }
-        ],
-        "metadata": false,
-        "tags": [
-            "connection|openforge",
-            "shape|floor",
-            "shape|floor|squares",
-            "size|depth|1",
-            "size|width|3",
-            "texture|cave",
-            "texture|cave|aggregate"
-        ],
-        "type": "model"
-    },
-    {
-        "config": {
-            "parts": [
-                {
-                    "name": "base",
-                    "optional": true,
-                    "tags": {
-                        "constrain": [
-                            {
-                                "filter": "shape|floor"
-                            },
-                            {
-                                "filter": "shape|wall"
-                            },
-                            {
-                                "tag": "shape"
-                            },
-                            {
-                                "tag": "size|depth"
-                            },
-                            {
-                                "tag": "size|width"
-                            }
-                        ],
-                        "deny": [
-                            {
-                                "tag": "build|s2w"
-                            }
-                        ],
-                        "require": [
-                            {
-                                "tag": "shape|base"
-                            }
-                        ]
-                    }
-                }
-            ]
-        },
-        "file_metadata": {
-            "file": "cave%aggregate#floor+squares.3x3.openforge.stl",
-            "file_modified_at": "2020-02-25T14:42:05.891730",
-            "full_name": "tiles/cave/floors/floor%aggregate/openforge/cave%aggregate#floor+squares.3x3.openforge.stl",
-            "md5": "19c4a542e6695f10e90fc05cc2a28df0",
-            "size": 30510684,
-            "storage_address": "https://objects.openforge.tools/models/19c4a5/19c4a542e6695f10e90fc05cc2a28df0.stl"
-        },
-        "images": [
-            {
-                "image_name": "thumbnail",
-                "image_url": "https://objects.openforge.tools/sprites/19c4a5/19c4a542e6695f10e90fc05cc2a28df0.png",
-                "sprite_metadata": {
-                    "angles": [
-                        {
-                            "camera_pos": [
-                                -4,
-                                0,
-                                2
-                            ],
-                            "index": 0,
-                            "name": "front"
-                        },
-                        {
-                            "camera_pos": [
-                                -3,
-                                2,
-                                3
-                            ],
-                            "index": 1,
-                            "name": "front-right"
-                        },
-                        {
-                            "camera_pos": [
-                                0,
-                                2,
-                                4
-                            ],
-                            "index": 2,
-                            "name": "right"
-                        },
-                        {
-                            "camera_pos": [
-                                2,
-                                3,
-                                3
-                            ],
-                            "index": 3,
-                            "name": "back-right"
-                        },
-                        {
-                            "camera_pos": [
-                                0,
-                                2,
-                                4
-                            ],
-                            "index": 4,
-                            "name": "back"
-                        },
-                        {
-                            "camera_pos": [
-                                -3,
-                                2,
-                                3
-                            ],
-                            "index": 5,
-                            "name": "back-left"
-                        },
-                        {
-                            "camera_pos": [
-                                -4,
-                                0,
-                                2
-                            ],
-                            "index": 6,
-                            "name": "left"
-                        },
-                        {
-                            "camera_pos": [
-                                -3,
-                                -3,
-                                2
-                            ],
-                            "index": 7,
-                            "name": "front-left"
-                        },
-                        {
-                            "camera_pos": [
-                                -2,
-                                0,
-                                5
-                            ],
-                            "index": 8,
-                            "name": "top"
-                        },
-                        {
-                            "camera_pos": [
-                                -2,
-                                -3,
-                                0
-                            ],
-                            "index": 9,
-                            "name": "bottom"
-                        }
-                    ],
-                    "default_angle": 0,
-                    "grid_cols": 5,
-                    "grid_rows": 2,
-                    "tile_size": 512
-                }
-            }
-        ],
-        "metadata": false,
-        "tags": [
-            "connection|openforge",
-            "shape|floor",
-            "shape|floor|squares",
-            "size|depth|3",
-            "size|width|3",
-            "texture|cave",
-            "texture|cave|aggregate"
-        ],
-        "type": "model"
-    },
-    {
-        "config": {
-            "parts": [
-                {
-                    "name": "base",
-                    "optional": true,
-                    "tags": {
-                        "constrain": [
-                            {
-                                "filter": "shape|floor"
-                            },
-                            {
-                                "filter": "shape|wall"
-                            },
-                            {
-                                "tag": "shape"
-                            },
-                            {
-                                "tag": "size|depth"
-                            },
-                            {
-                                "tag": "size|width"
-                            }
-                        ],
-                        "deny": [
-                            {
-                                "tag": "build|s2w"
-                            }
-                        ],
-                        "require": [
-                            {
-                                "tag": "shape|base"
-                            }
-                        ]
-                    }
-                }
-            ]
-        },
-        "file_metadata": {
-            "file": "cave%aggregate#floor+squares.4x1.openforge.stl",
-            "file_modified_at": "2020-02-25T13:23:57.942227",
-            "full_name": "tiles/cave/floors/floor%aggregate/openforge/cave%aggregate#floor+squares.4x1.openforge.stl",
-            "md5": "e78441630a6e5f9c26c5525d44a80233",
-            "size": 8000784,
-            "storage_address": "https://objects.openforge.tools/models/e78441/e78441630a6e5f9c26c5525d44a80233.stl"
-        },
-        "images": [
-            {
-                "image_name": "thumbnail",
-                "image_url": "https://objects.openforge.tools/sprites/e78441/e78441630a6e5f9c26c5525d44a80233.png",
-                "sprite_metadata": {
-                    "angles": [
-                        {
-                            "camera_pos": [
-                                -4,
-                                0,
-                                2
-                            ],
-                            "index": 0,
-                            "name": "front"
-                        },
-                        {
-                            "camera_pos": [
-                                -3,
-                                2,
-                                3
-                            ],
-                            "index": 1,
-                            "name": "front-right"
-                        },
-                        {
-                            "camera_pos": [
-                                0,
-                                2,
-                                4
-                            ],
-                            "index": 2,
-                            "name": "right"
-                        },
-                        {
-                            "camera_pos": [
-                                2,
-                                3,
-                                3
-                            ],
-                            "index": 3,
-                            "name": "back-right"
-                        },
-                        {
-                            "camera_pos": [
-                                0,
-                                2,
-                                4
-                            ],
-                            "index": 4,
-                            "name": "back"
-                        },
-                        {
-                            "camera_pos": [
-                                -3,
-                                2,
-                                3
-                            ],
-                            "index": 5,
-                            "name": "back-left"
-                        },
-                        {
-                            "camera_pos": [
-                                -4,
-                                0,
-                                2
-                            ],
-                            "index": 6,
-                            "name": "left"
-                        },
-                        {
-                            "camera_pos": [
-                                -3,
-                                -3,
-                                2
-                            ],
-                            "index": 7,
-                            "name": "front-left"
-                        },
-                        {
-                            "camera_pos": [
-                                -2,
-                                0,
-                                5
-                            ],
-                            "index": 8,
-                            "name": "top"
-                        },
-                        {
-                            "camera_pos": [
-                                -2,
-                                -3,
-                                0
-                            ],
-                            "index": 9,
-                            "name": "bottom"
-                        }
-                    ],
-                    "default_angle": 0,
-                    "grid_cols": 5,
-                    "grid_rows": 2,
-                    "tile_size": 512
-                }
-            }
-        ],
-        "metadata": false,
-        "tags": [
-            "connection|openforge",
-            "shape|floor",
-            "shape|floor|squares",
-            "size|depth|1",
-            "size|width|4",
-            "texture|cave",
-            "texture|cave|aggregate"
-        ],
-        "type": "model"
-    },
-    {
-        "config": {
-            "parts": [
-                {
-                    "name": "base",
-                    "optional": true,
-                    "tags": {
-                        "constrain": [
-                            {
-                                "filter": "shape|floor"
-                            },
-                            {
-                                "filter": "shape|wall"
-                            },
-                            {
-                                "tag": "shape"
-                            },
-                            {
-                                "tag": "size|depth"
-                            },
-                            {
-                                "tag": "size|width"
-                            }
-                        ],
-                        "deny": [
-                            {
-                                "tag": "build|s2w"
-                            }
-                        ],
-                        "require": [
-                            {
-                                "tag": "shape|base"
-                            }
-                        ]
-                    }
-                }
-            ]
-        },
-        "file_metadata": {
-            "file": "cave%aggregate#floor+squares.4x2.openforge.stl",
-            "file_modified_at": "2020-02-25T14:38:50.856429",
-            "full_name": "tiles/cave/floors/floor%aggregate/openforge/cave%aggregate#floor+squares.4x2.openforge.stl",
-            "md5": "af08db84e92d31d5ed5c7f32ace86cea",
-            "size": 24857984,
-            "storage_address": "https://objects.openforge.tools/models/af08db/af08db84e92d31d5ed5c7f32ace86cea.stl"
-        },
-        "images": [
-            {
-                "image_name": "thumbnail",
-                "image_url": "https://objects.openforge.tools/sprites/af08db/af08db84e92d31d5ed5c7f32ace86cea.png",
-                "sprite_metadata": {
-                    "angles": [
-                        {
-                            "camera_pos": [
-                                -4,
-                                0,
-                                2
-                            ],
-                            "index": 0,
-                            "name": "front"
-                        },
-                        {
-                            "camera_pos": [
-                                -3,
-                                2,
-                                3
-                            ],
-                            "index": 1,
-                            "name": "front-right"
-                        },
-                        {
-                            "camera_pos": [
-                                0,
-                                2,
-                                4
-                            ],
-                            "index": 2,
-                            "name": "right"
-                        },
-                        {
-                            "camera_pos": [
-                                2,
-                                3,
-                                3
-                            ],
-                            "index": 3,
-                            "name": "back-right"
-                        },
-                        {
-                            "camera_pos": [
-                                0,
-                                2,
-                                4
-                            ],
-                            "index": 4,
-                            "name": "back"
-                        },
-                        {
-                            "camera_pos": [
-                                -3,
-                                2,
-                                3
-                            ],
-                            "index": 5,
-                            "name": "back-left"
-                        },
-                        {
-                            "camera_pos": [
-                                -4,
-                                0,
-                                2
-                            ],
-                            "index": 6,
-                            "name": "left"
-                        },
-                        {
-                            "camera_pos": [
-                                -3,
-                                -3,
-                                2
-                            ],
-                            "index": 7,
-                            "name": "front-left"
-                        },
-                        {
-                            "camera_pos": [
-                                -2,
-                                0,
-                                5
-                            ],
-                            "index": 8,
-                            "name": "top"
-                        },
-                        {
-                            "camera_pos": [
-                                -2,
-                                -3,
-                                0
-                            ],
-                            "index": 9,
-                            "name": "bottom"
-                        }
-                    ],
-                    "default_angle": 0,
-                    "grid_cols": 5,
-                    "grid_rows": 2,
-                    "tile_size": 512
-                }
-            }
-        ],
-        "metadata": false,
-        "tags": [
-            "connection|openforge",
-            "shape|floor",
-            "shape|floor|squares",
-            "size|depth|2",
-            "size|width|4",
-            "texture|cave",
-            "texture|cave|aggregate"
-        ],
-        "type": "model"
-    },
-    {
-        "config": {
-            "parts": [
-                {
-                    "name": "base",
-                    "optional": true,
-                    "tags": {
-                        "constrain": [
-                            {
-                                "filter": "shape|floor"
-                            },
-                            {
-                                "filter": "shape|wall"
-                            },
-                            {
-                                "tag": "shape"
-                            },
-                            {
-                                "tag": "size|depth"
-                            },
-                            {
-                                "tag": "size|width"
-                            }
-                        ],
-                        "deny": [
-                            {
-                                "tag": "build|s2w"
-                            }
-                        ],
-                        "require": [
-                            {
-                                "tag": "shape|base"
-                            }
-                        ]
-                    }
-                }
-            ]
-        },
-        "file_metadata": {
-            "file": "cave%aggregate#floor+squares.4x4.openforge.stl",
-            "file_modified_at": "2025-07-03T16:06:46.932279",
-            "full_name": "tiles/cave/floors/floor%aggregate/openforge/cave%aggregate#floor+squares.4x4.openforge.stl",
-            "md5": "72abce1cc4c497143614b0b7a8226104",
-            "size": 49066184,
-            "storage_address": "https://objects.openforge.tools/models/72abce/72abce1cc4c497143614b0b7a8226104.stl"
-        },
-        "images": [
-            {
-                "image_name": "thumbnail",
-                "image_url": "https://objects.openforge.tools/sprites/72abce/72abce1cc4c497143614b0b7a8226104.png",
-                "sprite_metadata": {
-                    "angles": [
-                        {
-                            "camera_pos": [
-                                -4,
-                                0,
-                                2
-                            ],
-                            "index": 0,
-                            "name": "front"
-                        },
-                        {
-                            "camera_pos": [
-                                -3,
-                                2,
-                                3
-                            ],
-                            "index": 1,
-                            "name": "front-right"
-                        },
-                        {
-                            "camera_pos": [
-                                0,
-                                2,
-                                4
-                            ],
-                            "index": 2,
-                            "name": "right"
-                        },
-                        {
-                            "camera_pos": [
-                                2,
-                                3,
-                                3
-                            ],
-                            "index": 3,
-                            "name": "back-right"
-                        },
-                        {
-                            "camera_pos": [
-                                0,
-                                2,
-                                4
-                            ],
-                            "index": 4,
-                            "name": "back"
-                        },
-                        {
-                            "camera_pos": [
-                                -3,
-                                2,
-                                3
-                            ],
-                            "index": 5,
-                            "name": "back-left"
-                        },
-                        {
-                            "camera_pos": [
-                                -4,
-                                0,
-                                2
-                            ],
-                            "index": 6,
-                            "name": "left"
-                        },
-                        {
-                            "camera_pos": [
-                                -3,
-                                -3,
-                                2
-                            ],
-                            "index": 7,
-                            "name": "front-left"
-                        },
-                        {
-                            "camera_pos": [
-                                -2,
-                                0,
-                                5
-                            ],
-                            "index": 8,
-                            "name": "top"
-                        },
-                        {
-                            "camera_pos": [
-                                -2,
-                                -3,
-                                0
-                            ],
-                            "index": 9,
-                            "name": "bottom"
-                        }
-                    ],
-                    "default_angle": 0,
-                    "grid_cols": 5,
-                    "grid_rows": 2,
-                    "tile_size": 512
-                }
-            }
-        ],
-        "metadata": false,
-        "tags": [
-            "connection|openforge",
-            "shape|floor",
-            "shape|floor|squares",
-            "size|depth|4",
-            "size|width|4",
-            "texture|cave",
-            "texture|cave|aggregate"
-        ],
-        "type": "model"
-    },
-    {
-        "config": {
-            "parts": [
-                {
-                    "name": "base",
-                    "optional": true,
-                    "tags": {
-                        "constrain": [
-                            {
-                                "filter": "shape|floor"
-                            },
-                            {
-                                "filter": "shape|wall"
-                            },
-                            {
-                                "tag": "shape"
-                            },
-                            {
-                                "tag": "size|depth"
-                            },
-                            {
-                                "tag": "size|width"
-                            }
-                        ],
-                        "deny": [
-                            {
-                                "tag": "build|s2w"
-                            }
-                        ],
-                        "require": [
-                            {
-                                "tag": "shape|base"
-                            }
-                        ]
-                    }
-                }
-            ]
-        },
-        "file_metadata": {
             "file": "cave%aggregate#floor.1x1.openforge.stl",
             "file_modified_at": "2020-02-25T13:05:51.069561",
             "full_name": "tiles/cave/floors/floor%aggregate/openforge/cave%aggregate#floor.1x1.openforge.stl",
@@ -2592,18 +1296,55 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "base",
+                    "optional": true,
+                    "tags": {
+                        "constrain": [
+                            {
+                                "filter": "shape|floor"
+                            },
+                            {
+                                "filter": "shape|wall"
+                            },
+                            {
+                                "tag": "shape"
+                            },
+                            {
+                                "tag": "size|depth"
+                            },
+                            {
+                                "tag": "size|width"
+                            }
+                        ],
+                        "deny": [
+                            {
+                                "tag": "build|s2w"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "shape|base"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
-            "file": "cave%aggregate#floor+squares.1x1.openlock.stl",
-            "file_modified_at": "2024-11-21T11:23:13.686864",
-            "full_name": "tiles/cave/floors/floor%aggregate/openlock/cave%aggregate#floor+squares.1x1.openlock.stl",
-            "md5": "bc487a601591eaf81ff21d753491c0b4",
-            "size": 2471584,
-            "storage_address": "https://objects.openforge.tools/models/bc487a/bc487a601591eaf81ff21d753491c0b4.stl"
+            "file": "cave%aggregate+squares#floor.1x1.openforge.stl",
+            "file_modified_at": "2020-02-25T13:12:03.136785",
+            "full_name": "tiles/cave/floors/floor%aggregate/openforge/cave%aggregate+squares#floor.1x1.openforge.stl",
+            "md5": "0805ce8aae75eb8b2c8b95be3eab15d9",
+            "size": 2397384,
+            "storage_address": "https://objects.openforge.tools/models/0805ce/0805ce8aae75eb8b2c8b95be3eab15d9.stl"
         },
         "images": [
             {
                 "image_name": "thumbnail",
-                "image_url": "https://objects.openforge.tools/sprites/bc487a/bc487a601591eaf81ff21d753491c0b4.png",
+                "image_url": "https://objects.openforge.tools/sprites/0805ce/0805ce8aae75eb8b2c8b95be3eab15d9.png",
                 "sprite_metadata": {
                     "angles": [
                         {
@@ -2706,29 +1447,67 @@
         ],
         "metadata": false,
         "tags": [
-            "connection|openlock",
+            "connection|openforge",
             "shape|floor",
-            "shape|floor|squares",
+            "shape|square",
             "size|depth|1",
             "size|width|1",
             "texture|cave",
-            "texture|cave|aggregate"
+            "texture|cave|aggregate",
+            "texture|cave|aggregate|squares"
         ],
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "base",
+                    "optional": true,
+                    "tags": {
+                        "constrain": [
+                            {
+                                "filter": "shape|floor"
+                            },
+                            {
+                                "filter": "shape|wall"
+                            },
+                            {
+                                "tag": "shape"
+                            },
+                            {
+                                "tag": "size|depth"
+                            },
+                            {
+                                "tag": "size|width"
+                            }
+                        ],
+                        "deny": [
+                            {
+                                "tag": "build|s2w"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "shape|base"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
-            "file": "cave%aggregate#floor+squares.2x1.openlock.stl",
-            "file_modified_at": "2024-11-21T11:23:10.866648",
-            "full_name": "tiles/cave/floors/floor%aggregate/openlock/cave%aggregate#floor+squares.2x1.openlock.stl",
-            "md5": "d5bcb3fa3b1eb9e8b3893e2244b6fddf",
-            "size": 4022884,
-            "storage_address": "https://objects.openforge.tools/models/d5bcb3/d5bcb3fa3b1eb9e8b3893e2244b6fddf.stl"
+            "file": "cave%aggregate+squares#floor.2x1.openforge.stl",
+            "file_modified_at": "2020-02-25T13:14:56.109778",
+            "full_name": "tiles/cave/floors/floor%aggregate/openforge/cave%aggregate+squares#floor.2x1.openforge.stl",
+            "md5": "688aca2c5e97bfde92eb2318f5ddadf1",
+            "size": 3891584,
+            "storage_address": "https://objects.openforge.tools/models/688aca/688aca2c5e97bfde92eb2318f5ddadf1.stl"
         },
         "images": [
             {
                 "image_name": "thumbnail",
-                "image_url": "https://objects.openforge.tools/sprites/d5bcb3/d5bcb3fa3b1eb9e8b3893e2244b6fddf.png",
+                "image_url": "https://objects.openforge.tools/sprites/688aca/688aca2c5e97bfde92eb2318f5ddadf1.png",
                 "sprite_metadata": {
                     "angles": [
                         {
@@ -2831,29 +1610,67 @@
         ],
         "metadata": false,
         "tags": [
-            "connection|openlock",
+            "connection|openforge",
             "shape|floor",
-            "shape|floor|squares",
+            "shape|square",
             "size|depth|1",
             "size|width|2",
             "texture|cave",
-            "texture|cave|aggregate"
+            "texture|cave|aggregate",
+            "texture|cave|aggregate|squares"
         ],
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "base",
+                    "optional": true,
+                    "tags": {
+                        "constrain": [
+                            {
+                                "filter": "shape|floor"
+                            },
+                            {
+                                "filter": "shape|wall"
+                            },
+                            {
+                                "tag": "shape"
+                            },
+                            {
+                                "tag": "size|depth"
+                            },
+                            {
+                                "tag": "size|width"
+                            }
+                        ],
+                        "deny": [
+                            {
+                                "tag": "build|s2w"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "shape|base"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
-            "file": "cave%aggregate#floor+squares.2x2.openlock.stl",
-            "file_modified_at": "2024-11-21T09:25:37.236372",
-            "full_name": "tiles/cave/floors/floor%aggregate/openlock/cave%aggregate#floor+squares.2x2.openlock.stl",
-            "md5": "9a9118ae948962ce14f6bb3c77f97c1a",
-            "size": 10759084,
-            "storage_address": "https://objects.openforge.tools/models/9a9118/9a9118ae948962ce14f6bb3c77f97c1a.stl"
+            "file": "cave%aggregate+squares#floor.2x2.openforge.stl",
+            "file_modified_at": "2020-02-25T14:46:38.946647",
+            "full_name": "tiles/cave/floors/floor%aggregate/openforge/cave%aggregate+squares#floor.2x2.openforge.stl",
+            "md5": "3a4fc90afc3d5b10c3ae87cfe55e27b3",
+            "size": 10400784,
+            "storage_address": "https://objects.openforge.tools/models/3a4fc9/3a4fc90afc3d5b10c3ae87cfe55e27b3.stl"
         },
         "images": [
             {
                 "image_name": "thumbnail",
-                "image_url": "https://objects.openforge.tools/sprites/9a9118/9a9118ae948962ce14f6bb3c77f97c1a.png",
+                "image_url": "https://objects.openforge.tools/sprites/3a4fc9/3a4fc90afc3d5b10c3ae87cfe55e27b3.png",
                 "sprite_metadata": {
                     "angles": [
                         {
@@ -2956,29 +1773,67 @@
         ],
         "metadata": false,
         "tags": [
-            "connection|openlock",
+            "connection|openforge",
             "shape|floor",
-            "shape|floor|squares",
+            "shape|square",
             "size|depth|2",
             "size|width|2",
             "texture|cave",
-            "texture|cave|aggregate"
+            "texture|cave|aggregate",
+            "texture|cave|aggregate|squares"
         ],
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "base",
+                    "optional": true,
+                    "tags": {
+                        "constrain": [
+                            {
+                                "filter": "shape|floor"
+                            },
+                            {
+                                "filter": "shape|wall"
+                            },
+                            {
+                                "tag": "shape"
+                            },
+                            {
+                                "tag": "size|depth"
+                            },
+                            {
+                                "tag": "size|width"
+                            }
+                        ],
+                        "deny": [
+                            {
+                                "tag": "build|s2w"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "shape|base"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
-            "file": "cave%aggregate#floor+squares.3x1.openlock.stl",
-            "file_modified_at": "2024-11-21T09:30:43.484116",
-            "full_name": "tiles/cave/floors/floor%aggregate/openlock/cave%aggregate#floor+squares.3x1.openlock.stl",
-            "md5": "b5eb47d1e6a5e04db03055edeebf2c3b",
-            "size": 6349184,
-            "storage_address": "https://objects.openforge.tools/models/b5eb47/b5eb47d1e6a5e04db03055edeebf2c3b.stl"
+            "file": "cave%aggregate+squares#floor.3x1.openforge.stl",
+            "file_modified_at": "2020-02-25T13:21:17.662700",
+            "full_name": "tiles/cave/floors/floor%aggregate/openforge/cave%aggregate+squares#floor.3x1.openforge.stl",
+            "md5": "ff38885514e7e84fd543f143d73e7b32",
+            "size": 6154684,
+            "storage_address": "https://objects.openforge.tools/models/ff3888/ff38885514e7e84fd543f143d73e7b32.stl"
         },
         "images": [
             {
                 "image_name": "thumbnail",
-                "image_url": "https://objects.openforge.tools/sprites/b5eb47/b5eb47d1e6a5e04db03055edeebf2c3b.png",
+                "image_url": "https://objects.openforge.tools/sprites/ff3888/ff38885514e7e84fd543f143d73e7b32.png",
                 "sprite_metadata": {
                     "angles": [
                         {
@@ -3081,29 +1936,67 @@
         ],
         "metadata": false,
         "tags": [
-            "connection|openlock",
+            "connection|openforge",
             "shape|floor",
-            "shape|floor|squares",
+            "shape|square",
             "size|depth|1",
             "size|width|3",
             "texture|cave",
-            "texture|cave|aggregate"
+            "texture|cave|aggregate",
+            "texture|cave|aggregate|squares"
         ],
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "base",
+                    "optional": true,
+                    "tags": {
+                        "constrain": [
+                            {
+                                "filter": "shape|floor"
+                            },
+                            {
+                                "filter": "shape|wall"
+                            },
+                            {
+                                "tag": "shape"
+                            },
+                            {
+                                "tag": "size|depth"
+                            },
+                            {
+                                "tag": "size|width"
+                            }
+                        ],
+                        "deny": [
+                            {
+                                "tag": "build|s2w"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "shape|base"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
-            "file": "cave%aggregate#floor+squares.3x3.openlock.stl",
-            "file_modified_at": "2024-11-21T10:44:51.481949",
-            "full_name": "tiles/cave/floors/floor%aggregate/openlock/cave%aggregate#floor+squares.3x3.openlock.stl",
-            "md5": "97def012640f40257fbaf771b4420236",
-            "size": 17584384,
-            "storage_address": "https://objects.openforge.tools/models/97def0/97def012640f40257fbaf771b4420236.stl"
+            "file": "cave%aggregate+squares#floor.3x3.openforge.stl",
+            "file_modified_at": "2020-02-25T14:42:05.891730",
+            "full_name": "tiles/cave/floors/floor%aggregate/openforge/cave%aggregate+squares#floor.3x3.openforge.stl",
+            "md5": "19c4a542e6695f10e90fc05cc2a28df0",
+            "size": 30510684,
+            "storage_address": "https://objects.openforge.tools/models/19c4a5/19c4a542e6695f10e90fc05cc2a28df0.stl"
         },
         "images": [
             {
                 "image_name": "thumbnail",
-                "image_url": "https://objects.openforge.tools/sprites/97def0/97def012640f40257fbaf771b4420236.png",
+                "image_url": "https://objects.openforge.tools/sprites/19c4a5/19c4a542e6695f10e90fc05cc2a28df0.png",
                 "sprite_metadata": {
                     "angles": [
                         {
@@ -3206,29 +2099,67 @@
         ],
         "metadata": false,
         "tags": [
-            "connection|openlock",
+            "connection|openforge",
             "shape|floor",
-            "shape|floor|squares",
+            "shape|square",
             "size|depth|3",
             "size|width|3",
             "texture|cave",
-            "texture|cave|aggregate"
+            "texture|cave|aggregate",
+            "texture|cave|aggregate|squares"
         ],
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "base",
+                    "optional": true,
+                    "tags": {
+                        "constrain": [
+                            {
+                                "filter": "shape|floor"
+                            },
+                            {
+                                "filter": "shape|wall"
+                            },
+                            {
+                                "tag": "shape"
+                            },
+                            {
+                                "tag": "size|depth"
+                            },
+                            {
+                                "tag": "size|width"
+                            }
+                        ],
+                        "deny": [
+                            {
+                                "tag": "build|s2w"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "shape|base"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
-            "file": "cave%aggregate#floor+squares.4x1.openlock.stl",
-            "file_modified_at": "2024-11-21T10:45:41.420529",
-            "full_name": "tiles/cave/floors/floor%aggregate/openlock/cave%aggregate#floor+squares.4x1.openlock.stl",
-            "md5": "4013d5a7c57d46168997bd0565dd3082",
-            "size": 8259384,
-            "storage_address": "https://objects.openforge.tools/models/4013d5/4013d5a7c57d46168997bd0565dd3082.stl"
+            "file": "cave%aggregate+squares#floor.4x1.openforge.stl",
+            "file_modified_at": "2020-02-25T13:23:57.942227",
+            "full_name": "tiles/cave/floors/floor%aggregate/openforge/cave%aggregate+squares#floor.4x1.openforge.stl",
+            "md5": "e78441630a6e5f9c26c5525d44a80233",
+            "size": 8000784,
+            "storage_address": "https://objects.openforge.tools/models/e78441/e78441630a6e5f9c26c5525d44a80233.stl"
         },
         "images": [
             {
                 "image_name": "thumbnail",
-                "image_url": "https://objects.openforge.tools/sprites/4013d5/4013d5a7c57d46168997bd0565dd3082.png",
+                "image_url": "https://objects.openforge.tools/sprites/e78441/e78441630a6e5f9c26c5525d44a80233.png",
                 "sprite_metadata": {
                     "angles": [
                         {
@@ -3331,29 +2262,67 @@
         ],
         "metadata": false,
         "tags": [
-            "connection|openlock",
+            "connection|openforge",
             "shape|floor",
-            "shape|floor|squares",
+            "shape|square",
             "size|depth|1",
             "size|width|4",
             "texture|cave",
-            "texture|cave|aggregate"
+            "texture|cave|aggregate",
+            "texture|cave|aggregate|squares"
         ],
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "base",
+                    "optional": true,
+                    "tags": {
+                        "constrain": [
+                            {
+                                "filter": "shape|floor"
+                            },
+                            {
+                                "filter": "shape|wall"
+                            },
+                            {
+                                "tag": "shape"
+                            },
+                            {
+                                "tag": "size|depth"
+                            },
+                            {
+                                "tag": "size|width"
+                            }
+                        ],
+                        "deny": [
+                            {
+                                "tag": "build|s2w"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "shape|base"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
-            "file": "cave%aggregate#floor+squares.4x2.openlock.stl",
-            "file_modified_at": "2024-11-21T11:05:32.885087",
-            "full_name": "tiles/cave/floors/floor%aggregate/openlock/cave%aggregate#floor+squares.4x2.openlock.stl",
-            "md5": "703b477a92c981235efc85e0d711e142",
-            "size": 15854184,
-            "storage_address": "https://objects.openforge.tools/models/703b47/703b477a92c981235efc85e0d711e142.stl"
+            "file": "cave%aggregate+squares#floor.4x2.openforge.stl",
+            "file_modified_at": "2020-02-25T14:38:50.856429",
+            "full_name": "tiles/cave/floors/floor%aggregate/openforge/cave%aggregate+squares#floor.4x2.openforge.stl",
+            "md5": "af08db84e92d31d5ed5c7f32ace86cea",
+            "size": 24857984,
+            "storage_address": "https://objects.openforge.tools/models/af08db/af08db84e92d31d5ed5c7f32ace86cea.stl"
         },
         "images": [
             {
                 "image_name": "thumbnail",
-                "image_url": "https://objects.openforge.tools/sprites/703b47/703b477a92c981235efc85e0d711e142.png",
+                "image_url": "https://objects.openforge.tools/sprites/af08db/af08db84e92d31d5ed5c7f32ace86cea.png",
                 "sprite_metadata": {
                     "angles": [
                         {
@@ -3456,29 +2425,67 @@
         ],
         "metadata": false,
         "tags": [
-            "connection|openlock",
+            "connection|openforge",
             "shape|floor",
-            "shape|floor|squares",
+            "shape|square",
             "size|depth|2",
             "size|width|4",
             "texture|cave",
-            "texture|cave|aggregate"
+            "texture|cave|aggregate",
+            "texture|cave|aggregate|squares"
         ],
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "base",
+                    "optional": true,
+                    "tags": {
+                        "constrain": [
+                            {
+                                "filter": "shape|floor"
+                            },
+                            {
+                                "filter": "shape|wall"
+                            },
+                            {
+                                "tag": "shape"
+                            },
+                            {
+                                "tag": "size|depth"
+                            },
+                            {
+                                "tag": "size|width"
+                            }
+                        ],
+                        "deny": [
+                            {
+                                "tag": "build|s2w"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "shape|base"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
-            "file": "cave%aggregate#floor+squares.4x4.openlock.stl",
-            "file_modified_at": "2024-11-21T11:15:27.503618",
-            "full_name": "tiles/cave/floors/floor%aggregate/openlock/cave%aggregate#floor+squares.4x4.openlock.stl",
-            "md5": "3208476fbb73b190ea7faae5bf37491c",
-            "size": 29597084,
-            "storage_address": "https://objects.openforge.tools/models/320847/3208476fbb73b190ea7faae5bf37491c.stl"
+            "file": "cave%aggregate+squares#floor.4x4.openforge.stl",
+            "file_modified_at": "2025-07-03T16:06:46.932279",
+            "full_name": "tiles/cave/floors/floor%aggregate/openforge/cave%aggregate+squares#floor.4x4.openforge.stl",
+            "md5": "72abce1cc4c497143614b0b7a8226104",
+            "size": 49066184,
+            "storage_address": "https://objects.openforge.tools/models/72abce/72abce1cc4c497143614b0b7a8226104.stl"
         },
         "images": [
             {
                 "image_name": "thumbnail",
-                "image_url": "https://objects.openforge.tools/sprites/320847/3208476fbb73b190ea7faae5bf37491c.png",
+                "image_url": "https://objects.openforge.tools/sprites/72abce/72abce1cc4c497143614b0b7a8226104.png",
                 "sprite_metadata": {
                     "angles": [
                         {
@@ -3581,13 +2588,14 @@
         ],
         "metadata": false,
         "tags": [
-            "connection|openlock",
+            "connection|openforge",
             "shape|floor",
-            "shape|floor|squares",
+            "shape|square",
             "size|depth|4",
             "size|width|4",
             "texture|cave",
-            "texture|cave|aggregate"
+            "texture|cave|aggregate",
+            "texture|cave|aggregate|squares"
         ],
         "type": "model"
     },
@@ -4588,6 +3596,1014 @@
             "size|width|4",
             "texture|cave",
             "texture|cave|aggregate"
+        ],
+        "type": "model"
+    },
+    {
+        "file_metadata": {
+            "file": "cave%aggregate+squares#floor.1x1.openlock.stl",
+            "file_modified_at": "2024-11-21T11:23:13.686864",
+            "full_name": "tiles/cave/floors/floor%aggregate/openlock/cave%aggregate+squares#floor.1x1.openlock.stl",
+            "md5": "bc487a601591eaf81ff21d753491c0b4",
+            "size": 2471584,
+            "storage_address": "https://objects.openforge.tools/models/bc487a/bc487a601591eaf81ff21d753491c0b4.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/bc487a/bc487a601591eaf81ff21d753491c0b4.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "connection|openlock",
+            "shape|floor",
+            "shape|square",
+            "size|depth|1",
+            "size|width|1",
+            "texture|cave",
+            "texture|cave|aggregate",
+            "texture|cave|aggregate|squares"
+        ],
+        "type": "model"
+    },
+    {
+        "file_metadata": {
+            "file": "cave%aggregate+squares#floor.2x1.openlock.stl",
+            "file_modified_at": "2024-11-21T11:23:10.866648",
+            "full_name": "tiles/cave/floors/floor%aggregate/openlock/cave%aggregate+squares#floor.2x1.openlock.stl",
+            "md5": "d5bcb3fa3b1eb9e8b3893e2244b6fddf",
+            "size": 4022884,
+            "storage_address": "https://objects.openforge.tools/models/d5bcb3/d5bcb3fa3b1eb9e8b3893e2244b6fddf.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/d5bcb3/d5bcb3fa3b1eb9e8b3893e2244b6fddf.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "connection|openlock",
+            "shape|floor",
+            "shape|square",
+            "size|depth|1",
+            "size|width|2",
+            "texture|cave",
+            "texture|cave|aggregate",
+            "texture|cave|aggregate|squares"
+        ],
+        "type": "model"
+    },
+    {
+        "file_metadata": {
+            "file": "cave%aggregate+squares#floor.2x2.openlock.stl",
+            "file_modified_at": "2024-11-21T09:25:37.236372",
+            "full_name": "tiles/cave/floors/floor%aggregate/openlock/cave%aggregate+squares#floor.2x2.openlock.stl",
+            "md5": "9a9118ae948962ce14f6bb3c77f97c1a",
+            "size": 10759084,
+            "storage_address": "https://objects.openforge.tools/models/9a9118/9a9118ae948962ce14f6bb3c77f97c1a.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/9a9118/9a9118ae948962ce14f6bb3c77f97c1a.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "connection|openlock",
+            "shape|floor",
+            "shape|square",
+            "size|depth|2",
+            "size|width|2",
+            "texture|cave",
+            "texture|cave|aggregate",
+            "texture|cave|aggregate|squares"
+        ],
+        "type": "model"
+    },
+    {
+        "file_metadata": {
+            "file": "cave%aggregate+squares#floor.3x1.openlock.stl",
+            "file_modified_at": "2024-11-21T09:30:43.484116",
+            "full_name": "tiles/cave/floors/floor%aggregate/openlock/cave%aggregate+squares#floor.3x1.openlock.stl",
+            "md5": "b5eb47d1e6a5e04db03055edeebf2c3b",
+            "size": 6349184,
+            "storage_address": "https://objects.openforge.tools/models/b5eb47/b5eb47d1e6a5e04db03055edeebf2c3b.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/b5eb47/b5eb47d1e6a5e04db03055edeebf2c3b.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "connection|openlock",
+            "shape|floor",
+            "shape|square",
+            "size|depth|1",
+            "size|width|3",
+            "texture|cave",
+            "texture|cave|aggregate",
+            "texture|cave|aggregate|squares"
+        ],
+        "type": "model"
+    },
+    {
+        "file_metadata": {
+            "file": "cave%aggregate+squares#floor.3x3.openlock.stl",
+            "file_modified_at": "2024-11-21T10:44:51.481949",
+            "full_name": "tiles/cave/floors/floor%aggregate/openlock/cave%aggregate+squares#floor.3x3.openlock.stl",
+            "md5": "97def012640f40257fbaf771b4420236",
+            "size": 17584384,
+            "storage_address": "https://objects.openforge.tools/models/97def0/97def012640f40257fbaf771b4420236.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/97def0/97def012640f40257fbaf771b4420236.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "connection|openlock",
+            "shape|floor",
+            "shape|square",
+            "size|depth|3",
+            "size|width|3",
+            "texture|cave",
+            "texture|cave|aggregate",
+            "texture|cave|aggregate|squares"
+        ],
+        "type": "model"
+    },
+    {
+        "file_metadata": {
+            "file": "cave%aggregate+squares#floor.4x1.openlock.stl",
+            "file_modified_at": "2024-11-21T10:45:41.420529",
+            "full_name": "tiles/cave/floors/floor%aggregate/openlock/cave%aggregate+squares#floor.4x1.openlock.stl",
+            "md5": "4013d5a7c57d46168997bd0565dd3082",
+            "size": 8259384,
+            "storage_address": "https://objects.openforge.tools/models/4013d5/4013d5a7c57d46168997bd0565dd3082.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/4013d5/4013d5a7c57d46168997bd0565dd3082.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "connection|openlock",
+            "shape|floor",
+            "shape|square",
+            "size|depth|1",
+            "size|width|4",
+            "texture|cave",
+            "texture|cave|aggregate",
+            "texture|cave|aggregate|squares"
+        ],
+        "type": "model"
+    },
+    {
+        "file_metadata": {
+            "file": "cave%aggregate+squares#floor.4x2.openlock.stl",
+            "file_modified_at": "2024-11-21T11:05:32.885087",
+            "full_name": "tiles/cave/floors/floor%aggregate/openlock/cave%aggregate+squares#floor.4x2.openlock.stl",
+            "md5": "703b477a92c981235efc85e0d711e142",
+            "size": 15854184,
+            "storage_address": "https://objects.openforge.tools/models/703b47/703b477a92c981235efc85e0d711e142.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/703b47/703b477a92c981235efc85e0d711e142.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "connection|openlock",
+            "shape|floor",
+            "shape|square",
+            "size|depth|2",
+            "size|width|4",
+            "texture|cave",
+            "texture|cave|aggregate",
+            "texture|cave|aggregate|squares"
+        ],
+        "type": "model"
+    },
+    {
+        "file_metadata": {
+            "file": "cave%aggregate+squares#floor.4x4.openlock.stl",
+            "file_modified_at": "2024-11-21T11:15:27.503618",
+            "full_name": "tiles/cave/floors/floor%aggregate/openlock/cave%aggregate+squares#floor.4x4.openlock.stl",
+            "md5": "3208476fbb73b190ea7faae5bf37491c",
+            "size": 29597084,
+            "storage_address": "https://objects.openforge.tools/models/320847/3208476fbb73b190ea7faae5bf37491c.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/320847/3208476fbb73b190ea7faae5bf37491c.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "connection|openlock",
+            "shape|floor",
+            "shape|square",
+            "size|depth|4",
+            "size|width|4",
+            "texture|cave",
+            "texture|cave|aggregate",
+            "texture|cave|aggregate|squares"
         ],
         "type": "model"
     },

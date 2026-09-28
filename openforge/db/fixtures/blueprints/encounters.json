@@ -38,9 +38,9 @@
             ]
         },
         "file_metadata": {
-            "file": "necro#floor+necromantic_circle,alter_base.4x4.openforge.stl",
+            "file": "necro#floor,necromantic_circle,alter_base.4x4.openforge.stl",
             "file_modified_at": "2024-04-22T20:13:31.307243",
-            "full_name": "tiles/encounters/necromancers_ossuary/floors/floor#necromantic_circle/necro#floor+necromantic_circle,alter_base.4x4.openforge.stl",
+            "full_name": "tiles/encounters/necromancers_ossuary/floors/floor#necromantic_circle/necro#floor,necromantic_circle,alter_base.4x4.openforge.stl",
             "md5": "5ce0eb9fe940602da6e8c10406aa90ea",
             "size": 24727884,
             "storage_address": "https://objects.openforge.tools/models/5ce0eb/5ce0eb9fe940602da6e8c10406aa90ea.stl"
@@ -152,9 +152,10 @@
         "metadata": false,
         "tags": [
             "component|alter_base",
+            "component|necromantic_circle",
             "connection|openforge",
             "shape|floor",
-            "shape|floor|necromantic_circle",
+            "shape|square",
             "size|depth|4",
             "size|width|4",
             "texture|necro"
@@ -200,9 +201,9 @@
             ]
         },
         "file_metadata": {
-            "file": "necro#floor+necromantic_circle.4x4.openforge.stl",
+            "file": "necro#floor,necromantic_circle.4x4.openforge.stl",
             "file_modified_at": "2024-04-21T17:14:07.375495",
-            "full_name": "tiles/encounters/necromancers_ossuary/floors/floor#necromantic_circle/necro#floor+necromantic_circle.4x4.openforge.stl",
+            "full_name": "tiles/encounters/necromancers_ossuary/floors/floor#necromantic_circle/necro#floor,necromantic_circle.4x4.openforge.stl",
             "md5": "d3de91c153e9928c06f7c9a198487fda",
             "size": 25929084,
             "storage_address": "https://objects.openforge.tools/models/d3de91/d3de91c153e9928c06f7c9a198487fda.stl"
@@ -313,9 +314,10 @@
         ],
         "metadata": false,
         "tags": [
+            "component|necromantic_circle",
             "connection|openforge",
             "shape|floor",
-            "shape|floor|necromantic_circle",
+            "shape|square",
             "size|depth|4",
             "size|width|4",
             "texture|necro"
@@ -2239,9 +2241,10 @@
         "tags": [
             "build|s2w",
             "connection|openforge",
-            "shape|corner",
             "shape|floor",
             "shape|floor|s2w",
+            "shape|floor|wall|corner",
+            "shape|square",
             "size|depth|1",
             "size|width|1",
             "texture|necro"
@@ -2365,9 +2368,10 @@
         "tags": [
             "build|s2w",
             "connection|openforge",
-            "shape|corner",
             "shape|floor",
             "shape|floor|s2w",
+            "shape|floor|wall|corner",
+            "shape|square",
             "size|depth|2",
             "size|width|2",
             "texture|necro"
@@ -2491,9 +2495,10 @@
         "tags": [
             "build|s2w",
             "connection|openforge",
-            "shape|corner",
             "shape|floor",
             "shape|floor|s2w",
+            "shape|floor|wall|corner",
+            "shape|square",
             "size|depth|3",
             "size|width|3",
             "texture|necro"
@@ -2617,9 +2622,10 @@
         "tags": [
             "build|s2w",
             "connection|openforge",
-            "shape|corner",
             "shape|floor",
             "shape|floor|s2w",
+            "shape|floor|wall|corner",
+            "shape|square",
             "size|depth|4",
             "size|width|4",
             "texture|necro"

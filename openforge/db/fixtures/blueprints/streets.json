@@ -2819,9 +2819,9 @@
             ]
         },
         "file_metadata": {
-            "file": "streets%cobble#floor+broken.4x4.openforge.stl",
+            "file": "streets%cobble#floor,broken.4x4.openforge.stl",
             "file_modified_at": "2019-07-06T12:28:29",
-            "full_name": "tiles/streets/floors/street,cobble+broken/streets%cobble#floor+broken.4x4.openforge.stl",
+            "full_name": "tiles/streets/floors/street,cobble+broken/streets%cobble#floor,broken.4x4.openforge.stl",
             "md5": "e42b2cabc12a406d2e8dfe4dfffcfa84",
             "size": 40917984,
             "storage_address": "https://objects.openforge.tools/models/e42b2c/e42b2cabc12a406d2e8dfe4dfffcfa84.stl"
@@ -2932,9 +2932,10 @@
         ],
         "metadata": false,
         "tags": [
+            "component|broken",
             "connection|openforge",
             "shape|floor",
-            "shape|floor|broken",
+            "shape|square",
             "size|depth|4",
             "size|width|4",
             "texture|streets",

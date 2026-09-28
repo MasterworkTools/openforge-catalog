@@ -456,7 +456,10 @@ roles:
       # up. `shape|floor` is exempt because it is required, and the
       # methods that want `shape|floor|wall` and `shape|floor|s2w`
       # name them themselves.
-      deny_children: ['shape', 'component']
+      # And decorations: a celtic knot or an air symbol carved into the
+      # floor is not the plain tile either. They were swept only by
+      # accident while the scanner left symbols as components.
+      deny_children: ['shape', 'component', 'decoration']
       allow: ['shape|square', 'component|wall']
       # A base is not a floor. Bases reach this role because
       # `_copy_base_shapes` gives a shape|base piece the plain shape
@@ -522,7 +525,10 @@ roles:
       # and the narrower sweep let one through as soon as the low-wall
       # option stopped requiring `component|wall`. Each height option
       # names the component it keeps.
-      deny_children: ['component', 'component|wall', 'connection', 'shape']
+      # Decorations too — corbels, timber framing, a symbol — for the
+      # same reason as the floor: the default answer is the plain wall.
+      deny_children:
+        ['component', 'component|wall', 'connection', 'shape', 'decoration']
       # shape|square is the straight one, and the sweep would take it
       # along with shape|angled. Permitted, not required: plenty of
       # plain walls carry no shape|? at all.

@@ -1282,6 +1282,7 @@
             "connection|openforge",
             "shape|floor",
             "shape|floor|wall",
+            "shape|square",
             "size|openlock|AS",
             "size|width|2",
             "texture|rough_stone"
@@ -2923,6 +2924,7 @@
             "connection|openlock",
             "shape|floor",
             "shape|floor|wall",
+            "shape|square",
             "size|openlock|AS",
             "size|width|2",
             "texture|rough_stone"
@@ -12347,8 +12349,9 @@
         "tags": [
             "build|wall on tile",
             "connection|openforge",
-            "shape|corner",
             "shape|floor",
+            "shape|floor|wall|corner",
+            "shape|square",
             "size|depth|1",
             "size|width|1",
             "texture|rough_stone"
@@ -12509,8 +12512,9 @@
         "tags": [
             "build|wall on tile",
             "connection|openforge",
-            "shape|corner",
             "shape|floor",
+            "shape|floor|wall|corner",
+            "shape|square",
             "size|depth|2",
             "size|width|2",
             "texture|rough_stone"
@@ -12671,8 +12675,9 @@
         "tags": [
             "build|wall on tile",
             "connection|openforge",
-            "shape|corner",
             "shape|floor",
+            "shape|floor|wall|corner",
+            "shape|square",
             "size|depth|3",
             "size|width|3",
             "texture|rough_stone"
@@ -12833,8 +12838,9 @@
         "tags": [
             "build|wall on tile",
             "connection|openforge",
-            "shape|corner",
             "shape|floor",
+            "shape|floor|wall|corner",
+            "shape|square",
             "size|depth|4",
             "size|width|4",
             "texture|rough_stone"
@@ -13504,8 +13510,9 @@
             "build|wall on tile",
             "connection|openforge",
             "shape|curved",
-            "shape|curved|concave",
             "shape|floor",
+            "shape|floor|wall|curved",
+            "shape|floor|wall|curved|concave",
             "size|depth|1",
             "size|width|1",
             "texture|rough_stone"
@@ -13667,8 +13674,9 @@
             "build|wall on tile",
             "connection|openforge",
             "shape|curved",
-            "shape|curved|concave",
             "shape|floor",
+            "shape|floor|wall|curved",
+            "shape|floor|wall|curved|concave",
             "size|depth|2",
             "size|width|2",
             "texture|rough_stone"
@@ -13830,8 +13838,9 @@
             "build|wall on tile",
             "connection|openforge",
             "shape|curved",
-            "shape|curved|concave",
             "shape|floor",
+            "shape|floor|wall|curved",
+            "shape|floor|wall|curved|concave",
             "size|depth|4",
             "size|width|2",
             "texture|rough_stone"
@@ -13993,8 +14002,9 @@
             "build|wall on tile",
             "connection|openforge",
             "shape|curved",
-            "shape|curved|concave",
             "shape|floor",
+            "shape|floor|wall|curved",
+            "shape|floor|wall|curved|concave",
             "size|depth|3",
             "size|width|3",
             "texture|rough_stone"
@@ -14156,8 +14166,9 @@
             "build|wall on tile",
             "connection|openforge",
             "shape|curved",
-            "shape|curved|concave",
             "shape|floor",
+            "shape|floor|wall|curved",
+            "shape|floor|wall|curved|concave",
             "size|depth|2",
             "size|width|4",
             "texture|rough_stone"
@@ -14319,8 +14330,9 @@
             "build|wall on tile",
             "connection|openforge",
             "shape|curved",
-            "shape|curved|concave",
             "shape|floor",
+            "shape|floor|wall|curved",
+            "shape|floor|wall|curved|concave",
             "size|depth|4",
             "size|width|4",
             "texture|rough_stone"
@@ -14483,6 +14495,7 @@
             "connection|openforge",
             "shape|curved",
             "shape|floor",
+            "shape|floor|wall|curved",
             "size|depth|1",
             "size|width|1",
             "texture|rough_stone"
@@ -14645,6 +14658,7 @@
             "connection|openforge",
             "shape|curved",
             "shape|floor",
+            "shape|floor|wall|curved",
             "size|depth|2",
             "size|width|2",
             "texture|rough_stone"
@@ -14807,6 +14821,7 @@
             "connection|openforge",
             "shape|curved",
             "shape|floor",
+            "shape|floor|wall|curved",
             "size|depth|4",
             "size|width|2",
             "texture|rough_stone"
@@ -14969,6 +14984,7 @@
             "connection|openforge",
             "shape|curved",
             "shape|floor",
+            "shape|floor|wall|curved",
             "size|depth|3",
             "size|width|3",
             "texture|rough_stone"
@@ -15131,6 +15147,7 @@
             "connection|openforge",
             "shape|curved",
             "shape|floor",
+            "shape|floor|wall|curved",
             "size|depth|2",
             "size|width|4",
             "texture|rough_stone"
@@ -15293,6 +15310,7 @@
             "connection|openforge",
             "shape|curved",
             "shape|floor",
+            "shape|floor|wall|curved",
             "size|depth|4",
             "size|width|4",
             "texture|rough_stone"
@@ -16330,8 +16348,9 @@
             "build|wall on tile",
             "connection|openforge",
             "shape|diagonal",
-            "shape|diagonal|a",
             "shape|floor",
+            "shape|floor|wall|diagonal",
+            "shape|floor|wall|diagonal|a",
             "size|depth|1",
             "size|width|1",
             "texture|rough_stone"
@@ -16493,8 +16512,9 @@
             "build|wall on tile",
             "connection|openforge",
             "shape|diagonal",
-            "shape|diagonal|a",
             "shape|floor",
+            "shape|floor|wall|diagonal",
+            "shape|floor|wall|diagonal|a",
             "size|depth|2",
             "size|width|2",
             "texture|rough_stone"
@@ -16656,8 +16676,9 @@
             "build|wall on tile",
             "connection|openforge",
             "shape|diagonal",
-            "shape|diagonal|a",
             "shape|floor",
+            "shape|floor|wall|diagonal",
+            "shape|floor|wall|diagonal|a",
             "size|depth|4",
             "size|width|2",
             "texture|rough_stone"
@@ -16819,8 +16840,9 @@
             "build|wall on tile",
             "connection|openforge",
             "shape|diagonal",
-            "shape|diagonal|a",
             "shape|floor",
+            "shape|floor|wall|diagonal",
+            "shape|floor|wall|diagonal|a",
             "size|depth|3",
             "size|width|3",
             "texture|rough_stone"
@@ -16982,8 +17004,9 @@
             "build|wall on tile",
             "connection|openforge",
             "shape|diagonal",
-            "shape|diagonal|a",
             "shape|floor",
+            "shape|floor|wall|diagonal",
+            "shape|floor|wall|diagonal|a",
             "size|depth|2",
             "size|width|4",
             "texture|rough_stone"
@@ -17145,8 +17168,9 @@
             "build|wall on tile",
             "connection|openforge",
             "shape|diagonal",
-            "shape|diagonal|a",
             "shape|floor",
+            "shape|floor|wall|diagonal",
+            "shape|floor|wall|diagonal|a",
             "size|depth|4",
             "size|width|4",
             "texture|rough_stone"
@@ -17308,8 +17332,9 @@
             "build|wall on tile",
             "connection|openforge",
             "shape|diagonal",
-            "shape|diagonal|b",
             "shape|floor",
+            "shape|floor|wall|diagonal",
+            "shape|floor|wall|diagonal|b",
             "size|depth|1",
             "size|width|1",
             "texture|rough_stone"
@@ -17471,8 +17496,9 @@
             "build|wall on tile",
             "connection|openforge",
             "shape|diagonal",
-            "shape|diagonal|b",
             "shape|floor",
+            "shape|floor|wall|diagonal",
+            "shape|floor|wall|diagonal|b",
             "size|depth|2",
             "size|width|2",
             "texture|rough_stone"
@@ -17634,8 +17660,9 @@
             "build|wall on tile",
             "connection|openforge",
             "shape|diagonal",
-            "shape|diagonal|b",
             "shape|floor",
+            "shape|floor|wall|diagonal",
+            "shape|floor|wall|diagonal|b",
             "size|depth|4",
             "size|width|2",
             "texture|rough_stone"
@@ -17797,8 +17824,9 @@
             "build|wall on tile",
             "connection|openforge",
             "shape|diagonal",
-            "shape|diagonal|b",
             "shape|floor",
+            "shape|floor|wall|diagonal",
+            "shape|floor|wall|diagonal|b",
             "size|depth|3",
             "size|width|3",
             "texture|rough_stone"
@@ -17960,8 +17988,9 @@
             "build|wall on tile",
             "connection|openforge",
             "shape|diagonal",
-            "shape|diagonal|b",
             "shape|floor",
+            "shape|floor|wall|diagonal",
+            "shape|floor|wall|diagonal|b",
             "size|depth|2",
             "size|width|4",
             "texture|rough_stone"
@@ -18123,8 +18152,9 @@
             "build|wall on tile",
             "connection|openforge",
             "shape|diagonal",
-            "shape|diagonal|b",
             "shape|floor",
+            "shape|floor|wall|diagonal",
+            "shape|floor|wall|diagonal|b",
             "size|depth|4",
             "size|width|4",
             "texture|rough_stone"
@@ -20064,6 +20094,7 @@
             "connection|openforge",
             "shape|floor",
             "shape|floor|wall",
+            "shape|square",
             "size|depth|1",
             "size|width|1",
             "texture|rough_stone"
@@ -20226,6 +20257,7 @@
             "connection|openforge",
             "shape|floor",
             "shape|floor|wall",
+            "shape|square",
             "size|depth|1",
             "size|width|2",
             "texture|rough_stone"
@@ -20388,6 +20420,7 @@
             "connection|openforge",
             "shape|floor",
             "shape|floor|wall",
+            "shape|square",
             "size|depth|2",
             "size|width|2",
             "texture|rough_stone"
@@ -20550,6 +20583,7 @@
             "connection|openforge",
             "shape|floor",
             "shape|floor|wall",
+            "shape|square",
             "size|depth|4",
             "size|width|2",
             "texture|rough_stone"
@@ -20712,6 +20746,7 @@
             "connection|openforge",
             "shape|floor",
             "shape|floor|wall",
+            "shape|square",
             "size|depth|1",
             "size|width|3",
             "texture|rough_stone"
@@ -20874,6 +20909,7 @@
             "connection|openforge",
             "shape|floor",
             "shape|floor|wall",
+            "shape|square",
             "size|depth|3",
             "size|width|3",
             "texture|rough_stone"
@@ -21036,6 +21072,7 @@
             "connection|openforge",
             "shape|floor",
             "shape|floor|wall",
+            "shape|square",
             "size|depth|1",
             "size|width|4",
             "texture|rough_stone"
@@ -21198,6 +21235,7 @@
             "connection|openforge",
             "shape|floor",
             "shape|floor|wall",
+            "shape|square",
             "size|depth|2",
             "size|width|4",
             "texture|rough_stone"
@@ -21360,6 +21398,7 @@
             "connection|openforge",
             "shape|floor",
             "shape|floor|wall",
+            "shape|square",
             "size|depth|4",
             "size|width|4",
             "texture|rough_stone"
@@ -21482,8 +21521,9 @@
         "metadata": false,
         "tags": [
             "build|wall on tile",
-            "component|wall|air_symbol",
+            "component|wall",
             "connection|openforge",
+            "decoration|symbol|air",
             "shape|wall",
             "size|openlock|A",
             "size|width|2",
@@ -21607,8 +21647,9 @@
         "metadata": false,
         "tags": [
             "build|wall on tile",
-            "component|wall|beezlebub_symbol",
+            "component|wall",
             "connection|openforge",
+            "decoration|symbol|beezlebub",
             "shape|wall",
             "size|openlock|A",
             "size|width|2",
@@ -21732,8 +21773,9 @@
         "metadata": false,
         "tags": [
             "build|wall on tile",
-            "component|wall|earth_symbol",
+            "component|wall",
             "connection|openforge",
+            "decoration|symbol|earth",
             "shape|wall",
             "size|openlock|A",
             "size|width|2",
@@ -21857,8 +21899,9 @@
         "metadata": false,
         "tags": [
             "build|wall on tile",
-            "component|wall|fire_symbol",
+            "component|wall",
             "connection|openforge",
+            "decoration|symbol|fire",
             "shape|wall",
             "size|openlock|A",
             "size|width|2",
@@ -21982,8 +22025,9 @@
         "metadata": false,
         "tags": [
             "build|wall on tile",
-            "component|wall|lamashtu_symbol",
+            "component|wall",
             "connection|openforge",
+            "decoration|symbol|lamashtu",
             "shape|wall",
             "size|openlock|A",
             "size|width|2",
@@ -22107,8 +22151,9 @@
         "metadata": false,
         "tags": [
             "build|wall on tile",
-            "component|wall|spirit_symbol",
+            "component|wall",
             "connection|openforge",
+            "decoration|symbol|spirit",
             "shape|wall",
             "size|openlock|A",
             "size|width|2",
@@ -22232,8 +22277,9 @@
         "metadata": false,
         "tags": [
             "build|wall on tile",
-            "component|wall|water_symbol",
+            "component|wall",
             "connection|openforge",
+            "decoration|symbol|water",
             "shape|wall",
             "size|openlock|A",
             "size|width|2",

@@ -19675,6 +19675,7 @@
             "connection|openforge",
             "shape|floor",
             "shape|floor|wall",
+            "shape|square",
             "size|openlock|AS",
             "size|width|2",
             "texture|large_brick"
@@ -20792,6 +20793,7 @@
             "connection|openlock",
             "shape|floor",
             "shape|floor|wall",
+            "shape|square",
             "size|openlock|AS",
             "size|width|2",
             "texture|large_brick"
@@ -52127,9 +52129,9 @@
     },
     {
         "file_metadata": {
-            "file": "plain#base,floor+portal.6x6.openlock+topless,magnetic+flex.stl",
+            "file": "plain#base,floor,portal.6x6.openlock+topless,magnetic+flex.stl",
             "file_modified_at": "2022-01-30T15:57:46",
-            "full_name": "tiles/building_facades/yawning_portal/portal/bases/plain#base,floor+portal.6x6.openlock+topless,magnetic+flex.stl",
+            "full_name": "tiles/building_facades/yawning_portal/portal/bases/plain#base,floor,portal.6x6.openlock+topless,magnetic+flex.stl",
             "md5": "689f857a47d7ad6299264fbb39b59458",
             "size": 570184,
             "storage_address": "https://objects.openforge.tools/models/689f85/689f857a47d7ad6299264fbb39b59458.stl"
@@ -52240,13 +52242,13 @@
         ],
         "metadata": false,
         "tags": [
+            "component|portal",
             "connection|magnetic",
             "connection|magnetic|flex",
             "connection|openlock",
             "connection|openlock|topless",
             "shape|base",
             "shape|floor",
-            "shape|floor|portal",
             "size|depth|6",
             "size|width|6",
             "texture|plain"
@@ -52255,9 +52257,9 @@
     },
     {
         "file_metadata": {
-            "file": "plain#base,floor+portal.6x6.openlock,magnetic+flex.stl",
+            "file": "plain#base,floor,portal.6x6.openlock,magnetic+flex.stl",
             "file_modified_at": "2022-01-30T16:10:52.428567",
-            "full_name": "tiles/building_facades/yawning_portal/portal/bases/plain#base,floor+portal.6x6.openlock,magnetic+flex.stl",
+            "full_name": "tiles/building_facades/yawning_portal/portal/bases/plain#base,floor,portal.6x6.openlock,magnetic+flex.stl",
             "md5": "6e9004972b81987e3756e9a4b44cdf4c",
             "size": 761784,
             "storage_address": "https://objects.openforge.tools/models/6e9004/6e9004972b81987e3756e9a4b44cdf4c.stl"
@@ -52368,12 +52370,12 @@
         ],
         "metadata": false,
         "tags": [
+            "component|portal",
             "connection|magnetic",
             "connection|magnetic|flex",
             "connection|openlock",
             "shape|base",
             "shape|floor",
-            "shape|floor|portal",
             "size|depth|6",
             "size|width|6",
             "texture|plain"
@@ -52382,9 +52384,9 @@
     },
     {
         "file_metadata": {
-            "file": "stone#base,wall+portal.6x6.openlock+topless,magnetic+flex.stl",
+            "file": "stone#base,wall,portal.6x6.openlock+topless,magnetic+flex.stl",
             "file_modified_at": "2022-01-30T16:13:27.240536",
-            "full_name": "tiles/building_facades/yawning_portal/portal/bases/stone#base,wall+portal.6x6.openlock+topless,magnetic+flex.stl",
+            "full_name": "tiles/building_facades/yawning_portal/portal/bases/stone#base,wall,portal.6x6.openlock+topless,magnetic+flex.stl",
             "md5": "3336dd2c08894a2953c3e2c6280e4482",
             "size": 4970184,
             "storage_address": "https://objects.openforge.tools/models/3336dd/3336dd2c08894a2953c3e2c6280e4482.stl"
@@ -52495,8 +52497,8 @@
         ],
         "metadata": false,
         "tags": [
+            "component|portal",
             "component|wall",
-            "component|wall|portal",
             "connection|magnetic",
             "connection|magnetic|flex",
             "connection|openlock",
@@ -52510,9 +52512,9 @@
     },
     {
         "file_metadata": {
-            "file": "stone#base,wall+portal.6x6.openlock,magnetic+flex.stl",
+            "file": "stone#base,wall,portal.6x6.openlock,magnetic+flex.stl",
             "file_modified_at": "2022-01-30T16:29:34.220932",
-            "full_name": "tiles/building_facades/yawning_portal/portal/bases/stone#base,wall+portal.6x6.openlock,magnetic+flex.stl",
+            "full_name": "tiles/building_facades/yawning_portal/portal/bases/stone#base,wall,portal.6x6.openlock,magnetic+flex.stl",
             "md5": "761e203e6efeee939f7bc7832e884b1f",
             "size": 49708984,
             "storage_address": "https://objects.openforge.tools/models/761e20/761e203e6efeee939f7bc7832e884b1f.stl"
@@ -52623,8 +52625,8 @@
         ],
         "metadata": false,
         "tags": [
+            "component|portal",
             "component|wall",
-            "component|wall|portal",
             "connection|magnetic",
             "connection|magnetic|flex",
             "connection|openlock",
@@ -52637,9 +52639,9 @@
     },
     {
         "file_metadata": {
-            "file": "stone#wall+portal,medium.6x6.openforge.stl",
+            "file": "stone#wall,portal+medium.6x6.openforge.stl",
             "file_modified_at": "2022-01-30T16:07:44.775778",
-            "full_name": "tiles/building_facades/yawning_portal/portal/stone#wall+portal,medium.6x6.openforge.stl",
+            "full_name": "tiles/building_facades/yawning_portal/portal/stone#wall,portal+medium.6x6.openforge.stl",
             "md5": "720ff84aff3d5e02caff127c4e943b32",
             "size": 16063984,
             "storage_address": "https://objects.openforge.tools/models/720ff8/720ff84aff3d5e02caff127c4e943b32.stl"
@@ -52750,9 +52752,9 @@
         ],
         "metadata": false,
         "tags": [
-            "component|medium",
+            "component|portal",
+            "component|portal|medium",
             "component|wall",
-            "component|wall|portal",
             "connection|openforge",
             "size|depth|6",
             "size|width|6",
@@ -52799,9 +52801,9 @@
             ]
         },
         "file_metadata": {
-            "file": "towne#floor+wood,portal.6x6.openforge.stl",
+            "file": "towne%wood#floor,portal.6x6.openforge.stl",
             "file_modified_at": "2022-01-30T16:17:47.833653",
-            "full_name": "tiles/building_facades/yawning_portal/portal/towne#floor+wood,portal.6x6.openforge.stl",
+            "full_name": "tiles/building_facades/yawning_portal/portal/towne%wood#floor,portal.6x6.openforge.stl",
             "md5": "319d7136513a50d7f3777c651f7a5b51",
             "size": 35132384,
             "storage_address": "https://objects.openforge.tools/models/319d71/319d7136513a50d7f3777c651f7a5b51.stl"
@@ -52915,10 +52917,11 @@
             "component|portal",
             "connection|openforge",
             "shape|floor",
-            "shape|floor|wood",
+            "shape|square",
             "size|depth|6",
             "size|width|6",
-            "texture|towne"
+            "texture|towne",
+            "texture|towne|wood"
         ],
         "type": "model"
     }
