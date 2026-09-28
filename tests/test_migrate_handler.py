@@ -43,19 +43,38 @@ def restore_db_log_level():
 
 
 def _schema_shape(db):
-    """Every (table, column) in the schema.
+    """Every column, index and constraint in the schema.
 
     Named nothing in particular on purpose. Asserting on `guides.hero_image`
     would pin this file to whichever version happens to be head, so the next
     schema PR would have to edit it — and comparing shapes additionally kills a
     `down_impl` that records its version without undoing anything, which
     checking one known column cannot.
+
+    Columns alone are not enough, and this is not hypothetical: `version_13` is
+    already a migration that adds only an extension, and a head that adds only an
+    index or a constraint would leave the column set identical. That would both
+    accuse its `down_impl` of doing nothing and make `_restore` return early,
+    skipping the repair rather than short-circuiting it — the one way the repair
+    can be silently missed. Indexes and constraints cover every migration in the
+    tree today.
     """
     with db.connection() as conn:
         with conn.cursor() as curs:
             curs.execute(
-                "SELECT table_name, column_name FROM information_schema.columns "
-                "WHERE table_schema = current_schema()"
+                """
+                SELECT 'column', table_name, column_name
+                  FROM information_schema.columns
+                 WHERE table_schema = current_schema()
+                UNION ALL
+                SELECT 'index', tablename, indexname
+                  FROM pg_indexes
+                 WHERE schemaname = current_schema()
+                UNION ALL
+                SELECT 'constraint', conrelid::regclass::text, conname
+                  FROM pg_constraint
+                 WHERE connamespace = current_schema()::regnamespace
+                """
             )
             return set(curs.fetchall())
 
