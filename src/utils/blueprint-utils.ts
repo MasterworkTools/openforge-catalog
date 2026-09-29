@@ -21,11 +21,15 @@ export const navigate = (url: string) => {
  * (openforge_catalog-m8i, reported from New Zealand).
  *
  * A minute is not a considered number; it is "longer than any download takes to
- * *start*". Starting is the only thing it has to outlast: once a response has
- * become a download the browser owns it, not the iframe, so a transfer still in
- * flight at 60 s is not affected — only a request that has not yet become a
- * download can be aborted. Removing the iframe is therefore tidiness rather
- * than correctness, and if that ever looks doubtful the timer can simply go.
+ * *start*". Starting is the only thing it has to outlast, because a response
+ * that has become a download is owned by the browser rather than by the iframe,
+ * so a transfer still in flight at 60 s is unaffected — only a request that has
+ * not yet become a download can be aborted. That last part is platform
+ * behaviour, not something measured here: every trial behind this fix cancels
+ * the transfer immediately after the handoff, so none of them exercises a
+ * download still running at 60 s. Removing the iframe is therefore tidiness
+ * rather than correctness, and if the assumption ever looks doubtful the timer
+ * can simply go.
  */
 const DOWNLOAD_IFRAME_LIFETIME_MS = 60_000;
 
@@ -37,10 +41,12 @@ const DOWNLOAD_IFRAME_LIFETIME_MS = 60_000;
  *
  * Many files cannot each be a navigation, so each gets a hidden iframe that
  * lives long enough for the request to start. Nothing paces them: measured on
- * production in Chromium and Firefox, six files at zero spacing delivered 6/6
- * in every trial, including a run whose last three requests landed on cold
- * execution environments 3.7–5.1 s in. The lifetime absorbs that, which is why
- * no stagger and no pre-flight are needed.
+ * production in Chromium and Firefox, all six of six files at zero spacing
+ * became downloads in every trial, including a run whose last three requests
+ * landed on cold execution environments 3.7–5.1 s in. ("Became downloads", not
+ * "arrived": the harness counts the handoff and then cancels the transfer.) The
+ * lifetime absorbs the cold start, which is why no stagger and no pre-flight are
+ * needed.
  *
  * ponytail: N files means N simultaneous requests, so up to N cold starts, and
  * up to N*4 Aurora sessions rather than N — openforge/db/__init__.py opens a
@@ -63,35 +69,42 @@ export const downloadFiles = (urls: string[], nav: (url: string) => void = navig
     const iframe = document.createElement('iframe');
     iframe.style.display = 'none';
 
-    // A file that downloads never commits a document, so the frame stays on the
-    // readable, empty about:blank it inherited. Anything with *content* here is
-    // therefore a failure, and there are two kinds: R2 refusing the object
-    // (cross-origin, so unreadable — `contentDocument` is null) and our own API
-    // 404ing (same-origin, so its error body can be printed). Measured in both
-    // engines, including against deliberately stalled responses: exactly one
-    // `load` per URL, and on success Firefox reports a readable empty document
-    // while Chromium fires nothing. So emptiness is the success signal — `load`
-    // alone would be a false positive on every Firefox download.
+    // The only report of a download that failed *past* the redirect, and it
+    // exists because Chromium logs R2's refusal itself while Firefox logs
+    // nothing at all — Firefox being the browser this was reported from.
     //
-    // Worth these lines because it is the only report of a download that failed
-    // *past* the redirect, and because Chromium logs R2's 403 itself while
-    // Firefox logs nothing at all — which is the browser this was reported from.
-    // Passive: it watches the real download, adds no request and gates nothing,
-    // so unlike a pre-flight check it cannot fail closed. Putting it on screen is
-    // openforge_catalog-ptt.
+    // A response that becomes a download never commits a document, so the frame
+    // stays on the readable, empty about:blank it inherited: content here means
+    // failure. Two kinds reach it — R2 refusing the object, which is
+    // cross-origin and so reads `contentDocument === null`, and our own API
+    // 404ing, which is same-origin and whose error body can be printed. A
+    // document that merely has no body yet is neither, and must not read as one.
     //
-    // If a future CSP pass ever adds `iframe.sandbox`, an opaque origin reads
-    // null unconditionally and this inverts into a warning on every success.
+    // Measured in both engines across 38 observations, including stalled
+    // responses, a two-hop redirect and live production: exactly one `load` per
+    // URL, and never one after `iframe.remove()` — removal aborts the
+    // navigation. On success Firefox reports a readable empty document and
+    // Chromium fires nothing, so emptiness is the success signal and `load`
+    // alone would warn on every Firefox download.
+    //
+    // Two limits worth knowing. Attaching this *before* `src` and `appendChild`
+    // is what yields one event: appending first gives Chromium two and loses
+    // Firefox's success event. No ordering warns wrongly, since a first event is
+    // always readable and empty, but the one-event property belongs to the line
+    // order below. And this only sees failures that commit a document: an
+    // unreachable R2 host, an empty-bodied 403 and a reset mid-transfer are all
+    // silent in Firefox, which openforge_catalog-ptt inherits — on-screen
+    // reporting cannot be driven off this signal alone.
+    //
+    // No try/catch: `contentDocument` has no throwing path in any engine (24
+    // reads across 12 frame states, including `sandbox`, never threw), and a
+    // catch here would launder a genuine unexpected throw into the one string
+    // that means "expected, unreadable failure". Passive either way — it watches
+    // the real download, adds no request and gates nothing, so unlike a
+    // pre-flight check it cannot fail closed.
     iframe.addEventListener('load', () => {
-      let body: string;
-      try {
-        // A null document is the opaque cross-origin case. A document that is
-        // merely bodyless is not a failure, so it must not read as one.
-        const doc = iframe.contentDocument;
-        body = doc === null ? '(cross-origin)' : (doc.body?.textContent ?? '');
-      } catch {
-        body = '(cross-origin)';
-      }
+      const doc = iframe.contentDocument;
+      const body = doc === null ? '(cross-origin)' : (doc.body?.textContent ?? '');
       if (body.trim()) console.warn('download did not start:', url, body.slice(0, 200));
     });
 

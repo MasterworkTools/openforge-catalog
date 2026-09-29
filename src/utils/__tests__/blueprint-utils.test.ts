@@ -17,6 +17,19 @@ describe('blueprint-utils', () => {
     });
 
     const iframes = () => Array.from(document.body.querySelectorAll('iframe'));
+
+    /**
+     * Give a frame a real same-origin Document with `text` as its body, which is
+     * what a browser hands back when the response rendered instead of
+     * downloading. A real Document rather than an object literal so the stub
+     * cannot drift from the shape the code reads.
+     */
+    const withDocument = (frame: HTMLIFrameElement, text: string) => {
+      const doc = document.implementation.createHTMLDocument('');
+      doc.body.textContent = text;
+      Object.defineProperty(frame, 'contentDocument', { configurable: true, get: () => doc });
+      return frame;
+    };
     const sources = () => iframes().map((frame) => frame.getAttribute('src'));
 
     it('navigates for a single URL, creating no iframe', () => {
@@ -117,28 +130,57 @@ describe('blueprint-utils', () => {
       // field. Same-origin, so the body is readable and worth printing.
       const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
 
+      // `download_blueprint` uses a bare `abort(404)`, so what actually renders
+      // is Werkzeug's HTML page rather than JSON.
+      const rendered = 'Not Found The requested URL was not found on the server.';
+      downloadFiles(['/a', '/b'], jest.fn());
+      withDocument(iframes()[0], rendered).dispatchEvent(new Event('load'));
+
+      expect(warn).toHaveBeenCalledWith('download did not start:', '/a', rendered);
+    });
+
+    it('stays quiet when the download succeeded', () => {
+      // A download never commits a document, so the frame keeps the readable,
+      // EMPTY about:blank it inherited — body present, textContent ''. That is
+      // the shape to pin: jsdom never loads the src, so a frame left as-is has
+      // no body at all, which is a different state and would test the bodyless
+      // fallback instead of success. Warning on `load` alone, or on a readable
+      // empty body, would fire on every Firefox download.
+      const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+
+      downloadFiles(['/a', '/b'], jest.fn());
+      iframes().forEach((frame) => {
+        const blank = withDocument(frame, '');
+        expect(blank.contentDocument!.body.textContent).toBe('');
+        blank.dispatchEvent(new Event('load'));
+      });
+
+      expect(warn).not.toHaveBeenCalled();
+    });
+
+    it('stays quiet for a whitespace-only body, and truncates a long one', () => {
+      const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+
+      downloadFiles(['/a', '/b'], jest.fn());
+      withDocument(iframes()[0], '   \n  ').dispatchEvent(new Event('load'));
+      expect(warn).not.toHaveBeenCalled();
+
+      withDocument(iframes()[1], 'x'.repeat(500)).dispatchEvent(new Event('load'));
+      expect(warn).toHaveBeenCalledWith('download did not start:', '/b', 'x'.repeat(200));
+    });
+
+    it('stays quiet for a document that has no body yet', () => {
+      // Distinct from both success and failure: a frame whose document exists
+      // but has not parsed a body is not evidence of anything.
+      const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+
       downloadFiles(['/a', '/b'], jest.fn());
       const frame = iframes()[0];
       Object.defineProperty(frame, 'contentDocument', {
         configurable: true,
-        get: () => ({ body: { textContent: '{"error":"Blueprint not found"}' } }),
+        get: () => ({ body: null }),
       });
       frame.dispatchEvent(new Event('load'));
-
-      expect(warn).toHaveBeenCalledWith(
-        'download did not start:',
-        '/a',
-        '{"error":"Blueprint not found"}'
-      );
-    });
-
-    it('stays quiet when the download succeeded', () => {
-      // A real download leaves the frame's own document in place, so it stays
-      // readable. Warning on `load` alone would fire on every Firefox success.
-      const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
-
-      downloadFiles(['/a', '/b'], jest.fn());
-      iframes().forEach((frame) => frame.dispatchEvent(new Event('load')));
 
       expect(warn).not.toHaveBeenCalled();
     });
