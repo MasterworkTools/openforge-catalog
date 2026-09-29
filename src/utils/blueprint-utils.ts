@@ -9,40 +9,101 @@ export const navigate = (url: string) => {
 };
 
 /**
- * Download multiple files sequentially
- * @param urls - Array of download URLs
- * @param nav - Navigation function (defaults to window.location.href)
+ * How long a download iframe stays in the DOM.
+ *
+ * Was 1000 ms, and that was a race the browser lost. Removing an iframe whose
+ * request has not started transferring aborts it — `NS_BINDING_ABORTED` in
+ * Firefox — and `/api/blueprints/<id>/download` only 302s to a presigned R2
+ * URL, after which the browser still has to open a connection to R2 and begin
+ * the transfer. Measured on production: that redirect takes 5.03 s on a cold
+ * Lambda and 0.35 s warm, so a cold start missed the old budget every time and
+ * a warm one missed it for anyone far from us-east or on cellular
+ * (openforge_catalog-m8i, reported from New Zealand).
+ *
+ * A minute is not a considered number; it is "longer than any download takes to
+ * *start*". The iframes cost nothing while they sit there, and the reason to
+ * remove them at all is tidiness rather than correctness.
  */
-export const downloadFiles = async (urls: string[], nav: (url: string) => void = navigate) => {
-  if (urls.length === 0) return;
+const DOWNLOAD_IFRAME_LIFETIME_MS = 60_000;
+
+/** What `downloadFiles` managed to do, so a caller can say so. */
+export interface DownloadOutcome {
+  /** URLs whose download was handed to the browser. */
+  started: string[];
+  /** URLs that could not be presigned; nothing was handed to the browser. */
+  failed: string[];
+}
+
+/**
+ * Download one or many files.
+ *
+ * One file is a plain navigation: the response is an attachment, so the browser
+ * downloads it and stays put, and there is nothing to race.
+ *
+ * Many files cannot each be a navigation, so each gets a hidden iframe. Before
+ * creating one, the redirect is asked for with `redirect: 'manual'`, which stops
+ * at the 302 without following it: that costs one presign and no file transfer,
+ * tells us whether the file can be fetched at all, and leaves the container warm
+ * for the iframe that immediately follows — which is what takes the cold start
+ * out of the download's critical path.
+ *
+ * Awaiting each probe also paces the iframes, so no artificial stagger is needed.
+ */
+export const downloadFiles = async (
+  urls: string[],
+  nav: (url: string) => void = navigate
+): Promise<DownloadOutcome> => {
+  if (urls.length === 0) return { started: [], failed: [] };
 
   if (urls.length === 1) {
     nav(urls[0]);
-    return;
+    return { started: [urls[0]], failed: [] };
   }
 
-  // For multiple files, download sequentially with delay
-  const downloadWithDelay = async (url: string, index: number) => {
-    return new Promise<void>((resolve) => {
-      setTimeout(async () => {
-        const iframe = document.createElement('iframe');
-        iframe.style.display = 'none';
-        iframe.src = url;
-        document.body.appendChild(iframe);
+  const started: string[] = [];
+  const failed: string[] = [];
 
-        // Remove iframe after a delay to ensure download starts
-        setTimeout(() => {
-          document.body.removeChild(iframe);
-          resolve();
-        }, 1000);
-      }, index * 1000); // 1 second delay between downloads
-    });
-  };
+  for (const url of urls) {
+    let presigned = false;
+    try {
+      const probe = await fetch(url, { redirect: 'manual' });
+      // A followed-but-not-followed redirect comes back opaque: no status, no
+      // headers. That is the success case here — the server had something to
+      // redirect us to. A real status means it answered instead of redirecting,
+      // which is only good if it is a 2xx.
+      presigned = probe.type === 'opaqueredirect' || probe.ok;
+    } catch {
+      presigned = false;
+    }
 
-  // Download files sequentially
-  for (let i = 0; i < urls.length; i++) {
-    await downloadWithDelay(urls[i], i);
+    if (!presigned) {
+      failed.push(url);
+      continue;
+    }
+
+    const iframe = document.createElement('iframe');
+    iframe.style.display = 'none';
+    iframe.src = url;
+    document.body.appendChild(iframe);
+    started.push(url);
+
+    setTimeout(() => {
+      if (iframe.parentNode) document.body.removeChild(iframe);
+    }, DOWNLOAD_IFRAME_LIFETIME_MS);
   }
+
+  if (failed.length > 0) {
+    // console, not the page: src/CLAUDE.md puts frontend error handling at
+    // console-log for the beta, and where a partial result belongs on screen is
+    // a design question (openforge_catalog-ptt). The outcome is returned so a
+    // caller can answer it without changing this.
+    console.warn(
+      `download: ${started.length} of ${urls.length} started; could not presign`,
+      failed
+    );
+  }
+
+  return { started, failed };
 };
 
 /**

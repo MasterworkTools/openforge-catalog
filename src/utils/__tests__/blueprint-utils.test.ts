@@ -4,52 +4,89 @@ import { Blueprint } from '@/types';
 
 describe('blueprint-utils', () => {
   describe('downloadFiles', () => {
-    let createElementSpy: jest.SpyInstance;
-    let appendChildSpy: jest.SpyInstance;
-    let removeChildSpy: jest.SpyInstance;
-    let setTimeoutSpy: jest.SpyInstance;
+    /**
+     * `redirect: 'manual'` stops at the 302 and hands back an opaque response:
+     * no status, no headers. That is the success signal — the server had
+     * somewhere to send us.
+     */
+    const redirected = { type: 'opaqueredirect', ok: false } as Response;
 
     beforeEach(() => {
-      createElementSpy = jest.spyOn(document, 'createElement').mockImplementation((tag: string) => {
-        const el = document.createElementNS('http://www.w3.org/1999/xhtml', tag);
-        // @ts-expect-error - Mocking style property for test
-        el.style = {};
-        return el;
-      });
-      appendChildSpy = jest.spyOn(document.body, 'appendChild').mockImplementation((node: Node) => node);
-      removeChildSpy = jest.spyOn(document.body, 'removeChild').mockImplementation((node: Node) => node);
-      setTimeoutSpy = jest.spyOn(global, 'setTimeout').mockImplementation((fn: () => void) => {
-        fn();
-        return 1 as unknown as NodeJS.Timeout;
-      });
+      jest.useFakeTimers();
+      global.fetch = jest.fn().mockResolvedValue(redirected);
+      document.body.innerHTML = '';
     });
 
     afterEach(() => {
-      createElementSpy.mockRestore();
-      appendChildSpy.mockRestore();
-      removeChildSpy.mockRestore();
-      setTimeoutSpy.mockRestore();
+      jest.useRealTimers();
+      jest.restoreAllMocks();
     });
 
-    it('calls nav for a single URL', async () => {
+    const iframes = () => document.body.querySelectorAll('iframe');
+
+    it('navigates for a single URL, with no iframe and no probe', async () => {
       const nav = jest.fn();
-      await downloadFiles(['http://example.com/file1'], nav);
-      expect(nav).toHaveBeenCalledWith('http://example.com/file1');
-      expect(createElementSpy).not.toHaveBeenCalled();
+
+      const outcome = await downloadFiles(['/api/blueprints/1/download'], nav);
+
+      expect(nav).toHaveBeenCalledWith('/api/blueprints/1/download');
+      expect(iframes()).toHaveLength(0);
+      expect(global.fetch).not.toHaveBeenCalled();
+      expect(outcome).toEqual({
+        started: ['/api/blueprints/1/download'],
+        failed: [],
+      });
     });
 
-    it('downloads multiple files by creating iframes', async () => {
-      const urls = ['http://example.com/file1', 'http://example.com/file2'];
-      await downloadFiles(urls, jest.fn());
-      expect(createElementSpy).toHaveBeenCalledTimes(2);
-      expect(appendChildSpy).toHaveBeenCalledTimes(2);
-      expect(removeChildSpy).toHaveBeenCalledTimes(2);
+    it('hands every file to the browser and says which', async () => {
+      const outcome = await downloadFiles(['/a', '/b'], jest.fn());
+
+      expect(iframes()).toHaveLength(2);
+      expect(outcome).toEqual({ started: ['/a', '/b'], failed: [] });
     });
 
-    it('returns immediately for empty urls', async () => {
-      await expect(downloadFiles([], jest.fn())).resolves.toBeUndefined();
-      expect(createElementSpy).not.toHaveBeenCalled();
-      expect(appendChildSpy).not.toHaveBeenCalled();
+    it('leaves each iframe up long enough for the download to start', async () => {
+      // The regression this file previously enforced: it asserted removeChild
+      // had been called, so a teardown that aborted the request was the
+      // expected behaviour. Removing an iframe whose request has not begun
+      // transferring aborts it (NS_BINDING_ABORTED in Firefox), and the
+      // /download redirect alone measured 5.03s on a cold Lambda against the
+      // old 1000ms budget.
+      await downloadFiles(['/a', '/b'], jest.fn());
+
+      jest.advanceTimersByTime(6_000);
+      expect(iframes()).toHaveLength(2);
+
+      jest.advanceTimersByTime(60_000);
+      expect(iframes()).toHaveLength(0);
+    });
+
+    it('reports a file it could not presign, and starts nothing for it', async () => {
+      (global.fetch as jest.Mock)
+        .mockResolvedValueOnce(redirected)
+        .mockResolvedValueOnce({ type: 'basic', ok: false, status: 500 });
+
+      const outcome = await downloadFiles(['/a', '/b'], jest.fn());
+
+      expect(outcome).toEqual({ started: ['/a'], failed: ['/b'] });
+      expect(iframes()).toHaveLength(1);
+    });
+
+    it('treats a network failure as a failed file rather than throwing', async () => {
+      (global.fetch as jest.Mock).mockRejectedValue(new Error('offline'));
+
+      const outcome = await downloadFiles(['/a', '/b'], jest.fn());
+
+      expect(outcome).toEqual({ started: [], failed: ['/a', '/b'] });
+      expect(iframes()).toHaveLength(0);
+    });
+
+    it('returns an empty outcome for no urls', async () => {
+      await expect(downloadFiles([], jest.fn())).resolves.toEqual({
+        started: [],
+        failed: [],
+      });
+      expect(global.fetch).not.toHaveBeenCalled();
     });
   });
 
