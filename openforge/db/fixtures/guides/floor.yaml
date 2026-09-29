@@ -48,7 +48,7 @@ steps:
   - key: size
     prompt: What size tiles?
     default: 2x2
-    blurb: |
+    blurb: >
       All tile sizes are in inches, which are also squares. Most people use
       2×2. 4×2 is handy for hallways, and a few systems have used 3×3 as
       their basis.
@@ -202,7 +202,7 @@ refinements:
         floor-print:
           - with-base
     default: connection|magnetic,connection|openlock,connection|openlock|topless
-    blurb: |
+    blurb: >
       Clips are how the bases join to each other. There are two systems, and
       the honest answer is that it rarely matters: the consensus is that
       Dragonbite clips hold better and OpenLOCK clips are easier for rapid
