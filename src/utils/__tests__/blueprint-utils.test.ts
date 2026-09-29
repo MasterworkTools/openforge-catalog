@@ -171,8 +171,12 @@ describe('blueprint-utils', () => {
       downloadFiles(['/a', '/b'], jest.fn());
       iframes().forEach((frame) => {
         // Not decoration: a sandboxed frame is an opaque origin, so
-        // `contentDocument` would read null and every success would warn. This is
-        // the executable form of the caveat on the listener.
+        // `contentDocument` would read null and every success would warn. A canary
+        // for the caveat on the listener, and it catches the `setAttribute`
+        // spelling only — this jsdom has no `sandbox` member, so `iframe.sandbox =
+        // ''` lands on a plain own property and slips past. Pinning that too would
+        // pin a jsdom gap, which a jsdom upgrade would then break on an unmodified
+        // tree, so the narrower guard is deliberate.
         expect(frame.hasAttribute('sandbox')).toBe(false);
         const blank = withDocument(frame, '');
         expect(blank.contentDocument!.body.textContent).toBe('');
