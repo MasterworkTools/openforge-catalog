@@ -13,6 +13,7 @@ describe('blueprint-utils', () => {
     afterEach(() => {
       jest.useRealTimers();
       jest.restoreAllMocks();
+      window.location.hash = '';
     });
 
     const iframes = () => Array.from(document.body.querySelectorAll('iframe'));
@@ -23,18 +24,35 @@ describe('blueprint-utils', () => {
 
       downloadFiles(['/api/blueprints/1/download'], nav);
 
+      expect(nav).toHaveBeenCalledTimes(1);
       expect(nav).toHaveBeenCalledWith('/api/blueprints/1/download');
       expect(iframes()).toHaveLength(0);
+      expect(global.fetch).not.toHaveBeenCalled();
+    });
+
+    it('uses window.location when no nav is given', () => {
+      // jsdom refuses document navigation, which is why `location` and its
+      // `href` accessor cannot be replaced — but it implements hash navigation,
+      // so the default argument can be pinned without touching the environment
+      // or reshaping the function.
+      downloadFiles(['#dl-marker']);
+
+      expect(window.location.hash).toBe('#dl-marker');
     });
 
     it('points one hidden iframe at each URL', () => {
-      downloadFiles(['/a', '/b'], jest.fn());
+      const nav = jest.fn();
+
+      downloadFiles(['/a', '/b'], nav);
 
       // The src is the download request. Asserting only the iframe count lets a
       // version that creates two empty iframes pass, which would download
       // nothing at all.
       expect(sources()).toEqual(['/a', '/b']);
       expect(iframes().map((frame) => frame.style.display)).toEqual(['none', 'none']);
+      // Navigating during a batch would cancel the requests just issued, which
+      // is the original bug by another route.
+      expect(nav).not.toHaveBeenCalled();
     });
 
     it('leaves each iframe up long enough for the download to start', () => {
@@ -64,11 +82,75 @@ describe('blueprint-utils', () => {
       expect(sources()).toEqual(['/a', '/b']);
     });
 
+    it('warns when a download produced a page instead of a file', () => {
+      // The R2-refusal class: a valid 302 whose object is gone. Cross-origin, so
+      // the error page is unreadable and `contentDocument` is null — which is the
+      // signal. jsdom has no cross-origin, so the null is supplied here.
+      const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+      const readable = Object.getOwnPropertyDescriptor(
+        HTMLIFrameElement.prototype,
+        'contentDocument'
+      );
+      Object.defineProperty(HTMLIFrameElement.prototype, 'contentDocument', {
+        configurable: true,
+        get: () => null,
+      });
+
+      try {
+        downloadFiles(['/a', '/b'], jest.fn());
+        iframes().forEach((frame) => frame.dispatchEvent(new Event('load')));
+      } finally {
+        if (readable) {
+          Object.defineProperty(HTMLIFrameElement.prototype, 'contentDocument', readable);
+        }
+      }
+
+      expect(warn).toHaveBeenCalledTimes(2);
+      expect(warn.mock.calls[0][1]).toBe('/a');
+      expect(warn.mock.calls[0][2]).toBe('(cross-origin)');
+      expect(warn.mock.calls[1][1]).toBe('/b');
+    });
+
+    it("warns with the API's own error text when the failure is same-origin", () => {
+      // Reachable, not hypothetical: _get_signed_urls bare-returns when
+      // storage_address is NULL, and collectDownloadUrls never screens that
+      // field. Same-origin, so the body is readable and worth printing.
+      const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+
+      downloadFiles(['/a', '/b'], jest.fn());
+      const frame = iframes()[0];
+      Object.defineProperty(frame, 'contentDocument', {
+        configurable: true,
+        get: () => ({ body: { textContent: '{"error":"Blueprint not found"}' } }),
+      });
+      frame.dispatchEvent(new Event('load'));
+
+      expect(warn).toHaveBeenCalledWith(
+        'download did not start:',
+        '/a',
+        '{"error":"Blueprint not found"}'
+      );
+    });
+
+    it('stays quiet when the download succeeded', () => {
+      // A real download leaves the frame's own document in place, so it stays
+      // readable. Warning on `load` alone would fire on every Firefox success.
+      const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+
+      downloadFiles(['/a', '/b'], jest.fn());
+      iframes().forEach((frame) => frame.dispatchEvent(new Event('load')));
+
+      expect(warn).not.toHaveBeenCalled();
+    });
+
     it('does nothing for no urls', () => {
-      downloadFiles([], jest.fn());
+      const nav = jest.fn();
+
+      downloadFiles([], nav);
 
       expect(iframes()).toHaveLength(0);
       expect(global.fetch).not.toHaveBeenCalled();
+      expect(nav).not.toHaveBeenCalled();
     });
   });
 
