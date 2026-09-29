@@ -1,0 +1,116 @@
+'use client';
+
+import React, { useEffect } from 'react';
+import { GuideBlueprint, thumbnailOf } from '@/services/guide-service';
+
+/**
+ * One frame of a blueprint's sprite sheet, at a fixed angle.
+ *
+ * The sprite viewer on a blueprint's own page is interactive — drag to
+ * rotate, arrow keys, an unwrapped cube. That is the right thing when
+ * you are looking at one piece. Here there are up to four pieces side
+ * by side and the question is whether they go together, which only
+ * works if they are all drawn from the same direction. So this is a
+ * still from the parts list's point of view — it does not spin itself.
+ * The list spins it, handing every piece the same angle *by name*,
+ * because these are different sheets and the name is the only thing
+ * they have in common. (In practice every sheet in the catalog carries
+ * the same ten angles in the same order, but leaning on that would
+ * make the first sheet that does not a silent wrong picture.)
+ */
+
+/**
+ * One size, because every part is drawn at the same one: a parts list
+ * answers "do these go together" at a glance, and pieces drawn at
+ * different scales do not.
+ *
+ * A doc comment rather than a line comment so the file overview above
+ * does not attach itself to this constant — `getDocumentationComment`
+ * takes the last JSDoc node before a statement, and with none of its
+ * own `SIZE` inherited the whole header.
+ */
+const SIZE = 240;
+
+interface GuideSpriteProps {
+  blueprint: GuideBlueprint | null;
+  /** Angle name, shared by every part so they turn together. */
+  view?: string;
+}
+
+/** One part's sheet, drawn at `view`, or its closest available frame. */
+export function GuideSprite({ blueprint, view = 'front' }: GuideSpriteProps) {
+  const image = thumbnailOf(blueprint);
+  const sprite = image?.sprite_metadata;
+  // A sheet that does not carry the angle being shown falls back to
+  // its default frame. The label has to fall back with it, or the page
+  // draws one side and tells a screen reader it is another — every
+  // sheet in the catalog carries all ten, so this is the sheet that
+  // has not been generated yet rather than a case anyone plans for.
+  const angle = sprite?.angles?.find((a) => a.name === view);
+  const name = blueprint?.blueprint_name ?? 'part';
+
+  // Says so out loud rather than only in the aria-label: a missing
+  // side is a generation gap, and otherwise the person sees a pressed
+  // "Left" button over a picture of something else.
+  //
+  // In an effect, and above the early returns because hooks cannot sit
+  // below them. Keyed on the sheet's URL and whether it is missing
+  // rather than on `sprite` and `angle`: those are object identities
+  // that follow the resolution, so a re-resolve would have said it
+  // again about the same sheet. `angle` is also redundant beside
+  // `view` once `missing` carries the answer.
+  const missing = !!sprite && !angle;
+  useEffect(() => {
+    if (missing) {
+      console.warn('sprite for %s has no %s angle', name, view);
+    }
+  }, [missing, image?.image_url, name, view]);
+
+  if (!image) {
+    return (
+      <div
+        className="flex items-center justify-center rounded bg-gray-100 text-xs text-gray-500"
+        style={{ width: SIZE, height: SIZE }}
+      >
+        no picture
+      </div>
+    );
+  }
+
+  // A thumbnail that is not a sprite sheet is just a picture.
+  if (!sprite) {
+    return (
+      <img
+        src={image.image_url}
+        alt={name}
+        className="object-contain rounded"
+        style={{ width: SIZE, height: SIZE }}
+      />
+    );
+  }
+
+  const index = angle?.index ?? sprite.default_angle ?? 0;
+  const showing = angle
+    ? view
+    : (sprite.angles?.find((a) => a.index === index)?.name ?? 'default angle');
+  const row = Math.floor(index / sprite.grid_cols);
+  const col = index % sprite.grid_cols;
+
+  return (
+    <div
+      role="img"
+      aria-label={`${name}, seen from the ${showing}`}
+      className="rounded"
+      style={{
+        width: SIZE,
+        height: SIZE,
+        backgroundImage: `url(${image.image_url})`,
+        // The sheet is drawn at `SIZE` per tile rather than its native
+        // tile_size, so the whole sheet scales with it.
+        backgroundSize: `${sprite.grid_cols * SIZE}px ${sprite.grid_rows * SIZE}px`,
+        backgroundPosition: `-${col * SIZE}px -${row * SIZE}px`,
+        backgroundRepeat: 'no-repeat',
+      }}
+    />
+  );
+}

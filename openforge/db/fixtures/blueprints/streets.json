@@ -2819,9 +2819,172 @@
             ]
         },
         "file_metadata": {
-            "file": "streets%cobble#floor+broken+a.2x2.openforge.stl",
+            "file": "streets%cobble#floor,broken.4x4.openforge.stl",
+            "file_modified_at": "2019-07-06T12:28:29",
+            "full_name": "tiles/streets/floors/street,cobble+broken/streets%cobble#floor,broken.4x4.openforge.stl",
+            "md5": "e42b2cabc12a406d2e8dfe4dfffcfa84",
+            "size": 40917984,
+            "storage_address": "https://objects.openforge.tools/models/e42b2c/e42b2cabc12a406d2e8dfe4dfffcfa84.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/e42b2c/e42b2cabc12a406d2e8dfe4dfffcfa84.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "component|broken",
+            "connection|openforge",
+            "shape|floor",
+            "shape|square",
+            "size|depth|4",
+            "size|width|4",
+            "texture|streets",
+            "texture|streets|cobble"
+        ],
+        "type": "model"
+    },
+    {
+        "config": {
+            "parts": [
+                {
+                    "name": "base",
+                    "optional": true,
+                    "tags": {
+                        "constrain": [
+                            {
+                                "filter": "shape|floor"
+                            },
+                            {
+                                "filter": "shape|wall"
+                            },
+                            {
+                                "tag": "shape"
+                            },
+                            {
+                                "tag": "size|depth"
+                            },
+                            {
+                                "tag": "size|width"
+                            }
+                        ],
+                        "deny": [
+                            {
+                                "tag": "build|s2w"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "shape|base"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        "file_metadata": {
+            "file": "streets%cobble+broken+a#floor.2x2.openforge.stl",
             "file_modified_at": "2019-07-06T12:27:24",
-            "full_name": "tiles/streets/floors/street,cobble+broken/streets%cobble#floor+broken+a.2x2.openforge.stl",
+            "full_name": "tiles/streets/floors/street,cobble+broken/streets%cobble+broken+a#floor.2x2.openforge.stl",
             "md5": "bd04188b5ddfa507db94f3959e252a7b",
             "size": 7158484,
             "storage_address": "https://objects.openforge.tools/models/bd0418/bd04188b5ddfa507db94f3959e252a7b.stl"
@@ -2934,12 +3097,13 @@
         "tags": [
             "connection|openforge",
             "shape|floor",
-            "shape|floor|a",
-            "shape|floor|broken",
+            "shape|square",
             "size|depth|2",
             "size|width|2",
             "texture|streets",
-            "texture|streets|cobble"
+            "texture|streets|cobble",
+            "texture|streets|cobble|a",
+            "texture|streets|cobble|broken"
         ],
         "type": "model"
     },
@@ -2982,9 +3146,9 @@
             ]
         },
         "file_metadata": {
-            "file": "streets%cobble#floor+broken+a.4x2.openforge.stl",
+            "file": "streets%cobble+broken+a#floor.4x2.openforge.stl",
             "file_modified_at": "2019-07-06T12:27:44",
-            "full_name": "tiles/streets/floors/street,cobble+broken/streets%cobble#floor+broken+a.4x2.openforge.stl",
+            "full_name": "tiles/streets/floors/street,cobble+broken/streets%cobble+broken+a#floor.4x2.openforge.stl",
             "md5": "7434acff6ed9a6ab5b8fdd69b8c87246",
             "size": 14843934,
             "storage_address": "https://objects.openforge.tools/models/7434ac/7434acff6ed9a6ab5b8fdd69b8c87246.stl"
@@ -3097,12 +3261,13 @@
         "tags": [
             "connection|openforge",
             "shape|floor",
-            "shape|floor|a",
-            "shape|floor|broken",
+            "shape|square",
             "size|depth|2",
             "size|width|4",
             "texture|streets",
-            "texture|streets|cobble"
+            "texture|streets|cobble",
+            "texture|streets|cobble|a",
+            "texture|streets|cobble|broken"
         ],
         "type": "model"
     },
@@ -3145,9 +3310,9 @@
             ]
         },
         "file_metadata": {
-            "file": "streets%cobble#floor+broken+b.2x2.openforge.stl",
+            "file": "streets%cobble+broken+b#floor.2x2.openforge.stl",
             "file_modified_at": "2019-07-06T12:27:28",
-            "full_name": "tiles/streets/floors/street,cobble+broken/streets%cobble#floor+broken+b.2x2.openforge.stl",
+            "full_name": "tiles/streets/floors/street,cobble+broken/streets%cobble+broken+b#floor.2x2.openforge.stl",
             "md5": "521158c7cc21b2e6ad8cc8a116356ed2",
             "size": 12237834,
             "storage_address": "https://objects.openforge.tools/models/521158/521158c7cc21b2e6ad8cc8a116356ed2.stl"
@@ -3260,12 +3425,13 @@
         "tags": [
             "connection|openforge",
             "shape|floor",
-            "shape|floor|b",
-            "shape|floor|broken",
+            "shape|square",
             "size|depth|2",
             "size|width|2",
             "texture|streets",
-            "texture|streets|cobble"
+            "texture|streets|cobble",
+            "texture|streets|cobble|b",
+            "texture|streets|cobble|broken"
         ],
         "type": "model"
     },
@@ -3308,9 +3474,9 @@
             ]
         },
         "file_metadata": {
-            "file": "streets%cobble#floor+broken+b.4x2.openforge.stl",
+            "file": "streets%cobble+broken+b#floor.4x2.openforge.stl",
             "file_modified_at": "2019-07-06T12:28:02",
-            "full_name": "tiles/streets/floors/street,cobble+broken/streets%cobble#floor+broken+b.4x2.openforge.stl",
+            "full_name": "tiles/streets/floors/street,cobble+broken/streets%cobble+broken+b#floor.4x2.openforge.stl",
             "md5": "46078c394e427d1534ce40e6963eb29e",
             "size": 36274684,
             "storage_address": "https://objects.openforge.tools/models/46078c/46078c394e427d1534ce40e6963eb29e.stl"
@@ -3423,12 +3589,13 @@
         "tags": [
             "connection|openforge",
             "shape|floor",
-            "shape|floor|b",
-            "shape|floor|broken",
+            "shape|square",
             "size|depth|2",
             "size|width|4",
             "texture|streets",
-            "texture|streets|cobble"
+            "texture|streets|cobble",
+            "texture|streets|cobble|b",
+            "texture|streets|cobble|broken"
         ],
         "type": "model"
     },
@@ -3471,9 +3638,9 @@
             ]
         },
         "file_metadata": {
-            "file": "streets%cobble#floor+broken+c.2x2.openforge.stl",
+            "file": "streets%cobble+broken+c#floor.2x2.openforge.stl",
             "file_modified_at": "2019-07-06T12:27:34",
-            "full_name": "tiles/streets/floors/street,cobble+broken/streets%cobble#floor+broken+c.2x2.openforge.stl",
+            "full_name": "tiles/streets/floors/street,cobble+broken/streets%cobble+broken+c#floor.2x2.openforge.stl",
             "md5": "1f7c373c72b94d3819382e17d721f3a9",
             "size": 18911534,
             "storage_address": "https://objects.openforge.tools/models/1f7c37/1f7c373c72b94d3819382e17d721f3a9.stl"
@@ -3586,12 +3753,13 @@
         "tags": [
             "connection|openforge",
             "shape|floor",
-            "shape|floor|broken",
-            "shape|floor|c",
+            "shape|square",
             "size|depth|2",
             "size|width|2",
             "texture|streets",
-            "texture|streets|cobble"
+            "texture|streets|cobble",
+            "texture|streets|cobble|broken",
+            "texture|streets|cobble|c"
         ],
         "type": "model"
     },
@@ -3634,9 +3802,9 @@
             ]
         },
         "file_metadata": {
-            "file": "streets%cobble#floor+broken+d.2x2.openforge.stl",
+            "file": "streets%cobble+broken+d#floor.2x2.openforge.stl",
             "file_modified_at": "2019-07-06T12:27:38",
-            "full_name": "tiles/streets/floors/street,cobble+broken/streets%cobble#floor+broken+d.2x2.openforge.stl",
+            "full_name": "tiles/streets/floors/street,cobble+broken/streets%cobble+broken+d#floor.2x2.openforge.stl",
             "md5": "d576cc6f3af3dd62727b209fe5eb3c87",
             "size": 12278684,
             "storage_address": "https://objects.openforge.tools/models/d576cc/d576cc6f3af3dd62727b209fe5eb3c87.stl"
@@ -3749,174 +3917,13 @@
         "tags": [
             "connection|openforge",
             "shape|floor",
-            "shape|floor|broken",
-            "shape|floor|d",
+            "shape|square",
             "size|depth|2",
             "size|width|2",
             "texture|streets",
-            "texture|streets|cobble"
-        ],
-        "type": "model"
-    },
-    {
-        "config": {
-            "parts": [
-                {
-                    "name": "base",
-                    "optional": true,
-                    "tags": {
-                        "constrain": [
-                            {
-                                "filter": "shape|floor"
-                            },
-                            {
-                                "filter": "shape|wall"
-                            },
-                            {
-                                "tag": "shape"
-                            },
-                            {
-                                "tag": "size|depth"
-                            },
-                            {
-                                "tag": "size|width"
-                            }
-                        ],
-                        "deny": [
-                            {
-                                "tag": "build|s2w"
-                            }
-                        ],
-                        "require": [
-                            {
-                                "tag": "shape|base"
-                            }
-                        ]
-                    }
-                }
-            ]
-        },
-        "file_metadata": {
-            "file": "streets%cobble#floor+broken.4x4.openforge.stl",
-            "file_modified_at": "2019-07-06T12:28:29",
-            "full_name": "tiles/streets/floors/street,cobble+broken/streets%cobble#floor+broken.4x4.openforge.stl",
-            "md5": "e42b2cabc12a406d2e8dfe4dfffcfa84",
-            "size": 40917984,
-            "storage_address": "https://objects.openforge.tools/models/e42b2c/e42b2cabc12a406d2e8dfe4dfffcfa84.stl"
-        },
-        "images": [
-            {
-                "image_name": "thumbnail",
-                "image_url": "https://objects.openforge.tools/sprites/e42b2c/e42b2cabc12a406d2e8dfe4dfffcfa84.png",
-                "sprite_metadata": {
-                    "angles": [
-                        {
-                            "camera_pos": [
-                                -4,
-                                0,
-                                2
-                            ],
-                            "index": 0,
-                            "name": "front"
-                        },
-                        {
-                            "camera_pos": [
-                                -3,
-                                2,
-                                3
-                            ],
-                            "index": 1,
-                            "name": "front-right"
-                        },
-                        {
-                            "camera_pos": [
-                                0,
-                                2,
-                                4
-                            ],
-                            "index": 2,
-                            "name": "right"
-                        },
-                        {
-                            "camera_pos": [
-                                2,
-                                3,
-                                3
-                            ],
-                            "index": 3,
-                            "name": "back-right"
-                        },
-                        {
-                            "camera_pos": [
-                                0,
-                                2,
-                                4
-                            ],
-                            "index": 4,
-                            "name": "back"
-                        },
-                        {
-                            "camera_pos": [
-                                -3,
-                                2,
-                                3
-                            ],
-                            "index": 5,
-                            "name": "back-left"
-                        },
-                        {
-                            "camera_pos": [
-                                -4,
-                                0,
-                                2
-                            ],
-                            "index": 6,
-                            "name": "left"
-                        },
-                        {
-                            "camera_pos": [
-                                -3,
-                                -3,
-                                2
-                            ],
-                            "index": 7,
-                            "name": "front-left"
-                        },
-                        {
-                            "camera_pos": [
-                                -2,
-                                0,
-                                5
-                            ],
-                            "index": 8,
-                            "name": "top"
-                        },
-                        {
-                            "camera_pos": [
-                                -2,
-                                -3,
-                                0
-                            ],
-                            "index": 9,
-                            "name": "bottom"
-                        }
-                    ],
-                    "default_angle": 0,
-                    "grid_cols": 5,
-                    "grid_rows": 2,
-                    "tile_size": 512
-                }
-            }
-        ],
-        "metadata": false,
-        "tags": [
-            "connection|openforge",
-            "shape|floor",
-            "shape|floor|broken",
-            "size|depth|4",
-            "size|width|4",
-            "texture|streets",
-            "texture|streets|cobble"
+            "texture|streets|cobble",
+            "texture|streets|cobble|broken",
+            "texture|streets|cobble|d"
         ],
         "type": "model"
     },
@@ -11895,978 +11902,6 @@
             ]
         },
         "file_metadata": {
-            "file": "streets%cobble#floor+a.2x2.openforge.stl",
-            "file_modified_at": "2018-11-13T11:03:46",
-            "full_name": "tiles/streets/floors/street,cobble/streets%cobble#floor+a.2x2.openforge.stl",
-            "md5": "edbc04b22a0a8ecdfcaed609c2127f07",
-            "size": 5859284,
-            "storage_address": "https://objects.openforge.tools/models/edbc04/edbc04b22a0a8ecdfcaed609c2127f07.stl"
-        },
-        "images": [
-            {
-                "image_name": "thumbnail",
-                "image_url": "https://objects.openforge.tools/sprites/edbc04/edbc04b22a0a8ecdfcaed609c2127f07.png",
-                "sprite_metadata": {
-                    "angles": [
-                        {
-                            "camera_pos": [
-                                -4,
-                                0,
-                                2
-                            ],
-                            "index": 0,
-                            "name": "front"
-                        },
-                        {
-                            "camera_pos": [
-                                -3,
-                                2,
-                                3
-                            ],
-                            "index": 1,
-                            "name": "front-right"
-                        },
-                        {
-                            "camera_pos": [
-                                0,
-                                2,
-                                4
-                            ],
-                            "index": 2,
-                            "name": "right"
-                        },
-                        {
-                            "camera_pos": [
-                                2,
-                                3,
-                                3
-                            ],
-                            "index": 3,
-                            "name": "back-right"
-                        },
-                        {
-                            "camera_pos": [
-                                0,
-                                2,
-                                4
-                            ],
-                            "index": 4,
-                            "name": "back"
-                        },
-                        {
-                            "camera_pos": [
-                                -3,
-                                2,
-                                3
-                            ],
-                            "index": 5,
-                            "name": "back-left"
-                        },
-                        {
-                            "camera_pos": [
-                                -4,
-                                0,
-                                2
-                            ],
-                            "index": 6,
-                            "name": "left"
-                        },
-                        {
-                            "camera_pos": [
-                                -3,
-                                -3,
-                                2
-                            ],
-                            "index": 7,
-                            "name": "front-left"
-                        },
-                        {
-                            "camera_pos": [
-                                -2,
-                                0,
-                                5
-                            ],
-                            "index": 8,
-                            "name": "top"
-                        },
-                        {
-                            "camera_pos": [
-                                -2,
-                                -3,
-                                0
-                            ],
-                            "index": 9,
-                            "name": "bottom"
-                        }
-                    ],
-                    "default_angle": 0,
-                    "grid_cols": 5,
-                    "grid_rows": 2,
-                    "tile_size": 512
-                }
-            }
-        ],
-        "metadata": false,
-        "tags": [
-            "connection|openforge",
-            "shape|floor",
-            "shape|floor|a",
-            "size|depth|2",
-            "size|width|2",
-            "texture|streets",
-            "texture|streets|cobble"
-        ],
-        "type": "model"
-    },
-    {
-        "config": {
-            "parts": [
-                {
-                    "name": "base",
-                    "optional": true,
-                    "tags": {
-                        "constrain": [
-                            {
-                                "filter": "shape|floor"
-                            },
-                            {
-                                "filter": "shape|wall"
-                            },
-                            {
-                                "tag": "shape"
-                            },
-                            {
-                                "tag": "size|depth"
-                            },
-                            {
-                                "tag": "size|width"
-                            }
-                        ],
-                        "deny": [
-                            {
-                                "tag": "build|s2w"
-                            }
-                        ],
-                        "require": [
-                            {
-                                "tag": "shape|base"
-                            }
-                        ]
-                    }
-                }
-            ]
-        },
-        "file_metadata": {
-            "file": "streets%cobble#floor+a.4x2.openforge.stl",
-            "file_modified_at": "2018-11-13T11:03:54",
-            "full_name": "tiles/streets/floors/street,cobble/streets%cobble#floor+a.4x2.openforge.stl",
-            "md5": "34b7e18fd326f0f510fecc635d28afa2",
-            "size": 9969084,
-            "storage_address": "https://objects.openforge.tools/models/34b7e1/34b7e18fd326f0f510fecc635d28afa2.stl"
-        },
-        "images": [
-            {
-                "image_name": "thumbnail",
-                "image_url": "https://objects.openforge.tools/sprites/34b7e1/34b7e18fd326f0f510fecc635d28afa2.png",
-                "sprite_metadata": {
-                    "angles": [
-                        {
-                            "camera_pos": [
-                                -4,
-                                0,
-                                2
-                            ],
-                            "index": 0,
-                            "name": "front"
-                        },
-                        {
-                            "camera_pos": [
-                                -3,
-                                2,
-                                3
-                            ],
-                            "index": 1,
-                            "name": "front-right"
-                        },
-                        {
-                            "camera_pos": [
-                                0,
-                                2,
-                                4
-                            ],
-                            "index": 2,
-                            "name": "right"
-                        },
-                        {
-                            "camera_pos": [
-                                2,
-                                3,
-                                3
-                            ],
-                            "index": 3,
-                            "name": "back-right"
-                        },
-                        {
-                            "camera_pos": [
-                                0,
-                                2,
-                                4
-                            ],
-                            "index": 4,
-                            "name": "back"
-                        },
-                        {
-                            "camera_pos": [
-                                -3,
-                                2,
-                                3
-                            ],
-                            "index": 5,
-                            "name": "back-left"
-                        },
-                        {
-                            "camera_pos": [
-                                -4,
-                                0,
-                                2
-                            ],
-                            "index": 6,
-                            "name": "left"
-                        },
-                        {
-                            "camera_pos": [
-                                -3,
-                                -3,
-                                2
-                            ],
-                            "index": 7,
-                            "name": "front-left"
-                        },
-                        {
-                            "camera_pos": [
-                                -2,
-                                0,
-                                5
-                            ],
-                            "index": 8,
-                            "name": "top"
-                        },
-                        {
-                            "camera_pos": [
-                                -2,
-                                -3,
-                                0
-                            ],
-                            "index": 9,
-                            "name": "bottom"
-                        }
-                    ],
-                    "default_angle": 0,
-                    "grid_cols": 5,
-                    "grid_rows": 2,
-                    "tile_size": 512
-                }
-            }
-        ],
-        "metadata": false,
-        "tags": [
-            "connection|openforge",
-            "shape|floor",
-            "shape|floor|a",
-            "size|depth|2",
-            "size|width|4",
-            "texture|streets",
-            "texture|streets|cobble"
-        ],
-        "type": "model"
-    },
-    {
-        "config": {
-            "parts": [
-                {
-                    "name": "base",
-                    "optional": true,
-                    "tags": {
-                        "constrain": [
-                            {
-                                "filter": "shape|floor"
-                            },
-                            {
-                                "filter": "shape|wall"
-                            },
-                            {
-                                "tag": "shape"
-                            },
-                            {
-                                "tag": "size|depth"
-                            },
-                            {
-                                "tag": "size|width"
-                            }
-                        ],
-                        "deny": [
-                            {
-                                "tag": "build|s2w"
-                            }
-                        ],
-                        "require": [
-                            {
-                                "tag": "shape|base"
-                            }
-                        ]
-                    }
-                }
-            ]
-        },
-        "file_metadata": {
-            "file": "streets%cobble#floor+b.2x2.openforge.stl",
-            "file_modified_at": "2018-11-13T11:03:47",
-            "full_name": "tiles/streets/floors/street,cobble/streets%cobble#floor+b.2x2.openforge.stl",
-            "md5": "cb63ba6b1d89f814f222d51df202b75d",
-            "size": 3511584,
-            "storage_address": "https://objects.openforge.tools/models/cb63ba/cb63ba6b1d89f814f222d51df202b75d.stl"
-        },
-        "images": [
-            {
-                "image_name": "thumbnail",
-                "image_url": "https://objects.openforge.tools/sprites/cb63ba/cb63ba6b1d89f814f222d51df202b75d.png",
-                "sprite_metadata": {
-                    "angles": [
-                        {
-                            "camera_pos": [
-                                -4,
-                                0,
-                                2
-                            ],
-                            "index": 0,
-                            "name": "front"
-                        },
-                        {
-                            "camera_pos": [
-                                -3,
-                                2,
-                                3
-                            ],
-                            "index": 1,
-                            "name": "front-right"
-                        },
-                        {
-                            "camera_pos": [
-                                0,
-                                2,
-                                4
-                            ],
-                            "index": 2,
-                            "name": "right"
-                        },
-                        {
-                            "camera_pos": [
-                                2,
-                                3,
-                                3
-                            ],
-                            "index": 3,
-                            "name": "back-right"
-                        },
-                        {
-                            "camera_pos": [
-                                0,
-                                2,
-                                4
-                            ],
-                            "index": 4,
-                            "name": "back"
-                        },
-                        {
-                            "camera_pos": [
-                                -3,
-                                2,
-                                3
-                            ],
-                            "index": 5,
-                            "name": "back-left"
-                        },
-                        {
-                            "camera_pos": [
-                                -4,
-                                0,
-                                2
-                            ],
-                            "index": 6,
-                            "name": "left"
-                        },
-                        {
-                            "camera_pos": [
-                                -3,
-                                -3,
-                                2
-                            ],
-                            "index": 7,
-                            "name": "front-left"
-                        },
-                        {
-                            "camera_pos": [
-                                -2,
-                                0,
-                                5
-                            ],
-                            "index": 8,
-                            "name": "top"
-                        },
-                        {
-                            "camera_pos": [
-                                -2,
-                                -3,
-                                0
-                            ],
-                            "index": 9,
-                            "name": "bottom"
-                        }
-                    ],
-                    "default_angle": 0,
-                    "grid_cols": 5,
-                    "grid_rows": 2,
-                    "tile_size": 512
-                }
-            }
-        ],
-        "metadata": false,
-        "tags": [
-            "connection|openforge",
-            "shape|floor",
-            "shape|floor|b",
-            "size|depth|2",
-            "size|width|2",
-            "texture|streets",
-            "texture|streets|cobble"
-        ],
-        "type": "model"
-    },
-    {
-        "config": {
-            "parts": [
-                {
-                    "name": "base",
-                    "optional": true,
-                    "tags": {
-                        "constrain": [
-                            {
-                                "filter": "shape|floor"
-                            },
-                            {
-                                "filter": "shape|wall"
-                            },
-                            {
-                                "tag": "shape"
-                            },
-                            {
-                                "tag": "size|depth"
-                            },
-                            {
-                                "tag": "size|width"
-                            }
-                        ],
-                        "deny": [
-                            {
-                                "tag": "build|s2w"
-                            }
-                        ],
-                        "require": [
-                            {
-                                "tag": "shape|base"
-                            }
-                        ]
-                    }
-                }
-            ]
-        },
-        "file_metadata": {
-            "file": "streets%cobble#floor+b.4x2.openforge.stl",
-            "file_modified_at": "2018-11-13T11:03:57",
-            "full_name": "tiles/streets/floors/street,cobble/streets%cobble#floor+b.4x2.openforge.stl",
-            "md5": "3da883b85c906d03d4ef8d60929f3a4f",
-            "size": 11007784,
-            "storage_address": "https://objects.openforge.tools/models/3da883/3da883b85c906d03d4ef8d60929f3a4f.stl"
-        },
-        "images": [
-            {
-                "image_name": "thumbnail",
-                "image_url": "https://objects.openforge.tools/sprites/3da883/3da883b85c906d03d4ef8d60929f3a4f.png",
-                "sprite_metadata": {
-                    "angles": [
-                        {
-                            "camera_pos": [
-                                -4,
-                                0,
-                                2
-                            ],
-                            "index": 0,
-                            "name": "front"
-                        },
-                        {
-                            "camera_pos": [
-                                -3,
-                                2,
-                                3
-                            ],
-                            "index": 1,
-                            "name": "front-right"
-                        },
-                        {
-                            "camera_pos": [
-                                0,
-                                2,
-                                4
-                            ],
-                            "index": 2,
-                            "name": "right"
-                        },
-                        {
-                            "camera_pos": [
-                                2,
-                                3,
-                                3
-                            ],
-                            "index": 3,
-                            "name": "back-right"
-                        },
-                        {
-                            "camera_pos": [
-                                0,
-                                2,
-                                4
-                            ],
-                            "index": 4,
-                            "name": "back"
-                        },
-                        {
-                            "camera_pos": [
-                                -3,
-                                2,
-                                3
-                            ],
-                            "index": 5,
-                            "name": "back-left"
-                        },
-                        {
-                            "camera_pos": [
-                                -4,
-                                0,
-                                2
-                            ],
-                            "index": 6,
-                            "name": "left"
-                        },
-                        {
-                            "camera_pos": [
-                                -3,
-                                -3,
-                                2
-                            ],
-                            "index": 7,
-                            "name": "front-left"
-                        },
-                        {
-                            "camera_pos": [
-                                -2,
-                                0,
-                                5
-                            ],
-                            "index": 8,
-                            "name": "top"
-                        },
-                        {
-                            "camera_pos": [
-                                -2,
-                                -3,
-                                0
-                            ],
-                            "index": 9,
-                            "name": "bottom"
-                        }
-                    ],
-                    "default_angle": 0,
-                    "grid_cols": 5,
-                    "grid_rows": 2,
-                    "tile_size": 512
-                }
-            }
-        ],
-        "metadata": false,
-        "tags": [
-            "connection|openforge",
-            "shape|floor",
-            "shape|floor|b",
-            "size|depth|2",
-            "size|width|4",
-            "texture|streets",
-            "texture|streets|cobble"
-        ],
-        "type": "model"
-    },
-    {
-        "config": {
-            "parts": [
-                {
-                    "name": "base",
-                    "optional": true,
-                    "tags": {
-                        "constrain": [
-                            {
-                                "filter": "shape|floor"
-                            },
-                            {
-                                "filter": "shape|wall"
-                            },
-                            {
-                                "tag": "shape"
-                            },
-                            {
-                                "tag": "size|depth"
-                            },
-                            {
-                                "tag": "size|width"
-                            }
-                        ],
-                        "deny": [
-                            {
-                                "tag": "build|s2w"
-                            }
-                        ],
-                        "require": [
-                            {
-                                "tag": "shape|base"
-                            }
-                        ]
-                    }
-                }
-            ]
-        },
-        "file_metadata": {
-            "file": "streets%cobble#floor+c.2x2.openforge.stl",
-            "file_modified_at": "2018-11-13T11:03:49",
-            "full_name": "tiles/streets/floors/street,cobble/streets%cobble#floor+c.2x2.openforge.stl",
-            "md5": "6b8407b56b26e005368afd49f1535287",
-            "size": 6303784,
-            "storage_address": "https://objects.openforge.tools/models/6b8407/6b8407b56b26e005368afd49f1535287.stl"
-        },
-        "images": [
-            {
-                "image_name": "thumbnail",
-                "image_url": "https://objects.openforge.tools/sprites/6b8407/6b8407b56b26e005368afd49f1535287.png",
-                "sprite_metadata": {
-                    "angles": [
-                        {
-                            "camera_pos": [
-                                -4,
-                                0,
-                                2
-                            ],
-                            "index": 0,
-                            "name": "front"
-                        },
-                        {
-                            "camera_pos": [
-                                -3,
-                                2,
-                                3
-                            ],
-                            "index": 1,
-                            "name": "front-right"
-                        },
-                        {
-                            "camera_pos": [
-                                0,
-                                2,
-                                4
-                            ],
-                            "index": 2,
-                            "name": "right"
-                        },
-                        {
-                            "camera_pos": [
-                                2,
-                                3,
-                                3
-                            ],
-                            "index": 3,
-                            "name": "back-right"
-                        },
-                        {
-                            "camera_pos": [
-                                0,
-                                2,
-                                4
-                            ],
-                            "index": 4,
-                            "name": "back"
-                        },
-                        {
-                            "camera_pos": [
-                                -3,
-                                2,
-                                3
-                            ],
-                            "index": 5,
-                            "name": "back-left"
-                        },
-                        {
-                            "camera_pos": [
-                                -4,
-                                0,
-                                2
-                            ],
-                            "index": 6,
-                            "name": "left"
-                        },
-                        {
-                            "camera_pos": [
-                                -3,
-                                -3,
-                                2
-                            ],
-                            "index": 7,
-                            "name": "front-left"
-                        },
-                        {
-                            "camera_pos": [
-                                -2,
-                                0,
-                                5
-                            ],
-                            "index": 8,
-                            "name": "top"
-                        },
-                        {
-                            "camera_pos": [
-                                -2,
-                                -3,
-                                0
-                            ],
-                            "index": 9,
-                            "name": "bottom"
-                        }
-                    ],
-                    "default_angle": 0,
-                    "grid_cols": 5,
-                    "grid_rows": 2,
-                    "tile_size": 512
-                }
-            }
-        ],
-        "metadata": false,
-        "tags": [
-            "connection|openforge",
-            "shape|floor",
-            "shape|floor|c",
-            "size|depth|2",
-            "size|width|2",
-            "texture|streets",
-            "texture|streets|cobble"
-        ],
-        "type": "model"
-    },
-    {
-        "config": {
-            "parts": [
-                {
-                    "name": "base",
-                    "optional": true,
-                    "tags": {
-                        "constrain": [
-                            {
-                                "filter": "shape|floor"
-                            },
-                            {
-                                "filter": "shape|wall"
-                            },
-                            {
-                                "tag": "shape"
-                            },
-                            {
-                                "tag": "size|depth"
-                            },
-                            {
-                                "tag": "size|width"
-                            }
-                        ],
-                        "deny": [
-                            {
-                                "tag": "build|s2w"
-                            }
-                        ],
-                        "require": [
-                            {
-                                "tag": "shape|base"
-                            }
-                        ]
-                    }
-                }
-            ]
-        },
-        "file_metadata": {
-            "file": "streets%cobble#floor+d.2x2.openforge.stl",
-            "file_modified_at": "2018-11-13T11:03:51",
-            "full_name": "tiles/streets/floors/street,cobble/streets%cobble#floor+d.2x2.openforge.stl",
-            "md5": "91e191e8945c04fdd6f550de2304842f",
-            "size": 6118384,
-            "storage_address": "https://objects.openforge.tools/models/91e191/91e191e8945c04fdd6f550de2304842f.stl"
-        },
-        "images": [
-            {
-                "image_name": "thumbnail",
-                "image_url": "https://objects.openforge.tools/sprites/91e191/91e191e8945c04fdd6f550de2304842f.png",
-                "sprite_metadata": {
-                    "angles": [
-                        {
-                            "camera_pos": [
-                                -4,
-                                0,
-                                2
-                            ],
-                            "index": 0,
-                            "name": "front"
-                        },
-                        {
-                            "camera_pos": [
-                                -3,
-                                2,
-                                3
-                            ],
-                            "index": 1,
-                            "name": "front-right"
-                        },
-                        {
-                            "camera_pos": [
-                                0,
-                                2,
-                                4
-                            ],
-                            "index": 2,
-                            "name": "right"
-                        },
-                        {
-                            "camera_pos": [
-                                2,
-                                3,
-                                3
-                            ],
-                            "index": 3,
-                            "name": "back-right"
-                        },
-                        {
-                            "camera_pos": [
-                                0,
-                                2,
-                                4
-                            ],
-                            "index": 4,
-                            "name": "back"
-                        },
-                        {
-                            "camera_pos": [
-                                -3,
-                                2,
-                                3
-                            ],
-                            "index": 5,
-                            "name": "back-left"
-                        },
-                        {
-                            "camera_pos": [
-                                -4,
-                                0,
-                                2
-                            ],
-                            "index": 6,
-                            "name": "left"
-                        },
-                        {
-                            "camera_pos": [
-                                -3,
-                                -3,
-                                2
-                            ],
-                            "index": 7,
-                            "name": "front-left"
-                        },
-                        {
-                            "camera_pos": [
-                                -2,
-                                0,
-                                5
-                            ],
-                            "index": 8,
-                            "name": "top"
-                        },
-                        {
-                            "camera_pos": [
-                                -2,
-                                -3,
-                                0
-                            ],
-                            "index": 9,
-                            "name": "bottom"
-                        }
-                    ],
-                    "default_angle": 0,
-                    "grid_cols": 5,
-                    "grid_rows": 2,
-                    "tile_size": 512
-                }
-            }
-        ],
-        "metadata": false,
-        "tags": [
-            "connection|openforge",
-            "shape|floor",
-            "shape|floor|d",
-            "size|depth|2",
-            "size|width|2",
-            "texture|streets",
-            "texture|streets|cobble"
-        ],
-        "type": "model"
-    },
-    {
-        "config": {
-            "parts": [
-                {
-                    "name": "base",
-                    "optional": true,
-                    "tags": {
-                        "constrain": [
-                            {
-                                "filter": "shape|floor"
-                            },
-                            {
-                                "filter": "shape|wall"
-                            },
-                            {
-                                "tag": "shape"
-                            },
-                            {
-                                "tag": "size|depth"
-                            },
-                            {
-                                "tag": "size|width"
-                            }
-                        ],
-                        "deny": [
-                            {
-                                "tag": "build|s2w"
-                            }
-                        ],
-                        "require": [
-                            {
-                                "tag": "shape|base"
-                            }
-                        ]
-                    }
-                }
-            ]
-        },
-        "file_metadata": {
             "file": "streets%cobble#floor.4x4.openforge.stl",
             "file_modified_at": "2018-11-13T11:04:03",
             "full_name": "tiles/streets/floors/street,cobble/streets%cobble#floor.4x4.openforge.stl",
@@ -13029,9 +12064,987 @@
             ]
         },
         "file_metadata": {
-            "file": "streets%fan_cobble#floor+a.2x2.openforge.stl",
+            "file": "streets%cobble+a#floor.2x2.openforge.stl",
+            "file_modified_at": "2018-11-13T11:03:46",
+            "full_name": "tiles/streets/floors/street,cobble/streets%cobble+a#floor.2x2.openforge.stl",
+            "md5": "edbc04b22a0a8ecdfcaed609c2127f07",
+            "size": 5859284,
+            "storage_address": "https://objects.openforge.tools/models/edbc04/edbc04b22a0a8ecdfcaed609c2127f07.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/edbc04/edbc04b22a0a8ecdfcaed609c2127f07.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "connection|openforge",
+            "shape|floor",
+            "shape|square",
+            "size|depth|2",
+            "size|width|2",
+            "texture|streets",
+            "texture|streets|cobble",
+            "texture|streets|cobble|a"
+        ],
+        "type": "model"
+    },
+    {
+        "config": {
+            "parts": [
+                {
+                    "name": "base",
+                    "optional": true,
+                    "tags": {
+                        "constrain": [
+                            {
+                                "filter": "shape|floor"
+                            },
+                            {
+                                "filter": "shape|wall"
+                            },
+                            {
+                                "tag": "shape"
+                            },
+                            {
+                                "tag": "size|depth"
+                            },
+                            {
+                                "tag": "size|width"
+                            }
+                        ],
+                        "deny": [
+                            {
+                                "tag": "build|s2w"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "shape|base"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        "file_metadata": {
+            "file": "streets%cobble+a#floor.4x2.openforge.stl",
+            "file_modified_at": "2018-11-13T11:03:54",
+            "full_name": "tiles/streets/floors/street,cobble/streets%cobble+a#floor.4x2.openforge.stl",
+            "md5": "34b7e18fd326f0f510fecc635d28afa2",
+            "size": 9969084,
+            "storage_address": "https://objects.openforge.tools/models/34b7e1/34b7e18fd326f0f510fecc635d28afa2.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/34b7e1/34b7e18fd326f0f510fecc635d28afa2.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "connection|openforge",
+            "shape|floor",
+            "shape|square",
+            "size|depth|2",
+            "size|width|4",
+            "texture|streets",
+            "texture|streets|cobble",
+            "texture|streets|cobble|a"
+        ],
+        "type": "model"
+    },
+    {
+        "config": {
+            "parts": [
+                {
+                    "name": "base",
+                    "optional": true,
+                    "tags": {
+                        "constrain": [
+                            {
+                                "filter": "shape|floor"
+                            },
+                            {
+                                "filter": "shape|wall"
+                            },
+                            {
+                                "tag": "shape"
+                            },
+                            {
+                                "tag": "size|depth"
+                            },
+                            {
+                                "tag": "size|width"
+                            }
+                        ],
+                        "deny": [
+                            {
+                                "tag": "build|s2w"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "shape|base"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        "file_metadata": {
+            "file": "streets%cobble+b#floor.2x2.openforge.stl",
+            "file_modified_at": "2018-11-13T11:03:47",
+            "full_name": "tiles/streets/floors/street,cobble/streets%cobble+b#floor.2x2.openforge.stl",
+            "md5": "cb63ba6b1d89f814f222d51df202b75d",
+            "size": 3511584,
+            "storage_address": "https://objects.openforge.tools/models/cb63ba/cb63ba6b1d89f814f222d51df202b75d.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/cb63ba/cb63ba6b1d89f814f222d51df202b75d.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "connection|openforge",
+            "shape|floor",
+            "shape|square",
+            "size|depth|2",
+            "size|width|2",
+            "texture|streets",
+            "texture|streets|cobble",
+            "texture|streets|cobble|b"
+        ],
+        "type": "model"
+    },
+    {
+        "config": {
+            "parts": [
+                {
+                    "name": "base",
+                    "optional": true,
+                    "tags": {
+                        "constrain": [
+                            {
+                                "filter": "shape|floor"
+                            },
+                            {
+                                "filter": "shape|wall"
+                            },
+                            {
+                                "tag": "shape"
+                            },
+                            {
+                                "tag": "size|depth"
+                            },
+                            {
+                                "tag": "size|width"
+                            }
+                        ],
+                        "deny": [
+                            {
+                                "tag": "build|s2w"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "shape|base"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        "file_metadata": {
+            "file": "streets%cobble+b#floor.4x2.openforge.stl",
+            "file_modified_at": "2018-11-13T11:03:57",
+            "full_name": "tiles/streets/floors/street,cobble/streets%cobble+b#floor.4x2.openforge.stl",
+            "md5": "3da883b85c906d03d4ef8d60929f3a4f",
+            "size": 11007784,
+            "storage_address": "https://objects.openforge.tools/models/3da883/3da883b85c906d03d4ef8d60929f3a4f.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/3da883/3da883b85c906d03d4ef8d60929f3a4f.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "connection|openforge",
+            "shape|floor",
+            "shape|square",
+            "size|depth|2",
+            "size|width|4",
+            "texture|streets",
+            "texture|streets|cobble",
+            "texture|streets|cobble|b"
+        ],
+        "type": "model"
+    },
+    {
+        "config": {
+            "parts": [
+                {
+                    "name": "base",
+                    "optional": true,
+                    "tags": {
+                        "constrain": [
+                            {
+                                "filter": "shape|floor"
+                            },
+                            {
+                                "filter": "shape|wall"
+                            },
+                            {
+                                "tag": "shape"
+                            },
+                            {
+                                "tag": "size|depth"
+                            },
+                            {
+                                "tag": "size|width"
+                            }
+                        ],
+                        "deny": [
+                            {
+                                "tag": "build|s2w"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "shape|base"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        "file_metadata": {
+            "file": "streets%cobble+c#floor.2x2.openforge.stl",
+            "file_modified_at": "2018-11-13T11:03:49",
+            "full_name": "tiles/streets/floors/street,cobble/streets%cobble+c#floor.2x2.openforge.stl",
+            "md5": "6b8407b56b26e005368afd49f1535287",
+            "size": 6303784,
+            "storage_address": "https://objects.openforge.tools/models/6b8407/6b8407b56b26e005368afd49f1535287.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/6b8407/6b8407b56b26e005368afd49f1535287.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "connection|openforge",
+            "shape|floor",
+            "shape|square",
+            "size|depth|2",
+            "size|width|2",
+            "texture|streets",
+            "texture|streets|cobble",
+            "texture|streets|cobble|c"
+        ],
+        "type": "model"
+    },
+    {
+        "config": {
+            "parts": [
+                {
+                    "name": "base",
+                    "optional": true,
+                    "tags": {
+                        "constrain": [
+                            {
+                                "filter": "shape|floor"
+                            },
+                            {
+                                "filter": "shape|wall"
+                            },
+                            {
+                                "tag": "shape"
+                            },
+                            {
+                                "tag": "size|depth"
+                            },
+                            {
+                                "tag": "size|width"
+                            }
+                        ],
+                        "deny": [
+                            {
+                                "tag": "build|s2w"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "shape|base"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        "file_metadata": {
+            "file": "streets%cobble+d#floor.2x2.openforge.stl",
+            "file_modified_at": "2018-11-13T11:03:51",
+            "full_name": "tiles/streets/floors/street,cobble/streets%cobble+d#floor.2x2.openforge.stl",
+            "md5": "91e191e8945c04fdd6f550de2304842f",
+            "size": 6118384,
+            "storage_address": "https://objects.openforge.tools/models/91e191/91e191e8945c04fdd6f550de2304842f.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/91e191/91e191e8945c04fdd6f550de2304842f.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "connection|openforge",
+            "shape|floor",
+            "shape|square",
+            "size|depth|2",
+            "size|width|2",
+            "texture|streets",
+            "texture|streets|cobble",
+            "texture|streets|cobble|d"
+        ],
+        "type": "model"
+    },
+    {
+        "config": {
+            "parts": [
+                {
+                    "name": "base",
+                    "optional": true,
+                    "tags": {
+                        "constrain": [
+                            {
+                                "filter": "shape|floor"
+                            },
+                            {
+                                "filter": "shape|wall"
+                            },
+                            {
+                                "tag": "shape"
+                            },
+                            {
+                                "tag": "size|depth"
+                            },
+                            {
+                                "tag": "size|width"
+                            }
+                        ],
+                        "deny": [
+                            {
+                                "tag": "build|s2w"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "shape|base"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        "file_metadata": {
+            "file": "streets%fan_cobble+a#floor.2x2.openforge.stl",
             "file_modified_at": "2018-11-13T09:21:18",
-            "full_name": "tiles/streets/floors/street,fan_cobble/streets%fan_cobble#floor+a.2x2.openforge.stl",
+            "full_name": "tiles/streets/floors/street,fan_cobble/streets%fan_cobble+a#floor.2x2.openforge.stl",
             "md5": "3ad972a3ad6946d04a29307a9c34fa5a",
             "size": 13290084,
             "storage_address": "https://objects.openforge.tools/models/3ad972/3ad972a3ad6946d04a29307a9c34fa5a.stl"
@@ -13144,11 +13157,12 @@
         "tags": [
             "connection|openforge",
             "shape|floor",
-            "shape|floor|a",
+            "shape|square",
             "size|depth|2",
             "size|width|2",
             "texture|streets",
-            "texture|streets|fan_cobble"
+            "texture|streets|fan_cobble",
+            "texture|streets|fan_cobble|a"
         ],
         "type": "model"
     },
@@ -13191,9 +13205,9 @@
             ]
         },
         "file_metadata": {
-            "file": "streets%fan_cobble#floor+a.2x4.openforge.stl",
+            "file": "streets%fan_cobble+a#floor.2x4.openforge.stl",
             "file_modified_at": "2018-11-13T09:22:33",
-            "full_name": "tiles/streets/floors/street,fan_cobble/streets%fan_cobble#floor+a.2x4.openforge.stl",
+            "full_name": "tiles/streets/floors/street,fan_cobble/streets%fan_cobble+a#floor.2x4.openforge.stl",
             "md5": "1d9813f0a84d5d6aa7ad1b9974f66d80",
             "size": 25364684,
             "storage_address": "https://objects.openforge.tools/models/1d9813/1d9813f0a84d5d6aa7ad1b9974f66d80.stl"
@@ -13306,11 +13320,12 @@
         "tags": [
             "connection|openforge",
             "shape|floor",
-            "shape|floor|a",
+            "shape|square",
             "size|depth|4",
             "size|width|2",
             "texture|streets",
-            "texture|streets|fan_cobble"
+            "texture|streets|fan_cobble",
+            "texture|streets|fan_cobble|a"
         ],
         "type": "model"
     },
@@ -13353,9 +13368,9 @@
             ]
         },
         "file_metadata": {
-            "file": "streets%fan_cobble#floor+a.4x4.openforge.stl",
+            "file": "streets%fan_cobble+a#floor.4x4.openforge.stl",
             "file_modified_at": "2018-11-13T09:23:48",
-            "full_name": "tiles/streets/floors/street,fan_cobble/streets%fan_cobble#floor+a.4x4.openforge.stl",
+            "full_name": "tiles/streets/floors/street,fan_cobble/streets%fan_cobble+a#floor.4x4.openforge.stl",
             "md5": "b4fba314ecb9409ac8082a57ecb03e0a",
             "size": 28459484,
             "storage_address": "https://objects.openforge.tools/models/b4fba3/b4fba314ecb9409ac8082a57ecb03e0a.stl"
@@ -13468,11 +13483,12 @@
         "tags": [
             "connection|openforge",
             "shape|floor",
-            "shape|floor|a",
+            "shape|square",
             "size|depth|4",
             "size|width|4",
             "texture|streets",
-            "texture|streets|fan_cobble"
+            "texture|streets|fan_cobble",
+            "texture|streets|fan_cobble|a"
         ],
         "type": "model"
     },
@@ -13515,9 +13531,9 @@
             ]
         },
         "file_metadata": {
-            "file": "streets%fan_cobble#floor+b.2x2.openforge.stl",
+            "file": "streets%fan_cobble+b#floor.2x2.openforge.stl",
             "file_modified_at": "2018-11-13T09:21:30",
-            "full_name": "tiles/streets/floors/street,fan_cobble/streets%fan_cobble#floor+b.2x2.openforge.stl",
+            "full_name": "tiles/streets/floors/street,fan_cobble/streets%fan_cobble+b#floor.2x2.openforge.stl",
             "md5": "9e569a7c79f156d9e263ae09b4cff6a7",
             "size": 12622884,
             "storage_address": "https://objects.openforge.tools/models/9e569a/9e569a7c79f156d9e263ae09b4cff6a7.stl"
@@ -13630,11 +13646,12 @@
         "tags": [
             "connection|openforge",
             "shape|floor",
-            "shape|floor|b",
+            "shape|square",
             "size|depth|2",
             "size|width|2",
             "texture|streets",
-            "texture|streets|fan_cobble"
+            "texture|streets|fan_cobble",
+            "texture|streets|fan_cobble|b"
         ],
         "type": "model"
     },
@@ -13677,9 +13694,9 @@
             ]
         },
         "file_metadata": {
-            "file": "streets%fan_cobble#floor+b.2x4.openforge.stl",
+            "file": "streets%fan_cobble+b#floor.2x4.openforge.stl",
             "file_modified_at": "2018-11-13T09:23:11",
-            "full_name": "tiles/streets/floors/street,fan_cobble/streets%fan_cobble#floor+b.2x4.openforge.stl",
+            "full_name": "tiles/streets/floors/street,fan_cobble/streets%fan_cobble+b#floor.2x4.openforge.stl",
             "md5": "ff4a1fd9eaf6e9fd3cc7af1fa024fdb3",
             "size": 25737184,
             "storage_address": "https://objects.openforge.tools/models/ff4a1f/ff4a1fd9eaf6e9fd3cc7af1fa024fdb3.stl"
@@ -13792,11 +13809,12 @@
         "tags": [
             "connection|openforge",
             "shape|floor",
-            "shape|floor|b",
+            "shape|square",
             "size|depth|4",
             "size|width|2",
             "texture|streets",
-            "texture|streets|fan_cobble"
+            "texture|streets|fan_cobble",
+            "texture|streets|fan_cobble|b"
         ],
         "type": "model"
     },
@@ -13839,9 +13857,9 @@
             ]
         },
         "file_metadata": {
-            "file": "streets%fan_cobble#floor+b.4x4.openforge.stl",
+            "file": "streets%fan_cobble+b#floor.4x4.openforge.stl",
             "file_modified_at": "2018-11-13T09:25:46",
-            "full_name": "tiles/streets/floors/street,fan_cobble/streets%fan_cobble#floor+b.4x4.openforge.stl",
+            "full_name": "tiles/streets/floors/street,fan_cobble/streets%fan_cobble+b#floor.4x4.openforge.stl",
             "md5": "3abff6094140185c08102b8a3c5ac488",
             "size": 30318384,
             "storage_address": "https://objects.openforge.tools/models/3abff6/3abff6094140185c08102b8a3c5ac488.stl"
@@ -13954,11 +13972,12 @@
         "tags": [
             "connection|openforge",
             "shape|floor",
-            "shape|floor|b",
+            "shape|square",
             "size|depth|4",
             "size|width|4",
             "texture|streets",
-            "texture|streets|fan_cobble"
+            "texture|streets|fan_cobble",
+            "texture|streets|fan_cobble|b"
         ],
         "type": "model"
     },
@@ -14001,9 +14020,9 @@
             ]
         },
         "file_metadata": {
-            "file": "streets%fan_cobble#floor+c.2x2.openforge.stl",
+            "file": "streets%fan_cobble+c#floor.2x2.openforge.stl",
             "file_modified_at": "2018-11-13T09:21:44",
-            "full_name": "tiles/streets/floors/street,fan_cobble/streets%fan_cobble#floor+c.2x2.openforge.stl",
+            "full_name": "tiles/streets/floors/street,fan_cobble/streets%fan_cobble+c#floor.2x2.openforge.stl",
             "md5": "da46b194fe9af65550255a84bc832bcd",
             "size": 12334484,
             "storage_address": "https://objects.openforge.tools/models/da46b1/da46b194fe9af65550255a84bc832bcd.stl"
@@ -14116,11 +14135,12 @@
         "tags": [
             "connection|openforge",
             "shape|floor",
-            "shape|floor|c",
+            "shape|square",
             "size|depth|2",
             "size|width|2",
             "texture|streets",
-            "texture|streets|fan_cobble"
+            "texture|streets|fan_cobble",
+            "texture|streets|fan_cobble|c"
         ],
         "type": "model"
     },
@@ -14163,9 +14183,9 @@
             ]
         },
         "file_metadata": {
-            "file": "streets%fan_cobble#floor+c.4x4.openforge.stl",
+            "file": "streets%fan_cobble+c#floor.4x4.openforge.stl",
             "file_modified_at": "2018-11-13T09:27:33",
-            "full_name": "tiles/streets/floors/street,fan_cobble/streets%fan_cobble#floor+c.4x4.openforge.stl",
+            "full_name": "tiles/streets/floors/street,fan_cobble/streets%fan_cobble+c#floor.4x4.openforge.stl",
             "md5": "99c5585b4f67a999db3a92a343f13794",
             "size": 24422884,
             "storage_address": "https://objects.openforge.tools/models/99c558/99c5585b4f67a999db3a92a343f13794.stl"
@@ -14278,11 +14298,12 @@
         "tags": [
             "connection|openforge",
             "shape|floor",
-            "shape|floor|c",
+            "shape|square",
             "size|depth|4",
             "size|width|4",
             "texture|streets",
-            "texture|streets|fan_cobble"
+            "texture|streets|fan_cobble",
+            "texture|streets|fan_cobble|c"
         ],
         "type": "model"
     },
@@ -14325,9 +14346,9 @@
             ]
         },
         "file_metadata": {
-            "file": "streets%fan_cobble#floor+d.2x2.openforge.stl",
+            "file": "streets%fan_cobble+d#floor.2x2.openforge.stl",
             "file_modified_at": "2018-11-13T09:22:00",
-            "full_name": "tiles/streets/floors/street,fan_cobble/streets%fan_cobble#floor+d.2x2.openforge.stl",
+            "full_name": "tiles/streets/floors/street,fan_cobble/streets%fan_cobble+d#floor.2x2.openforge.stl",
             "md5": "09390eeffed1dfcadeeb0c9a67f3402a",
             "size": 13159284,
             "storage_address": "https://objects.openforge.tools/models/09390e/09390eeffed1dfcadeeb0c9a67f3402a.stl"
@@ -14440,11 +14461,12 @@
         "tags": [
             "connection|openforge",
             "shape|floor",
-            "shape|floor|d",
+            "shape|square",
             "size|depth|2",
             "size|width|2",
             "texture|streets",
-            "texture|streets|fan_cobble"
+            "texture|streets|fan_cobble",
+            "texture|streets|fan_cobble|d"
         ],
         "type": "model"
     },
@@ -14487,9 +14509,9 @@
             ]
         },
         "file_metadata": {
-            "file": "streets%fan_cobble#floor+d.4x4.openforge.stl",
+            "file": "streets%fan_cobble+d#floor.4x4.openforge.stl",
             "file_modified_at": "2018-11-13T09:29:01",
-            "full_name": "tiles/streets/floors/street,fan_cobble/streets%fan_cobble#floor+d.4x4.openforge.stl",
+            "full_name": "tiles/streets/floors/street,fan_cobble/streets%fan_cobble+d#floor.4x4.openforge.stl",
             "md5": "ac59d41f9bf050c18c25f20a63d943b4",
             "size": 20964784,
             "storage_address": "https://objects.openforge.tools/models/ac59d4/ac59d41f9bf050c18c25f20a63d943b4.stl"
@@ -14602,11 +14624,12 @@
         "tags": [
             "connection|openforge",
             "shape|floor",
-            "shape|floor|d",
+            "shape|square",
             "size|depth|4",
             "size|width|4",
             "texture|streets",
-            "texture|streets|fan_cobble"
+            "texture|streets|fan_cobble",
+            "texture|streets|fan_cobble|d"
         ],
         "type": "model"
     },
@@ -14649,9 +14672,9 @@
             ]
         },
         "file_metadata": {
-            "file": "streets%fan_cobble#floor+e.4x4.openforge.stl",
+            "file": "streets%fan_cobble+e#floor.4x4.openforge.stl",
             "file_modified_at": "2018-11-13T09:31:30",
-            "full_name": "tiles/streets/floors/street,fan_cobble/streets%fan_cobble#floor+e.4x4.openforge.stl",
+            "full_name": "tiles/streets/floors/street,fan_cobble/streets%fan_cobble+e#floor.4x4.openforge.stl",
             "md5": "36eaeb1fb86eca347b7dac33bb5cd36d",
             "size": 30891784,
             "storage_address": "https://objects.openforge.tools/models/36eaeb/36eaeb1fb86eca347b7dac33bb5cd36d.stl"
@@ -14764,11 +14787,12 @@
         "tags": [
             "connection|openforge",
             "shape|floor",
-            "shape|floor|e",
+            "shape|square",
             "size|depth|4",
             "size|width|4",
             "texture|streets",
-            "texture|streets|fan_cobble"
+            "texture|streets|fan_cobble",
+            "texture|streets|fan_cobble|e"
         ],
         "type": "model"
     },

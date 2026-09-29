@@ -107,7 +107,15 @@ resource "aws_lambda_function" "api" {
     log_group  = aws_cloudwatch_log_group.api.name
   }
 
-  depends_on = [aws_iam_role_policy_attachment.api_vpc]
+  # api_db_secret named explicitly as well as the VPC attachment: a graph-only
+  # no-op for this full apply, but staging's deploy runs a `-target`ed first stage
+  # and -target walks dependencies rather than dependents, so without this edge the
+  # only grant of secretsmanager:GetSecretValue is skipped. Kept here so the two
+  # environments stay diffable and so copying staging's split job is safe.
+  depends_on = [
+    aws_iam_role_policy_attachment.api_vpc,
+    aws_iam_role_policy.api_db_secret,
+  ]
 }
 
 # ─── ALB ──────────────────────────────────────────────────────────────────────

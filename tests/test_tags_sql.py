@@ -1,9 +1,25 @@
 from psycopg.rows import dict_row
 
 import openforge.db.sql.blueprints as blueprint_sql
+import openforge.db.sql.tag_descriptions as tag_description_sql
 import openforge.db.sql.tags as tag_sql
 
 from .test_helpers import create_test_blueprint
+
+
+def _tagged(curs, name, tags):
+    """A searchable model with these tags, named for sort order.
+
+    The search orders by blueprint_name, so the names here are chosen
+    to make the expected order readable in the assertion.
+    """
+    data = create_test_blueprint(blueprint_name=name, blueprint_type="model")
+    data.pop("tags", None)
+    data.pop("images", None)
+    blueprint = blueprint_sql.insert_blueprint(curs, data)
+    for tag in tags:
+        tag_sql.insert_tag(curs, blueprint["id"], tag)
+    return blueprint
 
 
 def test_insert_and_get_tag(test_db):
@@ -99,10 +115,182 @@ def test_tag_search_blueprints(test_db):
             inserted_bp = blueprint_sql.insert_blueprint(curs, bp)
             tag_sql.insert_tag(curs, inserted_bp["id"], "foo|bar")
             results = tag_sql.tag_search_blueprints(
-                curs, ["foo|bar"], [], [], None, None, 20, True, False, None
+                curs, [{"tag": "foo|bar"}], [], [], None, None, 20, True, False, None
             )
             assert len(results) == 1
             assert results[0]["id"] == inserted_bp["id"]
+
+            # A bare string is silently ignored by the search, so a
+            # test that passes one asserts only that some model
+            # exists. Searching for a tag nothing carries has to come
+            # back empty — and this negative case is the half that
+            # carries the test. Reverting the call above to a bare
+            # string still passes; reverting this one does not. Do
+            # not delete it as redundant.
+            assert (
+                tag_sql.tag_search_blueprints(
+                    curs,
+                    [{"tag": "no|such"}],
+                    [],
+                    [],
+                    None,
+                    None,
+                    20,
+                    True,
+                    False,
+                    None,
+                )
+                == []
+            )
+
+
+def test_tag_search_blueprints_is_ordered_by_name(test_db):
+    """The ORDER BY is load-bearing, not cosmetic.
+
+    Guides resolve a role by asking for the single best candidate
+    (`LIMIT 1`), so this ordering is the only thing that makes a
+    recommendation reproducible — and therefore the only thing that
+    makes a shared guide URL show the same parts twice. Inserted out
+    of order on purpose.
+    """
+    with test_db.connection() as conn:
+        with conn.cursor(row_factory=dict_row) as curs:
+            for name in ["c wall", "a wall", "b wall"]:
+                inserted = blueprint_sql.insert_blueprint(
+                    curs,
+                    create_test_blueprint(blueprint_name=name, blueprint_type="model"),
+                )
+                tag_sql.insert_tag(curs, inserted["id"], "foo|bar")
+
+            results = tag_sql.tag_search_blueprints(
+                curs, [{"tag": "foo|bar"}], [], [], None, None, 20, True, False, None
+            )
+
+            assert [r["blueprint_name"] for r in results] == [
+                "a wall",
+                "b wall",
+                "c wall",
+            ]
+
+
+def test_tag_search_orders_ties_by_id(test_db):
+    """Names collide, so the listing needs a second key.
+
+    Thirteen rows share a name, with two others after them. Thirteen
+    rather than a handful because a short run of random uuids lands in
+    ascending order often enough to let the assertion pass with the
+    tiebreak removed; the two other names because a sort with nothing
+    to do can return its input untouched, and then the missing
+    tiebreak does not show.
+
+    The write in the middle is a perturbation, not the assertion — it
+    moves a row in the heap so the rows do not reach the final sort
+    already in the order being asserted. Comparing two reads and
+    calling that stability, which an earlier version of this test did,
+    proves less again: it samples one pair of executions out of a
+    space the test does not control.
+    """
+    with test_db.connection() as conn:
+        with conn.cursor(row_factory=dict_row) as curs:
+            for name in ["a wall"] * 13 + ["b wall", "c wall"]:
+                inserted = blueprint_sql.insert_blueprint(
+                    curs,
+                    create_test_blueprint(blueprint_name=name, blueprint_type="model"),
+                )
+                tag_sql.insert_tag(curs, inserted["id"], "foo|bar")
+
+            curs.execute(
+                "UPDATE blueprints SET file_size = 99 WHERE id = ("
+                "SELECT id FROM blueprints ORDER BY id LIMIT 1)"
+            )
+
+            found = tag_sql.tag_search_blueprints(
+                curs,
+                [{"tag": "foo|bar"}],
+                [],
+                [],
+                None,
+                None,
+                30,
+                True,
+                False,
+                None,
+            )
+            tied = [str(r["id"]) for r in found if r["blueprint_name"] == "a wall"]
+
+            assert [r["blueprint_name"] for r in found[-2:]] == [
+                "b wall",
+                "c wall",
+            ]
+            assert len(tied) == 13
+            assert tied == sorted(tied)
+
+
+def test_tag_search_blueprints_limit_takes_the_first_by_name(test_db):
+    """`LIMIT 1` must mean the first alphabetically, not an arbitrary row."""
+    with test_db.connection() as conn:
+        with conn.cursor(row_factory=dict_row) as curs:
+            for name in ["z wall", "a wall"]:
+                inserted = blueprint_sql.insert_blueprint(
+                    curs,
+                    create_test_blueprint(blueprint_name=name, blueprint_type="model"),
+                )
+                tag_sql.insert_tag(curs, inserted["id"], "foo|bar")
+
+            results = tag_sql.tag_search_blueprints(
+                curs, [{"tag": "foo|bar"}], [], [], None, None, 1, True, False, None
+            )
+
+            assert [r["blueprint_name"] for r in results] == ["a wall"]
+
+
+def test_tag_search_is_stable_when_names_collide(test_db):
+    """blueprint_name is not unique, so it cannot order alone.
+
+    159 names in the catalog are shared by two or more records, mostly
+    bases — the very role a guide resolves. With only the name in the
+    ORDER BY, LIMIT 1 picks arbitrarily among the ties and any
+    unrelated write can change which one comes back, so a shared guide
+    URL would show a different part later. The id makes it total.
+
+    This asserts the property rather than sampling it. Asking twice
+    with a write in between only compares two executions out of a
+    space the test does not control: whether an arbitrary pick moves
+    depends on the plan, and at these row counts Postgres chooses one
+    that happens to preserve heap order until the table is ANALYZEd.
+    The lowest ids among the ties are what a total order must return,
+    whatever the plan does — which is also why this needs no ANALYZE:
+    an earlier version only caught the regression on the plan an
+    unanalysed table happens to get.
+
+    It asks for five rather than one on purpose. Constraining a single
+    position still lets an arbitrary pick satisfy it by luck — with
+    twenty ties, one run in twenty — and a test that passes 5% of the
+    time when the bug is present is not a witness. Pinning the whole
+    five-row prefix drops that to one in 15,504.
+    """
+    with test_db.connection() as conn:
+        with conn.cursor(row_factory=dict_row) as curs:
+            for _ in range(20):
+                inserted = blueprint_sql.insert_blueprint(
+                    curs,
+                    create_test_blueprint(
+                        blueprint_name="same name", blueprint_type="model"
+                    ),
+                )
+                tag_sql.insert_tag(curs, inserted["id"], "foo|bar")
+            curs.execute(
+                "SELECT id FROM blueprints WHERE blueprint_name = %s "
+                "ORDER BY id LIMIT 5",
+                ("same name",),
+            )
+            lowest = [row["id"] for row in curs.fetchall()]
+
+            found = tag_sql.tag_search_blueprints(
+                curs, [{"tag": "foo|bar"}], [], [], None, None, 5, True, False, None
+            )
+
+            assert [row["id"] for row in found] == lowest
 
 
 def test_tag_search_tags(test_db):
@@ -153,3 +341,214 @@ def test_tag_search_tag_count(test_db):
             )
             assert count[0]["tag"] == ["foo", "bar"]
             assert count[0]["tag_count"] == 1
+
+
+def test_deny_children_keeps_the_tag_and_refuses_what_is_below_it(test_db):
+    """ "A plain wall" without listing every variant that is not one.
+
+    Denying `component|wall|*` by hand would mean editing every guide
+    each time a new variant is designed, which is the opposite of
+    tagging being the thing that keeps the catalog current.
+    """
+    with test_db.connection() as conn:
+        with conn.cursor(row_factory=dict_row) as curs:
+            plain = _tagged(curs, "a plain wall", ["shape|wall", "component|wall"])
+            _tagged(
+                curs,
+                "b arrow slit",
+                ["shape|wall", "component|wall", "component|wall|arrow_slit"],
+            )
+            _tagged(
+                curs,
+                "c curved",
+                ["shape|wall", "component|wall", "component|wall|curved"],
+            )
+
+            # `component|wall` is deliberately *not* required here, so
+            # that it is not exempt: what keeps the plain wall in is
+            # that the sweep takes what is strictly below the tag, not
+            # the tag itself.
+            found = tag_sql.tag_search_blueprints(
+                curs,
+                accept=[],
+                require=[{"tag": "shape|wall"}],
+                deny=[],
+                deny_children=[{"tag": "component|wall"}],
+            )
+
+            assert [b["id"] for b in found] == [plain["id"]]
+
+
+def test_a_required_child_survives_the_sweep_that_removes_its_siblings(test_db):
+    """An included child is exempt from the sweep, which is the point.
+
+    "shape|floor|wall and nothing else under shape|floor" is one
+    predicate rather than a contradiction: the required child is exempt
+    from the deny by construction, so the two terms do not have to know
+    about each other.
+    """
+    with test_db.connection() as conn:
+        with conn.cursor(row_factory=dict_row) as curs:
+            wanted = _tagged(
+                curs, "a floor for a wall", ["shape|floor", "shape|floor|wall"]
+            )
+            _tagged(curs, "b curved floor", ["shape|floor", "shape|floor|curved"])
+            _tagged(
+                curs,
+                "c curved floor for a wall",
+                ["shape|floor", "shape|floor|wall", "shape|floor|curved"],
+            )
+            _tagged(curs, "d bare floor", ["shape|floor"])
+
+            found = tag_sql.tag_search_blueprints(
+                curs,
+                accept=[],
+                require=[{"tag": "shape|floor"}, {"tag": "shape|floor|wall"}],
+                deny=[],
+                deny_children=[{"tag": "shape|floor"}],
+            )
+
+            # "c" carries the required child *and* a swept one, so it
+            # goes: the sweep spares the tags that were asked for, not
+            # the blueprints that happen to carry one.
+            assert [b["id"] for b in found] == [wanted["id"]]
+
+
+def test_allow_spares_a_child_without_requiring_it(test_db):
+    """`allow` asks for nothing; it only survives the sweep.
+
+    That is what makes it different from `accept`, which is a
+    requirement that some tag exists below a prefix.
+    """
+    with test_db.connection() as conn:
+        with conn.cursor(row_factory=dict_row) as curs:
+            bare = _tagged(curs, "a bare base", ["shape|base"])
+            square = _tagged(curs, "b square base", ["shape|base", "shape|base|square"])
+            _tagged(curs, "c wall base", ["shape|base", "shape|base|wall"])
+
+            found = tag_sql.tag_search_blueprints(
+                curs,
+                accept=[],
+                require=[{"tag": "shape|base"}],
+                deny=[],
+                deny_children=[{"tag": "shape|base"}],
+                allow=[{"tag": "shape|base|square"}],
+            )
+
+            # The bare one has nothing to sweep; the square one is
+            # spared; the wall one is not.
+            assert [b["id"] for b in found] == [bare["id"], square["id"]]
+
+
+def test_deny_children_ignores_an_entry_with_no_tag(test_db):
+    """A malformed term is skipped, not a KeyError out of a route.
+
+    Two things now stop such a term reaching here — `to_tag_query`
+    always writes {"tag": ...}, and `tag_query.yaml` refuses an item
+    without one at the boundary — so this is defence in depth rather
+    than a reachable path. It stays because the guard is the only
+    thing deciding between skipping and raising, and the SQL layer
+    takes plain dicts from callers other than the route.
+    """
+    with test_db.connection() as conn:
+        with conn.cursor(row_factory=dict_row) as curs:
+            plain = _tagged(curs, "a plain wall", ["shape|wall", "component|wall"])
+            _tagged(
+                curs,
+                "b slit wall",
+                ["shape|wall", "component|wall", "component|wall|arrow_slit"],
+            )
+
+            found = tag_sql.tag_search_blueprints(
+                curs,
+                accept=[],
+                require=[{"tag": "shape|wall"}],
+                deny=[],
+                deny_children=[{}, {"tag": "component|wall"}],
+            )
+
+            assert [b["id"] for b in found] == [plain["id"]]
+
+
+def test_namespace_facets_carry_the_tag_description(test_db):
+    """A derived answer shows the catalog's own words for the tag.
+
+    The `LEFT JOIN tag_descriptions` is what puts a blurb beside
+    "Magnets" in the guide's clip question. Nothing asserted it, so the
+    join could have been dropped and the answers would simply have
+    gone quiet.
+    """
+    with test_db.connection() as conn:
+        with conn.cursor(row_factory=dict_row) as curs:
+            _tagged(curs, "a base openlock", ["shape|base", "connection|openlock"])
+            _tagged(curs, "b base magnetic", ["shape|base", "connection|magnetic"])
+            tag_description_sql.insert_tag_description(
+                curs, ["connection", "magnetic"], "Spheres and cylinders, any polarity."
+            )
+
+            found = tag_sql.tag_search_namespace_facets(
+                curs, accept=[], require=["shape|base"], deny=[], namespace="connection"
+            )
+
+    by_tag = {f["tag"]: f for f in found}
+    assert by_tag["connection|magnetic"]["blurb"] == (
+        "Spheres and cylinders, any polarity."
+    )
+    assert by_tag["connection|magnetic"]["count"] == 1
+    # A tag nobody has described is still an answer, just a quiet one.
+    assert by_tag["connection|openlock"]["blurb"] is None
+
+
+def test_a_bare_sql_statement_logs_itself_not_the_separator(caplog):
+    """`join` means opposite things on `SQL` and `Composed`.
+
+    `Composed.join(sep)` joins its parts with the separator;
+    `SQL.join(seq)` treats *self* as the separator and iterates the
+    argument. One caller passes a bare `SQL`, and it used to log the
+    string `'\\n'` with the statement thrown away — visible only once
+    somebody turned DEBUG on, which is exactly when they needed it.
+    """
+    import logging
+
+    from psycopg import sql
+
+    from openforge.db.sql.tags import _log_query
+
+    with caplog.at_level(logging.DEBUG):
+        _log_query(sql.SQL("DELETE FROM tags"))
+        _log_query(sql.Composed([sql.SQL("SELECT 1"), sql.SQL("FROM tags")]))
+
+    assert "DELETE FROM tags" in caplog.text
+    assert "SELECT 1\nFROM tags" in caplog.text
+
+
+def test_a_query_is_not_rendered_when_nothing_is_listening(caplog):
+    """The level check is the point: `as_string()` is not free, and the
+    guide's availability pass builds fifty-odd of these per request.
+
+    Asserting no output is not enough — `logger.debug` emits nothing at
+    WARNING whether or not the gate is there, so that assertion passes
+    with the gate deleted. What has to be pinned is that the rendering
+    does not happen, which is the whole saving (1.97us gated against
+    168us ungated).
+    """
+    import logging
+    from unittest.mock import patch
+
+    from psycopg import sql
+
+    from openforge.db.sql.tags import _log_query
+
+    with patch.object(
+        sql.Composed, "as_string", autospec=True, return_value="rendered"
+    ) as rendered:
+        with caplog.at_level(logging.WARNING):
+            _log_query(sql.SQL("DELETE FROM tags"))
+        assert rendered.call_count == 0
+        assert caplog.text == ""
+
+        # And it does render when something is listening, so the test
+        # cannot pass by never reaching the call at all.
+        with caplog.at_level(logging.DEBUG):
+            _log_query(sql.SQL("DELETE FROM tags"))
+        assert rendered.call_count == 1

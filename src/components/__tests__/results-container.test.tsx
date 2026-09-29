@@ -50,6 +50,8 @@ describe('ResultsContainer', () => {
         paging,
         selectedTags: ['foo', 'bar'],
         denyTags: ['baz'],
+        denyChildrenTags: [],
+        allowTags: [],
         searchTerm: 'search',
         removeTag: mockFunctions.removeTag,
         addTag: mockFunctions.addTag,
@@ -141,6 +143,8 @@ describe('ResultsContainer', () => {
         paging: createMockPaging({ total_count: 10, start_count: 2 }),
         selectedTags: ['foo', 'bar'],
         denyTags: ['baz'],
+        denyChildrenTags: [],
+        allowTags: [],
         searchTerm: 'search',
         removeTag: mockFunctions.removeTag,
         addTag: mockFunctions.addTag,
@@ -193,6 +197,36 @@ describe('ResultsContainer', () => {
     });
   });
 
+  it('keeps deny_children and allow when the props change after setup', () => {
+    // The sweep is what keeps arrow slits and curved corners out of a
+    // plain wall's dialog. It was passed on the initial setup and
+    // then dropped by the rebuild on every later prop change, which
+    // *widens* the result set — the one direction a restriction must
+    // never fail in.
+    const configValues = createMockConfigTags({
+      require: [{ tag: 'shape|wall' }],
+      deny: [],
+      deny_children: [{ tag: 'component' }],
+      allow: [{ tag: 'component|wall' }]
+    });
+    mockFunctions.fetchData.mockReturnValue(undefined);
+
+    const { rerender } = render(<ResultsContainer configValues={configValues} />);
+    mockFunctions.setTagState.mockClear();
+    // A second render with different props takes the update branch,
+    // which is the one that used to lose them.
+    rerender(
+      <ResultsContainer configValues={configValues} parentTags={['texture|cave']} />
+    );
+
+    expect(mockFunctions.setTagState).toHaveBeenCalledWith(
+      expect.objectContaining({
+        denyChildren: ['component'],
+        allow: ['component|wall']
+      })
+    );
+  });
+
   it('handles configValues with constrain logic integration', () => {
     const configValues = createMockConfigTags({
       require: [],
@@ -221,6 +255,98 @@ describe('ResultsContainer', () => {
     });
   });
 
+  it('lets the caller name seeded tags the person may take off', () => {
+    // `removable` is what makes the guide's dialog open narrow and
+    // still let you widen it. Deleting the whole branch that reads it
+    // left the suite green, because nothing passed the prop at all.
+    // Both tags are seeded by the caller, so both are normally fixed.
+    // The store already holds them as the selected set, which is what
+    // the list actually renders.
+    const configValues = createMockConfigTags({
+      require: [{ tag: 'foo' }, { tag: 'bar' }],
+      deny: []
+    });
+    mockFunctions.fetchData.mockReturnValue(undefined);
+
+    const { rerender } = render(
+      <ResultsContainer configValues={configValues} removable={['foo']} />
+    );
+    const withProp = screen.queryAllByRole('button', { name: '-' }).length;
+
+    // The same seeded tags, minus the caller's permission. The store
+    // holds other tags that are removable for their own reasons, so
+    // the difference is what this prop is responsible for.
+    rerender(<ResultsContainer configValues={configValues} removable={[]} />);
+    const without = screen.queryAllByRole('button', { name: '-' }).length;
+
+    expect(withProp - without).toBe(1);
+  });
+
+  it('writes a change confined to deny_children and allow', () => {
+    // The store already holds the require/deny this config derives,
+    // so the old change test — which compared only those two — saw no
+    // change and dropped the sweep on the floor. The previous
+    // regression test could not catch it: `setTagState` is mocked, so
+    // `selectedTags` never caught up and `requireChanged` was true on
+    // every render regardless.
+    (useTagContext as jest.Mock).mockImplementation(
+      (selector: (state: TagStore) => unknown) =>
+        selector({
+          blueprints,
+          paging,
+          // Already equal to what this config derives.
+          selectedTags: ['shape|wall'],
+          denyTags: [],
+          // And the sweep is not yet applied, which is the change.
+          denyChildrenTags: [],
+          allowTags: [],
+          searchTerm: null,
+          removeTag: mockFunctions.removeTag,
+          addTag: mockFunctions.addTag,
+          clearTags: mockFunctions.clearTags,
+          fetchBlueprints: mockFunctions.fetchBlueprints,
+          setTagState: mockFunctions.setTagState,
+          autoload: false,
+          setSearchTerm: mockFunctions.setSearchTerm,
+          data: {},
+          expandedNodes: {},
+          tagDescriptions: {},
+          fetchData: mockFunctions.fetchData,
+          setData: mockFunctions.setData,
+          toggleNode: mockFunctions.toggleNode,
+          addAllTags: mockFunctions.addAllTags,
+          addDenyTag: mockFunctions.addDenyTag,
+          removeDenyTag: mockFunctions.removeDenyTag,
+          setBlueprints: mockFunctions.setBlueprints,
+          fetchTagDescriptions: mockFunctions.fetchTagDescriptions,
+          search_models: false,
+          search_blueprints: false,
+          initialSetupComplete: true,
+          setInitialSetupComplete: mockFunctions.setInitialSetupComplete,
+        } as unknown as TagStore)
+    );
+    const configValues = createMockConfigTags({
+      require: [{ tag: 'shape|wall' }],
+      deny: [],
+      deny_children: [{ tag: 'component' }],
+      allow: [{ tag: 'component|wall' }]
+    });
+    mockFunctions.fetchData.mockReturnValue(undefined);
+
+    const { rerender } = render(<ResultsContainer configValues={configValues} />);
+    mockFunctions.setTagState.mockClear();
+    rerender(
+      <ResultsContainer configValues={configValues} parentTags={['texture|cave']} />
+    );
+
+    expect(mockFunctions.setTagState).toHaveBeenCalledWith(
+      expect.objectContaining({
+        denyChildren: ['component'],
+        allow: ['component|wall']
+      })
+    );
+  });
+
   it('handles configValues with async fetchData without race condition', async () => {
     const configValues = createMockConfigTags({
       require: [{ tag: 'required1' }, { tag: 'required2' }],
@@ -238,6 +364,8 @@ describe('ResultsContainer', () => {
         paging,
         selectedTags: [],
         denyTags: [],
+        denyChildrenTags: [],
+        allowTags: [],
         searchTerm: null,
         removeTag: mockFunctions.removeTag,
         addTag: mockFunctions.addTag,
@@ -294,6 +422,8 @@ describe('ResultsContainer', () => {
         paging,
         selectedTags: ['foo', 'bar'],
         denyTags: [],
+        denyChildrenTags: [],
+        allowTags: [],
         searchTerm: 'search',
         removeTag: mockFunctions.removeTag,
         addTag: mockFunctions.addTag,
@@ -340,6 +470,8 @@ describe('ResultsContainer', () => {
         paging,
         selectedTags: ['config-required', 'config-denied', 'removable-tag'],
         denyTags: ['config-denied'],
+        denyChildrenTags: [],
+        allowTags: [],
         searchTerm: null,
         removeTag: mockFunctions.removeTag,
         addTag: mockFunctions.addTag,
@@ -408,6 +540,8 @@ describe('ResultsContainer', () => {
         paging: createMockPaging({ total_count: 0, start_count: 0, next_token: undefined, previous_token: undefined }),
         selectedTags: [],
         denyTags: [],
+        denyChildrenTags: [],
+        allowTags: [],
         searchTerm: null,
         removeTag: mockFunctions.removeTag,
         addTag: mockFunctions.addTag,

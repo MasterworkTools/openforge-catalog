@@ -16,15 +16,33 @@ interface ResultsContainerProps {
   configValues?: ConfigTags | null;
   parentTags?: string[];
   siblingSelections?: { partName: string; tags: string[] }[];
+  /**
+   * Seeded tags the person may take off again.
+   *
+   * A seeded tag is normally fixed — it is what the caller is asking
+   * about, and removing it would answer a different question. These
+   * are the exceptions: the guide's merely-preferred restrictions,
+   * which it opens the dialog with so that browsing starts inside the
+   * family you chose, and offers to drop so that leaving the family
+   * is one click rather than the default.
+   */
+  removable?: string[];
 }
 
-const ResultsContainer = ({ configValues, parentTags = [], siblingSelections = [] }: ResultsContainerProps) => {
+const ResultsContainer = ({ configValues, parentTags = [], siblingSelections = [], removable = [] }: ResultsContainerProps) => {
   const setSelectedBlueprint = useBlueprintContext((state) => state.setSelectedBlueprint);
   const selectedBlueprint = useBlueprintContext((state) => state.selectedBlueprint);
   const blueprints = useTagContext((state) => state.blueprints);
   const paging = useTagContext((state) => state.paging);
   const selectedTags = useTagContext((state) => state.selectedTags);
   const denyTags = useTagContext((state) => state.denyTags);
+  // Read back so the change test below can see them. Without these
+  // the merge carried the sweep but the comparison ignored it, so a
+  // config change confined to `deny_children`/`allow` was computed,
+  // merged, and then never written — the widening bug again, one
+  // step further along.
+  const denyChildrenTags = useTagContext((state) => state.denyChildrenTags);
+  const allowTags = useTagContext((state) => state.allowTags);
   const searchTerm = useTagContext((state) => state.searchTerm);
   const removeTag = useTagContext((state) => state.removeTag);
   const clearTags = useTagContext((state) => state.clearTags);
@@ -101,16 +119,29 @@ const ResultsContainer = ({ configValues, parentTags = [], siblingSelections = [
         const derivedRequire = Array.isArray(derivedTags.require) ? derivedTags.require : [];
         const derivedDeny = Array.isArray(derivedTags.deny) ? derivedTags.deny : [];
 
+        // `denyChildren` and `allow` come along. They are not merged
+        // with the user's tags — the tag tree cannot add or remove
+        // them — but leaving them out of this rebuild dropped them on
+        // every prop change after the first, which *widens* the
+        // result set: the guide's sweep is what keeps the arrow slits
+        // and curved corners out of a plain wall's dialog.
         const mergedTags = {
           require: [...derivedRequire, ...userAddedTags],
-          deny: derivedDeny
+          deny: derivedDeny,
+          ...(derivedTags.denyChildren ? { denyChildren: derivedTags.denyChildren } : {}),
+          ...(derivedTags.allow ? { allow: derivedTags.allow } : {})
         };
 
-        // Compare arrays to prevent infinite loops
-        const requireChanged = !areTagArraysUnsortedEqual(mergedTags.require || [], selectedTags);
-        const denyChanged = !areTagArraysUnsortedEqual(mergedTags.deny || [], denyTags);
+        // Compare arrays to prevent infinite loops. All four terms,
+        // not just the two the tag tree can edit: the other two are
+        // still part of what the caller asked for.
+        const changed =
+          !areTagArraysUnsortedEqual(mergedTags.require || [], selectedTags) ||
+          !areTagArraysUnsortedEqual(mergedTags.deny || [], denyTags) ||
+          !areTagArraysUnsortedEqual(mergedTags.denyChildren || [], denyChildrenTags) ||
+          !areTagArraysUnsortedEqual(mergedTags.allow || [], allowTags);
 
-        if (requireChanged || denyChanged) {
+        if (changed) {
           setTagState(mergedTags);
         }
       }
@@ -119,7 +150,7 @@ const ResultsContainer = ({ configValues, parentTags = [], siblingSelections = [
         isCancelled = true;
       };
     }
-  }, [configValues, parentTags, siblingSelections, fetchData, setTagState, hasSetTagState, selectedTags, denyTags]);
+  }, [configValues, parentTags, siblingSelections, fetchData, setTagState, hasSetTagState, selectedTags, denyTags, denyChildrenTags, allowTags]);
 
   const handleSelect = (blueprint: Blueprint) => {
     setSelectedBlueprint(blueprint);
@@ -133,6 +164,10 @@ const ResultsContainer = ({ configValues, parentTags = [], siblingSelections = [
     // Tag is not removable if it's from other selections
     if (parentTags.includes(tag) || siblingSelections.some(selection => selection.tags.includes(tag))) {
       return false;
+    }
+    // Named by the caller as one of its own it is willing to lose.
+    if (removable.includes(tag)) {
+      return true;
     }
     // If configValues exists, check if the tag is in require or deny
     if (configValues) {

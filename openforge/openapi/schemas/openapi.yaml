@@ -244,7 +244,7 @@ paths:
         required: true
         description: |
           Raw fixture file content in JSON or YAML format.
-          The fixture type (blueprint/tag_description/tag_documentation) is auto-detected from the data structure.
+          The fixture type (blueprint/tag_description/tag_documentation/guide) is auto-detected from the data structure.
         content:
           application/json:
             schema:
@@ -254,7 +254,10 @@ paths:
                   items:
                     type: object
                 - type: object
-                  description: Tag description or tag documentation fixture (object with tag mappings)
+                  description: >
+                    Tag description or tag documentation fixture (object with
+                    tag mappings), or a guide document (object with key, title
+                    and steps)
             examples:
               blueprint:
                 summary: Blueprint fixture example
@@ -317,7 +320,7 @@ paths:
                           type: integer
                   modified:
                     type: array
-                    description: Items that were modified (blueprints, tag descriptions, or tag documentation)
+                    description: Items that were modified (blueprints, tag descriptions, tag documentation, or guides)
                     items:
                       type: object
                   deprecated:

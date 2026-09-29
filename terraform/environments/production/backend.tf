@@ -3,7 +3,14 @@ terraform {
 
   required_providers {
     aws = {
-      source  = "hashicorp/aws"
+      source = "hashicorp/aws"
+      # The range is safe because .terraform.lock.hcl is committed beside this
+      # file and every workflow inits with -lockfile=readonly, so the provider
+      # version AND its checksums are fixed: the plan reviewed on a PR is the
+      # plan the merge applies. Without that, `tofu init` would resolve the
+      # newest 6.x, and on an adoption apply a changed CustomizeDiff between
+      # minors is the difference between "adopt" and "replace".
+      # Upgrade deliberately with `tofu providers lock`, not by editing this.
       version = "~> 6.0"
     }
   }

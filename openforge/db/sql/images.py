@@ -67,6 +67,30 @@ def get_images_for_blueprints(
 ) -> list[dict]:
     """Get all images for multiple blueprints in a single query.
 
+    Projects the same columns as the single-blueprint version. It used
+    to omit image_type and sprite_metadata, which mattered in two
+    places: a caller could not tell a thumbnail from a documentation
+    image, and the incremental loader compares whole image dicts, so
+    every fixture image — all of which carry sprite_metadata — looked
+    changed on every scan and had its images deleted and reinserted.
+
+    Parity with the single-blueprint query is asserted by a test, but
+    that is a test of agreement, not of these columns: it passes if a
+    column is dropped from both.
+
+    What keeps image_type here is that the single-blueprint query has
+    always projected it and four call sites in blueprints.py return it
+    to clients unread, so it is already part of the published shape of
+    a blueprint's image object. Dropping it is an unannounced API
+    change, and that is true whether or not any Python reads it —
+    which is why no test here can see the constraint.
+    `_get_blueprint_thumbnail` is the one place that does read it, and
+    its `.get` means nothing notices if it stops matching: remove the
+    column from both queries and the whole suite stays at baseline.
+    openforge_catalog-0bz is the next reader and carries the
+    instruction to make it observable; openforge_catalog-q3o turns it
+    into the field that says which images the scanner owns.
+
     Args:
         curs: Database cursor
         blueprint_ids: List of blueprint IDs to get images for
@@ -80,6 +104,7 @@ def get_images_for_blueprints(
     query = sql.SQL(
         """
 SELECT i.id AS id, i.image_name AS image_name, i.image_url AS image_url,
+    i.image_type AS image_type, i.sprite_metadata AS sprite_metadata,
     i.created_at AS created_at, i.updated_at AS updated_at,
     bi.blueprint_id AS blueprint_id
   FROM images i

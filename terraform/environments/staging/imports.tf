@@ -1,0 +1,122 @@
+# Staging was built by hand before this repo had tofu, so these resources already
+# exist and are adopted rather than created. Safe to delete after the first apply
+# has recorded them in state.
+#
+# ─── There is no manual step ───────────────────────────────────────────────────
+#
+# An earlier version of this file told you to deregister the old function from the
+# target group first, because a Lambda target group holds exactly one target and
+# `aws_lb_target_group_attachment` could not be imported. The first half is true;
+# the second stopped being true at provider v6.40.0, which documents a
+# comma-separated `target_group_arn,target_id` import. So the attachment is imported
+# below and `target_id` — which is ForceNew — makes the apply deregister the old
+# function and register the new one itself.
+#
+# What holds that v6.40.0 floor is `.terraform.lock.hcl` pinning 6.66.0, not the
+# `~> 6.0` range. Not because the range would resolve below the floor — it resolves
+# to the newest matching version, so a bare init lands well above it — but because
+# the range *admits* anything from 6.0.0 up and therefore guarantees nothing. The
+# lockfile is what makes the plan a human read on the PR and the plan the merge
+# applies the same provider, which is what decides adopt-versus-replace across
+# minors. Anyone re-locking downward takes this design with them: without the
+# attachment import the apply cannot swap a target group holding one target, and
+# the manual step this file exists to delete comes back.
+#
+# How long that takes, stated accurately because an earlier version of this comment
+# said "milliseconds" and that is wrong. Tofu orders a ForceNew replacement whose
+# resource depends on something being created as destroy-old, create-dependency,
+# create-new — so the deregister lands in the first wave and the target group is
+# empty until `openforge-catalog-api` exists: an image pull, VPC ENIs, and the wait
+# for LastUpdateStatus=Successful. Minutes, on the adoption apply only, because that
+# is the one apply that creates the function.
+#
+# Still far better than the manual step this replaces. If even that window is
+# unwanted, the adoption apply can be split. Run
+#
+#   tofu apply -var image_tag=<sha> -target=aws_lambda_permission.alb
+#
+# to create the new function and its permission first — a targeted plan processes
+# its dependencies' import blocks, including the target group's, and silently prunes
+# the rest — then a full apply swaps the target. `image_tag` has no default, so pass
+# the `-var` or tofu will stop and prompt for it.
+#
+# The deleted instruction was worse than redundant: it took `/api/*` down *before* an
+# apply that cannot currently succeed, because the app secret is read as a data source
+# and resolved at plan time, so a missing one fails the plan having changed nothing —
+# staging broken, recovery by hand. It also told you to remove an `AllowALBInvoke`
+# statement that does not exist (the live id is
+# `AWS-ALB_Invoke-targetgroup-openforge-catalog-api-cd223d56e9899b78`, so the command
+# only ever raised into a `|| true`), and had it worked it would have broken the
+# rollback it was meant to preserve, since re-registering the old function needs that
+# permission.
+#
+# ─── The first apply widens the ALB ────────────────────────────────────────────
+#
+# One adopted attribute does not match live, deliberately. The ALB spans 2 subnets
+# today; `main.tf` declares `local.infra.subnet_ids`, which is all six default-VPC
+# subnets, because that is the expression production uses and this environment is
+# meant to be diffable against it. `subnets` is not ForceNew on an ALB — the
+# provider's `ForceNew(subnets)` only applies to network load balancers — so this
+# is an in-place `SetSubnets` that adds four AZs and detaches nothing. The DNS name
+# is unchanged, so CloudFront's origin is unaffected.
+#
+# ─── What is NOT imported, and why ────────────────────────────────────────────
+#
+# The function and its role: they are named Openforge-Catalog-API and
+# Openforge-Catalog-API-role-ogdz6ix0 (service-role path). function_name is
+# ForceNew, and the deploy role may only touch IAM named openforge-catalog-*, so
+# neither can become the production-shaped resource. Tofu creates
+# openforge-catalog-api fresh; the old pair is deleted by hand once staging serves
+# from the new one (openforge_catalog-rc2), and until then it is the rollback.
+#
+# The port 443 listener: unused, and CloudFront reaches the ALB http-only on port
+# 80. Tofu cannot prune a listener it does not model, so leaving it out is safe.
+# Note it forwards to the target group below, so after this apply that listener
+# invokes the new function too.
+
+import {
+  to = aws_lb.api
+  id = "arn:aws:elasticloadbalancing:us-east-1:682033461796:loadbalancer/app/openforge-catalog/67abed33a99d7bf7"
+}
+
+import {
+  to = aws_lb_target_group.api
+  id = "arn:aws:elasticloadbalancing:us-east-1:682033461796:targetgroup/openforge-catalog-api/cd223d56e9899b78"
+}
+
+# The old function, so the apply swaps it for the new one rather than trying to add
+# a second target to a group that can only hold one.
+import {
+  to = aws_lb_target_group_attachment.api
+  id = "arn:aws:elasticloadbalancing:us-east-1:682033461796:targetgroup/openforge-catalog-api/cd223d56e9899b78,arn:aws:lambda:us-east-1:682033461796:function:Openforge-Catalog-API"
+}
+
+import {
+  to = aws_lb_listener.http
+  id = "arn:aws:elasticloadbalancing:us-east-1:682033461796:listener/app/openforge-catalog/67abed33a99d7bf7/55666e4452ada2aa"
+}
+
+import {
+  to = aws_lb_listener_rule.api
+  id = "arn:aws:elasticloadbalancing:us-east-1:682033461796:listener-rule/app/openforge-catalog/67abed33a99d7bf7/55666e4452ada2aa/5f58e2674418a9f6"
+}
+
+import {
+  to = aws_s3_bucket.site
+  id = "staging-openforge-catalog-website"
+}
+
+import {
+  to = aws_s3_bucket_website_configuration.site
+  id = "staging-openforge-catalog-website"
+}
+
+import {
+  to = aws_s3_bucket_public_access_block.site
+  id = "staging-openforge-catalog-website"
+}
+
+import {
+  to = aws_s3_bucket_policy.site
+  id = "staging-openforge-catalog-website"
+}

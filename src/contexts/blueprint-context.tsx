@@ -1,6 +1,6 @@
 'use client'
 
-import React, { createContext, useContext, useEffect, Suspense, useMemo } from 'react';
+import React, { createContext, useContext, useEffect, useMemo, Suspense } from 'react';
 import { StoreApi, useStore } from 'zustand';
 import { createBlueprintStore, BlueprintStore } from '@/stores/blueprint-store';
 import { useSearchParams } from 'next/navigation';
@@ -12,6 +12,19 @@ export const BlueprintContext = createContext<BlueprintContext>(null);
 interface BlueprintProviderProps {
   children: React.ReactNode;
   autoload?: boolean;
+  /**
+   * A blueprint to open on, by md5.
+   *
+   * For a caller that already knows which piece it is talking about —
+   * the guide opens the catalog on the part you clicked, rather than
+   * on "No Blueprint Selected" beside a list you have to search for
+   * something you were already looking at.
+   *
+   * Separate from `autoload`, which reads the *page's* query string.
+   * A modal has no URL of its own, and giving it one would fight the
+   * page it opened over.
+   */
+  initialMd5?: string | null;
 }
 
 interface BlueprintProviderInnerProps extends BlueprintProviderProps {
@@ -50,11 +63,45 @@ function BlueprintProviderInner({ children, autoload = false, store }: Blueprint
   );
 }
 
-export function BlueprintProvider({ children, autoload = false }: BlueprintProviderProps) {
+export function BlueprintProvider({ children, autoload = false, initialMd5 = null }: BlueprintProviderProps) {
   // IMPORTANT: Empty dependency array is intentional!
   // Zustand stores must be created ONCE and never recreated. Recreating the store
   // would lose all state and cause infinite re-render loops.
   const store = useMemo(() => createBlueprintStore(), []);
+
+  useEffect(() => {
+    if (!initialMd5) return;
+    let current = true;
+    store.getState().fetchBlueprintByMd5(initialMd5)
+      .then(blueprint => {
+        // Only if nothing has been selected since. The cleanup alone
+        // does not cover this: it runs when `initialMd5` changes or
+        // the provider unmounts, and clicking a different result does
+        // neither — so a slow fetch used to land on top of the piece
+        // the person had just chosen. Reading the store is what
+        // actually answers "have they moved on".
+        //
+        // "Nothing selected" is enough because the store is per-mount
+        // and the only mount is inside `PartSelectionModal`, which is
+        // `if (!isOpen) return null` behind a `fixed; inset: 0`
+        // overlay: a fresh store every open, and no way to click a
+        // different part without closing first. So `initialMd5` never
+        // changes under a live store, and the only thing that can
+        // have selected anything by the time this lands is the person.
+        if (!current || store.getState().selectedBlueprint) return;
+        store.getState().setSelectedBlueprint(blueprint);
+      })
+      .catch(error => {
+        // Only the fetch. The list is still there to search, and a
+        // part whose file has been replaced since the link was made
+        // is a reason to open on nothing rather than to break the
+        // dialog. A failure inside `setSelectedBlueprint` is not that
+        // and must not be filed under it, hence the md5 in the
+        // message and the `.then` doing no work that can throw.
+        console.error(`Failed to open on blueprint ${initialMd5}:`, error);
+      });
+    return () => { current = false; };
+  }, [initialMd5, store]);
 
   if (autoload) {
     return (

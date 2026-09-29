@@ -41,8 +41,8 @@ export function InstructionsPartSearch() {
       <p className="mb-6">
         The main interface for this is designed for you to select tags that help you refine your search.
         You can select tags in the tree on the left. The tags are broken into some broad categories.
-        If you want to instead build full tiles, and select all the parts needed to make that tile, click on the Blueprints tab
-        above.
+        If you want to be walked through building something instead, with the parts chosen for you,
+        click on the Guided Builds tab above.
       </p>
 
       {Section({ title: 'Build', tags: [

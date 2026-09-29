@@ -150,3 +150,44 @@ def test_image_duplicate_url(test_db):
             # Should return the existing image
             assert created2["id"] == created1["id"]
             assert created2["image_url"] == created1["image_url"]
+
+
+def test_the_batch_query_projects_what_the_single_blueprint_query_does(test_db):
+    """The two image queries must agree, column for column.
+
+    They drifted, and it cost the catalog a real bug: the batch query
+    omitted sprite_metadata, the incremental loader compares whole
+    image dicts against the fixture, every fixture image carries
+    sprite_metadata, so every blueprint with an image reported as
+    changed on every scan and had its images deleted and reinserted.
+
+    Asserting the two projections match — rather than naming the two
+    columns that went missing — is what makes this catch the next
+    column added to one query and forgotten in the other, which is the
+    shape the bug actually had.
+    """
+    with test_db.connection() as conn:
+        with conn.cursor(row_factory=dict_row) as curs:
+            blueprint = blueprint_sql.insert_blueprint(curs, create_test_blueprint())
+            image_sql.insert_image_for_blueprint(
+                curs,
+                blueprint["id"],
+                {
+                    "image_name": "test_image",
+                    "image_url": "http://test.com/image.jpg",
+                    "sprite_metadata": {"frames": 24, "columns": 6},
+                },
+            )
+
+            one = image_sql.get_images_for_blueprint(curs, blueprint["id"])
+            many = image_sql.get_images_for_blueprints(curs, [blueprint["id"]])
+
+            assert len(one) == 1 and len(many) == 1
+            # The batch query carries blueprint_id as well, because it
+            # is the only thing telling its rows apart.
+            assert set(many[0]) - {"blueprint_id"} == set(one[0])
+            assert {k: many[0][k] for k in one[0]} == one[0]
+
+            # And the value that was missing is really a value, not a
+            # key present and null.
+            assert many[0]["sprite_metadata"] == {"frames": 24, "columns": 6}

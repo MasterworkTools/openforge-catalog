@@ -1,0 +1,1 @@
+# Guide fixtures subdirectory
