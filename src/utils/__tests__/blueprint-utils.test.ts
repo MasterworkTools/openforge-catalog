@@ -4,52 +4,225 @@ import { Blueprint } from '@/types';
 
 describe('blueprint-utils', () => {
   describe('downloadFiles', () => {
-    let createElementSpy: jest.SpyInstance;
-    let appendChildSpy: jest.SpyInstance;
-    let removeChildSpy: jest.SpyInstance;
-    let setTimeoutSpy: jest.SpyInstance;
-
     beforeEach(() => {
-      createElementSpy = jest.spyOn(document, 'createElement').mockImplementation((tag: string) => {
-        const el = document.createElementNS('http://www.w3.org/1999/xhtml', tag);
-        // @ts-expect-error - Mocking style property for test
-        el.style = {};
-        return el;
-      });
-      appendChildSpy = jest.spyOn(document.body, 'appendChild').mockImplementation((node: Node) => node);
-      removeChildSpy = jest.spyOn(document.body, 'removeChild').mockImplementation((node: Node) => node);
-      setTimeoutSpy = jest.spyOn(global, 'setTimeout').mockImplementation((fn: () => void) => {
-        fn();
-        return 1 as unknown as NodeJS.Timeout;
-      });
+      jest.useFakeTimers();
+      global.fetch = jest.fn();
+      document.body.innerHTML = '';
     });
 
     afterEach(() => {
-      createElementSpy.mockRestore();
-      appendChildSpy.mockRestore();
-      removeChildSpy.mockRestore();
-      setTimeoutSpy.mockRestore();
+      jest.useRealTimers();
+      jest.restoreAllMocks();
+      window.location.hash = '';
     });
 
-    it('calls nav for a single URL', async () => {
+    const iframes = () => Array.from(document.body.querySelectorAll('iframe'));
+
+    /**
+     * Give a frame a real same-origin Document with `text` as its body, which is
+     * what a browser hands back when the response rendered instead of
+     * downloading. A real Document rather than an object literal so the stub
+     * cannot drift from the shape the code reads.
+     */
+    const withDocument = (frame: HTMLIFrameElement, text: string) =>
+      withRenderedBody(frame, (body) => {
+        body.textContent = text;
+      });
+
+    /** As `withDocument`, but the body is real markup rather than flat text. */
+    const withMarkup = (frame: HTMLIFrameElement, markup: string) =>
+      withRenderedBody(frame, (body) => {
+        body.innerHTML = markup;
+      });
+
+    const withRenderedBody = (frame: HTMLIFrameElement, fill: (body: HTMLElement) => void) => {
+      const doc = document.implementation.createHTMLDocument('');
+      fill(doc.body);
+      Object.defineProperty(frame, 'contentDocument', { configurable: true, get: () => doc });
+      return frame;
+    };
+    const sources = () => iframes().map((frame) => frame.getAttribute('src'));
+
+    it('navigates for a single URL, creating no iframe', () => {
       const nav = jest.fn();
-      await downloadFiles(['http://example.com/file1'], nav);
-      expect(nav).toHaveBeenCalledWith('http://example.com/file1');
-      expect(createElementSpy).not.toHaveBeenCalled();
+
+      downloadFiles(['/api/blueprints/1/download'], nav);
+
+      expect(nav).toHaveBeenCalledTimes(1);
+      expect(nav).toHaveBeenCalledWith('/api/blueprints/1/download');
+      expect(iframes()).toHaveLength(0);
+      expect(global.fetch).not.toHaveBeenCalled();
     });
 
-    it('downloads multiple files by creating iframes', async () => {
-      const urls = ['http://example.com/file1', 'http://example.com/file2'];
-      await downloadFiles(urls, jest.fn());
-      expect(createElementSpy).toHaveBeenCalledTimes(2);
-      expect(appendChildSpy).toHaveBeenCalledTimes(2);
-      expect(removeChildSpy).toHaveBeenCalledTimes(2);
+    it('uses window.location when no nav is given', () => {
+      // jsdom refuses document navigation, which is why `location` and its
+      // `href` accessor cannot be replaced — but it implements hash navigation,
+      // so the default argument can be pinned without touching the environment
+      // or reshaping the function.
+      downloadFiles(['#dl-marker']);
+
+      expect(window.location.hash).toBe('#dl-marker');
     });
 
-    it('returns immediately for empty urls', async () => {
-      await expect(downloadFiles([], jest.fn())).resolves.toBeUndefined();
-      expect(createElementSpy).not.toHaveBeenCalled();
-      expect(appendChildSpy).not.toHaveBeenCalled();
+    it('points one hidden iframe at each URL', () => {
+      const nav = jest.fn();
+
+      downloadFiles(['/a', '/b'], nav);
+
+      // The src is the download request. Asserting only the iframe count lets a
+      // version that creates two empty iframes pass, which would download
+      // nothing at all.
+      expect(sources()).toEqual(['/a', '/b']);
+      expect(iframes().map((frame) => frame.style.display)).toEqual(['none', 'none']);
+      // Navigating during a batch would cancel the requests just issued, which
+      // is the original bug by another route.
+      expect(nav).not.toHaveBeenCalled();
+    });
+
+    it('leaves each iframe up long enough for the download to start', () => {
+      // The regression this file previously enforced: it asserted removeChild
+      // had been called, so a teardown that aborted the request was the
+      // expected behaviour. Removing an iframe whose request has not begun
+      // transferring aborts it (NS_BINDING_ABORTED in Firefox), and the
+      // /download redirect alone measured ~4.7s on a cold Lambda against the
+      // old 1000ms budget.
+      downloadFiles(['/a', '/b'], jest.fn());
+
+      jest.advanceTimersByTime(6_000);
+      expect(iframes()).toHaveLength(2);
+
+      jest.advanceTimersByTime(60_000);
+      expect(iframes()).toHaveLength(0);
+    });
+
+    it('issues no request of its own, so a download is never gated on a pre-flight', () => {
+      // An earlier version of this fix probed each URL with `redirect: 'manual'`
+      // before creating its iframe. Measurement killed it: the 60s lifetime
+      // already absorbs the cold start the probe was meant to hide, and a probe
+      // that failed for any reason skipped a download that would have worked.
+      downloadFiles(['/a', '/b'], jest.fn());
+
+      expect(global.fetch).not.toHaveBeenCalled();
+      expect(sources()).toEqual(['/a', '/b']);
+    });
+
+    it('warns when a download produced a page instead of a file', () => {
+      // The R2-refusal class: a valid 302 whose object is gone. Cross-origin, so
+      // the error page is unreadable and `contentDocument` is null — which is the
+      // signal. jsdom has no cross-origin, so the null is supplied here.
+      const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+      const readable = Object.getOwnPropertyDescriptor(
+        HTMLIFrameElement.prototype,
+        'contentDocument'
+      );
+      Object.defineProperty(HTMLIFrameElement.prototype, 'contentDocument', {
+        configurable: true,
+        get: () => null,
+      });
+
+      try {
+        downloadFiles(['/a', '/b'], jest.fn());
+        iframes().forEach((frame) => frame.dispatchEvent(new Event('load')));
+      } finally {
+        if (readable) {
+          Object.defineProperty(HTMLIFrameElement.prototype, 'contentDocument', readable);
+        }
+      }
+
+      expect(warn).toHaveBeenCalledTimes(2);
+      expect(warn.mock.calls[0][1]).toBe('/a');
+      expect(warn.mock.calls[0][2]).toBe('(cross-origin)');
+      expect(warn.mock.calls[1][1]).toBe('/b');
+    });
+
+    it("warns with the API's own error text when the failure is same-origin", () => {
+      // Reachable, not hypothetical: _get_signed_urls bare-returns when
+      // storage_address is NULL, and collectDownloadUrls never screens that
+      // field. Same-origin, so the body is readable and worth printing.
+      const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+
+      // `download_blueprint` uses a bare `abort(404)`, so what actually renders is
+      // Werkzeug's HTML page rather than JSON. Set as real markup, not as flat
+      // text: with a markup-free fixture `innerHTML` and `textContent` are equal,
+      // so a version reading markup instead of text would pass here and then warn
+      // on a successful download whose blank page is styled rather than empty.
+      const markup =
+        '<h1>Not Found</h1><p>The requested URL was not found on the server. If' +
+        ' you entered the URL manually please check your spelling and try again.</p>';
+      const rendered =
+        'Not FoundThe requested URL was not found on the server. If you entered' +
+        ' the URL manually please check your spelling and try again.';
+
+      downloadFiles(['/a', '/b'], jest.fn());
+      withMarkup(iframes()[0], markup).dispatchEvent(new Event('load'));
+
+      expect(warn).toHaveBeenCalledWith('download did not start:', '/a', rendered);
+    });
+
+    it('stays quiet when the download succeeded', () => {
+      // A download never commits a document, so the frame keeps the readable,
+      // EMPTY about:blank it inherited — body present, textContent ''. That is
+      // the shape to pin: jsdom never loads the src, so a frame left as-is has
+      // no body at all, which is a different state and would test the bodyless
+      // fallback instead of success. Warning on `load` alone, or on a readable
+      // empty body, would fire on every Firefox download.
+      const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+
+      downloadFiles(['/a', '/b'], jest.fn());
+      iframes().forEach((frame) => {
+        // Not decoration: a sandboxed frame is an opaque origin, so
+        // `contentDocument` would read null and every success would warn. A canary
+        // for the caveat on the listener, and it catches the `setAttribute`
+        // spelling only — this jsdom has no `sandbox` member, so `iframe.sandbox =
+        // ''` lands on a plain own property and slips past. Pinning that too would
+        // pin a jsdom gap, which a jsdom upgrade would then break on an unmodified
+        // tree, so the narrower guard is deliberate.
+        expect(frame.hasAttribute('sandbox')).toBe(false);
+        const blank = withDocument(frame, '');
+        expect(blank.contentDocument!.body.textContent).toBe('');
+        blank.dispatchEvent(new Event('load'));
+      });
+
+      expect(warn).not.toHaveBeenCalled();
+    });
+
+    it('stays quiet for a whitespace-only body, and truncates a long one', () => {
+      const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+
+      downloadFiles(['/a', '/b'], jest.fn());
+      withDocument(iframes()[0], '   \n  ').dispatchEvent(new Event('load'));
+      expect(warn).not.toHaveBeenCalled();
+
+      // Distinguishable head and tail, so this pins *which* 200 characters:
+      // a repeated character leaves slice(-200) passing.
+      const long = 'A'.repeat(200) + 'B'.repeat(300);
+      withDocument(iframes()[1], long).dispatchEvent(new Event('load'));
+      expect(warn).toHaveBeenCalledWith('download did not start:', '/b', 'A'.repeat(200));
+    });
+
+    it('stays quiet for a document that has no body yet', () => {
+      // Distinct from both success and failure: a frame whose document exists
+      // but has not parsed a body is not evidence of anything.
+      const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+
+      downloadFiles(['/a', '/b'], jest.fn());
+      const frame = iframes()[0];
+      // jsdom never loads the src, so this frame is already in that state — no
+      // stub needed, and none wanted.
+      expect(frame.contentDocument!.body).toBeNull();
+      frame.dispatchEvent(new Event('load'));
+
+      expect(warn).not.toHaveBeenCalled();
+    });
+
+    it('does nothing for no urls', () => {
+      const nav = jest.fn();
+
+      downloadFiles([], nav);
+
+      expect(iframes()).toHaveLength(0);
+      expect(global.fetch).not.toHaveBeenCalled();
+      expect(nav).not.toHaveBeenCalled();
     });
   });
 
