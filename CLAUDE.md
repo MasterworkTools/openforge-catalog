@@ -221,13 +221,23 @@ The fixtures go last, not in the middle: `bin/upload_fixture` POSTs to
 the merge it is still `main`'s image — and an older image will misclassify a
 fixture format it does not know rather than reject it cleanly. The ref matters and fails silently if you get it wrong:
 `bin/db_update up` iterates the schema versions **in the checkout**, so from a
-`main` checkout today it finds no `version_18`/`version_19`, applies nothing,
-prints nothing and exits 0 — after which the merge lands in exactly the 500 this
-paragraph exists to prevent. The window between the migration and the fixture
-load is benign: the new image against an empty table
+`main` checkout that predates a release you are about to make, it finds none of
+that release's new versions, applies nothing, prints nothing and exits 0 — after
+which the merge lands in exactly the 500 this paragraph exists to prevent. Check
+out the ref being released, not `main`. The window between the migration and the
+fixture load is benign: the new image against an empty table
 answers `404 {"guides": []}`, which the page renders as "none yet" rather than as
-an error. As of PR #246 the pending gap is schema 18 and 19
-(`openforge_catalog-jag`), since `main` is still at 17.
+an error.
+
+**There is no pending schema gap as of the 0.8.1 release** (2026-09-29): `main`
+carries 18 and 19, applied by hand during the 0.8.0 release. An earlier version of
+this paragraph said "the pending gap is schema 18 and 19, since `main` is still at
+17", which was true as of PR #246 and is not now — so do not read it as a standing
+instruction. The way to know for a given release is
+`git diff --stat origin/main origin/test -- openforge/db/schema/`, tip to tip: empty
+means no migration is needed. (Note the three-dot form diffs against the merge base,
+which is stale here because releases are squash-merged, and will list schema files
+that both branches already have.)
 
 Runtime secrets live in Secrets Manager
 (`openforge-catalog/production/app`, created once by `scripts/create-app-secret.sh`), never
