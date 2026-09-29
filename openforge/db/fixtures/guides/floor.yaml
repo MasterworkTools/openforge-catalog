@@ -29,10 +29,18 @@ steps:
           The tile prints bare and sits in a base that carries the
           connectors. The usual openforge arrangement.
         roles:
-          floor: null
-          floor-base:
+          # `require: [connection|openforge]` is not decoration. Without it this
+          # predicate also admits one-piece OpenLOCK tiles, which already carry
+          # their own base — 128 of the 313 otherwise-reachable floors. The
+          # recommendation never picks one, but the catalog dialog opens on this
+          # predicate, so a person browsing could choose a tile that physically
+          # cannot sit in the base shown beneath it.
+          floor:
             require:
-              - shape|base|square
+              - connection|openforge
+          # No predicate: the role's own query already requires
+          # shape|base|square, and repeating it here says nothing.
+          floor-base: null
       - key: single-piece
         title: One piece, base included
         blurb: >
@@ -48,6 +56,13 @@ steps:
   - key: size
     prompt: What size tiles?
     default: 2x2
+    # These eight are the wall guide's list. They do not cover the catalog: 73
+    # plain floors have a footprint no answer here reaches — 6x4, 6x6 and 8x8,
+    # plus odd pairs like 1x2 and 3x2 — and because this question is not
+    # `browsable`, its tags never become relaxable, so browsing cannot reach
+    # them either. Widening it is not just adding buttons: 6x4 and 8x8 have no
+    # square base at all, so those sizes would empty `floor-base` on the
+    # with-base branch. Tracked as openforge_catalog-9ab.
     blurb: >
       All tile sizes are in inches, which are also squares. Most people use
       2×2. 4×2 is handy for hallways, and a few systems have used 3×3 as
@@ -117,14 +132,25 @@ steps:
 roles:
   floor:
     title: Floor
-    # The wall guide's floor role is the same but for one `allow`: it
-    # spares `component|wall`, because the floor it picks may be a tile
-    # with a wall standing on it. Here it must not, so the tag is left
-    # out and `deny_children: [component]` sweeps it away along with
-    # `component|pool` and the rest. What survives is a plain square
-    # floor: `deny_children: [shape]` refuses `shape|floor|wall`,
-    # `shape|curved` and `shape|floor|s2w`, while `shape|floor` is spared
-    # for being required and `shape|square` for being allowed.
+    # A plain square floor. `deny_children: [shape]` refuses
+    # `shape|floor|wall`, `shape|curved` and `shape|floor|s2w`; `shape|floor`
+    # is spared for being required and `shape|square` for being allowed.
+    # `deny_children: [component]` then removes `component|pool` and the rest.
+    #
+    # `allow: [shape|square]` is load-bearing — without it the sweep takes
+    # `shape|square` too and the set is empty, not merely smaller.
+    #
+    # This is byte-for-byte the wall guide's floor query minus its
+    # `allow: [component|wall]`, and measurement says the two select the
+    # IDENTICAL 533 pieces. An earlier version of this comment claimed the
+    # difference is what keeps wall-bearing tiles out; that was wrong. Every
+    # `shape|floor` piece carrying `component|wall` also carries
+    # `shape|floor|wall|angled` or `shape|floor|s2w`, so the shape sweep has
+    # already taken them before the component sweep runs. The wall guide needs
+    # that `allow` only because its *method options* require
+    # `shape|floor|wall`, which exempts the tag from the sweep and lets the
+    # component term matter. No option here does that, so listing it would be
+    # inert — it is left out because it says nothing, not because it is wrong.
     query:
       require:
         - shape|floor
@@ -133,14 +159,11 @@ roles:
         - component
       allow:
         - shape|square
-      deny:
-        - shape|base
     prefer:
       - texture|dungeon_stone|block
       - texture|dungeon_stone
       - size|width|2
       - size|depth|2
-      - connection|openforge
     avoid:
       - decoration
   floor-base:
@@ -165,27 +188,39 @@ refinements:
     prompt: Floor texture
     default: texture|dungeon_stone
     from_namespace: texture
-    # The counts are floors specifically, which is why they differ from
-    # the wall guide's texture list.
+    # No counts in these blurbs, deliberately. The wall guide's equivalents
+    # carry them ("71 floors", "38 floors", ...) and every one is now wrong —
+    # measured 151/65/77/51/24 against this role. Correcting them would not
+    # help, because the honest number depends on the size already chosen and
+    # texture is asked AFTER size: dungeon stone is 151 across all sizes, 54 at
+    # the default 2x2, and 18 at 4x4. One figure cannot be true of all three,
+    # so a number here is wrong in most states the person can be in.
+    #
+    # What is left is the part that does not rot. Each claim below was checked
+    # against the catalog: dungeon stone really is entirely block or eroded,
+    # block really is what gets recommended, and the wood floors really are all
+    # boarded, in exactly two plank layouts.
+    #
+    # If counts are wanted, they should be derived — the engine already returns
+    # a count per answer for `from_combination` refinements. See
+    # openforge_catalog-ume.
     choices:
       - tag: texture|dungeon_stone
         title: Dungeon stone
         blurb: >
-          Cut flags. 71 floors, every one of them block or eroded; the
-          recommendation is block.
+          Cut flags, every one of them block or eroded; the recommendation
+          is block.
       - tag: texture|rough_stone
         title: Rough stone
-        blurb: 38 floors.
       - tag: texture|cut-stone
         title: Cut stone
-        blurb: 32 floors.
       - tag: texture|towne
         title: Wood
         blurb: >
-          23 floors, all of them boarded, in two or three plank layouts.
+          All boarded, in two plank layouts: long planks, or a shorter
+          wood.
       - tag: texture|aztlan
         title: Aztlan
-        blurb: 11 floors.
 
   - key: base-clips
     role: "*"
@@ -259,7 +294,28 @@ refinements:
         floor-print:
           - single-piece
     default: connection|openlock
+    blurb: |
+      A one-piece tile carries its own clip bays, so this is the same choice
+      the base question asks on the other branch — just made on the tile
+      itself.
+
+      Print it in whatever you are printing everything else in. The advice to
+      use PETG applies to the clips, not to the tiles they go into: PLA is
+      rigid enough that a clip snaps instead of flexing, while a tile has
+      nothing to flex.
+
+      Unsupported removes the built-in supports over the clip bay, on the
+      bet that a modern printer bridges the gap cleanly. If a clip will not
+      go into its bay, that is almost always the supports on the clip itself,
+      which both systems print with and which you have to snap out first. It
+      is the question people ask most.
     from_combination: connection
+    # Only OpenLOCK and OpenLOCK unsupported can ever be offered here — no
+    # floor in this role's set carries dragonlock or magnetic, and the
+    # dragonlock ones that exist are all ruined tiles the component sweep
+    # removes. The other two titles and both exclusions are inert today and
+    # kept as cheap cover for a catalog that grows, which is exactly how the
+    # counts above went stale.
     titles:
       connection|openlock: OpenLOCK
       connection|dragonlock: DragonLock
