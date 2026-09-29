@@ -1280,7 +1280,9 @@ def _chosen_blueprint(pinned, inherited, predicate, role, find_candidates):
         return pinned
     if inherited is None:
         return None
-    return _recommend(predicate, role.get("prefer", []), find_candidates)
+    return _recommend(
+        predicate, role.get("prefer", []), find_candidates, role.get("avoid", [])
+    )
 
 
 def _browsable(document: dict) -> set[str]:
@@ -1526,17 +1528,29 @@ def _union(predicates: list[dict]) -> dict:
     return composed
 
 
-def _recommend(predicate: dict, prefer: list[str], find_candidates):
+def _recommend(
+    predicate: dict, prefer: list[str], find_candidates, avoid: list[str] = ()
+):
     """The best candidate, or None when the query matches nothing.
 
     Preferred tags are required outright and then dropped one at a time
     from the least wanted, so the recommendation is the most preferred
     part that exists rather than the best of an arbitrary page of
     candidates.
+
+    Avoided tags outrank every preference: the whole search runs first
+    with them denied, and only if nothing at all survives does it run
+    again without. So a decorated floor stays one of the options — it
+    matches the role — but is never the default while a plain one
+    exists, even a plain one of the wrong texture.
     """
-    for kept in range(len(prefer), -1, -1):
-        narrowed = _union([predicate, {"require": prefer[:kept]}])
-        candidates = find_candidates(narrowed)
-        if candidates:
-            return candidates[0]
+    # `deny` is an exact-tag test and pieces carry the leaves
+    # (`decoration|symbol|air`), so the subtree goes through the sweep.
+    searches = [_union([predicate, {"deny_children": list(avoid)}])] if avoid else []
+    for base in [*searches, predicate]:
+        for kept in range(len(prefer), -1, -1):
+            narrowed = _union([base, {"require": prefer[:kept]}])
+            candidates = find_candidates(narrowed)
+            if candidates:
+                return candidates[0]
     return None
