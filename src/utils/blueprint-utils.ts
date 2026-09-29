@@ -9,39 +9,114 @@ export const navigate = (url: string) => {
 };
 
 /**
- * Download multiple files sequentially
- * @param urls - Array of download URLs
- * @param nav - Navigation function (defaults to window.location.href)
+ * How long a download iframe stays in the DOM.
+ *
+ * Was 1000 ms, and that was a race the browser lost. Removing an iframe whose
+ * request has not started transferring aborts it — `NS_BINDING_ABORTED` in
+ * Firefox — and `/api/blueprints/<id>/download` only 302s to a presigned R2
+ * URL, after which the browser still has to open a connection to R2 and begin
+ * the transfer. Measured on production, that redirect takes ~4.7 s on a cold
+ * Lambda and ~0.3 s warm, so a cold start missed the old budget outright and a
+ * warm one missed it for anyone far from us-east or on cellular
+ * (openforge_catalog-m8i, reported from New Zealand).
+ *
+ * A minute is not a considered number; it is "longer than any download takes to
+ * *start*". Starting is the only thing it has to outlast, because a response
+ * that has become a download is owned by the browser rather than by the iframe,
+ * so a transfer still in flight at 60 s is unaffected — only a request that has
+ * not yet become a download can be aborted. That last part is platform
+ * behaviour, not something measured here: every trial behind this fix cancels
+ * the transfer immediately after the handoff, so none of them exercises a
+ * download still running at 60 s. Removing the iframe is therefore tidiness
+ * rather than correctness, and if the assumption ever looks doubtful the timer
+ * can simply go.
  */
-export const downloadFiles = async (urls: string[], nav: (url: string) => void = navigate) => {
-  if (urls.length === 0) return;
+const DOWNLOAD_IFRAME_LIFETIME_MS = 60_000;
 
+/**
+ * Download one or many files.
+ *
+ * One file is a plain navigation: the response is an attachment, so the browser
+ * downloads it and stays put, and there is nothing to race.
+ *
+ * Many files cannot each be a navigation, so each gets a hidden iframe that
+ * lives long enough for the request to start. Nothing paces them: measured on
+ * production in Chromium and Firefox, all six of six files at zero spacing
+ * became downloads in every trial, including a run whose last three requests
+ * landed on cold execution environments 3.7–5.1 s in. ("Became downloads", not
+ * "arrived": the harness counts the handoff and then cancels the transfer.) The
+ * lifetime absorbs the cold start, which is why no stagger and no pre-flight are
+ * needed.
+ *
+ * ponytail: N files means N simultaneous requests, so up to N cold starts, and
+ * up to N*4 Aurora sessions rather than N — openforge/db/__init__.py opens a
+ * 4-connection pool per container and Lambda only ever uses one of them
+ * (openforge_catalog-505). Measured clean at 12 and 25 concurrent against
+ * production, and N is a guide's roles or a blueprint's config selections, never
+ * the catalog. The bound that bites first is not N but 50/N *overlapping*
+ * Download-alls, since reserved_concurrent_executions = 50 is shared with all
+ * other API traffic. So if N grows, or this button becomes common enough to
+ * overlap, the first lever is that pool (min_size=1, max_size=2), not spacing
+ * these out.
+ */
+export const downloadFiles = (urls: string[], nav: (url: string) => void = navigate): void => {
   if (urls.length === 1) {
     nav(urls[0]);
     return;
   }
 
-  // For multiple files, download sequentially with delay
-  const downloadWithDelay = async (url: string, index: number) => {
-    return new Promise<void>((resolve) => {
-      setTimeout(async () => {
-        const iframe = document.createElement('iframe');
-        iframe.style.display = 'none';
-        iframe.src = url;
-        document.body.appendChild(iframe);
+  for (const url of urls) {
+    const iframe = document.createElement('iframe');
+    iframe.style.display = 'none';
 
-        // Remove iframe after a delay to ensure download starts
-        setTimeout(() => {
-          document.body.removeChild(iframe);
-          resolve();
-        }, 1000);
-      }, index * 1000); // 1 second delay between downloads
+    // The only report of a download that failed *past* the redirect, and it
+    // exists because Chromium logs R2's refusal itself while Firefox logs
+    // nothing at all — Firefox being the browser this was reported from.
+    //
+    // A response that becomes a download never commits a document, so the frame
+    // stays on the readable, empty about:blank it inherited: content here means
+    // failure. Two kinds reach it — R2 refusing the object, which is
+    // cross-origin and so reads `contentDocument === null`, and our own API
+    // 404ing, which is same-origin and whose error body can be printed. A
+    // document that merely has no body yet is neither, and must not read as one.
+    //
+    // Measured in both engines across 38 observations, including stalled
+    // responses, a two-hop redirect and live production: exactly one `load` per
+    // URL, and never one after `iframe.remove()` — removal aborts the
+    // navigation. On success Firefox reports a readable empty document and
+    // Chromium fires nothing, so emptiness is the success signal and `load`
+    // alone would warn on every Firefox download.
+    //
+    // Two limits worth knowing. Attaching this *before* `src` and `appendChild`
+    // is what yields one event: appending first gives Chromium two and loses
+    // Firefox's success event. No ordering warns wrongly, since a first event is
+    // always readable and empty, but the one-event property belongs to the line
+    // order below. And this only sees failures that commit a document: an
+    // unreachable R2 host, an empty-bodied 403 and a reset mid-transfer are all
+    // silent in Firefox, which openforge_catalog-ptt inherits — on-screen
+    // reporting cannot be driven off this signal alone.
+    //
+    // No try/catch: `contentDocument` has no throwing path in any engine (24
+    // reads across 12 frame states, including `sandbox`, never threw), and a
+    // catch here would launder a genuine unexpected throw into the one string
+    // that means "expected, unreadable failure". Passive either way — it watches
+    // the real download, adds no request and gates nothing, so unlike a
+    // pre-flight check it cannot fail closed.
+    //
+    // One way to break this silently: adding `iframe.sandbox` in some future CSP
+    // pass makes the frame an opaque origin, so `contentDocument` reads null
+    // unconditionally, `body` becomes '(cross-origin)' and EVERY completed
+    // download warns. The check inverts rather than degrades.
+    iframe.addEventListener('load', () => {
+      const doc = iframe.contentDocument;
+      const body = doc === null ? '(cross-origin)' : (doc.body?.textContent ?? '');
+      if (body.trim()) console.warn('download did not start:', url, body.slice(0, 200));
     });
-  };
 
-  // Download files sequentially
-  for (let i = 0; i < urls.length; i++) {
-    await downloadWithDelay(urls[i], i);
+    iframe.src = url;
+    document.body.appendChild(iframe);
+
+    setTimeout(() => iframe.remove(), DOWNLOAD_IFRAME_LIFETIME_MS);
   }
 };
 
