@@ -6,12 +6,22 @@ summary: A plain floor tile
 # The floor half of the wall guide, on its own. Someone laying a room or a
 # hallway floor needs two decisions — how it prints and how big it is — and
 # none of the wall guide's method question, because there is no wall to
-# attach. What is left is deliberately the same prose and the same
-# predicates, so a floor chosen here and a floor chosen inside the wall
-# guide are the same piece.
+# attach. The prose is deliberately the wall guide's, so the two read as one
+# voice.
 #
-# The one predicate that differs is the floor role's, and it differs on
-# purpose: see its comment below.
+# The predicates are NOT identical, and the differences are the interesting
+# part of this file. Two of them:
+#
+#   - the floor role drops the wall guide's `allow: [component|wall]` and its
+#     `deny: [shape|base]`. Both are inert here; see the role's comment.
+#   - the `with-base` option requires `connection|openforge` where the wall
+#     guide constrains nothing. That one is not cosmetic: it changes which
+#     floors the catalog dialog will offer, from 533 to 331. The wall guide
+#     has the same hole (openforge_catalog-39q).
+#
+# So a floor RECOMMENDED here and a floor recommended inside the wall guide
+# are the same piece — verified across all 40 with-base combinations — but
+# the sets you can browse to are not the same.
 
 steps:
   - key: floor-print
@@ -56,11 +66,13 @@ steps:
   - key: size
     prompt: What size tiles?
     default: 2x2
-    # These eight are the wall guide's list. They do not cover the catalog: 73
-    # plain floors have a footprint no answer here reaches — 6x4, 6x6 and 8x8,
-    # plus odd pairs like 1x2 and 3x2 — and because this question is not
-    # `browsable`, its tags never become relaxable, so browsing cannot reach
-    # them either. Widening it is not just adding buttons: 6x4 and 8x8 have no
+    # These eight are the wall guide's list. They do not cover the catalog.
+    # Of the role's 533 floors: 313 are reachable by answering, 147 more only
+    # by browsing to a texture outside the five offered, and 73 by neither —
+    # their footprint is not on this list, and because this question is not
+    # `browsable` its tags never become relaxable, so the catalog dialog
+    # cannot reach them either. (6x4 17, 6x6 15, 8x8 15, and the rest at odd
+    # pairs like 1x2 and 3x2.) Widening it is not just adding buttons: 6x4 and 8x8 have no
     # square base at all, so those sizes would empty `floor-base` on the
     # with-base branch. Tracked as openforge_catalog-9ab.
     blurb: >
@@ -140,17 +152,21 @@ roles:
     # `allow: [shape|square]` is load-bearing — without it the sweep takes
     # `shape|square` too and the set is empty, not merely smaller.
     #
-    # This is byte-for-byte the wall guide's floor query minus its
-    # `allow: [component|wall]`, and measurement says the two select the
-    # IDENTICAL 533 pieces. An earlier version of this comment claimed the
-    # difference is what keeps wall-bearing tiles out; that was wrong. Every
-    # `shape|floor` piece carrying `component|wall` also carries
-    # `shape|floor|wall|angled` or `shape|floor|s2w`, so the shape sweep has
-    # already taken them before the component sweep runs. The wall guide needs
-    # that `allow` only because its *method options* require
-    # `shape|floor|wall`, which exempts the tag from the sweep and lets the
-    # component term matter. No option here does that, so listing it would be
-    # inert — it is left out because it says nothing, not because it is wrong.
+    # This is the wall guide's floor query minus TWO terms — its
+    # `allow: [component|wall]` and its `deny: [shape|base]` — and measurement
+    # says the two select the IDENTICAL 533 pieces.
+    #
+    # An earlier version of this comment claimed the missing `allow` is what
+    # keeps wall-bearing tiles out. That was wrong. Only 14 pieces today carry
+    # both `shape|floor` and `component|wall`, and all 14 also carry
+    # `shape|floor|wall|angled` or `shape|floor|s2w` — so they fail the shape
+    # sweep whether or not the component term is there. (Every term is an AND
+    # in one WHERE clause, not a sequence, so "already taken" describes
+    # redundancy rather than ordering.) The wall guide needs that `allow` only
+    # because its *method options* require `shape|floor|wall`, which exempts
+    # the tag from the sweep and lets the component term bite. No option here
+    # does that, so listing it would be inert — it is left out because it says
+    # nothing, not because it is wrong.
     query:
       require:
         - shape|floor
@@ -295,9 +311,12 @@ refinements:
           - single-piece
     default: connection|openlock
     blurb: |
-      A one-piece tile carries its own clip bays, so this is the same choice
-      the base question asks on the other branch — just made on the tile
-      itself.
+      A one-piece tile carries its own clip bays, so the choice is made on
+      the tile rather than on a base under it. It is a narrower choice than
+      the base question offers: printed into a tile, OpenLOCK is all there
+      is. No floor is made with DragonLock bays, and a one-piece tile cannot
+      take magnets — if you want either, print the tile bare and choose a
+      base, which is the other answer to the question above.
 
       Print it in whatever you are printing everything else in. The advice to
       use PETG applies to the clips, not to the tiles they go into: PLA is
@@ -305,9 +324,9 @@ refinements:
       nothing to flex.
 
       Unsupported removes the built-in supports over the clip bay, on the
-      bet that a modern printer bridges the gap cleanly. If a clip will not
-      go into its bay, that is almost always the supports on the clip itself,
-      which both systems print with and which you have to snap out first. It
+      bet that a modern printer bridges the gap cleanly. If a clip will not go
+      into its bay, that is almost always the supports on the clip itself,
+      which OpenLOCK clips print with and which you have to snap out first. It
       is the question people ask most.
     from_combination: connection
     # Only OpenLOCK and OpenLOCK unsupported can ever be offered here — no
