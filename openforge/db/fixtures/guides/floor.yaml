@@ -1,0 +1,269 @@
+key: floor
+title: Floor
+hero_image: https://objects.openforge.tools/guides/guide.floor.webp
+summary: A plain floor tile
+
+# The floor half of the wall guide, on its own. Someone laying a room or a
+# hallway floor needs two decisions — how it prints and how big it is — and
+# none of the wall guide's method question, because there is no wall to
+# attach. What is left is deliberately the same prose and the same
+# predicates, so a floor chosen here and a floor chosen inside the wall
+# guide are the same piece.
+#
+# The one predicate that differs is the floor role's, and it differs on
+# purpose: see its comment below.
+
+steps:
+  - key: floor-print
+    prompt: How should the floor print?
+    default: with-base
+    # This step introduces the roles. The wall guide's `method` step does
+    # that job there; with no method to choose, the first question is the
+    # one that decides whether there is a base at all, so `floor` is
+    # named here with a null predicate — the role comes into play and
+    # takes no constraint from the answer.
+    options:
+      - key: with-base
+        title: Floor plus a base
+        blurb: >
+          The tile prints bare and sits in a base that carries the
+          connectors. The usual openforge arrangement.
+        roles:
+          floor: null
+          floor-base:
+            require:
+              - shape|base|square
+      - key: single-piece
+        title: One piece, base included
+        blurb: >
+          The tile is printed with its base already part of it. Fewer
+          pieces on the table and less to lose.
+        roles:
+          floor:
+            deny:
+              - connection|openforge
+            allow:
+              - connection|openlock
+
+  - key: size
+    prompt: What size tiles?
+    default: 2x2
+    blurb: |
+      All tile sizes are in inches, which are also squares. Most people use
+      2×2. 4×2 is handy for hallways, and a few systems have used 3×3 as
+      their basis.
+
+      Unlike walls, the thin sizes are fine here: a 1 inch wide floor makes
+      a perfectly good hallway, it is only walls that crowd a mini at that
+      width.
+    options:
+      - key: 1x1
+        title: 1×1
+        roles:
+          floor:
+            require:
+              - size|width|1
+              - size|depth|1
+      - key: 2x1
+        title: 2×1
+        roles:
+          floor:
+            require:
+              - size|width|2
+              - size|depth|1
+      - key: 2x2
+        title: 2×2
+        roles:
+          floor:
+            require:
+              - size|width|2
+              - size|depth|2
+      - key: 3x1
+        title: 3×1
+        roles:
+          floor:
+            require:
+              - size|width|3
+              - size|depth|1
+      - key: 3x3
+        title: 3×3
+        roles:
+          floor:
+            require:
+              - size|width|3
+              - size|depth|3
+      - key: 4x1
+        title: 4×1
+        roles:
+          floor:
+            require:
+              - size|width|4
+              - size|depth|1
+      - key: 4x2
+        title: 4×2
+        roles:
+          floor:
+            require:
+              - size|width|4
+              - size|depth|2
+      - key: 4x4
+        title: 4×4
+        roles:
+          floor:
+            require:
+              - size|width|4
+              - size|depth|4
+
+roles:
+  floor:
+    title: Floor
+    # The wall guide's floor role is the same but for one `allow`: it
+    # spares `component|wall`, because the floor it picks may be a tile
+    # with a wall standing on it. Here it must not, so the tag is left
+    # out and `deny_children: [component]` sweeps it away along with
+    # `component|pool` and the rest. What survives is a plain square
+    # floor: `deny_children: [shape]` refuses `shape|floor|wall`,
+    # `shape|curved` and `shape|floor|s2w`, while `shape|floor` is spared
+    # for being required and `shape|square` for being allowed.
+    query:
+      require:
+        - shape|floor
+      deny_children:
+        - shape
+        - component
+      allow:
+        - shape|square
+      deny:
+        - shape|base
+    prefer:
+      - texture|dungeon_stone|block
+      - texture|dungeon_stone
+      - size|width|2
+      - size|depth|2
+      - connection|openforge
+    avoid:
+      - decoration
+  floor-base:
+    title: Base for the floor
+    query:
+      require:
+        - shape|base
+        - shape|base|square
+      deny_children:
+        - shape|base
+    prefer:
+      - texture|plain
+    under: floor
+    match:
+      - size|width
+      - size|depth
+
+refinements:
+  - key: texture
+    role: floor
+    browsable: true
+    prompt: Floor texture
+    default: texture|dungeon_stone
+    from_namespace: texture
+    # The counts are floors specifically, which is why they differ from
+    # the wall guide's texture list.
+    choices:
+      - tag: texture|dungeon_stone
+        title: Dungeon stone
+        blurb: >
+          Cut flags. 71 floors, every one of them block or eroded; the
+          recommendation is block.
+      - tag: texture|rough_stone
+        title: Rough stone
+        blurb: 38 floors.
+      - tag: texture|cut-stone
+        title: Cut stone
+        blurb: 32 floors.
+      - tag: texture|towne
+        title: Wood
+        blurb: >
+          23 floors, all of them boarded, in two or three plank layouts.
+      - tag: texture|aztlan
+        title: Aztlan
+        blurb: 11 floors.
+
+  - key: base-clips
+    role: "*"
+    browsable: true
+    # Everything except the floor itself, which is to say the base. Spelled
+    # as an exception rather than as `role: floor-base` so that it keeps
+    # covering the bases if this guide ever gains another one.
+    except_roles:
+      - floor
+    group: How do the pieces clip together?
+    prompt: The base
+    when:
+      selected:
+        floor-print:
+          - with-base
+    default: connection|magnetic,connection|openlock,connection|openlock|topless
+    blurb: |
+      Clips are how the bases join to each other. There are two systems, and
+      the honest answer is that it rarely matters: the consensus is that
+      Dragonbite clips hold better and OpenLOCK clips are easier for rapid
+      swapping, but most people agree they aren't different enough to worry
+      about. Supporting both is built into how this project is developed,
+      from the ground up.
+
+      For what it is worth, I have more OpenLOCK tiles than DragonLock, and
+      OpenLOCK is somewhat more widespread.
+
+      Magnets are better if you lay tiles down at game time — they help you
+      align tiles quickly, and frankly they have a pleasing feel. The flex
+      magnetic bases take 5mm spheres and five cylindrical sizes: 5mm×3mm,
+      5mm×2mm, 4mm×3mm, 4mm×2mm and 3/16"×1/8". They spin in place, so you
+      never have to think about polarity.
+
+      Topless removes the material above the clip bay, which is not thick to
+      begin with: faster to print, and no supports to take out. I don't
+      recommend it on its own, though — there is very little contact between
+      the top of the base and whatever you glue it to. If you want a single
+      central OpenLOCK bay, which is a common choice, take the magnetic
+      OpenLOCK base and simply don't fit the magnets. Unsupported is newer:
+      modern printers bridge well enough that many people find they don't
+      need supports at all.
+
+      Print your clips in PETG, not PLA. PLA is rigid and brittle, so clips
+      snap instead of flexing. Keep the bases in whatever you are printing
+      everything else in — PETG is harder to glue and harder to paint.
+
+      If a clip will not go into its bay, that is almost always the built-in
+      supports: OpenLOCK and DragonLock clips both print with supports you
+      have to snap out first. It is the question people ask most.
+    links:
+      5mm×3mm: https://amzn.to/3TiebAV
+      5mm×2mm: https://amzn.to/3n2prFa
+      4mm×3mm: https://amzn.to/3JOtXzd
+      4mm×2mm: https://amzn.to/3looXJl
+      3/16"×1/8": https://www.kjmagnetics.com/proddetail.asp?prod=D32AH
+    titles:
+      connection|openlock: OpenLOCK
+      connection|dragonlock: DragonLock
+      connection|magnetic: Magnets
+    from_combination: connection
+    exclude:
+      - connection|magnetic|flex
+
+  - key: floor-clips
+    role: floor
+    browsable: true
+    group: How do the pieces clip together?
+    prompt: The floor
+    when:
+      selected:
+        floor-print:
+          - single-piece
+    default: connection|openlock
+    from_combination: connection
+    titles:
+      connection|openlock: OpenLOCK
+      connection|dragonlock: DragonLock
+      connection|magnetic: Magnets
+    exclude:
+      - connection|side
+      - connection|openforge
