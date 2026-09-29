@@ -27,11 +27,15 @@ steps:
   - key: floor-print
     prompt: How should the floor print?
     default: with-base
-    # This step introduces the roles. The wall guide's `method` step does
-    # that job there; with no method to choose, the first question is the
-    # one that decides whether there is a base at all, so `floor` is
-    # named here with a null predicate — the role comes into play and
-    # takes no constraint from the answer.
+    # This step introduces both roles. The wall guide's `method` step does
+    # that job there; with no method to choose, the first question is the one
+    # that decides whether there is a base at all.
+    #
+    # `floor-base` is the one with a null predicate — it comes into play and
+    # takes no constraint from the answer, because the role's own query
+    # already requires `shape|base|square`. `floor` is NOT unconstrained:
+    # each option puts something on it, and on `with-base` that something is
+    # load-bearing (see the comment there).
     options:
       - key: with-base
         title: Floor plus a base
@@ -72,9 +76,9 @@ steps:
     # their footprint is not on this list, and because this question is not
     # `browsable` its tags never become relaxable, so the catalog dialog
     # cannot reach them either. (6x4 17, 6x6 15, 8x8 15, and the rest at odd
-    # pairs like 1x2 and 3x2.) Widening it is not just adding buttons: 6x4 and 8x8 have no
-    # square base at all, so those sizes would empty `floor-base` on the
-    # with-base branch. Tracked as openforge_catalog-9ab.
+    # pairs like 1x2 and 3x2.) Widening it is not just adding buttons: 6x4
+    # and 8x8 have no square base at all, so those sizes would empty
+    # `floor-base` on the with-base branch. Tracked as openforge_catalog-9ab.
     blurb: >
       All tile sizes are in inches, which are also squares. Most people use
       2×2. 4×2 is handy for hallways, and a few systems have used 3×3 as
