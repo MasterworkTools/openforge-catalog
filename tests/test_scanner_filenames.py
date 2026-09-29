@@ -768,6 +768,24 @@ def test_a_wall_slot_implies_the_floor_outline(form, outline):
     assert not any(("shape", o) in tags for o in others)
 
 
+@pytest.mark.parametrize("cut_out", ["corner", "internal_corner", "diagonal"])
+def test_a_cut_out_replaces_the_straight_slot(cut_out):
+    """A `wall` directory gives every piece in it a straight slot; a
+    cut-out piece there must lose it, or a straight wall would match."""
+    tags = _wall_on_tile_tags(f"rough_stone#{cut_out},floor.2x2.openforge.stl")
+
+    assert ("shape", "floor", "wall", cut_out) in tags
+    assert ("shape", "floor", "wall") not in tags
+
+
+def test_an_angled_slot_means_an_angled_floor():
+    tags = _wall_on_tile_tags("rough_stone#angled,floor.2x2.openforge.stl")
+
+    assert ("shape", "floor", "wall", "angled") in tags
+    assert ("shape", "angled") in tags
+    assert ("shape", "square") not in tags
+
+
 def test_a_square_floor_is_square_even_on_wall_on_tile():
     """Square is an outline, never a cut-out."""
     tags = _wall_on_tile_tags("rough_stone#floor.E.openforge.stl")
@@ -850,6 +868,43 @@ def test_a_base_curve_qualifier_sits_under_curved(bend):
     assert ("shape", bend) not in tags
 
 
+def test_a_curved_floor_that_is_not_radial_takes_any_curved_base():
+    o = {
+        "tags": {
+            ("shape", "floor"),
+            ("shape", "curved"),
+            ("shape", "curved", "concave"),
+            ("connection", "openforge"),
+        }
+    }
+    apply_default_metadata(o)
+
+    (base,) = o["config"]["parts"]
+    assert {"tag": "shape|curved|radial"} not in base["tags"]["require"]
+
+
+def test_a_mirrored_base_keeps_its_mirror():
+    """Mirror became an option on floors only; bases were not ruled on."""
+    tags = _tags_at(
+        ["tiles", "bases", "plain", "curved+mirror", "openlock"],
+        "plain#base+curved+mirror.4x4.openlock.stl",
+    )
+
+    assert ("shape", "base", "mirror") in tags
+    assert ("shape", "option", "mirror") not in tags
+
+
+def test_an_internal_corner_base_carries_the_plain_shape():
+    """Beside `shape|base|internal_corner`, so a floor can ask for it."""
+    tags = _tags_at(
+        ["tiles", "bases", "plain", "internal_corner", "openlock"],
+        "plain#base+internal_corner.2x2.openlock.stl",
+    )
+
+    assert ("shape", "base", "internal_corner") in tags
+    assert ("shape", "internal_corner") in tags
+
+
 def test_a_radial_floor_asks_for_a_radial_base():
     o = {
         "tags": {
@@ -881,6 +936,17 @@ def test_every_symbol_spelling_is_a_decoration(form):
 
     leftovers = [t for t in tags if {"air", "air_symbol"} & set(t[1:])]
     assert leftovers == [("decoration", "symbol", "air")]
+
+
+# Written out, not SYMBOLS: a test that iterates the code's own list
+# loses the case in the same edit that breaks it.
+@pytest.mark.parametrize(
+    "symbol", ["air", "beezlebub", "earth", "fire", "lamashtu", "spirit", "water"]
+)
+def test_every_symbol_is_a_decoration(symbol):
+    tags = _wall_on_tile_tags(f"cut-stone#floor,{symbol}_symbol.2x2.openforge.stl")
+
+    assert ("decoration", "symbol", symbol) in tags
 
 
 @pytest.mark.parametrize("form", ["wall+spirit_symbol", "wall,spirit"])

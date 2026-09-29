@@ -1752,9 +1752,9 @@ def test_two_answers_jointly_to_blame_are_not_blamed_one_at_a_time(guide):
     # And the property: the part is still named, the question is not.
     rough = texture["because"]["texture|rough"]
     assert rough["part"] == "Wall"
-    assert "question" not in rough, (
-        f"a scapegoat for a joint failure: {rough.get('prompt')}"
-    )
+    assert (
+        "question" not in rough
+    ), f"a scapegoat for a joint failure: {rough.get('prompt')}"
 
 
 #: Two roles, one of which the catalog cannot serve at all, so the only
@@ -1967,9 +1967,9 @@ def test_the_sweep_holds_a_pin_only_where_the_click_would_keep_it():
     # finish re-decides the floor and says nothing about the wall, so
     # the wall pin stands and the explanation stands with it.
     detail = asked["finish"]
-    assert detail["unavailable"] == ["rough"], (
-        "the fixture no longer has a finish the floor cannot serve at this width"
-    )
+    assert detail["unavailable"] == [
+        "rough"
+    ], "the fixture no longer has a finish the floor cannot serve at this width"
     rough = detail["because"]["rough"]
     assert rough["part"] == "Floor"
     assert rough.get("question") == "size", (
@@ -2123,6 +2123,40 @@ def _sweeping_finder(pieces):
         ]
 
     return find
+
+
+def _find_with_sweep(predicate):
+    """`find_candidates`, plus the SQL's `deny_children` subtree sweep."""
+    spared = set(predicate.get("require", [])) | set(predicate.get("allow", []))
+    return [
+        b
+        for b in find_candidates(predicate)
+        if not any(
+            t.startswith(f"{parent}|") and t not in spared
+            for parent in predicate.get("deny_children", [])
+            for t in b["tags"]
+        )
+    ]
+
+
+def test_a_roles_avoid_reaches_the_recommendation(guide):
+    """`avoid` in the guide document, not just in `_recommend`'s signature.
+
+    With no `prefer` and the finder ordering wall 2 first, wall 2 is the
+    default — unless the role's `avoid` reaches `_recommend`, since wall
+    2 carries `connection|openforge` and wall 1 carries no connection.
+    """
+    guide["roles"]["wall"]["prefer"] = []
+
+    def wall_2_first(predicate):
+        return sorted(_find_with_sweep(predicate), key=lambda b: b["id"] != "2")
+
+    plain = resolve(guide, {"method": "s2w-modular"}, wall_2_first)
+    assert parts_by_role(plain)["wall"]["blueprint"]["id"] == "2"
+
+    guide["roles"]["wall"]["avoid"] = ["connection"]
+    avoided = resolve(guide, {"method": "s2w-modular"}, wall_2_first)
+    assert parts_by_role(avoided)["wall"]["blueprint"]["id"] == "1"
 
 
 def test_avoid_keeps_a_decorated_piece_from_being_the_default():
