@@ -24,9 +24,20 @@ describe('blueprint-utils', () => {
      * downloading. A real Document rather than an object literal so the stub
      * cannot drift from the shape the code reads.
      */
-    const withDocument = (frame: HTMLIFrameElement, text: string) => {
+    const withDocument = (frame: HTMLIFrameElement, text: string) =>
+      withRenderedBody(frame, (body) => {
+        body.textContent = text;
+      });
+
+    /** As `withDocument`, but the body is real markup rather than flat text. */
+    const withMarkup = (frame: HTMLIFrameElement, markup: string) =>
+      withRenderedBody(frame, (body) => {
+        body.innerHTML = markup;
+      });
+
+    const withRenderedBody = (frame: HTMLIFrameElement, fill: (body: HTMLElement) => void) => {
       const doc = document.implementation.createHTMLDocument('');
-      doc.body.textContent = text;
+      fill(doc.body);
       Object.defineProperty(frame, 'contentDocument', { configurable: true, get: () => doc });
       return frame;
     };
@@ -130,11 +141,20 @@ describe('blueprint-utils', () => {
       // field. Same-origin, so the body is readable and worth printing.
       const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
 
-      // `download_blueprint` uses a bare `abort(404)`, so what actually renders
-      // is Werkzeug's HTML page rather than JSON.
-      const rendered = 'Not Found The requested URL was not found on the server.';
+      // `download_blueprint` uses a bare `abort(404)`, so what actually renders is
+      // Werkzeug's HTML page rather than JSON. Set as real markup, not as flat
+      // text: with a markup-free fixture `innerHTML` and `textContent` are equal,
+      // so a version reading markup instead of text would pass here and then warn
+      // on a successful download whose blank page is styled rather than empty.
+      const markup =
+        '<h1>Not Found</h1><p>The requested URL was not found on the server. If' +
+        ' you entered the URL manually please check your spelling and try again.</p>';
+      const rendered =
+        'Not FoundThe requested URL was not found on the server. If you entered' +
+        ' the URL manually please check your spelling and try again.';
+
       downloadFiles(['/a', '/b'], jest.fn());
-      withDocument(iframes()[0], rendered).dispatchEvent(new Event('load'));
+      withMarkup(iframes()[0], markup).dispatchEvent(new Event('load'));
 
       expect(warn).toHaveBeenCalledWith('download did not start:', '/a', rendered);
     });
@@ -150,6 +170,10 @@ describe('blueprint-utils', () => {
 
       downloadFiles(['/a', '/b'], jest.fn());
       iframes().forEach((frame) => {
+        // Not decoration: a sandboxed frame is an opaque origin, so
+        // `contentDocument` would read null and every success would warn. This is
+        // the executable form of the caveat on the listener.
+        expect(frame.hasAttribute('sandbox')).toBe(false);
         const blank = withDocument(frame, '');
         expect(blank.contentDocument!.body.textContent).toBe('');
         blank.dispatchEvent(new Event('load'));
@@ -165,8 +189,11 @@ describe('blueprint-utils', () => {
       withDocument(iframes()[0], '   \n  ').dispatchEvent(new Event('load'));
       expect(warn).not.toHaveBeenCalled();
 
-      withDocument(iframes()[1], 'x'.repeat(500)).dispatchEvent(new Event('load'));
-      expect(warn).toHaveBeenCalledWith('download did not start:', '/b', 'x'.repeat(200));
+      // Distinguishable head and tail, so this pins *which* 200 characters:
+      // a repeated character leaves slice(-200) passing.
+      const long = 'A'.repeat(200) + 'B'.repeat(300);
+      withDocument(iframes()[1], long).dispatchEvent(new Event('load'));
+      expect(warn).toHaveBeenCalledWith('download did not start:', '/b', 'A'.repeat(200));
     });
 
     it('stays quiet for a document that has no body yet', () => {
@@ -176,10 +203,9 @@ describe('blueprint-utils', () => {
 
       downloadFiles(['/a', '/b'], jest.fn());
       const frame = iframes()[0];
-      Object.defineProperty(frame, 'contentDocument', {
-        configurable: true,
-        get: () => ({ body: null }),
-      });
+      // jsdom never loads the src, so this frame is already in that state — no
+      // stub needed, and none wanted.
+      expect(frame.contentDocument!.body).toBeNull();
       frame.dispatchEvent(new Event('load'));
 
       expect(warn).not.toHaveBeenCalled();

@@ -102,6 +102,11 @@ export const downloadFiles = (urls: string[], nav: (url: string) => void = navig
     // that means "expected, unreadable failure". Passive either way — it watches
     // the real download, adds no request and gates nothing, so unlike a
     // pre-flight check it cannot fail closed.
+    //
+    // One way to break this silently: adding `iframe.sandbox` in some future CSP
+    // pass makes the frame an opaque origin, so `contentDocument` reads null
+    // unconditionally, `body` becomes '(cross-origin)' and EVERY completed
+    // download warns. The check inverts rather than degrades.
     iframe.addEventListener('load', () => {
       const doc = iframe.contentDocument;
       const body = doc === null ? '(cross-origin)' : (doc.body?.textContent ?? '');
