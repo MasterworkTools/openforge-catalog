@@ -4,16 +4,9 @@ import { Blueprint } from '@/types';
 
 describe('blueprint-utils', () => {
   describe('downloadFiles', () => {
-    /**
-     * `redirect: 'manual'` stops at the 302 and hands back an opaque response:
-     * no status, no headers. That is the success signal — the server had
-     * somewhere to send us.
-     */
-    const redirected = { type: 'opaqueredirect', ok: false } as Response;
-
     beforeEach(() => {
       jest.useFakeTimers();
-      global.fetch = jest.fn().mockResolvedValue(redirected);
+      global.fetch = jest.fn();
       document.body.innerHTML = '';
     });
 
@@ -22,37 +15,36 @@ describe('blueprint-utils', () => {
       jest.restoreAllMocks();
     });
 
-    const iframes = () => document.body.querySelectorAll('iframe');
+    const iframes = () => Array.from(document.body.querySelectorAll('iframe'));
+    const sources = () => iframes().map((frame) => frame.getAttribute('src'));
 
-    it('navigates for a single URL, with no iframe and no probe', async () => {
+    it('navigates for a single URL, creating no iframe', () => {
       const nav = jest.fn();
 
-      const outcome = await downloadFiles(['/api/blueprints/1/download'], nav);
+      downloadFiles(['/api/blueprints/1/download'], nav);
 
       expect(nav).toHaveBeenCalledWith('/api/blueprints/1/download');
       expect(iframes()).toHaveLength(0);
-      expect(global.fetch).not.toHaveBeenCalled();
-      expect(outcome).toEqual({
-        started: ['/api/blueprints/1/download'],
-        failed: [],
-      });
     });
 
-    it('hands every file to the browser and says which', async () => {
-      const outcome = await downloadFiles(['/a', '/b'], jest.fn());
+    it('points one hidden iframe at each URL', () => {
+      downloadFiles(['/a', '/b'], jest.fn());
 
-      expect(iframes()).toHaveLength(2);
-      expect(outcome).toEqual({ started: ['/a', '/b'], failed: [] });
+      // The src is the download request. Asserting only the iframe count lets a
+      // version that creates two empty iframes pass, which would download
+      // nothing at all.
+      expect(sources()).toEqual(['/a', '/b']);
+      expect(iframes().map((frame) => frame.style.display)).toEqual(['none', 'none']);
     });
 
-    it('leaves each iframe up long enough for the download to start', async () => {
+    it('leaves each iframe up long enough for the download to start', () => {
       // The regression this file previously enforced: it asserted removeChild
       // had been called, so a teardown that aborted the request was the
       // expected behaviour. Removing an iframe whose request has not begun
       // transferring aborts it (NS_BINDING_ABORTED in Firefox), and the
-      // /download redirect alone measured 5.03s on a cold Lambda against the
+      // /download redirect alone measured ~4.7s on a cold Lambda against the
       // old 1000ms budget.
-      await downloadFiles(['/a', '/b'], jest.fn());
+      downloadFiles(['/a', '/b'], jest.fn());
 
       jest.advanceTimersByTime(6_000);
       expect(iframes()).toHaveLength(2);
@@ -61,31 +53,21 @@ describe('blueprint-utils', () => {
       expect(iframes()).toHaveLength(0);
     });
 
-    it('reports a file it could not presign, and starts nothing for it', async () => {
-      (global.fetch as jest.Mock)
-        .mockResolvedValueOnce(redirected)
-        .mockResolvedValueOnce({ type: 'basic', ok: false, status: 500 });
+    it('issues no request of its own, so a download is never gated on a pre-flight', () => {
+      // An earlier version of this fix probed each URL with `redirect: 'manual'`
+      // before creating its iframe. Measurement killed it: the 60s lifetime
+      // already absorbs the cold start the probe was meant to hide, and a probe
+      // that failed for any reason skipped a download that would have worked.
+      downloadFiles(['/a', '/b'], jest.fn());
 
-      const outcome = await downloadFiles(['/a', '/b'], jest.fn());
-
-      expect(outcome).toEqual({ started: ['/a'], failed: ['/b'] });
-      expect(iframes()).toHaveLength(1);
+      expect(global.fetch).not.toHaveBeenCalled();
+      expect(sources()).toEqual(['/a', '/b']);
     });
 
-    it('treats a network failure as a failed file rather than throwing', async () => {
-      (global.fetch as jest.Mock).mockRejectedValue(new Error('offline'));
+    it('does nothing for no urls', () => {
+      downloadFiles([], jest.fn());
 
-      const outcome = await downloadFiles(['/a', '/b'], jest.fn());
-
-      expect(outcome).toEqual({ started: [], failed: ['/a', '/b'] });
       expect(iframes()).toHaveLength(0);
-    });
-
-    it('returns an empty outcome for no urls', async () => {
-      await expect(downloadFiles([], jest.fn())).resolves.toEqual({
-        started: [],
-        failed: [],
-      });
       expect(global.fetch).not.toHaveBeenCalled();
     });
   });
