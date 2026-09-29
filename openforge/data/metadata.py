@@ -231,6 +231,17 @@ def apply_openforge_wall(o):
     o["config"] = config
 
 
+def _radial_requires(o):
+    """A radial floor's joints only meet a radial base's.
+
+    The `constrain: shape` below keeps only the most general tag of each
+    chain, so on its own it asks a radial floor for any curved base.
+    """
+    if ("shape", "curved", "radial") in o["tags"]:
+        return [{"tag": "shape|curved|radial"}]
+    return []
+
+
 def apply_openforge_floor(o):
     if not is_openforge_floor(o):
         return
@@ -242,6 +253,7 @@ def apply_openforge_floor(o):
             "tags": {
                 "require": [
                     {"tag": "shape|base"},
+                    *_radial_requires(o),
                 ],
                 "deny": [
                     {"tag": "build|s2w"},

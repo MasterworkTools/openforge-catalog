@@ -495,6 +495,9 @@ roles:
       - 'size|width|2'
       - 'size|depth|2'
       - 'connection|openforge'
+    # A celtic knot or a carved symbol is still a floor, and one of the
+    # options; it is just never the one the guide hands you first.
+    avoid: ['decoration']
   wall:
     title: Wall
     query:
@@ -565,6 +568,8 @@ roles:
         - 'connection|openforge'
         - 'connection|openlock'
     prefer: ['texture|dungeon_stone', 'size|width|2']
+    # Corbels, timber framing and symbols: options, never the default.
+    avoid: ['decoration']
   floor-base:
     title: Base for the floor
     query:

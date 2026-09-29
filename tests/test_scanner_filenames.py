@@ -1,6 +1,6 @@
 import pytest
 
-from openforge.data.metadata import add_tag, apply_metadata
+from openforge.data.metadata import add_tag, apply_default_metadata, apply_metadata
 from openforge.data.scanner import _sort_and_clean_recursively, parse_file_tags
 
 
@@ -206,7 +206,6 @@ def test_parse_filename_curved():
         ("connection", "openforge"),
         ("shape", "angled"),
         ("shape", "floor"),
-        ("shape", "floor", "angled"),
     }
 
     assert tags == expected_tags
@@ -283,7 +282,7 @@ def test_parse_filename_curved_floor():
         ("texture", "towne"),
         ("texture", "towne", "wood"),
         ("shape", "floor"),
-        ("shape", "floor", "curved"),
+        ("shape", "curved"),
         ("size", "width", 2),
         ("size", "depth", 2),
         ("connection", "openforge"),
@@ -318,6 +317,9 @@ def test_parse_filename_curved_wall():
         ("texture", "towne"),
         ("texture", "towne", "stone"),
         ("shape", "wall"),
+        # Curved is a shape, not a second component, so the wall
+        # stays a wall.
+        ("component", "wall"),
         ("shape", "curved", "concave"),
         ("shape", "curved"),
         ("size", "radius", 2),
@@ -399,6 +401,9 @@ def test_parse_filename_curved_wall_with_filter_shape():
         ("texture", "towne"),
         ("texture", "towne", "stone"),
         ("shape", "wall"),
+        # Curved is a shape, not a second component, so the wall
+        # stays a wall.
+        ("component", "wall"),
         ("shape", "curved", "concave"),
         ("shape", "curved"),
         ("size", "radius", 2),
@@ -583,8 +588,8 @@ def test_filename_with_complex_nested_texture():
     # Check that we get the expected shape tags (components get transformed)
     expected_shapes = {
         ("shape", "floor"),
-        ("shape", "floor", "angled"),
-        ("shape", "floor", "curved"),
+        ("shape", "angled"),
+        ("shape", "curved"),
     }
     assert all(shape in tags for shape in expected_shapes)
 
@@ -638,6 +643,318 @@ def test_filename_with_wall_alone():
     parse_file_tags(file_info, tags, None)
 
     # Should keep component wall when it's alone
+    assert ("component", "wall") in tags
+
+
+def _wall_on_tile_tags(filename):
+    path = ["tiles", "rough_stone+ruined", "wall_on_tile", "wall", "wall"]
+    tags = set()
+    parse_file_tags(
+        {"full_name": "/".join(path + [filename]), "file": filename, "path": path},
+        tags,
+        None,
+    )
+    return tags
+
+
+def test_collapsed_wall_keeps_component_wall():
+    """Collapsed is how much of the wall stands, not a second component."""
+    tags = _wall_on_tile_tags("rough_stone+ruined#wall,collapsed+low.1x.openforge.stl")
+
+    assert ("component", "wall") in tags
+    assert ("component", "collapsed", "low") in tags
+
+
+def test_collapsed_is_the_only_exception_to_wall_alone():
+    """A real second component still takes component|wall away."""
+    tags = _wall_on_tile_tags(
+        "rough_stone+ruined#wall,window,collapsed+low.2x.openforge.stl"
+    )
+
+    assert ("component", "wall") not in tags
+    assert ("component", "window") in tags
+
+
+@pytest.mark.parametrize("shape", ["curved", "diagonal"])
+def test_shaped_wall_keeps_component_wall(shape):
+    """A curved or diagonal wall is one wall, not a wall plus a part."""
+    tags = _wall_on_tile_tags(
+        f"rough_stone+ruined#{shape}+wall,collapsed+low.1x1.openforge.stl"
+    )
+
+    assert ("component", "wall") in tags
+    assert ("shape", shape) in tags
+    assert ("shape", shape, "wall") in tags
+    assert not any(t[0] == "component" and t[1] == shape for t in tags)
+
+
+def test_diagonal_floor_is_a_shape_not_a_square():
+    """A wall-on-tile diagonal is the cut-out, and a diagonal outline."""
+    tags = _wall_on_tile_tags("rough_stone#diagonal+a,floor.1x1.openforge.stl")
+
+    assert ("shape", "floor", "wall", "diagonal") in tags
+    assert ("shape", "floor", "wall", "diagonal", "a") in tags
+    assert ("shape", "diagonal") in tags
+    assert ("shape", "square") not in tags
+
+
+def _tags_at(path, filename):
+    tags = set()
+    parse_file_tags(
+        {"full_name": "/".join(path + [filename]), "file": filename, "path": path},
+        tags,
+        None,
+    )
+    return tags
+
+
+FLOORS = ["tiles", "dungeon_stone", "floors", "floor#curved", "openforge"]
+S2W = ["tiles", "dungeon_stone", "s2w", "curved", "floor#curved+s2w"]
+
+
+@pytest.mark.parametrize(
+    "form", ["floor+curved+concave", "curved+concave,floor", "floor,curved+concave"]
+)
+def test_a_plain_floor_shape_is_a_peer_of_floor(form):
+    """The outline of a full floor: `+shape|curved` finds it."""
+    tags = _tags_at(FLOORS, f"dungeon_stone#{form}.2x2.openforge.stl")
+
+    assert ("shape", "floor") in tags
+    assert ("shape", "curved", "concave") in tags
+    assert not any(t[:2] == ("shape", "floor") and len(t) > 2 for t in tags)
+
+
+@pytest.mark.parametrize(
+    "form", ["floor+curved+concave", "curved+concave,floor", "floor,curved+concave"]
+)
+def test_a_wall_on_tile_shape_is_the_cut_out(form):
+    """The shape of the slot the wall sits in."""
+    tags = _wall_on_tile_tags(f"dungeon_stone#{form}.2x2.openforge.stl")
+
+    assert ("shape", "floor", "wall", "curved", "concave") in tags
+    assert ("shape", "floor", "curved") not in tags
+    # The outline the slot implies, without the slot's detail.
+    assert ("shape", "curved") in tags
+    assert ("shape", "curved", "concave") not in tags
+
+
+def test_an_s2w_shape_is_the_cut_out():
+    tags = _tags_at(
+        S2W, "dungeon_stone%block#floor+s2w,curved+radial.4r45°.openforge.stl"
+    )
+
+    assert ("shape", "floor", "wall", "curved", "radial") in tags
+    assert ("shape", "floor", "s2w") in tags
+    # A cut-out, not a straight slot: a straight wall must not match it.
+    assert ("shape", "floor", "wall") not in tags
+
+
+@pytest.mark.parametrize(
+    "form, outline",
+    [
+        ("wall,floor", "square"),
+        ("corner,floor", "square"),
+        ("internal_corner+ab,floor", "square"),
+        ("curved+concave,floor", "curved"),
+        ("diagonal+a,floor", "diagonal"),
+    ],
+)
+def test_a_wall_slot_implies_the_floor_outline(form, outline):
+    """The slot is the cut-out; the outline is the peer shape."""
+    tags = _wall_on_tile_tags(f"rough_stone#{form}.2x2.openforge.stl")
+
+    assert ("shape", outline) in tags
+    others = {"square", "curved", "diagonal", "angled"} - {outline}
+    assert not any(("shape", o) in tags for o in others)
+
+
+@pytest.mark.parametrize("cut_out", ["corner", "internal_corner", "diagonal"])
+def test_a_cut_out_replaces_the_straight_slot(cut_out):
+    """A `wall` directory gives every piece in it a straight slot; a
+    cut-out piece there must lose it, or a straight wall would match."""
+    tags = _wall_on_tile_tags(f"rough_stone#{cut_out},floor.2x2.openforge.stl")
+
+    assert ("shape", "floor", "wall", cut_out) in tags
+    assert ("shape", "floor", "wall") not in tags
+
+
+def test_an_angled_slot_means_an_angled_floor():
+    tags = _wall_on_tile_tags("rough_stone#angled,floor.2x2.openforge.stl")
+
+    assert ("shape", "floor", "wall", "angled") in tags
+    assert ("shape", "angled") in tags
+    assert ("shape", "square") not in tags
+
+
+def test_a_square_floor_is_square_even_on_wall_on_tile():
+    """Square is an outline, never a cut-out."""
+    tags = _wall_on_tile_tags("rough_stone#floor.E.openforge.stl")
+
+    assert ("shape", "floor", "square") not in tags
+
+
+@pytest.mark.parametrize("letters", ["a", "ab", "abcd", "ad"])
+def test_internal_corner_is_its_own_shape(letters):
+    """Not a variant of corner; its letters name the open edges."""
+    tags = _wall_on_tile_tags(
+        f"towne%wood#internal_corner+{letters},floor.2x2.openforge.stl"
+    )
+
+    assert ("shape", "floor", "wall", "internal_corner", letters) in tags
+    assert not any("corner" in t for t in tags if "internal_corner" not in t)
+
+
+@pytest.mark.parametrize("name", ["curved+notch,floor.4x4", "curved,floor.4x4+notch"])
+def test_a_notch_is_a_shape_option(name):
+    """Named in the form or in the size, a notch is the same option."""
+    tags = _tags_at(FLOORS, f"cut-stone#{name}.openforge.stl")
+
+    assert ("shape", "option", "notch") in tags
+    assert not any(t[-1] == "notch" and t[1] != "option" for t in tags)
+
+
+def test_a_mirrored_floor_is_a_shape_option():
+    tags = _tags_at(
+        FLOORS, "dungeon_stone%block#floor,curved+interface+mirror.RxG.openforge.stl"
+    )
+
+    assert ("shape", "option", "mirror") in tags
+    assert ("shape", "curved", "interface") in tags
+    assert not any(t[-1] == "mirror" and t[1] != "option" for t in tags)
+
+
+@pytest.mark.parametrize(
+    "directory, filename",
+    [
+        ("curved_floors", "plain#base+curved+radial.4r45°.openlock.stl"),
+        ("primary_floors", "plain#base+square.2x2.openlock.stl"),
+        # The size table says shape|floor for F, E, R, U, V...
+        ("curved_floors", "plain#base+curved.F.openlock.stl"),
+        ("primary_floors", "plain#base+square.E.openlock.stl"),
+    ],
+)
+def test_a_base_in_a_floor_directory_is_not_a_floor(directory, filename):
+    """`bases/.../curved_floors/` holds the bases *for* those floors."""
+    tags = _tags_at(
+        ["tiles", "bases", "separate_wall", directory, "base#cf%plain", "openlock"],
+        filename,
+    )
+
+    assert ("shape", "base") in tags
+    assert not any(t[:2] == ("shape", "floor") for t in tags)
+
+
+def test_a_base_that_names_the_floor_is_one():
+    """`#base,floor,portal` says in its own name that it is a floor."""
+    tags = _tags_at(
+        ["tiles", "building_facades", "yawning_portal", "portal", "bases"],
+        "plain#base,floor,portal.6x6.openlock.stl",
+    )
+
+    assert ("shape", "floor") in tags
+
+
+@pytest.mark.parametrize("bend", ["radial", "concave"])
+def test_a_base_curve_qualifier_sits_under_curved(bend):
+    """Both the base's own shape and the plain copy beside it."""
+    tags = _tags_at(
+        ["tiles", "bases", "plain", f"curved+{bend}", "openlock"],
+        f"plain#base+curved+{bend}.4r45°.openlock.stl",
+    )
+
+    assert ("shape", "base", "curved", bend) in tags
+    assert ("shape", "curved", bend) in tags
+    assert ("shape", "base", bend) not in tags
+    assert ("shape", bend) not in tags
+
+
+def test_a_curved_floor_that_is_not_radial_takes_any_curved_base():
+    o = {
+        "tags": {
+            ("shape", "floor"),
+            ("shape", "curved"),
+            ("shape", "curved", "concave"),
+            ("connection", "openforge"),
+        }
+    }
+    apply_default_metadata(o)
+
+    (base,) = o["config"]["parts"]
+    assert {"tag": "shape|curved|radial"} not in base["tags"]["require"]
+
+
+def test_a_mirrored_base_keeps_its_mirror():
+    """Mirror became an option on floors only; bases were not ruled on."""
+    tags = _tags_at(
+        ["tiles", "bases", "plain", "curved+mirror", "openlock"],
+        "plain#base+curved+mirror.4x4.openlock.stl",
+    )
+
+    assert ("shape", "base", "mirror") in tags
+    assert ("shape", "option", "mirror") not in tags
+
+
+def test_an_internal_corner_base_carries_the_plain_shape():
+    """Beside `shape|base|internal_corner`, so a floor can ask for it."""
+    tags = _tags_at(
+        ["tiles", "bases", "plain", "internal_corner", "openlock"],
+        "plain#base+internal_corner.2x2.openlock.stl",
+    )
+
+    assert ("shape", "base", "internal_corner") in tags
+    assert ("shape", "internal_corner") in tags
+
+
+def test_a_radial_floor_asks_for_a_radial_base():
+    o = {
+        "tags": {
+            ("shape", "floor"),
+            ("shape", "curved"),
+            ("shape", "curved", "radial"),
+            ("connection", "openforge"),
+        }
+    }
+    apply_default_metadata(o)
+
+    (base,) = o["config"]["parts"]
+    assert {"tag": "shape|curved|radial"} in base["tags"]["require"]
+
+
+@pytest.mark.parametrize(
+    "form",
+    [
+        "floor+air_symbol",
+        "floor,air_symbol",
+        "wall+air_symbol",
+        "wall,air",
+        "archway+air",
+    ],
+)
+def test_every_symbol_spelling_is_a_decoration(form):
+    """However the filename attaches it, a symbol is a decoration."""
+    tags = _wall_on_tile_tags(f"cut-stone#{form}.2x2.openforge.stl")
+
+    leftovers = [t for t in tags if {"air", "air_symbol"} & set(t[1:])]
+    assert leftovers == [("decoration", "symbol", "air")]
+
+
+# Written out, not SYMBOLS: a test that iterates the code's own list
+# loses the case in the same edit that breaks it.
+@pytest.mark.parametrize(
+    "symbol", ["air", "beezlebub", "earth", "fire", "lamashtu", "spirit", "water"]
+)
+def test_every_symbol_is_a_decoration(symbol):
+    tags = _wall_on_tile_tags(f"cut-stone#floor,{symbol}_symbol.2x2.openforge.stl")
+
+    assert ("decoration", "symbol", symbol) in tags
+
+
+@pytest.mark.parametrize("form", ["wall+spirit_symbol", "wall,spirit"])
+def test_a_symbol_wall_is_still_a_wall(form):
+    """A carved symbol is not a second component."""
+    tags = _wall_on_tile_tags(f"rough_stone#{form}.2x.openforge.stl")
+
+    assert ("decoration", "symbol", "spirit") in tags
     assert ("component", "wall") in tags
 
 
@@ -880,10 +1197,11 @@ def test_filename_with_form_variants():
     # Should parse complex form variants (components get transformed to shapes)
     expected_shapes = {
         ("shape", "floor"),
-        ("shape", "floor", "angled"),
-        ("shape", "floor", "curved"),
-        ("shape", "floor", "convex"),
-        ("shape", "floor", "concave"),
+        ("shape", "angled"),
+        ("shape", "curved"),
+        # Which way the curve bends, so under the curve.
+        ("shape", "curved", "convex"),
+        ("shape", "curved", "concave"),
     }
     assert all(shape in tags for shape in expected_shapes)
 
@@ -1044,12 +1362,12 @@ def test_filename_with_edge_case_form_parsing():
     # Should handle all form variants
     expected_shapes = {
         ("shape", "floor"),
-        ("shape", "floor", "angled"),
-        ("shape", "floor", "curved"),
-        ("shape", "floor", "convex"),
-        ("shape", "floor", "concave"),
-        ("shape", "floor", "radial"),
-        ("shape", "floor", "corner"),
+        ("shape", "angled"),
+        ("shape", "curved"),
+        ("shape", "curved", "convex"),
+        ("shape", "curved", "concave"),
+        ("shape", "curved", "radial"),
+        ("shape", "corner"),
         ("shape", "floor", "wall"),
     }
     assert all(shape in tags for shape in expected_shapes)
@@ -1800,17 +2118,20 @@ def test_nothing_is_both_a_floor_and_a_wall():
             ("shape", "floor"),
             ("shape", "floor", "s2w"),
             ("shape", "floor", "wall"),
+            ("shape", "square"),
         },
         # The one-piece wall-on-tile tile, from the filename.
         "tiles/dungeon_stone/wall_on_tile/wall/floor%block/"
         "dungeon_stone%block#wall,floor.1x1.openforge.stl": {
             ("shape", "floor"),
             ("shape", "floor", "wall"),
+            ("shape", "square"),
         },
         # An ordinary floor whose *size code* claimed it was a wall.
         "tiles/aztlan/floors/floor/openforge/aztlan#floor.AS.openforge.stl": {
             ("shape", "floor"),
             ("shape", "floor", "wall"),
+            ("shape", "square"),
         },
         # The fourth source, and the one that pins the ordering: no
         # `wall` appears in the path and no size code asserts one, so
@@ -1825,6 +2146,7 @@ def test_nothing_is_both_a_floor_and_a_wall():
             ("shape", "base", "wall"),
             ("shape", "floor"),
             ("shape", "floor", "wall"),
+            ("shape", "square"),
         },
     }
     for full_name, expected_shapes in cases.items():

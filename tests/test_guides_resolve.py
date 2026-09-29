@@ -6,6 +6,7 @@ import pytest
 from openforge.db.sql.tags import tag_search_blueprints
 from openforge.guides.resolve import (
     GuideSelectionError,
+    _recommend,
     resolve,
     to_tag_query,
 )
@@ -2098,3 +2099,94 @@ def test_a_combination_answer_uses_the_titles_the_catalog_cannot_spell(guide):
 
     clips = {r["key"]: r for r in resolved["refinements"]}["clips"]
     assert [c["title"] for c in clips["choices"]] == ["OpenLOCK"]
+
+
+def _sweeping_finder(pieces):
+    """A finder with the SQL's `deny_children`: every tag strictly
+    beneath the parent is refused unless required or allowed."""
+
+    def find(predicate):
+        spared = set(predicate.get("require", [])) | set(predicate.get("allow", []))
+
+        def swept(tags):
+            return any(
+                t.startswith(f"{parent}|") and t not in spared
+                for parent in predicate.get("deny_children", [])
+                for t in tags
+            )
+
+        return [
+            p
+            for p in pieces
+            if all(r in p["tags"] for r in predicate.get("require", []))
+            and not swept(p["tags"])
+        ]
+
+    return find
+
+
+def _find_with_sweep(predicate):
+    """`find_candidates`, plus the SQL's `deny_children` subtree sweep."""
+    spared = set(predicate.get("require", [])) | set(predicate.get("allow", []))
+    return [
+        b
+        for b in find_candidates(predicate)
+        if not any(
+            t.startswith(f"{parent}|") and t not in spared
+            for parent in predicate.get("deny_children", [])
+            for t in b["tags"]
+        )
+    ]
+
+
+def test_a_roles_avoid_reaches_the_recommendation(guide):
+    """`avoid` in the guide document, not just in `_recommend`'s signature.
+
+    With no `prefer` and the finder ordering wall 2 first, wall 2 is the
+    default — unless the role's `avoid` reaches `_recommend`, since wall
+    2 carries `connection|openforge` and wall 1 carries no connection.
+    """
+    guide["roles"]["wall"]["prefer"] = []
+
+    def wall_2_first(predicate):
+        return sorted(_find_with_sweep(predicate), key=lambda b: b["id"] != "2")
+
+    plain = resolve(guide, {"method": "s2w-modular"}, wall_2_first)
+    assert parts_by_role(plain)["wall"]["blueprint"]["id"] == "2"
+
+    guide["roles"]["wall"]["avoid"] = ["connection"]
+    avoided = resolve(guide, {"method": "s2w-modular"}, wall_2_first)
+    assert parts_by_role(avoided)["wall"]["blueprint"]["id"] == "1"
+
+
+def test_avoid_keeps_a_decorated_piece_from_being_the_default():
+    """A carved floor is an option, never the first answer."""
+    pieces = [
+        {
+            "id": "knot",
+            "tags": [
+                "shape|floor",
+                "texture|dungeon_stone",
+                "decoration|celtic_knot|straight",
+            ],
+        },
+        {"id": "plain", "tags": ["shape|floor", "texture|towne"]},
+    ]
+    chosen = _recommend(
+        {"require": ["shape|floor"]},
+        ["texture|dungeon_stone"],
+        _sweeping_finder(pieces),
+        ["decoration"],
+    )
+
+    # Outranks prefer: the plain towne floor beats the preferred texture.
+    assert chosen["id"] == "plain"
+
+
+def test_avoid_falls_back_when_every_candidate_carries_it():
+    pieces = [{"id": "knot", "tags": ["shape|floor", "decoration|symbol|air"]}]
+    chosen = _recommend(
+        {"require": ["shape|floor"]}, [], _sweeping_finder(pieces), ["decoration"]
+    )
+
+    assert chosen["id"] == "knot"

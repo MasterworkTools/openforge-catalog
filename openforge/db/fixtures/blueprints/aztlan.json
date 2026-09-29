@@ -1443,6 +1443,7 @@
             "connection|openforge",
             "shape|floor",
             "shape|floor|wall",
+            "shape|square",
             "size|openlock|AS",
             "size|width|2",
             "texture|aztlan"
@@ -2569,6 +2570,7 @@
             "connection|openlock|unsupported",
             "shape|floor",
             "shape|floor|wall",
+            "shape|square",
             "size|openlock|AS",
             "size|width|2",
             "texture|aztlan"
@@ -3686,6 +3688,7 @@
             "connection|openlock",
             "shape|floor",
             "shape|floor|wall",
+            "shape|square",
             "size|openlock|AS",
             "size|width|2",
             "texture|aztlan"
@@ -4831,8 +4834,9 @@
             "build|s2w",
             "connection|openforge",
             "shape|floor",
-            "shape|floor|corner",
             "shape|floor|s2w",
+            "shape|floor|wall|corner",
+            "shape|square",
             "size|depth|2",
             "size|width|2",
             "texture|aztlan"
@@ -7359,6 +7363,7 @@
             "shape|floor",
             "shape|floor|s2w",
             "shape|floor|wall",
+            "shape|square",
             "size|depth|1",
             "size|width|1",
             "texture|aztlan"
@@ -7485,6 +7490,7 @@
             "shape|floor",
             "shape|floor|s2w",
             "shape|floor|wall",
+            "shape|square",
             "size|depth|1",
             "size|width|2",
             "texture|aztlan"
@@ -7611,6 +7617,7 @@
             "shape|floor",
             "shape|floor|s2w",
             "shape|floor|wall",
+            "shape|square",
             "size|depth|2",
             "size|width|2",
             "texture|aztlan"
@@ -7737,6 +7744,7 @@
             "shape|floor",
             "shape|floor|s2w",
             "shape|floor|wall",
+            "shape|square",
             "size|depth|1",
             "size|width|3",
             "texture|aztlan"
@@ -7863,6 +7871,7 @@
             "shape|floor",
             "shape|floor|s2w",
             "shape|floor|wall",
+            "shape|square",
             "size|depth|3",
             "size|width|3",
             "texture|aztlan"
@@ -7989,6 +7998,7 @@
             "shape|floor",
             "shape|floor|s2w",
             "shape|floor|wall",
+            "shape|square",
             "size|depth|1",
             "size|width|4",
             "texture|aztlan"
@@ -8115,6 +8125,7 @@
             "shape|floor",
             "shape|floor|s2w",
             "shape|floor|wall",
+            "shape|square",
             "size|depth|2",
             "size|width|4",
             "texture|aztlan"
@@ -8241,6 +8252,7 @@
             "shape|floor",
             "shape|floor|s2w",
             "shape|floor|wall",
+            "shape|square",
             "size|depth|4",
             "size|width|4",
             "texture|aztlan"

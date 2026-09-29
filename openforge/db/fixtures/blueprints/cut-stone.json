@@ -3,19 +3,6 @@
         "config": {
             "parts": [
                 {
-                    "name": "trapdoor",
-                    "tags": {
-                        "require": [
-                            {
-                                "tag": "interface|trapdoor"
-                            },
-                            {
-                                "tag": "size|small"
-                            }
-                        ]
-                    }
-                },
-                {
                     "name": "base",
                     "optional": true,
                     "tags": {
@@ -51,9 +38,9 @@
             ]
         },
         "file_metadata": {
-            "file": "cut-stone#floor+angled+trapdoor.3x3.openforge.stl",
+            "file": "cut-stone#floor+angled,trapdoor.3x3.openforge.stl",
             "file_modified_at": "2020-11-30T14:48:41.910519",
-            "full_name": "tiles/cut-stone/floors/floor#angled+trapdoor/cut-stone#floor+angled+trapdoor.3x3.openforge.stl",
+            "full_name": "tiles/cut-stone/floors/floor#angled+trapdoor/cut-stone#floor+angled,trapdoor.3x3.openforge.stl",
             "md5": "ab3ee559b3b7844bf32cb1c62420999e",
             "size": 10863884,
             "storage_address": "https://objects.openforge.tools/models/ab3ee5/ab3ee559b3b7844bf32cb1c62420999e.stl"
@@ -162,12 +149,12 @@
                 }
             }
         ],
-        "metadata": true,
+        "metadata": false,
         "tags": [
+            "component|trapdoor",
             "connection|openforge",
+            "shape|angled",
             "shape|floor",
-            "shape|floor|angled",
-            "shape|floor|trapdoor",
             "size|depth|3",
             "size|width|3",
             "texture|cut-stone"
@@ -177,19 +164,6 @@
     {
         "config": {
             "parts": [
-                {
-                    "name": "trapdoor",
-                    "tags": {
-                        "require": [
-                            {
-                                "tag": "interface|trapdoor"
-                            },
-                            {
-                                "tag": "size|standard"
-                            }
-                        ]
-                    }
-                },
                 {
                     "name": "base",
                     "optional": true,
@@ -226,9 +200,9 @@
             ]
         },
         "file_metadata": {
-            "file": "cut-stone#floor+angled+trapdoor.4x4.openforge.stl",
+            "file": "cut-stone#floor+angled,trapdoor.4x4.openforge.stl",
             "file_modified_at": "2020-11-30T14:49:01.193413",
-            "full_name": "tiles/cut-stone/floors/floor#angled+trapdoor/cut-stone#floor+angled+trapdoor.4x4.openforge.stl",
+            "full_name": "tiles/cut-stone/floors/floor#angled+trapdoor/cut-stone#floor+angled,trapdoor.4x4.openforge.stl",
             "md5": "60ffa6885ab37ddb7bb2d7f079150e6f",
             "size": 17044084,
             "storage_address": "https://objects.openforge.tools/models/60ffa6/60ffa6885ab37ddb7bb2d7f079150e6f.stl"
@@ -337,12 +311,12 @@
                 }
             }
         ],
-        "metadata": true,
+        "metadata": false,
         "tags": [
+            "component|trapdoor",
             "connection|openforge",
+            "shape|angled",
             "shape|floor",
-            "shape|floor|angled",
-            "shape|floor|trapdoor",
             "size|depth|4",
             "size|width|4",
             "texture|cut-stone"
@@ -597,19 +571,6 @@
         "config": {
             "parts": [
                 {
-                    "name": "trapdoor",
-                    "tags": {
-                        "require": [
-                            {
-                                "tag": "interface|trapdoor"
-                            },
-                            {
-                                "tag": "size|small"
-                            }
-                        ]
-                    }
-                },
-                {
                     "name": "base",
                     "optional": true,
                     "tags": {
@@ -645,9 +606,9 @@
             ]
         },
         "file_metadata": {
-            "file": "cut-stone#floor+curved+trapdoor.2x2.openforge.stl",
+            "file": "cut-stone#floor+curved,trapdoor.2x2.openforge.stl",
             "file_modified_at": "2020-11-30T15:15:41.687599",
-            "full_name": "tiles/cut-stone/floors/floor#curved+trapdoor/openforge/cut-stone#floor+curved+trapdoor.2x2.openforge.stl",
+            "full_name": "tiles/cut-stone/floors/floor#curved+trapdoor/openforge/cut-stone#floor+curved,trapdoor.2x2.openforge.stl",
             "md5": "5cf6f3baf1d3fc640a6daa3ce4f5af2d",
             "size": 8924984,
             "storage_address": "https://objects.openforge.tools/models/5cf6f3/5cf6f3baf1d3fc640a6daa3ce4f5af2d.stl"
@@ -756,12 +717,12 @@
                 }
             }
         ],
-        "metadata": true,
+        "metadata": false,
         "tags": [
+            "component|trapdoor",
             "connection|openforge",
+            "shape|curved",
             "shape|floor",
-            "shape|floor|curved",
-            "shape|floor|trapdoor",
             "size|depth|2",
             "size|width|2",
             "texture|cut-stone"
@@ -771,19 +732,6 @@
     {
         "config": {
             "parts": [
-                {
-                    "name": "trapdoor",
-                    "tags": {
-                        "require": [
-                            {
-                                "tag": "interface|trapdoor"
-                            },
-                            {
-                                "tag": "size|standard"
-                            }
-                        ]
-                    }
-                },
                 {
                     "name": "base",
                     "optional": true,
@@ -820,9 +768,9 @@
             ]
         },
         "file_metadata": {
-            "file": "cut-stone#floor+curved+trapdoor.3x3.openforge.stl",
+            "file": "cut-stone#floor+curved,trapdoor.3x3.openforge.stl",
             "file_modified_at": "2020-11-30T14:48:10.266055",
-            "full_name": "tiles/cut-stone/floors/floor#curved+trapdoor/openforge/cut-stone#floor+curved+trapdoor.3x3.openforge.stl",
+            "full_name": "tiles/cut-stone/floors/floor#curved+trapdoor/openforge/cut-stone#floor+curved,trapdoor.3x3.openforge.stl",
             "md5": "f22d7f15635f3c066d06c8328625f77d",
             "size": 6345784,
             "storage_address": "https://objects.openforge.tools/models/f22d7f/f22d7f15635f3c066d06c8328625f77d.stl"
@@ -931,12 +879,12 @@
                 }
             }
         ],
-        "metadata": true,
+        "metadata": false,
         "tags": [
+            "component|trapdoor",
             "connection|openforge",
+            "shape|curved",
             "shape|floor",
-            "shape|floor|curved",
-            "shape|floor|trapdoor",
             "size|depth|3",
             "size|width|3",
             "texture|cut-stone"
@@ -946,19 +894,6 @@
     {
         "config": {
             "parts": [
-                {
-                    "name": "trapdoor",
-                    "tags": {
-                        "require": [
-                            {
-                                "tag": "interface|trapdoor"
-                            },
-                            {
-                                "tag": "size|standard"
-                            }
-                        ]
-                    }
-                },
                 {
                     "name": "base",
                     "optional": true,
@@ -995,9 +930,9 @@
             ]
         },
         "file_metadata": {
-            "file": "cut-stone#floor+curved+trapdoor.4x4.openforge.stl",
+            "file": "cut-stone#floor+curved,trapdoor.4x4.openforge.stl",
             "file_modified_at": "2020-11-22T12:42:51.125784",
-            "full_name": "tiles/cut-stone/floors/floor#curved+trapdoor/openforge/cut-stone#floor+curved+trapdoor.4x4.openforge.stl",
+            "full_name": "tiles/cut-stone/floors/floor#curved+trapdoor/openforge/cut-stone#floor+curved,trapdoor.4x4.openforge.stl",
             "md5": "710462db1715373925732c3280a39822",
             "size": 13761884,
             "storage_address": "https://objects.openforge.tools/models/710462/710462db1715373925732c3280a39822.stl"
@@ -1106,12 +1041,12 @@
                 }
             }
         ],
-        "metadata": true,
+        "metadata": false,
         "tags": [
+            "component|trapdoor",
             "connection|openforge",
+            "shape|curved",
             "shape|floor",
-            "shape|floor|curved",
-            "shape|floor|trapdoor",
             "size|depth|4",
             "size|width|4",
             "texture|cut-stone"
@@ -1119,27 +1054,10 @@
         "type": "model"
     },
     {
-        "config": {
-            "parts": [
-                {
-                    "name": "trapdoor",
-                    "tags": {
-                        "require": [
-                            {
-                                "tag": "interface|trapdoor"
-                            },
-                            {
-                                "tag": "size|small"
-                            }
-                        ]
-                    }
-                }
-            ]
-        },
         "file_metadata": {
-            "file": "cut-stone#floor+curved+trapdoor.2x2.openlock.stl",
+            "file": "cut-stone#floor+curved,trapdoor.2x2.openlock.stl",
             "file_modified_at": "2021-09-30T15:03:45.554748",
-            "full_name": "tiles/cut-stone/floors/floor#curved+trapdoor/openlock/cut-stone#floor+curved+trapdoor.2x2.openlock.stl",
+            "full_name": "tiles/cut-stone/floors/floor#curved+trapdoor/openlock/cut-stone#floor+curved,trapdoor.2x2.openlock.stl",
             "md5": "d931fdae2798a39e00d33bea7e6ca364",
             "size": 8553934,
             "storage_address": "https://objects.openforge.tools/models/d931fd/d931fdae2798a39e00d33bea7e6ca364.stl"
@@ -1248,12 +1166,12 @@
                 }
             }
         ],
-        "metadata": true,
+        "metadata": false,
         "tags": [
+            "component|trapdoor",
             "connection|openlock",
+            "shape|curved",
             "shape|floor",
-            "shape|floor|curved",
-            "shape|floor|trapdoor",
             "size|depth|2",
             "size|width|2",
             "texture|cut-stone"
@@ -1261,27 +1179,10 @@
         "type": "model"
     },
     {
-        "config": {
-            "parts": [
-                {
-                    "name": "trapdoor",
-                    "tags": {
-                        "require": [
-                            {
-                                "tag": "interface|trapdoor"
-                            },
-                            {
-                                "tag": "size|standard"
-                            }
-                        ]
-                    }
-                }
-            ]
-        },
         "file_metadata": {
-            "file": "cut-stone#floor+curved+trapdoor.4x4.openlock.stl",
+            "file": "cut-stone#floor+curved,trapdoor.4x4.openlock.stl",
             "file_modified_at": "2021-09-30T15:31:19.649275",
-            "full_name": "tiles/cut-stone/floors/floor#curved+trapdoor/openlock/cut-stone#floor+curved+trapdoor.4x4.openlock.stl",
+            "full_name": "tiles/cut-stone/floors/floor#curved+trapdoor/openlock/cut-stone#floor+curved,trapdoor.4x4.openlock.stl",
             "md5": "c1ca88febe96cae22acdd42ac5f76fd0",
             "size": 13566234,
             "storage_address": "https://objects.openforge.tools/models/c1ca88/c1ca88febe96cae22acdd42ac5f76fd0.stl"
@@ -1390,12 +1291,12 @@
                 }
             }
         ],
-        "metadata": true,
+        "metadata": false,
         "tags": [
+            "component|trapdoor",
             "connection|openlock",
+            "shape|curved",
             "shape|floor",
-            "shape|floor|curved",
-            "shape|floor|trapdoor",
             "size|depth|4",
             "size|width|4",
             "texture|cut-stone"
@@ -1799,8 +1700,8 @@
         "metadata": false,
         "tags": [
             "connection|openforge",
+            "shape|curved",
             "shape|floor",
-            "shape|floor|curved",
             "size|depth|2",
             "size|width|2",
             "texture|cut-stone"
@@ -1960,8 +1861,8 @@
         "metadata": false,
         "tags": [
             "connection|openforge",
+            "shape|curved",
             "shape|floor",
-            "shape|floor|curved",
             "shape|option|notch",
             "size|depth|4",
             "size|width|4",
@@ -2122,8 +2023,8 @@
         "metadata": false,
         "tags": [
             "connection|openforge",
+            "shape|curved",
             "shape|floor",
-            "shape|floor|curved",
             "size|depth|4",
             "size|width|4",
             "texture|cut-stone"
@@ -2246,8 +2147,8 @@
         "metadata": false,
         "tags": [
             "connection|openlock",
+            "shape|curved",
             "shape|floor",
-            "shape|floor|curved",
             "size|depth|2",
             "size|width|2",
             "texture|cut-stone"
@@ -2370,8 +2271,8 @@
         "metadata": false,
         "tags": [
             "connection|openlock",
+            "shape|curved",
             "shape|floor",
-            "shape|floor|curved",
             "shape|option|notch",
             "size|depth|4",
             "size|width|4",
@@ -2495,8 +2396,8 @@
         "metadata": false,
         "tags": [
             "connection|openlock",
+            "shape|curved",
             "shape|floor",
-            "shape|floor|curved",
             "size|depth|4",
             "size|width|4",
             "texture|cut-stone"
@@ -6537,9 +6438,9 @@
             ]
         },
         "file_metadata": {
-            "file": "cut-stone#floor+air_symbol.2x2.openforge.stl",
+            "file": "cut-stone#floor,air_symbol.2x2.openforge.stl",
             "file_modified_at": "2019-06-25T17:41:21",
-            "full_name": "tiles/cut-stone/floors/floor+encounters/cut-stone#floor+air_symbol.2x2.openforge.stl",
+            "full_name": "tiles/cut-stone/floors/floor+encounters/cut-stone#floor,air_symbol.2x2.openforge.stl",
             "md5": "0297a97d6f384dcabad515bfaec7b133",
             "size": 1219584,
             "storage_address": "https://objects.openforge.tools/models/0297a9/0297a97d6f384dcabad515bfaec7b133.stl"
@@ -6651,8 +6552,9 @@
         "metadata": false,
         "tags": [
             "connection|openforge",
+            "decoration|symbol|air",
             "shape|floor",
-            "shape|floor|air_symbol",
+            "shape|square",
             "size|depth|2",
             "size|width|2",
             "texture|cut-stone"
@@ -6698,9 +6600,9 @@
             ]
         },
         "file_metadata": {
-            "file": "cut-stone#floor+air_symbol.4x4.openforge.stl",
+            "file": "cut-stone#floor,air_symbol.4x4.openforge.stl",
             "file_modified_at": "2019-06-25T17:41:23",
-            "full_name": "tiles/cut-stone/floors/floor+encounters/cut-stone#floor+air_symbol.4x4.openforge.stl",
+            "full_name": "tiles/cut-stone/floors/floor+encounters/cut-stone#floor,air_symbol.4x4.openforge.stl",
             "md5": "f5c75f1265830efe2e5d35f94eea21c8",
             "size": 3494084,
             "storage_address": "https://objects.openforge.tools/models/f5c75f/f5c75f1265830efe2e5d35f94eea21c8.stl"
@@ -6812,8 +6714,9 @@
         "metadata": false,
         "tags": [
             "connection|openforge",
+            "decoration|symbol|air",
             "shape|floor",
-            "shape|floor|air_symbol",
+            "shape|square",
             "size|depth|4",
             "size|width|4",
             "texture|cut-stone"
@@ -6859,9 +6762,9 @@
             ]
         },
         "file_metadata": {
-            "file": "cut-stone#floor+beezlebub_symbol.2x2.openforge.stl",
+            "file": "cut-stone#floor,beezlebub_symbol.2x2.openforge.stl",
             "file_modified_at": "2019-06-25T18:56:53",
-            "full_name": "tiles/cut-stone/floors/floor+encounters/cut-stone#floor+beezlebub_symbol.2x2.openforge.stl",
+            "full_name": "tiles/cut-stone/floors/floor+encounters/cut-stone#floor,beezlebub_symbol.2x2.openforge.stl",
             "md5": "0497d60cfe8004e7cdce5dc0e6bf8973",
             "size": 1148684,
             "storage_address": "https://objects.openforge.tools/models/0497d6/0497d60cfe8004e7cdce5dc0e6bf8973.stl"
@@ -6973,8 +6876,9 @@
         "metadata": false,
         "tags": [
             "connection|openforge",
+            "decoration|symbol|beezlebub",
             "shape|floor",
-            "shape|floor|beezlebub_symbol",
+            "shape|square",
             "size|depth|2",
             "size|width|2",
             "texture|cut-stone"
@@ -7020,9 +6924,9 @@
             ]
         },
         "file_metadata": {
-            "file": "cut-stone#floor+earth_symbol.2x2.openforge.stl",
+            "file": "cut-stone#floor,earth_symbol.2x2.openforge.stl",
             "file_modified_at": "2019-06-26T16:28:53",
-            "full_name": "tiles/cut-stone/floors/floor+encounters/cut-stone#floor+earth_symbol.2x2.openforge.stl",
+            "full_name": "tiles/cut-stone/floors/floor+encounters/cut-stone#floor,earth_symbol.2x2.openforge.stl",
             "md5": "8f85bc4befd1769df2582284ded5c587",
             "size": 1003184,
             "storage_address": "https://objects.openforge.tools/models/8f85bc/8f85bc4befd1769df2582284ded5c587.stl"
@@ -7134,8 +7038,9 @@
         "metadata": false,
         "tags": [
             "connection|openforge",
+            "decoration|symbol|earth",
             "shape|floor",
-            "shape|floor|earth_symbol",
+            "shape|square",
             "size|depth|2",
             "size|width|2",
             "texture|cut-stone"
@@ -7181,9 +7086,9 @@
             ]
         },
         "file_metadata": {
-            "file": "cut-stone#floor+earth_symbol.4x4.openforge.stl",
+            "file": "cut-stone#floor,earth_symbol.4x4.openforge.stl",
             "file_modified_at": "2019-06-26T16:28:54",
-            "full_name": "tiles/cut-stone/floors/floor+encounters/cut-stone#floor+earth_symbol.4x4.openforge.stl",
+            "full_name": "tiles/cut-stone/floors/floor+encounters/cut-stone#floor,earth_symbol.4x4.openforge.stl",
             "md5": "286548b2da17f991062eb0c3e90ec7b0",
             "size": 3069184,
             "storage_address": "https://objects.openforge.tools/models/286548/286548b2da17f991062eb0c3e90ec7b0.stl"
@@ -7295,8 +7200,9 @@
         "metadata": false,
         "tags": [
             "connection|openforge",
+            "decoration|symbol|earth",
             "shape|floor",
-            "shape|floor|earth_symbol",
+            "shape|square",
             "size|depth|4",
             "size|width|4",
             "texture|cut-stone"
@@ -7342,9 +7248,9 @@
             ]
         },
         "file_metadata": {
-            "file": "cut-stone#floor+fire_symbol.2x2.openforge.stl",
+            "file": "cut-stone#floor,fire_symbol.2x2.openforge.stl",
             "file_modified_at": "2019-06-26T21:43:00",
-            "full_name": "tiles/cut-stone/floors/floor+encounters/cut-stone#floor+fire_symbol.2x2.openforge.stl",
+            "full_name": "tiles/cut-stone/floors/floor+encounters/cut-stone#floor,fire_symbol.2x2.openforge.stl",
             "md5": "94ceccb2402a47a7cee8600356af1519",
             "size": 1482784,
             "storage_address": "https://objects.openforge.tools/models/94cecc/94ceccb2402a47a7cee8600356af1519.stl"
@@ -7456,8 +7362,9 @@
         "metadata": false,
         "tags": [
             "connection|openforge",
+            "decoration|symbol|fire",
             "shape|floor",
-            "shape|floor|fire_symbol",
+            "shape|square",
             "size|depth|2",
             "size|width|2",
             "texture|cut-stone"
@@ -7503,9 +7410,9 @@
             ]
         },
         "file_metadata": {
-            "file": "cut-stone#floor+fire_symbol.4x4.openforge.stl",
+            "file": "cut-stone#floor,fire_symbol.4x4.openforge.stl",
             "file_modified_at": "2019-06-26T21:43:03",
-            "full_name": "tiles/cut-stone/floors/floor+encounters/cut-stone#floor+fire_symbol.4x4.openforge.stl",
+            "full_name": "tiles/cut-stone/floors/floor+encounters/cut-stone#floor,fire_symbol.4x4.openforge.stl",
             "md5": "e2ef6be1307cd861739253f15935283a",
             "size": 4373484,
             "storage_address": "https://objects.openforge.tools/models/e2ef6b/e2ef6be1307cd861739253f15935283a.stl"
@@ -7617,8 +7524,9 @@
         "metadata": false,
         "tags": [
             "connection|openforge",
+            "decoration|symbol|fire",
             "shape|floor",
-            "shape|floor|fire_symbol",
+            "shape|square",
             "size|depth|4",
             "size|width|4",
             "texture|cut-stone"
@@ -7664,9 +7572,9 @@
             ]
         },
         "file_metadata": {
-            "file": "cut-stone#floor+lamashtu_symbol.2x2.openforge.stl",
+            "file": "cut-stone#floor,lamashtu_symbol.2x2.openforge.stl",
             "file_modified_at": "2019-06-27T16:24:48",
-            "full_name": "tiles/cut-stone/floors/floor+encounters/cut-stone#floor+lamashtu_symbol.2x2.openforge.stl",
+            "full_name": "tiles/cut-stone/floors/floor+encounters/cut-stone#floor,lamashtu_symbol.2x2.openforge.stl",
             "md5": "b072b59e6ff790f96d1205134b67f35d",
             "size": 11133684,
             "storage_address": "https://objects.openforge.tools/models/b072b5/b072b59e6ff790f96d1205134b67f35d.stl"
@@ -7778,8 +7686,9 @@
         "metadata": false,
         "tags": [
             "connection|openforge",
+            "decoration|symbol|lamashtu",
             "shape|floor",
-            "shape|floor|lamashtu_symbol",
+            "shape|square",
             "size|depth|2",
             "size|width|2",
             "texture|cut-stone"
@@ -7825,9 +7734,9 @@
             ]
         },
         "file_metadata": {
-            "file": "cut-stone#floor+spirit_symbol.2x2.openforge.stl",
+            "file": "cut-stone#floor,spirit_symbol.2x2.openforge.stl",
             "file_modified_at": "2019-01-25T10:22:26",
-            "full_name": "tiles/cut-stone/floors/floor+encounters/cut-stone#floor+spirit_symbol.2x2.openforge.stl",
+            "full_name": "tiles/cut-stone/floors/floor+encounters/cut-stone#floor,spirit_symbol.2x2.openforge.stl",
             "md5": "573a821366ca5ad8ba093205398d9045",
             "size": 1178884,
             "storage_address": "https://objects.openforge.tools/models/573a82/573a821366ca5ad8ba093205398d9045.stl"
@@ -7939,8 +7848,9 @@
         "metadata": false,
         "tags": [
             "connection|openforge",
+            "decoration|symbol|spirit",
             "shape|floor",
-            "shape|floor|spirit_symbol",
+            "shape|square",
             "size|depth|2",
             "size|width|2",
             "texture|cut-stone"
@@ -7986,9 +7896,9 @@
             ]
         },
         "file_metadata": {
-            "file": "cut-stone#floor+water_symbol.2x2.openforge.stl",
+            "file": "cut-stone#floor,water_symbol.2x2.openforge.stl",
             "file_modified_at": "2019-06-27T13:39:55",
-            "full_name": "tiles/cut-stone/floors/floor+encounters/cut-stone#floor+water_symbol.2x2.openforge.stl",
+            "full_name": "tiles/cut-stone/floors/floor+encounters/cut-stone#floor,water_symbol.2x2.openforge.stl",
             "md5": "162f5f11a78cbab137b5bf9a6f4c7708",
             "size": 1118384,
             "storage_address": "https://objects.openforge.tools/models/162f5f/162f5f11a78cbab137b5bf9a6f4c7708.stl"
@@ -8100,8 +8010,9 @@
         "metadata": false,
         "tags": [
             "connection|openforge",
+            "decoration|symbol|water",
             "shape|floor",
-            "shape|floor|water_symbol",
+            "shape|square",
             "size|depth|2",
             "size|width|2",
             "texture|cut-stone"
@@ -8147,9 +8058,9 @@
             ]
         },
         "file_metadata": {
-            "file": "cut-stone#floor+water_symbol.4x4.openforge.stl",
+            "file": "cut-stone#floor,water_symbol.4x4.openforge.stl",
             "file_modified_at": "2019-06-27T13:39:56",
-            "full_name": "tiles/cut-stone/floors/floor+encounters/cut-stone#floor+water_symbol.4x4.openforge.stl",
+            "full_name": "tiles/cut-stone/floors/floor+encounters/cut-stone#floor,water_symbol.4x4.openforge.stl",
             "md5": "f364a00278ecef6def5695fcfdf36266",
             "size": 2990084,
             "storage_address": "https://objects.openforge.tools/models/f364a0/f364a00278ecef6def5695fcfdf36266.stl"
@@ -8261,8 +8172,9 @@
         "metadata": false,
         "tags": [
             "connection|openforge",
+            "decoration|symbol|water",
             "shape|floor",
-            "shape|floor|water_symbol",
+            "shape|square",
             "size|depth|4",
             "size|width|4",
             "texture|cut-stone"
@@ -8272,22 +8184,6 @@
     {
         "config": {
             "parts": [
-                {
-                    "name": "trapdoor",
-                    "tags": {
-                        "require": [
-                            {
-                                "tag": "interface|floor_grate"
-                            },
-                            {
-                                "tag": "size|depth|2"
-                            },
-                            {
-                                "tag": "size|width|2"
-                            }
-                        ]
-                    }
-                },
                 {
                     "name": "base",
                     "optional": true,
@@ -8324,9 +8220,9 @@
             ]
         },
         "file_metadata": {
-            "file": "cut-stone#floor+grate.2x2.openforge.stl",
+            "file": "cut-stone#floor,grate.2x2.openforge.stl",
             "file_modified_at": "2016-08-30T20:40:27",
-            "full_name": "tiles/cut-stone/floors/floor+grate/cut-stone#floor+grate.2x2.openforge.stl",
+            "full_name": "tiles/cut-stone/floors/floor+grate/cut-stone#floor,grate.2x2.openforge.stl",
             "md5": "2f66b7b76139c62601a1b543f000f37c",
             "size": 794684,
             "storage_address": "https://objects.openforge.tools/models/2f66b7/2f66b7b76139c62601a1b543f000f37c.stl"
@@ -8435,11 +8331,12 @@
                 }
             }
         ],
-        "metadata": true,
+        "metadata": false,
         "tags": [
+            "component|grate",
             "connection|openforge",
             "shape|floor",
-            "shape|floor|grate",
+            "shape|square",
             "size|depth|2",
             "size|width|2",
             "texture|cut-stone"
@@ -8449,22 +8346,6 @@
     {
         "config": {
             "parts": [
-                {
-                    "name": "trapdoor",
-                    "tags": {
-                        "require": [
-                            {
-                                "tag": "interface|floor_grate"
-                            },
-                            {
-                                "tag": "size|depth|4"
-                            },
-                            {
-                                "tag": "size|width|2"
-                            }
-                        ]
-                    }
-                },
                 {
                     "name": "base",
                     "optional": true,
@@ -8501,9 +8382,9 @@
             ]
         },
         "file_metadata": {
-            "file": "cut-stone#floor+grate.2x4.openforge.stl",
+            "file": "cut-stone#floor,grate.2x4.openforge.stl",
             "file_modified_at": "2016-08-31T21:16:00",
-            "full_name": "tiles/cut-stone/floors/floor+grate/cut-stone#floor+grate.2x4.openforge.stl",
+            "full_name": "tiles/cut-stone/floors/floor+grate/cut-stone#floor,grate.2x4.openforge.stl",
             "md5": "4ed1b8fc0d3b373defc658a81bca9a56",
             "size": 1276084,
             "storage_address": "https://objects.openforge.tools/models/4ed1b8/4ed1b8fc0d3b373defc658a81bca9a56.stl"
@@ -8612,11 +8493,12 @@
                 }
             }
         ],
-        "metadata": true,
+        "metadata": false,
         "tags": [
+            "component|grate",
             "connection|openforge",
             "shape|floor",
-            "shape|floor|grate",
+            "shape|square",
             "size|depth|4",
             "size|width|2",
             "texture|cut-stone"
@@ -8626,22 +8508,6 @@
     {
         "config": {
             "parts": [
-                {
-                    "name": "trapdoor",
-                    "tags": {
-                        "require": [
-                            {
-                                "tag": "interface|floor_grate"
-                            },
-                            {
-                                "tag": "size|depth|3"
-                            },
-                            {
-                                "tag": "size|width|3"
-                            }
-                        ]
-                    }
-                },
                 {
                     "name": "base",
                     "optional": true,
@@ -8678,9 +8544,9 @@
             ]
         },
         "file_metadata": {
-            "file": "cut-stone#floor+grate.3x3.openforge.stl",
+            "file": "cut-stone#floor,grate.3x3.openforge.stl",
             "file_modified_at": "2016-09-02T09:47:37",
-            "full_name": "tiles/cut-stone/floors/floor+grate/cut-stone#floor+grate.3x3.openforge.stl",
+            "full_name": "tiles/cut-stone/floors/floor+grate/cut-stone#floor,grate.3x3.openforge.stl",
             "md5": "e09d380b680623884ff844b937c1f322",
             "size": 1325884,
             "storage_address": "https://objects.openforge.tools/models/e09d38/e09d380b680623884ff844b937c1f322.stl"
@@ -8789,11 +8655,12 @@
                 }
             }
         ],
-        "metadata": true,
+        "metadata": false,
         "tags": [
+            "component|grate",
             "connection|openforge",
             "shape|floor",
-            "shape|floor|grate",
+            "shape|square",
             "size|depth|3",
             "size|width|3",
             "texture|cut-stone"
@@ -8803,22 +8670,6 @@
     {
         "config": {
             "parts": [
-                {
-                    "name": "trapdoor",
-                    "tags": {
-                        "require": [
-                            {
-                                "tag": "interface|floor_grate"
-                            },
-                            {
-                                "tag": "size|depth|4"
-                            },
-                            {
-                                "tag": "size|width|4"
-                            }
-                        ]
-                    }
-                },
                 {
                     "name": "base",
                     "optional": true,
@@ -8855,9 +8706,9 @@
             ]
         },
         "file_metadata": {
-            "file": "cut-stone#floor+grate.4x4.openforge.stl",
+            "file": "cut-stone#floor,grate.4x4.openforge.stl",
             "file_modified_at": "2016-09-02T09:48:22",
-            "full_name": "tiles/cut-stone/floors/floor+grate/cut-stone#floor+grate.4x4.openforge.stl",
+            "full_name": "tiles/cut-stone/floors/floor+grate/cut-stone#floor,grate.4x4.openforge.stl",
             "md5": "a76c42b0a2dc39a6998e7dbb198823b9",
             "size": 1781184,
             "storage_address": "https://objects.openforge.tools/models/a76c42/a76c42b0a2dc39a6998e7dbb198823b9.stl"
@@ -8966,11 +8817,12 @@
                 }
             }
         ],
-        "metadata": true,
+        "metadata": false,
         "tags": [
+            "component|grate",
             "connection|openforge",
             "shape|floor",
-            "shape|floor|grate",
+            "shape|square",
             "size|depth|4",
             "size|width|4",
             "texture|cut-stone"
@@ -9473,19 +9325,6 @@
         "config": {
             "parts": [
                 {
-                    "name": "trapdoor",
-                    "tags": {
-                        "require": [
-                            {
-                                "tag": "interface|trapdoor"
-                            },
-                            {
-                                "tag": "size|standard"
-                            }
-                        ]
-                    }
-                },
-                {
                     "name": "base",
                     "optional": true,
                     "tags": {
@@ -9521,9 +9360,9 @@
             ]
         },
         "file_metadata": {
-            "file": "cut-stone#floor+trapdoor.2x2.openforge.stl",
+            "file": "cut-stone#floor,trapdoor.2x2.openforge.stl",
             "file_modified_at": "2020-11-30T15:15:28.466364",
-            "full_name": "tiles/cut-stone/floors/floor+trapdoor/openforge/cut-stone#floor+trapdoor.2x2.openforge.stl",
+            "full_name": "tiles/cut-stone/floors/floor+trapdoor/openforge/cut-stone#floor,trapdoor.2x2.openforge.stl",
             "md5": "2b1278ce02f9e291fe6b801c88312faf",
             "size": 6258284,
             "storage_address": "https://objects.openforge.tools/models/2b1278/2b1278ce02f9e291fe6b801c88312faf.stl"
@@ -9632,11 +9471,12 @@
                 }
             }
         ],
-        "metadata": true,
+        "metadata": false,
         "tags": [
+            "component|trapdoor",
             "connection|openforge",
             "shape|floor",
-            "shape|floor|trapdoor",
+            "shape|square",
             "size|depth|2",
             "size|width|2",
             "texture|cut-stone"
@@ -9646,19 +9486,6 @@
     {
         "config": {
             "parts": [
-                {
-                    "name": "trapdoor",
-                    "tags": {
-                        "require": [
-                            {
-                                "tag": "interface|trapdoor"
-                            },
-                            {
-                                "tag": "size|standard"
-                            }
-                        ]
-                    }
-                },
                 {
                     "name": "base",
                     "optional": true,
@@ -9695,9 +9522,9 @@
             ]
         },
         "file_metadata": {
-            "file": "cut-stone#floor+trapdoor.3x3.openforge.stl",
+            "file": "cut-stone#floor,trapdoor.3x3.openforge.stl",
             "file_modified_at": "2020-11-30T14:49:35.840188",
-            "full_name": "tiles/cut-stone/floors/floor+trapdoor/openforge/cut-stone#floor+trapdoor.3x3.openforge.stl",
+            "full_name": "tiles/cut-stone/floors/floor+trapdoor/openforge/cut-stone#floor,trapdoor.3x3.openforge.stl",
             "md5": "9474bc08733c77ead041c501df744f1b",
             "size": 8324584,
             "storage_address": "https://objects.openforge.tools/models/9474bc/9474bc08733c77ead041c501df744f1b.stl"
@@ -9806,11 +9633,12 @@
                 }
             }
         ],
-        "metadata": true,
+        "metadata": false,
         "tags": [
+            "component|trapdoor",
             "connection|openforge",
             "shape|floor",
-            "shape|floor|trapdoor",
+            "shape|square",
             "size|depth|3",
             "size|width|3",
             "texture|cut-stone"
@@ -9820,19 +9648,6 @@
     {
         "config": {
             "parts": [
-                {
-                    "name": "trapdoor",
-                    "tags": {
-                        "require": [
-                            {
-                                "tag": "interface|trapdoor"
-                            },
-                            {
-                                "tag": "size|standard"
-                            }
-                        ]
-                    }
-                },
                 {
                     "name": "base",
                     "optional": true,
@@ -9869,9 +9684,9 @@
             ]
         },
         "file_metadata": {
-            "file": "cut-stone#floor+trapdoor.4x4.openforge.stl",
+            "file": "cut-stone#floor,trapdoor.4x4.openforge.stl",
             "file_modified_at": "2020-11-22T12:50:06.996338",
-            "full_name": "tiles/cut-stone/floors/floor+trapdoor/openforge/cut-stone#floor+trapdoor.4x4.openforge.stl",
+            "full_name": "tiles/cut-stone/floors/floor+trapdoor/openforge/cut-stone#floor,trapdoor.4x4.openforge.stl",
             "md5": "d94a5f8d2b14f3eda36d98dc08fccaf2",
             "size": 14786684,
             "storage_address": "https://objects.openforge.tools/models/d94a5f/d94a5f8d2b14f3eda36d98dc08fccaf2.stl"
@@ -9980,11 +9795,12 @@
                 }
             }
         ],
-        "metadata": true,
+        "metadata": false,
         "tags": [
+            "component|trapdoor",
             "connection|openforge",
             "shape|floor",
-            "shape|floor|trapdoor",
+            "shape|square",
             "size|depth|4",
             "size|width|4",
             "texture|cut-stone"
@@ -9992,27 +9808,10 @@
         "type": "model"
     },
     {
-        "config": {
-            "parts": [
-                {
-                    "name": "trapdoor",
-                    "tags": {
-                        "require": [
-                            {
-                                "tag": "interface|trapdoor"
-                            },
-                            {
-                                "tag": "size|standard"
-                            }
-                        ]
-                    }
-                }
-            ]
-        },
         "file_metadata": {
-            "file": "cut-stone#floor+trapdoor.2x2.openlock.stl",
+            "file": "cut-stone#floor,trapdoor.2x2.openlock.stl",
             "file_modified_at": "2021-11-24T11:14:22.503420",
-            "full_name": "tiles/cut-stone/floors/floor+trapdoor/openlock/cut-stone#floor+trapdoor.2x2.openlock.stl",
+            "full_name": "tiles/cut-stone/floors/floor+trapdoor/openlock/cut-stone#floor,trapdoor.2x2.openlock.stl",
             "md5": "490f9477ea43999490c376703413f8da",
             "size": 6419834,
             "storage_address": "https://objects.openforge.tools/models/490f94/490f9477ea43999490c376703413f8da.stl"
@@ -10121,11 +9920,12 @@
                 }
             }
         ],
-        "metadata": true,
+        "metadata": false,
         "tags": [
+            "component|trapdoor",
             "connection|openlock",
             "shape|floor",
-            "shape|floor|trapdoor",
+            "shape|square",
             "size|depth|2",
             "size|width|2",
             "texture|cut-stone"
@@ -10133,27 +9933,10 @@
         "type": "model"
     },
     {
-        "config": {
-            "parts": [
-                {
-                    "name": "trapdoor",
-                    "tags": {
-                        "require": [
-                            {
-                                "tag": "interface|trapdoor"
-                            },
-                            {
-                                "tag": "size|standard"
-                            }
-                        ]
-                    }
-                }
-            ]
-        },
         "file_metadata": {
-            "file": "cut-stone#floor+trapdoor.4x4.openlock.stl",
+            "file": "cut-stone#floor,trapdoor.4x4.openlock.stl",
             "file_modified_at": "2021-11-24T11:18:53.005653",
-            "full_name": "tiles/cut-stone/floors/floor+trapdoor/openlock/cut-stone#floor+trapdoor.4x4.openlock.stl",
+            "full_name": "tiles/cut-stone/floors/floor+trapdoor/openlock/cut-stone#floor,trapdoor.4x4.openlock.stl",
             "md5": "0cf5308e7150452cb0be80343e7d15cb",
             "size": 14441334,
             "storage_address": "https://objects.openforge.tools/models/0cf530/0cf5308e7150452cb0be80343e7d15cb.stl"
@@ -10262,11 +10045,12 @@
                 }
             }
         ],
-        "metadata": true,
+        "metadata": false,
         "tags": [
+            "component|trapdoor",
             "connection|openlock",
             "shape|floor",
-            "shape|floor|trapdoor",
+            "shape|square",
             "size|depth|4",
             "size|width|4",
             "texture|cut-stone"
@@ -12444,6 +12228,7 @@
             "connection|openforge",
             "shape|floor",
             "shape|floor|wall",
+            "shape|square",
             "size|openlock|AS",
             "size|width|2",
             "texture|cut-stone"
@@ -13945,6 +13730,7 @@
             "connection|openlock|unsupported",
             "shape|floor",
             "shape|floor|wall",
+            "shape|square",
             "size|openlock|AS",
             "size|width|2",
             "texture|cut-stone"
@@ -15434,6 +15220,7 @@
             "connection|openlock",
             "shape|floor",
             "shape|floor|wall",
+            "shape|square",
             "size|openlock|AS",
             "size|width|2",
             "texture|cut-stone"
@@ -27391,8 +27178,9 @@
             "build|s2w",
             "connection|openforge",
             "shape|floor",
-            "shape|floor|corner",
             "shape|floor|s2w",
+            "shape|floor|wall|corner",
+            "shape|square",
             "size|depth|1",
             "size|width|1",
             "texture|cut-stone"
@@ -27517,8 +27305,9 @@
             "build|s2w",
             "connection|openforge",
             "shape|floor",
-            "shape|floor|corner",
             "shape|floor|s2w",
+            "shape|floor|wall|corner",
+            "shape|square",
             "size|depth|2",
             "size|width|2",
             "texture|cut-stone"
@@ -27643,8 +27432,9 @@
             "build|s2w",
             "connection|openforge",
             "shape|floor",
-            "shape|floor|corner",
             "shape|floor|s2w",
+            "shape|floor|wall|corner",
+            "shape|square",
             "size|depth|3",
             "size|width|3",
             "texture|cut-stone"
@@ -27769,8 +27559,9 @@
             "build|s2w",
             "connection|openforge",
             "shape|floor",
-            "shape|floor|corner",
             "shape|floor|s2w",
+            "shape|floor|wall|corner",
+            "shape|square",
             "size|depth|4",
             "size|width|4",
             "texture|cut-stone"
@@ -37508,8 +37299,9 @@
             "build|s2w",
             "connection|openforge",
             "shape|floor",
-            "shape|floor|internal_corner",
             "shape|floor|s2w",
+            "shape|floor|wall|internal_corner",
+            "shape|square",
             "size|depth|2",
             "size|width|2",
             "texture|cut-stone"
@@ -37636,6 +37428,7 @@
             "shape|floor",
             "shape|floor|s2w",
             "shape|floor|wall",
+            "shape|square",
             "size|depth|1",
             "size|width|1",
             "texture|cut-stone"
@@ -37762,6 +37555,7 @@
             "shape|floor",
             "shape|floor|s2w",
             "shape|floor|wall",
+            "shape|square",
             "size|depth|1",
             "size|width|2",
             "texture|cut-stone"
@@ -37888,6 +37682,7 @@
             "shape|floor",
             "shape|floor|s2w",
             "shape|floor|wall",
+            "shape|square",
             "size|depth|2",
             "size|width|2",
             "texture|cut-stone"
@@ -38014,6 +37809,7 @@
             "shape|floor",
             "shape|floor|s2w",
             "shape|floor|wall",
+            "shape|square",
             "size|depth|1",
             "size|width|3",
             "texture|cut-stone"
@@ -38140,6 +37936,7 @@
             "shape|floor",
             "shape|floor|s2w",
             "shape|floor|wall",
+            "shape|square",
             "size|depth|3",
             "size|width|3",
             "texture|cut-stone"
@@ -38266,6 +38063,7 @@
             "shape|floor",
             "shape|floor|s2w",
             "shape|floor|wall",
+            "shape|square",
             "size|depth|1",
             "size|width|4",
             "texture|cut-stone"
@@ -38392,6 +38190,7 @@
             "shape|floor",
             "shape|floor|s2w",
             "shape|floor|wall",
+            "shape|square",
             "size|depth|2",
             "size|width|4",
             "texture|cut-stone"
@@ -38518,6 +38317,7 @@
             "shape|floor",
             "shape|floor|s2w",
             "shape|floor|wall",
+            "shape|square",
             "size|depth|4",
             "size|width|4",
             "texture|cut-stone"
@@ -40922,6 +40722,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openforge",
             "shape|curved",
             "shape|curved|concave",
@@ -41074,6 +40875,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openforge",
             "shape|curved",
             "shape|curved|concave",
@@ -41226,6 +41028,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openforge",
             "shape|curved",
             "shape|curved|concave",
@@ -41378,6 +41181,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openforge",
             "shape|curved",
             "shape|curved|concave",
@@ -41530,6 +41334,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openforge",
             "connection|pegs",
             "shape|curved",
@@ -41683,6 +41488,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openforge",
             "connection|pegs",
             "shape|curved",
@@ -41836,6 +41642,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openforge",
             "connection|pegs",
             "shape|curved",
@@ -41989,6 +41796,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openforge",
             "connection|pegs",
             "connection|side",
@@ -42144,6 +41952,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openforge",
             "connection|pegs",
             "connection|side",
@@ -42299,6 +42108,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openforge",
             "connection|pegs",
             "connection|side",
@@ -42454,6 +42264,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openforge",
             "connection|side",
             "connection|side|openlock",
@@ -42608,6 +42419,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openforge",
             "connection|side",
             "connection|side|openlock",
@@ -42762,6 +42574,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openforge",
             "connection|side",
             "connection|side|openlock",
@@ -42916,6 +42729,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openforge",
             "connection|side",
             "connection|side|openlock",
@@ -43044,6 +42858,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openlock",
             "shape|curved",
             "shape|curved|concave",
@@ -43170,6 +42985,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openlock",
             "shape|curved",
             "shape|curved|concave",
@@ -43296,6 +43112,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openlock",
             "shape|curved",
             "shape|curved|concave",
@@ -43422,6 +43239,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openlock",
             "shape|curved",
             "shape|curved|concave",
@@ -43548,6 +43366,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openlock",
             "connection|pegs",
             "shape|curved",
@@ -43675,6 +43494,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openlock",
             "connection|pegs",
             "shape|curved",
@@ -43802,6 +43622,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openlock",
             "connection|pegs",
             "shape|curved",
@@ -43929,6 +43750,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openlock",
             "connection|pegs",
             "connection|side",
@@ -44058,6 +43880,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openlock",
             "connection|pegs",
             "connection|side",
@@ -44187,6 +44010,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openlock",
             "connection|pegs",
             "connection|side",
@@ -44316,6 +44140,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openlock",
             "connection|side",
             "connection|side|openlock",
@@ -44444,6 +44269,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openlock",
             "connection|side",
             "connection|side|openlock",
@@ -44572,6 +44398,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openlock",
             "connection|side",
             "connection|side|openlock",
@@ -44700,6 +44527,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "connection|openlock",
             "connection|side",
             "connection|side|openlock",
@@ -105776,9 +105604,9 @@
             ]
         },
         "file_metadata": {
-            "file": "cut-stone#floor+curved+concave.1x1.openforge.stl",
+            "file": "cut-stone#curved+concave,floor.1x1.openforge.stl",
             "file_modified_at": "2019-03-18T21:32:31",
-            "full_name": "tiles/cut-stone/wall_on_tile/curved/floor+concave/cut-stone#floor+curved+concave.1x1.openforge.stl",
+            "full_name": "tiles/cut-stone/wall_on_tile/curved/floor+concave/cut-stone#curved+concave,floor.1x1.openforge.stl",
             "md5": "fc9c8c4921496fb88237a5c8edacc550",
             "size": 91784,
             "storage_address": "https://objects.openforge.tools/models/fc9c8c/fc9c8c4921496fb88237a5c8edacc550.stl"
@@ -105891,9 +105719,10 @@
         "tags": [
             "build|wall on tile",
             "connection|openforge",
+            "shape|curved",
             "shape|floor",
-            "shape|floor|concave",
-            "shape|floor|curved",
+            "shape|floor|wall|curved",
+            "shape|floor|wall|curved|concave",
             "size|depth|1",
             "size|width|1",
             "texture|cut-stone"
@@ -105939,9 +105768,9 @@
             ]
         },
         "file_metadata": {
-            "file": "cut-stone#floor+curved+concave.2x2.openforge.stl",
+            "file": "cut-stone#curved+concave,floor.2x2.openforge.stl",
             "file_modified_at": "2019-03-18T21:32:31",
-            "full_name": "tiles/cut-stone/wall_on_tile/curved/floor+concave/cut-stone#floor+curved+concave.2x2.openforge.stl",
+            "full_name": "tiles/cut-stone/wall_on_tile/curved/floor+concave/cut-stone#curved+concave,floor.2x2.openforge.stl",
             "md5": "5a51a377de1d0c67522539695675a85b",
             "size": 444284,
             "storage_address": "https://objects.openforge.tools/models/5a51a3/5a51a377de1d0c67522539695675a85b.stl"
@@ -106054,9 +105883,10 @@
         "tags": [
             "build|wall on tile",
             "connection|openforge",
+            "shape|curved",
             "shape|floor",
-            "shape|floor|concave",
-            "shape|floor|curved",
+            "shape|floor|wall|curved",
+            "shape|floor|wall|curved|concave",
             "size|depth|2",
             "size|width|2",
             "texture|cut-stone"
@@ -106102,9 +105932,9 @@
             ]
         },
         "file_metadata": {
-            "file": "cut-stone#floor+curved+concave.2x4.openforge.stl",
+            "file": "cut-stone#curved+concave,floor.2x4.openforge.stl",
             "file_modified_at": "2019-03-18T21:32:31",
-            "full_name": "tiles/cut-stone/wall_on_tile/curved/floor+concave/cut-stone#floor+curved+concave.2x4.openforge.stl",
+            "full_name": "tiles/cut-stone/wall_on_tile/curved/floor+concave/cut-stone#curved+concave,floor.2x4.openforge.stl",
             "md5": "4da61f13055d36a01b431b93d53e0e6c",
             "size": 816684,
             "storage_address": "https://objects.openforge.tools/models/4da61f/4da61f13055d36a01b431b93d53e0e6c.stl"
@@ -106217,9 +106047,10 @@
         "tags": [
             "build|wall on tile",
             "connection|openforge",
+            "shape|curved",
             "shape|floor",
-            "shape|floor|concave",
-            "shape|floor|curved",
+            "shape|floor|wall|curved",
+            "shape|floor|wall|curved|concave",
             "size|depth|4",
             "size|width|2",
             "texture|cut-stone"
@@ -106265,9 +106096,9 @@
             ]
         },
         "file_metadata": {
-            "file": "cut-stone#floor+curved+concave.3x3.openforge.stl",
+            "file": "cut-stone#curved+concave,floor.3x3.openforge.stl",
             "file_modified_at": "2019-03-18T21:32:32",
-            "full_name": "tiles/cut-stone/wall_on_tile/curved/floor+concave/cut-stone#floor+curved+concave.3x3.openforge.stl",
+            "full_name": "tiles/cut-stone/wall_on_tile/curved/floor+concave/cut-stone#curved+concave,floor.3x3.openforge.stl",
             "md5": "c066f708b55666c1f7f6396454fcef8c",
             "size": 796084,
             "storage_address": "https://objects.openforge.tools/models/c066f7/c066f708b55666c1f7f6396454fcef8c.stl"
@@ -106380,9 +106211,10 @@
         "tags": [
             "build|wall on tile",
             "connection|openforge",
+            "shape|curved",
             "shape|floor",
-            "shape|floor|concave",
-            "shape|floor|curved",
+            "shape|floor|wall|curved",
+            "shape|floor|wall|curved|concave",
             "size|depth|3",
             "size|width|3",
             "texture|cut-stone"
@@ -106428,9 +106260,9 @@
             ]
         },
         "file_metadata": {
-            "file": "cut-stone#floor+curved+concave.4x2.openforge.stl",
+            "file": "cut-stone#curved+concave,floor.4x2.openforge.stl",
             "file_modified_at": "2019-03-18T21:32:32",
-            "full_name": "tiles/cut-stone/wall_on_tile/curved/floor+concave/cut-stone#floor+curved+concave.4x2.openforge.stl",
+            "full_name": "tiles/cut-stone/wall_on_tile/curved/floor+concave/cut-stone#curved+concave,floor.4x2.openforge.stl",
             "md5": "9c0a6b4a930965f9602d6f96fab86220",
             "size": 816684,
             "storage_address": "https://objects.openforge.tools/models/9c0a6b/9c0a6b4a930965f9602d6f96fab86220.stl"
@@ -106543,9 +106375,10 @@
         "tags": [
             "build|wall on tile",
             "connection|openforge",
+            "shape|curved",
             "shape|floor",
-            "shape|floor|concave",
-            "shape|floor|curved",
+            "shape|floor|wall|curved",
+            "shape|floor|wall|curved|concave",
             "size|depth|2",
             "size|width|4",
             "texture|cut-stone"
@@ -106591,9 +106424,9 @@
             ]
         },
         "file_metadata": {
-            "file": "cut-stone#floor+curved+concave.4x4.openforge.stl",
+            "file": "cut-stone#curved+concave,floor.4x4.openforge.stl",
             "file_modified_at": "2019-03-18T21:32:32",
-            "full_name": "tiles/cut-stone/wall_on_tile/curved/floor+concave/cut-stone#floor+curved+concave.4x4.openforge.stl",
+            "full_name": "tiles/cut-stone/wall_on_tile/curved/floor+concave/cut-stone#curved+concave,floor.4x4.openforge.stl",
             "md5": "65168ce6f93dfd623ac47de1e053d6f2",
             "size": 1459084,
             "storage_address": "https://objects.openforge.tools/models/65168c/65168ce6f93dfd623ac47de1e053d6f2.stl"
@@ -106706,9 +106539,10 @@
         "tags": [
             "build|wall on tile",
             "connection|openforge",
+            "shape|curved",
             "shape|floor",
-            "shape|floor|concave",
-            "shape|floor|curved",
+            "shape|floor|wall|curved",
+            "shape|floor|wall|curved|concave",
             "size|depth|4",
             "size|width|4",
             "texture|cut-stone"
@@ -106754,9 +106588,9 @@
             ]
         },
         "file_metadata": {
-            "file": "cut-stone#floor+curved+concave.6x6+a.openforge.stl",
+            "file": "cut-stone#curved+concave,floor.6x6+a.openforge.stl",
             "file_modified_at": "2019-12-15T22:44:09",
-            "full_name": "tiles/cut-stone/wall_on_tile/curved/floor+concave/cut-stone#floor+curved+concave.6x6+a.openforge.stl",
+            "full_name": "tiles/cut-stone/wall_on_tile/curved/floor+concave/cut-stone#curved+concave,floor.6x6+a.openforge.stl",
             "md5": "f5f6ffc3af29ca2dda8c726230208ed5",
             "size": 308884,
             "storage_address": "https://objects.openforge.tools/models/f5f6ff/f5f6ffc3af29ca2dda8c726230208ed5.stl"
@@ -106871,8 +106705,8 @@
             "connection|openforge",
             "shape|curved",
             "shape|floor",
-            "shape|floor|concave",
-            "shape|floor|curved",
+            "shape|floor|wall|curved",
+            "shape|floor|wall|curved|concave",
             "size|depth|6",
             "size|segment|a",
             "size|width|6",
@@ -106919,9 +106753,9 @@
             ]
         },
         "file_metadata": {
-            "file": "cut-stone#floor+curved+concave.6x6+b.openforge.stl",
+            "file": "cut-stone#curved+concave,floor.6x6+b.openforge.stl",
             "file_modified_at": "2019-12-15T22:44:09",
-            "full_name": "tiles/cut-stone/wall_on_tile/curved/floor+concave/cut-stone#floor+curved+concave.6x6+b.openforge.stl",
+            "full_name": "tiles/cut-stone/wall_on_tile/curved/floor+concave/cut-stone#curved+concave,floor.6x6+b.openforge.stl",
             "md5": "7259a35551052af4af94695b238379fc",
             "size": 2289984,
             "storage_address": "https://objects.openforge.tools/models/7259a3/7259a35551052af4af94695b238379fc.stl"
@@ -107036,8 +106870,8 @@
             "connection|openforge",
             "shape|curved",
             "shape|floor",
-            "shape|floor|concave",
-            "shape|floor|curved",
+            "shape|floor|wall|curved",
+            "shape|floor|wall|curved|concave",
             "size|depth|6",
             "size|segment|b",
             "size|width|6",
@@ -107084,9 +106918,9 @@
             ]
         },
         "file_metadata": {
-            "file": "cut-stone#floor+curved+concave.6x6+c.openforge.stl",
+            "file": "cut-stone#curved+concave,floor.6x6+c.openforge.stl",
             "file_modified_at": "2019-12-15T22:44:09",
-            "full_name": "tiles/cut-stone/wall_on_tile/curved/floor+concave/cut-stone#floor+curved+concave.6x6+c.openforge.stl",
+            "full_name": "tiles/cut-stone/wall_on_tile/curved/floor+concave/cut-stone#curved+concave,floor.6x6+c.openforge.stl",
             "md5": "e8f1d78c8f3f850df7b2113647c44249",
             "size": 315084,
             "storage_address": "https://objects.openforge.tools/models/e8f1d7/e8f1d78c8f3f850df7b2113647c44249.stl"
@@ -107201,8 +107035,8 @@
             "connection|openforge",
             "shape|curved",
             "shape|floor",
-            "shape|floor|concave",
-            "shape|floor|curved",
+            "shape|floor|wall|curved",
+            "shape|floor|wall|curved|concave",
             "size|depth|6",
             "size|segment|c",
             "size|width|6",
@@ -107249,9 +107083,9 @@
             ]
         },
         "file_metadata": {
-            "file": "cut-stone#floor+curved+concave.8x8+a.openforge.stl",
+            "file": "cut-stone#curved+concave,floor.8x8+a.openforge.stl",
             "file_modified_at": "2019-12-15T22:44:10",
-            "full_name": "tiles/cut-stone/wall_on_tile/curved/floor+concave/cut-stone#floor+curved+concave.8x8+a.openforge.stl",
+            "full_name": "tiles/cut-stone/wall_on_tile/curved/floor+concave/cut-stone#curved+concave,floor.8x8+a.openforge.stl",
             "md5": "15299f016272f8f1adafa1f01d11a8c8",
             "size": 577084,
             "storage_address": "https://objects.openforge.tools/models/15299f/15299f016272f8f1adafa1f01d11a8c8.stl"
@@ -107366,8 +107200,8 @@
             "connection|openforge",
             "shape|curved",
             "shape|floor",
-            "shape|floor|concave",
-            "shape|floor|curved",
+            "shape|floor|wall|curved",
+            "shape|floor|wall|curved|concave",
             "size|depth|8",
             "size|segment|a",
             "size|width|8",
@@ -107414,9 +107248,9 @@
             ]
         },
         "file_metadata": {
-            "file": "cut-stone#floor+curved+concave.8x8+b.openforge.stl",
+            "file": "cut-stone#curved+concave,floor.8x8+b.openforge.stl",
             "file_modified_at": "2019-12-15T22:44:11",
-            "full_name": "tiles/cut-stone/wall_on_tile/curved/floor+concave/cut-stone#floor+curved+concave.8x8+b.openforge.stl",
+            "full_name": "tiles/cut-stone/wall_on_tile/curved/floor+concave/cut-stone#curved+concave,floor.8x8+b.openforge.stl",
             "md5": "03e3172833136e4d174dd7833cdef5e0",
             "size": 4044084,
             "storage_address": "https://objects.openforge.tools/models/03e317/03e3172833136e4d174dd7833cdef5e0.stl"
@@ -107531,8 +107365,8 @@
             "connection|openforge",
             "shape|curved",
             "shape|floor",
-            "shape|floor|concave",
-            "shape|floor|curved",
+            "shape|floor|wall|curved",
+            "shape|floor|wall|curved|concave",
             "size|depth|8",
             "size|segment|b",
             "size|width|8",
@@ -107579,9 +107413,9 @@
             ]
         },
         "file_metadata": {
-            "file": "cut-stone#floor+curved+concave.8x8+c.openforge.stl",
+            "file": "cut-stone#curved+concave,floor.8x8+c.openforge.stl",
             "file_modified_at": "2019-12-15T22:44:11",
-            "full_name": "tiles/cut-stone/wall_on_tile/curved/floor+concave/cut-stone#floor+curved+concave.8x8+c.openforge.stl",
+            "full_name": "tiles/cut-stone/wall_on_tile/curved/floor+concave/cut-stone#curved+concave,floor.8x8+c.openforge.stl",
             "md5": "b846faf2478cd2714815a79ad992219e",
             "size": 644184,
             "storage_address": "https://objects.openforge.tools/models/b846fa/b846faf2478cd2714815a79ad992219e.stl"
@@ -107696,8 +107530,8 @@
             "connection|openforge",
             "shape|curved",
             "shape|floor",
-            "shape|floor|concave",
-            "shape|floor|curved",
+            "shape|floor|wall|curved",
+            "shape|floor|wall|curved|concave",
             "size|depth|8",
             "size|segment|c",
             "size|width|8",
@@ -107744,9 +107578,9 @@
             ]
         },
         "file_metadata": {
-            "file": "cut-stone#floor+curved+notch.4x4.openforge.stl",
+            "file": "cut-stone#curved+notch,floor.4x4.openforge.stl",
             "file_modified_at": "2019-12-15T22:44:06",
-            "full_name": "tiles/cut-stone/wall_on_tile/curved/floor/cut-stone#floor+curved+notch.4x4.openforge.stl",
+            "full_name": "tiles/cut-stone/wall_on_tile/curved/floor/cut-stone#curved+notch,floor.4x4.openforge.stl",
             "md5": "3799c184de13fbc379c26df96a746f3b",
             "size": 2225784,
             "storage_address": "https://objects.openforge.tools/models/3799c1/3799c184de13fbc379c26df96a746f3b.stl"
@@ -107859,9 +107693,10 @@
         "tags": [
             "build|wall on tile",
             "connection|openforge",
+            "shape|curved",
             "shape|floor",
-            "shape|floor|curved",
-            "shape|floor|notch",
+            "shape|floor|wall|curved",
+            "shape|option|notch",
             "size|depth|4",
             "size|width|4",
             "texture|cut-stone"
@@ -107907,9 +107742,9 @@
             ]
         },
         "file_metadata": {
-            "file": "cut-stone#floor+curved.1x1.openforge.stl",
+            "file": "cut-stone#curved,floor.1x1.openforge.stl",
             "file_modified_at": "2019-03-18T21:32:02",
-            "full_name": "tiles/cut-stone/wall_on_tile/curved/floor/cut-stone#floor+curved.1x1.openforge.stl",
+            "full_name": "tiles/cut-stone/wall_on_tile/curved/floor/cut-stone#curved,floor.1x1.openforge.stl",
             "md5": "799cbe75c70b7d7cd2a1610e50e572b3",
             "size": 111584,
             "storage_address": "https://objects.openforge.tools/models/799cbe/799cbe75c70b7d7cd2a1610e50e572b3.stl"
@@ -108022,8 +107857,9 @@
         "tags": [
             "build|wall on tile",
             "connection|openforge",
+            "shape|curved",
             "shape|floor",
-            "shape|floor|curved",
+            "shape|floor|wall|curved",
             "size|depth|1",
             "size|width|1",
             "texture|cut-stone"
@@ -108069,9 +107905,9 @@
             ]
         },
         "file_metadata": {
-            "file": "cut-stone#floor+curved.2x2.openforge.stl",
+            "file": "cut-stone#curved,floor.2x2.openforge.stl",
             "file_modified_at": "2019-03-18T21:32:02",
-            "full_name": "tiles/cut-stone/wall_on_tile/curved/floor/cut-stone#floor+curved.2x2.openforge.stl",
+            "full_name": "tiles/cut-stone/wall_on_tile/curved/floor/cut-stone#curved,floor.2x2.openforge.stl",
             "md5": "e48362b5471806e12ac6bccb353913f9",
             "size": 753184,
             "storage_address": "https://objects.openforge.tools/models/e48362/e48362b5471806e12ac6bccb353913f9.stl"
@@ -108184,8 +108020,9 @@
         "tags": [
             "build|wall on tile",
             "connection|openforge",
+            "shape|curved",
             "shape|floor",
-            "shape|floor|curved",
+            "shape|floor|wall|curved",
             "size|depth|2",
             "size|width|2",
             "texture|cut-stone"
@@ -108231,9 +108068,9 @@
             ]
         },
         "file_metadata": {
-            "file": "cut-stone#floor+curved.2x4.openforge.stl",
+            "file": "cut-stone#curved,floor.2x4.openforge.stl",
             "file_modified_at": "2019-03-18T21:32:03",
-            "full_name": "tiles/cut-stone/wall_on_tile/curved/floor/cut-stone#floor+curved.2x4.openforge.stl",
+            "full_name": "tiles/cut-stone/wall_on_tile/curved/floor/cut-stone#curved,floor.2x4.openforge.stl",
             "md5": "234f0714d08e581513428a89202d56fa",
             "size": 1748684,
             "storage_address": "https://objects.openforge.tools/models/234f07/234f0714d08e581513428a89202d56fa.stl"
@@ -108346,8 +108183,9 @@
         "tags": [
             "build|wall on tile",
             "connection|openforge",
+            "shape|curved",
             "shape|floor",
-            "shape|floor|curved",
+            "shape|floor|wall|curved",
             "size|depth|4",
             "size|width|2",
             "texture|cut-stone"
@@ -108393,9 +108231,9 @@
             ]
         },
         "file_metadata": {
-            "file": "cut-stone#floor+curved.3x3.openforge.stl",
+            "file": "cut-stone#curved,floor.3x3.openforge.stl",
             "file_modified_at": "2019-03-18T21:32:03",
-            "full_name": "tiles/cut-stone/wall_on_tile/curved/floor/cut-stone#floor+curved.3x3.openforge.stl",
+            "full_name": "tiles/cut-stone/wall_on_tile/curved/floor/cut-stone#curved,floor.3x3.openforge.stl",
             "md5": "75dd304c3c15ce7049e0c10c19e6c3c0",
             "size": 2182184,
             "storage_address": "https://objects.openforge.tools/models/75dd30/75dd304c3c15ce7049e0c10c19e6c3c0.stl"
@@ -108508,8 +108346,9 @@
         "tags": [
             "build|wall on tile",
             "connection|openforge",
+            "shape|curved",
             "shape|floor",
-            "shape|floor|curved",
+            "shape|floor|wall|curved",
             "size|depth|3",
             "size|width|3",
             "texture|cut-stone"
@@ -108555,9 +108394,9 @@
             ]
         },
         "file_metadata": {
-            "file": "cut-stone#floor+curved.4x2.openforge.stl",
+            "file": "cut-stone#curved,floor.4x2.openforge.stl",
             "file_modified_at": "2019-03-18T21:32:04",
-            "full_name": "tiles/cut-stone/wall_on_tile/curved/floor/cut-stone#floor+curved.4x2.openforge.stl",
+            "full_name": "tiles/cut-stone/wall_on_tile/curved/floor/cut-stone#curved,floor.4x2.openforge.stl",
             "md5": "a896fb61e7ffd192591624ca286418c9",
             "size": 1748684,
             "storage_address": "https://objects.openforge.tools/models/a896fb/a896fb61e7ffd192591624ca286418c9.stl"
@@ -108670,8 +108509,9 @@
         "tags": [
             "build|wall on tile",
             "connection|openforge",
+            "shape|curved",
             "shape|floor",
-            "shape|floor|curved",
+            "shape|floor|wall|curved",
             "size|depth|2",
             "size|width|4",
             "texture|cut-stone"
@@ -108717,9 +108557,9 @@
             ]
         },
         "file_metadata": {
-            "file": "cut-stone#floor+curved.4x4.openforge.stl",
+            "file": "cut-stone#curved,floor.4x4.openforge.stl",
             "file_modified_at": "2019-03-18T21:32:05",
-            "full_name": "tiles/cut-stone/wall_on_tile/curved/floor/cut-stone#floor+curved.4x4.openforge.stl",
+            "full_name": "tiles/cut-stone/wall_on_tile/curved/floor/cut-stone#curved,floor.4x4.openforge.stl",
             "md5": "1cdbd69a6669f9b1f11fa34d1bafda70",
             "size": 3922784,
             "storage_address": "https://objects.openforge.tools/models/1cdbd6/1cdbd69a6669f9b1f11fa34d1bafda70.stl"
@@ -108832,8 +108672,9 @@
         "tags": [
             "build|wall on tile",
             "connection|openforge",
+            "shape|curved",
             "shape|floor",
-            "shape|floor|curved",
+            "shape|floor|wall|curved",
             "size|depth|4",
             "size|width|4",
             "texture|cut-stone"
@@ -108879,9 +108720,9 @@
             ]
         },
         "file_metadata": {
-            "file": "cut-stone#floor+curved.6x6+a.openforge.stl",
+            "file": "cut-stone#curved,floor.6x6+a.openforge.stl",
             "file_modified_at": "2019-12-15T22:44:07",
-            "full_name": "tiles/cut-stone/wall_on_tile/curved/floor/cut-stone#floor+curved.6x6+a.openforge.stl",
+            "full_name": "tiles/cut-stone/wall_on_tile/curved/floor/cut-stone#curved,floor.6x6+a.openforge.stl",
             "md5": "dc4fbc6818b7dec3805107538719fb4c",
             "size": 1249984,
             "storage_address": "https://objects.openforge.tools/models/dc4fbc/dc4fbc6818b7dec3805107538719fb4c.stl"
@@ -108996,7 +108837,7 @@
             "connection|openforge",
             "shape|curved",
             "shape|floor",
-            "shape|floor|curved",
+            "shape|floor|wall|curved",
             "size|depth|6",
             "size|segment|a",
             "size|width|6",
@@ -109043,9 +108884,9 @@
             ]
         },
         "file_metadata": {
-            "file": "cut-stone#floor+curved.6x6+b.openforge.stl",
+            "file": "cut-stone#curved,floor.6x6+b.openforge.stl",
             "file_modified_at": "2019-12-15T22:44:07",
-            "full_name": "tiles/cut-stone/wall_on_tile/curved/floor/cut-stone#floor+curved.6x6+b.openforge.stl",
+            "full_name": "tiles/cut-stone/wall_on_tile/curved/floor/cut-stone#curved,floor.6x6+b.openforge.stl",
             "md5": "da93c2c37ed5e3e81f4abfeeabfb1f32",
             "size": 762984,
             "storage_address": "https://objects.openforge.tools/models/da93c2/da93c2c37ed5e3e81f4abfeeabfb1f32.stl"
@@ -109160,7 +109001,7 @@
             "connection|openforge",
             "shape|curved",
             "shape|floor",
-            "shape|floor|curved",
+            "shape|floor|wall|curved",
             "size|depth|6",
             "size|segment|b",
             "size|width|6",
@@ -109207,9 +109048,9 @@
             ]
         },
         "file_metadata": {
-            "file": "cut-stone#floor+curved.6x6+c.openforge.stl",
+            "file": "cut-stone#curved,floor.6x6+c.openforge.stl",
             "file_modified_at": "2019-12-15T22:44:07",
-            "full_name": "tiles/cut-stone/wall_on_tile/curved/floor/cut-stone#floor+curved.6x6+c.openforge.stl",
+            "full_name": "tiles/cut-stone/wall_on_tile/curved/floor/cut-stone#curved,floor.6x6+c.openforge.stl",
             "md5": "a1e08242c837caab0bb984c6ebd5671d",
             "size": 1176784,
             "storage_address": "https://objects.openforge.tools/models/a1e082/a1e08242c837caab0bb984c6ebd5671d.stl"
@@ -109324,7 +109165,7 @@
             "connection|openforge",
             "shape|curved",
             "shape|floor",
-            "shape|floor|curved",
+            "shape|floor|wall|curved",
             "size|depth|6",
             "size|segment|c",
             "size|width|6",
@@ -109371,9 +109212,9 @@
             ]
         },
         "file_metadata": {
-            "file": "cut-stone#floor+curved.8x8+a.openforge.stl",
+            "file": "cut-stone#curved,floor.8x8+a.openforge.stl",
             "file_modified_at": "2019-12-15T22:44:08",
-            "full_name": "tiles/cut-stone/wall_on_tile/curved/floor/cut-stone#floor+curved.8x8+a.openforge.stl",
+            "full_name": "tiles/cut-stone/wall_on_tile/curved/floor/cut-stone#curved,floor.8x8+a.openforge.stl",
             "md5": "4250835d25e7b861f3180e12f022454e",
             "size": 1792784,
             "storage_address": "https://objects.openforge.tools/models/425083/4250835d25e7b861f3180e12f022454e.stl"
@@ -109488,7 +109329,7 @@
             "connection|openforge",
             "shape|curved",
             "shape|floor",
-            "shape|floor|curved",
+            "shape|floor|wall|curved",
             "size|depth|8",
             "size|segment|a",
             "size|width|8",
@@ -109535,9 +109376,9 @@
             ]
         },
         "file_metadata": {
-            "file": "cut-stone#floor+curved.8x8+b.openforge.stl",
+            "file": "cut-stone#curved,floor.8x8+b.openforge.stl",
             "file_modified_at": "2019-12-15T22:44:08",
-            "full_name": "tiles/cut-stone/wall_on_tile/curved/floor/cut-stone#floor+curved.8x8+b.openforge.stl",
+            "full_name": "tiles/cut-stone/wall_on_tile/curved/floor/cut-stone#curved,floor.8x8+b.openforge.stl",
             "md5": "11537a2d3e51b7b00a8df990760bb61a",
             "size": 1490584,
             "storage_address": "https://objects.openforge.tools/models/11537a/11537a2d3e51b7b00a8df990760bb61a.stl"
@@ -109652,7 +109493,7 @@
             "connection|openforge",
             "shape|curved",
             "shape|floor",
-            "shape|floor|curved",
+            "shape|floor|wall|curved",
             "size|depth|8",
             "size|segment|b",
             "size|width|8",
@@ -109699,9 +109540,9 @@
             ]
         },
         "file_metadata": {
-            "file": "cut-stone#floor+curved.8x8+c.openforge.stl",
+            "file": "cut-stone#curved,floor.8x8+c.openforge.stl",
             "file_modified_at": "2019-12-15T22:44:09",
-            "full_name": "tiles/cut-stone/wall_on_tile/curved/floor/cut-stone#floor+curved.8x8+c.openforge.stl",
+            "full_name": "tiles/cut-stone/wall_on_tile/curved/floor/cut-stone#curved,floor.8x8+c.openforge.stl",
             "md5": "86a7cd19063aa4d7f89655466bead1f1",
             "size": 1791684,
             "storage_address": "https://objects.openforge.tools/models/86a7cd/86a7cd19063aa4d7f89655466bead1f1.stl"
@@ -109816,7 +109657,7 @@
             "connection|openforge",
             "shape|curved",
             "shape|floor",
-            "shape|floor|curved",
+            "shape|floor|wall|curved",
             "size|depth|8",
             "size|segment|c",
             "size|width|8",
@@ -112899,9 +112740,9 @@
             ]
         },
         "file_metadata": {
-            "file": "cut-stone#floor+diagonal.1x1.openforge.stl",
+            "file": "cut-stone#diagonal,floor.1x1.openforge.stl",
             "file_modified_at": "2019-03-18T21:41:27",
-            "full_name": "tiles/cut-stone/wall_on_tile/diagonal/floor/cut-stone#floor+diagonal.1x1.openforge.stl",
+            "full_name": "tiles/cut-stone/wall_on_tile/diagonal/floor/cut-stone#diagonal,floor.1x1.openforge.stl",
             "md5": "3ca35c46967ef273edb24ad08115806f",
             "size": 534684,
             "storage_address": "https://objects.openforge.tools/models/3ca35c/3ca35c46967ef273edb24ad08115806f.stl"
@@ -113014,8 +112855,9 @@
         "tags": [
             "build|wall on tile",
             "connection|openforge",
+            "shape|diagonal",
             "shape|floor",
-            "shape|floor|diagonal",
+            "shape|floor|wall|diagonal",
             "size|depth|1",
             "size|width|1",
             "texture|cut-stone"
@@ -113061,9 +112903,9 @@
             ]
         },
         "file_metadata": {
-            "file": "cut-stone#floor+diagonal.2x2.openforge.stl",
+            "file": "cut-stone#diagonal,floor.2x2.openforge.stl",
             "file_modified_at": "2019-03-18T21:41:28",
-            "full_name": "tiles/cut-stone/wall_on_tile/diagonal/floor/cut-stone#floor+diagonal.2x2.openforge.stl",
+            "full_name": "tiles/cut-stone/wall_on_tile/diagonal/floor/cut-stone#diagonal,floor.2x2.openforge.stl",
             "md5": "3a2d7dcdc097b707b1e802ae8c772e7e",
             "size": 2368684,
             "storage_address": "https://objects.openforge.tools/models/3a2d7d/3a2d7dcdc097b707b1e802ae8c772e7e.stl"
@@ -113176,8 +113018,9 @@
         "tags": [
             "build|wall on tile",
             "connection|openforge",
+            "shape|diagonal",
             "shape|floor",
-            "shape|floor|diagonal",
+            "shape|floor|wall|diagonal",
             "size|depth|2",
             "size|width|2",
             "texture|cut-stone"
@@ -113223,9 +113066,9 @@
             ]
         },
         "file_metadata": {
-            "file": "cut-stone#floor+diagonal.2x4.openforge.stl",
+            "file": "cut-stone#diagonal,floor.2x4.openforge.stl",
             "file_modified_at": "2019-03-18T21:41:29",
-            "full_name": "tiles/cut-stone/wall_on_tile/diagonal/floor/cut-stone#floor+diagonal.2x4.openforge.stl",
+            "full_name": "tiles/cut-stone/wall_on_tile/diagonal/floor/cut-stone#diagonal,floor.2x4.openforge.stl",
             "md5": "c04825f56155087b434c9d15462d5175",
             "size": 3685784,
             "storage_address": "https://objects.openforge.tools/models/c04825/c04825f56155087b434c9d15462d5175.stl"
@@ -113338,8 +113181,9 @@
         "tags": [
             "build|wall on tile",
             "connection|openforge",
+            "shape|diagonal",
             "shape|floor",
-            "shape|floor|diagonal",
+            "shape|floor|wall|diagonal",
             "size|depth|4",
             "size|width|2",
             "texture|cut-stone"
@@ -113385,9 +113229,9 @@
             ]
         },
         "file_metadata": {
-            "file": "cut-stone#floor+diagonal.3x3.openforge.stl",
+            "file": "cut-stone#diagonal,floor.3x3.openforge.stl",
             "file_modified_at": "2019-03-18T21:41:31",
-            "full_name": "tiles/cut-stone/wall_on_tile/diagonal/floor/cut-stone#floor+diagonal.3x3.openforge.stl",
+            "full_name": "tiles/cut-stone/wall_on_tile/diagonal/floor/cut-stone#diagonal,floor.3x3.openforge.stl",
             "md5": "208ecb04deb1268078a6dbf2331041c6",
             "size": 5730584,
             "storage_address": "https://objects.openforge.tools/models/208ecb/208ecb04deb1268078a6dbf2331041c6.stl"
@@ -113500,8 +113344,9 @@
         "tags": [
             "build|wall on tile",
             "connection|openforge",
+            "shape|diagonal",
             "shape|floor",
-            "shape|floor|diagonal",
+            "shape|floor|wall|diagonal",
             "size|depth|3",
             "size|width|3",
             "texture|cut-stone"
@@ -113547,9 +113392,9 @@
             ]
         },
         "file_metadata": {
-            "file": "cut-stone#floor+diagonal.4x2.openforge.stl",
+            "file": "cut-stone#diagonal,floor.4x2.openforge.stl",
             "file_modified_at": "2019-03-18T21:41:32",
-            "full_name": "tiles/cut-stone/wall_on_tile/diagonal/floor/cut-stone#floor+diagonal.4x2.openforge.stl",
+            "full_name": "tiles/cut-stone/wall_on_tile/diagonal/floor/cut-stone#diagonal,floor.4x2.openforge.stl",
             "md5": "d44c064e01b49bd7bec9f6f70a0fe764",
             "size": 3685784,
             "storage_address": "https://objects.openforge.tools/models/d44c06/d44c064e01b49bd7bec9f6f70a0fe764.stl"
@@ -113662,8 +113507,9 @@
         "tags": [
             "build|wall on tile",
             "connection|openforge",
+            "shape|diagonal",
             "shape|floor",
-            "shape|floor|diagonal",
+            "shape|floor|wall|diagonal",
             "size|depth|2",
             "size|width|4",
             "texture|cut-stone"
@@ -113709,9 +113555,9 @@
             ]
         },
         "file_metadata": {
-            "file": "cut-stone#floor+diagonal.4x4.openforge.stl",
+            "file": "cut-stone#diagonal,floor.4x4.openforge.stl",
             "file_modified_at": "2019-03-18T21:41:35",
-            "full_name": "tiles/cut-stone/wall_on_tile/diagonal/floor/cut-stone#floor+diagonal.4x4.openforge.stl",
+            "full_name": "tiles/cut-stone/wall_on_tile/diagonal/floor/cut-stone#diagonal,floor.4x4.openforge.stl",
             "md5": "5b9f12a767437d166711526e3c792eb8",
             "size": 10508984,
             "storage_address": "https://objects.openforge.tools/models/5b9f12/5b9f12a767437d166711526e3c792eb8.stl"
@@ -113824,8 +113670,9 @@
         "tags": [
             "build|wall on tile",
             "connection|openforge",
+            "shape|diagonal",
             "shape|floor",
-            "shape|floor|diagonal",
+            "shape|floor|wall|diagonal",
             "size|depth|4",
             "size|width|4",
             "texture|cut-stone"
@@ -117010,6 +116857,7 @@
             "connection|openforge",
             "shape|floor",
             "shape|floor|wall",
+            "shape|square",
             "size|depth|2",
             "size|width|2",
             "texture|cut-stone"
@@ -117889,8 +117737,8 @@
         "tags": [
             "build|wall on tile",
             "component|archway",
-            "component|spirit",
             "connection|openforge",
+            "decoration|symbol|spirit",
             "shape|wall",
             "size|openlock|A",
             "size|width|2",
@@ -119903,8 +119751,9 @@
         "metadata": false,
         "tags": [
             "build|wall on tile",
-            "component|spirit",
+            "component|wall",
             "connection|openforge",
+            "decoration|symbol|spirit",
             "shape|wall",
             "size|openlock|A",
             "size|width|2",
@@ -120569,6 +120418,7 @@
             "connection|openforge",
             "shape|floor",
             "shape|floor|wall",
+            "shape|square",
             "size|depth|1",
             "size|width|1",
             "texture|cut-stone"
@@ -120731,6 +120581,7 @@
             "connection|openforge",
             "shape|floor",
             "shape|floor|wall",
+            "shape|square",
             "size|depth|1",
             "size|width|2",
             "texture|cut-stone"
@@ -120893,6 +120744,7 @@
             "connection|openforge",
             "shape|floor",
             "shape|floor|wall",
+            "shape|square",
             "size|depth|2",
             "size|width|2",
             "texture|cut-stone"
@@ -121055,6 +120907,7 @@
             "connection|openforge",
             "shape|floor",
             "shape|floor|wall",
+            "shape|square",
             "size|depth|1",
             "size|width|3",
             "texture|cut-stone"
@@ -121217,6 +121070,7 @@
             "connection|openforge",
             "shape|floor",
             "shape|floor|wall",
+            "shape|square",
             "size|depth|3",
             "size|width|3",
             "texture|cut-stone"
@@ -121379,6 +121233,7 @@
             "connection|openforge",
             "shape|floor",
             "shape|floor|wall",
+            "shape|square",
             "size|depth|1",
             "size|width|4",
             "texture|cut-stone"
@@ -121541,6 +121396,7 @@
             "connection|openforge",
             "shape|floor",
             "shape|floor|wall",
+            "shape|square",
             "size|depth|2",
             "size|width|4",
             "texture|cut-stone"
@@ -121703,6 +121559,7 @@
             "connection|openforge",
             "shape|floor",
             "shape|floor|wall",
+            "shape|square",
             "size|depth|4",
             "size|width|4",
             "texture|cut-stone"

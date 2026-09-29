@@ -251,11 +251,37 @@ def filter_s_system(tags):
         tags.discard(tag)
 
 
+SYMBOLS = ("air", "beezlebub", "earth", "fire", "lamashtu", "spirit", "water")
+# A floor's shape means one of two things. On an s2w or wall-on-tile
+# tile it is the shape of the cut-out the wall sits in, so it belongs
+# under `shape|floor|wall`. On any other floor it is the floor's own
+# outline, a peer of `shape|floor`, so that `+shape|curved` finds every
+# curve and `+shape|floor` narrows it to floors.
+FLOOR_SHAPES = (
+    "angled",
+    "concave",
+    "convex",
+    "corner",
+    "curved",
+    "diagonal",
+    "hex",
+    "internal_corner",
+    "radial",
+)
+CUT_OUT_BUILDS = {("build", "s2w"), ("build", "wall on tile")}
+
+
 def filter_shape(tags):
     def _check_wall_alone(tags):
         count = 0
         for tag in tags:
             if tag[0] == "component":
+                # A collapsed wall is still only a wall: `collapsed+low`
+                # says how much of it is left standing, not that a
+                # second piece is attached. Counting it cost every
+                # ruined wall its `component|wall`.
+                if tag[1] == "collapsed":
+                    continue
                 if tag != ("component", "wall"):
                     count += 1
         if count == 0:
@@ -284,6 +310,7 @@ def filter_shape(tags):
             "concave",
             "radial",
             "corner",
+            "internal_corner",
             "wall",
         ]
         for tag in copy_tags:
@@ -344,26 +371,6 @@ def filter_shape(tags):
         _move_tag_chain(
             tags, ["component", "wall", "corbels"], ["decoration", "corbels"]
         )
-        _move_tag_chain(tags, ["component", "air"], ["decoration", "symbol", "air"])
-        _move_tag_chain(
-            tags, ["component", "air_symbol"], ["decoration", "symbol", "air"]
-        )
-        _move_tag_chain(
-            tags, ["shape", "floor", "air_symbol"], ["decoration", "symbol", "air"]
-        )
-        _move_tag_chain(
-            tags, ["component", "beezlebub"], ["decoration", "symbol", "beezlebub"]
-        )
-        _move_tag_chain(
-            tags,
-            ["component", "beezlebub_symbol"],
-            ["decoration", "symbol", "beezlebub"],
-        )
-        _move_tag_chain(
-            tags,
-            ["shape", "floor", "beezlebub_symbol"],
-            ["decoration", "symbol", "beezlebub"],
-        )
         _move_tag_chain(
             tags, ["component", "celtic_knot"], ["decoration", "celtic_knot"]
         )
@@ -371,48 +378,42 @@ def filter_shape(tags):
         _move_tag_chain(
             tags, ["component", "dragon_skulls"], ["decoration", "dragon_skulls"]
         )
-        _move_tag_chain(tags, ["component", "earth"], ["decoration", "symbol", "earth"])
-        _move_tag_chain(
-            tags, ["component", "earth_symbol"], ["decoration", "symbol", "earth"]
-        )
-        _move_tag_chain(
-            tags, ["shape", "floor", "earth_symbol"], ["decoration", "symbol", "earth"]
-        )
-        _move_tag_chain(tags, ["component", "fire"], ["decoration", "symbol", "fire"])
-        _move_tag_chain(
-            tags, ["component", "fire_symbol"], ["decoration", "symbol", "fire"]
-        )
-        _move_tag_chain(
-            tags, ["shape", "floor", "fire_symbol"], ["decoration", "symbol", "fire"]
-        )
-        _move_tag_chain(
-            tags, ["component", "lamashtu"], ["decoration", "symbol", "lamashtu"]
-        )
-        _move_tag_chain(
-            tags, ["component", "lamashtu_symbol"], ["decoration", "symbol", "lamashtu"]
-        )
-        _move_tag_chain(
-            tags,
-            ["shape", "floor", "lamashtu_symbol"],
-            ["decoration", "symbol", "lamashtu"],
-        )
-        _move_tag_chain(
-            tags, ["component", "spirit_symbol"], ["decoration", "symbol", "spirit"]
-        )
-        _move_tag_chain(
-            tags,
-            ["shape", "floor", "spirit_symbol"],
-            ["decoration", "symbol", "spirit"],
-        )
-        _move_tag_chain(tags, ["component", "water"], ["decoration", "symbol", "water"])
-        _move_tag_chain(
-            tags, ["component", "water_symbol"], ["decoration", "symbol", "water"]
-        )
-        _move_tag_chain(
-            tags, ["shape", "floor", "water_symbol"], ["decoration", "symbol", "water"]
-        )
+        # A symbol is carved into whatever it sits on, so every spelling
+        # lands in one place. The filenames say it five ways: a sibling
+        # (`wall,air`, `floor,air_symbol`), or a child of the piece it is
+        # on (`floor+air_symbol`, `wall+air_symbol`, `archway+air`).
+        # These run while the floor is still `component|floor`; the old
+        # `shape|floor|air_symbol` sources ran before that move and never
+        # matched a single file.
+        for symbol in SYMBOLS:
+            for source in (
+                [symbol],
+                [f"{symbol}_symbol"],
+                ["floor", f"{symbol}_symbol"],
+                ["wall", f"{symbol}_symbol"],
+                ["archway", symbol],
+            ):
+                _move_tag_chain(
+                    tags, ["component", *source], ["decoration", "symbol", symbol]
+                )
 
+    # Shapes before the wall check, for the reason decorations go there:
+    # a curved or diagonal wall is one wall, and while these are still
+    # components the check counts them as a second one and takes
+    # `component|wall` away.
+    # A base is not a floor, even when it is the base *for* one: the
+    # curved bases live in `bases/.../curved_floors/`, and the size table
+    # says `shape|floor` for codes like E, F and V whatever carries them.
+    # Only a filename that names the floor itself (`#base,floor,portal`)
+    # makes a base one.
+    if ("component", "base") in tags and ("component", "floor") not in tags:
+        tags.discard(("shape", "floor"))
     _move_tag_chain(tags, ["component", "corner"], ["shape", "corner"])
+    _move_tag_chain(
+        tags, ["component", "internal_corner"], ["shape", "internal_corner"]
+    )
+    _move_tag_chain(tags, ["component", "curved"], ["shape", "curved"])
+    _move_tag_chain(tags, ["component", "diagonal"], ["shape", "diagonal"])
     # Before the wall and floor checks, not after. Those checks ask
     # "is this only a wall?" by counting component tags, and a carving
     # is not a second component — it is the same wall with a dragon
@@ -434,7 +435,6 @@ def filter_shape(tags):
     # `component|wall` has no such move, so what it decides sticks:
     # deleting only its `else` loses `component|wall` on 75 files.
     _move_tag_chain(tags, ["component", "floor"], ["shape", "floor"])
-    _move_tag_chain(tags, ["component", "curved"], ["shape", "curved"])
     _move_tag_chain(tags, ["component", "base"], ["shape", "base"])
     _move_tag_chain(tags, ["component", "angled"], ["shape", "angled"])
     _move_tag_chain(tags, ["component", "riser"], ["shape", "riser"])
@@ -466,6 +466,79 @@ def filter_shape(tags):
     if ("shape", "floor") in tags and ("shape", "wall") in tags:
         tags.discard(("shape", "wall"))
         tags.add(("shape", "floor", "wall"))
+    # Where a floor's shape goes, whatever order the filename put it in
+    # (`floor+curved+concave`, `curved+concave,floor`). Square is always
+    # an outline, never a cut-out. After everything above, which asks
+    # about these tags where they were first put.
+    if ("shape", "floor") in tags:
+        cut_out = bool(CUT_OUT_BUILDS & tags)
+        for shape in FLOOR_SHAPES:
+            peer, nested = ["shape", shape], ["shape", "floor", shape]
+            slot = ["shape", "floor", "wall", shape]
+            if cut_out:
+                _move_tag_chain(tags, peer, slot)
+                _move_tag_chain(tags, nested, slot)
+            else:
+                _move_tag_chain(tags, nested, peer)
+        # A cut-out replaces the straight slot rather than adding to it:
+        # a corner piece is `shape|floor|wall|corner` and not also
+        # `shape|floor|wall`, which is what a straight wall asks for.
+        slot = ("shape", "floor", "wall")
+        if any(t[:3] == slot and len(t) > 3 for t in tags):
+            tags.discard(slot)
+        if any(t[:3] == slot for t in tags):
+            _add_slot_outline(tags)
+    _nest_under_curved(tags)
+    # A notch is an option on the shape, not a kind of it: the size table
+    # says `4x4+notch` -> `shape|option|notch`, and `#curved+notch` in
+    # the form means the same thing.
+    for tag in [t for t in tags if t[0] == "shape" and t[-1] == "notch"]:
+        tags.discard(tag)
+        tags.add(("shape", "option", "notch"))
+    # Likewise a mirrored curve (`#curved+interface+mirror`). Not a
+    # base's: `shape|base|mirror` has not been ruled on.
+    mirrors = [
+        t
+        for t in tags
+        if t[0] == "shape" and t[1] not in ("base", "option") and t[-1] == "mirror"
+    ]
+    for tag in mirrors:
+        tags.discard(tag)
+        tags.add(("shape", "option", "mirror"))
+
+
+def _add_slot_outline(tags):
+    """The outline a wall slot implies for the whole floor.
+
+    A curved, diagonal or angled slot means a floor of that shape; a
+    straight slot, a corner or an internal corner means a square one.
+    """
+    slot = ("shape", "floor", "wall")
+    kinds = {t[3] for t in tags if t[:3] == slot and len(t) > 3}
+    outlines = kinds & {"curved", "diagonal", "angled"}
+    for outline in outlines:
+        tags.add(("shape", outline))
+    if not outlines and kinds <= {"corner", "internal_corner"}:
+        tags.add(("shape", "square"))
+
+
+def _nest_under_curved(tags):
+    """Put what qualifies a curve under it, at every level that says curved.
+
+    Every `+` in a form is a child of its first part, so
+    `base+curved+radial` and `floor+curved+concave` give the curve and
+    its qualifier as equals, and so do the plain shapes
+    `_copy_base_shapes` puts beside a base's own. Radial says the curve
+    is one of a set of rings; concave and convex, which way it bends.
+    """
+    for prefix in (("shape",), ("shape", "base"), ("shape", "floor", "wall")):
+        if prefix + ("curved",) not in tags:
+            continue
+        for qualifier in ("radial", "concave", "convex"):
+            head = prefix + (qualifier,)
+            for tag in [t for t in tags if t[: len(head)] == head]:
+                tags.discard(tag)
+                tags.add(prefix + ("curved",) + tag[len(prefix) :])
 
 
 def parse_file_tags(file_info, tags, metadata):
