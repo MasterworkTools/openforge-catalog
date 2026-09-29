@@ -145,6 +145,18 @@ For language-specific coding preferences and patterns, see:
 - ❌ "This function validates input AND transforms data AND saves to database" - should be 3 functions
 - ✅ "This function validates and saves user data (validation is a prerequisite for saving, so it's cohesive)"
 
+### Comments
+
+- Default to no comment. Write one only for what a competent reader would get
+  wrong: a non-obvious constraint, a workaround, a surprising fact about the data.
+- One or two lines, stating what is true now. Never how it got here — no "used
+  to", "was changed", review rounds, or reverted approaches. That is the commit
+  message's job.
+- No facts that drift: no measurements, counts, test names, line numbers, bead
+  ids or PR numbers in comments or docstrings.
+- When a review flags a comment, delete or shorten it before rewriting it.
+- PR bodies carry no test counts or line counts.
+
 ## Background Context
 
 ### Technical Experience
