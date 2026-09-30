@@ -630,6 +630,7 @@ refinements:
       - {tag: 'texture|stone_brick', title: 'Stone brick', blurb: 'A building facade: brick below, timber above. 40 walls, no matching floor.'}
       - {tag: 'texture|aztlan', title: 'Aztlan', blurb: 'Carved stepped stone. 38 walls.'}
       - {tag: 'texture|necro', title: 'Necro', blurb: 'Bone and black stone. 25 walls, no matching floor.'}
+      - {tag: 'texture|nova_trail', title: 'Nova Trail'}
     # The base that goes under a texture is not always a base of that
     # name. A towne building stands on a wood base: the catalog has 441
     # towne walls and no towne base at all, so without this, asking for
@@ -707,6 +708,7 @@ refinements:
       # came out of.
       - {tag: 'texture|towne', title: 'Wood', blurb: '23 floors, all of them boarded, in two or three plank layouts.'}
       - {tag: 'texture|aztlan', title: 'Aztlan', blurb: '11 floors.'}
+      - {tag: 'texture|nova_trail', title: 'Nova Trail'}
 
 
   # How the bases clip down — one question, whose answers are the
