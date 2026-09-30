@@ -3,39 +3,15 @@ title: Floor
 hero_image: https://objects.openforge.tools/guides/guide.floor.webp
 summary: A plain floor tile
 
-# The floor half of the wall guide, on its own. Someone laying a room or a
-# hallway floor needs two decisions — how it prints and how big it is — and
-# none of the wall guide's method question, because there is no wall to
-# attach. The prose is deliberately the wall guide's, so the two read as one
-# voice.
-#
-# The predicates are NOT identical, and the differences are the interesting
-# part of this file. Two of them:
-#
-#   - the floor role drops the wall guide's `allow: [component|wall]` and its
-#     `deny: [shape|base]`. Both are inert here; see the role's comment.
-#   - the `with-base` option requires `connection|openforge` where the wall
-#     guide constrains nothing. That one is not cosmetic: it changes which
-#     floors the catalog dialog will offer, from 533 to 331. The wall guide
-#     has the same hole (openforge_catalog-39q).
-#
-# So a floor RECOMMENDED here and a floor recommended inside the wall guide
-# are the same piece — verified across all 40 with-base combinations — but
-# the sets you can browse to are not the same.
+# The floor half of the wall guide, on its own, for laying a floor rather
+# than building a wall. Same prose; the predicates differ where noted.
 
 steps:
   - key: floor-print
     prompt: How should the floor print?
     default: with-base
-    # This step introduces both roles. The wall guide's `method` step does
-    # that job there; with no method to choose, the first question is the one
-    # that decides whether there is a base at all.
-    #
-    # `floor-base` is the one with a null predicate — it comes into play and
-    # takes no constraint from the answer, because the role's own query
-    # already requires `shape|base|square`. `floor` is NOT unconstrained:
-    # each option puts something on it, and on `with-base` that something is
-    # load-bearing (see the comment there).
+    # Roles come into play only from a chosen step option, so this step is
+    # what introduces both.
     options:
       - key: with-base
         title: Floor plus a base
@@ -43,17 +19,12 @@ steps:
           The tile prints bare and sits in a base that carries the
           connectors. The usual openforge arrangement.
         roles:
-          # `require: [connection|openforge]` is not decoration. Without it this
-          # predicate also admits one-piece OpenLOCK tiles, which already carry
-          # their own base — 128 of the 313 otherwise-reachable floors. The
-          # recommendation never picks one, but the catalog dialog opens on this
-          # predicate, so a person browsing could choose a tile that physically
-          # cannot sit in the base shown beneath it.
+          # Without this the dialog also offers one-piece OpenLOCK tiles,
+          # which already are bases and cannot sit in one.
           floor:
             require:
               - connection|openforge
-          # No predicate: the role's own query already requires
-          # shape|base|square, and repeating it here says nothing.
+          # The role's own query already requires shape|base|square.
           floor-base: null
       - key: single-piece
         title: One piece, base included
@@ -70,15 +41,8 @@ steps:
   - key: size
     prompt: What size tiles?
     default: 2x2
-    # These eight are the wall guide's list. They do not cover the catalog.
-    # Of the role's 533 floors: 313 are reachable by answering, 147 more only
-    # by browsing to a texture outside the five offered, and 73 by neither —
-    # their footprint is not on this list, and because this question is not
-    # `browsable` its tags never become relaxable, so the catalog dialog
-    # cannot reach them either. (6x4 17, 6x6 15, 8x8 15, and the rest at odd
-    # pairs like 1x2 and 3x2.) Widening it is not just adding buttons: 6x4
-    # and 8x8 have no square base at all, so those sizes would empty
-    # `floor-base` on the with-base branch. Tracked as openforge_catalog-9ab.
+    # Not every footprint in the catalog is offered. Some of the larger ones
+    # have no square base at all, so adding them would empty `floor-base`.
     blurb: >
       All tile sizes are in inches, which are also squares. Most people use
       2×2. 4×2 is handy for hallways, and a few systems have used 3×3 as
@@ -148,29 +112,8 @@ steps:
 roles:
   floor:
     title: Floor
-    # A plain square floor. `deny_children: [shape]` refuses
-    # `shape|floor|wall`, `shape|curved` and `shape|floor|s2w`; `shape|floor`
-    # is spared for being required and `shape|square` for being allowed.
-    # `deny_children: [component]` then removes `component|pool` and the rest.
-    #
-    # `allow: [shape|square]` is load-bearing — without it the sweep takes
-    # `shape|square` too and the set is empty, not merely smaller.
-    #
-    # This is the wall guide's floor query minus TWO terms — its
-    # `allow: [component|wall]` and its `deny: [shape|base]` — and measurement
-    # says the two select the IDENTICAL 533 pieces.
-    #
-    # An earlier version of this comment claimed the missing `allow` is what
-    # keeps wall-bearing tiles out. That was wrong. Only 14 pieces today carry
-    # both `shape|floor` and `component|wall`, and all 14 also carry
-    # `shape|floor|wall|angled` or `shape|floor|s2w` — so they fail the shape
-    # sweep whether or not the component term is there. (Every term is an AND
-    # in one WHERE clause, not a sequence, so "already taken" describes
-    # redundancy rather than ordering.) The wall guide needs that `allow` only
-    # because its *method options* require `shape|floor|wall`, which exempts
-    # the tag from the sweep and lets the component term bite. No option here
-    # does that, so listing it would be inert — it is left out because it says
-    # nothing, not because it is wrong.
+    # `allow: [shape|square]` is load-bearing: the shape sweep takes
+    # `shape|square` too, and without sparing it this matches nothing.
     query:
       require:
         - shape|floor
@@ -208,22 +151,8 @@ refinements:
     prompt: Floor texture
     default: texture|dungeon_stone
     from_namespace: texture
-    # No counts in these blurbs, deliberately. The wall guide's equivalents
-    # carry them ("71 floors", "38 floors", ...) and every one is now wrong —
-    # measured 151/65/77/51/24 against this role. Correcting them would not
-    # help, because the honest number depends on the size already chosen and
-    # texture is asked AFTER size: dungeon stone is 151 across all sizes, 54 at
-    # the default 2x2, and 18 at 4x4. One figure cannot be true of all three,
-    # so a number here is wrong in most states the person can be in.
-    #
-    # What is left is the part that does not rot. Each claim below was checked
-    # against the catalog: dungeon stone really is entirely block or eroded,
-    # block really is what gets recommended, and the wood floors really are all
-    # boarded, in exactly two plank layouts.
-    #
-    # If counts are wanted, they should be derived — the engine already returns
-    # a count per answer for `from_combination` refinements. See
-    # openforge_catalog-ume.
+    # Blurbs carry no counts: the honest number depends on the size already
+    # chosen, and size is asked first.
     choices:
       - tag: texture|dungeon_stone
         title: Dungeon stone
@@ -245,9 +174,8 @@ refinements:
   - key: base-clips
     role: "*"
     browsable: true
-    # Everything except the floor itself, which is to say the base. Spelled
-    # as an exception rather than as `role: floor-base` so that it keeps
-    # covering the bases if this guide ever gains another one.
+    # An exception rather than `role: floor-base`, so it still covers the
+    # bases if this guide gains another one.
     except_roles:
       - floor
     group: How do the pieces clip together?
@@ -333,12 +261,8 @@ refinements:
       which OpenLOCK clips print with and which you have to snap out first. It
       is the question people ask most.
     from_combination: connection
-    # Only OpenLOCK and OpenLOCK unsupported can ever be offered here — no
-    # floor in this role's set carries dragonlock or magnetic, and the
-    # dragonlock ones that exist are all ruined tiles the component sweep
-    # removes. The other two titles and both exclusions are inert today and
-    # kept as cheap cover for a catalog that grows, which is exactly how the
-    # counts above went stale.
+    # No floor carries dragonlock or magnetic, so those titles and the
+    # exclusions below are inert — kept as cover for a growing catalog.
     titles:
       connection|openlock: OpenLOCK
       connection|dragonlock: DragonLock
