@@ -7605,6 +7605,19 @@
         "config": {
             "parts": [
                 {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|nova|sliding"
+                            },
+                            {
+                                "tag": "size|single"
+                            }
+                        ]
+                    }
+                },
+                {
                     "name": "base",
                     "optional": true,
                     "tags": {
@@ -7740,7 +7753,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -7759,6 +7772,19 @@
     {
         "config": {
             "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|nova|sliding"
+                            },
+                            {
+                                "tag": "size|single"
+                            }
+                        ]
+                    }
+                },
                 {
                     "name": "base",
                     "optional": true,
@@ -7895,7 +7921,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -8090,28 +8116,6 @@
                             },
                             {
                                 "tag": "size|single"
-                            }
-                        ]
-                    }
-                },
-                {
-                    "name": "base",
-                    "optional": true,
-                    "tags": {
-                        "constrain": [
-                            {
-                                "tag": "shape"
-                            },
-                            {
-                                "tag": "size|width"
-                            },
-                            {
-                                "tag": "texture"
-                            }
-                        ],
-                        "require": [
-                            {
-                                "tag": "shape|base"
                             }
                         ]
                     }
@@ -9934,6 +9938,23 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|nova|sliding"
+                            },
+                            {
+                                "tag": "size|single"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "nova_trail#wall,door+sliding+pocket+mirror.A.openlock+unsupported.stl",
             "file_modified_at": "2026-09-29T21:52:56.400968",
@@ -10046,7 +10067,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -10064,6 +10085,23 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|nova|sliding"
+                            },
+                            {
+                                "tag": "size|single"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "nova_trail#wall,door+sliding+pocket.A.openlock+unsupported.stl",
             "file_modified_at": "2026-09-29T21:53:03.428432",
@@ -10176,7 +10214,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -11815,6 +11853,23 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|nova|sliding"
+                            },
+                            {
+                                "tag": "size|single"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "nova_trail#wall,door+sliding+pocket+mirror.A.openlock.stl",
             "file_modified_at": "2026-09-29T22:23:29.509004",
@@ -11927,7 +11982,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -11944,6 +11999,23 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|nova|sliding"
+                            },
+                            {
+                                "tag": "size|single"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "nova_trail#wall,door+sliding+pocket.A.openlock.stl",
             "file_modified_at": "2026-09-29T22:26:05.727709",
@@ -12056,7 +12128,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
