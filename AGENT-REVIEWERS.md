@@ -14,7 +14,7 @@ Each H2 below names a reviewer. The one-line summary tells the main loop **what 
 
 ## general-reviewer
 
-**What it checks:** the whole PR, generalist pass — logic correctness against claims/docs (verified empirically, not by plausibility), domain/design soundness against upcoming beads tickets, contract fidelity against authoritative sources, cross-cutting interactions between the PR's parts, PR-body/docstring accuracy, design-level house style. Explicitly does NOT duplicate the specialist reviewers' dimensions.
+**What it checks:** the whole PR, generalist pass — logic correctness against claims/docs (verified empirically, not by plausibility), domain/design soundness against upcoming beads tickets, contract fidelity against authoritative sources, cross-cutting interactions between the PR's parts, docstrings that contradict the code, design-level house style. Does not check PR-body wording or counts. Explicitly does NOT duplicate the specialist reviewers' dimensions.
 **When to spawn:** **every PR, every round** — this repo has no Gemini/Cursor, so this reviewer is the broad-coverage pass. Never skipped for scope; last to retire under diminishing returns. Posts a single structured PR comment (not line comments) and per-item verdicts on verification rounds.
 
 Read `.reviewers/general-reviewer.md` and follow it as your complete review specification.
@@ -149,6 +149,8 @@ Read `.reviewers/credentials-hygiene-reviewer.md` and follow it as your complete
 
 Each reviewer runs independently and reports findings without coordination. A reviewer's silence on something is not an endorsement — it just means that reviewer didn't see anything in its scope.
 
+**Comment and docstring findings belong to `comment-analyzer`.** Other reviewers don't file them unless the comment is a symptom of their own finding (e.g. dead code whose docstring still describes it).
+
 **No external review bots on this repo.** Gemini Code Assist and Cursor Bugbot are not installed; do not burn `--wait` cycles polling for them. `general-reviewer` is the pack's broad-coverage substitute and spawns on every PR alongside the in-scope specialists.
 
 **Per-reviewer file scope:**
@@ -207,6 +209,7 @@ Every finding must be tagged with a beads-style priority:
 - `test-coverage-reviewer`: **P2** by default.
 - `complexity-reviewer`: **P2** for objective floor violations; **P3** for heuristic findings.
 - `dead-code-reviewer`: **P3** by default.
+- **Comment, docstring and PR-body wording (any reviewer):** **P3**, and the fix is deleting or shortening the text. **P2** only if the text would lead a reader to write a bug. Never P1. This rule overrides any spec under `.reviewers/`.
 
 A reviewer may promote or demote a specific finding from its default, but must state why. **Where a spec under `.reviewers/` tags a specific pattern with an explicit priority, the spec's tag wins over this table** — the table gives each reviewer's default, not a ceiling/floor.
 
