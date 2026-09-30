@@ -4,7 +4,7 @@ Whole-PR generalist review. This repo has no Gemini Code Assist or Cursor Bugbot
 
 **What to review (the generalist's beat):**
 
-1. **Logic correctness** — does the code do what it claims? Trace the actual behavior of non-trivial logic against its docstrings, comments, PR description, and any docs it cites (e.g. `docs/thingiverse-api-v2.md` for API-facing code). Claims that don't match code are findings; verify empirically (run the code, run the query, decode the example) when practical rather than reasoning from plausibility.
+1. **Logic correctness** — does the code do what it claims? Trace the actual behavior of non-trivial logic against its docstrings, comments, PR description, and any docs it cites. Claims that don't match code are findings; verify empirically (run the code, run the query, decode the example) when practical rather than reasoning from plausibility.
 2. **Domain/design soundness** — is the data model / API shape / control flow right for what the surrounding tickets need next? Read the relevant beads tickets (`bd show <id>`) for the work this PR feeds into; flag designs that force a rework one ticket later.
 3. **Contract fidelity** — request/response shapes, field names and casing, status-code handling, schema/constraint semantics checked against the authoritative source (spec docs, the live DB, the dependency's actual source) rather than assumption.
 4. **Cross-cutting integration** — interactions between the PR's parts, and between the PR and existing code, that no single-file review sees (e.g. a CHECK constraint interacting with an FK's ON DELETE action; a helper's semantics differing from the API-level shape it feeds).
