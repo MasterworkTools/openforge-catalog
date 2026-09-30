@@ -203,6 +203,9 @@ steps:
           The tile prints bare and sits in a base that carries the
           connectors. The usual openforge arrangement.
         roles:
+          # A bare tile is openforge. Without this the dialog also offers
+          # one-piece OpenLOCK floors, which already carry their own base.
+          floor: {require: ['connection|openforge']}
           floor-base: {require: ['shape|base|square']}
       - key: single-piece
         title: One piece, base included
