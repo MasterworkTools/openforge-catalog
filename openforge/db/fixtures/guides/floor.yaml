@@ -170,6 +170,8 @@ refinements:
           wood.
       - tag: texture|aztlan
         title: Aztlan
+      - tag: texture|nova_trail
+        title: Nova Trail
 
   - key: base-clips
     role: "*"
