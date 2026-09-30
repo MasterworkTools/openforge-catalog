@@ -765,13 +765,15 @@ refinements:
 
       Topless removes the material above the clip bay, which is not
       thick to begin with: faster to print, and no supports to take
-      out. I don't recommend it on its own, though — there is very
-      little contact between the top of the base and whatever you glue
-      it to. If you want a single central OpenLOCK bay, which is a
-      common choice, take the magnetic OpenLOCK base and simply don't
-      fit the magnets. Unsupported is newer: modern printers bridge
-      well enough that many people find they don't need supports at
-      all.
+      out. Plain topless is the one to be careful with — with that
+      material gone there is very little contact between the base and
+      whatever you glue to it. Topless *with magnets* does not have
+      that problem, and that is the combination recommended here: the
+      magnetic base gives you plenty to glue to. If you want a single
+      central OpenLOCK bay, which is a common choice, take the magnetic
+      OpenLOCK base and simply don't fit the magnets. Unsupported is
+      newer: modern printers bridge well enough that many people find
+      they don't need supports at all.
 
       Print your clips in PETG, not PLA. PLA is rigid and brittle, so
       clips snap instead of flexing. Keep the bases in whatever you
