@@ -8115,9 +8115,222 @@
                             }
                         ]
                     }
+                },
+                {
+                    "name": "base",
+                    "optional": true,
+                    "tags": {
+                        "constrain": [
+                            {
+                                "tag": "shape"
+                            },
+                            {
+                                "tag": "size|width"
+                            },
+                            {
+                                "tag": "texture"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "shape|base"
+                            }
+                        ]
+                    }
                 }
             ]
         },
+        "file_metadata": {
+            "file": "nova_trail#wall,door+sliding+slot+mirror.Q.openforge.stl",
+            "file_modified_at": "2026-09-30T10:15:12.636022",
+            "full_name": "tiles/nova_trail/separate_wall/primary_walls/wall+door/openforge/nova_trail#wall,door+sliding+slot+mirror.Q.openforge.stl",
+            "md5": "fd1c31831564a079253e041155a421a7",
+            "size": 4746284,
+            "storage_address": "https://objects.openforge.tools/models/fd1c31/fd1c31831564a079253e041155a421a7.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/fd1c31/fd1c31831564a079253e041155a421a7.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": true,
+        "tags": [
+            "build|separate wall",
+            "component|door",
+            "component|door|mirror",
+            "component|door|sliding",
+            "component|door|slot",
+            "connection|openforge",
+            "shape|square",
+            "shape|wall",
+            "size|openlock|Q",
+            "size|width|4",
+            "texture|nova_trail"
+        ],
+        "type": "model"
+    },
+    {
+        "config": {
+            "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|nova|sliding"
+                            },
+                            {
+                                "tag": "size|single"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "name": "base",
+                    "optional": true,
+                    "tags": {
+                        "constrain": [
+                            {
+                                "tag": "shape"
+                            },
+                            {
+                                "tag": "size|width"
+                            },
+                            {
+                                "tag": "texture"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "shape|base"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "name": "base",
+                    "optional": true,
+                    "tags": {
+                        "constrain": [
+                            {
+                                "tag": "shape"
+                            },
+                            {
+                                "tag": "size|width"
+                            },
+                            {
+                                "tag": "texture"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "shape|base"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        "deprecated": true,
         "file_metadata": {
             "file": "nova_trail#wall,door+sliding+slot+mirror.Q.openforge.stl",
             "file_modified_at": "2026-09-29T21:53:15.022995",
