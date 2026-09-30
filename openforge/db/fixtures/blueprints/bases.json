@@ -188870,6 +188870,5278 @@
     },
     {
         "file_metadata": {
+            "file": "nova_trail#base+wall.A.dragonlock,magnetic+flex.stl",
+            "file_modified_at": "2026-09-30T10:08:21.610699",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%nova_trail/dragonlock,magnetic+flex/nova_trail#base+wall.A.dragonlock,magnetic+flex.stl",
+            "md5": "1c7d455d8b24ae2d5982d98fc2c4b1ec",
+            "size": 566784,
+            "storage_address": "https://objects.openforge.tools/models/1c7d45/1c7d455d8b24ae2d5982d98fc2c4b1ec.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/1c7d45/1c7d455d8b24ae2d5982d98fc2c4b1ec.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "build|separate wall",
+            "connection|dragonlock",
+            "connection|magnetic",
+            "connection|magnetic|flex",
+            "shape|base",
+            "shape|base|wall",
+            "shape|square",
+            "shape|wall",
+            "size|openlock|A",
+            "size|width|2",
+            "texture|nova_trail"
+        ],
+        "type": "model"
+    },
+    {
+        "file_metadata": {
+            "file": "nova_trail#base+wall.BA+mirror.dragonlock,magnetic+flex.stl",
+            "file_modified_at": "2026-09-30T09:45:56.918623",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%nova_trail/dragonlock,magnetic+flex/nova_trail#base+wall.BA+mirror.dragonlock,magnetic+flex.stl",
+            "md5": "b43ecdba92842f1fb9e8ff6e2e8862b5",
+            "size": 441284,
+            "storage_address": "https://objects.openforge.tools/models/b43ecd/b43ecdba92842f1fb9e8ff6e2e8862b5.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/b43ecd/b43ecdba92842f1fb9e8ff6e2e8862b5.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "build|separate wall",
+            "connection|dragonlock",
+            "connection|magnetic",
+            "connection|magnetic|flex",
+            "shape|base",
+            "shape|base|wall",
+            "shape|option|mirror",
+            "shape|square",
+            "shape|wall",
+            "size|openlock|BA",
+            "size|width|1.5",
+            "texture|nova_trail"
+        ],
+        "type": "model"
+    },
+    {
+        "file_metadata": {
+            "file": "nova_trail#base+wall.BA.dragonlock,magnetic+flex.stl",
+            "file_modified_at": "2026-09-30T09:45:52.892689",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%nova_trail/dragonlock,magnetic+flex/nova_trail#base+wall.BA.dragonlock,magnetic+flex.stl",
+            "md5": "ffffe145f7d38f1d7c74aa767adc85f5",
+            "size": 442284,
+            "storage_address": "https://objects.openforge.tools/models/ffffe1/ffffe145f7d38f1d7c74aa767adc85f5.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/ffffe1/ffffe145f7d38f1d7c74aa767adc85f5.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "build|separate wall",
+            "connection|dragonlock",
+            "connection|magnetic",
+            "connection|magnetic|flex",
+            "shape|base",
+            "shape|base|wall",
+            "shape|square",
+            "shape|wall",
+            "size|openlock|BA",
+            "size|width|1.5",
+            "texture|nova_trail"
+        ],
+        "type": "model"
+    },
+    {
+        "file_metadata": {
+            "file": "nova_trail#base+wall.D.dragonlock,magnetic+flex.stl",
+            "file_modified_at": "2026-09-30T10:07:38.345492",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%nova_trail/dragonlock,magnetic+flex/nova_trail#base+wall.D.dragonlock,magnetic+flex.stl",
+            "md5": "0022b98e60987c9bf6096e2f9a0db732",
+            "size": 760184,
+            "storage_address": "https://objects.openforge.tools/models/0022b9/0022b98e60987c9bf6096e2f9a0db732.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/0022b9/0022b98e60987c9bf6096e2f9a0db732.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "build|separate wall",
+            "connection|dragonlock",
+            "connection|magnetic",
+            "connection|magnetic|flex",
+            "shape|base",
+            "shape|base|wall",
+            "shape|square",
+            "shape|wall",
+            "size|openlock|D",
+            "size|width|3",
+            "texture|nova_trail"
+        ],
+        "type": "model"
+    },
+    {
+        "file_metadata": {
+            "file": "nova_trail#base+wall.Q.dragonlock,magnetic+flex.stl",
+            "file_modified_at": "2026-09-30T10:07:26.982600",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%nova_trail/dragonlock,magnetic+flex/nova_trail#base+wall.Q.dragonlock,magnetic+flex.stl",
+            "md5": "916b6311c1c42d996eb1493d655c4582",
+            "size": 948784,
+            "storage_address": "https://objects.openforge.tools/models/916b63/916b6311c1c42d996eb1493d655c4582.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/916b63/916b6311c1c42d996eb1493d655c4582.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "build|separate wall",
+            "connection|dragonlock",
+            "connection|magnetic",
+            "connection|magnetic|flex",
+            "shape|base",
+            "shape|base|wall",
+            "shape|square",
+            "shape|wall",
+            "size|openlock|Q",
+            "size|width|4",
+            "texture|nova_trail"
+        ],
+        "type": "model"
+    },
+    {
+        "file_metadata": {
+            "file": "nova_trail#base+wall.A.dragonlock.stl",
+            "file_modified_at": "2026-09-30T10:10:18.866458",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%nova_trail/dragonlock/nova_trail#base+wall.A.dragonlock.stl",
+            "md5": "347bfe8361ac8b8b3107ed4e4b4efad5",
+            "size": 678184,
+            "storage_address": "https://objects.openforge.tools/models/347bfe/347bfe8361ac8b8b3107ed4e4b4efad5.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/347bfe/347bfe8361ac8b8b3107ed4e4b4efad5.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "build|separate wall",
+            "connection|dragonlock",
+            "shape|base",
+            "shape|base|wall",
+            "shape|square",
+            "shape|wall",
+            "size|openlock|A",
+            "size|width|2",
+            "texture|nova_trail"
+        ],
+        "type": "model"
+    },
+    {
+        "file_metadata": {
+            "file": "nova_trail#base+wall.BA.dragonlock.stl",
+            "file_modified_at": "2026-09-30T10:09:54.638222",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%nova_trail/dragonlock/nova_trail#base+wall.BA.dragonlock.stl",
+            "md5": "b74d7b20f10efcec8158d4b81aec4c2e",
+            "size": 493684,
+            "storage_address": "https://objects.openforge.tools/models/b74d7b/b74d7b20f10efcec8158d4b81aec4c2e.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/b74d7b/b74d7b20f10efcec8158d4b81aec4c2e.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "build|separate wall",
+            "connection|dragonlock",
+            "shape|base",
+            "shape|base|wall",
+            "shape|square",
+            "shape|wall",
+            "size|openlock|BA",
+            "size|width|1.5",
+            "texture|nova_trail"
+        ],
+        "type": "model"
+    },
+    {
+        "file_metadata": {
+            "file": "nova_trail#base+wall.D.dragonlock.stl",
+            "file_modified_at": "2026-09-30T10:09:37.259722",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%nova_trail/dragonlock/nova_trail#base+wall.D.dragonlock.stl",
+            "md5": "44745af0ed6a63349b25cecf8e5d6d00",
+            "size": 908884,
+            "storage_address": "https://objects.openforge.tools/models/44745a/44745af0ed6a63349b25cecf8e5d6d00.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/44745a/44745af0ed6a63349b25cecf8e5d6d00.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "build|separate wall",
+            "connection|dragonlock",
+            "shape|base",
+            "shape|base|wall",
+            "shape|square",
+            "shape|wall",
+            "size|openlock|D",
+            "size|width|3",
+            "texture|nova_trail"
+        ],
+        "type": "model"
+    },
+    {
+        "file_metadata": {
+            "file": "nova_trail#base+wall.IA.dragonlock.stl",
+            "file_modified_at": "2026-09-30T10:09:08.810032",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%nova_trail/dragonlock/nova_trail#base+wall.IA.dragonlock.stl",
+            "md5": "d35bde630c7ba4468c77a3c5d956e01a",
+            "size": 323784,
+            "storage_address": "https://objects.openforge.tools/models/d35bde/d35bde630c7ba4468c77a3c5d956e01a.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/d35bde/d35bde630c7ba4468c77a3c5d956e01a.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "build|separate wall",
+            "connection|dragonlock",
+            "shape|base",
+            "shape|base|wall",
+            "shape|square",
+            "shape|wall",
+            "size|openlock|IA",
+            "size|width|1",
+            "texture|nova_trail"
+        ],
+        "type": "model"
+    },
+    {
+        "file_metadata": {
+            "file": "nova_trail#base+wall.Q.dragonlock.stl",
+            "file_modified_at": "2026-09-30T10:08:48.591012",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%nova_trail/dragonlock/nova_trail#base+wall.Q.dragonlock.stl",
+            "md5": "99a92f6f103fe1c8885e7890d70d37b2",
+            "size": 1158084,
+            "storage_address": "https://objects.openforge.tools/models/99a92f/99a92f6f103fe1c8885e7890d70d37b2.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/99a92f/99a92f6f103fe1c8885e7890d70d37b2.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "build|separate wall",
+            "connection|dragonlock",
+            "shape|base",
+            "shape|base|wall",
+            "shape|square",
+            "shape|wall",
+            "size|openlock|Q",
+            "size|width|4",
+            "texture|nova_trail"
+        ],
+        "type": "model"
+    },
+    {
+        "file_metadata": {
+            "file": "nova_trail#base+wall.A.magnetic+flex.stl",
+            "file_modified_at": "2026-09-30T09:40:49.528780",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%nova_trail/magnetic+flex/nova_trail#base+wall.A.magnetic+flex.stl",
+            "md5": "9e60ac418c9f48ccd94f3617dde63995",
+            "size": 500184,
+            "storage_address": "https://objects.openforge.tools/models/9e60ac/9e60ac418c9f48ccd94f3617dde63995.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/9e60ac/9e60ac418c9f48ccd94f3617dde63995.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "build|separate wall",
+            "connection|magnetic",
+            "connection|magnetic|flex",
+            "shape|base",
+            "shape|base|wall",
+            "shape|square",
+            "shape|wall",
+            "size|openlock|A",
+            "size|width|2",
+            "texture|nova_trail"
+        ],
+        "type": "model"
+    },
+    {
+        "file_metadata": {
+            "file": "nova_trail#base+wall.BA.magnetic+flex.stl",
+            "file_modified_at": "2026-09-30T09:45:47.204391",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%nova_trail/magnetic+flex/nova_trail#base+wall.BA.magnetic+flex.stl",
+            "md5": "9ff6bcfc6faff27963c00b7fa08d66ae",
+            "size": 396784,
+            "storage_address": "https://objects.openforge.tools/models/9ff6bc/9ff6bcfc6faff27963c00b7fa08d66ae.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/9ff6bc/9ff6bcfc6faff27963c00b7fa08d66ae.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "build|separate wall",
+            "connection|magnetic",
+            "connection|magnetic|flex",
+            "shape|base",
+            "shape|base|wall",
+            "shape|square",
+            "shape|wall",
+            "size|openlock|BA",
+            "size|width|1.5",
+            "texture|nova_trail"
+        ],
+        "type": "model"
+    },
+    {
+        "file_metadata": {
+            "file": "nova_trail#base+wall.D.magnetic+flex.stl",
+            "file_modified_at": "2026-09-30T10:08:10.890731",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%nova_trail/magnetic+flex/nova_trail#base+wall.D.magnetic+flex.stl",
+            "md5": "bd13cfb36720f2aa9ad4daa23b0daebb",
+            "size": 618784,
+            "storage_address": "https://objects.openforge.tools/models/bd13cf/bd13cfb36720f2aa9ad4daa23b0daebb.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/bd13cf/bd13cfb36720f2aa9ad4daa23b0daebb.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "build|separate wall",
+            "connection|magnetic",
+            "connection|magnetic|flex",
+            "shape|base",
+            "shape|base|wall",
+            "shape|square",
+            "shape|wall",
+            "size|openlock|D",
+            "size|width|3",
+            "texture|nova_trail"
+        ],
+        "type": "model"
+    },
+    {
+        "file_metadata": {
+            "file": "nova_trail#base+wall.IA.magnetic+flex.stl",
+            "file_modified_at": "2026-09-30T09:45:41.543035",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%nova_trail/magnetic+flex/nova_trail#base+wall.IA.magnetic+flex.stl",
+            "md5": "7885585514f06612ed2ff9a0bd9a5b5f",
+            "size": 268784,
+            "storage_address": "https://objects.openforge.tools/models/788558/7885585514f06612ed2ff9a0bd9a5b5f.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/788558/7885585514f06612ed2ff9a0bd9a5b5f.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "build|separate wall",
+            "connection|magnetic",
+            "connection|magnetic|flex",
+            "shape|base",
+            "shape|base|wall",
+            "shape|square",
+            "shape|wall",
+            "size|openlock|IA",
+            "size|width|1",
+            "texture|nova_trail"
+        ],
+        "type": "model"
+    },
+    {
+        "file_metadata": {
+            "file": "nova_trail#base+wall.Q.magnetic+flex.stl",
+            "file_modified_at": "2026-09-30T09:41:08.890045",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%nova_trail/magnetic+flex/nova_trail#base+wall.Q.magnetic+flex.stl",
+            "md5": "ca833b5fbe97743e06ab2d19bcc4363d",
+            "size": 752984,
+            "storage_address": "https://objects.openforge.tools/models/ca833b/ca833b5fbe97743e06ab2d19bcc4363d.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/ca833b/ca833b5fbe97743e06ab2d19bcc4363d.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "build|separate wall",
+            "connection|magnetic",
+            "connection|magnetic|flex",
+            "shape|base",
+            "shape|base|wall",
+            "shape|square",
+            "shape|wall",
+            "size|openlock|Q",
+            "size|width|4",
+            "texture|nova_trail"
+        ],
+        "type": "model"
+    },
+    {
+        "file_metadata": {
+            "file": "nova_trail#base+wall.A.openlock+topless,magnetic+flex.stl",
+            "file_modified_at": "2026-09-30T09:40:49.812573",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%nova_trail/openlock+topless,magnetic+flex/nova_trail#base+wall.A.openlock+topless,magnetic+flex.stl",
+            "md5": "6dedb586afb5e0524e7068fdfa8c3ec3",
+            "size": 506884,
+            "storage_address": "https://objects.openforge.tools/models/6dedb5/6dedb586afb5e0524e7068fdfa8c3ec3.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/6dedb5/6dedb586afb5e0524e7068fdfa8c3ec3.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "build|separate wall",
+            "connection|magnetic",
+            "connection|magnetic|flex",
+            "connection|openlock",
+            "connection|openlock|topless",
+            "shape|base",
+            "shape|base|wall",
+            "shape|square",
+            "shape|wall",
+            "size|openlock|A",
+            "size|width|2",
+            "texture|nova_trail"
+        ],
+        "type": "model"
+    },
+    {
+        "file_metadata": {
+            "file": "nova_trail#base+wall.BA+mirror.openlock+topless,magnetic+flex.stl",
+            "file_modified_at": "2026-09-30T09:45:55.971577",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%nova_trail/openlock+topless,magnetic+flex/nova_trail#base+wall.BA+mirror.openlock+topless,magnetic+flex.stl",
+            "md5": "493784aa8114040c0f442175fddef05a",
+            "size": 377184,
+            "storage_address": "https://objects.openforge.tools/models/493784/493784aa8114040c0f442175fddef05a.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/493784/493784aa8114040c0f442175fddef05a.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "build|separate wall",
+            "connection|magnetic",
+            "connection|magnetic|flex",
+            "connection|openlock",
+            "connection|openlock|topless",
+            "shape|base",
+            "shape|base|wall",
+            "shape|option|mirror",
+            "shape|square",
+            "shape|wall",
+            "size|openlock|BA",
+            "size|width|1.5",
+            "texture|nova_trail"
+        ],
+        "type": "model"
+    },
+    {
+        "file_metadata": {
+            "file": "nova_trail#base+wall.BA.openlock+topless,magnetic+flex.stl",
+            "file_modified_at": "2026-09-30T09:45:50.727884",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%nova_trail/openlock+topless,magnetic+flex/nova_trail#base+wall.BA.openlock+topless,magnetic+flex.stl",
+            "md5": "0e9a0f192eaa73eee5afb24b8c711112",
+            "size": 378084,
+            "storage_address": "https://objects.openforge.tools/models/0e9a0f/0e9a0f192eaa73eee5afb24b8c711112.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/0e9a0f/0e9a0f192eaa73eee5afb24b8c711112.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "build|separate wall",
+            "connection|magnetic",
+            "connection|magnetic|flex",
+            "connection|openlock",
+            "connection|openlock|topless",
+            "shape|base",
+            "shape|base|wall",
+            "shape|square",
+            "shape|wall",
+            "size|openlock|BA",
+            "size|width|1.5",
+            "texture|nova_trail"
+        ],
+        "type": "model"
+    },
+    {
+        "file_metadata": {
+            "file": "nova_trail#base+wall.D.openlock+topless,magnetic+flex.stl",
+            "file_modified_at": "2026-09-30T10:11:43.210114",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%nova_trail/openlock+topless,magnetic+flex/nova_trail#base+wall.D.openlock+topless,magnetic+flex.stl",
+            "md5": "fc88cc7d18fcf22f332f993ba371602f",
+            "size": 631384,
+            "storage_address": "https://objects.openforge.tools/models/fc88cc/fc88cc7d18fcf22f332f993ba371602f.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/fc88cc/fc88cc7d18fcf22f332f993ba371602f.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "build|separate wall",
+            "connection|magnetic",
+            "connection|magnetic|flex",
+            "connection|openlock",
+            "connection|openlock|topless",
+            "shape|base",
+            "shape|base|wall",
+            "shape|square",
+            "shape|wall",
+            "size|openlock|D",
+            "size|width|3",
+            "texture|nova_trail"
+        ],
+        "type": "model"
+    },
+    {
+        "file_metadata": {
+            "file": "nova_trail#base+wall.Q.openlock+topless,magnetic+flex.stl",
+            "file_modified_at": "2026-09-30T09:41:09.271133",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%nova_trail/openlock+topless,magnetic+flex/nova_trail#base+wall.Q.openlock+topless,magnetic+flex.stl",
+            "md5": "372488aa0db202addacdaf499b4c7806",
+            "size": 773884,
+            "storage_address": "https://objects.openforge.tools/models/372488/372488aa0db202addacdaf499b4c7806.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/372488/372488aa0db202addacdaf499b4c7806.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "build|separate wall",
+            "connection|magnetic",
+            "connection|magnetic|flex",
+            "connection|openlock",
+            "connection|openlock|topless",
+            "shape|base",
+            "shape|base|wall",
+            "shape|square",
+            "shape|wall",
+            "size|openlock|Q",
+            "size|width|4",
+            "texture|nova_trail"
+        ],
+        "type": "model"
+    },
+    {
+        "file_metadata": {
+            "file": "nova_trail#base+wall.IA.openlock+topless.stl",
+            "file_modified_at": "2026-09-30T09:45:40.993554",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%nova_trail/openlock+topless/nova_trail#base+wall.IA.openlock+topless.stl",
+            "md5": "c334290dc2de7ea6057712f80dad2f15",
+            "size": 249084,
+            "storage_address": "https://objects.openforge.tools/models/c33429/c334290dc2de7ea6057712f80dad2f15.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/c33429/c334290dc2de7ea6057712f80dad2f15.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "build|separate wall",
+            "connection|openlock",
+            "connection|openlock|topless",
+            "shape|base",
+            "shape|base|wall",
+            "shape|square",
+            "shape|wall",
+            "size|openlock|IA",
+            "size|width|1",
+            "texture|nova_trail"
+        ],
+        "type": "model"
+    },
+    {
+        "file_metadata": {
+            "file": "nova_trail#base+wall.A.openlock+unsupported,magnetic+flex.stl",
+            "file_modified_at": "2026-09-30T09:40:49.725054",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%nova_trail/openlock+unsupported,magnetic+flex/nova_trail#base+wall.A.openlock+unsupported,magnetic+flex.stl",
+            "md5": "51d627f43abadd570d03a4d8b30e204b",
+            "size": 505784,
+            "storage_address": "https://objects.openforge.tools/models/51d627/51d627f43abadd570d03a4d8b30e204b.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/51d627/51d627f43abadd570d03a4d8b30e204b.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "build|separate wall",
+            "connection|magnetic",
+            "connection|magnetic|flex",
+            "connection|openlock",
+            "connection|openlock|unsupported",
+            "shape|base",
+            "shape|base|wall",
+            "shape|square",
+            "shape|wall",
+            "size|openlock|A",
+            "size|width|2",
+            "texture|nova_trail"
+        ],
+        "type": "model"
+    },
+    {
+        "file_metadata": {
+            "file": "nova_trail#base+wall.BA+mirror.openlock+unsupported,magnetic+flex.stl",
+            "file_modified_at": "2026-09-30T09:45:55.073460",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%nova_trail/openlock+unsupported,magnetic+flex/nova_trail#base+wall.BA+mirror.openlock+unsupported,magnetic+flex.stl",
+            "md5": "e95af2ec2be763d8d5a63ae9e1b35289",
+            "size": 375984,
+            "storage_address": "https://objects.openforge.tools/models/e95af2/e95af2ec2be763d8d5a63ae9e1b35289.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/e95af2/e95af2ec2be763d8d5a63ae9e1b35289.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "build|separate wall",
+            "connection|magnetic",
+            "connection|magnetic|flex",
+            "connection|openlock",
+            "connection|openlock|unsupported",
+            "shape|base",
+            "shape|base|wall",
+            "shape|option|mirror",
+            "shape|square",
+            "shape|wall",
+            "size|openlock|BA",
+            "size|width|1.5",
+            "texture|nova_trail"
+        ],
+        "type": "model"
+    },
+    {
+        "file_metadata": {
+            "file": "nova_trail#base+wall.BA.openlock+unsupported,magnetic+flex.stl",
+            "file_modified_at": "2026-09-30T09:45:49.906042",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%nova_trail/openlock+unsupported,magnetic+flex/nova_trail#base+wall.BA.openlock+unsupported,magnetic+flex.stl",
+            "md5": "053e56f296cd97564b385934aba1be89",
+            "size": 376584,
+            "storage_address": "https://objects.openforge.tools/models/053e56/053e56f296cd97564b385934aba1be89.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/053e56/053e56f296cd97564b385934aba1be89.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "build|separate wall",
+            "connection|magnetic",
+            "connection|magnetic|flex",
+            "connection|openlock",
+            "connection|openlock|unsupported",
+            "shape|base",
+            "shape|base|wall",
+            "shape|square",
+            "shape|wall",
+            "size|openlock|BA",
+            "size|width|1.5",
+            "texture|nova_trail"
+        ],
+        "type": "model"
+    },
+    {
+        "file_metadata": {
+            "file": "nova_trail#base+wall.D.openlock+unsupported,magnetic+flex.stl",
+            "file_modified_at": "2026-09-30T10:12:53.162016",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%nova_trail/openlock+unsupported,magnetic+flex/nova_trail#base+wall.D.openlock+unsupported,magnetic+flex.stl",
+            "md5": "fc66906192356f2a90702fe3103ac271",
+            "size": 628984,
+            "storage_address": "https://objects.openforge.tools/models/fc6690/fc66906192356f2a90702fe3103ac271.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/fc6690/fc66906192356f2a90702fe3103ac271.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "build|separate wall",
+            "connection|magnetic",
+            "connection|magnetic|flex",
+            "connection|openlock",
+            "connection|openlock|unsupported",
+            "shape|base",
+            "shape|base|wall",
+            "shape|square",
+            "shape|wall",
+            "size|openlock|D",
+            "size|width|3",
+            "texture|nova_trail"
+        ],
+        "type": "model"
+    },
+    {
+        "file_metadata": {
+            "file": "nova_trail#base+wall.Q.openlock+unsupported,magnetic+flex.stl",
+            "file_modified_at": "2026-09-30T09:41:09.142207",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%nova_trail/openlock+unsupported,magnetic+flex/nova_trail#base+wall.Q.openlock+unsupported,magnetic+flex.stl",
+            "md5": "05a6dbb4a0fdc2e0af61790220242a14",
+            "size": 770384,
+            "storage_address": "https://objects.openforge.tools/models/05a6db/05a6dbb4a0fdc2e0af61790220242a14.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/05a6db/05a6dbb4a0fdc2e0af61790220242a14.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "build|separate wall",
+            "connection|magnetic",
+            "connection|magnetic|flex",
+            "connection|openlock",
+            "connection|openlock|unsupported",
+            "shape|base",
+            "shape|base|wall",
+            "shape|square",
+            "shape|wall",
+            "size|openlock|Q",
+            "size|width|4",
+            "texture|nova_trail"
+        ],
+        "type": "model"
+    },
+    {
+        "file_metadata": {
+            "file": "nova_trail#base+wall.A.openlock+unsupported.stl",
+            "file_modified_at": "2026-09-30T09:40:50.002799",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%nova_trail/openlock+unsupported/nova_trail#base+wall.A.openlock+unsupported.stl",
+            "md5": "30f43504739b402b4d4134154699d1e8",
+            "size": 462384,
+            "storage_address": "https://objects.openforge.tools/models/30f435/30f43504739b402b4d4134154699d1e8.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/30f435/30f43504739b402b4d4134154699d1e8.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "build|separate wall",
+            "connection|openlock",
+            "connection|openlock|unsupported",
+            "shape|base",
+            "shape|base|wall",
+            "shape|square",
+            "shape|wall",
+            "size|openlock|A",
+            "size|width|2",
+            "texture|nova_trail"
+        ],
+        "type": "model"
+    },
+    {
+        "file_metadata": {
+            "file": "nova_trail#base+wall.BA.openlock+unsupported.stl",
+            "file_modified_at": "2026-09-30T09:45:46.382576",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%nova_trail/openlock+unsupported/nova_trail#base+wall.BA.openlock+unsupported.stl",
+            "md5": "275465e8ae4c166e6a67299598032925",
+            "size": 353584,
+            "storage_address": "https://objects.openforge.tools/models/275465/275465e8ae4c166e6a67299598032925.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/275465/275465e8ae4c166e6a67299598032925.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "build|separate wall",
+            "connection|openlock",
+            "connection|openlock|unsupported",
+            "shape|base",
+            "shape|base|wall",
+            "shape|square",
+            "shape|wall",
+            "size|openlock|BA",
+            "size|width|1.5",
+            "texture|nova_trail"
+        ],
+        "type": "model"
+    },
+    {
+        "file_metadata": {
+            "file": "nova_trail#base+wall.D.openlock+unsupported.stl",
+            "file_modified_at": "2026-09-30T09:41:06.044893",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%nova_trail/openlock+unsupported/nova_trail#base+wall.D.openlock+unsupported.stl",
+            "md5": "8246a58e542112c41747e658ae86ed86",
+            "size": 567184,
+            "storage_address": "https://objects.openforge.tools/models/8246a5/8246a58e542112c41747e658ae86ed86.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/8246a5/8246a58e542112c41747e658ae86ed86.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "build|separate wall",
+            "connection|openlock",
+            "connection|openlock|unsupported",
+            "shape|base",
+            "shape|base|wall",
+            "shape|square",
+            "shape|wall",
+            "size|openlock|D",
+            "size|width|3",
+            "texture|nova_trail"
+        ],
+        "type": "model"
+    },
+    {
+        "file_metadata": {
+            "file": "nova_trail#base+wall.IA.openlock+unsupported.stl",
+            "file_modified_at": "2026-09-30T09:45:40.546757",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%nova_trail/openlock+unsupported/nova_trail#base+wall.IA.openlock+unsupported.stl",
+            "md5": "311256d18bbed87834034af8015dffee",
+            "size": 248984,
+            "storage_address": "https://objects.openforge.tools/models/311256/311256d18bbed87834034af8015dffee.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/311256/311256d18bbed87834034af8015dffee.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "build|separate wall",
+            "connection|openlock",
+            "connection|openlock|unsupported",
+            "shape|base",
+            "shape|base|wall",
+            "shape|square",
+            "shape|wall",
+            "size|openlock|IA",
+            "size|width|1",
+            "texture|nova_trail"
+        ],
+        "type": "model"
+    },
+    {
+        "file_metadata": {
+            "file": "nova_trail#base+wall.Q.openlock+unsupported.stl",
+            "file_modified_at": "2026-09-30T09:41:09.504229",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%nova_trail/openlock+unsupported/nova_trail#base+wall.Q.openlock+unsupported.stl",
+            "md5": "6e5b4e9705ba2cfb3ccc3a23d19498a5",
+            "size": 684184,
+            "storage_address": "https://objects.openforge.tools/models/6e5b4e/6e5b4e9705ba2cfb3ccc3a23d19498a5.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/6e5b4e/6e5b4e9705ba2cfb3ccc3a23d19498a5.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "build|separate wall",
+            "connection|openlock",
+            "connection|openlock|unsupported",
+            "shape|base",
+            "shape|base|wall",
+            "shape|square",
+            "shape|wall",
+            "size|openlock|Q",
+            "size|width|4",
+            "texture|nova_trail"
+        ],
+        "type": "model"
+    },
+    {
+        "file_metadata": {
+            "file": "nova_trail#base+wall.A.openlock,magnetic+flex.stl",
+            "file_modified_at": "2026-09-30T09:40:49.635594",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%nova_trail/openlock,magnetic+flex/nova_trail#base+wall.A.openlock,magnetic+flex.stl",
+            "md5": "66b79be2164159efd793c02d9adf23f3",
+            "size": 519584,
+            "storage_address": "https://objects.openforge.tools/models/66b79b/66b79be2164159efd793c02d9adf23f3.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/66b79b/66b79be2164159efd793c02d9adf23f3.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "build|separate wall",
+            "connection|magnetic",
+            "connection|magnetic|flex",
+            "connection|openlock",
+            "shape|base",
+            "shape|base|wall",
+            "shape|square",
+            "shape|wall",
+            "size|openlock|A",
+            "size|width|2",
+            "texture|nova_trail"
+        ],
+        "type": "model"
+    },
+    {
+        "file_metadata": {
+            "file": "nova_trail#base+wall.BA+mirror.openlock,magnetic+flex.stl",
+            "file_modified_at": "2026-09-30T09:45:53.770779",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%nova_trail/openlock,magnetic+flex/nova_trail#base+wall.BA+mirror.openlock,magnetic+flex.stl",
+            "md5": "3885f99634bd03cbedc3aae6690bc130",
+            "size": 389784,
+            "storage_address": "https://objects.openforge.tools/models/3885f9/3885f99634bd03cbedc3aae6690bc130.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/3885f9/3885f99634bd03cbedc3aae6690bc130.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "build|separate wall",
+            "connection|magnetic",
+            "connection|magnetic|flex",
+            "connection|openlock",
+            "shape|base",
+            "shape|base|wall",
+            "shape|option|mirror",
+            "shape|square",
+            "shape|wall",
+            "size|openlock|BA",
+            "size|width|1.5",
+            "texture|nova_trail"
+        ],
+        "type": "model"
+    },
+    {
+        "file_metadata": {
+            "file": "nova_trail#base+wall.BA.openlock,magnetic+flex.stl",
+            "file_modified_at": "2026-09-30T09:45:48.452897",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%nova_trail/openlock,magnetic+flex/nova_trail#base+wall.BA.openlock,magnetic+flex.stl",
+            "md5": "34da358a927da168c2b5e9339b3af65e",
+            "size": 390984,
+            "storage_address": "https://objects.openforge.tools/models/34da35/34da358a927da168c2b5e9339b3af65e.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/34da35/34da358a927da168c2b5e9339b3af65e.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "build|separate wall",
+            "connection|magnetic",
+            "connection|magnetic|flex",
+            "connection|openlock",
+            "shape|base",
+            "shape|base|wall",
+            "shape|square",
+            "shape|wall",
+            "size|openlock|BA",
+            "size|width|1.5",
+            "texture|nova_trail"
+        ],
+        "type": "model"
+    },
+    {
+        "file_metadata": {
+            "file": "nova_trail#base+wall.D.openlock,magnetic+flex.stl",
+            "file_modified_at": "2026-09-30T10:10:51.599421",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%nova_trail/openlock,magnetic+flex/nova_trail#base+wall.D.openlock,magnetic+flex.stl",
+            "md5": "ae4aa89c059ce0d5d6a7629d52ea5687",
+            "size": 646984,
+            "storage_address": "https://objects.openforge.tools/models/ae4aa8/ae4aa89c059ce0d5d6a7629d52ea5687.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/ae4aa8/ae4aa89c059ce0d5d6a7629d52ea5687.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "build|separate wall",
+            "connection|magnetic",
+            "connection|magnetic|flex",
+            "connection|openlock",
+            "shape|base",
+            "shape|base|wall",
+            "shape|square",
+            "shape|wall",
+            "size|openlock|D",
+            "size|width|3",
+            "texture|nova_trail"
+        ],
+        "type": "model"
+    },
+    {
+        "file_metadata": {
+            "file": "nova_trail#base+wall.Q.openlock,magnetic+flex.stl",
+            "file_modified_at": "2026-09-30T09:41:09.014625",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%nova_trail/openlock,magnetic+flex/nova_trail#base+wall.Q.openlock,magnetic+flex.stl",
+            "md5": "8345aae47bfb934bb77813d70dcbd6ee",
+            "size": 800384,
+            "storage_address": "https://objects.openforge.tools/models/8345aa/8345aae47bfb934bb77813d70dcbd6ee.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/8345aa/8345aae47bfb934bb77813d70dcbd6ee.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "build|separate wall",
+            "connection|magnetic",
+            "connection|magnetic|flex",
+            "connection|openlock",
+            "shape|base",
+            "shape|base|wall",
+            "shape|square",
+            "shape|wall",
+            "size|openlock|Q",
+            "size|width|4",
+            "texture|nova_trail"
+        ],
+        "type": "model"
+    },
+    {
+        "file_metadata": {
+            "file": "nova_trail#base+wall.A.openlock.stl",
+            "file_modified_at": "2026-09-30T10:09:00.911896",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%nova_trail/openlock/nova_trail#base+wall.A.openlock.stl",
+            "md5": "2511a18e31b3e9d2bb2a94fb934dcbe5",
+            "size": 501084,
+            "storage_address": "https://objects.openforge.tools/models/2511a1/2511a18e31b3e9d2bb2a94fb934dcbe5.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/2511a1/2511a18e31b3e9d2bb2a94fb934dcbe5.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "build|separate wall",
+            "connection|openlock",
+            "shape|base",
+            "shape|base|wall",
+            "shape|square",
+            "shape|wall",
+            "size|openlock|A",
+            "size|width|2",
+            "texture|nova_trail"
+        ],
+        "type": "model"
+    },
+    {
+        "file_metadata": {
+            "file": "nova_trail#base+wall.BA.openlock.stl",
+            "file_modified_at": "2026-09-30T09:45:45.689700",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%nova_trail/openlock/nova_trail#base+wall.BA.openlock.stl",
+            "md5": "a9e34d87e101a86d752d7e804f2b7570",
+            "size": 381584,
+            "storage_address": "https://objects.openforge.tools/models/a9e34d/a9e34d87e101a86d752d7e804f2b7570.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/a9e34d/a9e34d87e101a86d752d7e804f2b7570.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "build|separate wall",
+            "connection|openlock",
+            "shape|base",
+            "shape|base|wall",
+            "shape|square",
+            "shape|wall",
+            "size|openlock|BA",
+            "size|width|1.5",
+            "texture|nova_trail"
+        ],
+        "type": "model"
+    },
+    {
+        "file_metadata": {
+            "file": "nova_trail#base+wall.D.openlock.stl",
+            "file_modified_at": "2026-09-30T10:09:25.059113",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%nova_trail/openlock/nova_trail#base+wall.D.openlock.stl",
+            "md5": "d9fdd6253dbcbafa855142196fbf7517",
+            "size": 629684,
+            "storage_address": "https://objects.openforge.tools/models/d9fdd6/d9fdd6253dbcbafa855142196fbf7517.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/d9fdd6/d9fdd6253dbcbafa855142196fbf7517.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "build|separate wall",
+            "connection|openlock",
+            "shape|base",
+            "shape|base|wall",
+            "shape|square",
+            "shape|wall",
+            "size|openlock|D",
+            "size|width|3",
+            "texture|nova_trail"
+        ],
+        "type": "model"
+    },
+    {
+        "file_metadata": {
+            "file": "nova_trail#base+wall.IA.openlock.stl",
+            "file_modified_at": "2026-09-30T09:45:40.122777",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%nova_trail/openlock/nova_trail#base+wall.IA.openlock.stl",
+            "md5": "210f8d186c7563c87537e547880b26be",
+            "size": 262984,
+            "storage_address": "https://objects.openforge.tools/models/210f8d/210f8d186c7563c87537e547880b26be.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/210f8d/210f8d186c7563c87537e547880b26be.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "build|separate wall",
+            "connection|openlock",
+            "shape|base",
+            "shape|base|wall",
+            "shape|square",
+            "shape|wall",
+            "size|openlock|IA",
+            "size|width|1",
+            "texture|nova_trail"
+        ],
+        "type": "model"
+    },
+    {
+        "file_metadata": {
+            "file": "nova_trail#base+wall.Q.openlock.stl",
+            "file_modified_at": "2026-09-30T09:41:09.394398",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%nova_trail/openlock/nova_trail#base+wall.Q.openlock.stl",
+            "md5": "a28770407c553308e4c8cbd84edd481b",
+            "size": 763084,
+            "storage_address": "https://objects.openforge.tools/models/a28770/a28770407c553308e4c8cbd84edd481b.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/a28770/a28770407c553308e4c8cbd84edd481b.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "build|separate wall",
+            "connection|openlock",
+            "shape|base",
+            "shape|base|wall",
+            "shape|square",
+            "shape|wall",
+            "size|openlock|Q",
+            "size|width|4",
+            "texture|nova_trail"
+        ],
+        "type": "model"
+    },
+    {
+        "file_metadata": {
             "file": "plain#base+wall.A.dragonlock,magnetic+flex.stl",
             "file_modified_at": "2023-03-30T13:48:55.974204",
             "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%plain/dragonlock,magnetic+flex/plain#base+wall.A.dragonlock,magnetic+flex.stl",
