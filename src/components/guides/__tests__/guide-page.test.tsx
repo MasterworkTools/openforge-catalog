@@ -3190,7 +3190,9 @@ describe('inspecting a part', () => {
     });
 
     render(<GuidePage />);
-    await screen.findByText('a dungeon stone wall');
+    // Two now: the part card names it, and so does the question whose
+    // answer the pin displaced.
+    await screen.findAllByText('a dungeon stone wall');
 
     // Forwarded to the backend, or a shared link would resolve
     // without the very part it was shared to show. The page sends
@@ -3218,6 +3220,12 @@ describe('inspecting a part', () => {
             parts: RESOLVED_WITH_PARTS.parts.map((p) =>
               p.role === 'wall' ? { ...p, pinned: true } : p
             ),
+            // Answered, so it is folded to its answer — the state this
+            // is about. An unanswered question is still showing its
+            // options and has no answer to dim.
+            refinements: RESOLVED_WITH_PARTS.refinements.map((r) =>
+              r.key === 'side-locks' ? { ...r, selected: 'on' } : r
+            ),
           }
         : GUIDE_DOCUMENT
     );
@@ -3226,13 +3234,23 @@ describe('inspecting a part', () => {
 
     // Named by the blueprint, not by the part's title: the title says
     // "Wall", which is the one thing already obvious here.
-    const note = await screen.findByText('You picked a dungeon stone wall');
+    const note = await screen.findByText('Custom Selection');
     // `side-locks` is the question with `role: 'wall'`, and each
     // ungrouped question is its own section, so the section holding the
     // note identifies which question claimed it.
     const section = note.closest('.guide-refinements');
     expect(section).not.toBeNull();
     expect(section!.textContent).toContain('Side locks');
+    // And it names which part, so the admission is not just "something
+    // else decided this".
+    expect(section!.textContent).toContain('a dungeon stone wall');
+
+    // The answer it displaced is dimmed. Asserting the class because
+    // "this answer is not the one in force" is a visual statement and
+    // there is nothing else in the DOM that makes it.
+    expect(
+      within(section as HTMLElement).getByText('Yes').className
+    ).toContain('text-gray-400');
 
     // And it is undone from there.
     const undo = screen.getByRole('button', { name: 'undo' });
@@ -3257,13 +3275,13 @@ describe('inspecting a part', () => {
     );
 
     render(<GuidePage />);
-    await screen.findByText('You picked a dungeon stone wall');
+    await screen.findByText('Custom Selection');
 
     const texture = screen
       .getByRole('heading', { name: 'Texture' })
       .closest('.guide-refinements');
     expect(texture).not.toBeNull();
-    expect(texture!.textContent).not.toContain('You picked');
+    expect(texture!.textContent).not.toContain('Custom Selection');
   });
 
   it('admits a pinned part once, however many questions share its role', async () => {
@@ -3291,11 +3309,9 @@ describe('inspecting a part', () => {
     );
 
     render(<GuidePage />);
-    await screen.findByText('You picked a dungeon stone wall');
+    await screen.findByText('Custom Selection');
 
-    expect(screen.getAllByText('You picked a dungeon stone wall')).toHaveLength(
-      1
-    );
+    expect(screen.getAllByText('Custom Selection')).toHaveLength(1);
     expect(screen.getAllByRole('button', { name: 'undo' })).toHaveLength(1);
   });
 

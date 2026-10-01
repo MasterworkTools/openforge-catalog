@@ -552,17 +552,27 @@ function PinnedOverride({
   onUndo?: () => void;
 }) {
   return (
-    <div className="mt-1 text-xs text-blue-700 flex items-start gap-2">
-      <span className="break-all">You picked {part}</span>
-      {onUndo && (
-        <button
-          type="button"
-          onClick={onUndo}
-          className="underline shrink-0"
-        >
-          undo
-        </button>
-      )}
+    <div className="mt-1 rounded border border-blue-200 bg-blue-50 px-2 py-1.5">
+      <div className="flex items-baseline justify-between gap-2">
+        {/* The weight the answer it replaced is drawn in, because it is
+            the answer now. */}
+        <span className="font-semibold text-blue-800">Custom Selection</span>
+        {onUndo && (
+          <button
+            type="button"
+            onClick={onUndo}
+            className="underline text-blue-700 shrink-0 text-xs"
+          >
+            undo
+          </button>
+        )}
+      </div>
+      {/* A filename is one long token, so it is given its own line and
+          allowed to break anywhere. Beside the label it wrapped into
+          the gap and collided with the link. */}
+      <div className="mt-0.5 break-all leading-snug text-[11px] text-gray-600">
+        {part}
+      </div>
     </div>
   );
 }
