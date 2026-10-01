@@ -80,7 +80,10 @@ export function GuideParts({
   // `string` rather than the ring's own type: this also holds `top` and
   // `bottom`, which are not on the ring, and `SpriteControls` hands
   // angle names back as plain strings.
-  const [view, setView] = useState<string>('front');
+  // front-left, not front: a wall or a floor tile seen face-on is close
+  // to a flat rectangle, and the three-quarter view shows the top face
+  // and one side, which is what tells you what you are printing.
+  const [view, setView] = useState<string>('front-left');
   // Where the drag began, so each move is measured from there rather
   // than accumulating rounding as the pointer travels.
   const viewAtStart = useRef(view);

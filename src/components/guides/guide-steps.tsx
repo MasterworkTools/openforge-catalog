@@ -6,6 +6,7 @@ import {
   GuideRefinement,
   GuideStep,
   MissingReason,
+  Selections,
 } from '@/services/guide-service';
 
 /**
@@ -126,8 +127,29 @@ function Missing({
   );
 }
 
+/**
+ * The answer in force for one question, preferring the URL over the
+ * resolution.
+ *
+ * A click rewrites the URL immediately and the resolution lands a round
+ * trip later, so highlighting from the resolution alone leaves a click
+ * looking ignored for as long as the catalog takes. Only the highlight
+ * reads this: whether a question counts as answered still comes from the
+ * resolution, or clicking would fold the question away as you answered
+ * it.
+ */
+function pickedValue(
+  key: string,
+  selected: string | null,
+  picked?: Selections | null
+): string | null {
+  return picked && key in picked ? (picked[key] ?? null) : selected;
+}
+
 interface GuideStepsProps {
   steps: GuideStep[];
+  /** The URL's answers, which lead the resolution between click and response. */
+  picked?: Selections | null;
   unavailable?: Unavailable;
   because?: Because;
   /**
@@ -144,6 +166,7 @@ interface GuideStepsProps {
 
 export function GuideSteps({
   steps,
+  picked,
   unavailable,
   because,
   opened,
@@ -161,6 +184,7 @@ export function GuideSteps({
             step={step}
             dead={dead}
             because={why}
+            inForce={pickedValue(step.key, step.selected, picked)}
             onSelect={onSelect}
           />
         ) : (
@@ -170,6 +194,7 @@ export function GuideSteps({
             dead={dead}
             because={why}
             open={opened === step.key}
+            inForce={pickedValue(step.key, step.selected, picked)}
             onOpenChange={onOpenChange}
             onSelect={onSelect}
           />
@@ -186,11 +211,14 @@ function OpenStep({
   step,
   dead,
   because,
+  inForce,
   onSelect,
 }: {
   step: GuideStep;
   dead: string[];
   because?: Record<string, MissingReason>;
+  /** The answer the URL holds, which leads the resolution. */
+  inForce: string | null;
   onSelect: (key: string, value: string | null) => void;
 }) {
   const live = step.options.filter((option) => !dead.includes(option.key));
@@ -210,9 +238,11 @@ function OpenStep({
           <Answer
             key={option.key}
             label={option.title}
-            chosen={false}
+            chosen={inForce === option.key}
             recommended={step.recommended === option.key}
-            assumed={step.recommended === option.key}
+            // Recommended and in force only while nothing has been
+            // picked; once it has, it is a choice rather than a guess.
+            assumed={inForce === null && step.recommended === option.key}
             onPick={() => onSelect(step.key, option.key)}
           />
         ))}
@@ -241,6 +271,7 @@ function AnsweredStep({
   dead,
   because,
   open,
+  inForce,
   onOpenChange,
   onSelect,
 }: {
@@ -248,10 +279,14 @@ function AnsweredStep({
   dead: string[];
   because?: Record<string, MissingReason>;
   open: boolean;
+  /** The answer the URL holds, which leads the resolution. */
+  inForce: string | null;
   onOpenChange?: (key: string | null) => void;
   onSelect: (key: string, value: string | null) => void;
 }) {
-  const chosen = step.options.find((option) => option.key === step.selected);
+  // From the answer in force rather than the resolved one, or changing an
+  // answer folds the question back showing the answer you just replaced.
+  const chosen = step.options.find((option) => option.key === inForce);
   // The answer in force is always drawn, dead or not: it is the one
   // thing this section is here to show, and hiding it would leave a
   // reopened question looking as though it was never answered.
@@ -282,7 +317,7 @@ function AnsweredStep({
             <Answer
               key={option.key}
               label={option.title}
-              chosen={step.selected === option.key}
+              chosen={inForce === option.key}
               recommended={step.recommended === option.key}
               onPick={() => {
                 onOpenChange?.(null);
@@ -319,7 +354,7 @@ function AnsweredStep({
           {step.prompt}
         </span>
         <span className="block font-semibold">
-          {chosen?.title ?? step.selected}
+          {chosen?.title ?? inForce}
         </span>
       </button>
       {/* Same as a folded refinement, and for the same reason: an
@@ -390,6 +425,8 @@ function Answer({
 
 interface GuideRefinementsProps {
   refinements: GuideRefinement[];
+  /** The URL's answers, which lead the resolution between click and response. */
+  picked?: Selections | null;
   unavailable?: Unavailable;
   because?: Because;
   /** The one answered question reopened, shared with the steps. */
@@ -400,6 +437,7 @@ interface GuideRefinementsProps {
 
 export function GuideRefinements({
   refinements,
+  picked,
   unavailable,
   because,
   opened,
@@ -464,6 +502,7 @@ export function GuideRefinements({
           // repeating it inside would ask it twice.
           showPrompts={section.grouped}
           refinements={section.of}
+          picked={picked}
           deadFor={deadFor}
           becauseFor={becauseFor}
           opened={opened}
@@ -480,6 +519,7 @@ function RefinementGroup({
   name,
   showPrompts,
   refinements,
+  picked,
   deadFor,
   becauseFor,
   opened,
@@ -491,6 +531,8 @@ function RefinementGroup({
   name: string;
   showPrompts: boolean;
   refinements: GuideRefinement[];
+  /** The URL's answers, which lead the resolution. */
+  picked?: Selections | null;
   deadFor: (refinement: GuideRefinement) => string[];
   becauseFor: (
     refinement: GuideRefinement
@@ -520,6 +562,7 @@ function RefinementGroup({
                     ? becauseFor(refinement)?.[refinement.selected]
                     : undefined
                 }
+                inForce={pickedValue(refinement.key, refinement.selected, picked)}
                 onOpen={() => onOpenChange?.(refinement.key)}
               />
             );
@@ -550,6 +593,7 @@ function RefinementGroup({
               labelledBy={headingId}
               dead={deadFor(refinement)}
               because={becauseFor(refinement)}
+              inForce={pickedValue(refinement.key, refinement.selected, picked)}
               onSelect={answer}
             />
           ) : (
@@ -596,10 +640,13 @@ function AnsweredRefinement({
   refinement,
   showPrompt,
   why,
+  inForce,
   onOpen,
 }: {
   refinement: GuideRefinement;
   showPrompt: boolean;
+  /** The answer the URL holds, which leads the resolution. */
+  inForce: string | null;
   /**
    * Why this answer empties a part, when it does.
    *
@@ -611,9 +658,7 @@ function AnsweredRefinement({
   why?: MissingReason;
   onOpen: () => void;
 }) {
-  const chosen = refinement.choices?.find(
-    (choice) => choice.tag === refinement.selected
-  );
+  const chosen = refinement.choices?.find((choice) => choice.tag === inForce);
   const answer = answerLabel(refinement, chosen);
   return (
     <div>
@@ -650,6 +695,7 @@ function ChoicePicker({
   labelledBy,
   dead,
   because,
+  inForce,
   onSelect,
 }: {
   refinement: GuideRefinement;
@@ -659,6 +705,8 @@ function ChoicePicker({
   labelledBy: string;
   dead: string[];
   because?: Record<string, MissingReason>;
+  /** The answer the URL holds, which leads the resolution. */
+  inForce: string | null;
   onSelect: (key: string, value: string | null) => void;
 }) {
   // Named by its own prompt when it has one, and by the section
@@ -677,7 +725,7 @@ function ChoicePicker({
       )}
       <div role="group" aria-labelledby={heading} className="flex flex-col gap-1">
         {live.map((choice) => {
-          const chosen = refinement.selected === choice.tag;
+          const chosen = inForce === choice.tag;
           return (
             <Answer
               key={choice.tag}
@@ -686,8 +734,7 @@ function ChoicePicker({
               chosen={chosen}
               recommended={refinement.recommended === choice.tag}
               assumed={
-                refinement.selected === null &&
-                refinement.recommended === choice.tag
+                inForce === null && refinement.recommended === choice.tag
               }
               onPick={() => onSelect(refinement.key, chosen ? null : choice.tag)}
             />

@@ -118,6 +118,7 @@ const RESOLVED_WITH_PARTS: ResolvedGuide = {
               angles: [
                 { index: 0, name: 'back' },
                 { index: 3, name: 'front' },
+                { index: 7, name: 'front-left' },
               ],
             },
           },
@@ -156,6 +157,7 @@ const RESOLVED_WITH_PARTS: ResolvedGuide = {
                 { index: 0, name: 'front' },
                 { index: 1, name: 'right' },
                 { index: 2, name: 'top' },
+                { index: 4, name: 'front-left' },
               ],
             },
           },
@@ -1420,9 +1422,10 @@ describe('GuidePage', () => {
       );
       const surface = sprite.closest('.guide-parts')!.querySelector('.select-none')!;
 
-      // Two thresholds to the right is two steps round the ring.
+      // Three thresholds to the right is three steps round the ring,
+      // which from front-left lands on `right`.
       fireEvent.mouseDown(surface, { button: 0, clientX: 100, clientY: 100 });
-      fireEvent.mouseMove(window, { clientX: 162, clientY: 100 });
+      fireEvent.mouseMove(window, { clientX: 193, clientY: 100 });
       fireEvent.mouseUp(window);
 
       // The base has a `right` frame and turns to it.
@@ -1496,10 +1499,9 @@ describe('GuidePage', () => {
       // On the side widget rather than a picture: it is keyed by
       // angle name, so it reports the view the drag reached whether
       // or not a given sheet has a frame for it.
-      expect(screen.getByRole('button', { name: 'front' })).toHaveAttribute(
-        'aria-pressed',
-        'true'
-      );
+      expect(
+        screen.getByRole('button', { name: 'front-left' })
+      ).toHaveAttribute('aria-pressed', 'true');
 
       // One and a half thresholds to the LEFT: one step back, the
       // same distance the identical rightward drag would travel.
@@ -1507,9 +1509,10 @@ describe('GuidePage', () => {
       fireEvent.mouseMove(window, { clientX: 55, clientY: 100 });
       fireEvent.mouseUp(window);
 
-      expect(
-        screen.getByRole('button', { name: 'front-left' })
-      ).toHaveAttribute('aria-pressed', 'true');
+      expect(screen.getByRole('button', { name: 'left' })).toHaveAttribute(
+        'aria-pressed',
+        'true'
+      );
     });
 
     it('does not open the tag search at the end of a drag', async () => {
@@ -1898,6 +1901,50 @@ describe('GuidePage', () => {
       expect(box.value).toBe('texture|dungeon_stone');
     });
 
+    it('marks an answer as chosen before the resolution lands', async () => {
+      // A click rewrites the URL at once and the parts take a round
+      // trip to catch up. Drawing the chosen answer from the resolution
+      // alone left the button looking unpressed for the whole wait, so
+      // people clicked again not knowing the first had registered.
+      visit('?guide=wall');
+      let resolves = 0;
+      global.fetch = jest.fn((url: string) => {
+        if (!url.includes('/resolve')) {
+          return Promise.resolve({
+            ok: true,
+            status: 200,
+            json: () => Promise.resolve(GUIDE_DOCUMENT),
+          });
+        }
+        resolves += 1;
+        // The first lands so the questions render; the one the click
+        // causes never does.
+        const body =
+          resolves === 1 ? Promise.resolve(RESOLVED) : new Promise(() => {});
+        return Promise.resolve({ ok: true, status: 200, json: () => body });
+      }) as unknown as typeof fetch;
+
+      render(<GuidePage />);
+      const separate = await screen.findByRole('button', {
+        name: /Separate wall/,
+      });
+      expect(separate).toHaveAttribute('aria-pressed', 'false');
+
+      fireEvent.click(separate);
+
+      // Still waiting on the catalog, and already visibly taken.
+      await waitFor(() =>
+        expect(
+          screen.getByRole('button', { name: /Separate wall/ })
+        ).toHaveAttribute('aria-pressed', 'true')
+      );
+      // And the question stays open: the point is to show the answer
+      // was heard, not to fold it away before the parts exist.
+      expect(
+        screen.getByRole('button', { name: /Modular \(s2w\)/ })
+      ).toBeInTheDocument();
+    });
+
     it('lets the newest answer win when an older one lands last', async () => {
       // Every click re-fires the resolve effect, and the network does
       // not promise to answer in order. Without the `current` guard
@@ -1969,10 +2016,10 @@ describe('GuidePage', () => {
       ).not.toBeInTheDocument();
     });
 
-    it('draws the sprite frame named front, not frame zero', async () => {
+    it('draws the sprite frame named front-left, not frame zero', async () => {
       // Every piece has to be seen from the same direction for the
       // parts list to show whether they go together, and the index of
-      // 'front' is not the same in every sheet.
+      // 'front-left' is not the same in every sheet.
       visit('?guide=wall&method=separate-wall');
       mockFetch((url) =>
         url.includes('/resolve') ? RESOLVED_WITH_PARTS : GUIDE_DOCUMENT
@@ -1980,10 +2027,10 @@ describe('GuidePage', () => {
 
       render(<GuidePage />);
       const sprite = await screen.findByLabelText(
-        'a dungeon stone wall, seen from the front'
+        'a dungeon stone wall, seen from the front-left'
       );
 
-      // Frame 3 of a 5-wide, 2-tall sheet: row 0, column 3. Asserted
+      // Frame 7 of a 5-wide, 2-tall sheet: row 1, column 2. Asserted
       // relative to the rendered tile so that changing how large the
       // pieces are drawn does not break this — what it pins is which
       // frame, not how big.
@@ -1991,7 +2038,7 @@ describe('GuidePage', () => {
       expect(tile).toBeGreaterThan(0);
       expect(sprite).toHaveStyle({
         backgroundImage: 'url(https://objects.openforge.tools/thumb.png)',
-        backgroundPosition: `-${3 * tile}px -0px`,
+        backgroundPosition: `-${2 * tile}px -${1 * tile}px`,
         backgroundSize: `${5 * tile}px ${2 * tile}px`,
       });
     });
@@ -2004,7 +2051,7 @@ describe('GuidePage', () => {
 
       render(<GuidePage />);
       const sprite = await screen.findByLabelText(
-        'a dungeon stone wall, seen from the front'
+        'a dungeon stone wall, seen from the front-left'
       );
 
       expect(sprite).toHaveStyle({
