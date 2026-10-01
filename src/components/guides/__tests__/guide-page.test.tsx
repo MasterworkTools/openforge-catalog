@@ -3205,6 +3205,100 @@ describe('inspecting a part', () => {
     expect(window.location.search).not.toContain('part.wall');
   });
 
+  it('admits the pinned part under the question that governs its role', async () => {
+    // The pin's whole effect is that this question stops deciding that
+    // role, so this question is where it has to be owned up to and
+    // where it is taken back. Looking in the parts column to find out
+    // why the answer you just gave was ignored is backwards.
+    visit('?guide=wall&method=separate-wall&part.wall=chosen-md5');
+    mockFetch((url) =>
+      url.includes('/resolve')
+        ? {
+            ...RESOLVED_WITH_PARTS,
+            parts: RESOLVED_WITH_PARTS.parts.map((p) =>
+              p.role === 'wall' ? { ...p, pinned: true } : p
+            ),
+          }
+        : GUIDE_DOCUMENT
+    );
+
+    render(<GuidePage />);
+
+    // Named by the blueprint, not by the part's title: the title says
+    // "Wall", which is the one thing already obvious here.
+    const note = await screen.findByText('You picked a dungeon stone wall');
+    // `side-locks` is the question with `role: 'wall'`, and each
+    // ungrouped question is its own section, so the section holding the
+    // note identifies which question claimed it.
+    const section = note.closest('.guide-refinements');
+    expect(section).not.toBeNull();
+    expect(section!.textContent).toContain('Side locks');
+
+    // And it is undone from there.
+    const undo = screen.getByRole('button', { name: 'undo' });
+    expect(undo.closest('.guide-refinements')).toBe(section);
+    fireEvent.click(undo);
+    expect(window.location.search).not.toContain('part.wall');
+  });
+
+  it('does not let a question spanning roles claim a pinned part', async () => {
+    // `texture` is `role: '*'`: it applies to every part at once, so one
+    // pinned piece does not settle it and it must not say otherwise.
+    visit('?guide=wall&method=separate-wall&part.wall=chosen-md5');
+    mockFetch((url) =>
+      url.includes('/resolve')
+        ? {
+            ...RESOLVED_WITH_PARTS,
+            parts: RESOLVED_WITH_PARTS.parts.map((p) =>
+              p.role === 'wall' ? { ...p, pinned: true } : p
+            ),
+          }
+        : GUIDE_DOCUMENT
+    );
+
+    render(<GuidePage />);
+    await screen.findByText('You picked a dungeon stone wall');
+
+    const texture = screen
+      .getByRole('heading', { name: 'Texture' })
+      .closest('.guide-refinements');
+    expect(texture).not.toBeNull();
+    expect(texture!.textContent).not.toContain('You picked');
+  });
+
+  it('admits a pinned part once, however many questions share its role', async () => {
+    // Two questions can govern one role. The options offer already had
+    // to unlearn appearing once per question that narrowed a part; one
+    // pinned piece must not produce two identical undo buttons either.
+    visit('?guide=wall&method=separate-wall&part.wall=chosen-md5');
+    mockFetch((url) =>
+      url.includes('/resolve')
+        ? {
+            ...RESOLVED_WITH_PARTS,
+            parts: RESOLVED_WITH_PARTS.parts.map((p) =>
+              p.role === 'wall' ? { ...p, pinned: true } : p
+            ),
+            refinements: [
+              ...RESOLVED_WITH_PARTS.refinements,
+              {
+                ...RESOLVED_WITH_PARTS.refinements[2],
+                key: 'wall-clips',
+                prompt: 'Wall clips',
+              },
+            ],
+          }
+        : GUIDE_DOCUMENT
+    );
+
+    render(<GuidePage />);
+    await screen.findByText('You picked a dungeon stone wall');
+
+    expect(screen.getAllByText('You picked a dungeon stone wall')).toHaveLength(
+      1
+    );
+    expect(screen.getAllByRole('button', { name: 'undo' })).toHaveLength(1);
+  });
+
   it('lets a pinned part go when you answer the question that decides it', async () => {
     // A pinned part outranks the questions, so without this, going
     // back to the texture after hand-picking a wall changes nothing

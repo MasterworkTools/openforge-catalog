@@ -2,7 +2,7 @@
 
 import GuideEntry from './guide-entry';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { releasedBy } from '@/services/guide-service';
+import { pinKey, releasedBy } from '@/services/guide-service';
 import {
   clearGuide,
   isPlainClick,
@@ -272,6 +272,16 @@ export default function GuidePage() {
               picked={selections}
               unavailable={unavailable}
               because={because}
+              // The blueprint's name, not the part's title: the title
+              // names the role ("Floor"), which is the one thing the
+              // person already knows here.
+              pinnedByRole={Object.fromEntries(
+                pinned.map((part) => [
+                  part.role,
+                  part.blueprint?.blueprint_name ?? part.title,
+                ])
+              )}
+              onUnpin={(role) => select(pinKey(role), null)}
               opened={opened}
               onOpenChange={setOpened}
               onSelect={answer}
@@ -309,7 +319,6 @@ export default function GuidePage() {
               options={settledOptions}
               inspecting={inspecting}
               onInspect={setInspecting}
-              onSelect={select}
               onSelectAll={selectAll}
             />
           </div>

@@ -39,8 +39,6 @@ interface GuidePartsProps {
    */
   inspecting?: string | null;
   onInspect?: (role: string | null) => void;
-  /** Same setter the questions use: a pin is a selection like any other. */
-  onSelect?: (key: string, value: string | null) => void;
   /**
    * Several answers at once. Picking a part settles the pin and the
    * questions that part answers, and those have to be one write — the
@@ -74,7 +72,6 @@ export function GuideParts({
   options,
   inspecting = null,
   onInspect,
-  onSelect,
   onSelectAll,
 }: GuidePartsProps) {
   // `string` rather than the ring's own type: this also holds `top` and
@@ -152,9 +149,6 @@ export function GuideParts({
                   view={view}
                   options={options?.[part.role]}
                   onInspect={onInspect ?? (() => {})}
-                  onUnpin={
-                    onSelect ? () => onSelect(pinKey(part.role), null) : undefined
-                  }
                 />
               ))}
             </div>
@@ -266,7 +260,6 @@ function Part({
   view,
   options,
   onInspect,
-  onUnpin,
 }: {
   part: GuidePart;
   view: string;
@@ -274,8 +267,6 @@ function Part({
   options?: number;
   /** Opens the catalog dialog on this part's role. */
   onInspect: (role: string) => void;
-  /** Undoes a pin, putting the role back on the guide's own answer. */
-  onUnpin?: () => void;
 }) {
   return (
     <div className="border border-gray-300 rounded p-3 w-64">
@@ -310,14 +301,7 @@ function Part({
           left, and saying so is the only way the page can explain why
           changing a texture leaves this piece alone. */}
       {part.pinned && (
-        <div className="text-xs text-blue-700 flex items-center gap-2">
-          <span>You picked this part</span>
-          {onUnpin && (
-            <button type="button" onClick={onUnpin} className="underline">
-              undo
-            </button>
-          )}
-        </div>
+        <div className="text-xs text-blue-700">You picked this part</div>
       )}
       {part.blueprint ? (
         <>

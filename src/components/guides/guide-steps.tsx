@@ -433,6 +433,9 @@ interface GuideRefinementsProps {
   opened?: string | null;
   onOpenChange?: (key: string | null) => void;
   onSelect: (key: string, value: string | null) => void;
+  /** Hand-picked parts, by the role each one fills: role to part title. */
+  pinnedByRole?: Record<string, string>;
+  onUnpin?: (role: string) => void;
 }
 
 export function GuideRefinements({
@@ -440,6 +443,8 @@ export function GuideRefinements({
   picked,
   unavailable,
   because,
+  pinnedByRole,
+  onUnpin,
   opened,
   onOpenChange,
   onSelect,
@@ -458,6 +463,24 @@ export function GuideRefinements({
       !deadFor(refinement).includes('on')
   );
   if (asked.length === 0) return null;
+  // One admission per pinned role, on the first question that governs
+  // it. Two questions can share a role — a floor's texture and its
+  // clips both do — and two identical undo buttons for one pinned part
+  // is the duplication the options offer already had to unlearn.
+  //
+  // A question with `role: '*'` falls out of this on its own: pins are
+  // keyed by the concrete role they fill, so there is no '*' to match.
+  const owner = new Map<string, string>();
+  for (const refinement of asked) {
+    const role = refinement.role;
+    if (!role || !pinnedByRole?.[role]) continue;
+    if (!owner.has(role)) owner.set(role, refinement.key);
+  }
+  const overrideFor = (refinement: GuideRefinement) => {
+    const role = refinement.role;
+    if (!role || owner.get(role) !== refinement.key) return null;
+    return pinnedByRole?.[role] ?? null;
+  };
   // A section each, in document order. A question is its own section
   // headed by its own prompt — "Change anything" over the lot of them
   // said nothing and made four unrelated questions look like one.
@@ -505,12 +528,42 @@ export function GuideRefinements({
           picked={picked}
           deadFor={deadFor}
           becauseFor={becauseFor}
+          overrideFor={overrideFor}
+          onUnpin={onUnpin}
           opened={opened}
           onOpenChange={onOpenChange}
           onSelect={onSelect}
         />
       ))}
     </>
+  );
+}
+
+/**
+ * A question admitting that a hand-picked part, rather than its own
+ * answer, is what fills the role — and the place to take that back,
+ * because this question is what the pin overrode.
+ */
+function PinnedOverride({
+  part,
+  onUndo,
+}: {
+  part: string;
+  onUndo?: () => void;
+}) {
+  return (
+    <div className="mt-1 text-xs text-blue-700 flex items-start gap-2">
+      <span className="break-all">You picked {part}</span>
+      {onUndo && (
+        <button
+          type="button"
+          onClick={onUndo}
+          className="underline shrink-0"
+        >
+          undo
+        </button>
+      )}
+    </div>
   );
 }
 
@@ -522,6 +575,8 @@ function RefinementGroup({
   picked,
   deadFor,
   becauseFor,
+  overrideFor,
+  onUnpin,
   opened,
   onOpenChange,
   onSelect,
@@ -537,6 +592,9 @@ function RefinementGroup({
   becauseFor: (
     refinement: GuideRefinement
   ) => Record<string, MissingReason> | undefined;
+  /** The hand-picked part this question should admit to, if any. */
+  overrideFor: (refinement: GuideRefinement) => string | null;
+  onUnpin?: (role: string) => void;
   opened?: string | null;
   onOpenChange?: (key: string | null) => void;
   onSelect: (key: string, value: string | null) => void;
@@ -549,10 +607,33 @@ function RefinementGroup({
       </h2>
       <div className="flex flex-col gap-3">
         {refinements.map((refinement) => {
+          // A pinned part is not an answer to this question, so the
+          // question has to admit it is not in force for that role —
+          // and be where the pin is undone, since this is what the pin
+          // overrode.
+          const overridden = overrideFor(refinement);
+          const note = overridden && (
+            <PinnedOverride
+              part={overridden}
+              onUndo={
+                onUnpin && refinement.role
+                  ? () => onUnpin(refinement.role as string)
+                  : undefined
+              }
+            />
+          );
+          // Every control this question can render as gets the note the
+          // same way, so a pin is admitted whichever one it is.
+          const wrap = (question: React.ReactNode) => (
+            <div key={refinement.key}>
+              {question}
+              {note}
+            </div>
+          );
           // Answered and not reopened: folded to its answer, exactly
           // as a settled step is. Clicking it opens it again.
           if (refinement.selected !== null && opened !== refinement.key) {
-            return (
+            return wrap(
               <AnsweredRefinement
                 key={refinement.key}
                 refinement={refinement}
@@ -563,6 +644,7 @@ function RefinementGroup({
                     : undefined
                 }
                 inForce={pickedValue(refinement.key, refinement.selected, picked)}
+                overridden={Boolean(overridden)}
                 onOpen={() => onOpenChange?.(refinement.key)}
               />
             );
@@ -573,7 +655,7 @@ function RefinementGroup({
             onSelect(key, value);
           };
           if (refinement.on_tags) {
-            return (
+            return wrap(
               <Toggle
                 key={refinement.key}
                 refinement={refinement}
@@ -585,24 +667,24 @@ function RefinementGroup({
           // A closed list is a question you can answer by looking at
           // it, so it gets buttons like a step. The open namespace has
           // no list to show and stays a text box.
-          return refinement.choices?.length ? (
-            <ChoicePicker
-              key={refinement.key}
-              refinement={refinement}
-              showPrompt={showPrompts}
-              labelledBy={headingId}
-              dead={deadFor(refinement)}
-              because={becauseFor(refinement)}
-              inForce={pickedValue(refinement.key, refinement.selected, picked)}
-              onSelect={answer}
-            />
-          ) : (
-            <NamespacePicker
-              key={refinement.key}
-              refinement={refinement}
-              showPrompt={showPrompts}
-              onSelect={answer}
-            />
+          return wrap(
+            refinement.choices?.length ? (
+              <ChoicePicker
+                refinement={refinement}
+                showPrompt={showPrompts}
+                labelledBy={headingId}
+                dead={deadFor(refinement)}
+                because={becauseFor(refinement)}
+                inForce={pickedValue(refinement.key, refinement.selected, picked)}
+                onSelect={answer}
+              />
+            ) : (
+              <NamespacePicker
+                refinement={refinement}
+                showPrompt={showPrompts}
+                onSelect={answer}
+              />
+            )
           );
         })}
       </div>
@@ -641,10 +723,13 @@ function AnsweredRefinement({
   showPrompt,
   why,
   inForce,
+  overridden,
   onOpen,
 }: {
   refinement: GuideRefinement;
   showPrompt: boolean;
+  /** A hand-picked part is filling this role, so this answer is not. */
+  overridden?: boolean;
   /** The answer the URL holds, which leads the resolution. */
   inForce: string | null;
   /**
@@ -673,7 +758,13 @@ function AnsweredRefinement({
             {refinement.prompt}
           </span>
         )}
-        <span className="block font-semibold">{answer}</span>
+        <span
+          className={`block font-semibold ${
+            overridden ? 'text-gray-400' : ''
+          }`}
+        >
+          {answer}
+        </span>
       </button>
       {why && <DeadAnswer why={why} />}
     </div>
