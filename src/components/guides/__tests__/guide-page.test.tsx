@@ -3228,24 +3228,22 @@ describe('inspecting a part', () => {
     render(<GuidePage />);
 
     const note = await screen.findByText('Custom Selection');
-    const section = note.closest('.guide-refinements');
-    expect(section).not.toBeNull();
-    expect(section!.textContent).toContain('Texture');
+    const section = note.closest('.guide-refinements') as HTMLElement;
+    expect(section.textContent).toContain('Texture');
     // Named by the blueprint; the title is the role, which says nothing.
-    expect(section!.textContent).toContain('a dungeon stone wall');
+    expect(section.textContent).toContain('a dungeon stone wall');
 
     // `side-locks` also governs the wall but answered second, so it
     // must not carry a second admission.
     const later = screen
       .getByRole('heading', { name: 'Side locks' })
-      .closest('.guide-refinements');
-    expect(later!.textContent).not.toContain('Custom Selection');
+      .closest('.guide-refinements') as HTMLElement;
+    expect(later.textContent).not.toContain('Custom Selection');
 
     // Not dimmed: `texture` spans roles, so it still decides the floor
     // and the bases even with the wall hand-picked.
     expect(
-      within(section as HTMLElement).getByText('texture|dungeon_stone')
-        .className
+      within(section).getByText('texture|dungeon_stone').className
     ).not.toContain('text-gray-400');
 
     const undo = screen.getByRole('button', { name: 'undo' });
