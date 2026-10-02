@@ -436,20 +436,13 @@ function overrides(
   asked: GuideRefinement[],
   pinnedByRole: Record<string, string>
 ): (refinement: GuideRefinement) => Override[] {
-  const owner = new Map<string, { key: string; override: Override }>();
-  for (const refinement of asked) {
-    for (const [role, part] of Object.entries(pinnedByRole)) {
-      if (!owner.has(role) && reaches(refinement, role)) {
-        owner.set(role, { key: refinement.key, override: { role, part } });
-      }
-    }
+  const owned = new Map<string, Override[]>();
+  for (const [role, part] of Object.entries(pinnedByRole)) {
+    const owner = asked.find((refinement) => reaches(refinement, role));
+    if (!owner) continue;
+    owned.set(owner.key, [...(owned.get(owner.key) ?? []), { role, part }]);
   }
-  // One question can reach several pinned roles, and every one of them
-  // needs its own way back.
-  return (refinement) =>
-    [...owner.values()]
-      .filter((owned) => owned.key === refinement.key)
-      .map((owned) => owned.override);
+  return (refinement) => owned.get(refinement.key) ?? [];
 }
 
 interface GuideRefinementsProps {
@@ -604,7 +597,7 @@ function RefinementGroup({
   becauseFor: (
     refinement: GuideRefinement
   ) => Record<string, MissingReason> | undefined;
-  /** The hand-picked part this question should admit to, if any. */
+  /** The hand-picked parts this question answers for. */
   overrideFor: (refinement: GuideRefinement) => Override[];
   onUnpin: (role: string) => void;
   opened?: string | null;
@@ -621,8 +614,8 @@ function RefinementGroup({
         {refinements.map((refinement) => {
           // A pinned part is not an answer to this question, so this is
           // where it is admitted and where it is undone.
-          const overridden = overrideFor(refinement);
-          const note = overridden.map((pin) => (
+          const pins = overrideFor(refinement);
+          const note = pins.map((pin) => (
             <PinnedOverride
               key={pin.role}
               part={pin.part}
@@ -648,7 +641,7 @@ function RefinementGroup({
                     : undefined
                 }
                 inForce={pickedValue(refinement.key, refinement.selected, picked)}
-                overridden={overridden.length > 0}
+                overridden={pins.length > 0 && refinement.role !== '*'}
                 onOpen={() => onOpenChange?.(refinement.key)}
               />
             );
@@ -731,7 +724,7 @@ function AnsweredRefinement({
 }: {
   refinement: GuideRefinement;
   showPrompt: boolean;
-  /** A hand-picked part is filling this role, so this answer is not. */
+  /** Hand-picked parts fill everything this question decides. */
   overridden: boolean;
   /** The answer the URL holds, which leads the resolution. */
   inForce: string | null;

@@ -3241,16 +3241,49 @@ describe('inspecting a part', () => {
       .closest('.guide-refinements');
     expect(later!.textContent).not.toContain('Custom Selection');
 
-    // The displaced answer is dimmed.
+    // Not dimmed: `texture` spans roles, so it still decides the floor
+    // and the bases even with the wall hand-picked.
     expect(
       within(section as HTMLElement).getByText('texture|dungeon_stone')
         .className
-    ).toContain('text-gray-400');
+    ).not.toContain('text-gray-400');
 
     const undo = screen.getByRole('button', { name: 'undo' });
     expect(undo.closest('.guide-refinements')).toBe(section);
     fireEvent.click(undo);
     expect(window.location.search).not.toContain('part.wall');
+  });
+
+  it('dims an answer a pin wholly displaces', async () => {
+    // `side-locks` is `role: 'wall'`, so a pinned wall leaves it
+    // deciding nothing. `texture` is moved off the wall here so the
+    // spanning question does not claim the pin first.
+    visit('?guide=wall&method=separate-wall&part.wall=chosen-md5');
+    mockFetch((url) =>
+      url.includes('/resolve')
+        ? {
+            ...RESOLVED_WITH_PARTS,
+            parts: RESOLVED_WITH_PARTS.parts.map((p) =>
+              p.role === 'wall' ? { ...p, pinned: true } : p
+            ),
+            refinements: RESOLVED_WITH_PARTS.refinements.map((r) =>
+              r.key === 'texture'
+                ? { ...r, role: 'floor' }
+                : r.key === 'side-locks'
+                  ? { ...r, selected: 'on' }
+                  : r
+            ),
+          }
+        : GUIDE_DOCUMENT
+    );
+
+    render(<GuidePage />);
+    const heading = await screen.findByRole('heading', { name: 'Side locks' });
+    const section = heading.closest('.guide-refinements') as HTMLElement;
+    expect(within(section).getByText('Custom Selection')).toBeInTheDocument();
+    expect(within(section).getByText('Yes').className).toContain(
+      'text-gray-400'
+    );
   });
 
   it('leaves an unpinned answer undimmed', async () => {
@@ -3275,6 +3308,32 @@ describe('inspecting a part', () => {
       within(section).getByText('texture|dungeon_stone').className
     ).not.toContain('text-gray-400');
     expect(screen.queryByText('Custom Selection')).toBeNull();
+  });
+
+  it('keeps the card undo when no question on screen governs the pin', async () => {
+    // The resolution withholds refinements until every step is
+    // answered, so on the first screen every part is pinnable and no
+    // question is there to carry the admission.
+    visit('?guide=wall&part.wall=chosen-md5');
+    mockFetch((url) =>
+      url.includes('/resolve')
+        ? {
+            ...RESOLVED_WITH_PARTS,
+            steps: [{ ...RESOLVED_WITH_PARTS.steps[0], selected: null }],
+            refinements: [],
+            parts: RESOLVED_WITH_PARTS.parts.map((p) =>
+              p.role === 'wall' ? { ...p, pinned: true } : p
+            ),
+          }
+        : GUIDE_DOCUMENT
+    );
+
+    render(<GuidePage />);
+    await screen.findByText('You picked this part');
+
+    const undo = screen.getByRole('button', { name: 'undo' });
+    fireEvent.click(undo);
+    expect(window.location.search).not.toContain('part.wall');
   });
 
   it('admits every pinned part one question governs, not just the first', async () => {

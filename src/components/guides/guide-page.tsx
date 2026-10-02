@@ -2,7 +2,7 @@
 
 import GuideEntry from './guide-entry';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { pinKey, releasedBy } from '@/services/guide-service';
+import { pinKey, reaches, releasedBy } from '@/services/guide-service';
 import {
   clearGuide,
   isPlainClick,
@@ -106,6 +106,14 @@ export default function GuidePage() {
   const pinnedByRole = Object.fromEntries(
     pinned.map((part) => [part.role, part.blueprint!.blueprint_name])
   );
+  // The resolution publishes no refinements until every step is
+  // answered, so a part pinned on the first screen has no question to
+  // carry its admission. The card keeps the undo for those.
+  const admitted = pinned
+    .map((part) => part.role)
+    .filter((role) =>
+      (resolved?.refinements ?? []).some((r) => reaches(r, role))
+    );
   const answer = (key: string, value: string | null) => {
     const asked = [...(resolved?.steps ?? []), ...(resolved?.refinements ?? [])];
     const question = asked.find((q) => q.key === key);
@@ -317,6 +325,8 @@ export default function GuidePage() {
               options={settledOptions}
               inspecting={inspecting}
               onInspect={setInspecting}
+              admitted={admitted}
+              onUnpin={(role) => select(pinKey(role), null)}
               onSelectAll={selectAll}
             />
           </div>
