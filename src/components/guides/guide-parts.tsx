@@ -297,9 +297,7 @@ function Part({
         <GuideSprite blueprint={part.blueprint} view={view} />
       </button>
       <div className="mt-2 font-semibold">{part.title}</div>
-      {/* A pinned part is no longer an answer to the questions on the
-          left, and saying so is the only way the page can explain why
-          changing a texture leaves this piece alone. */}
+      {/* Why changing a texture leaves this piece alone. */}
       {part.pinned && (
         <div className="text-xs text-blue-700">You picked this part</div>
       )}

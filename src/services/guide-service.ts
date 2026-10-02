@@ -448,7 +448,7 @@ function answeredBy(
 }
 
 /** Does this question apply to that role? Same test the engine makes. */
-function reaches(refinement: GuideRefinement, role: string): boolean {
+export function reaches(refinement: GuideRefinement, role: string): boolean {
   if (refinement.role !== '*' && refinement.role !== role) return false;
   return !(refinement.except_roles ?? []).includes(role);
 }

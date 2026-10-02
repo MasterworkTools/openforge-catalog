@@ -6,6 +6,7 @@ import {
   GuideRefinement,
   GuideStep,
   MissingReason,
+  reaches,
   Selections,
 } from '@/services/guide-service';
 
@@ -423,6 +424,44 @@ function Answer({
   );
 }
 
+/** A hand-picked part, and the role it fills. */
+interface Override {
+  /** The pinned role, which is what the undo clears — not the
+      question's own role, which may span several. */
+  role: string;
+  part: string;
+}
+
+/**
+ * Which question admits to each pinned part.
+ *
+ * `reaches` is the test the engine already makes for whether a question
+ * governs a role, so a spanning question counts and `except_roles` is
+ * honoured. Answering first wins, so one pinned part is admitted once
+ * however many questions govern it.
+ */
+function overrides(
+  asked: GuideRefinement[],
+  pinnedByRole?: Record<string, string>
+): (refinement: GuideRefinement) => Override | null {
+  const owner = new Map<string, string>();
+  for (const refinement of asked) {
+    for (const role of Object.keys(pinnedByRole ?? {})) {
+      if (!owner.has(role) && reaches(refinement, role)) {
+        owner.set(role, refinement.key);
+      }
+    }
+  }
+  return (refinement) => {
+    for (const [role, key] of owner) {
+      if (key === refinement.key) {
+        return { role, part: pinnedByRole?.[role] ?? '' };
+      }
+    }
+    return null;
+  };
+}
+
 interface GuideRefinementsProps {
   refinements: GuideRefinement[];
   /** The URL's answers, which lead the resolution between click and response. */
@@ -433,9 +472,9 @@ interface GuideRefinementsProps {
   opened?: string | null;
   onOpenChange?: (key: string | null) => void;
   onSelect: (key: string, value: string | null) => void;
-  /** Hand-picked parts, by the role each one fills: role to part title. */
+  /** Hand-picked parts: the role each fills, to the blueprint's name. */
   pinnedByRole?: Record<string, string>;
-  onUnpin?: (role: string) => void;
+  onUnpin: (role: string) => void;
 }
 
 export function GuideRefinements({
@@ -463,24 +502,7 @@ export function GuideRefinements({
       !deadFor(refinement).includes('on')
   );
   if (asked.length === 0) return null;
-  // One admission per pinned role, on the first question that governs
-  // it. Two questions can share a role — a floor's texture and its
-  // clips both do — and two identical undo buttons for one pinned part
-  // is the duplication the options offer already had to unlearn.
-  //
-  // A question with `role: '*'` falls out of this on its own: pins are
-  // keyed by the concrete role they fill, so there is no '*' to match.
-  const owner = new Map<string, string>();
-  for (const refinement of asked) {
-    const role = refinement.role;
-    if (!role || !pinnedByRole?.[role]) continue;
-    if (!owner.has(role)) owner.set(role, refinement.key);
-  }
-  const overrideFor = (refinement: GuideRefinement) => {
-    const role = refinement.role;
-    if (!role || owner.get(role) !== refinement.key) return null;
-    return pinnedByRole?.[role] ?? null;
-  };
+  const overrideFor = overrides(asked, pinnedByRole);
   // A section each, in document order. A question is its own section
   // headed by its own prompt — "Change anything" over the lot of them
   // said nothing and made four unrelated questions look like one.
@@ -549,28 +571,22 @@ function PinnedOverride({
   onUndo,
 }: {
   part: string;
-  onUndo?: () => void;
+  onUndo: () => void;
 }) {
   return (
     <div className="mt-1 rounded border border-blue-200 bg-blue-50 px-2 py-1.5">
       <div className="flex items-baseline justify-between gap-2">
-        {/* The weight the answer it replaced is drawn in, because it is
-            the answer now. */}
-        <span className="font-semibold text-blue-800">Custom Selection</span>
-        {onUndo && (
-          <button
-            type="button"
-            onClick={onUndo}
-            className="underline text-blue-700 shrink-0 text-xs"
-          >
-            undo
-          </button>
-        )}
+        <span className="font-semibold text-blue-700">Custom Selection</span>
+        <button
+          type="button"
+          onClick={onUndo}
+          className="underline text-blue-700 shrink-0 text-xs"
+        >
+          undo
+        </button>
       </div>
-      {/* A filename is one long token, so it is given its own line and
-          allowed to break anywhere. Beside the label it wrapped into
-          the gap and collided with the link. */}
-      <div className="mt-0.5 break-all leading-snug text-[11px] text-gray-600">
+      {/* A filename is one long token, so it breaks anywhere. */}
+      <div className="mt-0.5 break-all leading-snug text-xs text-gray-500">
         {part}
       </div>
     </div>
@@ -603,8 +619,8 @@ function RefinementGroup({
     refinement: GuideRefinement
   ) => Record<string, MissingReason> | undefined;
   /** The hand-picked part this question should admit to, if any. */
-  overrideFor: (refinement: GuideRefinement) => string | null;
-  onUnpin?: (role: string) => void;
+  overrideFor: (refinement: GuideRefinement) => Override | null;
+  onUnpin: (role: string) => void;
   opened?: string | null;
   onOpenChange?: (key: string | null) => void;
   onSelect: (key: string, value: string | null) => void;
@@ -617,23 +633,15 @@ function RefinementGroup({
       </h2>
       <div className="flex flex-col gap-3">
         {refinements.map((refinement) => {
-          // A pinned part is not an answer to this question, so the
-          // question has to admit it is not in force for that role —
-          // and be where the pin is undone, since this is what the pin
-          // overrode.
+          // A pinned part is not an answer to this question, so this is
+          // where it is admitted and where it is undone.
           const overridden = overrideFor(refinement);
           const note = overridden && (
             <PinnedOverride
-              part={overridden}
-              onUndo={
-                onUnpin && refinement.role
-                  ? () => onUnpin(refinement.role as string)
-                  : undefined
-              }
+              part={overridden.part}
+              onUndo={() => onUnpin(overridden.role)}
             />
           );
-          // Every control this question can render as gets the note the
-          // same way, so a pin is admitted whichever one it is.
           const wrap = (question: React.ReactNode) => (
             <div key={refinement.key}>
               {question}
@@ -645,7 +653,6 @@ function RefinementGroup({
           if (refinement.selected !== null && opened !== refinement.key) {
             return wrap(
               <AnsweredRefinement
-                key={refinement.key}
                 refinement={refinement}
                 showPrompt={showPrompts}
                 why={
@@ -667,7 +674,6 @@ function RefinementGroup({
           if (refinement.on_tags) {
             return wrap(
               <Toggle
-                key={refinement.key}
                 refinement={refinement}
                 showPrompt={showPrompts}
                 onSelect={answer}

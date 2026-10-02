@@ -100,6 +100,11 @@ export default function GuidePage() {
   // pinning is — so without this, going back to the texture after
   // hand-picking a wall changes nothing and the button looks dead.
   const pinned = (resolved?.parts ?? []).filter((p) => p.pinned);
+  // Named by the blueprint; the part's title is the role, which is the
+  // one thing already obvious beside the question.
+  const pinnedByRole = Object.fromEntries(
+    pinned.map((part) => [part.role, part.blueprint?.blueprint_name ?? part.title])
+  );
   const answer = (key: string, value: string | null) => {
     const asked = [...(resolved?.steps ?? []), ...(resolved?.refinements ?? [])];
     const question = asked.find((q) => q.key === key);
@@ -272,15 +277,7 @@ export default function GuidePage() {
               picked={selections}
               unavailable={unavailable}
               because={because}
-              // The blueprint's name, not the part's title: the title
-              // names the role ("Floor"), which is the one thing the
-              // person already knows here.
-              pinnedByRole={Object.fromEntries(
-                pinned.map((part) => [
-                  part.role,
-                  part.blueprint?.blueprint_name ?? part.title,
-                ])
-              )}
+              pinnedByRole={pinnedByRole}
               onUnpin={(role) => select(pinKey(role), null)}
               opened={opened}
               onOpenChange={setOpened}

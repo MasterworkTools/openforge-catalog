@@ -3207,11 +3207,10 @@ describe('inspecting a part', () => {
     expect(window.location.search).not.toContain('part.wall');
   });
 
-  it('admits the pinned part under the question that governs its role', async () => {
-    // The pin's whole effect is that this question stops deciding that
-    // role, so this question is where it has to be owned up to and
-    // where it is taken back. Looking in the parts column to find out
-    // why the answer you just gave was ignored is backwards.
+  it('admits the pinned part under the first question that governs its role', async () => {
+    // The pin stops this question deciding that role, so this is where
+    // it is owned up to and taken back. `texture` is `role: '*'` and
+    // comes first, so it governs the wall before `side-locks` does.
     visit('?guide=wall&method=separate-wall&part.wall=chosen-md5');
     mockFetch((url) =>
       url.includes('/resolve')
@@ -3220,11 +3219,10 @@ describe('inspecting a part', () => {
             parts: RESOLVED_WITH_PARTS.parts.map((p) =>
               p.role === 'wall' ? { ...p, pinned: true } : p
             ),
-            // Answered, so it is folded to its answer — the state this
-            // is about. An unanswered question is still showing its
-            // options and has no answer to dim.
             refinements: RESOLVED_WITH_PARTS.refinements.map((r) =>
-              r.key === 'side-locks' ? { ...r, selected: 'on' } : r
+              r.key === 'texture'
+                ? { ...r, selected: 'texture|dungeon_stone' }
+                : r
             ),
           }
         : GUIDE_DOCUMENT
@@ -3232,43 +3230,70 @@ describe('inspecting a part', () => {
 
     render(<GuidePage />);
 
-    // Named by the blueprint, not by the part's title: the title says
-    // "Wall", which is the one thing already obvious here.
     const note = await screen.findByText('Custom Selection');
-    // `side-locks` is the question with `role: 'wall'`, and each
-    // ungrouped question is its own section, so the section holding the
-    // note identifies which question claimed it.
     const section = note.closest('.guide-refinements');
     expect(section).not.toBeNull();
-    expect(section!.textContent).toContain('Side locks');
-    // And it names which part, so the admission is not just "something
-    // else decided this".
+    expect(section!.textContent).toContain('Texture');
+    // Named by the blueprint; the title is the role, which says nothing.
     expect(section!.textContent).toContain('a dungeon stone wall');
 
-    // The answer it displaced is dimmed. Asserting the class because
-    // "this answer is not the one in force" is a visual statement and
-    // there is nothing else in the DOM that makes it.
+    // `side-locks` also governs the wall but answered second, so it
+    // must not carry a second admission.
+    const later = screen
+      .getByRole('heading', { name: 'Side locks' })
+      .closest('.guide-refinements');
+    expect(later!.textContent).not.toContain('Custom Selection');
+
+    // The displaced answer is dimmed.
     expect(
-      within(section as HTMLElement).getByText('Yes').className
+      within(section as HTMLElement).getByText('texture|dungeon_stone')
+        .className
     ).toContain('text-gray-400');
 
-    // And it is undone from there.
     const undo = screen.getByRole('button', { name: 'undo' });
     expect(undo.closest('.guide-refinements')).toBe(section);
     fireEvent.click(undo);
     expect(window.location.search).not.toContain('part.wall');
   });
 
-  it('does not let a question spanning roles claim a pinned part', async () => {
-    // `texture` is `role: '*'`: it applies to every part at once, so one
-    // pinned piece does not settle it and it must not say otherwise.
-    visit('?guide=wall&method=separate-wall&part.wall=chosen-md5');
+  it('leaves an unpinned answer undimmed', async () => {
+    // The dimming has to mean something, so it must be absent when no
+    // pin has displaced the answer.
+    visit('?guide=wall&method=separate-wall');
+    mockFetch((url) =>
+      url.includes('/resolve')
+        ? {
+            ...RESOLVED_WITH_PARTS,
+            refinements: RESOLVED_WITH_PARTS.refinements.map((r) =>
+              r.key === 'texture'
+                ? { ...r, selected: 'texture|dungeon_stone' }
+                : r
+            ),
+          }
+        : GUIDE_DOCUMENT
+    );
+
+    render(<GuidePage />);
+    const heading = await screen.findByRole('heading', { name: 'Texture' });
+    const section = heading.closest('.guide-refinements') as HTMLElement;
+    expect(
+      within(section).getByText('texture|dungeon_stone').className
+    ).not.toContain('text-gray-400');
+    expect(screen.queryByText('Custom Selection')).toBeNull();
+  });
+
+  it('keeps a pinned base undoable though no question names its role', async () => {
+    // Every part can be hand-picked, including the bases, but neither
+    // shipped guide has a question declaring a base role — they are
+    // reached only by a spanning one. Deciding ownership by an exact
+    // role match left those pins with no undo anywhere on the page.
+    visit('?guide=wall&method=separate-wall&part.wall-base=chosen-md5');
     mockFetch((url) =>
       url.includes('/resolve')
         ? {
             ...RESOLVED_WITH_PARTS,
             parts: RESOLVED_WITH_PARTS.parts.map((p) =>
-              p.role === 'wall' ? { ...p, pinned: true } : p
+              p.role === 'wall-base' ? { ...p, pinned: true } : p
             ),
           }
         : GUIDE_DOCUMENT
@@ -3277,11 +3302,9 @@ describe('inspecting a part', () => {
     render(<GuidePage />);
     await screen.findByText('Custom Selection');
 
-    const texture = screen
-      .getByRole('heading', { name: 'Texture' })
-      .closest('.guide-refinements');
-    expect(texture).not.toBeNull();
-    expect(texture!.textContent).not.toContain('Custom Selection');
+    const undo = screen.getByRole('button', { name: 'undo' });
+    fireEvent.click(undo);
+    expect(window.location.search).not.toContain('part.wall-base');
   });
 
   it('admits a pinned part once, however many questions share its role', async () => {
