@@ -31,6 +31,7 @@ export default function GuidePage() {
     error,
     status,
     select,
+    selections,
     selectAll,
   } = useGuideState(guideKey);
   // Which settled question has been reopened. Here rather than in the
@@ -259,6 +260,7 @@ export default function GuidePage() {
           <div className="lg:w-72 lg:shrink-0 lg:overflow-y-auto lg:min-h-0 pr-2">
             <GuideSteps
               steps={resolved.steps}
+              picked={selections}
               unavailable={unavailable}
               because={because}
               opened={opened}
@@ -267,6 +269,7 @@ export default function GuidePage() {
             />
             <GuideRefinements
               refinements={resolved.refinements}
+              picked={selections}
               unavailable={unavailable}
               because={because}
               opened={opened}
