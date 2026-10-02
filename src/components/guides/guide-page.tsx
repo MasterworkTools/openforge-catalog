@@ -101,9 +101,10 @@ export default function GuidePage() {
   // hand-picking a wall changes nothing and the button looks dead.
   const pinned = (resolved?.parts ?? []).filter((p) => p.pinned);
   // Named by the blueprint; the part's title is the role, which is the
-  // one thing already obvious beside the question.
+  // one thing already obvious beside the question. A part is only
+  // `pinned` when the pin resolved, so the blueprint is always there.
   const pinnedByRole = Object.fromEntries(
-    pinned.map((part) => [part.role, part.blueprint?.blueprint_name ?? part.title])
+    pinned.map((part) => [part.role, part.blueprint!.blueprint_name])
   );
   const answer = (key: string, value: string | null) => {
     const asked = [...(resolved?.steps ?? []), ...(resolved?.refinements ?? [])];

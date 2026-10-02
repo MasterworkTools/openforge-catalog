@@ -434,11 +434,11 @@ interface Override {
 /** The pinned parts each question answers for, by the first that reaches each. */
 function overrides(
   asked: GuideRefinement[],
-  pinnedByRole?: Record<string, string>
+  pinnedByRole: Record<string, string>
 ): (refinement: GuideRefinement) => Override[] {
   const owner = new Map<string, { key: string; override: Override }>();
   for (const refinement of asked) {
-    for (const [role, part] of Object.entries(pinnedByRole ?? {})) {
+    for (const [role, part] of Object.entries(pinnedByRole)) {
       if (!owner.has(role) && reaches(refinement, role)) {
         owner.set(role, { key: refinement.key, override: { role, part } });
       }
@@ -463,7 +463,7 @@ interface GuideRefinementsProps {
   onOpenChange?: (key: string | null) => void;
   onSelect: (key: string, value: string | null) => void;
   /** Hand-picked parts: the role each fills, to the blueprint's name. */
-  pinnedByRole?: Record<string, string>;
+  pinnedByRole: Record<string, string>;
   onUnpin: (role: string) => void;
 }
 
