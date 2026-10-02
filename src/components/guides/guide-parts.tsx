@@ -38,8 +38,8 @@ interface GuidePartsProps {
    * has been replaced underneath it.
    */
   inspecting?: string | null;
-  onInspect?: (role: string | null) => void;
-  /** Hand-picked roles, as the URL has them rather than the resolution. */
+  onInspect: (role: string | null) => void;
+  /** Roles with a hand-picked part, per `admissions()`. */
   pinnedRoles: string[];
   /** Pinned roles a question admits: the card shows no undo for these. */
   admitted: string[];
@@ -49,7 +49,7 @@ interface GuidePartsProps {
    * questions that part answers, and those have to be one write — the
    * URL is the state, and two writes would lose the first.
    */
-  onSelectAll?: (changes: Record<string, string | null>) => void;
+  onSelectAll: (changes: Record<string, string | null>) => void;
 }
 
 /**
@@ -156,7 +156,7 @@ export function GuideParts({
                   part={part}
                   view={view}
                   options={options?.[part.role]}
-                  onInspect={onInspect ?? (() => {})}
+                  onInspect={onInspect}
                   pinned={pinnedRoles.includes(part.role)}
                   onUndo={
                     admitted.includes(part.role)
@@ -191,7 +191,7 @@ export function GuideParts({
       </div>
       <PartSelectionModal
         isOpen={inspected !== null}
-        onClose={() => onInspect?.(null)}
+        onClose={() => onInspect(null)}
         partName={inspected ? `${inspected.title} (${inspected.role})` : ''}
         // What the guide actually resolved, not a wider set. Opening
         // on your own wall is the useful place to start looking for
@@ -203,7 +203,7 @@ export function GuideParts({
         // the dialog should not make you find it again.
         initialMd5={inspected?.blueprint?.file_md5 ?? null}
         onPartSelected={
-          onSelectAll && inspected
+          inspected
             ? (_name, blueprint) => {
                 onSelectAll({
                   [pinKey(inspected.role)]: blueprint.file_md5,
@@ -212,7 +212,7 @@ export function GuideParts({
                   // wall beside the word "dungeon stone".
                   ...impliedBy(blueprint, inspected.role, refinements),
                 });
-                onInspect?.(null);
+                onInspect(null);
               }
             : undefined
         }
@@ -283,7 +283,7 @@ function Part({
   options?: number;
   /** Opens the catalog dialog on this part's role. */
   onInspect: (role: string) => void;
-  /** Hand-picked, as the URL has it rather than the resolution. */
+  /** Has a hand-picked part, per `admissions()`. */
   pinned: boolean;
   /** Present only when no question on screen carries this pin. */
   onUndo?: () => void;

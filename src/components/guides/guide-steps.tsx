@@ -435,7 +435,7 @@ interface Override {
   part: string;
 }
 
-/** What a question has to admit to, and whether that is all it decided. */
+/** The pins a question admits, and whether they are all it decided. */
 interface Admission {
   pins: Override[];
   /** It admits a pin and has nothing else left to decide. */
@@ -443,7 +443,7 @@ interface Admission {
 }
 
 /**
- * Per question: the pins it admits, the first to reach a role owning it,
+ * The pins each question admits — the first to reach a role owns it —
  * and whether they leave it nothing else to decide.
  */
 function overrides(
@@ -465,9 +465,7 @@ function overrides(
     );
     return {
       pins,
-      // Admitting a pin is required, or an answer greys with nothing
-      // beside it saying what replaced it. It also keeps `every` off an
-      // empty `decides`.
+      // An answer greys only beside a pin that replaced it.
       overridden:
         pins.length > 0 && decides.every((r) => Object.hasOwn(pinnedByRole, r)),
     };
@@ -599,7 +597,9 @@ function PinnedOverride({
         </button>
       </div>
       {/* A filename is one long token, so it breaks anywhere. */}
-      <div className="mt-0.5 break-all leading-snug text-xs text-gray-500">
+      {/* Darker than muted text elsewhere: on this panel's blue it is
+          the difference between 4.44 and 6.94 against AA's 4.5. */}
+      <div className="mt-0.5 break-all leading-snug text-xs text-gray-600">
         {part}
       </div>
     </div>
@@ -631,7 +631,7 @@ function RefinementGroup({
   becauseFor: (
     refinement: GuideRefinement
   ) => Record<string, MissingReason> | undefined;
-  /** The hand-picked parts this question answers for. */
+  /** The pins this question admits, and what it has left to decide. */
   overrideFor: (refinement: GuideRefinement) => Admission;
   onUnpin: (role: string) => void;
   opened?: string | null;
@@ -646,8 +646,6 @@ function RefinementGroup({
       </h2>
       <div className="flex flex-col gap-3">
         {refinements.map((refinement) => {
-          // A pinned part is not an answer to this question, so the
-          // question admits it here.
           const { pins, overridden } = overrideFor(refinement);
           const note = pins.map((pin) => (
             <PinnedOverride

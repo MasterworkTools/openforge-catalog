@@ -448,11 +448,11 @@ function answeredBy(
 }
 
 /**
- * The hand-picked parts, their blueprint names by role, and which roles
- * a question on screen admits.
+ * The hand-picked parts, their blueprint names by role, which roles a
+ * question on screen admits, and every role this build has a part for.
  *
- * A pin just released is gone from here a round trip before the
- * resolution stops reporting it.
+ * Pins come from the URL when there are selections, so a released pin
+ * goes before the resolution stops reporting it.
  */
 export function admissions(
   resolved: ResolvedGuide | null,
@@ -465,6 +465,8 @@ export function admissions(
   roles: Record<string, string>;
 } {
   const pinned = (resolved?.parts ?? []).filter(
+    // A part is `pinned` only when its pin resolved, so the blueprint
+    // is there; the compiler takes this body on trust either way.
     (part): part is GuidePart & { blueprint: GuideBlueprint } =>
       part.pinned &&
       part.blueprint !== null &&

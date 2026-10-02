@@ -3228,7 +3228,7 @@ describe('inspecting a part', () => {
 
     render(<GuidePage />);
 
-    const note = await screen.findByText(/^Custom Selection/);
+    const note = await screen.findByText('Custom Selection');
     const section = note.closest('.guide-refinements') as HTMLElement;
     expect(section.textContent).toContain('Texture');
     expect(section.textContent).toContain('a dungeon stone wall');
@@ -3278,7 +3278,7 @@ describe('inspecting a part', () => {
     render(<GuidePage />);
     const heading = await screen.findByRole('heading', { name: 'Side locks' });
     const section = heading.closest('.guide-refinements') as HTMLElement;
-    expect(within(section).getByText(/^Custom Selection/)).toBeInTheDocument();
+    expect(within(section).getByText('Custom Selection')).toBeInTheDocument();
     expect(within(section).getByText('Yes').className).toContain(
       'text-gray-500'
     );
@@ -3335,7 +3335,7 @@ describe('inspecting a part', () => {
     );
 
     render(<GuidePage />);
-    const note = await screen.findByText(/^Custom Selection/);
+    const note = await screen.findByText('Custom Selection');
     const section = note.closest('.guide-refinements') as HTMLElement;
     expect(section.textContent).toContain('Side locks');
     expect(screen.getAllByRole('button', { name: /^undo/ })).toHaveLength(1);
@@ -3367,7 +3367,7 @@ describe('inspecting a part', () => {
     await screen.findByText('You picked this part');
     // The card's, not the question's: a toggle whose only answer is
     // dead is not asked, so it cannot admit anything.
-    expect(screen.queryByText(/^Custom Selection/)).toBeNull();
+    expect(screen.queryByText('Custom Selection')).toBeNull();
     const undo = await screen.findByRole('button', { name: 'undo Wall' });
     fireEvent.click(undo);
     expect(window.location.search).not.toContain('part.wall');
@@ -3396,7 +3396,7 @@ describe('inspecting a part', () => {
     );
 
     render(<GuidePage />);
-    const note = await screen.findByText(/^Custom Selection/);
+    const note = await screen.findByText('Custom Selection');
     expect(note.closest('.guide-refinements')!.textContent).toContain(
       'Side locks'
     );
@@ -3421,7 +3421,7 @@ describe('inspecting a part', () => {
     );
 
     render(<GuidePage />);
-    const note = await screen.findByText(/^Custom Selection/);
+    const note = await screen.findByText('Custom Selection');
     expect(note.closest('.guide-refinements')!.textContent).toContain(
       'Side locks'
     );
@@ -3473,7 +3473,7 @@ describe('inspecting a part', () => {
 
     render(<GuidePage />);
     await screen.findByText('a dungeon stone wall');
-    expect(screen.queryByText(/^Custom Selection/)).toBeNull();
+    expect(screen.queryByText('Custom Selection')).toBeNull();
     expect(screen.queryByRole('button', { name: /^undo/ })).toBeNull();
   });
 
@@ -3498,7 +3498,7 @@ describe('inspecting a part', () => {
     expect(
       within(section).getByText('texture|dungeon_stone').className
     ).not.toContain('text-gray-500');
-    expect(screen.queryByText(/^Custom Selection/)).toBeNull();
+    expect(screen.queryByText('Custom Selection')).toBeNull();
   });
 
   it('keeps the card undo when the only question reaching the pin is not asked', async () => {
@@ -3579,7 +3579,7 @@ describe('inspecting a part', () => {
     );
 
     render(<GuidePage />);
-    await screen.findAllByText(/^Custom Selection/);
+    await screen.findAllByText('Custom Selection');
 
     const panels = screen
       .getAllByText('Custom Selection')
@@ -3601,14 +3601,16 @@ describe('inspecting a part', () => {
     expect(
       screen.getByRole('button', { name: 'undo Base for the wall' })
     ).toBeInTheDocument();
-    const undos = screen.getAllByRole('button', { name: /^undo/ });
-    expect(undos).toHaveLength(2);
+    expect(screen.getAllByRole('button', { name: /^undo/ })).toHaveLength(2);
 
-    // Each undo clears its own pin and leaves the other alone.
-    fireEvent.click(undos[0]);
+    // Each undo clears its own pin and leaves the other alone. By name,
+    // or the pairing is only ever checked in document order.
+    fireEvent.click(
+      screen.getByRole('button', { name: 'undo Base for the wall' })
+    );
     const after = window.location.search;
-    expect(after).not.toContain('part.wall=');
-    expect(after).toContain('part.wall-base=');
+    expect(after).not.toContain('part.wall-base=');
+    expect(after).toContain('part.wall=');
   });
 
   it('keeps a pinned base undoable though no question names its role', async () => {
@@ -3627,7 +3629,7 @@ describe('inspecting a part', () => {
     );
 
     render(<GuidePage />);
-    await screen.findByText(/^Custom Selection/);
+    await screen.findByText('Custom Selection');
 
     const undo = screen.getByRole('button', { name: /^undo/ });
     fireEvent.click(undo);
@@ -3658,9 +3660,9 @@ describe('inspecting a part', () => {
     );
 
     render(<GuidePage />);
-    await screen.findByText(/^Custom Selection/);
+    await screen.findByText('Custom Selection');
 
-    expect(screen.getAllByText(/^Custom Selection/)).toHaveLength(1);
+    expect(screen.getAllByText('Custom Selection')).toHaveLength(1);
     expect(screen.getAllByRole('button', { name: /^undo/ })).toHaveLength(1);
   });
 
