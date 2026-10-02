@@ -493,7 +493,7 @@ export function deadAnswers(
   question: GuideStep | GuideRefinement,
   unavailable?: Record<string, string[]> | null
 ): string[] {
-  // The type says always present; a step from the wire may not be.
+  // Not every fixture carries the field the type requires.
   return unavailable?.[question.key] ?? question.unavailable ?? [];
 }
 

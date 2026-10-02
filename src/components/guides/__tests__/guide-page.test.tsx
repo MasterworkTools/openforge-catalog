@@ -3244,7 +3244,7 @@ describe('inspecting a part', () => {
     // and the bases even with the wall hand-picked.
     expect(
       within(section).getByText('texture|dungeon_stone').className
-    ).not.toContain('text-gray-400');
+    ).not.toContain('text-gray-500');
 
     const undo = screen.getByRole('button', { name: /^undo/ });
     expect(undo.closest('.guide-refinements')).toBe(section);
@@ -3280,7 +3280,7 @@ describe('inspecting a part', () => {
     const section = heading.closest('.guide-refinements') as HTMLElement;
     expect(within(section).getByText(/^Custom Selection/)).toBeInTheDocument();
     expect(within(section).getByText('Yes').className).toContain(
-      'text-gray-400'
+      'text-gray-500'
     );
   });
 
@@ -3313,7 +3313,7 @@ describe('inspecting a part', () => {
     const section = heading.closest('.guide-refinements') as HTMLElement;
     expect(
       within(section).getByText('texture|dungeon_stone').className
-    ).toContain('text-gray-400');
+    ).toContain('text-gray-500');
   });
 
   it('admits a pin under a live toggle that has not been answered', async () => {
@@ -3451,7 +3451,7 @@ describe('inspecting a part', () => {
     const section = heading.closest('.guide-refinements') as HTMLElement;
     expect(section.textContent).not.toContain('Custom Selection');
     expect(within(section).getByText('Yes').className).not.toContain(
-      'text-gray-400'
+      'text-gray-500'
     );
   });
 
@@ -3497,7 +3497,7 @@ describe('inspecting a part', () => {
     const section = heading.closest('.guide-refinements') as HTMLElement;
     expect(
       within(section).getByText('texture|dungeon_stone').className
-    ).not.toContain('text-gray-400');
+    ).not.toContain('text-gray-500');
     expect(screen.queryByText(/^Custom Selection/)).toBeNull();
   });
 

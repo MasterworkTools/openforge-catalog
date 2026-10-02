@@ -791,7 +791,7 @@ function AnsweredRefinement({
         )}
         <span
           className={`block font-semibold ${
-            overridden ? 'text-gray-400' : ''
+            overridden ? 'text-gray-500' : ''
           }`}
         >
           {answer}
