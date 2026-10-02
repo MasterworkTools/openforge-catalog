@@ -3253,9 +3253,8 @@ describe('inspecting a part', () => {
   });
 
   it('dims an answer a pin wholly displaces', async () => {
-    // `side-locks` is `role: 'wall'`, so a pinned wall leaves it
-    // deciding nothing. `texture` is moved off the wall here so the
-    // spanning question does not claim the pin first.
+    // `floor-texture` is moved onto the wall here so it owns the pin;
+    // `texture` is moved off it so the spanning question stands aside.
     visit('?guide=wall&method=separate-wall&part.wall=chosen-md5');
     mockFetch((url) =>
       url.includes('/resolve')
@@ -3267,8 +3266,8 @@ describe('inspecting a part', () => {
             refinements: RESOLVED_WITH_PARTS.refinements.map((r) =>
               r.key === 'texture'
                 ? { ...r, role: 'floor' }
-                : r.key === 'side-locks'
-                  ? { ...r, selected: 'on' }
+                : r.key === 'floor-texture'
+                  ? { ...r, role: 'wall', selected: 'texture|dungeon_stone' }
                   : r
             ),
           }
@@ -3276,10 +3275,12 @@ describe('inspecting a part', () => {
     );
 
     render(<GuidePage />);
-    const heading = await screen.findByRole('heading', { name: 'Side locks' });
+    const heading = await screen.findByRole('heading', {
+      name: 'Floor texture',
+    });
     const section = heading.closest('.guide-refinements') as HTMLElement;
     expect(within(section).getByText('Custom Selection')).toBeInTheDocument();
-    expect(within(section).getByText('Yes').className).toContain(
+    expect(within(section).getByText('Dungeon stone').className).toContain(
       'text-gray-500'
     );
   });
@@ -3529,6 +3530,31 @@ describe('inspecting a part', () => {
     const undo = await screen.findByRole('button', { name: /^undo/ });
     fireEvent.click(undo);
     expect(window.location.search).not.toContain('part.wall');
+  });
+
+  it('shows a yes/no question as an answered box that one click flips', async () => {
+    // Unanswered means no, which is an answer. Drawing it as an empty
+    // checkbox made it the only question on the page that is not a box,
+    // and changing it took two clicks through two different controls.
+    visit('?guide=wall&method=separate-wall');
+    mockFetch((url) =>
+      url.includes('/resolve') ? RESOLVED_WITH_PARTS : GUIDE_DOCUMENT
+    );
+
+    render(<GuidePage />);
+    const toggle = await screen.findByRole('button', { name: /Side locks/ });
+    expect(toggle.textContent).toContain('No');
+    expect(toggle).toHaveAttribute('aria-pressed', 'false');
+
+    fireEvent.click(toggle);
+    expect(window.location.search).toContain('side-locks=on');
+
+    const pressed = await screen.findByRole('button', { name: /Side locks/ });
+    expect(pressed.textContent).toContain('Yes');
+    expect(pressed).toHaveAttribute('aria-pressed', 'true');
+
+    fireEvent.click(pressed);
+    expect(window.location.search).toContain('side-locks=off');
   });
 
   it('re-picking the answer a pin displaced releases the pin and keeps it', async () => {

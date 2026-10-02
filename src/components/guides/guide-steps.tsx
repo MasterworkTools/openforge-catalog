@@ -639,6 +639,11 @@ function RefinementGroup({
   onSelect: (key: string, value: string | null) => void;
 }) {
   const headingId = `refinements-${id}`;
+  // Only an answer that is dead needs explaining; a live one speaks.
+  const whyFor = (refinement: GuideRefinement) =>
+    refinement.selected && deadFor(refinement).includes(refinement.selected)
+      ? becauseFor(refinement)?.[refinement.selected]
+      : undefined;
   return (
     <section className="guide-refinements mb-8">
       <h2 id={headingId} className="text-xl font-bold mb-3">
@@ -661,6 +666,28 @@ function RefinementGroup({
               {note}
             </div>
           );
+          // Answering closes whatever was open, so the next question is.
+          const answer = (key: string, value: string | null) => {
+            onOpenChange?.(null);
+            onSelect(key, value);
+          };
+          // A yes/no is a box whether or not it has been answered, so it
+          // never folds and never opens — the click is the answer.
+          if (refinement.on_tags) {
+            return wrap(
+              <Toggle
+                refinement={refinement}
+                showPrompt={showPrompts}
+                why={whyFor(refinement)}
+                inForce={pickedValue(
+                  refinement.key,
+                  refinement.selected,
+                  picked
+                )}
+                onSelect={answer}
+              />
+            );
+          }
           // Answered and not reopened: folded to its answer, exactly
           // as a settled step is. Clicking it opens it again.
           if (refinement.selected !== null && opened !== refinement.key) {
@@ -668,28 +695,10 @@ function RefinementGroup({
               <AnsweredRefinement
                 refinement={refinement}
                 showPrompt={showPrompts}
-                why={
-                  deadFor(refinement).includes(refinement.selected)
-                    ? becauseFor(refinement)?.[refinement.selected]
-                    : undefined
-                }
+                why={whyFor(refinement)}
                 inForce={pickedValue(refinement.key, refinement.selected, picked)}
                 overridden={overridden}
                 onOpen={() => onOpenChange?.(refinement.key)}
-              />
-            );
-          }
-          // Answering closes it, so the next question is what is open.
-          const answer = (key: string, value: string | null) => {
-            onOpenChange?.(null);
-            onSelect(key, value);
-          };
-          if (refinement.on_tags) {
-            return wrap(
-              <Toggle
-                refinement={refinement}
-                showPrompt={showPrompts}
-                onSelect={answer}
               />
             );
           }
@@ -914,29 +923,41 @@ function labelFor(choice: GuideChoice): string {
 function Toggle({
   refinement,
   showPrompt,
+  why,
+  inForce,
   onSelect,
 }: {
   refinement: GuideRefinement;
   /** False when the section heading is already this question. */
   showPrompt: boolean;
+  /** The answer the URL holds, which leads the resolution. */
+  inForce: string | null;
+  why?: MissingReason;
   onSelect: (key: string, value: string | null) => void;
 }) {
-  // A yes/no the catalog cannot always answer — four of the eight wall
-  // textures have no pegged wall at all — is not drawn at all. That is
-  // decided by the caller, which drops the whole question rather than
-  // heading a section over an unanswerable one.
+  // Unanswered means no, so it is drawn as answered: a yes/no question
+  // with no answer yet still has one. A question the catalog cannot
+  // answer yes to is dropped by the caller rather than shown as a no
+  // nobody can change.
+  const on = inForce === 'on';
   return (
-    <label className="flex items-center gap-2">
-      <input
-        type="checkbox"
+    <div>
+      <button
+        type="button"
+        aria-pressed={on}
         aria-label={showPrompt ? undefined : refinement.prompt}
-        checked={refinement.selected === 'on'}
-        onChange={(e) =>
-          onSelect(refinement.key, e.target.checked ? 'on' : 'off')
-        }
-      />
-      {showPrompt && <span>{refinement.prompt}</span>}
-    </label>
+        onClick={() => onSelect(refinement.key, on ? 'off' : 'on')}
+        className="w-full text-left rounded border border-gray-200 px-3 py-2 hover:border-gray-400"
+      >
+        {showPrompt && (
+          <span className="block text-xs uppercase tracking-wide text-gray-500">
+            {refinement.prompt}
+          </span>
+        )}
+        <span className="block font-semibold">{on ? 'Yes' : 'No'}</span>
+      </button>
+      {why && <DeadAnswer why={why} />}
+    </div>
   );
 }
 
