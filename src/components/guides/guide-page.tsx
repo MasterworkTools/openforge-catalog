@@ -100,10 +100,10 @@ export default function GuidePage() {
     selections,
     unavailable
   );
-  // Answering a question also lets go of the parts that question
-  // decides, or going back to the texture after hand-picking a wall
-  // changes nothing and the button looks dead.
   const unpin = (role: string) => select(pinKey(role), null);
+  // Answering a question lets go of the parts it decides. Without that,
+  // going back to the texture after hand-picking a wall changes nothing
+  // and the button looks dead.
   const answer = (key: string, value: string | null) => {
     const asked = [...(resolved?.steps ?? []), ...(resolved?.refinements ?? [])];
     const question = asked.find((q) => q.key === key);
@@ -277,7 +277,9 @@ export default function GuidePage() {
               unavailable={unavailable}
               because={because}
               pinnedByRole={pinnedByRole}
-              roles={resolved.parts.map((part) => part.role)}
+              roles={Object.fromEntries(
+                resolved.parts.map((part) => [part.role, part.title])
+              )}
               onUnpin={unpin}
               opened={opened}
               onOpenChange={setOpened}

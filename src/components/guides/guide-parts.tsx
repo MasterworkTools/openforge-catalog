@@ -41,7 +41,7 @@ interface GuidePartsProps {
   onInspect?: (role: string | null) => void;
   /** Hand-picked roles, as the URL has them rather than the resolution. */
   pinnedRoles: string[];
-  /** Those a question on screen admits, so the card need not. */
+  /** The pinned roles a question on screen admits, so the card need not. */
   admitted: string[];
   onUnpin: (role: string) => void;
   /**

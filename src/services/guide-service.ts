@@ -448,19 +448,10 @@ function answeredBy(
 }
 
 /**
- * The questions actually put to the person. A toggle whose "yes" is
- * dead is not a question, and nothing can be admitted on one.
- *
- * One home for the dead-answer lookup as well as the test: the card and
- * the question column both decide who owns a pin from this, and a pin
- * is the one answer the questions cannot clear on their own.
- */
-/**
  * The hand-picked parts, and which of them a question on screen admits.
  *
- * The URL leads the resolution, as it does for the answers: a pin the
- * person has just released is gone from here a round trip before the
- * resolution stops reporting it.
+ * A pin the person has just released is gone from here a round trip
+ * before the resolution stops reporting it.
  */
 export function admissions(
   resolved: ResolvedGuide | null,
@@ -472,14 +463,15 @@ export function admissions(
   admitted: string[];
 } {
   const pinned = (resolved?.parts ?? []).filter(
-    (part) => part.pinned && (!selections || pinKey(part.role) in selections)
+    (part) =>
+      part.pinned &&
+      part.blueprint &&
+      (!selections || pinKey(part.role) in selections)
   );
   const asked = askedOf(resolved?.refinements ?? [], unavailable);
   return {
     pinned,
-    // Named by the blueprint; the title is the role, which is already
-    // obvious beside the question. A part is `pinned` only when the pin
-    // resolved, so the blueprint is there.
+    // Named by the blueprint: the title is only the role.
     pinnedByRole: Object.fromEntries(
       pinned.map((part) => [part.role, part.blueprint!.blueprint_name])
     ),
@@ -489,18 +481,25 @@ export function admissions(
   };
 }
 
+/** The answers this question cannot offer, freshest source first. */
+export function deadAnswers(
+  question: GuideStep | GuideRefinement,
+  unavailable?: Record<string, string[]> | null
+): string[] {
+  return unavailable?.[question.key] ?? question.unavailable ?? [];
+}
+
+/** The questions put to the person: a toggle whose yes is dead is not one. */
 export function askedOf(
   refinements: GuideRefinement[],
   unavailable?: Record<string, string[]> | null
 ): GuideRefinement[] {
-  return refinements.filter((refinement) => {
-    const dead = unavailable?.[refinement.key] ?? refinement.unavailable ?? [];
-    return (
+  return refinements.filter(
+    (refinement) =>
       !refinement.on_tags ||
       refinement.selected !== null ||
-      !dead.includes('on')
-    );
-  });
+      !deadAnswers(refinement, unavailable).includes('on')
+  );
 }
 
 /** Does this question apply to that role? Same test the engine makes. */

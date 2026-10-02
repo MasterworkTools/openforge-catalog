@@ -6,6 +6,7 @@ import {
   GuideRefinement,
   GuideStep,
   askedOf,
+  deadAnswers,
   MissingReason,
   reaches,
   Selections,
@@ -429,40 +430,42 @@ function Answer({
 interface Override {
   /** What the undo clears, which is not the question's own role. */
   role: string;
+  /** The role's own name, since one question can admit several. */
+  title: string;
   part: string;
 }
 
 /** What a question has to admit to, and whether that is all it decided. */
 interface Admission {
   pins: Override[];
-  /** Every role it reaches is hand-picked, so its answer decides nothing. */
+  /** It admits a pin and has nothing else left to decide. */
   overridden: boolean;
 }
 
-/**
- * Per question: the pins it admits, the first question reaching a role
- * owning it, and whether they displace its whole answer.
- */
+/** What each question answers for, and whether that is all it decided. */
 function overrides(
   asked: GuideRefinement[],
   pinnedByRole: Record<string, string>,
-  roles: string[]
+  roles: Record<string, string>
 ): (refinement: GuideRefinement) => Admission {
   const owned = new Map<string, Override[]>();
   for (const [role, part] of Object.entries(pinnedByRole)) {
     const owner = asked.find((refinement) => reaches(refinement, role));
     if (!owner) continue;
-    owned.set(owner.key, [...(owned.get(owner.key) ?? []), { role, part }]);
+    const pin = { role, title: roles[role] ?? role, part };
+    owned.set(owner.key, [...(owned.get(owner.key) ?? []), pin]);
   }
   return (refinement) => {
-    const decides = roles.filter((role) => reaches(refinement, role));
+    const pins = owned.get(refinement.key) ?? [];
+    const decides = Object.keys(roles).filter((role) =>
+      reaches(refinement, role)
+    );
     return {
-      pins: owned.get(refinement.key) ?? [],
-      // Defensive, and known to be: the engine drops a question that
-      // reaches no part in the build.
+      pins,
+      // A question that admits no pin never dims, or an answer greys
+      // with nothing beside it saying what replaced it.
       overridden:
-        decides.length > 0 &&
-        decides.every((r) => Object.hasOwn(pinnedByRole, r)),
+        pins.length > 0 && decides.every((r) => Object.hasOwn(pinnedByRole, r)),
     };
   };
 }
@@ -479,8 +482,8 @@ interface GuideRefinementsProps {
   onSelect: (key: string, value: string | null) => void;
   /** Hand-picked parts: the role each fills, to the blueprint's name. */
   pinnedByRole: Record<string, string>;
-  /** The roles this build has parts for. */
-  roles: string[];
+  /** The roles this build has parts for, by their own names. */
+  roles: Record<string, string>;
   onUnpin: (role: string) => void;
 }
 
@@ -497,7 +500,7 @@ export function GuideRefinements({
   onSelect,
 }: GuideRefinementsProps) {
   const deadFor = (refinement: GuideRefinement) =>
-    unavailable?.[refinement.key] ?? refinement.unavailable ?? [];
+    deadAnswers(refinement, unavailable);
   const becauseFor = (refinement: GuideRefinement) =>
     because?.[refinement.key] ?? refinement.because;
   // A yes/no question whose "yes" is dead is not a question — pegs in
@@ -567,19 +570,24 @@ export function GuideRefinements({
 /** A hand-picked part filling a role, and the way back. */
 function PinnedOverride({
   part,
+  role,
   onUndo,
 }: {
   part: string;
+  /** The role this fills, since one question can admit several. */
+  role: string;
   onUndo: () => void;
 }) {
   return (
     <div className="mt-1 rounded border border-blue-200 bg-blue-50 px-2 py-1.5">
       <div className="flex items-baseline justify-between gap-2">
-        <span className="font-semibold text-blue-700">Custom Selection</span>
+        <span className="font-semibold text-blue-700">
+          {`Custom Selection: ${role}`}
+        </span>
         <button
           type="button"
           onClick={onUndo}
-          aria-label={`undo ${part}`}
+          aria-label={`undo ${role}`}
           className="underline text-blue-700 shrink-0 text-xs"
         >
           undo
@@ -640,6 +648,7 @@ function RefinementGroup({
             <PinnedOverride
               key={pin.role}
               part={pin.part}
+              role={pin.title}
               onUndo={() => onUnpin(pin.role)}
             />
           ));
@@ -662,7 +671,7 @@ function RefinementGroup({
                     : undefined
                 }
                 inForce={pickedValue(refinement.key, refinement.selected, picked)}
-                overridden={overridden && pins.length > 0}
+                overridden={overridden}
                 onOpen={() => onOpenChange?.(refinement.key)}
               />
             );
@@ -745,7 +754,7 @@ function AnsweredRefinement({
 }: {
   refinement: GuideRefinement;
   showPrompt: boolean;
-  /** Hand-picked parts fill everything this question decides. */
+  /** This question admits a pin and has nothing else left to decide. */
   overridden: boolean;
   /** The answer the URL holds, which leads the resolution. */
   inForce: string | null;
