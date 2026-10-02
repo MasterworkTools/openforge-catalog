@@ -431,18 +431,32 @@ interface Override {
   part: string;
 }
 
-/** The pinned parts each question answers for, by the first that reaches each. */
+/** What a question has to admit to, and whether that is all it decided. */
+interface Admission {
+  pins: Override[];
+  /** Every role it reaches is hand-picked, so its answer decides nothing. */
+  whole: boolean;
+}
+
+/** What each question answers for, by the first that reaches each pin. */
 function overrides(
   asked: GuideRefinement[],
-  pinnedByRole: Record<string, string>
-): (refinement: GuideRefinement) => Override[] {
+  pinnedByRole: Record<string, string>,
+  roles: string[]
+): (refinement: GuideRefinement) => Admission {
   const owned = new Map<string, Override[]>();
   for (const [role, part] of Object.entries(pinnedByRole)) {
     const owner = asked.find((refinement) => reaches(refinement, role));
     if (!owner) continue;
     owned.set(owner.key, [...(owned.get(owner.key) ?? []), { role, part }]);
   }
-  return (refinement) => owned.get(refinement.key) ?? [];
+  return (refinement) => {
+    const decides = roles.filter((role) => reaches(refinement, role));
+    return {
+      pins: owned.get(refinement.key) ?? [],
+      whole: decides.length > 0 && decides.every((r) => r in pinnedByRole),
+    };
+  };
 }
 
 interface GuideRefinementsProps {
@@ -457,6 +471,8 @@ interface GuideRefinementsProps {
   onSelect: (key: string, value: string | null) => void;
   /** Hand-picked parts: the role each fills, to the blueprint's name. */
   pinnedByRole: Record<string, string>;
+  /** The roles this build has parts for. */
+  roles: string[];
   onUnpin: (role: string) => void;
 }
 
@@ -466,6 +482,7 @@ export function GuideRefinements({
   unavailable,
   because,
   pinnedByRole,
+  roles,
   onUnpin,
   opened,
   onOpenChange,
@@ -485,7 +502,7 @@ export function GuideRefinements({
       !deadFor(refinement).includes('on')
   );
   if (asked.length === 0) return null;
-  const overrideFor = overrides(asked, pinnedByRole);
+  const overrideFor = overrides(asked, pinnedByRole, roles);
   // A section each, in document order. A question is its own section
   // headed by its own prompt — "Change anything" over the lot of them
   // said nothing and made four unrelated questions look like one.
@@ -598,7 +615,7 @@ function RefinementGroup({
     refinement: GuideRefinement
   ) => Record<string, MissingReason> | undefined;
   /** The hand-picked parts this question answers for. */
-  overrideFor: (refinement: GuideRefinement) => Override[];
+  overrideFor: (refinement: GuideRefinement) => Admission;
   onUnpin: (role: string) => void;
   opened?: string | null;
   onOpenChange?: (key: string | null) => void;
@@ -614,7 +631,7 @@ function RefinementGroup({
         {refinements.map((refinement) => {
           // A pinned part is not an answer to this question, so this is
           // where it is admitted and where it is undone.
-          const pins = overrideFor(refinement);
+          const { pins, whole } = overrideFor(refinement);
           const note = pins.map((pin) => (
             <PinnedOverride
               key={pin.role}
@@ -641,7 +658,7 @@ function RefinementGroup({
                     : undefined
                 }
                 inForce={pickedValue(refinement.key, refinement.selected, picked)}
-                overridden={pins.length > 0 && refinement.role !== '*'}
+                overridden={whole}
                 onOpen={() => onOpenChange?.(refinement.key)}
               />
             );

@@ -287,6 +287,7 @@ export default function GuidePage() {
               unavailable={unavailable}
               because={because}
               pinnedByRole={pinnedByRole}
+              roles={(resolved?.parts ?? []).map((part) => part.role)}
               onUnpin={(role) => select(pinKey(role), null)}
               opened={opened}
               onOpenChange={setOpened}

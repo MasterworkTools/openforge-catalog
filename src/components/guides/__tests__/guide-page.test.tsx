@@ -3286,6 +3286,40 @@ describe('inspecting a part', () => {
     );
   });
 
+  it('dims a spanning answer once every role it reaches is pinned', async () => {
+    // Not dimmed while it still decides something, dimmed when it does
+    // not. Asking whether the question spans roles cannot tell these
+    // apart; asking what is left to decide can.
+    visit(
+      '?guide=wall&method=separate-wall&part.wall=a' +
+        '&part.wall-base=b&part.floor-base=c'
+    );
+    mockFetch((url) =>
+      url.includes('/resolve')
+        ? {
+            ...RESOLVED_WITH_PARTS,
+            parts: RESOLVED_WITH_PARTS.parts.map((p) => ({
+              ...p,
+              pinned: true,
+              blueprint: p.blueprint ?? RESOLVED_WITH_PARTS.parts[0].blueprint,
+            })),
+            refinements: RESOLVED_WITH_PARTS.refinements.map((r) =>
+              r.key === 'texture'
+                ? { ...r, selected: 'texture|dungeon_stone' }
+                : r
+            ),
+          }
+        : GUIDE_DOCUMENT
+    );
+
+    render(<GuidePage />);
+    const heading = await screen.findByRole('heading', { name: 'Texture' });
+    const section = heading.closest('.guide-refinements') as HTMLElement;
+    expect(
+      within(section).getByText('texture|dungeon_stone').className
+    ).toContain('text-gray-400');
+  });
+
   it('leaves an unpinned answer undimmed', async () => {
     visit('?guide=wall&method=separate-wall');
     mockFetch((url) =>
@@ -3367,8 +3401,8 @@ describe('inspecting a part', () => {
     // Each undo clears its own pin and leaves the other alone.
     fireEvent.click(undos[0]);
     const after = window.location.search;
-    expect(after.includes('part.wall=') && after.includes('part.wall-base='))
-      .toBe(false);
+    expect(after).not.toContain('part.wall=');
+    expect(after).toContain('part.wall-base=');
   });
 
   it('keeps a pinned base undoable though no question names its role', async () => {
