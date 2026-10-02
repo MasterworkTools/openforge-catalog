@@ -3173,8 +3173,7 @@ describe('inspecting a part', () => {
 
   it('marks a pinned part as the person\'s, with a way back', async () => {
     // A pinned part stops answering to the questions on the left, and
-    // saying so is the only way the page can explain why changing the
-    // texture leaves this one piece alone.
+    // the card says so.
     visit('?guide=wall&method=separate-wall&part.wall=chosen-md5');
     const asked: string[] = [];
     mockFetch((url) => {
@@ -3190,8 +3189,6 @@ describe('inspecting a part', () => {
     });
 
     render(<GuidePage />);
-    // Two now: the part card names it, and so does the question whose
-    // answer the pin displaced.
     await screen.findAllByText('a dungeon stone wall');
 
     // Forwarded to the backend, or a shared link would resolve

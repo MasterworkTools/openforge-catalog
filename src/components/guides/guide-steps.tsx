@@ -745,7 +745,7 @@ function AnsweredRefinement({
   refinement: GuideRefinement;
   showPrompt: boolean;
   /** A hand-picked part is filling this role, so this answer is not. */
-  overridden?: boolean;
+  overridden: boolean;
   /** The answer the URL holds, which leads the resolution. */
   inForce: string | null;
   /**
