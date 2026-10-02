@@ -3531,6 +3531,53 @@ describe('inspecting a part', () => {
     expect(window.location.search).not.toContain('part.wall');
   });
 
+  it('re-picking the answer a pin displaced releases the pin and keeps it', async () => {
+    // Clicking the chosen answer normally clears it, which is how you
+    // get back to no preference. With a pin in play that reads as
+    // "undo my pick", and clearing the answer leaves the question open
+    // with nothing to fold to.
+    visit(
+      '?guide=wall&method=separate-wall' +
+        '&texture=texture%7Cdungeon_stone&part.wall=chosen-md5'
+    );
+    mockFetch((url) =>
+      url.includes('/resolve')
+        ? {
+            ...RESOLVED_WITH_PARTS,
+            parts: RESOLVED_WITH_PARTS.parts.map((p) =>
+              p.role === 'wall' ? { ...p, pinned: true } : p
+            ),
+            refinements: RESOLVED_WITH_PARTS.refinements.map((r) =>
+              r.key === 'texture'
+                ? {
+                    ...r,
+                    selected: 'texture|dungeon_stone',
+                    choices: [
+                      { tag: 'texture|dungeon_stone', title: 'Dungeon stone' },
+                      { tag: 'texture|cave', title: 'Cave' },
+                    ],
+                  }
+                : r
+            ),
+          }
+        : GUIDE_DOCUMENT
+    );
+
+    render(<GuidePage />);
+
+    // Reopen the settled question, then re-pick the answer it shows.
+    const heading = await screen.findByRole('heading', { name: 'Texture' });
+    const section = heading.closest('.guide-refinements') as HTMLElement;
+    fireEvent.click(within(section).getByText('Dungeon stone'));
+    fireEvent.click(
+      within(section).getByRole('button', { name: /Dungeon stone/ })
+    );
+
+    const after = window.location.search;
+    expect(after).not.toContain('part.wall');
+    expect(after).toContain('texture=texture%7Cdungeon_stone');
+  });
+
   it('keeps the card undo when no question on screen governs the pin', async () => {
     // The resolution withholds refinements until every step is
     // answered, so on the first screen every part is pinnable and no

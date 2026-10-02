@@ -705,6 +705,7 @@ function RefinementGroup({
                 dead={deadFor(refinement)}
                 because={becauseFor(refinement)}
                 inForce={pickedValue(refinement.key, refinement.selected, picked)}
+                displaced={pins.length > 0}
                 onSelect={answer}
               />
             ) : (
@@ -807,7 +808,9 @@ function AnsweredRefinement({
  * applies to whatever parts happen to be in play.
  *
  * Picking the selected answer again clears it, which is how you get
- * back to "no preference" without a separate control.
+ * back to "no preference" without a separate control — unless a pin is
+ * displacing it, where that click means "undo my pick" and clearing the
+ * answer would leave the question with nothing to fold to.
  */
 function ChoicePicker({
   refinement,
@@ -816,11 +819,14 @@ function ChoicePicker({
   dead,
   because,
   inForce,
+  displaced,
   onSelect,
 }: {
   refinement: GuideRefinement;
   /** False when the section heading is already this question. */
   showPrompt: boolean;
+  /** A pin is standing in for this answer, so re-picking releases it. */
+  displaced: boolean;
   /** The section heading, to name the group by when it is. */
   labelledBy: string;
   dead: string[];
@@ -856,7 +862,12 @@ function ChoicePicker({
               assumed={
                 inForce === null && refinement.recommended === choice.tag
               }
-              onPick={() => onSelect(refinement.key, chosen ? null : choice.tag)}
+              onPick={() =>
+                onSelect(
+                  refinement.key,
+                  chosen && !displaced ? null : choice.tag
+                )
+              }
             />
           );
         })}
