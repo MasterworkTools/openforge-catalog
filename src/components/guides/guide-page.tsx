@@ -95,7 +95,7 @@ export default function GuidePage() {
     [answered, options]
   );
 
-  const { pinned, pinnedByRole, admitted } = admissions(
+  const { pinned, pinnedByRole, admitted, roles } = admissions(
     resolved,
     selections,
     unavailable
@@ -277,9 +277,7 @@ export default function GuidePage() {
               unavailable={unavailable}
               because={because}
               pinnedByRole={pinnedByRole}
-              roles={Object.fromEntries(
-                resolved.parts.map((part) => [part.role, part.title])
-              )}
+              roles={roles}
               onUnpin={unpin}
               opened={opened}
               onOpenChange={setOpened}

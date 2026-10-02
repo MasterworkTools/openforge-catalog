@@ -448,10 +448,11 @@ function answeredBy(
 }
 
 /**
- * The hand-picked parts, and which of them a question on screen admits.
+ * The hand-picked parts, their blueprint names by role, and which roles
+ * a question on screen admits.
  *
- * A pin the person has just released is gone from here a round trip
- * before the resolution stops reporting it.
+ * A pin just released is gone from here a round trip before the
+ * resolution stops reporting it.
  */
 export function admissions(
   resolved: ResolvedGuide | null,
@@ -461,19 +462,25 @@ export function admissions(
   pinned: GuidePart[];
   pinnedByRole: Record<string, string>;
   admitted: string[];
+  roles: Record<string, string>;
 } {
   const pinned = (resolved?.parts ?? []).filter(
-    (part) =>
+    (part): part is GuidePart & { blueprint: GuideBlueprint } =>
       part.pinned &&
-      part.blueprint &&
+      part.blueprint !== null &&
       (!selections || pinKey(part.role) in selections)
   );
   const asked = askedOf(resolved?.refinements ?? [], unavailable);
   return {
     pinned,
+    // Every role this build has a part for, which is the set the pinned
+    // ones are drawn from.
+    roles: Object.fromEntries(
+      (resolved?.parts ?? []).map((part) => [part.role, part.title])
+    ),
     // Named by the blueprint: the title is only the role.
     pinnedByRole: Object.fromEntries(
-      pinned.map((part) => [part.role, part.blueprint!.blueprint_name])
+      pinned.map((part) => [part.role, part.blueprint.blueprint_name])
     ),
     admitted: pinned
       .map((part) => part.role)
@@ -486,6 +493,7 @@ export function deadAnswers(
   question: GuideStep | GuideRefinement,
   unavailable?: Record<string, string[]> | null
 ): string[] {
+  // The type says always present; a step from the wire may not be.
   return unavailable?.[question.key] ?? question.unavailable ?? [];
 }
 

@@ -3231,7 +3231,6 @@ describe('inspecting a part', () => {
     const note = await screen.findByText(/^Custom Selection/);
     const section = note.closest('.guide-refinements') as HTMLElement;
     expect(section.textContent).toContain('Texture');
-    // Named by the blueprint; the title is the role, which says nothing.
     expect(section.textContent).toContain('a dungeon stone wall');
 
     // `side-locks` also governs the wall but answered second, so it
@@ -3369,7 +3368,7 @@ describe('inspecting a part', () => {
     // The card's, not the question's: a toggle whose only answer is
     // dead is not asked, so it cannot admit anything.
     expect(screen.queryByText(/^Custom Selection/)).toBeNull();
-    const undo = await screen.findByRole('button', { name: /^undo/ });
+    const undo = await screen.findByRole('button', { name: 'undo Wall' });
     fireEvent.click(undo);
     expect(window.location.search).not.toContain('part.wall');
   });
@@ -3582,26 +3581,28 @@ describe('inspecting a part', () => {
     render(<GuidePage />);
     await screen.findAllByText(/^Custom Selection/);
 
-    expect(screen.getAllByText(/^Custom Selection/)).toHaveLength(2);
-    // Named, so one question admitting two pins is readable and the
-    // undos are tellable apart by more than their order.
-    expect(screen.getByText('Custom Selection: Wall')).toBeInTheDocument();
+    const panels = screen
+      .getAllByText('Custom Selection')
+      .map((label) => label.parentElement as HTMLElement);
+    expect(panels).toHaveLength(2);
+
+    // Each panel names the role it fills and the part filling it, so
+    // two admissions under one question are readable on their own.
+    expect(panels[0].textContent).toContain('Wall');
+    expect(panels[0].textContent).toContain('a dungeon stone wall');
+    expect(panels[1].textContent).toContain('Base for the wall');
+    expect(panels[1].textContent).toContain('a dungeon stone base');
+
+    // Named, not merely distinct: a label of `undo 4` would be unique
+    // and useless.
     expect(
-      screen.getByText('Custom Selection: Base for the wall')
+      screen.getByRole('button', { name: 'undo Wall' })
     ).toBeInTheDocument();
-    // Each names the part it is about, not just the role it fills.
-    const named = screen
-      .getAllByText(/^Custom Selection/)
-      .map((heading) => heading.closest('div')?.parentElement?.textContent);
-    expect(named[0]).toContain('a dungeon stone wall');
-    expect(named[1]).toContain('a dungeon stone base');
+    expect(
+      screen.getByRole('button', { name: 'undo Base for the wall' })
+    ).toBeInTheDocument();
     const undos = screen.getAllByRole('button', { name: /^undo/ });
     expect(undos).toHaveLength(2);
-    // Distinct names, or the only control that clears a pin is tellable
-    // apart solely by its position.
-    expect(undos[0].getAttribute('aria-label')).not.toEqual(
-      undos[1].getAttribute('aria-label')
-    );
 
     // Each undo clears its own pin and leaves the other alone.
     fireEvent.click(undos[0]);

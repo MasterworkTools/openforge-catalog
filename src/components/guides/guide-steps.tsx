@@ -179,7 +179,7 @@ export function GuideSteps({
   return (
     <div className="guide-steps">
       {steps.map((step) => {
-        const dead = unavailable?.[step.key] ?? step.unavailable ?? [];
+        const dead = deadAnswers(step, unavailable);
         const why = because?.[step.key] ?? step.because;
         return step.selected === null ? (
           <OpenStep
@@ -428,7 +428,7 @@ function Answer({
 
 /** A hand-picked part, and the role it fills. */
 interface Override {
-  /** What the undo clears, which is not the question's own role. */
+  /** What the undo clears, which may not be the question's own role. */
   role: string;
   /** The role's own name, since one question can admit several. */
   title: string;
@@ -442,7 +442,10 @@ interface Admission {
   overridden: boolean;
 }
 
-/** What each question answers for, and whether that is all it decided. */
+/**
+ * Per question: the pins it admits, the first to reach a role owning it,
+ * and whether they leave it nothing else to decide.
+ */
 function overrides(
   asked: GuideRefinement[],
   pinnedByRole: Record<string, string>,
@@ -452,7 +455,7 @@ function overrides(
   for (const [role, part] of Object.entries(pinnedByRole)) {
     const owner = asked.find((refinement) => reaches(refinement, role));
     if (!owner) continue;
-    const pin = { role, title: roles[role] ?? role, part };
+    const pin = { role, title: roles[role], part };
     owned.set(owner.key, [...(owned.get(owner.key) ?? []), pin]);
   }
   return (refinement) => {
@@ -462,8 +465,9 @@ function overrides(
     );
     return {
       pins,
-      // A question that admits no pin never dims, or an answer greys
-      // with nothing beside it saying what replaced it.
+      // Admitting a pin is required, or an answer greys with nothing
+      // beside it saying what replaced it. It also keeps `every` off an
+      // empty `decides`.
       overridden:
         pins.length > 0 && decides.every((r) => Object.hasOwn(pinnedByRole, r)),
     };
@@ -503,9 +507,7 @@ export function GuideRefinements({
     deadAnswers(refinement, unavailable);
   const becauseFor = (refinement: GuideRefinement) =>
     because?.[refinement.key] ?? refinement.because;
-  // A yes/no question whose "yes" is dead is not a question — pegs in
-  // a texture that has none is nothing to decide. Dropped here rather
-  // than inside, so a section left with nothing is never headed.
+  // A section left with nothing is never headed.
   const asked = askedOf(refinements, unavailable);
   if (asked.length === 0) return null;
   const overrideFor = overrides(asked, pinnedByRole, roles);
@@ -570,24 +572,27 @@ export function GuideRefinements({
 /** A hand-picked part filling a role, and the way back. */
 function PinnedOverride({
   part,
-  role,
+  title,
   onUndo,
 }: {
   part: string;
-  /** The role this fills, since one question can admit several. */
-  role: string;
+  /** The role's own name, since one question can admit several. */
+  title: string;
   onUndo: () => void;
 }) {
   return (
     <div className="mt-1 rounded border border-blue-200 bg-blue-50 px-2 py-1.5">
+      {/* The label takes the prompt's treatment so the role keeps the
+          full width; together on one line the role is what wraps. */}
+      <span className="block text-xs uppercase tracking-wide text-blue-700">
+        Custom Selection
+      </span>
       <div className="flex items-baseline justify-between gap-2">
-        <span className="font-semibold text-blue-700">
-          {`Custom Selection: ${role}`}
-        </span>
+        <span className="font-semibold text-blue-700">{title}</span>
         <button
           type="button"
           onClick={onUndo}
-          aria-label={`undo ${role}`}
+          aria-label={`undo ${title}`}
           className="underline text-blue-700 shrink-0 text-xs"
         >
           undo
@@ -648,7 +653,7 @@ function RefinementGroup({
             <PinnedOverride
               key={pin.role}
               part={pin.part}
-              role={pin.title}
+              title={pin.title}
               onUndo={() => onUnpin(pin.role)}
             />
           ));
