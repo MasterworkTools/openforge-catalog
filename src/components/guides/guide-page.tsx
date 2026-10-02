@@ -2,12 +2,7 @@
 
 import GuideEntry from './guide-entry';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import {
-  isAsked,
-  pinKey,
-  reaches,
-  releasedBy,
-} from '@/services/guide-service';
+import { admissions, pinKey, releasedBy } from '@/services/guide-service';
 import {
   clearGuide,
   isPlainClick,
@@ -100,26 +95,15 @@ export default function GuidePage() {
     [answered, options]
   );
 
+  const { pinned, pinnedByRole, admitted } = admissions(
+    resolved,
+    selections,
+    unavailable
+  );
   // Answering a question also lets go of the parts that question
-  // decides. A pinned part outranks the questions — that is what
-  // pinning is — so without this, going back to the texture after
-  // hand-picking a wall changes nothing and the button looks dead.
-  const pinned = (resolved?.parts ?? []).filter((p) => p.pinned);
-  // Named by the blueprint; the part's title is the role, which is the
-  // one thing already obvious beside the question. A part is only
-  // `pinned` when the pin resolved, so the blueprint is always there.
-  const pinnedByRole = Object.fromEntries(
-    pinned.map((part) => [part.role, part.blueprint!.blueprint_name])
-  );
-  // The resolution publishes no refinements until every step is
-  // answered, so a part pinned on the first screen has no question to
-  // carry its admission. The card keeps the undo for those.
-  const asked = (resolved?.refinements ?? []).filter((r) =>
-    isAsked(r, unavailable?.[r.key] ?? r.unavailable ?? [])
-  );
-  const admitted = pinned
-    .map((part) => part.role)
-    .filter((role) => asked.some((r) => reaches(r, role)));
+  // decides, or going back to the texture after hand-picking a wall
+  // changes nothing and the button looks dead.
+  const unpin = (role: string) => select(pinKey(role), null);
   const answer = (key: string, value: string | null) => {
     const asked = [...(resolved?.steps ?? []), ...(resolved?.refinements ?? [])];
     const question = asked.find((q) => q.key === key);
@@ -293,8 +277,8 @@ export default function GuidePage() {
               unavailable={unavailable}
               because={because}
               pinnedByRole={pinnedByRole}
-              roles={(resolved?.parts ?? []).map((part) => part.role)}
-              onUnpin={(role) => select(pinKey(role), null)}
+              roles={resolved.parts.map((part) => part.role)}
+              onUnpin={unpin}
               opened={opened}
               onOpenChange={setOpened}
               onSelect={answer}
@@ -332,8 +316,9 @@ export default function GuidePage() {
               options={settledOptions}
               inspecting={inspecting}
               onInspect={setInspecting}
+              pinnedRoles={pinned.map((part) => part.role)}
               admitted={admitted}
-              onUnpin={(role) => select(pinKey(role), null)}
+              onUnpin={unpin}
               onSelectAll={selectAll}
             />
           </div>

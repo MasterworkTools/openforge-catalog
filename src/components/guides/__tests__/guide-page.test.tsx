@@ -3201,7 +3201,7 @@ describe('inspecting a part', () => {
       )
     ).toBe(true);
     expect(screen.getByText('You picked this part')).toBeInTheDocument();
-    fireEvent.click(screen.getByRole('button', { name: 'undo' }));
+    fireEvent.click(screen.getByRole('button', { name: /^undo/ }));
     expect(window.location.search).not.toContain('part.wall');
   });
 
@@ -3247,7 +3247,7 @@ describe('inspecting a part', () => {
       within(section).getByText('texture|dungeon_stone').className
     ).not.toContain('text-gray-400');
 
-    const undo = screen.getByRole('button', { name: 'undo' });
+    const undo = screen.getByRole('button', { name: /^undo/ });
     expect(undo.closest('.guide-refinements')).toBe(section);
     fireEvent.click(undo);
     expect(window.location.search).not.toContain('part.wall');
@@ -3286,9 +3286,7 @@ describe('inspecting a part', () => {
   });
 
   it('dims a spanning answer once every role it reaches is pinned', async () => {
-    // Not dimmed while it still decides something, dimmed when it does
-    // not. Asking whether the question spans roles cannot tell these
-    // apart; asking what is left to decide can.
+    // Dimmed only once it has nothing left to decide.
     visit(
       '?guide=wall&method=separate-wall&part.wall=a' +
         '&part.wall-base=b&part.floor-base=c'
@@ -3317,37 +3315,6 @@ describe('inspecting a part', () => {
     expect(
       within(section).getByText('texture|dungeon_stone').className
     ).toContain('text-gray-400');
-  });
-
-  it('leaves a question deciding no part in this build undimmed', async () => {
-    // `floor-texture` is `role: 'floor'` and this build has no floor,
-    // so it decides nothing — but nothing was hand-picked from it
-    // either, and an empty set is not a displaced one.
-    visit('?guide=wall&method=separate-wall&part.wall=chosen-md5');
-    mockFetch((url) =>
-      url.includes('/resolve')
-        ? {
-            ...RESOLVED_WITH_PARTS,
-            parts: RESOLVED_WITH_PARTS.parts.map((p) =>
-              p.role === 'wall' ? { ...p, pinned: true } : p
-            ),
-            refinements: RESOLVED_WITH_PARTS.refinements.map((r) =>
-              r.key === 'floor-texture'
-                ? { ...r, selected: 'texture|dungeon_stone' }
-                : r
-            ),
-          }
-        : GUIDE_DOCUMENT
-    );
-
-    render(<GuidePage />);
-    const heading = await screen.findByRole('heading', {
-      name: 'Floor texture',
-    });
-    const section = heading.closest('.guide-refinements') as HTMLElement;
-    expect(
-      within(section).getByText('Dungeon stone').className
-    ).not.toContain('text-gray-400');
   });
 
   it('leaves an unpinned answer undimmed', async () => {
@@ -3399,7 +3366,7 @@ describe('inspecting a part', () => {
     render(<GuidePage />);
     await screen.findByText('You picked this part');
 
-    const undo = await screen.findByRole('button', { name: 'undo' });
+    const undo = await screen.findByRole('button', { name: /^undo/ });
     fireEvent.click(undo);
     expect(window.location.search).not.toContain('part.wall');
   });
@@ -3425,7 +3392,7 @@ describe('inspecting a part', () => {
     render(<GuidePage />);
     await screen.findByText('You picked this part');
 
-    const undo = screen.getByRole('button', { name: 'undo' });
+    const undo = screen.getByRole('button', { name: /^undo/ });
     fireEvent.click(undo);
     expect(window.location.search).not.toContain('part.wall');
   });
@@ -3455,7 +3422,7 @@ describe('inspecting a part', () => {
     await screen.findAllByText('Custom Selection');
 
     expect(screen.getAllByText('Custom Selection')).toHaveLength(2);
-    const undos = screen.getAllByRole('button', { name: 'undo' });
+    const undos = screen.getAllByRole('button', { name: /^undo/ });
     expect(undos).toHaveLength(2);
 
     // Each undo clears its own pin and leaves the other alone.
@@ -3483,7 +3450,7 @@ describe('inspecting a part', () => {
     render(<GuidePage />);
     await screen.findByText('Custom Selection');
 
-    const undo = screen.getByRole('button', { name: 'undo' });
+    const undo = screen.getByRole('button', { name: /^undo/ });
     fireEvent.click(undo);
     expect(window.location.search).not.toContain('part.wall-base');
   });
@@ -3515,7 +3482,7 @@ describe('inspecting a part', () => {
     await screen.findByText('Custom Selection');
 
     expect(screen.getAllByText('Custom Selection')).toHaveLength(1);
-    expect(screen.getAllByRole('button', { name: 'undo' })).toHaveLength(1);
+    expect(screen.getAllByRole('button', { name: /^undo/ })).toHaveLength(1);
   });
 
   it('lets a pinned part go when you answer the question that decides it', async () => {

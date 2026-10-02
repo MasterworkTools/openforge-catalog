@@ -5,7 +5,7 @@ import {
   GuideChoice,
   GuideRefinement,
   GuideStep,
-  isAsked,
+  askedOf,
   MissingReason,
   reaches,
   Selections,
@@ -436,10 +436,13 @@ interface Override {
 interface Admission {
   pins: Override[];
   /** Every role it reaches is hand-picked, so its answer decides nothing. */
-  whole: boolean;
+  overridden: boolean;
 }
 
-/** What each question answers for, by the first that reaches each pin. */
+/**
+ * Per question: the pins it admits, the first question reaching a role
+ * owning it, and whether they displace its whole answer.
+ */
 function overrides(
   asked: GuideRefinement[],
   pinnedByRole: Record<string, string>,
@@ -455,7 +458,11 @@ function overrides(
     const decides = roles.filter((role) => reaches(refinement, role));
     return {
       pins: owned.get(refinement.key) ?? [],
-      whole: decides.length > 0 && decides.every((r) => r in pinnedByRole),
+      // Defensive, and known to be: the engine drops a question that
+      // reaches no part in the build.
+      overridden:
+        decides.length > 0 &&
+        decides.every((r) => Object.hasOwn(pinnedByRole, r)),
     };
   };
 }
@@ -496,9 +503,7 @@ export function GuideRefinements({
   // A yes/no question whose "yes" is dead is not a question — pegs in
   // a texture that has none is nothing to decide. Dropped here rather
   // than inside, so a section left with nothing is never headed.
-  const asked = refinements.filter((refinement) =>
-    isAsked(refinement, deadFor(refinement))
-  );
+  const asked = askedOf(refinements, unavailable);
   if (asked.length === 0) return null;
   const overrideFor = overrides(asked, pinnedByRole, roles);
   // A section each, in document order. A question is its own section
@@ -574,6 +579,7 @@ function PinnedOverride({
         <button
           type="button"
           onClick={onUndo}
+          aria-label={`undo ${part}`}
           className="underline text-blue-700 shrink-0 text-xs"
         >
           undo
@@ -627,9 +633,9 @@ function RefinementGroup({
       </h2>
       <div className="flex flex-col gap-3">
         {refinements.map((refinement) => {
-          // A pinned part is not an answer to this question, so this is
-          // where it is admitted and where it is undone.
-          const { pins, whole } = overrideFor(refinement);
+          // A pinned part is not an answer to this question, so the
+          // question admits it here.
+          const { pins, overridden } = overrideFor(refinement);
           const note = pins.map((pin) => (
             <PinnedOverride
               key={pin.role}
@@ -656,7 +662,7 @@ function RefinementGroup({
                     : undefined
                 }
                 inForce={pickedValue(refinement.key, refinement.selected, picked)}
-                overridden={whole}
+                overridden={overridden && pins.length > 0}
                 onOpen={() => onOpenChange?.(refinement.key)}
               />
             );

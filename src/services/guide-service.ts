@@ -448,15 +448,59 @@ function answeredBy(
 }
 
 /**
- * Is this question actually put to the person? A toggle whose "yes" is
+ * The questions actually put to the person. A toggle whose "yes" is
  * dead is not a question, and nothing can be admitted on one.
+ *
+ * One home for the dead-answer lookup as well as the test: the card and
+ * the question column both decide who owns a pin from this, and a pin
+ * is the one answer the questions cannot clear on their own.
  */
-export function isAsked(refinement: GuideRefinement, dead: string[]): boolean {
-  return (
-    !refinement.on_tags ||
-    refinement.selected !== null ||
-    !dead.includes('on')
+/**
+ * The hand-picked parts, and which of them a question on screen admits.
+ *
+ * The URL leads the resolution, as it does for the answers: a pin the
+ * person has just released is gone from here a round trip before the
+ * resolution stops reporting it.
+ */
+export function admissions(
+  resolved: ResolvedGuide | null,
+  selections: Selections | null,
+  unavailable?: Record<string, string[]> | null
+): {
+  pinned: GuidePart[];
+  pinnedByRole: Record<string, string>;
+  admitted: string[];
+} {
+  const pinned = (resolved?.parts ?? []).filter(
+    (part) => part.pinned && (!selections || pinKey(part.role) in selections)
   );
+  const asked = askedOf(resolved?.refinements ?? [], unavailable);
+  return {
+    pinned,
+    // Named by the blueprint; the title is the role, which is already
+    // obvious beside the question. A part is `pinned` only when the pin
+    // resolved, so the blueprint is there.
+    pinnedByRole: Object.fromEntries(
+      pinned.map((part) => [part.role, part.blueprint!.blueprint_name])
+    ),
+    admitted: pinned
+      .map((part) => part.role)
+      .filter((role) => asked.some((r) => reaches(r, role))),
+  };
+}
+
+export function askedOf(
+  refinements: GuideRefinement[],
+  unavailable?: Record<string, string[]> | null
+): GuideRefinement[] {
+  return refinements.filter((refinement) => {
+    const dead = unavailable?.[refinement.key] ?? refinement.unavailable ?? [];
+    return (
+      !refinement.on_tags ||
+      refinement.selected !== null ||
+      !dead.includes('on')
+    );
+  });
 }
 
 /** Does this question apply to that role? Same test the engine makes. */

@@ -39,7 +39,9 @@ interface GuidePartsProps {
    */
   inspecting?: string | null;
   onInspect?: (role: string | null) => void;
-  /** Pinned roles a question on screen admits, so the card need not. */
+  /** Hand-picked roles, as the URL has them rather than the resolution. */
+  pinnedRoles: string[];
+  /** Those a question on screen admits, so the card need not. */
   admitted: string[];
   onUnpin: (role: string) => void;
   /**
@@ -75,6 +77,7 @@ export function GuideParts({
   options,
   inspecting = null,
   onInspect,
+  pinnedRoles,
   admitted,
   onUnpin,
   onSelectAll,
@@ -154,6 +157,7 @@ export function GuideParts({
                   view={view}
                   options={options?.[part.role]}
                   onInspect={onInspect ?? (() => {})}
+                  pinned={pinnedRoles.includes(part.role)}
                   onUndo={
                     admitted.includes(part.role)
                       ? undefined
@@ -270,6 +274,7 @@ function Part({
   view,
   options,
   onInspect,
+  pinned,
   onUndo,
 }: {
   part: GuidePart;
@@ -278,6 +283,8 @@ function Part({
   options?: number;
   /** Opens the catalog dialog on this part's role. */
   onInspect: (role: string) => void;
+  /** Hand-picked, as the URL has it rather than the resolution. */
+  pinned: boolean;
   /** Present only when no question on screen carries this pin. */
   onUndo?: () => void;
 }) {
@@ -311,11 +318,16 @@ function Part({
       </button>
       <div className="mt-2 font-semibold">{part.title}</div>
       {/* Why changing a texture leaves this piece alone. */}
-      {part.pinned && (
+      {pinned && (
         <div className="text-xs text-blue-700 flex items-center gap-2">
           <span>You picked this part</span>
           {onUndo && (
-            <button type="button" onClick={onUndo} className="underline">
+            <button
+              type="button"
+              onClick={onUndo}
+              aria-label={`undo ${part.title}`}
+              className="underline"
+            >
               undo
             </button>
           )}
