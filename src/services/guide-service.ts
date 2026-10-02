@@ -447,6 +447,18 @@ function answeredBy(
   return matched[0].tag;
 }
 
+/**
+ * Is this question actually put to the person? A toggle whose "yes" is
+ * dead is not a question, and nothing can be admitted on one.
+ */
+export function isAsked(refinement: GuideRefinement, dead: string[]): boolean {
+  return (
+    !refinement.on_tags ||
+    refinement.selected !== null ||
+    !dead.includes('on')
+  );
+}
+
 /** Does this question apply to that role? Same test the engine makes. */
 export function reaches(refinement: GuideRefinement, role: string): boolean {
   if (refinement.role !== '*' && refinement.role !== role) return false;

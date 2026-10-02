@@ -3171,9 +3171,10 @@ describe('inspecting a part', () => {
     );
   });
 
-  it('marks a pinned part as the person\'s, with a way back', async () => {
+  it('marks a pinned part as the person\'s, and offers one way back', async () => {
     // A pinned part stops answering to the questions on the left, and
-    // the card says so.
+    // the card says so. The undo here is the question's — the card
+    // offers its own only when no question can.
     visit('?guide=wall&method=separate-wall&part.wall=chosen-md5');
     const asked: string[] = [];
     mockFetch((url) => {
@@ -3318,6 +3319,37 @@ describe('inspecting a part', () => {
     ).toContain('text-gray-400');
   });
 
+  it('leaves a question deciding no part in this build undimmed', async () => {
+    // `floor-texture` is `role: 'floor'` and this build has no floor,
+    // so it decides nothing — but nothing was hand-picked from it
+    // either, and an empty set is not a displaced one.
+    visit('?guide=wall&method=separate-wall&part.wall=chosen-md5');
+    mockFetch((url) =>
+      url.includes('/resolve')
+        ? {
+            ...RESOLVED_WITH_PARTS,
+            parts: RESOLVED_WITH_PARTS.parts.map((p) =>
+              p.role === 'wall' ? { ...p, pinned: true } : p
+            ),
+            refinements: RESOLVED_WITH_PARTS.refinements.map((r) =>
+              r.key === 'floor-texture'
+                ? { ...r, selected: 'texture|dungeon_stone' }
+                : r
+            ),
+          }
+        : GUIDE_DOCUMENT
+    );
+
+    render(<GuidePage />);
+    const heading = await screen.findByRole('heading', {
+      name: 'Floor texture',
+    });
+    const section = heading.closest('.guide-refinements') as HTMLElement;
+    expect(
+      within(section).getByText('Dungeon stone').className
+    ).not.toContain('text-gray-400');
+  });
+
   it('leaves an unpinned answer undimmed', async () => {
     visit('?guide=wall&method=separate-wall');
     mockFetch((url) =>
@@ -3340,6 +3372,36 @@ describe('inspecting a part', () => {
       within(section).getByText('texture|dungeon_stone').className
     ).not.toContain('text-gray-400');
     expect(screen.queryByText('Custom Selection')).toBeNull();
+  });
+
+  it('keeps the card undo when the only question reaching the pin is not asked', async () => {
+    // A toggle whose "yes" is dead is dropped before any admission is
+    // worked out. The card has to use that same test, or it withholds
+    // its undo for a question that was never put to anyone.
+    visit('?guide=wall&method=separate-wall&part.wall=chosen-md5');
+    mockFetch((url) =>
+      url.includes('/availability')
+        ? { unavailable: { 'side-locks': ['on'] }, because: {}, options: {} }
+        : url.includes('/resolve')
+          ? {
+              ...RESOLVED_WITH_PARTS,
+              parts: RESOLVED_WITH_PARTS.parts.map((p) =>
+                p.role === 'wall' ? { ...p, pinned: true } : p
+              ),
+              // `side-locks` is then the only question reaching the wall.
+              refinements: RESOLVED_WITH_PARTS.refinements.map((r) =>
+                r.key === 'texture' ? { ...r, role: 'floor' } : r
+              ),
+            }
+          : GUIDE_DOCUMENT
+    );
+
+    render(<GuidePage />);
+    await screen.findByText('You picked this part');
+
+    const undo = await screen.findByRole('button', { name: 'undo' });
+    fireEvent.click(undo);
+    expect(window.location.search).not.toContain('part.wall');
   });
 
   it('keeps the card undo when no question on screen governs the pin', async () => {

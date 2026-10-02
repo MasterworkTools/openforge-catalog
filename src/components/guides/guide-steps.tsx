@@ -5,6 +5,7 @@ import {
   GuideChoice,
   GuideRefinement,
   GuideStep,
+  isAsked,
   MissingReason,
   reaches,
   Selections,
@@ -495,11 +496,8 @@ export function GuideRefinements({
   // A yes/no question whose "yes" is dead is not a question — pegs in
   // a texture that has none is nothing to decide. Dropped here rather
   // than inside, so a section left with nothing is never headed.
-  const asked = refinements.filter(
-    (refinement) =>
-      !refinement.on_tags ||
-      refinement.selected !== null ||
-      !deadFor(refinement).includes('on')
+  const asked = refinements.filter((refinement) =>
+    isAsked(refinement, deadFor(refinement))
   );
   if (asked.length === 0) return null;
   const overrideFor = overrides(asked, pinnedByRole, roles);

@@ -2,7 +2,12 @@
 
 import GuideEntry from './guide-entry';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { pinKey, reaches, releasedBy } from '@/services/guide-service';
+import {
+  isAsked,
+  pinKey,
+  reaches,
+  releasedBy,
+} from '@/services/guide-service';
 import {
   clearGuide,
   isPlainClick,
@@ -109,11 +114,12 @@ export default function GuidePage() {
   // The resolution publishes no refinements until every step is
   // answered, so a part pinned on the first screen has no question to
   // carry its admission. The card keeps the undo for those.
+  const asked = (resolved?.refinements ?? []).filter((r) =>
+    isAsked(r, unavailable?.[r.key] ?? r.unavailable ?? [])
+  );
   const admitted = pinned
     .map((part) => part.role)
-    .filter((role) =>
-      (resolved?.refinements ?? []).some((r) => reaches(r, role))
-    );
+    .filter((role) => asked.some((r) => reaches(r, role)));
   const answer = (key: string, value: string | null) => {
     const asked = [...(resolved?.steps ?? []), ...(resolved?.refinements ?? [])];
     const question = asked.find((q) => q.key === key);
