@@ -426,40 +426,30 @@ function Answer({
 
 /** A hand-picked part, and the role it fills. */
 interface Override {
-  /** The pinned role, which is what the undo clears — not the
-      question's own role, which may span several. */
+  /** What the undo clears, which is not the question's own role. */
   role: string;
   part: string;
 }
 
-/**
- * Which question admits to each pinned part.
- *
- * `reaches` is the test the engine already makes for whether a question
- * governs a role, so a spanning question counts and `except_roles` is
- * honoured. Answering first wins, so one pinned part is admitted once
- * however many questions govern it.
- */
+/** The pinned parts each question answers for, by the first that reaches each. */
 function overrides(
   asked: GuideRefinement[],
   pinnedByRole?: Record<string, string>
-): (refinement: GuideRefinement) => Override | null {
-  const owner = new Map<string, string>();
+): (refinement: GuideRefinement) => Override[] {
+  const owner = new Map<string, { key: string; override: Override }>();
   for (const refinement of asked) {
-    for (const role of Object.keys(pinnedByRole ?? {})) {
+    for (const [role, part] of Object.entries(pinnedByRole ?? {})) {
       if (!owner.has(role) && reaches(refinement, role)) {
-        owner.set(role, refinement.key);
+        owner.set(role, { key: refinement.key, override: { role, part } });
       }
     }
   }
-  return (refinement) => {
-    for (const [role, key] of owner) {
-      if (key === refinement.key) {
-        return { role, part: pinnedByRole?.[role] ?? '' };
-      }
-    }
-    return null;
-  };
+  // One question can reach several pinned roles, and every one of them
+  // needs its own way back.
+  return (refinement) =>
+    [...owner.values()]
+      .filter((owned) => owned.key === refinement.key)
+      .map((owned) => owned.override);
 }
 
 interface GuideRefinementsProps {
@@ -561,11 +551,7 @@ export function GuideRefinements({
   );
 }
 
-/**
- * A question admitting that a hand-picked part, rather than its own
- * answer, is what fills the role — and the place to take that back,
- * because this question is what the pin overrode.
- */
+/** A hand-picked part filling a role, and the way back. */
 function PinnedOverride({
   part,
   onUndo,
@@ -619,7 +605,7 @@ function RefinementGroup({
     refinement: GuideRefinement
   ) => Record<string, MissingReason> | undefined;
   /** The hand-picked part this question should admit to, if any. */
-  overrideFor: (refinement: GuideRefinement) => Override | null;
+  overrideFor: (refinement: GuideRefinement) => Override[];
   onUnpin: (role: string) => void;
   opened?: string | null;
   onOpenChange?: (key: string | null) => void;
@@ -636,12 +622,13 @@ function RefinementGroup({
           // A pinned part is not an answer to this question, so this is
           // where it is admitted and where it is undone.
           const overridden = overrideFor(refinement);
-          const note = overridden && (
+          const note = overridden.map((pin) => (
             <PinnedOverride
-              part={overridden.part}
-              onUndo={() => onUnpin(overridden.role)}
+              key={pin.role}
+              part={pin.part}
+              onUndo={() => onUnpin(pin.role)}
             />
-          );
+          ));
           const wrap = (question: React.ReactNode) => (
             <div key={refinement.key}>
               {question}
@@ -661,7 +648,7 @@ function RefinementGroup({
                     : undefined
                 }
                 inForce={pickedValue(refinement.key, refinement.selected, picked)}
-                overridden={Boolean(overridden)}
+                overridden={overridden.length > 0}
                 onOpen={() => onOpenChange?.(refinement.key)}
               />
             );

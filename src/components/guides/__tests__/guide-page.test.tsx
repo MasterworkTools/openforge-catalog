@@ -3254,8 +3254,6 @@ describe('inspecting a part', () => {
   });
 
   it('leaves an unpinned answer undimmed', async () => {
-    // The dimming has to mean something, so it must be absent when no
-    // pin has displaced the answer.
     visit('?guide=wall&method=separate-wall');
     mockFetch((url) =>
       url.includes('/resolve')
@@ -3279,11 +3277,44 @@ describe('inspecting a part', () => {
     expect(screen.queryByText('Custom Selection')).toBeNull();
   });
 
+  it('admits every pinned part one question governs, not just the first', async () => {
+    // `texture` is `role: '*'`, so it governs the wall and the base
+    // alike. Admitting only one of them leaves the other pin silent and
+    // un-undoable — the same dead end as a role no question governs.
+    visit(
+      '?guide=wall&method=separate-wall' +
+        '&part.wall=chosen-md5&part.wall-base=other-md5'
+    );
+    mockFetch((url) =>
+      url.includes('/resolve')
+        ? {
+            ...RESOLVED_WITH_PARTS,
+            parts: RESOLVED_WITH_PARTS.parts.map((p) =>
+              p.role === 'wall' || p.role === 'wall-base'
+                ? { ...p, pinned: true }
+                : p
+            ),
+          }
+        : GUIDE_DOCUMENT
+    );
+
+    render(<GuidePage />);
+    await screen.findAllByText('Custom Selection');
+
+    expect(screen.getAllByText('Custom Selection')).toHaveLength(2);
+    const undos = screen.getAllByRole('button', { name: 'undo' });
+    expect(undos).toHaveLength(2);
+
+    // Each undo clears its own pin and leaves the other alone.
+    fireEvent.click(undos[0]);
+    const after = window.location.search;
+    expect(after.includes('part.wall=') && after.includes('part.wall-base='))
+      .toBe(false);
+  });
+
   it('keeps a pinned base undoable though no question names its role', async () => {
-    // Every part can be hand-picked, including the bases, but neither
-    // shipped guide has a question declaring a base role — they are
-    // reached only by a spanning one. Deciding ownership by an exact
-    // role match left those pins with no undo anywhere on the page.
+    // A base role is reached only by a spanning question, and a pinned
+    // base still has to be undoable.
     visit('?guide=wall&method=separate-wall&part.wall-base=chosen-md5');
     mockFetch((url) =>
       url.includes('/resolve')
@@ -3305,9 +3336,8 @@ describe('inspecting a part', () => {
   });
 
   it('admits a pinned part once, however many questions share its role', async () => {
-    // Two questions can govern one role. The options offer already had
-    // to unlearn appearing once per question that narrowed a part; one
-    // pinned piece must not produce two identical undo buttons either.
+    // Two questions can govern one role; one pinned piece is one
+    // admission.
     visit('?guide=wall&method=separate-wall&part.wall=chosen-md5');
     mockFetch((url) =>
       url.includes('/resolve')
