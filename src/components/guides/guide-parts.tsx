@@ -38,15 +38,18 @@ interface GuidePartsProps {
    * has been replaced underneath it.
    */
   inspecting?: string | null;
-  onInspect?: (role: string | null) => void;
-  /** Same setter the questions use: a pin is a selection like any other. */
-  onSelect?: (key: string, value: string | null) => void;
+  onInspect: (role: string | null) => void;
+  /** Roles with a hand-picked part, per `admissions()`. */
+  pinnedRoles: string[];
+  /** Pinned roles a question admits: the card shows no undo for these. */
+  admitted: string[];
+  onUnpin: (role: string) => void;
   /**
    * Several answers at once. Picking a part settles the pin and the
    * questions that part answers, and those have to be one write — the
    * URL is the state, and two writes would lose the first.
    */
-  onSelectAll?: (changes: Record<string, string | null>) => void;
+  onSelectAll: (changes: Record<string, string | null>) => void;
 }
 
 /**
@@ -74,7 +77,9 @@ export function GuideParts({
   options,
   inspecting = null,
   onInspect,
-  onSelect,
+  pinnedRoles,
+  admitted,
+  onUnpin,
   onSelectAll,
 }: GuidePartsProps) {
   // `string` rather than the ring's own type: this also holds `top` and
@@ -151,9 +156,12 @@ export function GuideParts({
                   part={part}
                   view={view}
                   options={options?.[part.role]}
-                  onInspect={onInspect ?? (() => {})}
-                  onUnpin={
-                    onSelect ? () => onSelect(pinKey(part.role), null) : undefined
+                  onInspect={onInspect}
+                  pinned={pinnedRoles.includes(part.role)}
+                  onUndo={
+                    admitted.includes(part.role)
+                      ? undefined
+                      : () => onUnpin(part.role)
                   }
                 />
               ))}
@@ -183,7 +191,7 @@ export function GuideParts({
       </div>
       <PartSelectionModal
         isOpen={inspected !== null}
-        onClose={() => onInspect?.(null)}
+        onClose={() => onInspect(null)}
         partName={inspected ? `${inspected.title} (${inspected.role})` : ''}
         // What the guide actually resolved, not a wider set. Opening
         // on your own wall is the useful place to start looking for
@@ -195,7 +203,7 @@ export function GuideParts({
         // the dialog should not make you find it again.
         initialMd5={inspected?.blueprint?.file_md5 ?? null}
         onPartSelected={
-          onSelectAll && inspected
+          inspected
             ? (_name, blueprint) => {
                 onSelectAll({
                   [pinKey(inspected.role)]: blueprint.file_md5,
@@ -204,7 +212,7 @@ export function GuideParts({
                   // wall beside the word "dungeon stone".
                   ...impliedBy(blueprint, inspected.role, refinements),
                 });
-                onInspect?.(null);
+                onInspect(null);
               }
             : undefined
         }
@@ -266,7 +274,8 @@ function Part({
   view,
   options,
   onInspect,
-  onUnpin,
+  pinned,
+  onUndo,
 }: {
   part: GuidePart;
   view: string;
@@ -274,8 +283,10 @@ function Part({
   options?: number;
   /** Opens the catalog dialog on this part's role. */
   onInspect: (role: string) => void;
-  /** Undoes a pin, putting the role back on the guide's own answer. */
-  onUnpin?: () => void;
+  /** Has a hand-picked part, per `admissions()`. */
+  pinned: boolean;
+  /** Present only when no question on screen carries this pin. */
+  onUndo?: () => void;
 }) {
   return (
     <div className="border border-gray-300 rounded p-3 w-64">
@@ -306,14 +317,17 @@ function Part({
         <GuideSprite blueprint={part.blueprint} view={view} />
       </button>
       <div className="mt-2 font-semibold">{part.title}</div>
-      {/* A pinned part is no longer an answer to the questions on the
-          left, and saying so is the only way the page can explain why
-          changing a texture leaves this piece alone. */}
-      {part.pinned && (
+      {/* Why changing a texture leaves this piece alone. */}
+      {pinned && (
         <div className="text-xs text-blue-700 flex items-center gap-2">
           <span>You picked this part</span>
-          {onUnpin && (
-            <button type="button" onClick={onUnpin} className="underline">
+          {onUndo && (
+            <button
+              type="button"
+              onClick={onUndo}
+              aria-label={`undo ${part.title}`}
+              className="underline"
+            >
               undo
             </button>
           )}
