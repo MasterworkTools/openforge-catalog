@@ -58,6 +58,12 @@ def _parse_timestamp(timestamp) -> Optional[datetime]:
             return None
 
 
+def _dropped_successor(bp: Dict) -> str:
+    """The successor a revival discards, named so the link leaves a record."""
+    successor = bp.get("successor_id")
+    return f" (dropped successor {successor})" if successor else ""
+
+
 class ComparisonResult:
     """Result of comparing fixture data with existing database records."""
 
@@ -1028,6 +1034,10 @@ class IncrementalFixturesLoader:
                             "blueprint_name": new_file_name,
                             "search_text": search_text,
                             "deprecated": False,
+                            # This row is live again, so it is the current
+                            # version and succeeds nothing. A live row that
+                            # keeps a successor sends the chain reader off it.
+                            "successor_id": None,
                             # The row now owns this path, so it is no longer
                             # one of the row's duplicates.
                             "consolidated_paths": [
@@ -1060,7 +1070,8 @@ class IncrementalFixturesLoader:
                             image_sql.insert_image_for_blueprint(curs, bp["id"], image)
 
                         write_output(
-                            f"RENAMED: {existing_full_name} -> {new_full_name}\n"
+                            f"RENAMED: {existing_full_name} -> {new_full_name}"
+                            f"{_dropped_successor(bp)}\n"
                         )
 
                         # Return the updated blueprint
@@ -1107,7 +1118,9 @@ class IncrementalFixturesLoader:
                         )
                         tag_sql.delete_all_blueprint_tags(curs, bp["id"])
                         image_sql.delete_images_for_blueprint(curs, bp["id"])
-                        write_output(f"RESTORED: {bp['full_name']}\n")
+                        write_output(
+                            f"RESTORED: {bp['full_name']}{_dropped_successor(bp)}\n"
+                        )
 
                     # Normal case - insert tags and images for new blueprint
                     for tag in new_item.get("tags", []):

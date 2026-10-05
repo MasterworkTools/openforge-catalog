@@ -898,6 +898,64 @@ class TestIncrementalFixturesLoader:
         # Tracked, so the deprecation step in the same apply declines the row.
         assert "bp-1" in loader._renamed_blueprint_ids
 
+    def test_handle_addition_clears_the_successor_when_it_revives_by_rename(self):
+        """The takeover revives a tombstone, so it drops the successor too.
+
+        _handle_deprecation deliberately preserves successor_id when it
+        tombstones a row, so the field is routinely set on exactly the rows
+        this branch brings back. A live row that keeps one sends the
+        version-chain reader off it, or closes a cycle with the row that
+        replaced it.
+        """
+        loader = IncrementalFixturesLoader(create_mock_connection(), verbose=False)
+        loader.fixture_subset_path = "tiles/sewers"
+        loader.current_fixture_files = {"tiles/sewers/b.stl"}
+
+        # Deprecated holder, linked to whatever replaced it while it was away.
+        tombstone = {
+            "id": "bp-1",
+            "full_name": "tiles/catacombs/a.stl",
+            "deprecated": True,
+            "successor_id": "bp-successor",
+            "consolidated_paths": ["tiles/sewers/b.stl"],
+        }
+
+        new_item = create_mock_fixture_item("tiles/sewers/b.stl", "md5-shared")
+        new_item["file_metadata"]["file"] = "b.stl"
+
+        updates = []
+
+        with (
+            patch(
+                "openforge.db.fixtures.incremental.blueprint_sql.insert_blueprint",
+                return_value=tombstone,
+            ),
+            patch(
+                "openforge.db.fixtures.incremental.blueprint_sql.update_blueprint",
+                side_effect=lambda curs, bid, data: updates.append(data),
+            ),
+            patch(
+                "openforge.db.fixtures.incremental.tag_sql.delete_all_blueprint_tags"
+            ),
+            patch("openforge.db.fixtures.incremental.tag_sql.insert_tag"),
+            patch(
+                "openforge.db.fixtures.incremental.image_sql"
+                ".delete_images_for_blueprint"
+            ),
+            patch(
+                "openforge.db.fixtures.incremental.image_sql.insert_image_for_blueprint"
+            ),
+            patch("openforge.db.fixtures.incremental.write_output") as out,
+        ):
+            loader._handle_addition(Mock(), new_item)
+
+        assert len(updates) == 1
+        assert updates[0]["full_name"] == "tiles/sewers/b.stl"
+        assert updates[0]["deprecated"] is False
+        assert updates[0]["successor_id"] is None
+        # The discarded link is named rather than vanishing.
+        assert "bp-successor" in "".join(c.args[0] for c in out.call_args_list)
+
     def test_handle_addition_leaves_a_live_row_alone(self):
         """A fresh duplicate of a file still in the fixture joins, never steals.
 
@@ -1019,10 +1077,8 @@ class TestIncrementalFixturesLoader:
 
         # The takeover happened, which it can only do if the holder was a
         # known candidate while the addition was being applied.
-        assert any(
-            u.get("full_name") == "tiles/catacombs/thick_wall/loculus/b.stl"
-            for u in updates
-        )
+        assert len(updates) == 1
+        assert updates[0]["full_name"] == "tiles/catacombs/thick_wall/loculus/b.stl"
         assert "bp-1" in loader._renamed_blueprint_ids
         # And the row it inherited is therefore not tombstoned afterwards.
         mark_dep.assert_not_called()

@@ -632,3 +632,40 @@ class TestBlueprintFixtureResponse:
         assert result["deprecations_declined"] == [
             {"full_name": "tiles/x/left.stl", "md5": None, "size": None}
         ]
+
+    def test_declined_is_an_empty_list_when_an_apply_declined_nothing(self):
+        """Three states, and this is the ordinary one.
+
+        Null means no apply ran; an empty list means every candidate was
+        tombstoned. Collapsing them loses the distinction the count beside it
+        already makes.
+        """
+        from unittest.mock import Mock, patch
+
+        from openforge.app.routes.fixtures import _process_blueprint_fixture
+        from openforge.db.fixtures.incremental import ComparisonResult
+
+        changes = ComparisonResult()
+        changes.applied_deprecations = 2
+        changes.declined_deprecations = []
+
+        loader = Mock()
+        loader.compare_fixture_data.return_value = changes
+
+        with (
+            patch(
+                "openforge.app.routes.fixtures.is_blueprint_fixture",
+                return_value=True,
+            ),
+            patch(
+                "openforge.app.routes.fixtures.IncrementalFixturesLoader",
+                return_value=loader,
+            ),
+        ):
+            result = _process_blueprint_fixture(
+                [], Mock(), dry_run=False, verbose=False
+            )
+
+        assert result["deprecations_applied"] == 2
+        assert result["deprecations_declined"] == []
+        assert result["deprecations_declined"] is not None
