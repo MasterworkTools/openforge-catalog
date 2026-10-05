@@ -395,6 +395,11 @@ class TestResponseFormat:
         assert "errors" in data
         assert "output" in data
 
+        assert "deprecations_applied" in data
+        # A dry run applies nothing, so the applied figure is absent rather
+        # than zero, and `deprecated` stays the candidate list it always was.
+        assert data["deprecations_applied"] is None
+
         # Field types
         assert isinstance(data["added"], list)
         assert isinstance(data["modified"], list)

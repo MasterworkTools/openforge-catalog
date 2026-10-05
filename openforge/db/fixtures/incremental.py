@@ -935,6 +935,28 @@ class IncrementalFixturesLoader:
 
         return True
 
+    def _is_rename(self, bp: Dict, new_full_name: str) -> bool:
+        """Whether this path should take over an existing row, not just join it.
+
+        Only once the row's own path has left the fixture. After that, either
+        both paths sit in the fixture's own subtree, or the row already lists
+        this path among its duplicates — which says the bytes match, and that
+        is all the subtree test was ever standing in for.
+        """
+        existing_full_name = bp["full_name"]
+        if existing_full_name in self.current_fixture_files:
+            return False
+
+        if new_full_name in (bp.get("consolidated_paths") or []):
+            return True
+
+        if not self.fixture_subset_path:
+            return False
+        subtree = self.fixture_subset_path + "/"
+        return existing_full_name.startswith(subtree) and new_full_name.startswith(
+            subtree
+        )
+
     def _handle_addition(self, curs: cursor, new_item: Dict):
         """Handle addition of a new blueprint."""
         # Convert fixture format to database format
@@ -959,19 +981,7 @@ class IncrementalFixturesLoader:
                     existing_full_name = bp["full_name"]
                     new_full_name = new_item["file_metadata"]["full_name"]
 
-                    # A file is renamed within the fixture if:
-                    # 1. The existing file is NOT in the current fixture files
-                    # 2. Both paths share the same fixture subset path
-                    is_rename = False
-                    if (
-                        self.fixture_subset_path
-                        and existing_full_name not in self.current_fixture_files
-                        and existing_full_name.startswith(
-                            self.fixture_subset_path + "/"
-                        )
-                        and new_full_name.startswith(self.fixture_subset_path + "/")
-                    ):
-                        is_rename = True
+                    is_rename = self._is_rename(bp, new_full_name)
 
                     if is_rename:
                         # This is a rename within the fixture

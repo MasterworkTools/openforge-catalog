@@ -323,7 +323,10 @@ def _process_blueprint_fixture(
     return {
         "added": [_format_item(item) for item in changes.added],
         "modified": [_format_item(item) for item in changes.modified],
+        # The candidate list, as it has always been. How many of them the apply
+        # step actually tombstoned is the next key; null means nothing applied.
         "deprecated": [_format_item(item) for item in changes.deprecated],
+        "deprecations_applied": changes.applied_deprecations,
         "consolidated": [_format_item(item) for item in changes.consolidated],
         "errors": changes.errors,
     }

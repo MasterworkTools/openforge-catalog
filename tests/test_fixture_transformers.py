@@ -314,3 +314,23 @@ class TestDeprecatedEntryTransformer:
         assert "TagArrayToPipeTransformer failed" in str(exc_info.value)
         assert "Fixture:" in str(exc_info.value)
         assert str(fixture) in str(exc_info.value)
+
+
+class TestComparisonPrinter:
+    """print_comparison_results runs only on a dry run, where the deprecation
+    figure is a proposal rather than a result."""
+
+    def test_deprecations_are_labelled_as_candidates(self, capsys):
+        from openforge.db.fixtures import print_comparison_results
+        from openforge.db.fixtures.incremental import ComparisonResult
+
+        changes = ComparisonResult()
+        changes.deprecated = [{"full_name": "tiles/x/a.stl"}]
+
+        print_comparison_results(changes)
+        out = capsys.readouterr().out
+
+        assert "Deprecation candidates: 1" in out
+        assert "renamed in place on apply is not deprecated" in out
+        # The old wording claimed an outcome a dry run cannot know.
+        assert "Deprecated: 1" not in out

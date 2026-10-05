@@ -825,6 +825,72 @@ class TestIncrementalFixturesLoader:
         assert "atzlan" not in search_text.split()
         assert "floor" in search_text.split()
 
+    def test_handle_addition_takes_over_a_row_outside_the_subtree(self):
+        """A duplicate takes the row over even when the holder is above it.
+
+        The fixture's subtree is the common prefix of its own paths, so it
+        deepens when the holder's file is deleted — the same deletion that
+        makes the holder a deprecation candidate. Refusing the takeover on
+        that basis tombstones the row and leaves the surviving file with none.
+        """
+        loader = IncrementalFixturesLoader(create_mock_connection(), verbose=False)
+        loader.fixture_subset_path = "tiles/catacombs/thick_wall/loculus"
+        loader.current_fixture_files = {"tiles/catacombs/thick_wall/loculus/b.stl"}
+
+        # The rescued row sits above the subtree and already lists the new path.
+        existing_bp = {
+            "id": "bp-1",
+            "full_name": "tiles/catacombs/thick_wall/a.stl",
+            "consolidated_paths": ["tiles/catacombs/thick_wall/loculus/b.stl"],
+        }
+
+        new_item = create_mock_fixture_item(
+            "tiles/catacombs/thick_wall/loculus/b.stl", "md5-shared"
+        )
+        new_item["file_metadata"]["file"] = "b.stl"
+
+        captured = {}
+
+        with (
+            patch(
+                "openforge.db.fixtures.incremental.blueprint_sql.insert_blueprint",
+                return_value=existing_bp,
+            ),
+            patch(
+                "openforge.db.fixtures.incremental.blueprint_sql.update_blueprint",
+                side_effect=lambda curs, bid, data: captured.update(data),
+            ),
+            patch(
+                "openforge.db.fixtures.incremental.tag_sql.delete_all_blueprint_tags"
+            ),
+            patch("openforge.db.fixtures.incremental.tag_sql.insert_tag"),
+            patch(
+                "openforge.db.fixtures.incremental.image_sql"
+                ".delete_images_for_blueprint"
+            ),
+            patch(
+                "openforge.db.fixtures.incremental.image_sql.insert_image_for_blueprint"
+            ),
+        ):
+            loader._handle_addition(Mock(), new_item)
+
+        assert captured.get("full_name") == ("tiles/catacombs/thick_wall/loculus/b.stl")
+        # Tracked, so the deprecation step in the same apply declines the row.
+        assert "bp-1" in loader._renamed_blueprint_ids
+
+    def test_is_rename_declines_while_the_holder_is_still_in_the_fixture(self):
+        """Two live files are not a rename, however the paths sit."""
+        loader = IncrementalFixturesLoader(create_mock_connection(), verbose=False)
+        loader.fixture_subset_path = "tiles/x"
+        loader.current_fixture_files = {"tiles/x/a.stl", "tiles/x/b.stl"}
+
+        bp = {
+            "full_name": "tiles/x/a.stl",
+            "consolidated_paths": ["tiles/x/b.stl"],
+        }
+
+        assert loader._is_rename(bp, "tiles/x/b.stl") is False
+
     def test_renamed_id_skips_deprecation(self):
         """A bp id added to _renamed_blueprint_ids during a load must
         not be re-deprecated by _handle_deprecation in the same load."""
