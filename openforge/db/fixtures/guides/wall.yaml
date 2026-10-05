@@ -428,20 +428,11 @@ roles:
       # they ask for it themselves; a separate wall stands on an
       # ordinary floor, as its own comment below says.
       #
-      # 176 pieces carry shape|floor|wall, which is everything this
-      # role can ever return. By build tag: 88 s2w, 58 `wall on tile`,
-      # 29 with none, and 1 separate wall. Requiring build|s2w
-      # role-wide put those 29 out of reach of the one method that
-      # should have them. With every other term of this role applied,
-      # separate wall's pool goes from 80 to 168.
+      # Nothing asks for `build|wall on tile`, deliberately: those are
+      # legacy parts being retired, and a wall-on-tile build is
+      # assembled from s2w parts now, which is why that method asks the
+      # floor for build|s2w.
       #
-      # The 58 are not reachable today, and this comment used to imply
-      # they were. Both wall-on-tile and s2w ask the floor for exactly
-      # `build|s2w` + `shape|floor|wall`, so nothing ever asks for
-      # `build|wall on tile` and no method can return those pieces.
-      # Tracked as openforge_catalog-p1h rather than fixed here:
-      # changing the predicate moves the recommendation for every
-      # wall-on-tile build and wants its own verification sweep.
       # shape|floor and nothing else beneath it. Which children are
       # wanted is the method's business: s2w and wall-on-tile ask for
       # shape|floor|wall, because on those methods the tile is what the
