@@ -9,6 +9,8 @@ from openforge.data.transformers import (
     TagArrayToPipeTransformer,
     TimestampFieldTransformer,
 )
+from openforge.db.fixtures import print_comparison_results
+from openforge.db.fixtures.incremental import ComparisonResult
 
 
 class TestTagArrayToPipeTransformer:
@@ -321,9 +323,6 @@ class TestComparisonPrinter:
     figure is a proposal rather than a result."""
 
     def test_deprecations_are_labelled_as_candidates(self, capsys):
-        from openforge.db.fixtures import print_comparison_results
-        from openforge.db.fixtures.incremental import ComparisonResult
-
         changes = ComparisonResult()
         changes.deprecated = [{"full_name": "tiles/x/a.stl"}]
 
@@ -331,6 +330,49 @@ class TestComparisonPrinter:
         out = capsys.readouterr().out
 
         assert "Deprecation candidates: 1" in out
-        assert "renamed in place on apply is not deprecated" in out
-        # The old wording claimed an outcome a dry run cannot know.
-        assert "Deprecated: 1" not in out
+        assert "not deprecated" in out
+
+    def test_no_caveat_when_there_are_no_candidates(self, capsys):
+        """The caveat belongs to the list, so it goes when the list is empty."""
+        print_comparison_results(ComparisonResult())
+        out = capsys.readouterr().out
+
+        assert "Deprecation candidates: 0" in out
+        assert "not deprecated" not in out
+
+
+class TestBlueprintFixtureResponse:
+    """The applied-deprecation figure has to reach the response as a number
+    once an apply has run, since null is what a dry run means."""
+
+    def test_applied_count_is_an_integer_after_an_apply(self):
+        from unittest.mock import Mock, patch
+
+        from openforge.app.routes.fixtures import _process_blueprint_fixture
+
+        changes = ComparisonResult()
+        changes.applied_deprecations = 3
+        changes.declined_deprecations = [{"full_name": "tiles/x/left.stl"}]
+
+        loader = Mock()
+        loader.compare_fixture_data.return_value = changes
+
+        with (
+            patch(
+                "openforge.app.routes.fixtures.is_blueprint_fixture",
+                return_value=True,
+            ),
+            patch(
+                "openforge.app.routes.fixtures.IncrementalFixturesLoader",
+                return_value=loader,
+            ),
+        ):
+            result = _process_blueprint_fixture(
+                [], Mock(), dry_run=False, verbose=False
+            )
+
+        loader.apply_incremental_changes.assert_called_once()
+        assert result["deprecations_applied"] == 3
+        assert result["deprecations_declined"] == [
+            {"full_name": "tiles/x/left.stl", "md5": None, "size": None}
+        ]
