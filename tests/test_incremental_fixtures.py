@@ -401,6 +401,81 @@ class TestIncrementalFixturesLoader:
         added = [i["file_metadata"]["full_name"] for i in result.added]
         assert added == ["tiles/x/b.stl"]
 
+    def test_compare_fixture_data_consolidated_holder_in_another_fixture(
+        self, mock_loader
+    ):
+        """A holder outside this fixture's namespace is not this load's business.
+
+        consolidated_paths is written precisely when two files come from
+        different fixtures, so this is the common case rather than an edge one.
+        The holder is absent from this fixture's file list, but the missing-file
+        sweep cannot reach it either, so it survives and this path stays a
+        duplicate.
+        """
+        holder = create_mock_blueprint("tiles/cut-stone/brazier.stl", "same999")
+        holder["consolidated_paths"] = ["tiles/dungeon_stone/brazier.stl"]
+        mock_loader.existing_blueprints = {holder["full_name"]: holder}
+
+        fixture_data = [
+            create_mock_fixture_item("tiles/dungeon_stone/brazier.stl", "same999")
+        ]
+
+        result = mock_loader.compare_fixture_data(fixture_data, skip_load_existing=True)
+
+        assert len(result.added) == 0
+        assert len(result.modified) == 0
+
+    def test_compare_fixture_data_consolidated_checks_every_holder(self, mock_loader):
+        """One row listing the path does not settle it when another also does.
+
+        Both rows list the duplicate; only the second still matches its content.
+        Answering from the first row alone makes the verdict depend on row
+        order, which is the non-settling load this guard exists to stop.
+        """
+        stale = create_mock_blueprint("tiles/x/stale.stl", "old111")
+        stale["consolidated_paths"] = ["tiles/x/dup.stl"]
+        owner = create_mock_blueprint("tiles/x/owner.stl", "same999")
+        owner["consolidated_paths"] = ["tiles/x/dup.stl"]
+        mock_loader.existing_blueprints = {
+            stale["full_name"]: stale,
+            owner["full_name"]: owner,
+        }
+
+        fixture_data = [
+            create_mock_fixture_item("tiles/x/stale.stl", "old111"),
+            create_mock_fixture_item("tiles/x/owner.stl", "same999"),
+            create_mock_fixture_item("tiles/x/dup.stl", "same999"),
+        ]
+
+        result = mock_loader.compare_fixture_data(fixture_data, skip_load_existing=True)
+
+        assert len(result.added) == 0
+        assert len(result.modified) == 0
+
+    def test_compare_fixture_data_row_listing_its_own_path_is_still_compared(
+        self, mock_loader
+    ):
+        """A row can end up holding its own path, and must not skip itself.
+
+        The rename branch does not prune consolidated_paths, so a row moved onto
+        a path it had consolidated keeps pointing at itself. Its own changes
+        still have to be seen.
+        """
+        row = create_mock_blueprint("tiles/x/b.stl", "same999", tags=["shape|floor"])
+        row["consolidated_paths"] = ["tiles/x/b.stl"]
+        mock_loader.existing_blueprints = {row["full_name"]: row}
+
+        fixture_data = [
+            create_mock_fixture_item(
+                "tiles/x/b.stl", "same999", tags=["shape|floor", "size|width|2"]
+            )
+        ]
+
+        result = mock_loader.compare_fixture_data(fixture_data, skip_load_existing=True)
+
+        assert len(result.modified) == 1
+        assert len(result.added) == 0
+
     def test_compare_fixture_data_config_blueprint_new(self, mock_loader):
         """Test compare_fixture_data with new configuration blueprint."""
         fixture_data = [
@@ -794,7 +869,7 @@ class TestIncrementalFixturesLoader:
             patch.object(
                 loader,
                 "_find_deprecated_blueprint_by_md5",
-                side_effect=[{"id": "old"}, None],
+                side_effect=lambda md5: {"id": "old"} if md5 == "md5-1" else None,
             ),
             patch(
                 "openforge.db.fixtures.incremental.blueprint_sql"
