@@ -322,9 +322,15 @@ class TestIncrementalFixturesLoader:
         duplicate was consolidated into. Reported as a rename, that repeats on
         every load and the loader never settles.
         """
+        bystander = create_mock_blueprint("plain.2x2.magnetic.stl", "other111")
+        bystander["consolidated_paths"] = ["plain.2x2.magnetic,openlock.stl"]
         kept = create_mock_blueprint("plain.1x1.magnetic+flex.stl", "same999")
         kept["consolidated_paths"] = ["plain.1x1.magnetic+flex,openlock.stl"]
-        mock_loader.existing_blueprints = {kept["full_name"]: kept}
+        # Non-owner first, so finding the owner cannot depend on dict order.
+        mock_loader.existing_blueprints = {
+            bystander["full_name"]: bystander,
+            kept["full_name"]: kept,
+        }
 
         fixture_data = [
             create_mock_fixture_item("plain.1x1.magnetic+flex.stl", "same999"),
@@ -338,10 +344,14 @@ class TestIncrementalFixturesLoader:
         assert len(result.deprecated) == 0
 
     def test_compare_fixture_data_shared_md5_unrecorded_is_a_rename(self, mock_loader):
-        """An MD5 match at a path nobody consolidated is still a rename."""
-        mock_loader.existing_blueprints = {
-            "old/path.stl": create_mock_blueprint("old/path.stl", "same999")
-        }
+        """An MD5 match at a path nobody consolidated is still a rename.
+
+        The row holds an unrelated consolidated path, so only a membership test
+        can tell this path is not one of them.
+        """
+        existing = create_mock_blueprint("old/path.stl", "same999")
+        existing["consolidated_paths"] = ["some/other/dup.stl"]
+        mock_loader.existing_blueprints = {existing["full_name"]: existing}
 
         fixture_data = [create_mock_fixture_item("new/path.stl", "same999")]
 
@@ -350,6 +360,46 @@ class TestIncrementalFixturesLoader:
         assert len(result.added) == 1
         assert result.added[0]["file_metadata"]["full_name"] == "new/path.stl"
         assert len(result.modified) == 0
+
+    def test_compare_fixture_data_consolidated_holder_left_the_fixture(
+        self, mock_loader
+    ):
+        """A duplicate whose canonical path is gone has to take the row over.
+
+        The holder is absent from this fixture, so it becomes a deprecation
+        candidate. Skipping its surviving duplicate would tombstone the piece
+        while its file is still on disk.
+        """
+        holder = create_mock_blueprint("tiles/x/a.stl", "same999")
+        holder["consolidated_paths"] = ["tiles/x/b.stl"]
+        mock_loader.existing_blueprints = {holder["full_name"]: holder}
+
+        fixture_data = [create_mock_fixture_item("tiles/x/b.stl", "same999")]
+
+        result = mock_loader.compare_fixture_data(fixture_data, skip_load_existing=True)
+
+        assert len(result.added) == 1
+        assert result.added[0]["file_metadata"]["full_name"] == "tiles/x/b.stl"
+
+    def test_compare_fixture_data_consolidated_content_diverged(self, mock_loader):
+        """An edited duplicate is its own file again, not a skip.
+
+        consolidated_paths is only ever appended to, so a path still listed
+        after its content changed would otherwise never reach the catalog.
+        """
+        holder = create_mock_blueprint("tiles/x/a.stl", "same999")
+        holder["consolidated_paths"] = ["tiles/x/b.stl"]
+        mock_loader.existing_blueprints = {holder["full_name"]: holder}
+
+        fixture_data = [
+            create_mock_fixture_item("tiles/x/a.stl", "same999"),
+            create_mock_fixture_item("tiles/x/b.stl", "edited222"),
+        ]
+
+        result = mock_loader.compare_fixture_data(fixture_data, skip_load_existing=True)
+
+        added = [i["file_metadata"]["full_name"] for i in result.added]
+        assert added == ["tiles/x/b.stl"]
 
     def test_compare_fixture_data_config_blueprint_new(self, mock_loader):
         """Test compare_fixture_data with new configuration blueprint."""
@@ -682,8 +732,10 @@ class TestIncrementalFixturesLoader:
                 ".delete_images_for_blueprint"
             ) as del_imgs,
         ):
-            loader._handle_deprecation(Mock(), deprecated_bp)
+            applied = loader._handle_deprecation(Mock(), deprecated_bp)
 
+        # The caller counts this return, so a decline has to report one.
+        assert applied is False
         # The skip path means none of the deprecation side-effects fire.
         mark_dep.assert_not_called()
         del_tags.assert_not_called()
@@ -697,7 +749,9 @@ class TestIncrementalFixturesLoader:
         result.deprecated = [{}] * 236
 
         assert result.summary() == "236 added, 3 modified, 236 deprecated"
-        assert result.summary(applied_deprecations=0) == (
+
+        result.applied_deprecations = 0
+        assert result.summary() == (
             "236 added, 3 modified, 0 deprecated (236 left in place)"
         )
 
@@ -706,12 +760,23 @@ class TestIncrementalFixturesLoader:
         result = ComparisonResult()
         result.deprecated = [{}] * 10
 
-        assert result.summary(applied_deprecations=4) == (
-            "4 deprecated (6 left in place)"
-        )
+        result.applied_deprecations = 4
+        assert result.summary() == "4 deprecated (6 left in place)"
 
-    def test_apply_counts_only_the_deprecations_it_applied(self):
-        """A declined deprecation must not reach the applied summary."""
+    def test_summary_says_nothing_was_left_when_all_were_applied(self):
+        """The ordinary load: every candidate tombstoned, no trailing clause."""
+        result = ComparisonResult()
+        result.deprecated = [{}] * 10
+
+        result.applied_deprecations = 10
+        assert result.summary() == "10 deprecated"
+
+    def test_apply_counts_the_deprecations_it_applied_and_not_the_rest(self):
+        """One candidate tombstoned, one declined, and the summary says so.
+
+        A count that never rises and a count that rises unconditionally are both
+        wrong in the same place, so the partial case is the one worth pinning.
+        """
         loader = self._rename_loader()
 
         changes = ComparisonResult()
@@ -725,25 +790,38 @@ class TestIncrementalFixturesLoader:
 
         with (
             patch.object(loader, "_load_existing_blueprints", return_value={}),
-            # Both already carry a tombstone, so the apply step declines both.
+            # The first already carries a tombstone; the second does not.
             patch.object(
-                loader, "_find_deprecated_blueprint_by_md5", return_value={"id": "old"}
+                loader,
+                "_find_deprecated_blueprint_by_md5",
+                side_effect=[{"id": "old"}, None],
+            ),
+            patch(
+                "openforge.db.fixtures.incremental.blueprint_sql"
+                ".mark_blueprint_deprecated"
+            ) as mark_dep,
+            patch(
+                "openforge.db.fixtures.incremental.tag_sql.delete_all_blueprint_tags"
+            ),
+            patch(
+                "openforge.db.fixtures.incremental.image_sql"
+                ".delete_images_for_blueprint"
             ),
         ):
             loader._apply_changes_with_cursor(cursor, changes)
 
-        assert loader._deprecations_applied == 0
-        assert changes.summary(applied_deprecations=loader._deprecations_applied) == (
-            "0 deprecated (2 left in place)"
-        )
+        mark_dep.assert_called_once()
+        assert changes.applied_deprecations == 1
+        assert changes.summary() == "1 deprecated (1 left in place)"
 
-    def test_apply_changes_resets_renamed_ids_per_load(self):
-        """_renamed_blueprint_ids must reset at the top of each apply so
-        state from one fixture doesn't leak into the next."""
+    def test_apply_changes_resets_per_load_counters(self):
+        """Per-apply state must reset at the top so one fixture cannot
+        inflate the next: a loader instance serves a whole directory."""
         loader = self._rename_loader()
         loader._renamed_blueprint_ids.add("stale-id-from-prior-load")
 
         empty_changes = ComparisonResult()
+        empty_changes.applied_deprecations = 5
 
         # _link_deprecated_to_successors runs at the end and calls
         # cursor.fetchall(); make it return an empty list.
@@ -754,3 +832,4 @@ class TestIncrementalFixturesLoader:
             loader._apply_changes_with_cursor(cursor, empty_changes)
 
         assert loader._renamed_blueprint_ids == set()
+        assert empty_changes.applied_deprecations == 0
