@@ -352,12 +352,14 @@ class IncrementalFixturesLoader:
     def _in_deprecation_sweep(self, full_name: str) -> bool:
         """Whether this load's missing-file sweep can deprecate that row.
 
-        The sweep only reaches rows under the fixture's own namespace, so a row
-        outside it survives this load whatever the fixture says.
+        With a namespace the sweep reaches only rows beneath it, and the
+        trailing slash matters: `dungeon_stone` must not claim
+        `dungeon_stone_ruined`. Without one the sweep falls back to deprecating
+        anything absent from the fixture, so every row is in reach.
         """
-        return bool(self.fixture_namespace) and full_name.startswith(
-            f"tiles/{self.fixture_namespace}/"
-        )
+        if not self.fixture_namespace:
+            return True
+        return full_name.startswith(f"tiles/{self.fixture_namespace}/")
 
     def _find_missing_blueprints(
         self,
@@ -900,6 +902,16 @@ class IncrementalFixturesLoader:
                 return False
 
         blueprint_id = deprecated_bp["id"]
+
+        # Said out loud because no one function can tell: the duplicates listed
+        # here may be surviving in another fixture this run has already loaded,
+        # or has yet to, and tombstoning their only row leaves them with none.
+        if deprecated_bp.get("consolidated_paths"):
+            write_output(
+                f"WARNING: deprecating {deprecated_bp.get('full_name')}, which "
+                f"other paths were consolidated into: "
+                f"{', '.join(deprecated_bp['consolidated_paths'])}\n"
+            )
 
         # Remove tags and images for deprecated blueprint
         tag_sql.delete_all_blueprint_tags(curs, blueprint_id)

@@ -322,10 +322,10 @@ class TestIncrementalFixturesLoader:
         duplicate was consolidated into. Reported as a rename, that repeats on
         every load and the loader never settles.
         """
-        bystander = create_mock_blueprint("plain.2x2.magnetic.stl", "other111")
-        bystander["consolidated_paths"] = ["plain.2x2.magnetic,openlock.stl"]
-        kept = create_mock_blueprint("plain.1x1.magnetic+flex.stl", "same999")
-        kept["consolidated_paths"] = ["plain.1x1.magnetic+flex,openlock.stl"]
+        bystander = create_mock_blueprint("tiles/plain/2x2.magnetic.stl", "other111")
+        bystander["consolidated_paths"] = ["tiles/plain/2x2.magnetic,openlock.stl"]
+        kept = create_mock_blueprint("tiles/plain/1x1.magnetic+flex.stl", "same999")
+        kept["consolidated_paths"] = ["tiles/plain/1x1.magnetic+flex,openlock.stl"]
         # Non-owner first, so finding the owner cannot depend on dict order.
         mock_loader.existing_blueprints = {
             bystander["full_name"]: bystander,
@@ -333,8 +333,12 @@ class TestIncrementalFixturesLoader:
         }
 
         fixture_data = [
-            create_mock_fixture_item("plain.1x1.magnetic+flex.stl", "same999"),
-            create_mock_fixture_item("plain.1x1.magnetic+flex,openlock.stl", "same999"),
+            # Present, so the sweep has no reason to deprecate it.
+            create_mock_fixture_item("tiles/plain/2x2.magnetic.stl", "other111"),
+            create_mock_fixture_item("tiles/plain/1x1.magnetic+flex.stl", "same999"),
+            create_mock_fixture_item(
+                "tiles/plain/1x1.magnetic+flex,openlock.stl", "same999"
+            ),
         ]
 
         result = mock_loader.compare_fixture_data(fixture_data, skip_load_existing=True)
@@ -349,16 +353,18 @@ class TestIncrementalFixturesLoader:
         The row holds an unrelated consolidated path, so only a membership test
         can tell this path is not one of them.
         """
-        existing = create_mock_blueprint("old/path.stl", "same999")
-        existing["consolidated_paths"] = ["some/other/dup.stl"]
+        existing = create_mock_blueprint("tiles/plain/old/path.stl", "same999")
+        existing["consolidated_paths"] = ["tiles/plain/some/other/dup.stl"]
         mock_loader.existing_blueprints = {existing["full_name"]: existing}
 
-        fixture_data = [create_mock_fixture_item("new/path.stl", "same999")]
+        fixture_data = [create_mock_fixture_item("tiles/plain/new/path.stl", "same999")]
 
         result = mock_loader.compare_fixture_data(fixture_data, skip_load_existing=True)
 
         assert len(result.added) == 1
-        assert result.added[0]["file_metadata"]["full_name"] == "new/path.stl"
+        assert (
+            result.added[0]["file_metadata"]["full_name"] == "tiles/plain/new/path.stl"
+        )
         assert len(result.modified) == 0
 
     def test_compare_fixture_data_consolidated_holder_left_the_fixture(
@@ -412,7 +418,12 @@ class TestIncrementalFixturesLoader:
         sweep cannot reach it either, so it survives and this path stays a
         duplicate.
         """
-        holder = create_mock_blueprint("tiles/cut-stone/brazier.stl", "same999")
+        # dungeon_stone_ruined is a real namespace and dungeon_stone is a prefix
+        # of it, so the trailing slash in the sweep's prefix is what keeps this
+        # holder out of a dungeon_stone load's reach.
+        holder = create_mock_blueprint(
+            "tiles/dungeon_stone_ruined/brazier.stl", "same999"
+        )
         holder["consolidated_paths"] = ["tiles/dungeon_stone/brazier.stl"]
         mock_loader.existing_blueprints = {holder["full_name"]: holder}
 
@@ -424,6 +435,7 @@ class TestIncrementalFixturesLoader:
 
         assert len(result.added) == 0
         assert len(result.modified) == 0
+        assert result.deprecated == []
 
     def test_compare_fixture_data_consolidated_checks_every_holder(self, mock_loader):
         """One row listing the path does not settle it when another also does.
@@ -475,6 +487,33 @@ class TestIncrementalFixturesLoader:
 
         assert len(result.modified) == 1
         assert len(result.added) == 0
+
+    def test_compare_fixture_data_no_namespace_sweeps_everything(self, mock_loader):
+        """With no namespace the sweep is catalog-wide, so no holder is safe.
+
+        A fixture spanning two namespaces yields none, and the loader then
+        deprecates any model row absent from it. A holder certified as
+        surviving on that basis would be tombstoned by the same load, taking
+        the duplicate's only row with it.
+        """
+        holder = create_mock_blueprint("tiles/cut-stone/brazier.stl", "same999")
+        holder["consolidated_paths"] = ["tiles/dungeon_stone/brazier.stl"]
+        holder["blueprint_type"] = "model"
+        mock_loader.existing_blueprints = {holder["full_name"]: holder}
+
+        # Two namespaces, so _get_fixture_namespace cannot pick one.
+        fixture_data = [
+            create_mock_fixture_item("tiles/dungeon_stone/brazier.stl", "same999"),
+            create_mock_fixture_item("tiles/towne/wall.stl", "other222"),
+        ]
+
+        result = mock_loader.compare_fixture_data(fixture_data, skip_load_existing=True)
+
+        assert mock_loader.fixture_namespace is None
+        # The holder is swept, so the duplicate has to become its own row.
+        assert holder in result.deprecated
+        added = [i["file_metadata"]["full_name"] for i in result.added]
+        assert "tiles/dungeon_stone/brazier.stl" in added
 
     def test_compare_fixture_data_config_blueprint_new(self, mock_loader):
         """Test compare_fixture_data with new configuration blueprint."""
