@@ -418,11 +418,11 @@ class TestIncrementalFixturesLoader:
         sweep cannot reach it either, so it survives and this path stays a
         duplicate.
         """
-        # dungeon_stone_ruined is a real namespace and dungeon_stone is a prefix
-        # of it, so the trailing slash in the sweep's prefix is what keeps this
-        # holder out of a dungeon_stone load's reach.
+        # dungeon_stone+ruined is a real namespace that dungeon_stone is a
+        # prefix of, so the trailing slash in the sweep's prefix is what keeps
+        # this holder out of a dungeon_stone load's reach.
         holder = create_mock_blueprint(
-            "tiles/dungeon_stone_ruined/brazier.stl", "same999"
+            "tiles/dungeon_stone+ruined/brazier.stl", "same999"
         )
         holder["consolidated_paths"] = ["tiles/dungeon_stone/brazier.stl"]
         mock_loader.existing_blueprints = {holder["full_name"]: holder}
@@ -896,7 +896,14 @@ class TestIncrementalFixturesLoader:
         changes = ComparisonResult()
         changes.deprecated = [
             {"id": "bp-1", "file_md5": "md5-1"},
-            {"id": "bp-2", "file_md5": "md5-2"},
+            # Tombstoning this one strands the path consolidated into it, which
+            # is the one thing the deprecation step can say out loud.
+            {
+                "id": "bp-2",
+                "file_md5": "md5-2",
+                "full_name": "tiles/x/owner.stl",
+                "consolidated_paths": ["tiles/x/dup.stl"],
+            },
         ]
 
         cursor = Mock()
@@ -921,12 +928,15 @@ class TestIncrementalFixturesLoader:
                 "openforge.db.fixtures.incremental.image_sql"
                 ".delete_images_for_blueprint"
             ),
+            patch("openforge.db.fixtures.incremental.write_output") as out,
         ):
             loader._apply_changes_with_cursor(cursor, changes)
 
         mark_dep.assert_called_once()
         assert changes.applied_deprecations == 1
         assert changes.summary() == "1 deprecated (1 left in place)"
+        # Unconditional: the loader is not verbose here.
+        assert "tiles/x/dup.stl" in "".join(c.args[0] for c in out.call_args_list)
 
     def test_apply_changes_resets_per_load_counters(self):
         """Per-apply state must reset at the top so one fixture cannot

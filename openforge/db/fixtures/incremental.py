@@ -353,9 +353,9 @@ class IncrementalFixturesLoader:
         """Whether this load's missing-file sweep can deprecate that row.
 
         With a namespace the sweep reaches only rows beneath it, and the
-        trailing slash matters: `dungeon_stone` must not claim
-        `dungeon_stone_ruined`. Without one the sweep falls back to deprecating
-        anything absent from the fixture, so every row is in reach.
+        trailing slash matters: `cave` must not claim `cavern`. Without one the
+        sweep falls back to deprecating anything absent from the fixture, so
+        every row is in reach.
         """
         if not self.fixture_namespace:
             return True
