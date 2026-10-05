@@ -1099,6 +1099,20 @@ class IncrementalFixturesLoader:
                                 f"blueprint {bp['id']}\n"
                             )
                 else:
+                    # A rescued row already at this path can only be a
+                    # tombstone: a live row with this path and this MD5 would
+                    # never have been classified as an addition. The file is
+                    # back, so the row is. Tags and images are cleared first
+                    # because an earlier load may have inserted them onto the
+                    # tombstone without reviving it.
+                    if bp.get("deprecated"):
+                        blueprint_sql.update_blueprint(
+                            curs, bp["id"], {"deprecated": False}
+                        )
+                        tag_sql.delete_all_blueprint_tags(curs, bp["id"])
+                        image_sql.delete_images_for_blueprint(curs, bp["id"])
+                        write_output(f"RESTORED: {bp['full_name']}\n")
+
                     # Normal case - insert tags and images for new blueprint
                     for tag in new_item.get("tags", []):
 

@@ -1027,6 +1027,102 @@ class TestIncrementalFixturesLoader:
 
         assert loader._is_rename(bp, "tiles/plain/new.stl") is False
 
+    def test_handle_addition_revives_a_tombstone_at_the_same_path(self):
+        """A file restored under its own name brings its row back with it.
+
+        The rename branch is the only other place the flag is cleared, and it
+        needs the path to change. Without this, a deleted-then-restored file
+        has its tags rewritten onto a tombstone on every load while the output
+        reports adding it.
+        """
+        loader = IncrementalFixturesLoader(create_mock_connection(), verbose=False)
+        loader.fixture_subset_path = "tiles/plain"
+        loader.current_fixture_files = {"tiles/plain/a.stl"}
+
+        # Rescued by MD5; already at this path, so it can only be a tombstone.
+        tombstone = {
+            "id": "bp-1",
+            "full_name": "tiles/plain/a.stl",
+            "deprecated": True,
+        }
+
+        new_item = create_mock_fixture_item("tiles/plain/a.stl", "md5-shared")
+        new_item["file_metadata"]["file"] = "a.stl"
+
+        updates = []
+
+        with (
+            patch(
+                "openforge.db.fixtures.incremental.blueprint_sql.insert_blueprint",
+                return_value=tombstone,
+            ),
+            patch(
+                "openforge.db.fixtures.incremental.blueprint_sql.update_blueprint",
+                side_effect=lambda curs, bid, data: updates.append(data),
+            ),
+            patch(
+                "openforge.db.fixtures.incremental.tag_sql.delete_all_blueprint_tags"
+            ) as del_tags,
+            patch("openforge.db.fixtures.incremental.tag_sql.insert_tag"),
+            patch(
+                "openforge.db.fixtures.incremental.image_sql"
+                ".delete_images_for_blueprint"
+            ) as del_imgs,
+            patch(
+                "openforge.db.fixtures.incremental.image_sql.insert_image_for_blueprint"
+            ),
+            patch("openforge.db.fixtures.incremental.write_output") as out,
+        ):
+            loader._handle_addition(Mock(), new_item)
+
+        assert updates == [{"deprecated": False}]
+        # Cleared first, so a load that already wrote tags onto the tombstone
+        # does not leave two copies.
+        del_tags.assert_called_once()
+        del_imgs.assert_called_once()
+        # Said at default verbosity.
+        assert "tiles/plain/a.stl" in "".join(c.args[0] for c in out.call_args_list)
+
+    def test_handle_addition_does_not_touch_a_live_row_at_the_same_path(self):
+        """An ordinary insert is not a revival, so nothing is rewritten."""
+        loader = IncrementalFixturesLoader(create_mock_connection(), verbose=False)
+        loader.fixture_subset_path = "tiles/plain"
+        loader.current_fixture_files = {"tiles/plain/a.stl"}
+
+        fresh = {"id": "bp-1", "full_name": "tiles/plain/a.stl", "deprecated": False}
+
+        new_item = create_mock_fixture_item("tiles/plain/a.stl", "md5-new")
+        new_item["file_metadata"]["file"] = "a.stl"
+
+        updates = []
+
+        with (
+            patch(
+                "openforge.db.fixtures.incremental.blueprint_sql.insert_blueprint",
+                return_value=fresh,
+            ),
+            patch(
+                "openforge.db.fixtures.incremental.blueprint_sql.update_blueprint",
+                side_effect=lambda curs, bid, data: updates.append(data),
+            ),
+            patch(
+                "openforge.db.fixtures.incremental.tag_sql.delete_all_blueprint_tags"
+            ) as del_tags,
+            patch("openforge.db.fixtures.incremental.tag_sql.insert_tag"),
+            patch(
+                "openforge.db.fixtures.incremental.image_sql"
+                ".delete_images_for_blueprint"
+            ) as del_imgs,
+            patch(
+                "openforge.db.fixtures.incremental.image_sql.insert_image_for_blueprint"
+            ),
+        ):
+            loader._handle_addition(Mock(), new_item)
+
+        assert updates == []
+        del_tags.assert_not_called()
+        del_imgs.assert_not_called()
+
     def test_is_rename_declines_while_the_holder_is_still_in_the_fixture(self):
         """Two live files are not a rename, however the paths sit."""
         loader = IncrementalFixturesLoader(create_mock_connection(), verbose=False)
