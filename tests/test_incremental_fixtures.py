@@ -942,15 +942,92 @@ class TestIncrementalFixturesLoader:
             patch(
                 "openforge.db.fixtures.incremental.image_sql.insert_image_for_blueprint"
             ),
+            patch("openforge.db.fixtures.incremental.write_output") as out,
         ):
             loader._handle_addition(Mock(), new_item)
 
         # Consolidated, not renamed: the live row keeps its identity.
         assert updates == [{"consolidated_paths": ["tiles/plain/b.stl"]}]
+        # An append is a state change, so it is said at default verbosity.
+        said = "".join(c.args[0] for c in out.call_args_list)
+        assert "tiles/plain/b.stl" in said and "tiles/plain/a.stl" in said
         assert "bp-1" not in loader._renamed_blueprint_ids
         # The untouched file's tags and images survive.
         del_tags.assert_not_called()
         del_imgs.assert_not_called()
+
+    def test_apply_collects_candidates_before_applying_additions(self):
+        """The candidate set has to exist before additions consult it.
+
+        A duplicate inherits a row only when this load is deprecating it, so
+        the set is built from changes.deprecated at the top of the apply. Built
+        late, one fixture's takeovers would be judged against the previous
+        fixture's candidates, which is the per-load leak the rename set beside
+        it already guards against.
+        """
+        loader = IncrementalFixturesLoader(create_mock_connection(), verbose=False)
+        loader.fixture_subset_path = "tiles/catacombs/thick_wall/loculus"
+        loader.current_fixture_files = {"tiles/catacombs/thick_wall/loculus/b.stl"}
+
+        holder = {
+            "id": "bp-1",
+            "full_name": "tiles/catacombs/thick_wall/a.stl",
+            "file_md5": "md5-shared",
+            "consolidated_paths": ["tiles/catacombs/thick_wall/loculus/b.stl"],
+        }
+
+        new_item = create_mock_fixture_item(
+            "tiles/catacombs/thick_wall/loculus/b.stl", "md5-shared"
+        )
+        new_item["file_metadata"]["file"] = "b.stl"
+
+        changes = ComparisonResult()
+        changes.added = [new_item]
+        changes.deprecated = [holder]
+
+        cursor = Mock()
+        cursor.fetchall = Mock(return_value=[])
+        updates = []
+
+        with (
+            patch.object(loader, "_load_existing_blueprints", return_value={}),
+            patch(
+                "openforge.db.fixtures.incremental.blueprint_sql.insert_blueprint",
+                return_value=holder,
+            ),
+            patch(
+                "openforge.db.fixtures.incremental.blueprint_sql.update_blueprint",
+                side_effect=lambda curs, bid, data: updates.append(data),
+            ),
+            patch(
+                "openforge.db.fixtures.incremental.tag_sql.delete_all_blueprint_tags"
+            ),
+            patch("openforge.db.fixtures.incremental.tag_sql.insert_tag"),
+            patch(
+                "openforge.db.fixtures.incremental.image_sql"
+                ".delete_images_for_blueprint"
+            ),
+            patch(
+                "openforge.db.fixtures.incremental.image_sql.insert_image_for_blueprint"
+            ),
+            patch(
+                "openforge.db.fixtures.incremental.blueprint_sql"
+                ".mark_blueprint_deprecated"
+            ) as mark_dep,
+        ):
+            loader._apply_changes_with_cursor(cursor, changes)
+
+        # The takeover happened, which it can only do if the holder was a
+        # known candidate while the addition was being applied.
+        assert any(
+            u.get("full_name") == "tiles/catacombs/thick_wall/loculus/b.stl"
+            for u in updates
+        )
+        assert "bp-1" in loader._renamed_blueprint_ids
+        # And the row it inherited is therefore not tombstoned afterwards.
+        mark_dep.assert_not_called()
+        assert changes.applied_deprecations == 0
+        assert changes.declined_deprecations == [holder]
 
     def test_is_rename_declines_a_listed_path_when_the_holder_survives(self):
         """A listed duplicate inherits a row that is going, and only that.
@@ -1046,10 +1123,16 @@ class TestIncrementalFixturesLoader:
             "deprecated": True,
         }
 
-        new_item = create_mock_fixture_item("tiles/plain/a.stl", "md5-shared")
+        new_item = create_mock_fixture_item(
+            "tiles/plain/a.stl",
+            "md5-shared",
+            tags=[["shape", "floor"]],
+            images=[{"image_url": "https://example.test/a.png"}],
+        )
         new_item["file_metadata"]["file"] = "a.stl"
 
         updates = []
+        events = []
 
         with (
             patch(
@@ -1061,25 +1144,32 @@ class TestIncrementalFixturesLoader:
                 side_effect=lambda curs, bid, data: updates.append(data),
             ),
             patch(
-                "openforge.db.fixtures.incremental.tag_sql.delete_all_blueprint_tags"
-            ) as del_tags,
-            patch("openforge.db.fixtures.incremental.tag_sql.insert_tag"),
+                "openforge.db.fixtures.incremental.tag_sql.delete_all_blueprint_tags",
+                side_effect=lambda *a: events.append("del_tags"),
+            ),
+            patch(
+                "openforge.db.fixtures.incremental.tag_sql.insert_tag",
+                side_effect=lambda *a: events.append("ins_tag"),
+            ),
             patch(
                 "openforge.db.fixtures.incremental.image_sql"
-                ".delete_images_for_blueprint"
-            ) as del_imgs,
+                ".delete_images_for_blueprint",
+                side_effect=lambda *a: events.append("del_imgs"),
+            ),
             patch(
-                "openforge.db.fixtures.incremental.image_sql.insert_image_for_blueprint"
+                "openforge.db.fixtures.incremental.image_sql.insert_image_for_blueprint",
+                side_effect=lambda *a: events.append("ins_img"),
             ),
             patch("openforge.db.fixtures.incremental.write_output") as out,
         ):
             loader._handle_addition(Mock(), new_item)
 
-        assert updates == [{"deprecated": False}]
-        # Cleared first, so a load that already wrote tags onto the tombstone
-        # does not leave two copies.
-        del_tags.assert_called_once()
-        del_imgs.assert_called_once()
+        # The successor goes with the tombstone: a live row that keeps one
+        # sends the version-chain reader off to the wrong blueprint.
+        assert updates == [{"deprecated": False, "successor_id": None}]
+        # The resync has to precede the inserts, or the row comes back with
+        # nothing on it.
+        assert events == ["del_tags", "del_imgs", "ins_tag", "ins_img"]
         # Said at default verbosity.
         assert "tiles/plain/a.stl" in "".join(c.args[0] for c in out.call_args_list)
 
@@ -1122,19 +1212,6 @@ class TestIncrementalFixturesLoader:
         assert updates == []
         del_tags.assert_not_called()
         del_imgs.assert_not_called()
-
-    def test_is_rename_declines_while_the_holder_is_still_in_the_fixture(self):
-        """Two live files are not a rename, however the paths sit."""
-        loader = IncrementalFixturesLoader(create_mock_connection(), verbose=False)
-        loader.fixture_subset_path = "tiles/x"
-        loader.current_fixture_files = {"tiles/x/a.stl", "tiles/x/b.stl"}
-
-        bp = {
-            "full_name": "tiles/x/a.stl",
-            "consolidated_paths": ["tiles/x/b.stl"],
-        }
-
-        assert loader._is_rename(bp, "tiles/x/b.stl") is False
 
     def test_renamed_id_skips_deprecation(self):
         """A bp id added to _renamed_blueprint_ids during a load must
@@ -1257,8 +1334,11 @@ class TestIncrementalFixturesLoader:
         loader = self._rename_loader()
         loader._renamed_blueprint_ids.add("stale-id-from-prior-load")
 
+        loader._deprecation_candidates = {"stale-candidate"}
+
         empty_changes = ComparisonResult()
         empty_changes.applied_deprecations = 5
+        empty_changes.declined_deprecations = [{"id": "stale-declined"}]
 
         # _link_deprecated_to_successors runs at the end and calls
         # cursor.fetchall(); make it return an empty list.
@@ -1269,4 +1349,6 @@ class TestIncrementalFixturesLoader:
             loader._apply_changes_with_cursor(cursor, empty_changes)
 
         assert loader._renamed_blueprint_ids == set()
+        assert loader._deprecation_candidates == set()
         assert empty_changes.applied_deprecations == 0
+        assert empty_changes.declined_deprecations == []

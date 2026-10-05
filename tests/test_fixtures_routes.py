@@ -398,8 +398,10 @@ class TestResponseFormat:
         assert "deprecations_applied" in data
         assert "deprecations_declined" in data
         # A dry run applies nothing, so the figure is null rather than zero.
+        # Both null: a dry run cannot know either, and an empty list would
+        # read as "nothing was declined".
         assert data["deprecations_applied"] is None
-        assert data["deprecations_declined"] == []
+        assert data["deprecations_declined"] is None
 
         # Field types
         assert isinstance(data["added"], list)
@@ -592,3 +594,41 @@ def test_a_dry_run_upload_still_rejects_a_broken_guide(client, auth_headers, tes
 
     assert response.status_code == 500
     assert "plinth" in response.json["error"]
+
+
+class TestBlueprintFixtureResponse:
+    """The applied-deprecation figure has to reach the response as a number
+    once an apply has run, since null is what a dry run means."""
+
+    def test_applied_count_is_an_integer_after_an_apply(self):
+        from unittest.mock import Mock, patch
+
+        from openforge.app.routes.fixtures import _process_blueprint_fixture
+        from openforge.db.fixtures.incremental import ComparisonResult
+
+        changes = ComparisonResult()
+        changes.applied_deprecations = 3
+        changes.declined_deprecations = [{"full_name": "tiles/x/left.stl"}]
+
+        loader = Mock()
+        loader.compare_fixture_data.return_value = changes
+
+        with (
+            patch(
+                "openforge.app.routes.fixtures.is_blueprint_fixture",
+                return_value=True,
+            ),
+            patch(
+                "openforge.app.routes.fixtures.IncrementalFixturesLoader",
+                return_value=loader,
+            ),
+        ):
+            result = _process_blueprint_fixture(
+                [], Mock(), dry_run=False, verbose=False
+            )
+
+        loader.apply_incremental_changes.assert_called_once()
+        assert result["deprecations_applied"] == 3
+        assert result["deprecations_declined"] == [
+            {"full_name": "tiles/x/left.stl", "md5": None, "size": None}
+        ]

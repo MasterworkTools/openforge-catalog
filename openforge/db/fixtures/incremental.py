@@ -67,8 +67,9 @@ class ComparisonResult:
         self.deprecated = []  # Deprecated blueprints
         self.consolidated = []  # Path consolidation updates
         # Candidates the apply step declined to tombstone, which is what makes
-        # `applied_deprecations` reconcilable against `deprecated`.
-        self.declined_deprecations = []
+        # `applied_deprecations` reconcilable against `deprecated`. None until
+        # it runs, for the same reason the count is.
+        self.declined_deprecations = None
         self.errors = []  # Processing errors
         self.version_changes = {}  # Map of deprecated blueprint ID to new fixture item
         # How many of `deprecated` the apply step tombstoned. None until it runs.
@@ -831,9 +832,7 @@ class IncrementalFixturesLoader:
 
         # Reset rename tracking for this load.
         self._renamed_blueprint_ids = set()
-        self._deprecation_candidates = {
-            bp["id"] for bp in changes.deprecated if bp.get("id")
-        }
+        self._deprecation_candidates = {bp["id"] for bp in changes.deprecated}
         changes.applied_deprecations = 0
 
         # Track new blueprint IDs for version change linking
@@ -964,9 +963,7 @@ class IncrementalFixturesLoader:
             # that. Absence from current_fixture_files does not prove the row
             # is going: that set holds one fixture file, and a holder in
             # another is simply elsewhere.
-            return bool(bp.get("deprecated")) or (
-                bp.get("id") in self._deprecation_candidates
-            )
+            return bp.get("deprecated") or bp["id"] in self._deprecation_candidates
 
         if not self.fixture_subset_path:
             return False
@@ -1092,22 +1089,21 @@ class IncrementalFixturesLoader:
                         # Update the blueprint with the new consolidated_paths
                         update_data = {"consolidated_paths": existing_paths}
                         blueprint_sql.update_blueprint(curs, bp["id"], update_data)
-
-                        if self.verbose:
-                            write_output(
-                                f"Added path to consolidated_paths for "
-                                f"blueprint {bp['id']}\n"
-                            )
+                        write_output(f"CONSOLIDATED: {new_path} -> {bp['full_name']}\n")
                 else:
-                    # A rescued row already at this path can only be a
-                    # tombstone: a live row with this path and this MD5 would
-                    # never have been classified as an addition. The file is
-                    # back, so the row is. Tags and images are cleared first
-                    # because an earlier load may have inserted them onto the
-                    # tombstone without reviving it.
+                    # The file is back under the name it had, so the row is
+                    # too: nothing else in the loader clears this flag without
+                    # the path changing. Tags and images are resynced rather
+                    # than added to, since deprecating the row stripped them.
                     if bp.get("deprecated"):
+                        # successor_id goes with the tombstone: the chain
+                        # follower starts at a live row and then walks the
+                        # pointer unconditionally, so a live row that keeps one
+                        # answers with the wrong blueprint, or cycles.
                         blueprint_sql.update_blueprint(
-                            curs, bp["id"], {"deprecated": False}
+                            curs,
+                            bp["id"],
+                            {"deprecated": False, "successor_id": None},
                         )
                         tag_sql.delete_all_blueprint_tags(curs, bp["id"])
                         image_sql.delete_images_for_blueprint(curs, bp["id"])

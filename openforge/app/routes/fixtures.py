@@ -323,14 +323,16 @@ def _process_blueprint_fixture(
     return {
         "added": [_format_item(item) for item in changes.added],
         "modified": [_format_item(item) for item in changes.modified],
-        # Candidates. `deprecations_applied` is how many of them the apply step
-        # tombstoned, null when nothing was applied, and `deprecations_declined`
-        # names the rest so the two can be reconciled.
+        # Candidates. `deprecations_applied` is how many the apply step
+        # tombstoned and `deprecations_declined` names the rest, so the two
+        # reconcile. Both are null when no apply ran: a dry run cannot know.
         "deprecated": [_format_item(item) for item in changes.deprecated],
         "deprecations_applied": changes.applied_deprecations,
-        "deprecations_declined": [
-            _format_item(item) for item in changes.declined_deprecations
-        ],
+        "deprecations_declined": (
+            None
+            if changes.declined_deprecations is None
+            else [_format_item(item) for item in changes.declined_deprecations]
+        ),
         "consolidated": [_format_item(item) for item in changes.consolidated],
         "errors": changes.errors,
     }

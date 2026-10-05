@@ -334,7 +334,8 @@ paths:
                     description: How many of the candidates were tombstoned. Null when no apply ran.
                   deprecations_declined:
                     type: array
-                    description: Candidates the apply step left in place
+                    nullable: true
+                    description: Candidates the apply step left in place. Null when no apply ran.
                     items:
                       type: object
                   consolidated:
