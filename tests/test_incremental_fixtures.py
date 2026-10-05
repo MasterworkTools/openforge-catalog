@@ -315,6 +315,42 @@ class TestIncrementalFixturesLoader:
         assert len(result.modified) == 0
         assert len(result.deprecated) == 0  # Deprecation is handled in post-processing
 
+    def test_compare_fixture_data_shared_md5_already_consolidated(self, mock_loader):
+        """A path held in another blueprint's consolidated_paths is not a rename.
+
+        Both files are byte-identical, so the MD5 fallback finds the row the
+        duplicate was consolidated into. Reported as a rename, that repeats on
+        every load and the loader never settles.
+        """
+        kept = create_mock_blueprint("plain.1x1.magnetic+flex.stl", "same999")
+        kept["consolidated_paths"] = ["plain.1x1.magnetic+flex,openlock.stl"]
+        mock_loader.existing_blueprints = {kept["full_name"]: kept}
+
+        fixture_data = [
+            create_mock_fixture_item("plain.1x1.magnetic+flex.stl", "same999"),
+            create_mock_fixture_item("plain.1x1.magnetic+flex,openlock.stl", "same999"),
+        ]
+
+        result = mock_loader.compare_fixture_data(fixture_data, skip_load_existing=True)
+
+        assert len(result.added) == 0
+        assert len(result.modified) == 0
+        assert len(result.deprecated) == 0
+
+    def test_compare_fixture_data_shared_md5_unrecorded_is_a_rename(self, mock_loader):
+        """An MD5 match at a path nobody consolidated is still a rename."""
+        mock_loader.existing_blueprints = {
+            "old/path.stl": create_mock_blueprint("old/path.stl", "same999")
+        }
+
+        fixture_data = [create_mock_fixture_item("new/path.stl", "same999")]
+
+        result = mock_loader.compare_fixture_data(fixture_data, skip_load_existing=True)
+
+        assert len(result.added) == 1
+        assert result.added[0]["file_metadata"]["full_name"] == "new/path.stl"
+        assert len(result.modified) == 0
+
     def test_compare_fixture_data_config_blueprint_new(self, mock_loader):
         """Test compare_fixture_data with new configuration blueprint."""
         fixture_data = [
@@ -652,6 +688,54 @@ class TestIncrementalFixturesLoader:
         mark_dep.assert_not_called()
         del_tags.assert_not_called()
         del_imgs.assert_not_called()
+
+    def test_summary_reports_what_was_applied_not_what_was_proposed(self):
+        """A load that renamed every row in place deprecated none of them."""
+        result = ComparisonResult()
+        result.added = [{}] * 236
+        result.modified = [{}] * 3
+        result.deprecated = [{}] * 236
+
+        assert result.summary() == "236 added, 3 modified, 236 deprecated"
+        assert result.summary(applied_deprecations=0) == (
+            "236 added, 3 modified, 0 deprecated (236 left in place)"
+        )
+
+    def test_summary_reports_a_partial_deprecation(self):
+        """Some applied and some declined names both figures."""
+        result = ComparisonResult()
+        result.deprecated = [{}] * 10
+
+        assert result.summary(applied_deprecations=4) == (
+            "4 deprecated (6 left in place)"
+        )
+
+    def test_apply_counts_only_the_deprecations_it_applied(self):
+        """A declined deprecation must not reach the applied summary."""
+        loader = self._rename_loader()
+
+        changes = ComparisonResult()
+        changes.deprecated = [
+            {"id": "bp-1", "file_md5": "md5-1"},
+            {"id": "bp-2", "file_md5": "md5-2"},
+        ]
+
+        cursor = Mock()
+        cursor.fetchall = Mock(return_value=[])
+
+        with (
+            patch.object(loader, "_load_existing_blueprints", return_value={}),
+            # Both already carry a tombstone, so the apply step declines both.
+            patch.object(
+                loader, "_find_deprecated_blueprint_by_md5", return_value={"id": "old"}
+            ),
+        ):
+            loader._apply_changes_with_cursor(cursor, changes)
+
+        assert loader._deprecations_applied == 0
+        assert changes.summary(applied_deprecations=loader._deprecations_applied) == (
+            "0 deprecated (2 left in place)"
+        )
 
     def test_apply_changes_resets_renamed_ids_per_load(self):
         """_renamed_blueprint_ids must reset at the top of each apply so

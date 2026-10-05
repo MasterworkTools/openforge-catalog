@@ -73,15 +73,29 @@ class ComparisonResult:
         """Check if there are any changes to apply."""
         return bool(self.added or self.modified or self.deprecated or self.consolidated)
 
-    def summary(self) -> str:
-        """Get a summary of changes."""
+    def summary(self, applied_deprecations: Optional[int] = None) -> str:
+        """Get a summary of changes.
+
+        `applied_deprecations` is what the apply step tombstoned, which is the
+        only honest figure once it has run: it declines to deprecate a row it
+        renamed in place, and one whose content is already tombstoned. The
+        proposal stands for a dry run, which cannot know either outcome.
+        """
         parts = []
         if self.added:
             parts.append(f"{len(self.added)} added")
         if self.modified:
             parts.append(f"{len(self.modified)} modified")
         if self.deprecated:
-            parts.append(f"{len(self.deprecated)} deprecated")
+            applied = (
+                len(self.deprecated)
+                if applied_deprecations is None
+                else applied_deprecations
+            )
+            part = f"{applied} deprecated"
+            if applied < len(self.deprecated):
+                part += f" ({len(self.deprecated) - applied} left in place)"
+            parts.append(part)
         if self.consolidated:
             parts.append(f"{len(self.consolidated)} consolidated")
         if self.errors:
@@ -114,6 +128,7 @@ class IncrementalFixturesLoader:
         # `_apply_changes_with_cursor` so it doesn't leak between fixtures
         # when one loader instance processes a directory.
         self._renamed_blueprint_ids = set()
+        self._deprecations_applied = 0
 
     def _load_existing_blueprints(self, curs: cursor = None) -> Dict[str, Dict]:
         """Load existing blueprints from database for comparison.
@@ -521,6 +536,14 @@ class IncrementalFixturesLoader:
 
         existing_bp = existing_blueprints.get(full_name)
 
+        # Before the MD5 fallback on purpose: that matches on content, so it
+        # finds the blueprint this path was consolidated into, and the name
+        # comparison below then reads a known duplicate as a rename.
+        if existing_bp is None and self._is_consolidated(
+            full_name, existing_blueprints
+        ):
+            return
+
         # If not found by full_name, check if a blueprint exists with the same MD5
         # This handles cases where files are renamed or have reordered components
         if existing_bp is None and md5:
@@ -535,25 +558,10 @@ class IncrementalFixturesLoader:
                     break
 
         if existing_bp is None:
-            # Check if this file is already in consolidated_paths
-            # of any existing blueprint
-            already_consolidated = False
-            for bp in existing_blueprints.values():
-                consolidated_paths = bp.get("consolidated_paths") or []
-                if full_name in consolidated_paths:
-                    already_consolidated = True
-                    if self.verbose:
-                        write_output(
-                            f"DEBUG: Skipping {full_name} - already in "
-                            f"consolidated_paths of {bp['full_name']}\n"
-                        )
-                    break
-
-            if not already_consolidated:
-                # New file
-                result.added.append(fixture_item)
-                # Always show what was added
-                write_output(f"ADDED: {full_name}\n")
+            # New file
+            result.added.append(fixture_item)
+            # Always show what was added
+            write_output(f"ADDED: {full_name}\n")
         else:
             # Existing file found - check if it's a rename or modification
             # If the full_name is different, this is a rename
@@ -581,6 +589,20 @@ class IncrementalFixturesLoader:
                 result.modified.append(fixture_item)
                 if self.verbose:
                     write_output(f"MODIFIED: {full_name}\n")
+
+    def _is_consolidated(
+        self, full_name: str, existing_blueprints: Dict[str, Dict]
+    ) -> bool:
+        """Whether some existing blueprint already lists this path as a duplicate."""
+        for bp in existing_blueprints.values():
+            if full_name in (bp.get("consolidated_paths") or []):
+                if self.verbose:
+                    write_output(
+                        f"DEBUG: Skipping {full_name} - already in "
+                        f"consolidated_paths of {bp['full_name']}\n"
+                    )
+                return True
+        return False
 
     def _has_config_changes(self, fixture_item: Dict, existing_bp: Dict) -> bool:
         """Check if configuration blueprint has changes compared to existing blueprint.
@@ -764,10 +786,11 @@ class IncrementalFixturesLoader:
                 self._apply_changes_with_cursor(curs, changes)
 
         # Always show the summary of what was applied
+        applied = changes.summary(applied_deprecations=self._deprecations_applied)
         if filename:
-            write_output(f"{filename}: Applied {changes.summary()}\n")
+            write_output(f"{filename}: Applied {applied}\n")
         else:
-            write_output(f"Applied {changes.summary()}\n")
+            write_output(f"Applied {applied}\n")
 
     def _apply_changes_with_cursor(self, curs: cursor, changes: ComparisonResult):
         """Apply changes using the provided cursor."""
@@ -776,6 +799,7 @@ class IncrementalFixturesLoader:
 
         # Reset rename tracking for this load.
         self._renamed_blueprint_ids = set()
+        self._deprecations_applied = 0
 
         # Track new blueprint IDs for version change linking
         new_blueprint_ids = {}
@@ -800,7 +824,8 @@ class IncrementalFixturesLoader:
         # Process deprecations
         # (no version change linking here - that's done in post-processing)
         for deprecated_bp in changes.deprecated:
-            self._handle_deprecation(curs, deprecated_bp)
+            if self._handle_deprecation(curs, deprecated_bp):
+                self._deprecations_applied += 1
 
         # Process modifications
         for modified_item in changes.modified:
@@ -815,13 +840,17 @@ class IncrementalFixturesLoader:
 
     def _handle_deprecation(
         self, curs: cursor, deprecated_bp: Dict, successor_id: Optional[str] = None
-    ):
+    ) -> bool:
         """Handle deprecation of an existing blueprint.
 
         Args:
             curs: Database cursor
             deprecated_bp: Blueprint to deprecate
             successor_id: Optional ID of the successor blueprint (for version changes)
+
+        Returns:
+            Whether the row was tombstoned. False means it was deliberately left
+            alone, and the caller counts it so the summary does not claim it.
         """
         # If this blueprint was renamed in this same load, the row was
         # already updated in place. Deprecating it now would tombstone the
@@ -832,7 +861,7 @@ class IncrementalFixturesLoader:
                     f"Skipping deprecation of blueprint {deprecated_bp['id']} "
                     f"(renamed in this load)\n"
                 )
-            return
+            return False
 
         # Check if a deprecated blueprint with this MD5 already exists
         if deprecated_bp.get("file_md5"):
@@ -847,7 +876,7 @@ class IncrementalFixturesLoader:
                         f"(MD5 {deprecated_bp['file_md5']} already has "
                         f"deprecated entry: blueprint {existing_deprecated['id']})\n"
                     )
-                return
+                return False
 
         blueprint_id = deprecated_bp["id"]
 
@@ -879,6 +908,8 @@ class IncrementalFixturesLoader:
                 write_output(
                     f"Deprecated blueprint {blueprint_id} and removed tags/images\n"
                 )
+
+        return True
 
     def _handle_addition(self, curs: cursor, new_item: Dict):
         """Handle addition of a new blueprint."""
