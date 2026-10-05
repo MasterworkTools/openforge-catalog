@@ -88,8 +88,8 @@ class ComparisonResult:
     def _deprecated_part(self) -> str:
         """The deprecated figure, as what was applied once an apply has run.
 
-        The apply step declines to tombstone a row it renamed in place or one
-        already tombstoned, so the proposal is right only for a dry run.
+        The apply step declines to tombstone a row it renamed in place, so the
+        proposal is right only for a dry run.
         """
         if self.applied_deprecations is None:
             return f"{len(self.deprecated)} deprecated"

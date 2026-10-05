@@ -325,7 +325,7 @@ paths:
                       type: object
                   deprecated:
                     type: array
-                    description: Blueprints proposed for deprecation. The apply step declines a candidate it renamed in place, or one whose content is already tombstoned.
+                    description: Blueprints proposed for deprecation. The apply step declines a candidate it renamed in place.
                     items:
                       type: object
                   deprecations_applied:
