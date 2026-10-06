@@ -160,7 +160,7 @@ resource "aws_lambda_function" "migrate" {
   # Lambda bills actual duration, so a larger budget costs nothing, and a statement
   # that outran a smaller one would restart from zero on every retry and wedge
   # every merge to test at this gate. Bound lock waits with SET lock_timeout, not
-  # with the function timeout.
+  # with the function timeout, which migrate.py does per version.
   memory_size = 512
   timeout     = 900
 

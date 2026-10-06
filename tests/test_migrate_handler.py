@@ -502,3 +502,41 @@ def test_version_20_keeps_the_newest_row_at_each_path(test_db):
         assert head_version == 20
     finally:
         _restore(test_db, full_shape)
+
+
+def test_each_migration_runs_with_a_bounded_lock_wait(test_db, monkeypatch):
+    """A pending ACCESS EXCLUSIVE parks every reader behind it.
+
+    So the migration has to give up waiting rather than hold the whole
+    function's budget: a release landing during a fixture upload would
+    otherwise wedge reads until that upload's transaction ended.
+    """
+    seen = []
+
+    class _Recorder:
+        def __init__(self, conn):
+            self._conn = conn
+
+        def __getattr__(self, name):
+            return getattr(self._conn, name)
+
+        def execute(self, *args, **kwargs):
+            seen.append(args[0] if args else None)
+            return self._conn.execute(*args, **kwargs)
+
+    real_connection = test_db.connection
+
+    class _Db:
+        def connection(self):
+            import contextlib
+
+            @contextlib.contextmanager
+            def wrapped():
+                with real_connection() as conn:
+                    yield _Recorder(conn)
+
+            return wrapped()
+
+    migrate._apply(_Db(), get_schema_versions()[:1])
+
+    assert any("lock_timeout" in str(stmt) for stmt in seen), seen
