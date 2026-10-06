@@ -816,6 +816,11 @@ class IncrementalFixturesLoader:
         for new_item in changes.added:
             self._handle_addition(curs, new_item)
 
+        # An addition can revive a row the phase above tombstoned, and a rename
+        # is the only thing that undoes one. Without this the count claims a
+        # deprecation that is live again by the time the transaction commits.
+        self._uncount_revived(superseded, changes)
+
         # The rest: rows whose file left the fixture, which the additions above
         # may have claimed by rename.
         self._apply_deprecations(curs, vacated, changes)
@@ -830,6 +835,18 @@ class IncrementalFixturesLoader:
 
         # Post-process: Link deprecated blueprints to successors by file path
         self._link_deprecated_to_successors(curs)
+
+    def _uncount_revived(self, candidates: List[Dict], changes: ComparisonResult):
+        """Take back the tombstones an addition brought back to life.
+
+        Every candidate here was applied rather than declined: the only decline
+        left is a row already renamed in this load, and nothing is renamed until
+        the additions run.
+        """
+        for bp in candidates:
+            if bp.get("id") in self._renamed_blueprint_ids:
+                changes.applied_deprecations -= 1
+                changes.declined_deprecations.append(bp)
 
     def _apply_deprecations(
         self, curs: cursor, candidates: List[Dict], changes: ComparisonResult

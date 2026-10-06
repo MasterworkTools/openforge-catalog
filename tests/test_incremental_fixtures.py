@@ -1655,6 +1655,49 @@ class TestEditThenLoadAgainstTheDatabase:
         load([self._item_at(old_path, "Y"), self._item_at(new_path, "X")])
         assert live() == [(new_path, "X"), (old_path, "Y")]
 
+    def test_a_revived_row_is_not_reported_as_deprecated(self, test_db):
+        """The superseded phase runs before the only thing that undoes it.
+
+        Editing a file and renaming another onto its old bytes tombstones the
+        first row and then revives it under the new path, so nothing ends up
+        deprecated. A count taken before the additions says otherwise, which is
+        the same false report this series began with.
+        """
+        old_path, new_path = "tiles/plain/old.stl", "tiles/plain/new.stl"
+
+        with test_db.connection() as conn:
+            with conn.cursor(row_factory=dict_row) as curs:
+                loader = IncrementalFixturesLoader(conn, verbose=False)
+                first = loader.compare_fixture_data(
+                    [self._item_at(old_path, "X")], curs=curs
+                )
+                loader.apply_incremental_changes(first, curs=curs)
+            conn.commit()
+
+        with test_db.connection() as conn:
+            with conn.cursor(row_factory=dict_row) as curs:
+                loader = IncrementalFixturesLoader(conn, verbose=False)
+                changes = loader.compare_fixture_data(
+                    [self._item_at(old_path, "Y"), self._item_at(new_path, "X")],
+                    curs=curs,
+                )
+                # The old row is a candidate: its path is staying, its bytes are not.
+                assert len(changes.deprecated) == 1
+                loader.apply_incremental_changes(changes, curs=curs)
+            conn.commit()
+
+        with test_db.connection() as conn:
+            with conn.cursor(row_factory=dict_row) as curs:
+                curs.execute("SELECT count(*) AS n FROM blueprints WHERE deprecated")
+                tombstones = curs.fetchone()["n"]
+
+        # Nothing is deprecated in the database, so nothing may be reported as
+        # deprecated either.
+        assert tombstones == 0
+        assert changes.applied_deprecations == 0
+        assert len(changes.declined_deprecations) == 1
+        assert "0 deprecated (1 left in place)" in changes.summary()
+
     def test_one_loader_does_not_carry_md5s_between_fixture_files(self):
         """load_fixtures reuses one loader for every file in the directory.
 
