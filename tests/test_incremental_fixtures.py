@@ -1645,8 +1645,9 @@ class TestEditThenLoadAgainstTheDatabase:
         that are about to be fine.
         """
         holder, dupe = "tiles/a/p.stl", "tiles/a/q.stl"
+        elsewhere = "tiles/b/r.stl"
 
-        def seed():
+        def seed(listed=None):
             with test_db.connection() as conn:
                 with conn.cursor(row_factory=dict_row) as curs:
                     curs.execute("TRUNCATE blueprints CASCADE")
@@ -1655,7 +1656,7 @@ class TestEditThenLoadAgainstTheDatabase:
                         " full_name, file_md5, file_name, config,"
                         " consolidated_paths)"
                         " VALUES ('p.stl','model',%s,'M_old','p.stl','{}',%s)",
-                        (holder, [dupe]),
+                        (holder, listed if listed is not None else [dupe]),
                     )
                 conn.commit()
 
@@ -1674,6 +1675,20 @@ class TestEditThenLoadAgainstTheDatabase:
         # The duplicate is in the fixture, so it inherits the tombstone and
         # nothing is stranded.
         seed()
+        said = load([self._item_at(holder, "M_new"), self._item_at(dupe, "M_old")])
+        assert "consolidated into" not in said
+
+        # Re-exported together, so nothing is renamed and the suppression
+        # above cannot fire — but the duplicate is still listed, so it has an
+        # addition of its own and is not stranded either.
+        seed()
+        said = load([self._item_at(holder, "M_new"), self._item_at(dupe, "M_new")])
+        assert "consolidated into" not in said
+
+        # A path in another fixture cannot be checked against this one, so the
+        # suppression has to come from the row surviving: it is live at the
+        # duplicate's path and still lists the far one.
+        seed([dupe, elsewhere])
         said = load([self._item_at(holder, "M_new"), self._item_at(dupe, "M_old")])
         assert "consolidated into" not in said
 

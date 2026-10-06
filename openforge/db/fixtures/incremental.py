@@ -868,20 +868,28 @@ class IncrementalFixturesLoader:
         listed here may be surviving in another fixture this run has already
         loaded, or has yet to, and tombstoning their only row leaves them with
         none.
+
+        A path this fixture lists is not one of them — it has an addition of
+        its own coming, which will inherit the row or insert its own.
         """
-        if bp.get("consolidated_paths"):
+        orphans = [
+            path
+            for path in (bp.get("consolidated_paths") or [])
+            if path not in self.current_fixture_files
+        ]
+        if orphans:
             write_output(
                 f"WARNING: deprecating {bp.get('full_name')}, which "
                 f"other paths were consolidated into: "
-                f"{', '.join(bp['consolidated_paths'])}\n"
+                f"{', '.join(orphans)}\n"
             )
 
     def _warn_stranded_superseded(self, superseded: List[Dict]):
         """The same warning, once the additions have decided who survived.
 
-        A superseded path is still in the fixture, so an addition for it is
-        coming; usually that addition revives this very row. Warning before
-        they run names a row that is about to be live again.
+        A superseded row is usually revived by the addition for one of its
+        duplicates, which inherits it under that path. Warning before the
+        additions run names a row that is about to be live again.
         """
         for bp in superseded:
             if bp.get("id") not in self._renamed_blueprint_ids:
