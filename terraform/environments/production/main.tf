@@ -159,6 +159,10 @@ resource "aws_lambda_function" "migrate" {
     command = ["openforge.app.migrate.lambda_handler"]
   }
 
+  # The same subnets and the same single security group as the API, which is
+  # worth keeping identical: Lambda then reuses the API's Hyperplane ENIs rather
+  # than creating its own, so this costs no subnet addresses and no ENI stall on
+  # a first invoke.
   vpc_config {
     subnet_ids         = local.infra.subnet_ids
     security_group_ids = [local.infra.application_security_group_id]

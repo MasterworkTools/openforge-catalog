@@ -209,20 +209,19 @@ gh pr create --base main --title "release: deploy to production"
 
 ### Production infrastructure (`terraform/environments/production`)
 
-The API Lambda, its ALB and the frontend bucket are OpenTofu here, layered on
-openforge-infra's state (network, Aurora, ECR, deploy role). A merge to `main`
-builds the image, runs `tofu apply -var image_tag=<sha>`, then syncs the frontend
-to a per-sha prefix and promotes it to `current/` (what CloudFront serves).
-Release PRs get a plan comment from the `Production Plan` workflow.
+The API Lambda, its migration sibling, the ALB and the frontend bucket are
+OpenTofu here, layered on openforge-infra's state (network, Aurora, ECR, deploy
+role). Release PRs get a plan comment from the `Production Plan` workflow.
 
-**Migrations run in the release**, the same way staging does: a merge to `main`
-runs **docker-build → tofu-apply (migration function only) → migrate →
-tofu-apply → frontend-deploy**, each gated on the last. No bastion step, and
-nothing to do before the merge.
+A merge to `main` runs the whole chain, the same way staging does, each step
+gated on the last: **docker-build → tofu-apply (migration function only) →
+migrate → tofu-apply → frontend-deploy**. The last step syncs the frontend to a
+per-sha prefix and promotes it to `current/`, which is what CloudFront serves.
+No bastion step, and nothing to do before the merge.
 
-The apply is split for the same reason as staging's: `aws_lambda_function`
-waits for `LastUpdateStatus=Successful`, so a single apply would put the new API
-image live before the migration ran — new code against the old schema.
+The apply is split for the same reason as staging's: `aws_lambda_function` waits
+for `LastUpdateStatus=Successful`, so a single apply would put the new API image
+live before the migration ran.
 
 **Schema changes must still be expand/contract.** Between the migration and the
 second apply, the old API image serves against the new schema. Additive changes
