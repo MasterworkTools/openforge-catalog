@@ -918,6 +918,13 @@ class TestIncrementalFixturesLoader:
         assert payload["deprecated"] is False
         # And it no longer lists the path it now owns.
         assert payload["consolidated_paths"] == []
+        # The row is this item now, so every field a later comparison or a
+        # reader comes to is this item's, not the one it inherited.
+        assert payload["file_size"] == new_item["file_metadata"]["size"]
+        assert (
+            payload["file_modified_at"] == new_item["file_metadata"]["file_modified_at"]
+        )
+        assert payload["blueprint_config"] == new_item["config"]
         # Tracked, so the deprecation step in the same apply declines the row.
         assert "bp-1" in loader._renamed_blueprint_ids
 
@@ -1654,6 +1661,50 @@ class TestEditThenLoadAgainstTheDatabase:
         # And it settles.
         load([self._item_at(old_path, "Y"), self._item_at(new_path, "X")])
         assert live() == [(new_path, "X"), (old_path, "Y")]
+
+    def test_an_inherited_row_stops_reporting_changes(self, test_db):
+        """The row is the new item now, so its fields have to be the new item's.
+
+        An inherited modification time makes the next load of an unchanged
+        fixture report a modification, and a modification resets
+        consolidated_paths — so the holder's other duplicates lose every
+        representation for a load. Real duplicate groups disagree on mtime, so
+        this is the common case rather than a contrived one.
+        """
+        holder, dupe = "tiles/a/holder.stl", "tiles/a/dupe.stl"
+
+        with test_db.connection() as conn:
+            with conn.cursor(row_factory=dict_row) as curs:
+                curs.execute(
+                    "INSERT INTO blueprints (blueprint_name, blueprint_type,"
+                    " full_name, file_md5, file_name, config, consolidated_paths,"
+                    " file_modified_at)"
+                    " VALUES ('holder.stl','model',%s,'M_old','holder.stl','{}',%s,"
+                    " '2020-01-01T00:00:00')",
+                    (holder, [dupe]),
+                )
+            conn.commit()
+
+        def load():
+            with test_db.connection() as conn:
+                with conn.cursor(row_factory=dict_row) as curs:
+                    loader = IncrementalFixturesLoader(conn, verbose=False)
+                    data = [
+                        self._item_at(holder, "M_new"),
+                        self._item_at(dupe, "M_old"),
+                    ]
+                    changes = loader.compare_fixture_data(data, curs=curs)
+                    loader.apply_incremental_changes(changes, curs=curs)
+                conn.commit()
+                return changes
+
+        load()
+        settled = load()
+
+        # Nothing changed on disk, so nothing is reported.
+        assert len(settled.added) == 0
+        assert len(settled.modified) == 0
+        assert len(settled.deprecated) == 0
 
     def test_a_revived_row_is_not_reported_as_deprecated(self, test_db):
         """The superseded phase runs before the only thing that undoes it.

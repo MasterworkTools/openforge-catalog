@@ -1012,6 +1012,14 @@ class IncrementalFixturesLoader:
                             "blueprint_name": new_file_name,
                             "search_text": search_text,
                             "deprecated": False,
+                            # The row is this item now, so the fields a later
+                            # comparison reads have to be this item's. An
+                            # inherited mtime makes the next load of an
+                            # unchanged fixture report a modification, and a
+                            # modification resets consolidated_paths.
+                            "file_size": bp_data["file_size"],
+                            "file_modified_at": bp_data["file_modified_at"],
+                            "blueprint_config": bp_data["blueprint_config"],
                             # This row is live again, so it is the current
                             # version and succeeds nothing. A live row that
                             # keeps a successor sends the chain reader off it.
