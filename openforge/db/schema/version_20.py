@@ -1,7 +1,7 @@
 """Version 20: one live row per path
 
-- Deprecate the older of every pair of live rows sharing a full_name, linking
-  it to the newer as its successor.
+- Deprecate every live row but the newest at each full_name, linking it to that
+  newest row as its successor.
 - Add a partial unique index so it cannot happen again.
 
 Editing a file and rescanning used to leave two live rows at one path. file_md5
@@ -12,8 +12,8 @@ catalog by full_name and reads the oldest match, so it compared every later load
 against the row it had already superseded and reported the file as changed
 again, forever.
 
-The loader no longer does that. This migration repairs what it already did, and
-then makes the state unreachable rather than merely unproduced.
+This migration repairs the rows that state produced, and then makes it
+unreachable rather than merely unproduced.
 
 The index is partial on `NOT deprecated` because tombstones are history: a path
 accumulates one per edit, and they have to be allowed to share it with the live
@@ -24,6 +24,11 @@ The repair picks the survivor by created_at rather than by anything in the
 fixtures, because the fixtures are not available to a migration and the newest
 row is by construction the one the most recent scan inserted. Ties broken by id
 so the choice is deterministic.
+
+Every duplicate is deprecated, with no exception for one that already carries a
+successor_id: skipping any would leave it live and the index would then refuse
+to build. An existing successor is kept rather than overwritten, since that
+pointer is changelog history.
 
 Down drops the index and leaves the deprecations alone. Reviving them would mean
 guessing which tombstones this migration created rather than the loader, and a
@@ -60,13 +65,12 @@ survivor AS (
 )
 UPDATE blueprints AS b
    SET deprecated = true,
-       successor_id = survivor.id,
+       successor_id = COALESCE(b.successor_id, survivor.id),
        updated_at = CURRENT_TIMESTAMP
   FROM ranked
   JOIN survivor USING (full_name)
  WHERE b.id = ranked.id
    AND ranked.rank > 1
-   AND b.successor_id IS NULL
 """
         )
         curs.execute(query)

@@ -1,9 +1,8 @@
-"""Test what _handle_deprecation does to the row it tombstones.
+"""What _handle_deprecation does to the row it tombstones.
 
-This file used to test a guard against two rows sharing one MD5, one live and
-one deprecated. `UNIQUE (file_md5)` is table-wide, so that state cannot exist
-and the guard could only be reached by mocking the lookup that found it. The
-guard is gone; what remains worth asserting is the tombstone itself.
+`UNIQUE (file_md5)` is table-wide, so one live and one deprecated row cannot
+share an MD5 — there is nothing to guard against, only the tombstone itself to
+assert.
 """
 
 from unittest.mock import MagicMock, patch

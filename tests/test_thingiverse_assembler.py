@@ -274,14 +274,8 @@ class TestModelResolution:
                     assemble_thing(curs, manifest)
 
     def test_two_live_rows_cannot_share_a_full_name(self, test_db):
-        """The resolver's ambiguity guard is now the database's job.
-
-        _resolve_full_name raises on more than one match and
-        get_blueprints_by_full_name filters deprecated rows, so the state that
-        guard was written for is the one blueprints_live_full_name_key forbids.
-        Asserting it here pins the invariant where it is enforced; the guard
-        stays as cover for a database the index has not reached.
-        """
+        """blueprints_live_full_name_key forbids it, so the resolver's
+        ambiguity guard has nothing reachable to catch."""
         with test_db.connection() as conn:
             with conn.cursor(row_factory=dict_row) as curs:
                 dupe = "tiles/test/dupe.stl"

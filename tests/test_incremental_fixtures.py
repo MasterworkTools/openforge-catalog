@@ -5,6 +5,7 @@ Tests for incremental fixtures loading functionality.
 from unittest.mock import ANY, Mock, patch
 
 import pytest
+from psycopg.rows import dict_row
 
 from openforge.db.fixtures.incremental import (
     ComparisonResult,
@@ -1489,3 +1490,76 @@ class TestIncrementalFixturesLoader:
         assert loader._deprecation_candidates == set()
         assert empty_changes.applied_deprecations == 0
         assert empty_changes.declined_deprecations == []
+
+
+class TestEditThenLoadAgainstTheDatabase:
+    """The loader has to survive its own output against the real schema.
+
+    Every other test here mocks the SQL layer, so the one thing none of them
+    can see is a constraint. An edited file supersedes a row at the same path,
+    and only one live row per path is allowed, so the order the apply writes in
+    is load-bearing rather than incidental.
+    """
+
+    PATH = "tiles/plain/edit_me.stl"
+
+    def _item(self, md5):
+        return {
+            "type": "model",
+            "file_metadata": {
+                "full_name": self.PATH,
+                "file": "edit_me.stl",
+                "md5": md5,
+                "size": 1000,
+                "file_modified_at": "2020-01-01T12:00:00",
+            },
+            "tags": ["shape|floor"],
+            "images": [],
+            "config": {},
+        }
+
+    def _load(self, test_db, md5):
+        with test_db.connection() as conn:
+            with conn.cursor(row_factory=dict_row) as curs:
+                loader = IncrementalFixturesLoader(conn, verbose=False)
+                changes = loader.compare_fixture_data([self._item(md5)], curs=curs)
+                loader.apply_incremental_changes(changes, curs=curs)
+            conn.commit()
+
+    def test_editing_a_file_leaves_one_live_row_linked_to_its_predecessor(
+        self, test_db
+    ):
+        self._load(test_db, "md5-before")
+        self._load(test_db, "md5-after")
+
+        with test_db.connection() as conn:
+            with conn.cursor(row_factory=dict_row) as curs:
+                curs.execute(
+                    "SELECT id, file_md5, deprecated, successor_id"
+                    "  FROM blueprints WHERE full_name = %s"
+                    " ORDER BY created_at",
+                    (self.PATH,),
+                )
+                rows = curs.fetchall()
+
+        assert len(rows) == 2
+        old, new = rows
+        assert old["file_md5"] == "md5-before"
+        assert old["deprecated"] is True
+        assert new["file_md5"] == "md5-after"
+        assert new["deprecated"] is False
+        # The tombstone points at what replaced it, which is what the catalog
+        # follows to answer for the old bytes.
+        assert old["successor_id"] == new["id"]
+
+    def test_loading_the_same_bytes_twice_changes_nothing(self, test_db):
+        self._load(test_db, "md5-stable")
+        self._load(test_db, "md5-stable")
+
+        with test_db.connection() as conn:
+            with conn.cursor(row_factory=dict_row) as curs:
+                curs.execute(
+                    "SELECT count(*) AS n FROM blueprints WHERE full_name = %s",
+                    (self.PATH,),
+                )
+                assert curs.fetchone()["n"] == 1

@@ -542,11 +542,9 @@ class IncrementalFixturesLoader:
             # First check if MD5 is different - if so, this is a new version,
             # not a modification
             elif md5 != existing_bp["file_md5"]:
-                # A new version at the same path. The new row is inserted rather
-                # than updated, because file_md5 is the identity, so the row it
-                # replaces has to be deprecated or both stay live at one path.
-                # _link_deprecated_to_successors then links them: it matches a
-                # tombstone to the newest live row sharing its full_name.
+                # file_md5 is the identity, so new bytes arrive as a new row
+                # and the row they replace has to be deprecated — one live row
+                # per path.
                 result.added.append(fixture_item)
                 result.deprecated.append(existing_bp)
                 write_output(
@@ -573,14 +571,15 @@ class IncrementalFixturesLoader:
         comparison; what happens to it there is not this function's promise.
 
         Every holder is considered, because a path can be listed by more than
-        one row and only some of them qualify.
+        one row and only some of them qualify. Records a prune into `result`
+        for a holder whose content has diverged.
         """
         for bp in existing_blueprints.values():
             if full_name not in (bp.get("consolidated_paths") or []):
                 continue
             if bp.get("file_md5") != md5:
-                # Listed, but the bytes have moved on. The path is about to
-                # become its own row, so the holder should stop claiming it.
+                # Listed, but the bytes differ: the holder no longer matches
+                # this path, whatever becomes of it below.
                 if result is not None:
                     result.consolidated.append(
                         {"blueprint_id": bp["id"], "remove_path": full_name}
@@ -645,8 +644,8 @@ class IncrementalFixturesLoader:
         """
         full_name = fixture_item["file_metadata"]["full_name"]
 
-        # Note: MD5 changes are not checked here anymore since they're handled
-        # by the post-processing linking approach in _link_deprecated_to_successors
+        # MD5 changes never reach here: the comparison treats them as a new
+        # version before this runs.
 
         # Check modification time using robust datetime comparison
         existing_modified = existing_bp["file_modified_at"]
@@ -796,35 +795,29 @@ class IncrementalFixturesLoader:
         self._renamed_blueprint_ids = set()
         self._deprecation_candidates = {bp["id"] for bp in changes.deprecated}
         changes.applied_deprecations = 0
-
-        # Track new blueprint IDs for version change linking
-        new_blueprint_ids = {}
-        new_blueprint_ids_by_md5 = {}
-
-        # Process additions first to get the new blueprint IDs
-        for new_item in changes.added:
-            new_bp = self._handle_addition(curs, new_item)
-            if new_bp:
-                if "file_metadata" in new_item:
-                    # File-based blueprint
-                    full_name = new_item["file_metadata"]["full_name"]
-                    md5 = new_item["file_metadata"]["md5"]
-                    new_blueprint_ids[full_name] = new_bp["id"]
-                    new_blueprint_ids_by_md5[md5] = new_bp["id"]
-                else:
-                    # Configuration blueprint
-                    blueprint_name = new_item.get("name")
-                    if blueprint_name:
-                        new_blueprint_ids[blueprint_name] = new_bp["id"]
-
-        # Process deprecations
-        # (no version change linking here - that's done in post-processing)
         changes.declined_deprecations = []
+
+        # A superseded row has to go before the row that supersedes it: both sit
+        # at one path, and only one live row per path is allowed. A row missing
+        # from the fixture is the opposite — it has to stay until the additions
+        # have run, so a surviving duplicate can inherit it instead. Which is
+        # which is the same test _is_rename makes: the superseded path is in
+        # this fixture, the missing one is not.
+        superseded, vacated = [], []
         for deprecated_bp in changes.deprecated:
-            if self._handle_deprecation(curs, deprecated_bp):
-                changes.applied_deprecations += 1
+            if deprecated_bp.get("full_name") in self.current_fixture_files:
+                superseded.append(deprecated_bp)
             else:
-                changes.declined_deprecations.append(deprecated_bp)
+                vacated.append(deprecated_bp)
+
+        self._apply_deprecations(curs, superseded, changes)
+
+        for new_item in changes.added:
+            self._handle_addition(curs, new_item)
+
+        # The rest: rows whose file left the fixture, which the additions above
+        # may have claimed by rename.
+        self._apply_deprecations(curs, vacated, changes)
 
         # Process modifications
         for modified_item in changes.modified:
@@ -836,6 +829,16 @@ class IncrementalFixturesLoader:
 
         # Post-process: Link deprecated blueprints to successors by file path
         self._link_deprecated_to_successors(curs)
+
+    def _apply_deprecations(
+        self, curs: cursor, candidates: List[Dict], changes: ComparisonResult
+    ):
+        """Tombstone what can be tombstoned, and record what was declined."""
+        for deprecated_bp in candidates:
+            if self._handle_deprecation(curs, deprecated_bp):
+                changes.applied_deprecations += 1
+            else:
+                changes.declined_deprecations.append(deprecated_bp)
 
     def _handle_deprecation(self, curs: cursor, deprecated_bp: Dict) -> bool:
         """Handle deprecation of an existing blueprint.
@@ -1147,9 +1150,8 @@ class IncrementalFixturesLoader:
     def _handle_consolidation(self, curs: cursor, consolidated_item: Dict):
         """Drop a path a row can no longer claim.
 
-        consolidated_paths is otherwise only ever appended to, so a duplicate
-        whose content diverged stays listed by the row it used to match while
-        also holding a row of its own.
+        A duplicate whose content diverged would otherwise stay listed by the
+        row it used to match while also holding a row of its own.
         """
         blueprint_id = consolidated_item["blueprint_id"]
         remove_path = consolidated_item["remove_path"]

@@ -38,8 +38,7 @@ def create_test_blueprint(
             random.choices(string.ascii_lowercase + string.digits, k=24)
         )
     if full_name is None:
-        # Distinct per blueprint, like file_md5: a live path is unique, so a
-        # shared default made every fixture row collide with every other.
+        # Distinct per blueprint, like file_md5: a live path is unique.
         full_name = (
             "tiles/test/"
             + "".join(random.choices(string.ascii_lowercase + string.digits, k=16))
