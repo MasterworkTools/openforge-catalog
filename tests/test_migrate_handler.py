@@ -187,9 +187,9 @@ def test_applies_a_missing_version_and_names_it(test_db):
     assert result["schema_version_before"] == prior
     assert result["schema_version_after"] == head
     assert result["applied"] == [head]
-    assert shape_after == full_shape, (
-        "the migration recorded its version but did not restore the schema"
-    )
+    assert (
+        shape_after == full_shape
+    ), "the migration recorded its version but did not restore the schema"
     assert head in recorded_after
 
 
