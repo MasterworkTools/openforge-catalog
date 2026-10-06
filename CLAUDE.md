@@ -228,9 +228,15 @@ second apply, the old API image serves against the new schema. Additive changes
 are free; a `DROP COLUMN` or `RENAME` breaks the running code. So does a
 constraint the old image's writes would violate.
 
-**Fixtures are still manual**, and still last: `bin/upload_fixture <fixture>`
-after the merge, because it POSTs to the *deployed* app and an older image
-misreads a format it doesn't know. `openforge_catalog-25m` automates it.
+**Fixtures are still manual**, and still last, because a load POSTs to the
+*deployed* app and an older image misreads a format it doesn't know.
+`openforge_catalog-25m` automates it.
+
+Use `bin/fixtures` against the database, through a tunnel to the bastion — not
+`bin/upload_fixture`. That tool sends YAML as `application/x-yaml`, which the
+WSGI adapter leaves base64-encoded so the route 500s, and anything over roughly
+3.5 MB is rejected at the edge, which is most of a release
+(`openforge_catalog-ot6`).
 
 To tell whether a release carries a migration:
 `git diff --stat origin/main origin/test -- openforge/db/schema/` (two-dot; the

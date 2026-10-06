@@ -146,7 +146,8 @@ resource "aws_lambda_function" "migrate" {
   # no client is waiting on a 30 s budget. The ceiling rather than a guess, since
   # Lambda bills actual duration — and a statement that outran a smaller budget
   # would restart from zero on every retry and wedge every release at this gate.
-  # Bound lock waits with SET lock_timeout, not with the function timeout.
+  # Lock waits are bounded by the SET lock_timeout migrate.py issues per
+  # version, not by this budget.
   memory_size = 512
   timeout     = 900
 
