@@ -567,7 +567,7 @@ class IncrementalFixturesLoader:
         full_name: str,
         md5: str,
         existing_blueprints: Dict[str, Dict],
-        result: Optional[ComparisonResult] = None,
+        result: ComparisonResult,
     ) -> bool:
         """Whether this path duplicates a blueprint that outlives this load.
 
@@ -585,10 +585,9 @@ class IncrementalFixturesLoader:
             if bp.get("file_md5") != md5:
                 # Listed, but the bytes differ: the holder no longer matches
                 # this path, whatever becomes of it below.
-                if result is not None:
-                    result.consolidated.append(
-                        {"blueprint_id": bp["id"], "remove_path": full_name}
-                    )
+                result.consolidated.append(
+                    {"blueprint_id": bp["id"], "remove_path": full_name}
+                )
                 continue
             if not self._outlives_this_load(bp):
                 continue

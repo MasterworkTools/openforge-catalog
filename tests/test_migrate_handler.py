@@ -499,6 +499,6 @@ def test_version_20_keeps_the_newest_row_at_each_path(test_db):
         assert newer["successor_id"] is None
         # A row with no path is none of the repair's business.
         assert [r["deprecated"] for r in config_rows] == [False]
-        assert head_version == head.version
+        assert head_version == 20
     finally:
         _restore(test_db, full_shape)

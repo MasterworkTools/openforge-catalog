@@ -479,6 +479,11 @@ class TestIncrementalFixturesLoader:
 
         assert len(result.added) == 0
         assert len(result.modified) == 0
+        # The stale holder is told to stop claiming a path it no longer matches,
+        # even though a later holder does.
+        assert result.consolidated == [
+            {"blueprint_id": stale["id"], "remove_path": "tiles/x/dup.stl"}
+        ]
 
     def test_compare_fixture_data_row_listing_its_own_path_is_still_compared(
         self, mock_loader
@@ -1613,6 +1618,64 @@ class TestEditThenLoadAgainstTheDatabase:
         # And it settles: a second identical load changes nothing.
         load()
         assert live_paths() == [(holder, "M_new"), (dupe, "M_old")]
+
+    def test_editing_one_file_while_another_takes_its_bytes(self, test_db):
+        """Edit a file and rename a second onto the bytes it gave up.
+
+        The ordinary workflow, and the only load where the superseded phase,
+        the takeover and the index all fire together: `old.stl` is superseded,
+        so its row becomes a tombstone still holding the original MD5, and
+        `new.stl` carries exactly those bytes and has to inherit it.
+        """
+        old_path, new_path = "tiles/plain/old.stl", "tiles/plain/new.stl"
+
+        def load(items):
+            with test_db.connection() as conn:
+                with conn.cursor(row_factory=dict_row) as curs:
+                    loader = IncrementalFixturesLoader(conn, verbose=False)
+                    changes = loader.compare_fixture_data(items, curs=curs)
+                    loader.apply_incremental_changes(changes, curs=curs)
+                conn.commit()
+
+        def live():
+            with test_db.connection() as conn:
+                with conn.cursor(row_factory=dict_row) as curs:
+                    curs.execute(
+                        "SELECT full_name, file_md5 FROM blueprints"
+                        " WHERE NOT deprecated AND full_name IS NOT NULL"
+                        " ORDER BY full_name"
+                    )
+                    return [(r["full_name"], r["file_md5"]) for r in curs.fetchall()]
+
+        load([self._item_at(old_path, "X")])
+        load([self._item_at(old_path, "Y"), self._item_at(new_path, "X")])
+
+        assert live() == [(new_path, "X"), (old_path, "Y")]
+        # And it settles.
+        load([self._item_at(old_path, "Y"), self._item_at(new_path, "X")])
+        assert live() == [(new_path, "X"), (old_path, "Y")]
+
+    def test_one_loader_does_not_carry_md5s_between_fixture_files(self):
+        """load_fixtures reuses one loader for every file in the directory.
+
+        So the map of what each path currently holds has to be rebuilt per
+        file. Carried over, a path listed in the previous fixture reads as
+        unchanged in this one and the row it duplicates is tombstoned under it.
+        """
+        mock_loader = IncrementalFixturesLoader(create_mock_connection(), verbose=False)
+        mock_loader.existing_blueprints = {}
+        mock_loader.compare_fixture_data(
+            [create_mock_fixture_item("tiles/a/first.stl", "md5-first")],
+            skip_load_existing=True,
+        )
+        assert mock_loader.current_fixture_md5s == {"tiles/a/first.stl": "md5-first"}
+
+        mock_loader.compare_fixture_data(
+            [create_mock_fixture_item("tiles/b/second.stl", "md5-second")],
+            skip_load_existing=True,
+        )
+        assert mock_loader.current_fixture_md5s == {"tiles/b/second.stl": "md5-second"}
+        assert mock_loader.current_fixture_files == {"tiles/b/second.stl"}
 
     def test_loading_the_same_bytes_twice_changes_nothing(self, test_db):
         self._load(test_db, "md5-stable")

@@ -669,3 +669,23 @@ class TestBlueprintFixtureResponse:
         assert result["deprecations_applied"] == 2
         assert result["deprecations_declined"] == []
         assert result["deprecations_declined"] is not None
+
+
+class TestConsolidatedItemFormatting:
+    """A pruned path has no file_metadata, so the formatter needs its own branch
+    or the response says `unknown` with a 200."""
+
+    def test_a_pruned_path_is_named_in_the_response(self):
+        import uuid
+
+        from openforge.app.routes.fixtures import _format_item
+
+        blueprint_id = uuid.uuid4()
+        formatted = _format_item(
+            {"blueprint_id": blueprint_id, "remove_path": "tiles/x/gone.stl"}
+        )
+
+        assert formatted == {
+            "full_name": "tiles/x/gone.stl",
+            "blueprint_id": str(blueprint_id),
+        }
