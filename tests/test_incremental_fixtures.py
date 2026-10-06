@@ -1122,6 +1122,9 @@ class TestIncrementalFixturesLoader:
             "id": "bp-2",
             "full_name": "tiles/catacombs/gone.stl",
             "file_md5": "md5-gone",
+            # Tombstoning this strands the path listed here, which is the one
+            # thing the deprecation step says out loud.
+            "consolidated_paths": ["tiles/catacombs/stranded.stl"],
         }
 
         changes = ComparisonResult()
@@ -1157,8 +1160,12 @@ class TestIncrementalFixturesLoader:
                 "openforge.db.fixtures.incremental.blueprint_sql"
                 ".mark_blueprint_deprecated"
             ) as mark_dep,
+            patch("openforge.db.fixtures.incremental.write_output") as out,
         ):
             loader._apply_changes_with_cursor(cursor, changes)
+
+        said = "".join(c.args[0] for c in out.call_args_list)
+        assert "tiles/catacombs/stranded.stl" in said
 
         # The takeover happened, which it can only do if the holder was a
         # known candidate while the addition was being applied.
@@ -1503,6 +1510,12 @@ class TestEditThenLoadAgainstTheDatabase:
 
     PATH = "tiles/plain/edit_me.stl"
 
+    def _item_at(self, path, md5):
+        item = self._item(md5)
+        item["file_metadata"]["full_name"] = path
+        item["file_metadata"]["file"] = path.split("/")[-1]
+        return item
+
     def _item(self, md5):
         return {
             "type": "model",
@@ -1551,6 +1564,55 @@ class TestEditThenLoadAgainstTheDatabase:
         # The tombstone points at what replaced it, which is what the catalog
         # follows to answer for the old bytes.
         assert old["successor_id"] == new["id"]
+
+    def test_editing_a_holder_does_not_orphan_its_duplicate(self, test_db):
+        """A path consolidated into an edited row has to end up with a row.
+
+        The holder is superseded, so the row that carried both paths becomes a
+        tombstone. The duplicate's bytes are unchanged, so it inherits that
+        tombstone under its own path rather than losing its only
+        representation — and a second load has nothing left to do.
+        """
+        holder, dupe = "tiles/a/p.stl", "tiles/a/q.stl"
+
+        with test_db.connection() as conn:
+            with conn.cursor(row_factory=dict_row) as curs:
+                curs.execute(
+                    "INSERT INTO blueprints (blueprint_name, blueprint_type,"
+                    " full_name, file_md5, file_name, config, consolidated_paths)"
+                    " VALUES ('p.stl','model',%s,'M_old','p.stl','{}',%s)",
+                    (holder, [dupe]),
+                )
+            conn.commit()
+
+        def load():
+            with test_db.connection() as conn:
+                with conn.cursor(row_factory=dict_row) as curs:
+                    loader = IncrementalFixturesLoader(conn, verbose=False)
+                    data = [
+                        self._item_at(holder, "M_new"),
+                        self._item_at(dupe, "M_old"),
+                    ]
+                    changes = loader.compare_fixture_data(data, curs=curs)
+                    loader.apply_incremental_changes(changes, curs=curs)
+                conn.commit()
+
+        def live_paths():
+            with test_db.connection() as conn:
+                with conn.cursor(row_factory=dict_row) as curs:
+                    curs.execute(
+                        "SELECT full_name, file_md5 FROM blueprints"
+                        " WHERE NOT deprecated AND full_name IS NOT NULL"
+                        " ORDER BY full_name"
+                    )
+                    return [(r["full_name"], r["file_md5"]) for r in curs.fetchall()]
+
+        load()
+        assert live_paths() == [(holder, "M_new"), (dupe, "M_old")]
+
+        # And it settles: a second identical load changes nothing.
+        load()
+        assert live_paths() == [(holder, "M_new"), (dupe, "M_old")]
 
     def test_loading_the_same_bytes_twice_changes_nothing(self, test_db):
         self._load(test_db, "md5-stable")

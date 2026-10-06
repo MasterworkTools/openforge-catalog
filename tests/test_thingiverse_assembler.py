@@ -273,6 +273,23 @@ class TestModelResolution:
                 with pytest.raises(AssemblyError, match="has no file_md5"):
                     assemble_thing(curs, manifest)
 
+    def test_resolver_refuses_an_ambiguous_full_name(self):
+        """Cover for a database the index has not reached yet.
+
+        Production keeps the old loader until this release lands, so the guard
+        is not dead code until every environment is migrated.
+        """
+        from unittest.mock import patch
+
+        from openforge.thingiverse.assembler import _resolve_full_name
+
+        with patch(
+            "openforge.thingiverse.assembler.blueprint_sql.get_blueprints_by_full_name",
+            return_value=[{"blueprint_type": "model"}, {"blueprint_type": "model"}],
+        ):
+            with pytest.raises(AssemblyError, match="ambiguous"):
+                _resolve_full_name(None, "tiles/test/dupe.stl")
+
     def test_two_live_rows_cannot_share_a_full_name(self, test_db):
         """blueprints_live_full_name_key forbids it, so the resolver's
         ambiguity guard has nothing reachable to catch."""

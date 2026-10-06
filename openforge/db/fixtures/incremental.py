@@ -135,6 +135,7 @@ class IncrementalFixturesLoader:
         self.current_fixture_files = (
             set()
         )  # Will be populated when processing fixture data
+        self.current_fixture_md5s = {}  # The same paths, with their content
         # Blueprint IDs that were renamed in this load — used to skip the
         # subsequent deprecation step so a renamed row isn't tombstoned and
         # stripped of tags/images. Per-apply state: populated in
@@ -390,9 +391,13 @@ class IncrementalFixturesLoader:
 
         # Build a set of all current filenames in the fixture
         self.current_fixture_files = set()
+        self.current_fixture_md5s = {}
         for item in fixture_data:
             if "file_metadata" in item and not item.get("deprecated", False):
                 self.current_fixture_files.add(item["file_metadata"]["full_name"])
+                self.current_fixture_md5s[item["file_metadata"]["full_name"]] = item[
+                    "file_metadata"
+                ]["md5"]
 
         # Load existing blueprints within transaction context
         # (unless skipped for testing)
@@ -585,12 +590,9 @@ class IncrementalFixturesLoader:
                         {"blueprint_id": bp["id"], "remove_path": full_name}
                     )
                 continue
-            holder = bp["full_name"]
-            if (
-                self._in_deprecation_sweep(holder)
-                and holder not in self.current_fixture_files
-            ):
+            if not self._outlives_this_load(bp):
                 continue
+            holder = bp["full_name"]
             if self.verbose:
                 write_output(
                     f"DEBUG: Skipping {full_name} - already in "
@@ -896,6 +898,20 @@ class IncrementalFixturesLoader:
 
         return True
 
+    def _outlives_this_load(self, bp: Dict) -> bool:
+        """Whether this load leaves that row live under the path it has.
+
+        A path the fixture still lists survives only if the content matches:
+        different bytes at the same path replace the row rather than update it.
+        A path the fixture has dropped survives only if this load's sweep
+        cannot reach it.
+        """
+        full_name = bp["full_name"]
+        listed_md5 = self.current_fixture_md5s.get(full_name)
+        if listed_md5 is not None:
+            return listed_md5 == bp.get("file_md5")
+        return not self._in_deprecation_sweep(full_name)
+
     def _is_rename(self, bp: Dict, new_full_name: str) -> bool:
         """Whether this path should take over an existing row, not just join it.
 
@@ -905,7 +921,9 @@ class IncrementalFixturesLoader:
         stealing it from a file that is still there.
         """
         existing_full_name = bp["full_name"]
-        if existing_full_name in self.current_fixture_files:
+        # A tombstone is not still there, whatever the fixture lists.
+        still_there = existing_full_name in self.current_fixture_files
+        if still_there and not bp.get("deprecated"):
             return False
 
         if new_full_name in (bp.get("consolidated_paths") or []):
