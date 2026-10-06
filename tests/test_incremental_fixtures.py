@@ -2,7 +2,7 @@
 Tests for incremental fixtures loading functionality.
 """
 
-from unittest.mock import Mock, patch
+from unittest.mock import ANY, Mock, patch
 
 import pytest
 
@@ -299,21 +299,31 @@ class TestIncrementalFixturesLoader:
         assert len(result.deprecated) == 0
 
     def test_compare_fixture_data_version_change(self, mock_loader):
-        """Test compare_fixture_data with version change (MD5 different)."""
-        mock_loader.existing_blueprints = {
-            "version_change.stl": create_mock_blueprint("version_change.stl", "old789")
-        }
+        """An edited file is a new row, and the row it replaces is superseded.
+
+        file_md5 is the identity, so the new bytes cannot update the old row in
+        place. Leaving the old row live puts two of them at one path, and the
+        loader then compares against whichever is older.
+        """
+        superseded = create_mock_blueprint("version_change.stl", "old789")
+        mock_loader.existing_blueprints = {"version_change.stl": superseded}
 
         fixture_data = [create_mock_fixture_item("version_change.stl", "new789")]
 
-        result = mock_loader.compare_fixture_data(fixture_data, skip_load_existing=True)
+        with patch("openforge.db.fixtures.incremental.write_output") as out:
+            result = mock_loader.compare_fixture_data(
+                fixture_data, skip_load_existing=True
+            )
 
-        # Version changes now only create a new addition
-        # (deprecation is handled in post-processing)
         assert len(result.added) == 1
         assert result.added[0]["file_metadata"]["full_name"] == "version_change.stl"
         assert len(result.modified) == 0
-        assert len(result.deprecated) == 0  # Deprecation is handled in post-processing
+        # The superseded row is a deprecation candidate; the post-pass links it
+        # to the new row, which it finds by the path they share.
+        assert result.deprecated == [superseded]
+        # Said at default verbosity: this retires a row.
+        said = "".join(c.args[0] for c in out.call_args_list)
+        assert "SUPERSEDED" in said and "version_change.stl" in said
 
     def test_compare_fixture_data_shared_md5_already_consolidated(self, mock_loader):
         """A path held in another blueprint's consolidated_paths is not a rename.
@@ -406,6 +416,11 @@ class TestIncrementalFixturesLoader:
 
         added = [i["file_metadata"]["full_name"] for i in result.added]
         assert added == ["tiles/x/b.stl"]
+        # The holder still lists a path whose bytes have moved on, so the apply
+        # is told to stop it claiming one it no longer matches.
+        assert result.consolidated == [
+            {"blueprint_id": holder["id"], "remove_path": "tiles/x/b.stl"}
+        ]
 
     def test_compare_fixture_data_consolidated_holder_in_another_fixture(
         self, mock_loader
@@ -646,12 +661,13 @@ class TestIncrementalFixturesLoader:
 
     def test_compare_fixture_data_mixed_changes(self, mock_loader):
         """Test compare_fixture_data with mixed changes."""
+        superseded = create_mock_blueprint("version_change.stl", "old789")
         mock_loader.existing_blueprints = {
             "existing.stl": create_mock_blueprint("existing.stl", "abc123"),
             "modified.stl": create_mock_blueprint(
                 "modified.stl", "def456", tags=[["old", "tag"]]
             ),
-            "version_change.stl": create_mock_blueprint("version_change.stl", "old789"),
+            "version_change.stl": superseded,
         }
 
         fixture_data = [
@@ -674,7 +690,8 @@ class TestIncrementalFixturesLoader:
         assert len(result.modified) == 1
         assert result.modified[0]["file_metadata"]["full_name"] == "modified.stl"
 
-        assert len(result.deprecated) == 0  # Deprecation is handled in post-processing
+        # Only the edited file's old row; the unchanged and modified ones stay.
+        assert result.deprecated == [superseded]
 
     def test_munge_blueprint(self, mock_loader):
         """Test _munge_blueprint method."""
@@ -956,6 +973,64 @@ class TestIncrementalFixturesLoader:
         # The discarded link is named rather than vanishing.
         assert "bp-successor" in "".join(c.args[0] for c in out.call_args_list)
 
+    def test_handle_consolidation_drops_only_the_named_path(self):
+        """Pruning one stale listing leaves the row's other duplicates alone."""
+        loader = IncrementalFixturesLoader(create_mock_connection(), verbose=False)
+
+        holder = {
+            "id": "bp-1",
+            "full_name": "tiles/x/a.stl",
+            "consolidated_paths": ["tiles/x/gone.stl", "tiles/x/still.stl"],
+        }
+
+        updates = []
+
+        with (
+            patch(
+                "openforge.db.fixtures.incremental.blueprint_sql.get_blueprint_by_id",
+                return_value=holder,
+            ),
+            patch(
+                "openforge.db.fixtures.incremental.blueprint_sql.update_blueprint",
+                side_effect=lambda curs, bid, data: updates.append(data),
+            ),
+            patch("openforge.db.fixtures.incremental.write_output") as out,
+        ):
+            loader._handle_consolidation(
+                Mock(), {"blueprint_id": "bp-1", "remove_path": "tiles/x/gone.stl"}
+            )
+
+        assert updates == [{"consolidated_paths": ["tiles/x/still.stl"]}]
+        said = "".join(c.args[0] for c in out.call_args_list)
+        assert "tiles/x/gone.stl" in said
+
+    def test_handle_consolidation_writes_nothing_when_the_path_is_absent(self):
+        """A path the row never listed is not a change to make."""
+        loader = IncrementalFixturesLoader(create_mock_connection(), verbose=False)
+
+        holder = {
+            "id": "bp-1",
+            "full_name": "tiles/x/a.stl",
+            "consolidated_paths": ["tiles/x/still.stl"],
+        }
+
+        with (
+            patch(
+                "openforge.db.fixtures.incremental.blueprint_sql.get_blueprint_by_id",
+                return_value=holder,
+            ),
+            patch(
+                "openforge.db.fixtures.incremental.blueprint_sql.update_blueprint"
+            ) as upd,
+            patch("openforge.db.fixtures.incremental.write_output") as out,
+        ):
+            loader._handle_consolidation(
+                Mock(), {"blueprint_id": "bp-1", "remove_path": "tiles/x/never.stl"}
+            )
+
+        upd.assert_not_called()
+        out.assert_not_called()
+
     def test_handle_addition_leaves_a_live_row_alone(self):
         """A fresh duplicate of a file still in the fixture joins, never steals.
 
@@ -1039,9 +1114,18 @@ class TestIncrementalFixturesLoader:
         )
         new_item["file_metadata"]["file"] = "b.stl"
 
+        # The holder is declined because the addition takes its row over; the
+        # second candidate has nothing to inherit it, so it is tombstoned. One
+        # of each, through paths the loader can actually reach.
+        doomed = {
+            "id": "bp-2",
+            "full_name": "tiles/catacombs/gone.stl",
+            "file_md5": "md5-gone",
+        }
+
         changes = ComparisonResult()
         changes.added = [new_item]
-        changes.deprecated = [holder]
+        changes.deprecated = [holder, doomed]
 
         cursor = Mock()
         cursor.fetchall = Mock(return_value=[])
@@ -1080,10 +1164,12 @@ class TestIncrementalFixturesLoader:
         assert len(updates) == 1
         assert updates[0]["full_name"] == "tiles/catacombs/thick_wall/loculus/b.stl"
         assert "bp-1" in loader._renamed_blueprint_ids
-        # And the row it inherited is therefore not tombstoned afterwards.
-        mark_dep.assert_not_called()
-        assert changes.applied_deprecations == 0
+        # The inherited row is spared and the other is tombstoned, so one
+        # apply shows both outcomes.
+        mark_dep.assert_called_once_with(ANY, "bp-2")
+        assert changes.applied_deprecations == 1
         assert changes.declined_deprecations == [holder]
+        assert changes.summary() == "1 added, 1 deprecated (1 left in place)"
 
     def test_is_rename_declines_a_listed_path_when_the_holder_survives(self):
         """A listed duplicate inherits a row that is going, and only that.
@@ -1378,61 +1464,6 @@ class TestIncrementalFixturesLoader:
 
         result.applied_deprecations = 10
         assert result.summary() == "10 deprecated"
-
-    def test_apply_counts_the_deprecations_it_applied_and_not_the_rest(self):
-        """One candidate tombstoned, one declined, and the summary says so.
-
-        A count that never rises and a count that rises unconditionally are both
-        wrong in the same place, so the partial case is the one worth pinning.
-        """
-        loader = self._rename_loader()
-
-        changes = ComparisonResult()
-        changes.deprecated = [
-            {"id": "bp-1", "file_md5": "md5-1"},
-            # Tombstoning this one strands the path consolidated into it, which
-            # is the one thing the deprecation step can say out loud.
-            {
-                "id": "bp-2",
-                "file_md5": "md5-2",
-                "full_name": "tiles/x/owner.stl",
-                "consolidated_paths": ["tiles/x/dup.stl"],
-            },
-        ]
-
-        cursor = Mock()
-        cursor.fetchall = Mock(return_value=[])
-
-        with (
-            patch.object(loader, "_load_existing_blueprints", return_value={}),
-            # The first already carries a tombstone; the second does not.
-            patch.object(
-                loader,
-                "_find_deprecated_blueprint_by_md5",
-                side_effect=lambda md5: {"id": "old"} if md5 == "md5-1" else None,
-            ),
-            patch(
-                "openforge.db.fixtures.incremental.blueprint_sql"
-                ".mark_blueprint_deprecated"
-            ) as mark_dep,
-            patch(
-                "openforge.db.fixtures.incremental.tag_sql.delete_all_blueprint_tags"
-            ),
-            patch(
-                "openforge.db.fixtures.incremental.image_sql"
-                ".delete_images_for_blueprint"
-            ),
-            patch("openforge.db.fixtures.incremental.write_output") as out,
-        ):
-            loader._apply_changes_with_cursor(cursor, changes)
-
-        mark_dep.assert_called_once()
-        assert changes.applied_deprecations == 1
-        assert changes.summary() == "1 deprecated (1 left in place)"
-        # Named, so the count can be reconciled against the candidate list.
-        assert changes.declined_deprecations == [changes.deprecated[0]]
-        # Unconditional: the loader is not verbose here.
-        assert "tiles/x/dup.stl" in "".join(c.args[0] for c in out.call_args_list)
 
     def test_apply_changes_resets_per_load_counters(self):
         """Per-apply state must reset at the top so one fixture cannot

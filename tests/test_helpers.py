@@ -26,7 +26,7 @@ def create_test_blueprint(
     file_md5: str = None,
     file_size: int = 1024,
     file_name: str = "test.stl",
-    full_name: str = "Test Blueprint",
+    full_name: str = None,
     file_modified_at: str = "2024-02-20T00:00:00Z",
     storage_address: str = "test/address",
     tags: List[str] = None,
@@ -36,6 +36,14 @@ def create_test_blueprint(
     if file_md5 is None:
         file_md5 = "md5_" + "".join(
             random.choices(string.ascii_lowercase + string.digits, k=24)
+        )
+    if full_name is None:
+        # Distinct per blueprint, like file_md5: a live path is unique, so a
+        # shared default made every fixture row collide with every other.
+        full_name = (
+            "tiles/test/"
+            + "".join(random.choices(string.ascii_lowercase + string.digits, k=16))
+            + ".stl"
         )
     if tags is None:
         tags = ["test|tag"]

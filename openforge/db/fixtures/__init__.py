@@ -148,68 +148,52 @@ def load_fixtures(
 
             if fixture_type == "blueprint":
                 # Validate blueprint fixture
-                try:
-                    is_blueprint_fixture(data)
-                    # Use transaction to ensure all-or-nothing behavior
-                    with conn.transaction():
-                        with conn.cursor(row_factory=dict_row) as curs:
-                            changes = loader.compare_fixture_data(data, curs=curs)
-                            if dry_run:
-                                print_comparison_results(changes)
-                            else:
-                                loader.apply_incremental_changes(
-                                    changes, curs=curs, filename=f.name
-                                )
-                except Exception as e:
-                    raise e
+                is_blueprint_fixture(data)
+                # Use transaction to ensure all-or-nothing behavior
+                with conn.transaction():
+                    with conn.cursor(row_factory=dict_row) as curs:
+                        changes = loader.compare_fixture_data(data, curs=curs)
+                        if dry_run:
+                            print_comparison_results(changes)
+                        else:
+                            loader.apply_incremental_changes(
+                                changes, curs=curs, filename=f.name
+                            )
             elif fixture_type == "tag_description":
                 # Validate tag description fixture
-                try:
-                    is_tag_description_fixture(data)
-                    # Handle tag descriptions in incremental mode
-                    with conn.transaction():
-                        with conn.cursor(row_factory=dict_row) as curs:
-                            if dry_run:
-                                write_output(
-                                    f"DRY RUN: Would load tag description "
-                                    f"fixture: {f}\n"
-                                )
-                            else:
-                                count = load_tag_description_fixture(curs, data)
-                                write_output(
-                                    f"{f.name}: Applied {count} tag descriptions\n"
-                                )
-                                if verbose:
-                                    write_output(
-                                        f"Loaded tag description fixture: {f}\n"
-                                    )
-                except Exception as e:
-                    raise e
+                is_tag_description_fixture(data)
+                # Handle tag descriptions in incremental mode
+                with conn.transaction():
+                    with conn.cursor(row_factory=dict_row) as curs:
+                        if dry_run:
+                            write_output(
+                                f"DRY RUN: Would load tag description fixture: {f}\n"
+                            )
+                        else:
+                            count = load_tag_description_fixture(curs, data)
+                            write_output(
+                                f"{f.name}: Applied {count} tag descriptions\n"
+                            )
+                            if verbose:
+                                write_output(f"Loaded tag description fixture: {f}\n")
             elif fixture_type == "tag_documentation":
                 # Validate tag documentation fixture
-                try:
-                    is_tag_documentation_fixture(data)
-                    # Handle tag documentation in incremental mode
-                    with conn.transaction():
-                        with conn.cursor(row_factory=dict_row) as curs:
-                            if dry_run:
-                                write_output(
-                                    f"DRY RUN: Would load tag documentation "
-                                    f"fixture: {f}\n"
-                                )
-                            else:
-                                count = load_tag_documentation_fixture(curs, data)
-                                msg = (
-                                    f"{f.name}: Applied {count} tag documentation "
-                                    f"entries\n"
-                                )
-                                write_output(msg)
-                                if verbose:
-                                    write_output(
-                                        f"Loaded tag documentation fixture: {f}\n"
-                                    )
-                except Exception as e:
-                    raise e
+                is_tag_documentation_fixture(data)
+                # Handle tag documentation in incremental mode
+                with conn.transaction():
+                    with conn.cursor(row_factory=dict_row) as curs:
+                        if dry_run:
+                            write_output(
+                                f"DRY RUN: Would load tag documentation fixture: {f}\n"
+                            )
+                        else:
+                            count = load_tag_documentation_fixture(curs, data)
+                            msg = (
+                                f"{f.name}: Applied {count} tag documentation entries\n"
+                            )
+                            write_output(msg)
+                            if verbose:
+                                write_output(f"Loaded tag documentation fixture: {f}\n")
             elif fixture_type == "guide":
                 with conn.transaction():
                     with conn.cursor(row_factory=dict_row) as curs:
@@ -235,32 +219,21 @@ def load_fixtures(
 
                     if fixture_type == "blueprint":
                         # Validate blueprint fixture
-                        try:
-                            is_blueprint_fixture(data)
-                            for rec in data:
-                                load_blueprint_fixture(curs, rec)
-                        except Exception as e:
-                            raise e
+                        is_blueprint_fixture(data)
+                        for rec in data:
+                            load_blueprint_fixture(curs, rec)
                     elif fixture_type == "tag_description":
                         # Validate tag description fixture
-                        try:
-                            is_tag_description_fixture(data)
-                            count = load_tag_description_fixture(curs, data)
-                            write_output(
-                                f"{f.name}: Applied {count} tag descriptions\n"
-                            )
-                        except Exception as e:
-                            raise e
+                        is_tag_description_fixture(data)
+                        count = load_tag_description_fixture(curs, data)
+                        write_output(f"{f.name}: Applied {count} tag descriptions\n")
                     elif fixture_type == "tag_documentation":
                         # Validate tag documentation fixture
-                        try:
-                            is_tag_documentation_fixture(data)
-                            count = load_tag_documentation_fixture(curs, data)
-                            write_output(
-                                f"{f.name}: Applied {count} tag documentation entries\n"
-                            )
-                        except Exception as e:
-                            raise e
+                        is_tag_documentation_fixture(data)
+                        count = load_tag_documentation_fixture(curs, data)
+                        write_output(
+                            f"{f.name}: Applied {count} tag documentation entries\n"
+                        )
                     elif fixture_type == "guide":
                         key = load_guide_fixture(curs, data, f.name)
                         write_output(f"{f.name}: Applied guide {key}\n")
