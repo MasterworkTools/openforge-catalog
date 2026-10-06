@@ -811,7 +811,7 @@ class IncrementalFixturesLoader:
             else:
                 vacated.append(deprecated_bp)
 
-        self._apply_deprecations(curs, superseded, changes)
+        self._apply_deprecations(curs, superseded, changes, warn_stranded=False)
 
         for new_item in changes.added:
             self._handle_addition(curs, new_item)
@@ -820,6 +820,7 @@ class IncrementalFixturesLoader:
         # is the only thing that undoes one. Without this the count claims a
         # deprecation that is live again by the time the transaction commits.
         self._uncount_revived(superseded, changes)
+        self._warn_stranded_superseded(superseded)
 
         # The rest: rows whose file left the fixture, which the additions above
         # may have claimed by rename.
@@ -849,16 +850,46 @@ class IncrementalFixturesLoader:
                 changes.declined_deprecations.append(bp)
 
     def _apply_deprecations(
-        self, curs: cursor, candidates: List[Dict], changes: ComparisonResult
+        self,
+        curs: cursor,
+        candidates: List[Dict],
+        changes: ComparisonResult,
+        warn_stranded: bool = True,
     ):
         """Tombstone what can be tombstoned, and record what was declined."""
         for deprecated_bp in candidates:
-            if self._handle_deprecation(curs, deprecated_bp):
+            if self._handle_deprecation(curs, deprecated_bp, warn_stranded):
                 changes.applied_deprecations += 1
             else:
                 changes.declined_deprecations.append(deprecated_bp)
 
-    def _handle_deprecation(self, curs: cursor, deprecated_bp: Dict) -> bool:
+    def _warn_stranded(self, bp: Dict):
+        """Said out loud because no one function can tell: the duplicates
+        listed here may be surviving in another fixture this run has already
+        loaded, or has yet to, and tombstoning their only row leaves them with
+        none.
+        """
+        if bp.get("consolidated_paths"):
+            write_output(
+                f"WARNING: deprecating {bp.get('full_name')}, which "
+                f"other paths were consolidated into: "
+                f"{', '.join(bp['consolidated_paths'])}\n"
+            )
+
+    def _warn_stranded_superseded(self, superseded: List[Dict]):
+        """The same warning, once the additions have decided who survived.
+
+        A superseded path is still in the fixture, so an addition for it is
+        coming; usually that addition revives this very row. Warning before
+        they run names a row that is about to be live again.
+        """
+        for bp in superseded:
+            if bp.get("id") not in self._renamed_blueprint_ids:
+                self._warn_stranded(bp)
+
+    def _handle_deprecation(
+        self, curs: cursor, deprecated_bp: Dict, warn_stranded: bool = True
+    ) -> bool:
         """Handle deprecation of an existing blueprint.
 
         Args:
@@ -882,15 +913,8 @@ class IncrementalFixturesLoader:
 
         blueprint_id = deprecated_bp["id"]
 
-        # Said out loud because no one function can tell: the duplicates listed
-        # here may be surviving in another fixture this run has already loaded,
-        # or has yet to, and tombstoning their only row leaves them with none.
-        if deprecated_bp.get("consolidated_paths"):
-            write_output(
-                f"WARNING: deprecating {deprecated_bp.get('full_name')}, which "
-                f"other paths were consolidated into: "
-                f"{', '.join(deprecated_bp['consolidated_paths'])}\n"
-            )
+        if warn_stranded:
+            self._warn_stranded(deprecated_bp)
 
         # Remove tags and images for deprecated blueprint
         tag_sql.delete_all_blueprint_tags(curs, blueprint_id)
@@ -1100,7 +1124,19 @@ class IncrementalFixturesLoader:
                         blueprint_sql.update_blueprint(
                             curs,
                             bp["id"],
-                            {"deprecated": False, "successor_id": None},
+                            {
+                                "deprecated": False,
+                                "successor_id": None,
+                                # The row is this item now, so the fields a
+                                # later comparison reads have to be this
+                                # item's. An inherited mtime or config makes
+                                # the next load of an unchanged fixture report
+                                # a modification, and a modification resets
+                                # consolidated_paths.
+                                "file_size": bp_data["file_size"],
+                                "file_modified_at": bp_data["file_modified_at"],
+                                "blueprint_config": bp_data["blueprint_config"],
+                            },
                         )
                         tag_sql.delete_all_blueprint_tags(curs, bp["id"])
                         image_sql.delete_images_for_blueprint(curs, bp["id"])

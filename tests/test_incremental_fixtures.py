@@ -1293,6 +1293,7 @@ class TestIncrementalFixturesLoader:
             images=[{"image_url": "https://example.test/a.png"}],
         )
         new_item["file_metadata"]["file"] = "a.stl"
+        new_item["config"] = {"parts": ["pillar"]}
 
         updates = []
         events = []
@@ -1329,7 +1330,16 @@ class TestIncrementalFixturesLoader:
 
         # The successor goes with the tombstone: a live row that keeps one
         # sends the version-chain reader off to the wrong blueprint.
-        assert updates == [{"deprecated": False, "successor_id": None}]
+        (payload,) = updates
+        assert payload["deprecated"] is False
+        assert payload["successor_id"] is None
+        # The row is this item now, so the fields a later comparison reads
+        # have to be this item's rather than the tombstone's.
+        assert payload["file_size"] == new_item["file_metadata"]["size"]
+        assert (
+            payload["file_modified_at"] == new_item["file_metadata"]["file_modified_at"]
+        )
+        assert payload["blueprint_config"] == new_item["config"]
         said = "".join(c.args[0] for c in out.call_args_list)
         # The discarded link is named here too, not only on a rename.
         assert "bp-replacement" in said
@@ -1625,6 +1635,54 @@ class TestEditThenLoadAgainstTheDatabase:
         # And it settles: a second identical load changes nothing.
         load()
         assert live_paths() == [(holder, "M_new"), (dupe, "M_old")]
+
+    def test_the_stranding_warning_waits_for_the_additions(self, test_db):
+        """The warning has to describe what happened, not what was attempted.
+
+        Superseding a holder tombstones the row that listed its duplicates,
+        but the additions that follow usually revive it under one of them.
+        Warned before they run, every ordinary edit of a holder names paths
+        that are about to be fine.
+        """
+        holder, dupe = "tiles/a/p.stl", "tiles/a/q.stl"
+
+        def seed():
+            with test_db.connection() as conn:
+                with conn.cursor(row_factory=dict_row) as curs:
+                    curs.execute("TRUNCATE blueprints CASCADE")
+                    curs.execute(
+                        "INSERT INTO blueprints (blueprint_name, blueprint_type,"
+                        " full_name, file_md5, file_name, config,"
+                        " consolidated_paths)"
+                        " VALUES ('p.stl','model',%s,'M_old','p.stl','{}',%s)",
+                        (holder, [dupe]),
+                    )
+                conn.commit()
+
+        def load(data):
+            with (
+                patch("openforge.db.fixtures.incremental.write_output") as out,
+                test_db.connection() as conn,
+            ):
+                with conn.cursor(row_factory=dict_row) as curs:
+                    loader = IncrementalFixturesLoader(conn, verbose=False)
+                    changes = loader.compare_fixture_data(data, curs=curs)
+                    loader.apply_incremental_changes(changes, curs=curs)
+                conn.commit()
+            return "".join(c.args[0] for c in out.call_args_list)
+
+        # The duplicate is in the fixture, so it inherits the tombstone and
+        # nothing is stranded.
+        seed()
+        said = load([self._item_at(holder, "M_new"), self._item_at(dupe, "M_old")])
+        assert "consolidated into" not in said
+
+        # The duplicate is gone from the fixture, so the tombstone really does
+        # take its only row with it, and that still has to be said.
+        seed()
+        said = load([self._item_at(holder, "M_new")])
+        assert "consolidated into" in said
+        assert dupe in said
 
     def test_editing_one_file_while_another_takes_its_bytes(self, test_db):
         """Edit a file and rename a second onto the bytes it gave up.
