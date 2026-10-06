@@ -325,7 +325,17 @@ paths:
                       type: object
                   deprecated:
                     type: array
-                    description: Blueprints that were deprecated
+                    description: Blueprints proposed for deprecation. The apply step declines a candidate it renamed in place.
+                    items:
+                      type: object
+                  deprecations_applied:
+                    type: integer
+                    nullable: true
+                    description: How many of the candidates were tombstoned. Null when no apply ran.
+                  deprecations_declined:
+                    type: array
+                    nullable: true
+                    description: Candidates the apply step left in place. Null when no apply ran.
                     items:
                       type: object
                   consolidated:

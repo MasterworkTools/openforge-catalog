@@ -393,11 +393,16 @@ def _munge_image(image: dict):
 
 
 def print_comparison_results(changes):
-    """Print comparison results in a user-friendly format."""
+    """Print comparison results in a user-friendly format.
+
+    Only reached on a dry run, which is why deprecations are labelled as
+    candidates: the apply step declines to tombstone a row it renames in
+    place, and which rows those are is not known until it runs.
+    """
     print("\nComparison Results:")
     print(f"  Added: {len(changes.added)}")
     print(f"  Modified: {len(changes.modified)}")
-    print(f"  Deprecated: {len(changes.deprecated)}")
+    print(f"  Deprecation candidates: {len(changes.deprecated)}")
     print(f"  Consolidated: {len(changes.consolidated)}")
     print(f"  Errors: {len(changes.errors)}")
 
@@ -420,7 +425,8 @@ def print_comparison_results(changes):
             print(f"  - {name}")
 
     if changes.deprecated:
-        print("\nDeprecated blueprints:")
+        print("\nDeprecation candidates:")
+        print("  (a candidate renamed in place on apply is not deprecated)")
         for item in changes.deprecated:
             name = item.get("full_name", "unknown")
             print(f"  - {name}")

@@ -58,6 +58,12 @@ def _parse_timestamp(timestamp) -> Optional[datetime]:
             return None
 
 
+def _dropped_successor(bp: Dict) -> str:
+    """The successor a revival discards, named so the link leaves a record."""
+    successor = bp.get("successor_id")
+    return f" (dropped successor {successor})" if successor else ""
+
+
 class ComparisonResult:
     """Result of comparing fixture data with existing database records."""
 
@@ -66,6 +72,10 @@ class ComparisonResult:
         self.modified = []  # Updated blueprints
         self.deprecated = []  # Deprecated blueprints
         self.consolidated = []  # Path consolidation updates
+        # Candidates the apply step declined to tombstone, which is what makes
+        # `applied_deprecations` reconcilable against `deprecated`. None until
+        # it runs, for the same reason the count is.
+        self.declined_deprecations = None
         self.errors = []  # Processing errors
         self.version_changes = {}  # Map of deprecated blueprint ID to new fixture item
         # How many of `deprecated` the apply step tombstoned. None until it runs.
@@ -78,8 +88,8 @@ class ComparisonResult:
     def _deprecated_part(self) -> str:
         """The deprecated figure, as what was applied once an apply has run.
 
-        The apply step declines to tombstone a row it renamed in place or one
-        already tombstoned, so the proposal is right only for a dry run.
+        The apply step declines to tombstone a row it renamed in place, so the
+        proposal is right only for a dry run.
         """
         if self.applied_deprecations is None:
             return f"{len(self.deprecated)} deprecated"
@@ -132,6 +142,9 @@ class IncrementalFixturesLoader:
         # `_apply_changes_with_cursor` so it doesn't leak between fixtures
         # when one loader instance processes a directory.
         self._renamed_blueprint_ids = set()
+        # Rows this load proposes to deprecate, so a duplicate can tell an
+        # inheritance from a theft. Populated before additions are applied.
+        self._deprecation_candidates = set()
 
     def _load_existing_blueprints(self, curs: cursor = None) -> Dict[str, Dict]:
         """Load existing blueprints from database for comparison.
@@ -825,6 +838,7 @@ class IncrementalFixturesLoader:
 
         # Reset rename tracking for this load.
         self._renamed_blueprint_ids = set()
+        self._deprecation_candidates = {bp["id"] for bp in changes.deprecated}
         changes.applied_deprecations = 0
 
         # Track new blueprint IDs for version change linking
@@ -849,9 +863,12 @@ class IncrementalFixturesLoader:
 
         # Process deprecations
         # (no version change linking here - that's done in post-processing)
+        changes.declined_deprecations = []
         for deprecated_bp in changes.deprecated:
             if self._handle_deprecation(curs, deprecated_bp):
                 changes.applied_deprecations += 1
+            else:
+                changes.declined_deprecations.append(deprecated_bp)
 
         # Process modifications
         for modified_item in changes.modified:
@@ -935,6 +952,32 @@ class IncrementalFixturesLoader:
 
         return True
 
+    def _is_rename(self, bp: Dict, new_full_name: str) -> bool:
+        """Whether this path should take over an existing row, not just join it.
+
+        The bytes already match: the caller arrives here only because the
+        insert was rescued on this item's MD5. What is left to establish is
+        that the row is going away, so this path inherits it instead of
+        stealing it from a file that is still there.
+        """
+        existing_full_name = bp["full_name"]
+        if existing_full_name in self.current_fixture_files:
+            return False
+
+        if new_full_name in (bp.get("consolidated_paths") or []):
+            # A listed duplicate inherits a row this load is losing, and only
+            # that. Absence from current_fixture_files does not prove the row
+            # is going: that set holds one fixture file, and a holder in
+            # another is simply elsewhere.
+            return bp.get("deprecated") or bp["id"] in self._deprecation_candidates
+
+        if not self.fixture_subset_path:
+            return False
+        subtree = self.fixture_subset_path + "/"
+        return existing_full_name.startswith(subtree) and new_full_name.startswith(
+            subtree
+        )
+
     def _handle_addition(self, curs: cursor, new_item: Dict):
         """Handle addition of a new blueprint."""
         # Convert fixture format to database format
@@ -959,19 +1002,7 @@ class IncrementalFixturesLoader:
                     existing_full_name = bp["full_name"]
                     new_full_name = new_item["file_metadata"]["full_name"]
 
-                    # A file is renamed within the fixture if:
-                    # 1. The existing file is NOT in the current fixture files
-                    # 2. Both paths share the same fixture subset path
-                    is_rename = False
-                    if (
-                        self.fixture_subset_path
-                        and existing_full_name not in self.current_fixture_files
-                        and existing_full_name.startswith(
-                            self.fixture_subset_path + "/"
-                        )
-                        and new_full_name.startswith(self.fixture_subset_path + "/")
-                    ):
-                        is_rename = True
+                    is_rename = self._is_rename(bp, new_full_name)
 
                     if is_rename:
                         # This is a rename within the fixture
@@ -1003,6 +1034,17 @@ class IncrementalFixturesLoader:
                             "blueprint_name": new_file_name,
                             "search_text": search_text,
                             "deprecated": False,
+                            # This row is live again, so it is the current
+                            # version and succeeds nothing. A live row that
+                            # keeps a successor sends the chain reader off it.
+                            "successor_id": None,
+                            # The row now owns this path, so it is no longer
+                            # one of the row's duplicates.
+                            "consolidated_paths": [
+                                path
+                                for path in (bp.get("consolidated_paths") or [])
+                                if path != new_full_name
+                            ],
                         }
                         blueprint_sql.update_blueprint(curs, bp["id"], update_data)
                         # Mark this id as renamed so a later deprecation step
@@ -1027,11 +1069,10 @@ class IncrementalFixturesLoader:
                         for image in new_item.get("images", []):
                             image_sql.insert_image_for_blueprint(curs, bp["id"], image)
 
-                        if self.verbose:
-                            write_output(
-                                f"Updated blueprint {bp['id']} with new path: "
-                                f"{new_full_name}\n"
-                            )
+                        write_output(
+                            f"RENAMED: {existing_full_name} -> {new_full_name}"
+                            f"{_dropped_successor(bp)}\n"
+                        )
 
                         # Return the updated blueprint
                         return bp
@@ -1059,13 +1100,28 @@ class IncrementalFixturesLoader:
                         # Update the blueprint with the new consolidated_paths
                         update_data = {"consolidated_paths": existing_paths}
                         blueprint_sql.update_blueprint(curs, bp["id"], update_data)
-
-                    if self.verbose:
-                        write_output(
-                            f"Added path to consolidated_paths for "
-                            f"blueprint {bp['id']}\n"
-                        )
+                        write_output(f"CONSOLIDATED: {new_path} -> {bp['full_name']}\n")
                 else:
+                    # The file is back under the name it had, so the row is
+                    # too: nothing else in the loader clears this flag without
+                    # the path changing. Tags and images are resynced rather
+                    # than added to, since deprecating the row stripped them.
+                    if bp.get("deprecated"):
+                        # successor_id goes with the tombstone: the chain
+                        # follower starts at a live row and then walks the
+                        # pointer unconditionally, so a live row that keeps one
+                        # answers with the wrong blueprint, or cycles.
+                        blueprint_sql.update_blueprint(
+                            curs,
+                            bp["id"],
+                            {"deprecated": False, "successor_id": None},
+                        )
+                        tag_sql.delete_all_blueprint_tags(curs, bp["id"])
+                        image_sql.delete_images_for_blueprint(curs, bp["id"])
+                        write_output(
+                            f"RESTORED: {bp['full_name']}{_dropped_successor(bp)}\n"
+                        )
+
                     # Normal case - insert tags and images for new blueprint
                     for tag in new_item.get("tags", []):
 
