@@ -436,3 +436,41 @@ def test_a_virgin_database_reports_no_prior_version(test_db, monkeypatch):
     assert result["schema_version_before"] is None
     assert result["schema_version_after"] == max(every_version)
     assert result["applied"] == every_version
+
+
+def test_each_migration_runs_with_a_bounded_lock_wait(test_db, monkeypatch):
+    """A pending ACCESS EXCLUSIVE parks every reader behind it.
+
+    So the migration has to give up waiting rather than hold the whole
+    function's budget: a release landing during a fixture upload would
+    otherwise wedge reads until that upload's transaction ended.
+    """
+    seen = []
+
+    class _Recorder:
+        def __init__(self, conn):
+            self._conn = conn
+
+        def __getattr__(self, name):
+            return getattr(self._conn, name)
+
+        def execute(self, *args, **kwargs):
+            seen.append(args[0] if args else None)
+            return self._conn.execute(*args, **kwargs)
+
+    real_connection = test_db.connection
+
+    class _Db:
+        def connection(self):
+            import contextlib
+
+            @contextlib.contextmanager
+            def wrapped():
+                with real_connection() as conn:
+                    yield _Recorder(conn)
+
+            return wrapped()
+
+    migrate._apply(_Db(), get_schema_versions()[:1])
+
+    assert any("lock_timeout" in str(stmt) for stmt in seen), seen
