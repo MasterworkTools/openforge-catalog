@@ -12,6 +12,7 @@ import logging
 import psycopg
 import pytest
 from psycopg import sql
+from psycopg.rows import dict_row
 
 from openforge.app import migrate
 from openforge.db.schema import get_schema_versions
@@ -436,6 +437,71 @@ def test_a_virgin_database_reports_no_prior_version(test_db, monkeypatch):
     assert result["schema_version_before"] is None
     assert result["schema_version_after"] == max(every_version)
     assert result["applied"] == every_version
+
+
+def test_version_20_keeps_the_newest_row_at_each_path(test_db):
+    """The repair has to tombstone the predecessors, not the current file.
+
+    Rolling the head down removes only the index, so the duplicates seeded
+    below can exist at all. `up` then has to pick the newest row per path,
+    link the rest to it, and leave rows with no path alone.
+    """
+    full_shape = _schema_shape(test_db)
+    head_version = _roll_back_head(test_db)
+    head = get_schema_versions()[-1]
+
+    path = "tiles/repair/dupe.stl"
+    try:
+        with test_db.connection() as conn:
+            with conn.cursor(row_factory=dict_row) as curs:
+                for md5, day in (
+                    ("md5-older", "2025-01-01"),
+                    ("md5-newer", "2025-09-09"),
+                ):
+                    curs.execute(
+                        "INSERT INTO blueprints (blueprint_name, blueprint_type,"
+                        " full_name, file_md5, file_name, config, created_at)"
+                        " VALUES ('dupe.stl','model',%s,%s,'dupe.stl','{}',%s)",
+                        (path, md5, day),
+                    )
+                # A config row: no path, so the index must not consider it and
+                # the repair must not touch it.
+                curs.execute(
+                    "INSERT INTO blueprints (blueprint_name, blueprint_type,"
+                    " file_md5, config) VALUES ('cfg','blueprint','md5-cfg','{}')"
+                )
+            conn.commit()
+
+        with test_db.connection() as conn:
+            head(conn).up()
+            conn.commit()
+
+        with test_db.connection() as conn:
+            with conn.cursor(row_factory=dict_row) as curs:
+                curs.execute(
+                    "SELECT id, file_md5, deprecated, successor_id FROM blueprints"
+                    " WHERE full_name = %s ORDER BY created_at",
+                    (path,),
+                )
+                rows = curs.fetchall()
+                curs.execute(
+                    "SELECT deprecated FROM blueprints WHERE full_name IS NULL"
+                )
+                config_rows = curs.fetchall()
+
+        older, newer = rows
+        assert older["file_md5"] == "md5-older"
+        assert older["deprecated"] is True
+        assert older["successor_id"] == newer["id"]
+        # The current file stays live and unlinked.
+        assert newer["file_md5"] == "md5-newer"
+        assert newer["deprecated"] is False
+        assert newer["successor_id"] is None
+        # A row with no path is none of the repair's business.
+        assert [r["deprecated"] for r in config_rows] == [False]
+        assert head_version == 20
+    finally:
+        _restore(test_db, full_shape)
 
 
 def test_each_migration_runs_with_a_bounded_lock_wait(test_db, monkeypatch):

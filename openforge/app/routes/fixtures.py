@@ -462,5 +462,11 @@ def _format_item(item: Dict) -> Dict:
             "md5": item.get("file_md5"),
             "size": item.get("file_size"),
         }
+    elif "remove_path" in item:
+        # A path a row stopped claiming; it has no file_metadata of its own.
+        return {
+            "full_name": item["remove_path"],
+            "blueprint_id": str(item["blueprint_id"]),
+        }
     else:
         return {"name": item.get("name", "unknown")}

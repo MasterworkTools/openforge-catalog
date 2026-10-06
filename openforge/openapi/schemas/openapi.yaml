@@ -340,7 +340,7 @@ paths:
                       type: object
                   consolidated:
                     type: array
-                    description: Blueprints with consolidated paths
+                    description: Paths a blueprint stopped claiming, because their content no longer matches it
                     items:
                       type: object
                   errors:
