@@ -118,6 +118,85 @@ resource "aws_lambda_function" "api" {
   ]
 }
 
+# ─── Migration Lambda ─────────────────────────────────────────────────────────
+# The same image as the API with a different command, because nothing in CI can
+# reach Aurora: the cluster's security group admits the application and bastion
+# groups and a GitHub runner is in neither. The API Lambda is inside and already
+# reads the password from DB_SECRET_ARN, so a second function from the same image
+# is the cheapest way in — no extra build, nothing to keep in step.
+#
+# The deploy invokes it between the apply that creates it and the apply that
+# promotes the API image, so the schema is ahead of the code that needs it.
+# Production previously had no migration step at all and applied schema changes
+# from the bastion by hand.
+
+resource "aws_cloudwatch_log_group" "migrate" {
+  name              = "/aws/lambda/${local.name}-migrate"
+  retention_in_days = 30
+}
+
+resource "aws_lambda_function" "migrate" {
+  function_name = "${local.name}-migrate"
+  role          = aws_iam_role.api.arn
+  package_type  = "Image"
+  image_uri     = "${local.infra.ecr_repository_urls["openforge_catalog/api"]}:${var.image_tag}"
+  architectures = ["x86_64"]
+
+  # A migration is not a request: DDL on a table with data can take minutes and
+  # no client is waiting on a 30 s budget. The ceiling rather than a guess, since
+  # Lambda bills actual duration — and a statement that outran a smaller budget
+  # would restart from zero on every retry and wedge every release at this gate.
+  # Bound lock waits with SET lock_timeout, not with the function timeout.
+  memory_size = 512
+  timeout     = 900
+
+  # Exactly one at a time, so two releases landing together cannot run DDL
+  # concurrently. The second invoke is throttled, which fails that release
+  # loudly rather than interleaving migrations.
+  reserved_concurrent_executions = 1
+
+  image_config {
+    command = ["openforge.app.migrate.lambda_handler"]
+  }
+
+  vpc_config {
+    subnet_ids         = local.infra.subnet_ids
+    security_group_ids = [local.infra.application_security_group_id]
+  }
+
+  # Only what it needs to reach the database. No Cloudflare credentials and no
+  # API_TOKEN: this function answers to nobody and writes no files.
+  #
+  # No PGCONNECT_TIMEOUT, which is the one deliberate difference from staging.
+  # There it is set to 120 because that cluster runs at min_capacity 0 with a
+  # one-hour auto-pause and a resume takes about 20 s. This cluster has a
+  # min_capacity of 0.5 and no auto-pause configured, so there is no resume to
+  # wait for and psycopg's own 130 s default is the bound.
+  environment {
+    variables = {
+      PGHOST        = local.infra.db_cluster_endpoint
+      DB_SECRET_ARN = local.infra.db_secret_arn
+    }
+  }
+
+  logging_config {
+    log_format = "Text"
+    log_group  = aws_cloudwatch_log_group.migrate.name
+  }
+
+  # api_db_secret named explicitly, not just implied. The first apply is
+  # `-target`ed at this function, and -target walks dependencies rather than
+  # dependents: this policy is attached *to* aws_iam_role.api rather than
+  # referenced *by* it, so without this edge a change to the only grant of
+  # secretsmanager:GetSecretValue would be skipped by the apply that runs before
+  # the invoke — and the invoke would fail to read its password for a reason
+  # nothing in the plan mentioned.
+  depends_on = [
+    aws_iam_role_policy_attachment.api_vpc,
+    aws_iam_role_policy.api_db_secret,
+  ]
+}
+
 # ─── ALB ──────────────────────────────────────────────────────────────────────
 # ponytail: HTTP only. CloudFront reaches the ALB over port 80 (origin_protocol_policy
 # http-only, as staging), so no listener cert is needed here. Add a 443 listener with

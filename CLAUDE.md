@@ -215,21 +215,29 @@ builds the image, runs `tofu apply -var image_tag=<sha>`, then syncs the fronten
 to a per-sha prefix and promotes it to `current/` (what CloudFront serves).
 Release PRs get a plan comment from the `Production Plan` workflow.
 
-**Production does not run migrations** (`openforge_catalog-jag`). A release with a
-schema change must go in this order:
+**Migrations run in the release**, the same way staging does: a merge to `main`
+runs **docker-build → tofu-apply (migration function only) → migrate →
+tofu-apply → frontend-deploy**, each gated on the last. No bastion step, and
+nothing to do before the merge.
 
-1. `bin/db_update up` on the bastion, **from a checkout of the ref being
-   released**. From an older `main` checkout it finds no new versions, applies
-   nothing and exits 0.
-2. Merge to `main`.
-3. `bin/upload_fixture <fixture>` for any fixtures the release needs. Last,
-   because it POSTs to the *deployed* app, and an older image misreads a fixture
-   format it doesn't know.
+The apply is split for the same reason as staging's: `aws_lambda_function`
+waits for `LastUpdateStatus=Successful`, so a single apply would put the new API
+image live before the migration ran — new code against the old schema.
 
-To tell whether a release needs a migration:
+**Schema changes must still be expand/contract.** Between the migration and the
+second apply, the old API image serves against the new schema. Additive changes
+are free; a `DROP COLUMN` or `RENAME` breaks the running code. So does a
+constraint the old image's writes would violate.
+
+**Fixtures are still manual**, and still last: `bin/upload_fixture <fixture>`
+after the merge, because it POSTs to the *deployed* app and an older image
+misreads a format it doesn't know. `openforge_catalog-25m` automates it.
+
+To tell whether a release carries a migration:
 `git diff --stat origin/main origin/test -- openforge/db/schema/` (two-dot; the
 three-dot form lists stale files because releases are squash-merged). Empty
-means none.
+means none. It no longer changes what you have to do, only what the release log
+will say.
 
 Runtime secrets live in Secrets Manager (`openforge-catalog/production/app`,
 created by `scripts/create-app-secret.sh`). The DB password is read at cold start
