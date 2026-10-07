@@ -105,6 +105,25 @@ def test_expected_paths_skips_what_the_fixture_marks_deprecated(blueprint_fixtur
     assert handler._expected_paths([f]) == {"tiles/h/live.stl"}
 
 
+def test_a_schema_invalid_blueprint_fails_the_gate(tmp_path):
+    """The blueprint half of the gate, which is most of the tree.
+
+    The loop below the validator does not care about a schema-invalid item —
+    it reads `deprecated` and `full_name` and nothing else — so without the
+    validator the gate returns a clean path set and the fault is caught later,
+    per file, after everything sorting ahead of it has committed. Blueprint
+    fixtures are also the ones hand-edited at release time.
+    """
+    blueprints = tmp_path / "blueprints"
+    blueprints.mkdir()
+    f = blueprints / "edited.json"
+    # Valid JSON, and missing the required `type`.
+    f.write_text(json.dumps([{"file_metadata": {"full_name": "tiles/h/a.stl"}}]))
+
+    with pytest.raises(Exception):
+        handler._expected_paths([f])
+
+
 def test_a_bad_guide_fails_the_gate_before_any_blueprint_is_written(tmp_path):
     """The gate has to cover the files that sort last.
 
