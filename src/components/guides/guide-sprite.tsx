@@ -38,7 +38,7 @@ interface GuideSpriteProps {
 }
 
 /** One part's sheet, drawn at `view`, or its closest available frame. */
-export function GuideSprite({ blueprint, view = 'front' }: GuideSpriteProps) {
+export function GuideSprite({ blueprint, view = 'front-left' }: GuideSpriteProps) {
   const image = thumbnailOf(blueprint);
   const sprite = image?.sprite_metadata;
   // A sheet that does not carry the angle being shown falls back to

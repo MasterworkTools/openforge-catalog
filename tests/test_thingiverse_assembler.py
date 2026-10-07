@@ -1,6 +1,7 @@
 """Tests for openforge.thingiverse.assembler."""
 
 import pytest
+from psycopg.errors import UniqueViolation
 from psycopg.rows import dict_row
 
 import openforge.db.sql.blueprints as blueprint_sql
@@ -272,18 +273,32 @@ class TestModelResolution:
                 with pytest.raises(AssemblyError, match="has no file_md5"):
                     assemble_thing(curs, manifest)
 
-    def test_ambiguous_full_name_raises(self, test_db, tmp_path):
-        manifest = make_manifest(
-            tmp_path,
-            "name: X\nfiles:\n  models:\n    - full_name: tiles/test/dupe.stl\n",
-        )
+    def test_resolver_refuses_an_ambiguous_full_name(self):
+        """Cover for a database the index has not reached yet.
+
+        Production keeps the old loader until this release lands, so the guard
+        is not dead code until every environment is migrated.
+        """
+        from unittest.mock import patch
+
+        from openforge.thingiverse.assembler import _resolve_full_name
+
+        with patch(
+            "openforge.thingiverse.assembler.blueprint_sql.get_blueprints_by_full_name",
+            return_value=[{"blueprint_type": "model"}, {"blueprint_type": "model"}],
+        ):
+            with pytest.raises(AssemblyError, match="ambiguous"):
+                _resolve_full_name(None, "tiles/test/dupe.stl")
+
+    def test_two_live_rows_cannot_share_a_full_name(self, test_db):
+        """blueprints_live_full_name_key forbids it, so the resolver's
+        ambiguity guard has nothing reachable to catch."""
         with test_db.connection() as conn:
             with conn.cursor(row_factory=dict_row) as curs:
                 dupe = "tiles/test/dupe.stl"
                 insert_model(curs, "dupe_a", "md5a", [], full_name=dupe)
-                insert_model(curs, "dupe_b", "md5b", [], full_name=dupe)
-                with pytest.raises(AssemblyError, match="ambiguous"):
-                    assemble_thing(curs, manifest)
+                with pytest.raises(UniqueViolation):
+                    insert_model(curs, "dupe_b", "md5b", [], full_name=dupe)
 
     def test_select_limit_ceiling_raises(self, test_db, tmp_path, monkeypatch):
         import openforge.thingiverse.assembler as assembler_mod

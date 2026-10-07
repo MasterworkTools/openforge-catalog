@@ -118,6 +118,7 @@ const RESOLVED_WITH_PARTS: ResolvedGuide = {
               angles: [
                 { index: 0, name: 'back' },
                 { index: 3, name: 'front' },
+                { index: 7, name: 'front-left' },
               ],
             },
           },
@@ -156,6 +157,7 @@ const RESOLVED_WITH_PARTS: ResolvedGuide = {
                 { index: 0, name: 'front' },
                 { index: 1, name: 'right' },
                 { index: 2, name: 'top' },
+                { index: 4, name: 'front-left' },
               ],
             },
           },
@@ -1420,9 +1422,10 @@ describe('GuidePage', () => {
       );
       const surface = sprite.closest('.guide-parts')!.querySelector('.select-none')!;
 
-      // Two thresholds to the right is two steps round the ring.
+      // Three thresholds to the right is three steps round the ring,
+      // which from front-left lands on `right`.
       fireEvent.mouseDown(surface, { button: 0, clientX: 100, clientY: 100 });
-      fireEvent.mouseMove(window, { clientX: 162, clientY: 100 });
+      fireEvent.mouseMove(window, { clientX: 193, clientY: 100 });
       fireEvent.mouseUp(window);
 
       // The base has a `right` frame and turns to it.
@@ -1496,10 +1499,9 @@ describe('GuidePage', () => {
       // On the side widget rather than a picture: it is keyed by
       // angle name, so it reports the view the drag reached whether
       // or not a given sheet has a frame for it.
-      expect(screen.getByRole('button', { name: 'front' })).toHaveAttribute(
-        'aria-pressed',
-        'true'
-      );
+      expect(
+        screen.getByRole('button', { name: 'front-left' })
+      ).toHaveAttribute('aria-pressed', 'true');
 
       // One and a half thresholds to the LEFT: one step back, the
       // same distance the identical rightward drag would travel.
@@ -1507,9 +1509,10 @@ describe('GuidePage', () => {
       fireEvent.mouseMove(window, { clientX: 55, clientY: 100 });
       fireEvent.mouseUp(window);
 
-      expect(
-        screen.getByRole('button', { name: 'front-left' })
-      ).toHaveAttribute('aria-pressed', 'true');
+      expect(screen.getByRole('button', { name: 'left' })).toHaveAttribute(
+        'aria-pressed',
+        'true'
+      );
     });
 
     it('does not open the tag search at the end of a drag', async () => {
@@ -1898,6 +1901,50 @@ describe('GuidePage', () => {
       expect(box.value).toBe('texture|dungeon_stone');
     });
 
+    it('marks an answer as chosen before the resolution lands', async () => {
+      // A click rewrites the URL at once and the parts take a round
+      // trip to catch up. Drawing the chosen answer from the resolution
+      // alone left the button looking unpressed for the whole wait, so
+      // people clicked again not knowing the first had registered.
+      visit('?guide=wall');
+      let resolves = 0;
+      global.fetch = jest.fn((url: string) => {
+        if (!url.includes('/resolve')) {
+          return Promise.resolve({
+            ok: true,
+            status: 200,
+            json: () => Promise.resolve(GUIDE_DOCUMENT),
+          });
+        }
+        resolves += 1;
+        // The first lands so the questions render; the one the click
+        // causes never does.
+        const body =
+          resolves === 1 ? Promise.resolve(RESOLVED) : new Promise(() => {});
+        return Promise.resolve({ ok: true, status: 200, json: () => body });
+      }) as unknown as typeof fetch;
+
+      render(<GuidePage />);
+      const separate = await screen.findByRole('button', {
+        name: /Separate wall/,
+      });
+      expect(separate).toHaveAttribute('aria-pressed', 'false');
+
+      fireEvent.click(separate);
+
+      // Still waiting on the catalog, and already visibly taken.
+      await waitFor(() =>
+        expect(
+          screen.getByRole('button', { name: /Separate wall/ })
+        ).toHaveAttribute('aria-pressed', 'true')
+      );
+      // And the question stays open: the point is to show the answer
+      // was heard, not to fold it away before the parts exist.
+      expect(
+        screen.getByRole('button', { name: /Modular \(s2w\)/ })
+      ).toBeInTheDocument();
+    });
+
     it('lets the newest answer win when an older one lands last', async () => {
       // Every click re-fires the resolve effect, and the network does
       // not promise to answer in order. Without the `current` guard
@@ -1969,10 +2016,10 @@ describe('GuidePage', () => {
       ).not.toBeInTheDocument();
     });
 
-    it('draws the sprite frame named front, not frame zero', async () => {
+    it('draws the sprite frame named front-left, not frame zero', async () => {
       // Every piece has to be seen from the same direction for the
       // parts list to show whether they go together, and the index of
-      // 'front' is not the same in every sheet.
+      // 'front-left' is not the same in every sheet.
       visit('?guide=wall&method=separate-wall');
       mockFetch((url) =>
         url.includes('/resolve') ? RESOLVED_WITH_PARTS : GUIDE_DOCUMENT
@@ -1980,10 +2027,10 @@ describe('GuidePage', () => {
 
       render(<GuidePage />);
       const sprite = await screen.findByLabelText(
-        'a dungeon stone wall, seen from the front'
+        'a dungeon stone wall, seen from the front-left'
       );
 
-      // Frame 3 of a 5-wide, 2-tall sheet: row 0, column 3. Asserted
+      // Frame 7 of a 5-wide, 2-tall sheet: row 1, column 2. Asserted
       // relative to the rendered tile so that changing how large the
       // pieces are drawn does not break this — what it pins is which
       // frame, not how big.
@@ -1991,7 +2038,7 @@ describe('GuidePage', () => {
       expect(tile).toBeGreaterThan(0);
       expect(sprite).toHaveStyle({
         backgroundImage: 'url(https://objects.openforge.tools/thumb.png)',
-        backgroundPosition: `-${3 * tile}px -0px`,
+        backgroundPosition: `-${2 * tile}px -${1 * tile}px`,
         backgroundSize: `${5 * tile}px ${2 * tile}px`,
       });
     });
@@ -2004,7 +2051,7 @@ describe('GuidePage', () => {
 
       render(<GuidePage />);
       const sprite = await screen.findByLabelText(
-        'a dungeon stone wall, seen from the front'
+        'a dungeon stone wall, seen from the front-left'
       );
 
       expect(sprite).toHaveStyle({
@@ -3124,10 +3171,10 @@ describe('inspecting a part', () => {
     );
   });
 
-  it('marks a pinned part as the person\'s, with a way back', async () => {
+  it('marks a pinned part as the person\'s, and offers one way back', async () => {
     // A pinned part stops answering to the questions on the left, and
-    // saying so is the only way the page can explain why changing the
-    // texture leaves this one piece alone.
+    // the card says so. The undo here is the question's — the card
+    // offers its own only when no question can.
     visit('?guide=wall&method=separate-wall&part.wall=chosen-md5');
     const asked: string[] = [];
     mockFetch((url) => {
@@ -3143,7 +3190,7 @@ describe('inspecting a part', () => {
     });
 
     render(<GuidePage />);
-    await screen.findByText('a dungeon stone wall');
+    await screen.findAllByText('a dungeon stone wall');
 
     // Forwarded to the backend, or a shared link would resolve
     // without the very part it was shared to show. The page sends
@@ -3154,8 +3201,542 @@ describe('inspecting a part', () => {
       )
     ).toBe(true);
     expect(screen.getByText('You picked this part')).toBeInTheDocument();
-    fireEvent.click(screen.getByRole('button', { name: 'undo' }));
+    fireEvent.click(screen.getByRole('button', { name: /^undo/ }));
     expect(window.location.search).not.toContain('part.wall');
+  });
+
+  it('admits the pinned part under the first question that governs its role', async () => {
+    // The pin stops this question deciding that role, so this is where
+    // it is owned up to and taken back. `texture` is `role: '*'` and
+    // comes first, so it governs the wall before `side-locks` does.
+    visit('?guide=wall&method=separate-wall&part.wall=chosen-md5');
+    mockFetch((url) =>
+      url.includes('/resolve')
+        ? {
+            ...RESOLVED_WITH_PARTS,
+            parts: RESOLVED_WITH_PARTS.parts.map((p) =>
+              p.role === 'wall' ? { ...p, pinned: true } : p
+            ),
+            refinements: RESOLVED_WITH_PARTS.refinements.map((r) =>
+              r.key === 'texture'
+                ? { ...r, selected: 'texture|dungeon_stone' }
+                : r
+            ),
+          }
+        : GUIDE_DOCUMENT
+    );
+
+    render(<GuidePage />);
+
+    const note = await screen.findByText('Custom Selection');
+    const section = note.closest('.guide-refinements') as HTMLElement;
+    expect(section.textContent).toContain('Texture');
+    expect(section.textContent).toContain('a dungeon stone wall');
+
+    // `side-locks` also governs the wall but answered second, so it
+    // must not carry a second admission.
+    const later = screen
+      .getByRole('heading', { name: 'Side locks' })
+      .closest('.guide-refinements') as HTMLElement;
+    expect(later.textContent).not.toContain('Custom Selection');
+
+    // Not dimmed: `texture` spans roles, so it still decides the floor
+    // and the bases even with the wall hand-picked.
+    expect(
+      within(section).getByText('texture|dungeon_stone').className
+    ).not.toContain('text-gray-500');
+
+    const undo = screen.getByRole('button', { name: /^undo/ });
+    expect(undo.closest('.guide-refinements')).toBe(section);
+    fireEvent.click(undo);
+    expect(window.location.search).not.toContain('part.wall');
+  });
+
+  it('dims an answer a pin wholly displaces', async () => {
+    // `floor-texture` is moved onto the wall here so it owns the pin;
+    // `texture` is moved off it so the spanning question stands aside.
+    visit('?guide=wall&method=separate-wall&part.wall=chosen-md5');
+    mockFetch((url) =>
+      url.includes('/resolve')
+        ? {
+            ...RESOLVED_WITH_PARTS,
+            parts: RESOLVED_WITH_PARTS.parts.map((p) =>
+              p.role === 'wall' ? { ...p, pinned: true } : p
+            ),
+            refinements: RESOLVED_WITH_PARTS.refinements.map((r) =>
+              r.key === 'texture'
+                ? { ...r, role: 'floor' }
+                : r.key === 'floor-texture'
+                  ? { ...r, role: 'wall', selected: 'texture|dungeon_stone' }
+                  : r
+            ),
+          }
+        : GUIDE_DOCUMENT
+    );
+
+    render(<GuidePage />);
+    const heading = await screen.findByRole('heading', {
+      name: 'Floor texture',
+    });
+    const section = heading.closest('.guide-refinements') as HTMLElement;
+    expect(within(section).getByText('Custom Selection')).toBeInTheDocument();
+    expect(within(section).getByText('Dungeon stone').className).toContain(
+      'text-gray-500'
+    );
+  });
+
+  it('dims a spanning answer once every role it reaches is pinned', async () => {
+    // Dimmed only once it has nothing left to decide.
+    visit(
+      '?guide=wall&method=separate-wall&part.wall=a' +
+        '&part.wall-base=b&part.floor-base=c'
+    );
+    mockFetch((url) =>
+      url.includes('/resolve')
+        ? {
+            ...RESOLVED_WITH_PARTS,
+            parts: RESOLVED_WITH_PARTS.parts.map((p) => ({
+              ...p,
+              pinned: true,
+              blueprint: p.blueprint ?? RESOLVED_WITH_PARTS.parts[0].blueprint,
+            })),
+            refinements: RESOLVED_WITH_PARTS.refinements.map((r) =>
+              r.key === 'texture'
+                ? { ...r, selected: 'texture|dungeon_stone' }
+                : r
+            ),
+          }
+        : GUIDE_DOCUMENT
+    );
+
+    render(<GuidePage />);
+    const heading = await screen.findByRole('heading', { name: 'Texture' });
+    const section = heading.closest('.guide-refinements') as HTMLElement;
+    expect(
+      within(section).getByText('texture|dungeon_stone').className
+    ).toContain('text-gray-500');
+  });
+
+  it('admits a pin under a live toggle that has not been answered', async () => {
+    // The toggle arm of the wrapper. The other toggle test kills `on`,
+    // which filters the question out instead of exercising it.
+    visit('?guide=wall&method=separate-wall&part.wall=chosen-md5');
+    mockFetch((url) =>
+      url.includes('/resolve')
+        ? {
+            ...RESOLVED_WITH_PARTS,
+            parts: RESOLVED_WITH_PARTS.parts.map((p) =>
+              p.role === 'wall' ? { ...p, pinned: true } : p
+            ),
+            refinements: RESOLVED_WITH_PARTS.refinements.map((r) =>
+              r.key === 'texture' ? { ...r, role: 'floor' } : r
+            ),
+          }
+        : GUIDE_DOCUMENT
+    );
+
+    render(<GuidePage />);
+    const note = await screen.findByText('Custom Selection');
+    const section = note.closest('.guide-refinements') as HTMLElement;
+    expect(section.textContent).toContain('Side locks');
+    expect(screen.getAllByRole('button', { name: /^undo/ })).toHaveLength(1);
+  });
+
+  it('reads a dead answer from the refinement when availability has not arrived', async () => {
+    // On first paint the availability response is still in flight, so
+    // the refinement's own list is the only word on what is dead.
+    visit('?guide=wall&method=separate-wall&part.wall=chosen-md5');
+    mockFetch((url) =>
+      url.includes('/resolve')
+        ? {
+            ...RESOLVED_WITH_PARTS,
+            parts: RESOLVED_WITH_PARTS.parts.map((p) =>
+              p.role === 'wall' ? { ...p, pinned: true } : p
+            ),
+            refinements: RESOLVED_WITH_PARTS.refinements.map((r) =>
+              r.key === 'texture'
+                ? { ...r, role: 'floor' }
+                : r.key === 'side-locks'
+                  ? { ...r, unavailable: ['on'] }
+                  : r
+            ),
+          }
+        : GUIDE_DOCUMENT
+    );
+
+    render(<GuidePage />);
+    await screen.findByText('You picked this part');
+    // The card's, not the question's: a toggle whose only answer is
+    // dead is not asked, so it cannot admit anything.
+    expect(screen.queryByText('Custom Selection')).toBeNull();
+    const undo = await screen.findByRole('button', { name: 'undo Wall' });
+    fireEvent.click(undo);
+    expect(window.location.search).not.toContain('part.wall');
+  });
+
+  it('keeps an answered toggle asked once its own answer goes dead', async () => {
+    // Answered is answered. Dropping it from the questions would take
+    // the admission with it and silence the explanation for the pin.
+    visit('?guide=wall&method=separate-wall&part.wall=chosen-md5');
+    mockFetch((url) =>
+      url.includes('/resolve')
+        ? {
+            ...RESOLVED_WITH_PARTS,
+            parts: RESOLVED_WITH_PARTS.parts.map((p) =>
+              p.role === 'wall' ? { ...p, pinned: true } : p
+            ),
+            refinements: RESOLVED_WITH_PARTS.refinements.map((r) =>
+              r.key === 'texture'
+                ? { ...r, role: 'floor' }
+                : r.key === 'side-locks'
+                  ? { ...r, selected: 'on', unavailable: ['on'] }
+                  : r
+            ),
+          }
+        : GUIDE_DOCUMENT
+    );
+
+    render(<GuidePage />);
+    const note = await screen.findByText('Custom Selection');
+    expect(note.closest('.guide-refinements')!.textContent).toContain(
+      'Side locks'
+    );
+  });
+
+  it('does not claim a pin for a question its except_roles rules out', async () => {
+    // `reaches` honours except_roles, so the spanning question stands
+    // aside and the next one that reaches the role owns the pin.
+    visit('?guide=wall&method=separate-wall&part.wall=chosen-md5');
+    mockFetch((url) =>
+      url.includes('/resolve')
+        ? {
+            ...RESOLVED_WITH_PARTS,
+            parts: RESOLVED_WITH_PARTS.parts.map((p) =>
+              p.role === 'wall' ? { ...p, pinned: true } : p
+            ),
+            refinements: RESOLVED_WITH_PARTS.refinements.map((r) =>
+              r.key === 'texture' ? { ...r, except_roles: ['wall'] } : r
+            ),
+          }
+        : GUIDE_DOCUMENT
+    );
+
+    render(<GuidePage />);
+    const note = await screen.findByText('Custom Selection');
+    expect(note.closest('.guide-refinements')!.textContent).toContain(
+      'Side locks'
+    );
+  });
+
+  it('does not dim a question that carries no admission of its own', async () => {
+    // `side-locks` reaches only the pinned wall, so it decides nothing
+    // — but `texture` owns the pin, so dimming it would grey an answer
+    // with no explanation beside it.
+    visit('?guide=wall&method=separate-wall&part.wall=chosen-md5');
+    mockFetch((url) =>
+      url.includes('/resolve')
+        ? {
+            ...RESOLVED_WITH_PARTS,
+            parts: RESOLVED_WITH_PARTS.parts.map((p) =>
+              p.role === 'wall' ? { ...p, pinned: true } : p
+            ),
+            refinements: RESOLVED_WITH_PARTS.refinements.map((r) =>
+              r.key === 'side-locks' ? { ...r, selected: 'on' } : r
+            ),
+          }
+        : GUIDE_DOCUMENT
+    );
+
+    render(<GuidePage />);
+    const heading = await screen.findByRole('heading', { name: 'Side locks' });
+    const section = heading.closest('.guide-refinements') as HTMLElement;
+    expect(section.textContent).not.toContain('Custom Selection');
+    expect(within(section).getByText('Yes').className).not.toContain(
+      'text-gray-500'
+    );
+  });
+
+  it('drops a pin the URL has already released', async () => {
+    // The resolution still reports it while the next one is in flight.
+    // Reading it from there would grey the answer just given and offer
+    // to undo a pin that is gone.
+    visit('?guide=wall&method=separate-wall');
+    mockFetch((url) =>
+      url.includes('/resolve')
+        ? {
+            ...RESOLVED_WITH_PARTS,
+            parts: RESOLVED_WITH_PARTS.parts.map((p) =>
+              p.role === 'wall' ? { ...p, pinned: true } : p
+            ),
+          }
+        : GUIDE_DOCUMENT
+    );
+
+    render(<GuidePage />);
+    await screen.findByText('a dungeon stone wall');
+    expect(screen.queryByText('Custom Selection')).toBeNull();
+    expect(screen.queryByRole('button', { name: /^undo/ })).toBeNull();
+  });
+
+  it('leaves an unpinned answer undimmed', async () => {
+    visit('?guide=wall&method=separate-wall');
+    mockFetch((url) =>
+      url.includes('/resolve')
+        ? {
+            ...RESOLVED_WITH_PARTS,
+            refinements: RESOLVED_WITH_PARTS.refinements.map((r) =>
+              r.key === 'texture'
+                ? { ...r, selected: 'texture|dungeon_stone' }
+                : r
+            ),
+          }
+        : GUIDE_DOCUMENT
+    );
+
+    render(<GuidePage />);
+    const heading = await screen.findByRole('heading', { name: 'Texture' });
+    const section = heading.closest('.guide-refinements') as HTMLElement;
+    expect(
+      within(section).getByText('texture|dungeon_stone').className
+    ).not.toContain('text-gray-500');
+    expect(screen.queryByText('Custom Selection')).toBeNull();
+  });
+
+  it('keeps the card undo when the only question reaching the pin is not asked', async () => {
+    // A toggle whose "yes" is dead is dropped before any admission is
+    // worked out. The card has to use that same test, or it withholds
+    // its undo for a question that was never put to anyone.
+    visit('?guide=wall&method=separate-wall&part.wall=chosen-md5');
+    mockFetch((url) =>
+      url.includes('/availability')
+        ? { unavailable: { 'side-locks': ['on'] }, because: {}, options: {} }
+        : url.includes('/resolve')
+          ? {
+              ...RESOLVED_WITH_PARTS,
+              parts: RESOLVED_WITH_PARTS.parts.map((p) =>
+                p.role === 'wall' ? { ...p, pinned: true } : p
+              ),
+              // `side-locks` is then the only question reaching the wall.
+              refinements: RESOLVED_WITH_PARTS.refinements.map((r) =>
+                r.key === 'texture' ? { ...r, role: 'floor' } : r
+              ),
+            }
+          : GUIDE_DOCUMENT
+    );
+
+    render(<GuidePage />);
+    await screen.findByText('You picked this part');
+
+    const undo = await screen.findByRole('button', { name: /^undo/ });
+    fireEvent.click(undo);
+    expect(window.location.search).not.toContain('part.wall');
+  });
+
+  it('shows a yes/no question as an answered box that one click flips', async () => {
+    // Unanswered means no, which is an answer. Drawing it as an empty
+    // checkbox made it the only question on the page that is not a box,
+    // and changing it took two clicks through two different controls.
+    visit('?guide=wall&method=separate-wall');
+    mockFetch((url) =>
+      url.includes('/resolve') ? RESOLVED_WITH_PARTS : GUIDE_DOCUMENT
+    );
+
+    render(<GuidePage />);
+    const toggle = await screen.findByRole('button', { name: /Side locks/ });
+    expect(toggle.textContent).toContain('No');
+    expect(toggle).toHaveAttribute('aria-pressed', 'false');
+
+    fireEvent.click(toggle);
+    expect(window.location.search).toContain('side-locks=on');
+
+    const pressed = await screen.findByRole('button', { name: /Side locks/ });
+    expect(pressed.textContent).toContain('Yes');
+    expect(pressed).toHaveAttribute('aria-pressed', 'true');
+
+    fireEvent.click(pressed);
+    expect(window.location.search).toContain('side-locks=off');
+  });
+
+  it('re-picking the answer a pin displaced releases the pin and keeps it', async () => {
+    // Clicking the chosen answer normally clears it, which is how you
+    // get back to no preference. With a pin in play that reads as
+    // "undo my pick", and clearing the answer leaves the question open
+    // with nothing to fold to.
+    visit(
+      '?guide=wall&method=separate-wall' +
+        '&texture=texture%7Cdungeon_stone&part.wall=chosen-md5'
+    );
+    mockFetch((url) =>
+      url.includes('/resolve')
+        ? {
+            ...RESOLVED_WITH_PARTS,
+            parts: RESOLVED_WITH_PARTS.parts.map((p) =>
+              p.role === 'wall' ? { ...p, pinned: true } : p
+            ),
+            refinements: RESOLVED_WITH_PARTS.refinements.map((r) =>
+              r.key === 'texture'
+                ? {
+                    ...r,
+                    selected: 'texture|dungeon_stone',
+                    choices: [
+                      { tag: 'texture|dungeon_stone', title: 'Dungeon stone' },
+                      { tag: 'texture|cave', title: 'Cave' },
+                    ],
+                  }
+                : r
+            ),
+          }
+        : GUIDE_DOCUMENT
+    );
+
+    render(<GuidePage />);
+
+    // Reopen the settled question, then re-pick the answer it shows.
+    const heading = await screen.findByRole('heading', { name: 'Texture' });
+    const section = heading.closest('.guide-refinements') as HTMLElement;
+    fireEvent.click(within(section).getByText('Dungeon stone'));
+    fireEvent.click(
+      within(section).getByRole('button', { name: /Dungeon stone/ })
+    );
+
+    const after = window.location.search;
+    expect(after).not.toContain('part.wall');
+    expect(after).toContain('texture=texture%7Cdungeon_stone');
+  });
+
+  it('keeps the card undo when no question on screen governs the pin', async () => {
+    // The resolution withholds refinements until every step is
+    // answered, so on the first screen every part is pinnable and no
+    // question is there to carry the admission.
+    visit('?guide=wall&part.wall=chosen-md5');
+    mockFetch((url) =>
+      url.includes('/resolve')
+        ? {
+            ...RESOLVED_WITH_PARTS,
+            steps: [{ ...RESOLVED_WITH_PARTS.steps[0], selected: null }],
+            refinements: [],
+            parts: RESOLVED_WITH_PARTS.parts.map((p) =>
+              p.role === 'wall' ? { ...p, pinned: true } : p
+            ),
+          }
+        : GUIDE_DOCUMENT
+    );
+
+    render(<GuidePage />);
+    await screen.findByText('You picked this part');
+
+    const undo = screen.getByRole('button', { name: /^undo/ });
+    fireEvent.click(undo);
+    expect(window.location.search).not.toContain('part.wall');
+  });
+
+  it('admits every pinned part one question governs, not just the first', async () => {
+    // `texture` is `role: '*'`, so it governs the wall and the base
+    // alike. Admitting only one of them leaves the other pin silent and
+    // un-undoable — the same dead end as a role no question governs.
+    visit(
+      '?guide=wall&method=separate-wall' +
+        '&part.wall=chosen-md5&part.wall-base=other-md5'
+    );
+    mockFetch((url) =>
+      url.includes('/resolve')
+        ? {
+            ...RESOLVED_WITH_PARTS,
+            parts: RESOLVED_WITH_PARTS.parts.map((p) =>
+              p.role === 'wall' || p.role === 'wall-base'
+                ? { ...p, pinned: true }
+                : p
+            ),
+          }
+        : GUIDE_DOCUMENT
+    );
+
+    render(<GuidePage />);
+    await screen.findAllByText('Custom Selection');
+
+    const panels = screen
+      .getAllByText('Custom Selection')
+      .map((label) => label.parentElement as HTMLElement);
+    expect(panels).toHaveLength(2);
+
+    // Each panel names the role it fills and the part filling it, so
+    // two admissions under one question are readable on their own.
+    expect(panels[0].textContent).toContain('Wall');
+    expect(panels[0].textContent).toContain('a dungeon stone wall');
+    expect(panels[1].textContent).toContain('Base for the wall');
+    expect(panels[1].textContent).toContain('a dungeon stone base');
+
+    // Named, not merely distinct: a label of `undo 4` would be unique
+    // and useless.
+    expect(
+      screen.getByRole('button', { name: 'undo Wall' })
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: 'undo Base for the wall' })
+    ).toBeInTheDocument();
+    expect(screen.getAllByRole('button', { name: /^undo/ })).toHaveLength(2);
+
+    // Each undo clears its own pin and leaves the other alone. By name,
+    // or the pairing is only ever checked in document order.
+    fireEvent.click(
+      screen.getByRole('button', { name: 'undo Base for the wall' })
+    );
+    const after = window.location.search;
+    expect(after).not.toContain('part.wall-base=');
+    expect(after).toContain('part.wall=');
+  });
+
+  it('keeps a pinned base undoable though no question names its role', async () => {
+    // A base role is reached only by a spanning question, and a pinned
+    // base still has to be undoable.
+    visit('?guide=wall&method=separate-wall&part.wall-base=chosen-md5');
+    mockFetch((url) =>
+      url.includes('/resolve')
+        ? {
+            ...RESOLVED_WITH_PARTS,
+            parts: RESOLVED_WITH_PARTS.parts.map((p) =>
+              p.role === 'wall-base' ? { ...p, pinned: true } : p
+            ),
+          }
+        : GUIDE_DOCUMENT
+    );
+
+    render(<GuidePage />);
+    await screen.findByText('Custom Selection');
+
+    const undo = screen.getByRole('button', { name: /^undo/ });
+    fireEvent.click(undo);
+    expect(window.location.search).not.toContain('part.wall-base');
+  });
+
+  it('admits a pinned part once, however many questions share its role', async () => {
+    // Two questions can govern one role; one pinned piece is one
+    // admission.
+    visit('?guide=wall&method=separate-wall&part.wall=chosen-md5');
+    mockFetch((url) =>
+      url.includes('/resolve')
+        ? {
+            ...RESOLVED_WITH_PARTS,
+            parts: RESOLVED_WITH_PARTS.parts.map((p) =>
+              p.role === 'wall' ? { ...p, pinned: true } : p
+            ),
+            refinements: [
+              ...RESOLVED_WITH_PARTS.refinements,
+              {
+                ...RESOLVED_WITH_PARTS.refinements[2],
+                key: 'wall-clips',
+                prompt: 'Wall clips',
+              },
+            ],
+          }
+        : GUIDE_DOCUMENT
+    );
+
+    render(<GuidePage />);
+    await screen.findByText('Custom Selection');
+
+    expect(screen.getAllByText('Custom Selection')).toHaveLength(1);
+    expect(screen.getAllByRole('button', { name: /^undo/ })).toHaveLength(1);
   });
 
   it('lets a pinned part go when you answer the question that decides it', async () => {

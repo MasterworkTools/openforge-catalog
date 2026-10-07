@@ -1,0 +1,132 @@
+name: Load Fixtures
+
+# Re-runs the deploy's fixture load against an environment, invoking the same
+# function the deploy does, so there is one code path and one set of
+# guarantees.
+#
+# WHAT THIS IS FOR: re-running a load against an environment that is already
+# current — after its deploy finished, not during one.
+#
+# WHAT IT CANNOT DO, and this is the mistake it invites: recover a deploy whose
+# `load-fixtures` job failed. Re-run the failed jobs on that deploy run
+# instead. `tofu-apply` and `frontend-deploy` are gated on the load, so a
+# failed load leaves them skipped, and there is no apply and no frontend sync
+# here — this would converge the data, report green, and leave the release
+# stranded on the old image and the old frontend with nothing left to promote.
+#
+# WHAT IT ALSO CANNOT DO, despite being the obvious place to look: load fixtures
+# that are not in the deployed image. The function reads them off its own
+# filesystem (`find_fixtures_package`), and that filesystem is the last
+# deployed sha — there is no checkout here and adding one would not help,
+# because the runner cannot reach Aurora. Fixture JSON is tracked, so new
+# blueprints reach an environment by being merged, which deploys them. Running
+# this for data that has not been merged returns `blueprints_changed: false`
+# with every gate passing, because every path the *image's* fixtures list is
+# still answerable.
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: Which environment to re-run the load against
+        type: choice
+        required: true
+        default: staging
+        options: [staging, production]
+      fixture:
+        description: >-
+          One fixture file to load, e.g. bases.json. Leave empty to load them
+          all, which is what the deploy does and what you want unless you know
+          the change is confined to one file. A texture's parts span fixtures:
+          loading only the file named after the texture is how production ends
+          up serving a guide whose wall bases are missing.
+        type: string
+        required: false
+
+concurrency:
+  # Shared with the deploy, not just with other manual runs. Both invoke the
+  # same function, whose reserved concurrency of 1 would reject the second
+  # outright; queueing here fails nobody's run. The deploy workflows group on
+  # their ref, so this cannot be the same key as theirs — it serialises manual
+  # runs against each other and relies on the reserved concurrency to reject a
+  # genuine collision with a deploy, loudly.
+  group: load-fixtures-${{ inputs.environment }}
+  cancel-in-progress: false
+
+permissions:
+  id-token: write
+  contents: read
+
+# Two jobs rather than one with a conditional role, which is how every other
+# workflow here names a secret. `inputs.environment == 'production' &&
+# secrets.A || secrets.B` reads naturally and fails dangerously: GitHub's
+# `&&`/`||` return values, so an empty or renamed production secret yields ''
+# and the `||` hands back the *staging* ARN — a run the operator chose
+# production for would load staging and go green, since the function has the
+# same name in both accounts. A literal secret per job cannot do that, and it
+# makes the role and the environment gate one decision instead of two
+# independent reads of the same string.
+jobs:
+  staging:
+    name: Load fixtures into staging
+    if: ${{ inputs.environment == 'staging' }}
+    runs-on: ubuntu-latest
+    # The invoke is synchronous and multi-minute, and --cli-read-timeout 0
+    # removes the only clock on it: nothing flows on that connection until the
+    # function returns. A dropped socket would otherwise sit here to the job
+    # default of six hours, holding this environment's load queued behind it.
+    # Above the function's own 900 s ceiling, so a function that genuinely
+    # runs out of time still reports it rather than being killed.
+    timeout-minutes: 20
+    environment: staging
+    steps:
+      # For the invoke script only. The fixtures themselves come off the
+      # function's own image, not from this checkout.
+      - uses: actions/checkout@v6
+
+      - name: Configure Staging deploy role
+        uses: aws-actions/configure-aws-credentials@v5
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN_STAGING }}
+          role-session-name: staging-fixtures-manual
+          aws-region: us-east-1
+
+      - name: Load fixtures
+        env:
+          FIXTURE: ${{ inputs.fixture }}
+        run: |
+          "${GITHUB_WORKSPACE}/.github/scripts/load-fixtures.sh"
+
+  production:
+    name: Load fixtures into production
+    if: ${{ inputs.environment == 'production' }}
+    runs-on: ubuntu-latest
+    # The invoke is synchronous and multi-minute, and --cli-read-timeout 0
+    # removes the only clock on it: nothing flows on that connection until the
+    # function returns. A dropped socket would otherwise sit here to the job
+    # default of six hours, holding this environment's load queued behind it.
+    # Above the function's own 900 s ceiling, so a function that genuinely
+    # runs out of time still reports it rather than being killed.
+    timeout-minutes: 20
+    # The `production` environment's protection rule is a deployment branch
+    # policy naming `main`, so a dispatch from any other ref is rejected
+    # before the job starts and before a role is assumed. It is not a required
+    # reviewer: from `main`, anyone with write access can run this.
+    environment: production
+    steps:
+      # For the invoke script only. The fixtures themselves come off the
+      # function's own image, not from this checkout.
+      - uses: actions/checkout@v6
+
+      - name: Configure Production deploy role
+        uses: aws-actions/configure-aws-credentials@v5
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN_PRODUCTION }}
+          role-session-name: production-fixtures-manual
+          aws-region: us-east-1
+
+      - name: Load fixtures
+        env:
+          FIXTURE: ${{ inputs.fixture }}
+        run: |
+          "${GITHUB_WORKSPACE}/.github/scripts/load-fixtures.sh"

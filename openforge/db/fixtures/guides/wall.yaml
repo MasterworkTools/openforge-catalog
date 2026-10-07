@@ -203,6 +203,9 @@ steps:
           The tile prints bare and sits in a base that carries the
           connectors. The usual openforge arrangement.
         roles:
+          # A bare tile is openforge. Without this the dialog also offers
+          # one-piece OpenLOCK floors, which already carry their own base.
+          floor: {require: ['connection|openforge']}
           floor-base: {require: ['shape|base|square']}
       - key: single-piece
         title: One piece, base included
@@ -425,20 +428,11 @@ roles:
       # they ask for it themselves; a separate wall stands on an
       # ordinary floor, as its own comment below says.
       #
-      # 176 pieces carry shape|floor|wall, which is everything this
-      # role can ever return. By build tag: 88 s2w, 58 `wall on tile`,
-      # 29 with none, and 1 separate wall. Requiring build|s2w
-      # role-wide put those 29 out of reach of the one method that
-      # should have them. With every other term of this role applied,
-      # separate wall's pool goes from 80 to 168.
+      # Nothing asks for `build|wall on tile`, deliberately: those are
+      # legacy parts being retired, and a wall-on-tile build is
+      # assembled from s2w parts now, which is why that method asks the
+      # floor for build|s2w.
       #
-      # The 58 are not reachable today, and this comment used to imply
-      # they were. Both wall-on-tile and s2w ask the floor for exactly
-      # `build|s2w` + `shape|floor|wall`, so nothing ever asks for
-      # `build|wall on tile` and no method can return those pieces.
-      # Tracked as openforge_catalog-p1h rather than fixed here:
-      # changing the predicate moves the recommendation for every
-      # wall-on-tile build and wants its own verification sweep.
       # shape|floor and nothing else beneath it. Which children are
       # wanted is the method's business: s2w and wall-on-tile ask for
       # shape|floor|wall, because on those methods the tile is what the
@@ -765,13 +759,15 @@ refinements:
 
       Topless removes the material above the clip bay, which is not
       thick to begin with: faster to print, and no supports to take
-      out. I don't recommend it on its own, though — there is very
-      little contact between the top of the base and whatever you glue
-      it to. If you want a single central OpenLOCK bay, which is a
-      common choice, take the magnetic OpenLOCK base and simply don't
-      fit the magnets. Unsupported is newer: modern printers bridge
-      well enough that many people find they don't need supports at
-      all.
+      out. Plain topless is the one to be careful with — with that
+      material gone there is very little contact between the base and
+      whatever you glue to it. Topless *with magnets* does not have
+      that problem, and that is the combination recommended here: the
+      magnetic base gives you plenty to glue to. If you want a single
+      central OpenLOCK bay, which is a common choice, take the magnetic
+      OpenLOCK base and simply don't fit the magnets. Unsupported is
+      newer: modern printers bridge well enough that many people find
+      they don't need supports at all.
 
       Print your clips in PETG, not PLA. PLA is rigid and brittle, so
       clips snap instead of flexing. Keep the bases in whatever you

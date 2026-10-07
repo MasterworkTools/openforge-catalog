@@ -209,27 +209,130 @@ gh pr create --base main --title "release: deploy to production"
 
 ### Production infrastructure (`terraform/environments/production`)
 
-The API Lambda, its ALB and the frontend bucket are OpenTofu here, layered on
-openforge-infra's state (network, Aurora, ECR, deploy role). A merge to `main`
-builds the image, runs `tofu apply -var image_tag=<sha>`, then syncs the frontend
-to a per-sha prefix and promotes it to `current/` (what CloudFront serves).
-Release PRs get a plan comment from the `Production Plan` workflow.
+The API Lambda, its migration and fixtures siblings, the ALB and the frontend
+bucket are OpenTofu here, layered on openforge-infra's state (network, Aurora,
+ECR, deploy role). Release PRs get a plan comment from the `Production Plan`
+workflow.
 
-**Production does not run migrations** (`openforge_catalog-jag`). A release with a
-schema change must go in this order:
+A merge to `main` runs the whole chain, the same way staging does, each step
+gated on the last: **docker-build → tofu-apply (migration and fixtures
+functions only) → migrate → load-fixtures → tofu-apply → frontend-deploy**.
+The last step syncs the frontend to a per-sha prefix and promotes it to
+`current/`, which is what CloudFront serves.
+No bastion step, and nothing to do before the merge.
 
-1. `bin/db_update up` on the bastion, **from a checkout of the ref being
-   released**. From an older `main` checkout it finds no new versions, applies
-   nothing and exits 0.
-2. Merge to `main`.
-3. `bin/upload_fixture <fixture>` for any fixtures the release needs. Last,
-   because it POSTs to the *deployed* app, and an older image misreads a fixture
-   format it doesn't know.
+The apply is split for the same reason as staging's: `aws_lambda_function` waits
+for `LastUpdateStatus=Successful`, so a single apply would put the new API image
+live before the migration ran.
 
-To tell whether a release needs a migration:
+**Schema changes must still be expand/contract.** Between the migration and the
+second apply, the old API image serves against the new schema. Additive changes
+are free; a `DROP COLUMN` or `RENAME` breaks the running code. So does a
+constraint the old image's writes would violate.
+
+**Data formats need the same discipline, but the mirror image of it.** The
+fixtures land before that apply, so the old image — and, until
+`frontend-deploy` finishes and browsers pick up the new bundle, the old
+frontend — serves the new rows. New rows and new tags are additive and safe.
+
+A **changed shape in a stored document** is not, and not for the reason you
+would guess. There are two such documents — a guide, and a blueprint's
+`config` — and both have the same three properties: the schema that forbids
+unknown constructs is checked only on *write*, by the loader, which runs on the
+**new** image; nothing validates either on read; and the reader therefore does
+not reject an unknown construct, it **ignores** it. The answer is 200 with the
+wrong parts, no 500, nothing in CloudWatch. That is the `nova_trail` symptom.
+
+Which inverts the rule. For the schema, the data leads and the code follows.
+For a stored document the **code must lead and the data follow**: ship the
+reader that understands a construct in one release, and the documents using it
+in the next. Shipping both together is the broken case, because during the
+window the old reader serves documents written for the new one.
+
+**Both windows run to the browser**, which is the part that is easy to get
+wrong. A guide document is returned whole and interpreted in the bundle too —
+the accepted query parameters are built from the document's own step,
+refinement and role keys, and anything else is silently dropped — so an old
+bundle ignores a new guide construct just as it ignores a new `config` one.
+Neither window closes at the second apply; both run past `frontend-deploy`,
+past CloudFront's cache on `current/`, and on until every open tab has the new
+bundle. There is no step after which either is over.
+
+The difference is which readers must lead. `config` has no Python reader at
+all, so only the bundle has to. A guide has both, so **both** must — which
+makes a guide construct the stricter case, not the safer one. And "new
+blueprints are additive and safe" holds for rows and tags, **not** for a new
+`config` construct.
+
+**Fixtures load in the deploy**, between the migration and the apply that
+promotes the API image, so data arrives behind the schema it needs and ahead of
+the code that reads it. Every fixture, every deploy, in one invoke: a human
+choosing which files a release needs gets it wrong, because a texture's parts
+span fixtures and the dependency is invisible — `nova_trail.json` left
+production briefly broken when its wall bases turned out to live in
+`bases.json`. An incremental load of unchanged data is a no-op, so loading
+everything is cheap enough to be unconditional.
+
+There is no upload step. `Dockerfile.api.deploy` copies the whole `openforge`
+package, so the fixtures are already on the function's filesystem — which is
+why `openforge_catalog-ot6`, the API's limits on fixture uploads, does not
+apply to this path.
+
+The load fails the release if any path the fixtures list is left neither a live
+row nor listed as a duplicate by one. That is the failure worth gating on,
+because it otherwise looks like a healthy no-op.
+
+**If the load fails during a deploy, re-run the failed jobs on that deploy
+run** — not the `Load Fixtures` workflow. `tofu-apply` and `frontend-deploy`
+are gated on the load succeeding, so a failed load leaves them *skipped*, and
+the manual workflow has no apply and no frontend sync: it would converge the
+data and leave the release stranded on the old image and the old frontend,
+reporting green, with nothing left to promote. That is the state the job's
+20-minute cap exists to keep short, so do not re-enter it on purpose.
+
+The `Load Fixtures` workflow is for after a deploy has finished — a load you
+want to re-run against an environment that is otherwise current.
+
+Either way, what to do depends on why it failed. The load commits per fixture
+file and is incremental, so a re-run converges *if the cause was transient*. A
+bad fixture or a failed answerable-path gate re-fail identically, because the
+next run reads the same files: those need a fix and a new deploy.
+
+A production run must be dispatched from `main` — that environment's only
+protection rule is a branch
+policy, so a dispatch from anywhere else is rejected before a role is assumed,
+and from `main` it is *not* reviewed.
+
+**That workflow cannot load fixtures that are not in the deployed image.** The
+function reads them off its own filesystem, and that filesystem is the last
+deployed sha. Fixture JSON is tracked, so new blueprints reach an environment
+by being merged, which deploys them. Running it for unmerged data returns
+`blueprints_changed: false` with every gate passing, because every path the
+*image's* fixtures list is still answerable — a healthy-looking no-op.
+
+Never `bin/upload_fixture`: it sends YAML as `application/x-yaml`, which the
+WSGI adapter leaves base64-encoded so the route 500s, and it rejects anything
+over roughly 3.5 MB, which is most of a release.
+
+**Releases are forward-only once fixtures land, and this is the sharpest edge
+in the whole chain.** The load is a reconciliation, not an append: it deprecates
+rows the fixtures no longer list. So **deploying an older sha deletes data** —
+its fixtures are the old set, the load tombstones whatever the newer release
+added, and the answerable-path gate cannot catch it, because the paths it
+expects come from those same older files. It returns `ok: true`.
+
+Rolling the image back also does not undo the deprecations and consolidations
+a load applied, and a release carrying both a migration and fixtures cannot
+safely run `down_impl`, because the new rows' data sits in the columns `down`
+would drop.
+
+Roll forward. If you must go back, go back with a *new* commit on `main`.
+
+To tell whether a release carries a migration:
 `git diff --stat origin/main origin/test -- openforge/db/schema/` (two-dot; the
 three-dot form lists stale files because releases are squash-merged). Empty
-means none.
+means none. It no longer changes what you have to do, only what the release log
+will say.
 
 Runtime secrets live in Secrets Manager (`openforge-catalog/production/app`,
 created by `scripts/create-app-secret.sh`). The DB password is read at cold start
@@ -239,19 +342,27 @@ openforge-infra's `deploy_role_arns["openforge-catalog"]`.
 ### Staging infrastructure (`terraform/environments/staging`)
 
 A merge to `test` deploys staging the whole way, each step gated on the last:
-**docker-build → tofu-apply (migration function only) → migrate → tofu-apply →
-frontend-deploy**. The apply is split because a single apply makes the new API
-image live before the migration runs.
+**docker-build → tofu-apply (migration and fixtures functions only) → migrate
+→ load-fixtures → tofu-apply → frontend-deploy**. The apply is split because a
+single apply makes the new API image live before the migration runs.
 
 - **Schema changes must be expand/contract.** Between the migration and the
   second apply, the old API image serves against the new schema. Additive
   changes are free; a `DROP COLUMN` or `RENAME` breaks the running code. Add and
-  backfill in one release, remove the old shape in a later one.
+  backfill in one release, remove the old shape in a later one. **Guide
+  document shapes run the other way** — the code must lead and the data
+  follow, because nothing validates a stored guide on read, so an old engine
+  ignores a new construct rather than rejecting it. See the production section.
 - **Migrations run in a Lambda** (`openforge-catalog-migrate`, same image as the
   API, `openforge/app/migrate.py`), because Aurora's security group only admits
   the app and bastion. Reserved concurrency 1. The job fails on `FunctionError`
   or any payload without `ok: true`; the handler asserts the schema reached head.
-- **Nothing loads fixtures** — `bin/upload_fixture` by hand, as in production.
+- **Fixtures load in the deploy**, in the same place as production's, with the
+  same all-or-nothing invoke and the same answerable-path gate. The `Load
+  Fixtures` workflow re-runs a load against an environment that is otherwise
+  current; a load that failed *inside* a deploy is recovered by re-running
+  that deploy's failed jobs. It cannot load data that is not in the deployed
+  image. See the production section.
 - The old hand-built `Openforge-Catalog-API` function and role still exist until
   `openforge_catalog-rc2` deletes them.
 - The migration function sets `PGCONNECT_TIMEOUT = 120` (Aurora resumes from

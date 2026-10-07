@@ -143,10 +143,163 @@ jobs:
           provenance: false
           tags: "908027381953.dkr.ecr.us-east-1.amazonaws.com/openforge_catalog/api:${{ github.sha }}"
 
-  tofu-apply:
-    name: Production Tofu Apply
+  tofu-apply-migrate:
+    name: Production Tofu Apply — migration and fixtures functions
     needs: docker-build
     if: ${{ needs.docker-build.result == 'success' }}
+    runs-on: ubuntu-latest
+    environment: production
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Configure Production deploy role
+        uses: aws-actions/configure-aws-credentials@v5
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN_PRODUCTION }}
+          role-session-name: production-tofu-migrate
+          aws-region: us-east-1
+
+      - uses: opentofu/setup-opentofu@v1
+        with:
+          tofu_version: "1.9.0"
+          tofu_wrapper: false
+
+      # Two applies, and the split is the whole point of the ordering.
+      #
+      # `aws_lambda_function` waits for LastUpdateStatus=Successful, so a single
+      # apply would put the new API image live *before* the migrate job ran —
+      # /api/* serving new code against the old schema, which is the unhandled
+      # 500 this step exists to prevent. The frontend was already gated; the API
+      # image never was.
+      #
+      # So: move only the migration function first (-target pulls in its role and
+      # log group), let the migrate job run against it, then apply everything else
+      # including the API image. The chicken-and-egg — migrate must exist before it
+      # can be invoked — is why this cannot be one apply with the migrate job first.
+      #
+      # `-target` is normally a smell. Here it is the mechanism: it is scoped to one
+      # resource and the full apply follows two jobs later, before anything ships.
+      - name: tofu apply — migration and fixtures functions only
+        working-directory: terraform/environments/production
+        run: |
+          tofu init -input=false -lockfile=readonly
+          tofu apply -input=false -auto-approve \
+            -var image_tag=${{ github.sha }} \
+            -target=aws_lambda_function.migrate \
+            -target=aws_lambda_function.fixtures
+
+  migrate:
+    name: Production Migrate
+    needs: tofu-apply-migrate
+    if: ${{ needs.tofu-apply-migrate.result == 'success' }}
+    runs-on: ubuntu-latest
+    environment: production
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - name: Configure Production deploy role
+        uses: aws-actions/configure-aws-credentials@v5
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN_PRODUCTION }}
+          role-session-name: production-migrate
+          aws-region: us-east-1
+
+      # The schema goes first, then the API image, then the frontend — so neither the
+      # code nor the site is ever promoted in front of a database that cannot serve
+      # it. The runner cannot reach Aurora (its security group admits the application
+      # and bastion groups only); this invokes the function that can.
+      #
+      # --cli-read-timeout 0: botocore's default read timeout is 60 s, well under the
+      # function's 900 s budget, so a long migration would fail the release it had
+      # actually completed — and botocore's retry would then land on a function with
+      # reserved concurrency 1 and throttle.
+      #
+      # The name is the fixed one from terraform (local.name + "-migrate") rather than
+      # a tofu output, because the preceding apply is -target'd and its outputs are
+      # not guaranteed to be refreshed. A wrong name fails loudly at invoke.
+      - name: Apply database migrations
+        env:
+          FUNCTION: openforge-catalog-migrate
+        run: |
+          aws lambda invoke --function-name "$FUNCTION" \
+            --cli-read-timeout 0 \
+            --cli-binary-format raw-in-base64-out --payload '{}' \
+            response.json > invoke.json
+
+          echo "--- invoke metadata"; cat invoke.json; echo
+          echo "--- payload";         cat response.json; echo
+
+          # `aws lambda invoke` exits 0 for a function that raised, so the metadata
+          # has to be read. A throttle is different: reserved concurrency is 1, so a
+          # second release's invoke is rejected outright and the CLI exits non-zero
+          # above rather than reaching this.
+          python3 - <<'PY'
+          import json, sys
+
+          meta = json.load(open("invoke.json"))
+          if meta.get("FunctionError"):
+              sys.exit(f"migration failed ({meta['FunctionError']}); see the payload above")
+
+          payload = json.load(open("response.json"))
+          if payload.get("ok") is not True:
+              sys.exit(f"migration did not report ok: {payload}")
+
+          before, after = payload["schema_version_before"], payload["schema_version_after"]
+          applied = payload["applied"]
+          print(f"schema {before} -> {after}; applied {applied or 'nothing'}")
+          PY
+
+  load-fixtures:
+    name: Production Load Fixtures
+    needs: migrate
+    if: ${{ needs.migrate.result == 'success' }}
+    runs-on: ubuntu-latest
+    # The invoke is synchronous and multi-minute, and --cli-read-timeout 0
+    # removes the only clock on it: nothing flows on that connection until the
+    # function returns. A dropped socket would otherwise sit here to the job
+    # default of six hours — six hours of the old API image serving the new
+    # schema, and six hours of this ref's concurrency group blocking every
+    # later push. Above the function's own 900 s ceiling, so a function that
+    # genuinely runs out of time still reports it rather than being killed.
+    timeout-minutes: 20
+    environment: production
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      # For the invoke script only. The fixtures themselves come off the
+      # function's own image, not from this checkout.
+      - uses: actions/checkout@v6
+
+      - name: Configure Production deploy role
+        uses: aws-actions/configure-aws-credentials@v5
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN_PRODUCTION }}
+          role-session-name: production-fixtures
+          aws-region: us-east-1
+
+      # Data after the schema, before the API image. A fixture that arrived
+      # after the new image went live would be read by code expecting it; one
+      # that arrived before the migration would hit a table without its
+      # columns yet.
+      #
+      # Every fixture, every deploy, in one invoke. A human choosing which
+      # files a release needs gets it wrong, because a texture's parts span
+      # fixtures and the dependency is invisible — that is what left production
+      # briefly broken when nova_trail's wall bases turned out to live in
+      # bases.json. An incremental load of unchanged data is a no-op, so
+      # loading everything is cheap enough to be unconditional.
+      - name: Load fixtures
+        run: .github/scripts/load-fixtures.sh
+
+  tofu-apply:
+    name: Production Tofu Apply
+    needs: load-fixtures
+    if: ${{ needs.load-fixtures.result == 'success' }}
     runs-on: ubuntu-latest
     environment: production
     permissions:

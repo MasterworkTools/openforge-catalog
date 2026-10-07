@@ -7,7 +7,7 @@ token from `TokenManager.write_token()`.
 
 The full contract this implements — endpoints, payloads, the
 upload→finalize flow, and the hash-encoding quirk — is documented in
-docs/thingiverse-api-v2-private.md and was confirmed live against
+openforge-process docs/thingiverse-api-v2-private.md and was confirmed live against
 devonjones's account.
 
 Notes:

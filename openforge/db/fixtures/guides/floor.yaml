@@ -7,42 +7,9 @@ summary: A plain floor tile
 # than building a wall. Same prose; the predicates differ where noted.
 
 steps:
-  - key: floor-print
-    prompt: How should the floor print?
-    default: with-base
-    # Roles come into play only from a chosen step option, so this step is
-    # what introduces both.
-    options:
-      - key: with-base
-        title: Floor plus a base
-        blurb: >
-          The tile prints bare and sits in a base that carries the
-          connectors. The usual openforge arrangement.
-        roles:
-          # Without this the dialog also offers one-piece OpenLOCK tiles,
-          # which already are bases and cannot sit in one.
-          floor:
-            require:
-              - connection|openforge
-          # The role's own query already requires shape|base|square.
-          floor-base: null
-      - key: single-piece
-        title: One piece, base included
-        blurb: >
-          The tile is printed with its base already part of it. Fewer
-          pieces on the table and less to lose.
-        roles:
-          floor:
-            deny:
-              - connection|openforge
-            allow:
-              - connection|openlock
-
   - key: size
     prompt: What size tiles?
     default: 2x2
-    # Not every footprint in the catalog is offered. Some of the larger ones
-    # have no square base at all, so adding them would empty `floor-base`.
     blurb: >
       All tile sizes are in inches, which are also squares. Most people use
       2×2. 4×2 is handy for hallways, and a few systems have used 3×3 as
@@ -51,6 +18,10 @@ steps:
       Unlike walls, the thin sizes are fine here: a 1 inch wide floor makes
       a perfectly good hallway, it is only walls that crowd a mini at that
       width.
+
+      The big footprints print as one piece. There is no square base for a
+      bare 6×4 or 8×8 tile to sit in, so choosing one of those settles the
+      next question for you.
     options:
       - key: 1x1
         title: 1×1
@@ -108,7 +79,80 @@ steps:
             require:
               - size|width|4
               - size|depth|4
+      - key: 6x4
+        title: 6×4
+        roles:
+          floor:
+            require:
+              - size|width|6
+              - size|depth|4
+      - key: 6x6
+        title: 6×6
+        roles:
+          floor:
+            require:
+              - size|width|6
+              - size|depth|6
+      - key: 8x8
+        title: 8×8
+        roles:
+          floor:
+            require:
+              - size|width|8
+              - size|depth|8
 
+  - key: floor-print
+    prompt: How should the floor print?
+    # The sizes with no square base have only the one answer, so the
+    # recommendation has to follow the size rather than stand on its own.
+    default:
+      - when:
+          selected:
+            size:
+              - 6x4
+              - 8x8
+        value: single-piece
+      - value: with-base
+    options:
+      - key: with-base
+        title: Floor plus a base
+        blurb: >
+          The tile prints bare and sits in a base that carries the
+          connectors. The usual openforge arrangement.
+        # The footprints a square base is made in.
+        when:
+          selected:
+            size:
+              - 1x1
+              - 2x1
+              - 2x2
+              - 3x1
+              - 3x3
+              - 4x1
+              - 4x2
+              - 4x4
+              - 6x6
+        roles:
+          # Without this the dialog also offers one-piece OpenLOCK tiles,
+          # which already are bases and cannot sit in one.
+          floor:
+            require:
+              - connection|openforge
+          # Roles come into play only from a chosen step option, which is
+          # why this is here at all; the role's own query already requires
+          # shape|base|square.
+          floor-base: null
+      - key: single-piece
+        title: One piece, base included
+        blurb: >
+          The tile is printed with its base already part of it. Fewer
+          pieces on the table and less to lose.
+        roles:
+          floor:
+            deny:
+              - connection|openforge
+            allow:
+              - connection|openlock
 roles:
   floor:
     title: Floor
@@ -205,13 +249,15 @@ refinements:
       never have to think about polarity.
 
       Topless removes the material above the clip bay, which is not thick to
-      begin with: faster to print, and no supports to take out. I don't
-      recommend it on its own, though — there is very little contact between
-      the top of the base and whatever you glue it to. If you want a single
-      central OpenLOCK bay, which is a common choice, take the magnetic
-      OpenLOCK base and simply don't fit the magnets. Unsupported is newer:
-      modern printers bridge well enough that many people find they don't
-      need supports at all.
+      begin with: faster to print, and no supports to take out. Plain topless
+      is the one to be careful with — with that material gone there is very
+      little contact between the base and whatever you glue to it. Topless
+      *with magnets* does not have that problem, and that is the combination
+      recommended here: the magnetic base gives you plenty to glue to. If you
+      want a single central OpenLOCK bay, which is a common choice, take the
+      magnetic OpenLOCK base and simply don't fit the magnets. Unsupported is
+      newer: modern printers bridge well enough that many people find they
+      don't need supports at all.
 
       Print your clips in PETG, not PLA. PLA is rigid and brittle, so clips
       snap instead of flexing. Keep the bases in whatever you are printing

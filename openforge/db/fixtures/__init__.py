@@ -134,8 +134,22 @@ def load_fixtures(
     incremental: bool = True,
     dry_run: bool = False,
     verbose: bool = False,
-):
+) -> list:
+    """Load fixtures, and report per file what landed.
+
+    The return value exists for callers that have to decide something from it
+    rather than print it — the deploy's load reads it to tell a release that
+    changed *blueprints* from one that did not. It cannot speak for the other
+    fixture types: a guide reports the key it upserted and a tag fixture the
+    number of entries it wrote, both unconditionally. Printing callers ignore
+    it.
+
+    Empty on a dry run and in full-replacement mode: neither applies anything
+    a caller could act on, and the first prints its own comparison. Only the
+    incremental apply path reports.
+    """
     ffiles = files if files is not None else find_fixtures(alt)
+    results = []
 
     if incremental:
         # Import here to avoid circular imports
@@ -143,73 +157,79 @@ def load_fixtures(
 
         loader = IncrementalFixturesLoader(conn, verbose=verbose)
         for f in ffiles:
+            # Named before it is parsed, so a failure has something to point
+            # at. Nothing below catches anything: a jsonschema error locates
+            # the fault inside the instance, a decode error gives a line and
+            # column, and a psycopg traceback stops at this loop — none of
+            # them says which file. On success the `Applied` line follows.
+            write_output(f"{f.name}: loading\n")
             data = _load_data(f, verbose=verbose)
             fixture_type = _get_fixture_type(f)
 
             if fixture_type == "blueprint":
                 # Validate blueprint fixture
-                try:
-                    is_blueprint_fixture(data)
-                    # Use transaction to ensure all-or-nothing behavior
-                    with conn.transaction():
-                        with conn.cursor(row_factory=dict_row) as curs:
-                            changes = loader.compare_fixture_data(data, curs=curs)
-                            if dry_run:
-                                print_comparison_results(changes)
-                            else:
-                                loader.apply_incremental_changes(
-                                    changes, curs=curs, filename=f.name
-                                )
-                except Exception as e:
-                    raise e
+                is_blueprint_fixture(data)
+                # Use transaction to ensure all-or-nothing behavior
+                with conn.transaction():
+                    with conn.cursor(row_factory=dict_row) as curs:
+                        changes = loader.compare_fixture_data(data, curs=curs)
+                        if dry_run:
+                            print_comparison_results(changes)
+                        else:
+                            loader.apply_incremental_changes(
+                                changes, curs=curs, filename=f.name
+                            )
+                            results.append(
+                                {
+                                    "file": f.name,
+                                    "type": fixture_type,
+                                    "added": len(changes.added),
+                                    "modified": len(changes.modified),
+                                    "deprecated": changes.applied_deprecations,
+                                    "consolidated": len(changes.consolidated),
+                                }
+                            )
             elif fixture_type == "tag_description":
                 # Validate tag description fixture
-                try:
-                    is_tag_description_fixture(data)
-                    # Handle tag descriptions in incremental mode
-                    with conn.transaction():
-                        with conn.cursor(row_factory=dict_row) as curs:
-                            if dry_run:
-                                write_output(
-                                    f"DRY RUN: Would load tag description "
-                                    f"fixture: {f}\n"
-                                )
-                            else:
-                                count = load_tag_description_fixture(curs, data)
-                                write_output(
-                                    f"{f.name}: Applied {count} tag descriptions\n"
-                                )
-                                if verbose:
-                                    write_output(
-                                        f"Loaded tag description fixture: {f}\n"
-                                    )
-                except Exception as e:
-                    raise e
+                is_tag_description_fixture(data)
+                # Handle tag descriptions in incremental mode
+                with conn.transaction():
+                    with conn.cursor(row_factory=dict_row) as curs:
+                        if dry_run:
+                            write_output(
+                                f"DRY RUN: Would load tag description fixture: {f}\n"
+                            )
+                        else:
+                            count = load_tag_description_fixture(curs, data)
+                            write_output(
+                                f"{f.name}: Applied {count} tag descriptions\n"
+                            )
+                            results.append(
+                                {"file": f.name, "type": fixture_type, "count": count}
+                            )
+                            if verbose:
+                                write_output(f"Loaded tag description fixture: {f}\n")
             elif fixture_type == "tag_documentation":
                 # Validate tag documentation fixture
-                try:
-                    is_tag_documentation_fixture(data)
-                    # Handle tag documentation in incremental mode
-                    with conn.transaction():
-                        with conn.cursor(row_factory=dict_row) as curs:
-                            if dry_run:
-                                write_output(
-                                    f"DRY RUN: Would load tag documentation "
-                                    f"fixture: {f}\n"
-                                )
-                            else:
-                                count = load_tag_documentation_fixture(curs, data)
-                                msg = (
-                                    f"{f.name}: Applied {count} tag documentation "
-                                    f"entries\n"
-                                )
-                                write_output(msg)
-                                if verbose:
-                                    write_output(
-                                        f"Loaded tag documentation fixture: {f}\n"
-                                    )
-                except Exception as e:
-                    raise e
+                is_tag_documentation_fixture(data)
+                # Handle tag documentation in incremental mode
+                with conn.transaction():
+                    with conn.cursor(row_factory=dict_row) as curs:
+                        if dry_run:
+                            write_output(
+                                f"DRY RUN: Would load tag documentation fixture: {f}\n"
+                            )
+                        else:
+                            count = load_tag_documentation_fixture(curs, data)
+                            msg = (
+                                f"{f.name}: Applied {count} tag documentation entries\n"
+                            )
+                            write_output(msg)
+                            results.append(
+                                {"file": f.name, "type": fixture_type, "count": count}
+                            )
+                            if verbose:
+                                write_output(f"Loaded tag documentation fixture: {f}\n")
             elif fixture_type == "guide":
                 with conn.transaction():
                     with conn.cursor(row_factory=dict_row) as curs:
@@ -221,6 +241,9 @@ def load_fixtures(
                         else:
                             key = load_guide_fixture(curs, data, f.name)
                             write_output(f"{f.name}: Applied guide {key}\n")
+                            results.append(
+                                {"file": f.name, "type": fixture_type, "guide": key}
+                            )
             else:
                 raise ValueError(f"Unknown fixture type for file: {f}")
     else:
@@ -235,37 +258,28 @@ def load_fixtures(
 
                     if fixture_type == "blueprint":
                         # Validate blueprint fixture
-                        try:
-                            is_blueprint_fixture(data)
-                            for rec in data:
-                                load_blueprint_fixture(curs, rec)
-                        except Exception as e:
-                            raise e
+                        is_blueprint_fixture(data)
+                        for rec in data:
+                            load_blueprint_fixture(curs, rec)
                     elif fixture_type == "tag_description":
                         # Validate tag description fixture
-                        try:
-                            is_tag_description_fixture(data)
-                            count = load_tag_description_fixture(curs, data)
-                            write_output(
-                                f"{f.name}: Applied {count} tag descriptions\n"
-                            )
-                        except Exception as e:
-                            raise e
+                        is_tag_description_fixture(data)
+                        count = load_tag_description_fixture(curs, data)
+                        write_output(f"{f.name}: Applied {count} tag descriptions\n")
                     elif fixture_type == "tag_documentation":
                         # Validate tag documentation fixture
-                        try:
-                            is_tag_documentation_fixture(data)
-                            count = load_tag_documentation_fixture(curs, data)
-                            write_output(
-                                f"{f.name}: Applied {count} tag documentation entries\n"
-                            )
-                        except Exception as e:
-                            raise e
+                        is_tag_documentation_fixture(data)
+                        count = load_tag_documentation_fixture(curs, data)
+                        write_output(
+                            f"{f.name}: Applied {count} tag documentation entries\n"
+                        )
                     elif fixture_type == "guide":
                         key = load_guide_fixture(curs, data, f.name)
                         write_output(f"{f.name}: Applied guide {key}\n")
                     else:
                         raise ValueError(f"Unknown fixture type for file: {f}")
+
+    return results
 
 
 def _load_data(f, verbose=False):
@@ -393,39 +407,39 @@ def _munge_image(image: dict):
 
 
 def print_comparison_results(changes):
-    """Print comparison results in a user-friendly format."""
-    print("\nComparison Results:")
-    print(f"  Added: {len(changes.added)}")
-    print(f"  Modified: {len(changes.modified)}")
-    print(f"  Deprecated: {len(changes.deprecated)}")
-    print(f"  Consolidated: {len(changes.consolidated)}")
-    print(f"  Errors: {len(changes.errors)}")
+    """Print comparison results in a user-friendly format.
+
+    Only reached on a dry run, which is why deprecations are labelled as
+    candidates: the apply step declines to tombstone a row it renames in
+    place, and which rows those are is not known until it runs.
+    """
+    write_output("\nComparison Results:\n")
+    write_output(f"  Added: {len(changes.added)}\n")
+    write_output(f"  Modified: {len(changes.modified)}\n")
+    write_output(f"  Deprecation candidates: {len(changes.deprecated)}\n")
+    write_output(f"  Consolidated: {len(changes.consolidated)}\n")
 
     if changes.added:
-        print("\nAdded blueprints:")
+        write_output("\nAdded blueprints:\n")
         for item in changes.added:
             if "file_metadata" in item:
                 name = item.get("file_metadata", {}).get("full_name", "unknown")
             else:
                 name = item.get("name", "unknown")
-            print(f"  - {name}")
+            write_output(f"  - {name}\n")
 
     if changes.modified:
-        print("\nModified blueprints:")
+        write_output("\nModified blueprints:\n")
         for item in changes.modified:
             if "file_metadata" in item:
                 name = item.get("file_metadata", {}).get("full_name", "unknown")
             else:
                 name = item.get("name", "unknown")
-            print(f"  - {name}")
+            write_output(f"  - {name}\n")
 
     if changes.deprecated:
-        print("\nDeprecated blueprints:")
+        write_output("\nDeprecation candidates:\n")
+        write_output("  (a candidate renamed in place on apply is not deprecated)\n")
         for item in changes.deprecated:
             name = item.get("full_name", "unknown")
-            print(f"  - {name}")
-
-    if changes.errors:
-        print("\nErrors:")
-        for error in changes.errors:
-            print(f"  - {error}")
+            write_output(f"  - {name}\n")

@@ -323,9 +323,17 @@ def _process_blueprint_fixture(
     return {
         "added": [_format_item(item) for item in changes.added],
         "modified": [_format_item(item) for item in changes.modified],
+        # Candidates. `deprecations_applied` is how many the apply step
+        # tombstoned and `deprecations_declined` names the rest, so the two
+        # reconcile. Both are null when no apply ran: a dry run cannot know.
         "deprecated": [_format_item(item) for item in changes.deprecated],
+        "deprecations_applied": changes.applied_deprecations,
+        "deprecations_declined": (
+            None
+            if changes.declined_deprecations is None
+            else [_format_item(item) for item in changes.declined_deprecations]
+        ),
         "consolidated": [_format_item(item) for item in changes.consolidated],
-        "errors": changes.errors,
     }
 
 
@@ -363,7 +371,6 @@ def _process_guide_fixture(data: Dict, curs, dry_run: bool, verbose: bool) -> Di
         "modified": [{"name": key}],
         "deprecated": [],
         "consolidated": [],
-        "errors": [],
     }
 
 
@@ -395,7 +402,6 @@ def _process_tag_description_fixture(
         "modified": [{"name": key} for key in data.keys()],
         "deprecated": [],
         "consolidated": [],
-        "errors": [],
     }
 
 
@@ -428,7 +434,6 @@ def _process_tag_documentation_fixture(
         "modified": [{"name": key} for key in data.keys()],
         "deprecated": [],
         "consolidated": [],
-        "errors": [],
     }
 
 
@@ -452,6 +457,12 @@ def _format_item(item: Dict) -> Dict:
             "full_name": item.get("full_name"),
             "md5": item.get("file_md5"),
             "size": item.get("file_size"),
+        }
+    elif "remove_path" in item:
+        # A path a row stopped claiming; it has no file_metadata of its own.
+        return {
+            "full_name": item["remove_path"],
+            "blueprint_id": str(item["blueprint_id"]),
         }
     else:
         return {"name": item.get("name", "unknown")}

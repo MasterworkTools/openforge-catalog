@@ -9,6 +9,8 @@ from openforge.data.transformers import (
     TagArrayToPipeTransformer,
     TimestampFieldTransformer,
 )
+from openforge.db.fixtures import print_comparison_results
+from openforge.db.fixtures.incremental import ComparisonResult
 
 
 class TestTagArrayToPipeTransformer:
@@ -314,3 +316,27 @@ class TestDeprecatedEntryTransformer:
         assert "TagArrayToPipeTransformer failed" in str(exc_info.value)
         assert "Fixture:" in str(exc_info.value)
         assert str(fixture) in str(exc_info.value)
+
+
+class TestComparisonPrinter:
+    """print_comparison_results runs only on a dry run, where the deprecation
+    figure is a proposal rather than a result."""
+
+    def test_deprecations_are_labelled_as_candidates(self, capsys):
+        changes = ComparisonResult()
+        changes.deprecated = [{"full_name": "tiles/x/a.stl"}]
+
+        print_comparison_results(changes)
+        # write_output goes to stderr outside a request context.
+        out = capsys.readouterr().err
+
+        assert "Deprecation candidates: 1" in out
+        assert "not deprecated" in out
+
+    def test_no_caveat_when_there_are_no_candidates(self, capsys):
+        """The caveat belongs to the list, so it goes when the list is empty."""
+        print_comparison_results(ComparisonResult())
+        out = capsys.readouterr().err
+
+        assert "Deprecation candidates: 0" in out
+        assert "not deprecated" not in out

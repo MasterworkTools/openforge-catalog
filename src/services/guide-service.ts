@@ -447,8 +447,73 @@ function answeredBy(
   return matched[0].tag;
 }
 
+/**
+ * The hand-picked parts, their blueprint names by role, which roles a
+ * question on screen admits, and every role this build has a part for.
+ *
+ * Pins come from the URL when there are selections, so a released pin
+ * goes before the resolution stops reporting it.
+ */
+export function admissions(
+  resolved: ResolvedGuide | null,
+  selections: Selections | null,
+  unavailable?: Record<string, string[]> | null
+): {
+  pinned: GuidePart[];
+  pinnedByRole: Record<string, string>;
+  admitted: string[];
+  roles: Record<string, string>;
+} {
+  const pinned = (resolved?.parts ?? []).filter(
+    // A part is `pinned` only when its pin resolved, so the blueprint
+    // is there; the compiler takes this body on trust either way.
+    (part): part is GuidePart & { blueprint: GuideBlueprint } =>
+      part.pinned &&
+      part.blueprint !== null &&
+      (!selections || pinKey(part.role) in selections)
+  );
+  const asked = askedOf(resolved?.refinements ?? [], unavailable);
+  return {
+    pinned,
+    // Every role this build has a part for, which is the set the pinned
+    // ones are drawn from.
+    roles: Object.fromEntries(
+      (resolved?.parts ?? []).map((part) => [part.role, part.title])
+    ),
+    // Named by the blueprint: the title is only the role.
+    pinnedByRole: Object.fromEntries(
+      pinned.map((part) => [part.role, part.blueprint.blueprint_name])
+    ),
+    admitted: pinned
+      .map((part) => part.role)
+      .filter((role) => asked.some((r) => reaches(r, role))),
+  };
+}
+
+/** The answers this question cannot offer, freshest source first. */
+export function deadAnswers(
+  question: GuideStep | GuideRefinement,
+  unavailable?: Record<string, string[]> | null
+): string[] {
+  // Not every fixture carries the field the type requires.
+  return unavailable?.[question.key] ?? question.unavailable ?? [];
+}
+
+/** The questions put to the person: a toggle whose yes is dead is not one. */
+export function askedOf(
+  refinements: GuideRefinement[],
+  unavailable?: Record<string, string[]> | null
+): GuideRefinement[] {
+  return refinements.filter(
+    (refinement) =>
+      !refinement.on_tags ||
+      refinement.selected !== null ||
+      !deadAnswers(refinement, unavailable).includes('on')
+  );
+}
+
 /** Does this question apply to that role? Same test the engine makes. */
-function reaches(refinement: GuideRefinement, role: string): boolean {
+export function reaches(refinement: GuideRefinement, role: string): boolean {
   if (refinement.role !== '*' && refinement.role !== role) return false;
   return !(refinement.except_roles ?? []).includes(role);
 }

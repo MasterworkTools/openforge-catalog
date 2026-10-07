@@ -144,7 +144,7 @@ jobs:
           tags: "682033461796.dkr.ecr.us-east-1.amazonaws.com/openforge_catalog/api:${{ github.sha }}"
 
   tofu-apply-migrate:
-    name: Staging Tofu Apply — migration function
+    name: Staging Tofu Apply — migration and fixtures functions
     needs: docker-build
     if: ${{ needs.docker-build.result == 'success' }}
     runs-on: ubuntu-latest
@@ -186,13 +186,14 @@ jobs:
       # The one-time *adoption* apply is not this. imports.tf adopts live resources
       # and the app secret must exist first, so the first apply is run by hand as a
       # full apply; these two stages are the steady state after that.
-      - name: tofu apply — migration function only
+      - name: tofu apply — migration and fixtures functions only
         working-directory: terraform/environments/staging
         run: |
           tofu init -input=false -lockfile=readonly
           tofu apply -input=false -auto-approve \
             -var image_tag=${{ github.sha }} \
-            -target=aws_lambda_function.migrate
+            -target=aws_lambda_function.migrate \
+            -target=aws_lambda_function.fixtures
 
   migrate:
     name: Staging Migrate
@@ -256,10 +257,53 @@ jobs:
           print(f"schema {before} -> {after}; applied {applied or 'nothing'}")
           PY
 
-  tofu-apply:
-    name: Staging Tofu Apply
+  load-fixtures:
+    name: Staging Load Fixtures
     needs: migrate
     if: ${{ needs.migrate.result == 'success' }}
+    runs-on: ubuntu-latest
+    # The invoke is synchronous and multi-minute, and --cli-read-timeout 0
+    # removes the only clock on it: nothing flows on that connection until the
+    # function returns. A dropped socket would otherwise sit here to the job
+    # default of six hours — six hours of the old API image serving the new
+    # schema, and six hours of this ref's concurrency group blocking every
+    # later push. Above the function's own 900 s ceiling, so a function that
+    # genuinely runs out of time still reports it rather than being killed.
+    timeout-minutes: 20
+    environment: staging
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      # For the invoke script only. The fixtures themselves come off the
+      # function's own image, not from this checkout.
+      - uses: actions/checkout@v6
+
+      - name: Configure Staging deploy role
+        uses: aws-actions/configure-aws-credentials@v5
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN_STAGING }}
+          role-session-name: staging-fixtures
+          aws-region: us-east-1
+
+      # Data after the schema, before the API image. A fixture that arrived
+      # after the new image went live would be read by code expecting it; one
+      # that arrived before the migration would hit a table without its
+      # columns yet.
+      #
+      # Every fixture, every deploy, in one invoke. A human choosing which
+      # files a release needs gets it wrong, because a texture's parts span
+      # fixtures and the dependency is invisible — that is what left production
+      # briefly broken when nova_trail's wall bases turned out to live in
+      # bases.json. An incremental load of unchanged data is a no-op, so
+      # loading everything is cheap enough to be unconditional.
+      - name: Load fixtures
+        run: .github/scripts/load-fixtures.sh
+
+  tofu-apply:
+    name: Staging Tofu Apply
+    needs: load-fixtures
+    if: ${{ needs.load-fixtures.result == 'success' }}
     runs-on: ubuntu-latest
     environment: staging
     permissions:

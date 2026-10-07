@@ -2,7 +2,7 @@
 
 import GuideEntry from './guide-entry';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { releasedBy } from '@/services/guide-service';
+import { admissions, pinKey, releasedBy } from '@/services/guide-service';
 import {
   clearGuide,
   isPlainClick,
@@ -31,6 +31,7 @@ export default function GuidePage() {
     error,
     status,
     select,
+    selections,
     selectAll,
   } = useGuideState(guideKey);
   // Which settled question has been reopened. Here rather than in the
@@ -94,11 +95,15 @@ export default function GuidePage() {
     [answered, options]
   );
 
-  // Answering a question also lets go of the parts that question
-  // decides. A pinned part outranks the questions — that is what
-  // pinning is — so without this, going back to the texture after
-  // hand-picking a wall changes nothing and the button looks dead.
-  const pinned = (resolved?.parts ?? []).filter((p) => p.pinned);
+  const { pinned, pinnedByRole, admitted, roles } = admissions(
+    resolved,
+    selections,
+    unavailable
+  );
+  const unpin = (role: string) => select(pinKey(role), null);
+  // Answering a question lets go of the parts it decides. Without that,
+  // going back to the texture after hand-picking a wall changes nothing
+  // and the button looks dead.
   const answer = (key: string, value: string | null) => {
     const asked = [...(resolved?.steps ?? []), ...(resolved?.refinements ?? [])];
     const question = asked.find((q) => q.key === key);
@@ -259,6 +264,7 @@ export default function GuidePage() {
           <div className="lg:w-72 lg:shrink-0 lg:overflow-y-auto lg:min-h-0 pr-2">
             <GuideSteps
               steps={resolved.steps}
+              picked={selections}
               unavailable={unavailable}
               because={because}
               opened={opened}
@@ -267,8 +273,12 @@ export default function GuidePage() {
             />
             <GuideRefinements
               refinements={resolved.refinements}
+              picked={selections}
               unavailable={unavailable}
               because={because}
+              pinnedByRole={pinnedByRole}
+              roles={roles}
+              onUnpin={unpin}
               opened={opened}
               onOpenChange={setOpened}
               onSelect={answer}
@@ -306,7 +316,9 @@ export default function GuidePage() {
               options={settledOptions}
               inspecting={inspecting}
               onInspect={setInspecting}
-              onSelect={select}
+              pinnedRoles={pinned.map((part) => part.role)}
+              admitted={admitted}
+              onUnpin={unpin}
               onSelectAll={selectAll}
             />
           </div>
