@@ -1,18 +1,28 @@
 name: Load Fixtures
 
-# Fixtures between releases. The deploy loads them on every merge, which
-# covers a release; this covers a scanner pass landing new blueprints when no
-# code changed, which was the bastion by hand (openforge_catalog-25m).
+# Re-runs the deploy's fixture load against an environment, invoking the same
+# function the deploy does, so there is one code path and one set of
+# guarantees.
 #
-# Same function the deploy invokes, so there is one code path and one set of
-# guarantees. The handler asserts every fixture path is answerable afterwards,
-# so a load that drops one fails here too.
+# WHAT THIS IS FOR: recovering a deploy whose `load-fixtures` job failed. That
+# job commits per fixture file, so a failure part way leaves some files loaded;
+# the load is incremental, so re-running it converges.
+#
+# WHAT IT CANNOT DO, despite being the obvious place to look: load fixtures
+# that are not in the deployed image. The function reads them off its own
+# filesystem (`find_fixtures_package`), and that filesystem is the last
+# deployed sha — there is no checkout here and adding one would not help,
+# because the runner cannot reach Aurora. Fixture JSON is tracked, so new
+# blueprints reach an environment by being merged, which deploys them. Running
+# this for data that has not been merged returns `blueprints_changed: false`
+# with every gate passing, because every path the *image's* fixtures list is
+# still answerable.
 
 on:
   workflow_dispatch:
     inputs:
       environment:
-        description: Which environment to load into
+        description: Which environment to re-run the load against
         type: choice
         required: true
         default: staging
@@ -20,7 +30,7 @@ on:
       fixture:
         description: >-
           One fixture file to load, e.g. bases.json. Leave empty to load them
-          all, which is what a deploy does and what you want unless you know
+          all, which is what the deploy does and what you want unless you know
           the change is confined to one file. A texture's parts span fixtures:
           loading only the file named after the texture is how production ends
           up serving a guide whose wall bases are missing.
@@ -28,9 +38,12 @@ on:
         required: false
 
 concurrency:
-  # Serialised against itself per environment. The function's reserved
-  # concurrency of 1 would reject a second invoke anyway; this queues rather
-  # than failing someone's run.
+  # Shared with the deploy, not just with other manual runs. Both invoke the
+  # same function, whose reserved concurrency of 1 would reject the second
+  # outright; queueing here fails nobody's run. The deploy workflows group on
+  # their ref, so this cannot be the same key as theirs — it serialises manual
+  # runs against each other and relies on the reserved concurrency to reject a
+  # genuine collision with a deploy, loudly.
   group: load-fixtures-${{ inputs.environment }}
   cancel-in-progress: false
 
@@ -38,66 +51,62 @@ permissions:
   id-token: write
   contents: read
 
+# Two jobs rather than one with a conditional role, which is how every other
+# workflow here names a secret. `inputs.environment == 'production' &&
+# secrets.A || secrets.B` reads naturally and fails dangerously: GitHub's
+# `&&`/`||` return values, so an empty or renamed production secret yields ''
+# and the `||` hands back the *staging* ARN — a run the operator chose
+# production for would load staging and go green, since the function has the
+# same name in both accounts. A literal secret per job cannot do that, and it
+# makes the role and the environment gate one decision instead of two
+# independent reads of the same string.
 jobs:
-  load:
-    name: Load fixtures into ${{ inputs.environment }}
+  staging:
+    name: Load fixtures into staging
+    if: ${{ inputs.environment == 'staging' }}
     runs-on: ubuntu-latest
-    # Gates on whatever protection rules that environment carries, which is
-    # how a production load gets a review without this workflow enforcing one.
-    environment: ${{ inputs.environment }}
+    environment: staging
     steps:
-      - name: Configure deploy role
+      # For the invoke script only. The fixtures themselves come off the
+      # function's own image, not from this checkout.
+      - uses: actions/checkout@v6
+
+      - name: Configure Staging deploy role
         uses: aws-actions/configure-aws-credentials@v5
         with:
-          role-to-assume: >-
-            ${{ inputs.environment == 'production'
-            && secrets.AWS_ROLE_ARN_PRODUCTION
-            || secrets.AWS_ROLE_ARN_STAGING }}
-          role-session-name: ${{ inputs.environment }}-fixtures-manual
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN_STAGING }}
+          role-session-name: staging-fixtures-manual
           aws-region: us-east-1
 
-      # The function is created by the deploy's targeted apply, so a brand new
-      # environment must deploy once before this will find it. A wrong or
-      # absent name fails at invoke rather than silently doing nothing.
       - name: Load fixtures
         env:
-          FUNCTION: openforge-catalog-fixtures
           FIXTURE: ${{ inputs.fixture }}
         run: |
-          if [ -n "$FIXTURE" ]; then
-            payload=$(python3 -c 'import json,os; print(json.dumps({"fixture": os.environ["FIXTURE"]}))')
-            echo "loading one fixture: $FIXTURE"
-          else
-            payload='{}'
-            echo "loading every fixture"
-          fi
+          "${GITHUB_WORKSPACE}/.github/scripts/load-fixtures.sh"
 
-          aws lambda invoke --function-name "$FUNCTION" \
-            --cli-read-timeout 0 \
-            --cli-binary-format raw-in-base64-out --payload "$payload" \
-            response.json > invoke.json
+  production:
+    name: Load fixtures into production
+    if: ${{ inputs.environment == 'production' }}
+    runs-on: ubuntu-latest
+    # The `production` environment's protection rule is a deployment branch
+    # policy naming `main`, so a dispatch from any other ref is rejected
+    # before the job starts and before a role is assumed. It is not a required
+    # reviewer: from `main`, anyone with write access can run this.
+    environment: production
+    steps:
+      # For the invoke script only. The fixtures themselves come off the
+      # function's own image, not from this checkout.
+      - uses: actions/checkout@v6
 
-          echo "--- invoke metadata"; cat invoke.json; echo
-          echo "--- payload";         cat response.json; echo
+      - name: Configure Production deploy role
+        uses: aws-actions/configure-aws-credentials@v5
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN_PRODUCTION }}
+          role-session-name: production-fixtures-manual
+          aws-region: us-east-1
 
-          # `aws lambda invoke` exits 0 for a function that raised, so the
-          # metadata has to be read. A fixture name that matches nothing is a
-          # raise, not an empty load.
-          python3 - <<'PY'
-          import json, sys
-
-          meta = json.load(open("invoke.json"))
-          if meta.get("FunctionError"):
-              sys.exit(f"fixture load failed ({meta['FunctionError']}); see the payload above")
-
-          payload = json.load(open("response.json"))
-          if payload.get("ok") is not True:
-              sys.exit(f"fixture load did not report ok: {payload}")
-
-          if payload["blueprints_changed"]:
-              print(f"loaded {payload['files']} fixtures; blueprints changed in:")
-              for entry in payload["applied"]:
-                  print(f"  {entry['file']}: {entry}")
-          else:
-              print(f"loaded {payload['files']} fixtures; no blueprint changes")
-          PY
+      - name: Load fixtures
+        env:
+          FIXTURE: ${{ inputs.fixture }}
+        run: |
+          "${GITHUB_WORKSPACE}/.github/scripts/load-fixtures.sh"

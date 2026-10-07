@@ -122,7 +122,7 @@ resource "aws_lambda_function" "api" {
 # The same image as the API with a different command, because nothing in CI can
 # reach Aurora: the cluster's security group admits the application and bastion
 # groups and a GitHub runner is in neither. The API Lambda is inside and already
-# reads the password from DB_SECRET_ARN, so a second function from the same image
+# reads the password from DB_SECRET_ARN, so further functions from the same image
 # is the cheapest way in — no extra build, nothing to keep in step.
 #
 # The deploy invokes it between the apply that creates it and the apply that
@@ -223,12 +223,17 @@ resource "aws_lambda_function" "fixtures" {
   image_uri     = "${local.infra.ecr_repository_urls["openforge_catalog/api"]}:${var.image_tag}"
   architectures = ["x86_64"]
 
-  # Larger than the migration's 512 for two measured reasons, not a guess.
-  # _load_existing_blueprints peaks around 110 MiB at this catalog's size and
-  # the loader builds one per fixture file, and this handler then walks the
-  # fixtures again to check every path is answerable. The headroom is cheap:
-  # Lambda bills duration, and memory buys proportional CPU, which shortens a
-  # job measured in minutes.
+  # Memory is settled and is not the resource at risk: a measured full load of
+  # the real catalog peaks at ~225 MiB, and the answerable-path walk is 0.3 s
+  # and ~95 MiB of that. 2048 is for the CPU it buys, since Lambda scales them
+  # together and bills duration — a larger size makes a job measured in
+  # minutes shorter for the same money.
+  #
+  # TIME is the one to watch. A measured no-op load of all 45 fixtures is
+  # ~175 s against this 900 s ceiling, and it grows with files x catalog size:
+  # _load_existing_blueprints is uncached and the loader builds one per
+  # blueprint fixture file. There is headroom now; a catalog several times
+  # this size would not have it.
   #
   # openforge_catalog-nhf is the 128 MB API Lambda being asked to do this
   # work. A dedicated function is the fix for that, so it should not inherit

@@ -11,6 +11,7 @@ point the handler at a small set of files it builds itself.
 """
 
 import json
+from pathlib import Path
 
 import pytest
 from psycopg.rows import dict_row
@@ -56,17 +57,28 @@ def blueprint_fixture(tmp_path):
     return write
 
 
-def test_a_named_fixture_that_matches_nothing_is_refused():
+def test_a_named_fixture_that_matches_nothing_is_refused(monkeypatch):
     """Loading everything, or nothing, would both look like success."""
+    monkeypatch.setattr(
+        handler, "find_fixtures", lambda _: [Path("blueprints/only.json")]
+    )
+
     with pytest.raises(RuntimeError) as exc:
         handler._fixture_files("not-a-fixture.json")
 
     # The message lists what there was, so the operator does not have to guess.
     assert "no fixture named" in str(exc.value)
-    assert "bases.json" in str(exc.value)
+    assert "only.json" in str(exc.value)
 
 
-def test_a_named_fixture_narrows_to_exactly_that_file():
+def test_a_named_fixture_narrows_to_exactly_that_file(monkeypatch):
+    """An exact match, so a name that is a prefix of another does not widen."""
+    monkeypatch.setattr(
+        handler,
+        "find_fixtures",
+        lambda _: [Path("blueprints/cave.json"), Path("blueprints/cavern.json")],
+    )
+
     assert [f.name for f in handler._fixture_files("cave.json")] == ["cave.json"]
 
 
@@ -132,7 +144,7 @@ def test_a_path_left_unanswerable_fails_the_load(
 
     def load_then_lose(conn, alt, files):
         results = real_load(conn, alt, files)
-        with conn.cursor(row_factory=dict_row) as curs:
+        with conn.cursor() as curs:
             curs.execute(
                 "UPDATE blueprints SET deprecated = true"
                 " WHERE full_name = 'tiles/h/a.stl'"
@@ -147,6 +159,85 @@ def test_a_path_left_unanswerable_fails_the_load(
 
     assert "neither a live row nor listed by one" in str(exc.value)
     assert "tiles/h/a.stl" in str(exc.value)
+
+
+def test_the_event_can_name_one_fixture_and_may_be_absent(
+    test_db, blueprint_fixture, monkeypatch
+):
+    """Both shapes the function is invoked with.
+
+    The deploy sends `{}`; the manual re-run sends a fixture name. Lambda can
+    also hand a handler `None`, which `(event or {})` is there for.
+    """
+    # Separate namespaces, because that is how the real fixtures are: each
+    # `tiles/<ns>/` lives in exactly one file. Share one and loading a single
+    # fixture deprecates the other's paths, and nothing enforces the 1:1.
+    a = blueprint_fixture([_item("tiles/ha/a.stl", "M_a")], name="a.json")
+    b = blueprint_fixture([_item("tiles/hb/b.stl", "M_b")], name="b.json")
+    monkeypatch.setattr(handler, "find_fixtures", lambda _: [a, b])
+    monkeypatch.setattr(handler, "PgDB", lambda *a, **k: test_db)
+
+    named = handler.lambda_handler({"fixture": "a.json"}, None)
+    assert named["fixture"] == "a.json"
+    assert named["files"] == 1
+
+    # A null event loads everything, and b.json is still outstanding.
+    everything = handler.lambda_handler(None, None)
+    assert everything["fixture"] is None
+    assert everything["files"] == 2
+    assert [r["file"] for r in everything["applied"]] == ["b.json"]
+
+
+def test_a_non_blueprint_fixture_goes_through_without_blueprint_keys(
+    test_db, tmp_path, monkeypatch
+):
+    """Every deploy loads a tag-description fixture and two guides.
+
+    Those results carry no `added`/`modified` keys, so anything that reads
+    them before checking `type` raises on every release. Nothing else in the
+    suite drives a non-blueprint result through the handler, and
+    `_expected_paths` only skips a non-blueprint file on this path.
+    """
+    tags = tmp_path / "tag_descriptions"
+    tags.mkdir()
+    f = tags / "core.yaml"
+    # The real fixture's shape: a flat tag-to-description mapping.
+    f.write_text("shape|floor: A floor tile.\n")
+    monkeypatch.setattr(handler, "find_fixtures", lambda _: [f])
+    monkeypatch.setattr(handler, "PgDB", lambda *a, **k: test_db)
+
+    result = handler.lambda_handler({}, None)
+
+    assert result["ok"] is True
+    assert result["files"] == 1
+    # No blueprint moved, and reaching for a blueprint key would have raised.
+    assert result["blueprints_changed"] is False
+    assert result["applied"] == []
+
+
+@pytest.mark.parametrize("field", ["modified", "deprecated", "consolidated"])
+def test_any_blueprint_figure_counts_as_changed(field):
+    """`added` is not the only way a load moves blueprints.
+
+    A retag arrives as `modified` alone and a retired entry as `deprecated`
+    alone, so a handler that checked only `added` would report "no blueprint
+    changes" for both.
+    """
+    results = [
+        {
+            "file": "x.json",
+            "type": "blueprint",
+            "added": 0,
+            "modified": 0,
+            "deprecated": 0,
+            "consolidated": 0,
+        }
+    ]
+    results[0][field] = 1
+
+    moved = handler._moved_blueprints(results)
+
+    assert [r["file"] for r in moved] == ["x.json"]
 
 
 def test_a_duplicate_counts_as_answerable(test_db, blueprint_fixture, monkeypatch):

@@ -139,7 +139,14 @@ def load_fixtures(
 
     The return value exists for callers that have to decide something from it
     rather than print it — the deploy's load reads it to tell a release that
-    changed data apart from one that did not. Printing callers ignore it.
+    changed *blueprints* from one that did not. It cannot speak for the other
+    fixture types: a guide reports the key it upserted and a tag fixture the
+    number of entries it wrote, both unconditionally. Printing callers ignore
+    it.
+
+    Empty on a dry run and in full-replacement mode: neither applies anything
+    a caller could act on, and the first prints its own comparison. Only the
+    incremental apply path reports.
     """
     ffiles = files if files is not None else find_fixtures(alt)
     results = []
@@ -150,6 +157,12 @@ def load_fixtures(
 
         loader = IncrementalFixturesLoader(conn, verbose=verbose)
         for f in ffiles:
+            # Named before it is parsed, so a failure has something to point
+            # at. Nothing below catches anything: a jsonschema error locates
+            # the fault inside the instance, a decode error gives a line and
+            # column, and a psycopg traceback stops at this loop — none of
+            # them says which file. On success the `Applied` line follows.
+            write_output(f"{f.name}: loading\n")
             data = _load_data(f, verbose=verbose)
             fixture_type = _get_fixture_type(f)
 

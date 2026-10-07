@@ -230,11 +230,24 @@ second apply, the old API image serves against the new schema. Additive changes
 are free; a `DROP COLUMN` or `RENAME` breaks the running code. So does a
 constraint the old image's writes would violate.
 
-**So must data formats**, for the same window and the same reason: the fixtures
-land before that apply, so the old image serves the new rows. New blueprints
-and updated guides are additive and safe. A *changed* guide document shape is
-not — the old image validates against the schema it shipped with, so add the
-new shape in one release and stop writing the old one in a later one.
+**Data formats need the same discipline, but the mirror image of it.** The
+fixtures land before that apply, so the old image — and, until
+`frontend-deploy` finishes and browsers pick up the new bundle, the old
+frontend — serves the new rows. New blueprints are additive and safe.
+
+A *changed guide document shape* is not, and not for the reason you would
+guess: nothing validates a stored guide on read. `validate_guide_document` has
+one caller, the fixtures loader, which runs on the **new** image; `resolve()`
+calls only `reject_bad_recommendations`. So the old engine does not reject an
+unknown construct, it **ignores** it — answering 200 with the wrong parts, no
+500, nothing in CloudWatch. That is the `nova_trail` symptom in a narrower
+window.
+
+Which inverts the rule. For the schema, the data leads and the code follows.
+For guide documents the **code must lead and the data follow**: ship the engine
+that understands a construct in one release, and the documents that use it in
+the next. Shipping both together is the broken case, because during the window
+the old engine serves documents written for the new one.
 
 **Fixtures load in the deploy**, between the migration and the apply that
 promotes the API image, so data arrives behind the schema it needs and ahead of
@@ -254,13 +267,37 @@ The load fails the release if any path the fixtures list is left neither a live
 row nor listed as a duplicate by one. That is the failure worth gating on,
 because it otherwise looks like a healthy no-op.
 
-**For fixtures between releases** — a scanner pass landing new blueprints with
-no code change — run the `Load Fixtures` workflow, which invokes the same
-function. It takes an optional single fixture; leave it empty unless you know
-the change is confined to one file, for the `bases.json` reason above. Never
-`bin/upload_fixture`: it sends YAML as `application/x-yaml`, which the WSGI
-adapter leaves base64-encoded so the route 500s, and it rejects anything over
-roughly 3.5 MB, which is most of a release.
+**If the load fails**, re-run the `Load Fixtures` workflow, which invokes the
+same function. The load commits per fixture file, so a failure part way leaves
+some loaded; it is incremental, so re-running converges. A production run must
+be dispatched from `main` — that environment's only protection rule is a branch
+policy, so a dispatch from anywhere else is rejected before a role is assumed,
+and from `main` it is *not* reviewed.
+
+**That workflow cannot load fixtures that are not in the deployed image.** The
+function reads them off its own filesystem, and that filesystem is the last
+deployed sha. Fixture JSON is tracked, so new blueprints reach an environment
+by being merged, which deploys them. Running it for unmerged data returns
+`blueprints_changed: false` with every gate passing, because every path the
+*image's* fixtures list is still answerable — a healthy-looking no-op.
+
+Never `bin/upload_fixture`: it sends YAML as `application/x-yaml`, which the
+WSGI adapter leaves base64-encoded so the route 500s, and it rejects anything
+over roughly 3.5 MB, which is most of a release.
+
+**Releases are forward-only once fixtures land, and this is the sharpest edge
+in the whole chain.** The load is a reconciliation, not an append: it deprecates
+rows the fixtures no longer list. So **deploying an older sha deletes data** —
+its fixtures are the old set, the load tombstones whatever the newer release
+added, and the answerable-path gate cannot catch it, because the paths it
+expects come from those same older files. It returns `ok: true`.
+
+Rolling the image back also does not undo the deprecations and consolidations
+a load applied, and a release carrying both a migration and fixtures cannot
+safely run `down_impl`, because the new rows' data sits in the columns `down`
+would drop.
+
+Roll forward. If you must go back, go back with a *new* commit on `main`.
 
 To tell whether a release carries a migration:
 `git diff --stat origin/main origin/test -- openforge/db/schema/` (two-dot; the
@@ -283,9 +320,10 @@ single apply makes the new API image live before the migration runs.
 - **Schema changes must be expand/contract.** Between the migration and the
   second apply, the old API image serves against the new schema. Additive
   changes are free; a `DROP COLUMN` or `RENAME` breaks the running code. Add and
-  backfill in one release, remove the old shape in a later one. **Data formats
-  too**: fixtures land in that same window, so the old image serves the new
-  rows.
+  backfill in one release, remove the old shape in a later one. **Guide
+  document shapes run the other way** — the code must lead and the data
+  follow, because nothing validates a stored guide on read, so an old engine
+  ignores a new construct rather than rejecting it. See the production section.
 - **Migrations run in a Lambda** (`openforge-catalog-migrate`, same image as the
   API, `openforge/app/migrate.py`), because Aurora's security group only admits
   the app and bastion. Reserved concurrency 1. The job fails on `FunctionError`

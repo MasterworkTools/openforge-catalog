@@ -30,6 +30,8 @@ error metric, where a tidy `{"ok": false}` would give the alarms nothing.
 import json
 import os
 
+from yaml import safe_load
+
 from openforge.db import PgDB
 from openforge.db.fixtures import find_fixtures, load_fixtures
 
@@ -40,7 +42,10 @@ def _fixture_files(fixture):
     A named fixture that matches nothing raises rather than loading everything
     or loading nothing, because both of those look like success to the caller.
     """
-    files = list(find_fixtures(""))
+    # Sorted, because `find_fixtures` walks `iterdir()`. Unsorted, a load that
+    # fails part way leaves a different set committed on each image, and the
+    # retry starts from a state nobody can predict.
+    files = sorted(find_fixtures(""), key=lambda f: (f.parent.name, f.name))
     if not files:
         raise RuntimeError(
             "no fixtures found in the openforge package, so there is nothing "
@@ -71,10 +76,15 @@ def _expected_paths(files):
     """
     paths = set()
     for f in files:
-        if f.suffix != ".json" or f.parent.name != "blueprints":
+        # The loader decides a fixture's type by its directory and reads both
+        # formats, so testing the extension here would leave a YAML blueprint
+        # fixture outside the gate. None carries paths today; the rule should
+        # not depend on that.
+        if f.parent.name != "blueprints":
             continue
         with open(f) as fh:
-            for item in json.load(fh):
+            loaded = json.load(fh) if f.suffix == ".json" else safe_load(fh)
+            for item in loaded:
                 if item.get("deprecated"):
                     continue
                 metadata = item.get("file_metadata") or {}
@@ -98,10 +108,37 @@ def _answerable(db):
             return answerable
 
 
+def _moved_blueprints(results):
+    """The blueprint fixtures that actually changed something.
+
+    Only the blueprint figures can say whether a load moved anything. A guide
+    reports the key it upserted and a tag fixture the number of entries it
+    wrote, both unconditionally, so a `changed` derived from those would be
+    true on every deploy — the same always-true report that
+    `openforge_catalog-9fm` removed from the summary.
+
+    The `type` test comes first because the other results carry no blueprint
+    keys at all, and every deploy loads some.
+    """
+    return [
+        r
+        for r in results
+        if r["type"] == "blueprint"
+        and (r["added"] or r["modified"] or r["deprecated"] or r["consolidated"])
+    ]
+
+
 def lambda_handler(event, context):
     fixture = (event or {}).get("fixture")
     db = PgDB(os.environ, use_pool=False)
     files = _fixture_files(fixture)
+
+    # Parsed before anything is written. This reads only the fixture files, so
+    # the answer is the same either side of the load — but after it, a
+    # malformed fixture has already committed every file ahead of it, and the
+    # retry re-reads the same bad file and fails again. It is the one failure
+    # in this design that does not converge, and the fix is to crash first.
+    expected = _expected_paths(files)
 
     with db.connection() as conn:
         results = load_fixtures(conn, "", files)
@@ -111,24 +148,14 @@ def lambda_handler(event, context):
     # produces a payload indistinguishable from a healthy no-op, and that is
     # the failure this gate exists to stop: the catalog has no way to answer
     # for a file the fixtures still list.
-    missing = _expected_paths(files) - _answerable(db)
+    missing = expected - _answerable(db)
     if missing:
         raise RuntimeError(
             f"{len(missing)} fixture paths are neither a live row nor listed "
             f"by one after the load, e.g. {sorted(missing)[:3]}"
         )
 
-    # Only the blueprint figures can say whether anything changed. A guide
-    # reports the key it upserted and a tag fixture the number of entries it
-    # wrote, both unconditionally, so a `changed` derived from those would be
-    # true on every deploy — the same shape of always-true report that
-    # `openforge_catalog-9fm` removed from the summary.
-    moved = [
-        r
-        for r in results
-        if r["type"] == "blueprint"
-        and (r["added"] or r["modified"] or r["deprecated"] or r["consolidated"])
-    ]
+    moved = _moved_blueprints(results)
     return {
         "ok": True,
         "fixture": fixture,
