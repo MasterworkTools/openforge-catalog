@@ -230,6 +230,12 @@ second apply, the old API image serves against the new schema. Additive changes
 are free; a `DROP COLUMN` or `RENAME` breaks the running code. So does a
 constraint the old image's writes would violate.
 
+**So must data formats**, for the same window and the same reason: the fixtures
+land before that apply, so the old image serves the new rows. New blueprints
+and updated guides are additive and safe. A *changed* guide document shape is
+not — the old image validates against the schema it shipped with, so add the
+new shape in one release and stop writing the old one in a later one.
+
 **Fixtures load in the deploy**, between the migration and the apply that
 promotes the API image, so data arrives behind the schema it needs and ahead of
 the code that reads it. Every fixture, every deploy, in one invoke: a human
@@ -277,7 +283,9 @@ single apply makes the new API image live before the migration runs.
 - **Schema changes must be expand/contract.** Between the migration and the
   second apply, the old API image serves against the new schema. Additive
   changes are free; a `DROP COLUMN` or `RENAME` breaks the running code. Add and
-  backfill in one release, remove the old shape in a later one.
+  backfill in one release, remove the old shape in a later one. **Data formats
+  too**: fixtures land in that same window, so the old image serves the new
+  rows.
 - **Migrations run in a Lambda** (`openforge-catalog-migrate`, same image as the
   API, `openforge/app/migrate.py`), because Aurora's security group only admits
   the app and bastion. Reserved concurrency 1. The job fails on `FunctionError`
