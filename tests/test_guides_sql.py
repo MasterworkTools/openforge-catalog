@@ -1,4 +1,5 @@
 from pathlib import Path
+from unittest.mock import patch
 
 import psycopg
 import pytest
@@ -214,9 +215,14 @@ def test_the_fixtures_command_loads_a_guide_file(test_db, tmp_path):
     with test_db.connection() as conn:
         # The deploy reads `type` off every result, so a guide result without
         # one fails the release after the load has committed.
-        assert load_fixtures(conn, "", [path]) == [
-            {"file": "wall.yaml", "type": "guide", "guide": "wall"}
-        ]
+        with patch("openforge.db.fixtures.write_output") as out:
+            assert load_fixtures(conn, "", [path]) == [
+                {"file": "wall.yaml", "type": "guide", "guide": "wall"}
+            ]
+        # A psycopg traceback from inside the load names no file, so this line
+        # is the only thing an operator can bisect a failed deploy from.
+        logged = "".join(c.args[0] for c in out.call_args_list)
+        assert "wall.yaml: loading" in logged
         with conn.cursor(row_factory=dict_row) as curs:
             assert (
                 guide_sql.get_guide_by_key(curs, "wall")["document"]["title"]
