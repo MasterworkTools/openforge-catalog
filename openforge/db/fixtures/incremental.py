@@ -1077,9 +1077,9 @@ class IncrementalFixturesLoader:
                             "deprecated": False,
                             # The row is this item now, so the fields a later
                             # comparison reads have to be this item's. An
-                            # inherited mtime makes the next load of an
-                            # unchanged fixture report a modification, and a
-                            # modification resets consolidated_paths.
+                            # inherited mtime or config makes the next load of
+                            # an unchanged fixture report a modification that
+                            # never settles.
                             "file_size": bp_data["file_size"],
                             "file_modified_at": bp_data["file_modified_at"],
                             "blueprint_config": bp_data["blueprint_config"],
@@ -1172,8 +1172,7 @@ class IncrementalFixturesLoader:
                                 # later comparison reads have to be this
                                 # item's. An inherited mtime or config makes
                                 # the next load of an unchanged fixture report
-                                # a modification, and a modification resets
-                                # consolidated_paths.
+                                # a modification that never settles.
                                 "file_size": bp_data["file_size"],
                                 "file_modified_at": bp_data["file_modified_at"],
                                 "blueprint_config": bp_data["blueprint_config"],
@@ -1303,7 +1302,7 @@ class IncrementalFixturesLoader:
         """
         curs.execute(
             """
-            SELECT id, file_md5, full_name, created_at, consolidated_paths
+            SELECT id, file_md5, full_name, consolidated_paths
             FROM blueprints
             WHERE deprecated = false
             AND consolidated_paths IS NOT NULL
@@ -1312,7 +1311,7 @@ class IncrementalFixturesLoader:
         )
         index: Dict[str, List[Dict]] = {}
         for row in curs.fetchall():
-            for path in row["consolidated_paths"] or []:
+            for path in row["consolidated_paths"]:
                 index.setdefault(path, []).append(row)
         return index
 
@@ -1333,9 +1332,7 @@ class IncrementalFixturesLoader:
         this fixture does not mention has no current content to find, and no
         link is better than a guess.
 
-        `id` breaks the tie because every row one load writes shares a
-        transaction-start `created_at`, which makes the timestamp alone
-        arbitrary rather than newest-first.
+        At most one row can match, since `file_md5` is unique table-wide.
 
         The listing is handed in as a prefetched map. `= ANY(array)` cannot
         use an index, so asking the database per tombstone is a sequential
@@ -1366,7 +1363,6 @@ class IncrementalFixturesLoader:
         ]
         if not claimants:
             return None, False
-        claimants.sort(key=lambda r: (r["created_at"], r["id"]), reverse=True)
         return claimants[0], True
 
     def _link_deprecated_to_successors(self, curs: cursor):
@@ -1412,8 +1408,7 @@ class IncrementalFixturesLoader:
                 )
                 if by_listing:
                     # Said at any verbosity: the successor sits at another
-                    # path, so nothing else in the record connects the two,
-                    # and more than one row can list a path.
+                    # path, so nothing else in the record connects the two.
                     write_output(
                         f"LINKED: {full_name} -> {successor_bp['full_name']}\n"
                     )
