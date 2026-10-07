@@ -78,7 +78,6 @@ class TestFixtureLoadEndpoint:
         assert "modified" in data
         assert "deprecated" in data
         assert "consolidated" in data
-        assert "errors" in data
         assert "output" in data
         assert isinstance(data["output"], list)
 
@@ -392,7 +391,6 @@ class TestResponseFormat:
         assert "modified" in data
         assert "deprecated" in data
         assert "consolidated" in data
-        assert "errors" in data
         assert "output" in data
 
         assert "deprecations_applied" in data
@@ -408,7 +406,6 @@ class TestResponseFormat:
         assert isinstance(data["modified"], list)
         assert isinstance(data["deprecated"], list)
         assert isinstance(data["consolidated"], list)
-        assert isinstance(data["errors"], list)
         assert isinstance(data["output"], list)
 
     def test_error_response_structure(self, client, auth_headers):
@@ -470,7 +467,6 @@ def test_uploading_a_guide_loads_it(client, auth_headers, test_db):
     # openapi.yaml marks required on this response.
     assert response.json["modified"] == [{"name": "wall"}]
     assert response.json["added"] == []
-    assert response.json["errors"] == []
     with test_db.connection() as conn:
         with conn.cursor(row_factory=dict_row) as curs:
             assert (

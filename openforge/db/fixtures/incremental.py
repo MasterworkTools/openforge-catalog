@@ -76,8 +76,6 @@ class ComparisonResult:
         # `applied_deprecations` reconcilable against `deprecated`. None until
         # it runs, for the same reason the count is.
         self.declined_deprecations = None
-        self.errors = []  # Processing errors
-        self.version_changes = {}  # Map of deprecated blueprint ID to new fixture item
         # How many of `deprecated` the apply step tombstoned. None until it runs.
         self.applied_deprecations = None
 
@@ -111,8 +109,6 @@ class ComparisonResult:
             parts.append(self._deprecated_part())
         if self.consolidated:
             parts.append(f"{len(self.consolidated)} consolidated")
-        if self.errors:
-            parts.append(f"{len(self.errors)} errors")
 
         return ", ".join(parts) if parts else "no changes"
 
@@ -946,13 +942,39 @@ class IncrementalFixturesLoader:
 
         return True
 
+    def _split_listing(self, bp: Dict, new_full_name: str) -> tuple:
+        """The duplicates this row still speaks for, and the ones it drops.
+
+        The row owns `new_full_name` now, so that is no longer one of its
+        duplicates. Of the rest, only a path this fixture gives different
+        bytes is dropped: that path has a row of its own now.
+
+        A path the fixture does not mention is kept, because a duplicate has
+        no row of its own and so nothing here can tell whether it is gone or
+        simply lives in a fixture this load has not read. Keeping a stale
+        entry is recoverable; dropping the only record of a path is not.
+        """
+        kept, dropped = [], []
+        for path in bp.get("consolidated_paths") or []:
+            if path == new_full_name:
+                continue
+            listed_md5 = self.current_fixture_md5s.get(path)
+            if listed_md5 is not None and listed_md5 != bp.get("file_md5"):
+                dropped.append(path)
+            else:
+                kept.append(path)
+        return kept, dropped
+
     def _outlives_this_load(self, bp: Dict) -> bool:
         """Whether this load leaves that row live under the path it has.
 
         A path the fixture still lists survives only if the content matches:
-        different bytes at the same path replace the row rather than update it.
-        A path the fixture has dropped survives only if this load's sweep
+        different bytes at the same path replace the row rather than update
+        it. A path the fixture has dropped survives only if this load's sweep
         cannot reach it.
+
+        This asks about a row. A listed duplicate has no row, so the sweep
+        half does not apply to one and `_split_listing` must not use this.
         """
         full_name = bp["full_name"]
         listed_md5 = self.current_fixture_md5s.get(full_name)
@@ -980,6 +1002,12 @@ class IncrementalFixturesLoader:
             # is going: that set holds one fixture file, and a holder in
             # another is simply elsewhere.
             return bp.get("deprecated") or bp["id"] in self._deprecation_candidates
+
+        # The subtree test below guards a live row's path. A tombstone has no
+        # path to guard, so inheriting it is safe wherever it lies — and the
+        # alternative is appending this live file's path to a dead row.
+        if bp.get("deprecated"):
+            return True
 
         if not self.fixture_subset_path:
             return False
@@ -1038,6 +1066,9 @@ class IncrementalFixturesLoader:
                         search_text = blueprint_sql.blueprint_search_text(
                             {"blueprint_name": new_file_name}, words
                         )
+                        kept_paths, dropped_paths = self._split_listing(
+                            bp, new_full_name
+                        )
                         update_data = {
                             "full_name": new_full_name,
                             "file_name": new_file_name,
@@ -1046,9 +1077,9 @@ class IncrementalFixturesLoader:
                             "deprecated": False,
                             # The row is this item now, so the fields a later
                             # comparison reads have to be this item's. An
-                            # inherited mtime makes the next load of an
-                            # unchanged fixture report a modification, and a
-                            # modification resets consolidated_paths.
+                            # inherited mtime or config makes the next load of
+                            # an unchanged fixture report a modification that
+                            # never settles.
                             "file_size": bp_data["file_size"],
                             "file_modified_at": bp_data["file_modified_at"],
                             "blueprint_config": bp_data["blueprint_config"],
@@ -1056,15 +1087,11 @@ class IncrementalFixturesLoader:
                             # version and succeeds nothing. A live row that
                             # keeps a successor sends the chain reader off it.
                             "successor_id": None,
-                            # The row now owns this path, so it is no longer
-                            # one of the row's duplicates.
-                            "consolidated_paths": [
-                                path
-                                for path in (bp.get("consolidated_paths") or [])
-                                if path != new_full_name
-                            ],
+                            "consolidated_paths": kept_paths,
                         }
                         blueprint_sql.update_blueprint(curs, bp["id"], update_data)
+                        for path in dropped_paths:
+                            write_output(f"UNCONSOLIDATED: {path} <- {new_full_name}\n")
                         # Mark this id as renamed so a later deprecation step
                         # in the same load won't tombstone it.
                         self._renamed_blueprint_ids.add(bp["id"])
@@ -1125,6 +1152,12 @@ class IncrementalFixturesLoader:
                     # the path changing. Tags and images are resynced rather
                     # than added to, since deprecating the row stripped them.
                     if bp.get("deprecated"):
+                        # Revived in place, so the listing needs the same
+                        # filtering as a revival under a new path: a tombstone
+                        # froze it, and a duplicate may have diverged since.
+                        kept_paths, dropped_paths = self._split_listing(
+                            bp, bp["full_name"]
+                        )
                         # successor_id goes with the tombstone: the chain
                         # follower starts at a live row and then walks the
                         # pointer unconditionally, so a live row that keeps one
@@ -1139,13 +1172,17 @@ class IncrementalFixturesLoader:
                                 # later comparison reads have to be this
                                 # item's. An inherited mtime or config makes
                                 # the next load of an unchanged fixture report
-                                # a modification, and a modification resets
-                                # consolidated_paths.
+                                # a modification that never settles.
                                 "file_size": bp_data["file_size"],
                                 "file_modified_at": bp_data["file_modified_at"],
                                 "blueprint_config": bp_data["blueprint_config"],
+                                "consolidated_paths": kept_paths,
                             },
                         )
+                        for path in dropped_paths:
+                            write_output(
+                                f"UNCONSOLIDATED: {path} <- {bp['full_name']}\n"
+                            )
                         tag_sql.delete_all_blueprint_tags(curs, bp["id"])
                         image_sql.delete_images_for_blueprint(curs, bp["id"])
                         write_output(
@@ -1213,6 +1250,10 @@ class IncrementalFixturesLoader:
         bp_data["search_text"] = blueprint_sql.blueprint_search_text(
             bp_data, self._get_words(modified_item)
         )
+        # The duplicates a row holds are this loader's bookkeeping, not
+        # something a fixture declares, and the munge defaults the key to
+        # empty. Sending it would drop every path this row speaks for.
+        bp_data.pop("consolidated_paths", None)
         blueprint_sql.update_blueprint(curs, blueprint_id, bp_data)
 
         # Update tags (delete old, insert new)
@@ -1253,6 +1294,77 @@ class IncrementalFixturesLoader:
         )
         write_output(f"UNCONSOLIDATED: {remove_path} <- {bp['full_name']}\n")
 
+    def _listing_index(self, curs: cursor) -> Dict[str, List[Dict]]:
+        """Live rows that speak for a duplicate path, keyed by that path.
+
+        Built once per load rather than queried per tombstone: few rows hold
+        a listing at all, and the per-tombstone form is a sequential scan.
+        """
+        curs.execute(
+            """
+            SELECT id, file_md5, full_name, consolidated_paths
+            FROM blueprints
+            WHERE deprecated = false
+            AND consolidated_paths IS NOT NULL
+            AND array_length(consolidated_paths, 1) > 0
+            """
+        )
+        index: Dict[str, List[Dict]] = {}
+        for row in curs.fetchall():
+            for path in row["consolidated_paths"]:
+                index.setdefault(path, []).append(row)
+        return index
+
+    def _find_successor(
+        self, curs: cursor, full_name: str, listing_index: Dict[str, List[Dict]]
+    ) -> tuple:
+        """The live row that carries what this path used to hold, and how.
+
+        Usually a row took the path over. Failing that, the path's content was
+        rescued onto a row at another path, which then lists this one as a
+        duplicate, and that row is the successor — otherwise the tombstone is
+        never linked and a lookup by the old MD5 stops on a dead row.
+
+        The fallback insists the candidate carry the bytes this fixture gives
+        the path. A listing entry only proves the row held them once, and a
+        row keeps its listing when its own content changes, so matching on the
+        listing alone can point the chain at bytes nobody asked for. A path
+        this fixture does not mention has no current content to find, and no
+        link is better than a guess.
+
+        At most one row can match, since `file_md5` is unique table-wide.
+
+        The listing is handed in as a prefetched map. `= ANY(array)` cannot
+        use an index, so asking the database per tombstone is a sequential
+        scan each time, and this sweep covers every unlinked tombstone in
+        the catalog on every load rather than just this fixture's.
+        """
+        by_path = """
+            SELECT id, file_md5, full_name
+            FROM blueprints
+            WHERE deprecated = false
+            AND full_name = %s
+            ORDER BY created_at DESC, id DESC
+            LIMIT 1
+        """
+        curs.execute(by_path, (full_name,))
+        found = curs.fetchone()
+        if found:
+            return found, False
+
+        listed_md5 = self.current_fixture_md5s.get(full_name)
+        if listed_md5 is None:
+            return None, False
+
+        claimants = [
+            row
+            for row in listing_index.get(full_name, ())
+            if row["file_md5"] == listed_md5
+        ]
+        if not claimants:
+            return None, False
+        return claimants[0], True
+
     def _link_deprecated_to_successors(self, curs: cursor):
         """Link deprecated blueprints to successors by file path.
 
@@ -1278,29 +1390,29 @@ class IncrementalFixturesLoader:
                 f"blueprints without successor_id\n"
             )
 
+        listing_index = self._listing_index(curs)
+
         for deprecated_bp in deprecated_blueprints:
             full_name = deprecated_bp["full_name"]
             if not full_name:
                 continue  # Skip blueprints without full_name
 
-            # Find non-deprecated blueprint with same file path
-            query = """
-                SELECT id, file_md5
-                FROM blueprints
-                WHERE deprecated = false
-                AND full_name = %s
-                ORDER BY created_at DESC
-                LIMIT 1
-            """
-            curs.execute(query, (full_name,))
-            successor_bp = curs.fetchone()
+            successor_bp, by_listing = self._find_successor(
+                curs, full_name, listing_index
+            )
 
             if successor_bp:
                 # Link the deprecated blueprint to the successor
                 blueprint_sql.mark_blueprint_deprecated(
                     curs, deprecated_bp["id"], successor_bp["id"]
                 )
-                if self.verbose:
+                if by_listing:
+                    # Said at any verbosity: the successor sits at another
+                    # path, so nothing else in the record connects the two.
+                    write_output(
+                        f"LINKED: {full_name} -> {successor_bp['full_name']}\n"
+                    )
+                elif self.verbose:
                     write_output(
                         f"LINKED: {full_name} "
                         f"(deprecated: {deprecated_bp['file_md5']} -> "

@@ -372,39 +372,33 @@ def print_comparison_results(changes):
     candidates: the apply step declines to tombstone a row it renames in
     place, and which rows those are is not known until it runs.
     """
-    print("\nComparison Results:")
-    print(f"  Added: {len(changes.added)}")
-    print(f"  Modified: {len(changes.modified)}")
-    print(f"  Deprecation candidates: {len(changes.deprecated)}")
-    print(f"  Consolidated: {len(changes.consolidated)}")
-    print(f"  Errors: {len(changes.errors)}")
+    write_output("\nComparison Results:\n")
+    write_output(f"  Added: {len(changes.added)}\n")
+    write_output(f"  Modified: {len(changes.modified)}\n")
+    write_output(f"  Deprecation candidates: {len(changes.deprecated)}\n")
+    write_output(f"  Consolidated: {len(changes.consolidated)}\n")
 
     if changes.added:
-        print("\nAdded blueprints:")
+        write_output("\nAdded blueprints:\n")
         for item in changes.added:
             if "file_metadata" in item:
                 name = item.get("file_metadata", {}).get("full_name", "unknown")
             else:
                 name = item.get("name", "unknown")
-            print(f"  - {name}")
+            write_output(f"  - {name}\n")
 
     if changes.modified:
-        print("\nModified blueprints:")
+        write_output("\nModified blueprints:\n")
         for item in changes.modified:
             if "file_metadata" in item:
                 name = item.get("file_metadata", {}).get("full_name", "unknown")
             else:
                 name = item.get("name", "unknown")
-            print(f"  - {name}")
+            write_output(f"  - {name}\n")
 
     if changes.deprecated:
-        print("\nDeprecation candidates:")
-        print("  (a candidate renamed in place on apply is not deprecated)")
+        write_output("\nDeprecation candidates:\n")
+        write_output("  (a candidate renamed in place on apply is not deprecated)\n")
         for item in changes.deprecated:
             name = item.get("full_name", "unknown")
-            print(f"  - {name}")
-
-    if changes.errors:
-        print("\nErrors:")
-        for error in changes.errors:
-            print(f"  - {error}")
+            write_output(f"  - {name}\n")

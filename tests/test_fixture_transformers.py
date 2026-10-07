@@ -327,7 +327,8 @@ class TestComparisonPrinter:
         changes.deprecated = [{"full_name": "tiles/x/a.stl"}]
 
         print_comparison_results(changes)
-        out = capsys.readouterr().out
+        # write_output goes to stderr outside a request context.
+        out = capsys.readouterr().err
 
         assert "Deprecation candidates: 1" in out
         assert "not deprecated" in out
@@ -335,7 +336,7 @@ class TestComparisonPrinter:
     def test_no_caveat_when_there_are_no_candidates(self, capsys):
         """The caveat belongs to the list, so it goes when the list is empty."""
         print_comparison_results(ComparisonResult())
-        out = capsys.readouterr().out
+        out = capsys.readouterr().err
 
         assert "Deprecation candidates: 0" in out
         assert "not deprecated" not in out

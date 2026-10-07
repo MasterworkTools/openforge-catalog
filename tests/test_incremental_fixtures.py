@@ -1521,6 +1521,70 @@ class TestIncrementalFixturesLoader:
         assert empty_changes.declined_deprecations == []
 
 
+class TestSuccessorSelection:
+    """Which live row a tombstone's version chain should point at."""
+
+    def _row(self, bid, md5, path):
+        return {"id": bid, "file_md5": md5, "full_name": path}
+
+    def test_the_claimant_with_the_fixtures_bytes_wins(self):
+        """Two live rows can list one path; only one carries its content.
+
+        A listing outlives the content it described, and the prune that would
+        remove a stale one stops at the first qualifying holder in path order,
+        so the choice here cannot lean on it having run.
+        """
+        loader = IncrementalFixturesLoader(create_mock_connection(), verbose=False)
+        path = "tiles/beta/p.stl"
+        loader.current_fixture_md5s = {path: "M_good"}
+
+        curs = Mock()
+        curs.fetchone.return_value = None  # no live row holds the path
+
+        good = self._row("bp-good", "M_good", "tiles/beta/aaa.stl")
+        stale = self._row("bp-stale", "M_stale", "tiles/beta/zzz.stl")
+
+        found, by_listing = loader._find_successor(curs, path, {path: [stale, good]})
+
+        assert by_listing is True
+        # The stale row is listed first, so taking any claimant would pick it.
+        assert found["id"] == "bp-good"
+
+    def test_a_row_without_bytes_is_never_the_claimant(self):
+        """The reason the path check cannot be folded into the bytes check.
+
+        With the path gone there is nothing to match, and a row carrying no
+        md5 would match that nothing.
+        """
+        loader = IncrementalFixturesLoader(create_mock_connection(), verbose=False)
+        path = "tiles/beta/p.stl"
+        loader.current_fixture_md5s = {}
+
+        curs = Mock()
+        curs.fetchone.return_value = None
+
+        no_bytes = self._row("bp-none", None, "tiles/beta/zzz.stl")
+        found, by_listing = loader._find_successor(curs, path, {path: [no_bytes]})
+
+        assert found is None
+        assert by_listing is False
+
+    def test_no_claimant_when_the_fixture_dropped_the_path(self):
+        """With the path gone there is no current content, so no link."""
+        loader = IncrementalFixturesLoader(create_mock_connection(), verbose=False)
+        path = "tiles/beta/p.stl"
+        loader.current_fixture_md5s = {}
+
+        curs = Mock()
+        curs.fetchone.return_value = None
+
+        stale = self._row("bp-stale", "M_stale", "tiles/beta/zzz.stl")
+        found, by_listing = loader._find_successor(curs, path, {path: [stale]})
+
+        assert found is None
+        assert by_listing is False
+
+
 class TestEditThenLoadAgainstTheDatabase:
     """The loader has to survive its own output against the real schema.
 
@@ -1636,6 +1700,472 @@ class TestEditThenLoadAgainstTheDatabase:
         load()
         assert live_paths() == [(holder, "M_new"), (dupe, "M_old")]
 
+    def test_every_live_fixture_path_is_answerable_after_a_load(self, test_db):
+        """The property a load exists to establish, stated positively.
+
+        A path is answerable if a live row holds it or a live row lists it as
+        a duplicate. An entry the fixture itself marks deprecated is excluded,
+        because asking for no live row is what that flag means.
+
+        The database starts with a tombstone to inherit and a holder already
+        speaking for a duplicate, since every way a load can lose a path
+        needs state that was there before it ran.
+        """
+        plain = "tiles/inv/plain.stl"
+        holder, twin = "tiles/inv/holder.stl", "tiles/inv/twin.stl"
+        moved = "tiles/inv/moved.stl"
+        retired = "tiles/inv/retired.stl"
+
+        with test_db.connection() as conn:
+            with conn.cursor(row_factory=dict_row) as curs:
+                curs.execute(
+                    "INSERT INTO blueprints (blueprint_name, blueprint_type,"
+                    " full_name, file_md5, file_name, config, consolidated_paths)"
+                    " VALUES ('holder.stl','model',%s,'M_shared','holder.stl',"
+                    " '{}',%s)",
+                    (holder, [twin]),
+                )
+                # A tombstone whose bytes the fixture still carries, at a
+                # path outside this fixture's namespace — so inheriting it
+                # cannot lean on the subtree test.
+                curs.execute(
+                    "INSERT INTO blueprints (blueprint_name, blueprint_type,"
+                    " full_name, file_md5, file_name, config, deprecated)"
+                    " VALUES ('gone.stl','model','tiles/other/gone.stl','M_moved',"
+                    " 'gone.stl','{}',true)"
+                )
+            conn.commit()
+
+        items = [
+            self._item_at(plain, "M_plain"),
+            self._item_at(holder, "M_shared"),
+            self._item_at(twin, "M_shared"),
+            self._item_at(moved, "M_moved"),
+            self._item_at(retired, "M_retired"),
+        ]
+        items[-1]["deprecated"] = True
+
+        with test_db.connection() as conn:
+            with conn.cursor(row_factory=dict_row) as curs:
+                loader = IncrementalFixturesLoader(conn, verbose=False)
+                changes = loader.compare_fixture_data(items, curs=curs)
+                loader.apply_incremental_changes(changes, curs=curs)
+            conn.commit()
+
+        with test_db.connection() as conn:
+            with conn.cursor(row_factory=dict_row) as curs:
+                curs.execute(
+                    "SELECT full_name, consolidated_paths FROM blueprints"
+                    " WHERE NOT deprecated AND full_name IS NOT NULL"
+                )
+                live = curs.fetchall()
+                curs.execute(
+                    "SELECT count(*) AS n FROM blueprints WHERE full_name = %s",
+                    (retired,),
+                )
+                retired_rows = curs.fetchone()["n"]
+
+        answerable = {r["full_name"] for r in live}
+        for row in live:
+            answerable |= set(row["consolidated_paths"] or [])
+
+        expected = {
+            item["file_metadata"]["full_name"]
+            for item in items
+            if not item.get("deprecated")
+        }
+        # Equality, not containment: a load should answer for what the fixture
+        # lists and invent nothing.
+        assert answerable == expected, answerable ^ expected
+        # The retired entry produced no row at all, which is the flag working
+        # rather than a row quietly left live.
+        assert retired_rows == 0
+
+    def test_a_row_revived_in_place_also_drops_a_diverged_duplicate(self, test_db):
+        """Revival has two branches and the listing matters on both.
+
+        Here the tombstone's own path is still in the fixture, so it comes
+        back under that path rather than inheriting a new one. A tombstone
+        froze its listing, so a duplicate may have taken its own row since.
+        """
+        holder = "tiles/beta/h.stl"
+        diverged = "tiles/beta/q.stl"
+
+        with test_db.connection() as conn:
+            with conn.cursor(row_factory=dict_row) as curs:
+                curs.execute(
+                    "INSERT INTO blueprints (blueprint_name, blueprint_type,"
+                    " full_name, file_md5, file_name, config, consolidated_paths,"
+                    " deprecated)"
+                    " VALUES ('h.stl','model',%s,'M_x','h.stl','{}',%s,true)",
+                    (holder, [diverged]),
+                )
+            conn.commit()
+
+        with test_db.connection() as conn:
+            with conn.cursor(row_factory=dict_row) as curs:
+                with patch("openforge.db.fixtures.incremental.write_output") as out:
+                    loader = IncrementalFixturesLoader(conn, verbose=False)
+                    changes = loader.compare_fixture_data(
+                        [self._item_at(holder, "M_x"), self._item_at(diverged, "M_z")],
+                        curs=curs,
+                    )
+                    loader.apply_incremental_changes(changes, curs=curs)
+            conn.commit()
+
+        with test_db.connection() as conn:
+            with conn.cursor(row_factory=dict_row) as curs:
+                curs.execute(
+                    "SELECT full_name, consolidated_paths FROM blueprints"
+                    " WHERE NOT deprecated AND full_name IS NOT NULL"
+                )
+                live = curs.fetchall()
+
+        owned = {r["full_name"] for r in live}
+        assert owned == {holder, diverged}
+        # No live row speaks for a path another live row owns.
+        for row in live:
+            assert not (set(row["consolidated_paths"] or []) & owned)
+        # The drop is a state change, so it has to be in the record.
+        said = "".join(c.args[0] for c in out.call_args_list)
+        assert f"UNCONSOLIDATED: {diverged}" in said
+
+    def test_a_revived_row_keeps_a_duplicate_this_fixture_never_mentions(self, test_db):
+        """A duplicate has no row, so absence from this fixture proves nothing.
+
+        It may simply live in a fixture this load has not read. The load here
+        spans two namespaces, which leaves the loader with no namespace at
+        all and its sweep reaching everything — the case where a row-shaped
+        test would wrongly conclude the path is gone.
+        """
+        holder = "tiles/beta/h.stl"
+        elsewhere = "tiles/gamma/x.stl"
+        kept_path, other_ns = "tiles/beta/p.stl", "tiles/delta/r.stl"
+
+        with test_db.connection() as conn:
+            with conn.cursor(row_factory=dict_row) as curs:
+                curs.execute(
+                    "INSERT INTO blueprints (blueprint_name, blueprint_type,"
+                    " full_name, file_md5, file_name, config, consolidated_paths,"
+                    " deprecated)"
+                    " VALUES ('h.stl','model',%s,'M_x','h.stl','{}',%s,true)",
+                    (holder, [elsewhere]),
+                )
+            conn.commit()
+
+        with test_db.connection() as conn:
+            with conn.cursor(row_factory=dict_row) as curs:
+                loader = IncrementalFixturesLoader(conn, verbose=False)
+                changes = loader.compare_fixture_data(
+                    [
+                        self._item_at(kept_path, "M_x"),
+                        self._item_at(other_ns, "M_r"),
+                    ],
+                    curs=curs,
+                )
+                assert loader.fixture_namespace is None
+                loader.apply_incremental_changes(changes, curs=curs)
+            conn.commit()
+
+        with test_db.connection() as conn:
+            with conn.cursor(row_factory=dict_row) as curs:
+                curs.execute(
+                    "SELECT consolidated_paths FROM blueprints"
+                    " WHERE full_name = %s AND NOT deprecated",
+                    (kept_path,),
+                )
+                assert elsewhere in (curs.fetchone()["consolidated_paths"] or [])
+
+    def test_a_tombstone_is_not_linked_across_unrelated_bytes(self, test_db):
+        """A listing entry only proves the row held those bytes once.
+
+        A row keeps its listing when its own content changes, so matching on
+        the listing alone can point the version chain at bytes nobody asked
+        for. With the path absent from this fixture there is no current
+        content to find, and no link beats a wrong one.
+        """
+        holder, swept = "tiles/beta/holder.stl", "tiles/beta/p.stl"
+
+        with test_db.connection() as conn:
+            with conn.cursor(row_factory=dict_row) as curs:
+                curs.execute(
+                    "INSERT INTO blueprints (blueprint_name, blueprint_type,"
+                    " full_name, file_md5, file_name, config, consolidated_paths)"
+                    " VALUES ('holder.stl','model',%s,'M_holder_v2','holder.stl',"
+                    " '{}',%s)",
+                    (holder, [swept]),
+                )
+                curs.execute(
+                    "INSERT INTO blueprints (blueprint_name, blueprint_type,"
+                    " full_name, file_md5, file_name, config, deprecated)"
+                    " VALUES ('p.stl','model',%s,'M_p','p.stl','{}',true)",
+                    (swept,),
+                )
+            conn.commit()
+
+        with test_db.connection() as conn:
+            with conn.cursor(row_factory=dict_row) as curs:
+                loader = IncrementalFixturesLoader(conn, verbose=False)
+                changes = loader.compare_fixture_data(
+                    [self._item_at(holder, "M_holder_v2")], curs=curs
+                )
+                loader.apply_incremental_changes(changes, curs=curs)
+            conn.commit()
+
+        with test_db.connection() as conn:
+            with conn.cursor(row_factory=dict_row) as curs:
+                curs.execute(
+                    "SELECT successor_id FROM blueprints WHERE file_md5 = 'M_p'"
+                )
+                assert curs.fetchone()["successor_id"] is None
+
+    def test_a_revived_row_drops_duplicates_that_diverged(self, test_db):
+        """A revived row must not claim a path that now has its own row.
+
+        The prune that normally removes a diverged duplicate only sees live
+        rows, so a holder tombstoned earlier in the same directory load is
+        invisible to it and comes back carrying a listing that is no longer
+        true.
+        """
+        holder = "tiles/alpha/h.stl"
+        kept, diverged = "tiles/beta/p.stl", "tiles/beta/q.stl"
+
+        with test_db.connection() as conn:
+            with conn.cursor(row_factory=dict_row) as curs:
+                curs.execute(
+                    "INSERT INTO blueprints (blueprint_name, blueprint_type,"
+                    " full_name, file_md5, file_name, config, consolidated_paths,"
+                    " deprecated)"
+                    " VALUES ('h.stl','model',%s,'M_x','h.stl','{}',%s,true)",
+                    (holder, [kept, diverged]),
+                )
+            conn.commit()
+
+        with test_db.connection() as conn:
+            with conn.cursor(row_factory=dict_row) as curs:
+                with patch("openforge.db.fixtures.incremental.write_output") as out:
+                    loader = IncrementalFixturesLoader(conn, verbose=False)
+                    changes = loader.compare_fixture_data(
+                        [self._item_at(kept, "M_x"), self._item_at(diverged, "M_z")],
+                        curs=curs,
+                    )
+                    loader.apply_incremental_changes(changes, curs=curs)
+            conn.commit()
+
+        with test_db.connection() as conn:
+            with conn.cursor(row_factory=dict_row) as curs:
+                curs.execute(
+                    "SELECT full_name, file_md5, consolidated_paths FROM blueprints"
+                    " WHERE NOT deprecated ORDER BY full_name"
+                )
+                live = curs.fetchall()
+
+        by_path = {r["full_name"]: r for r in live}
+        # The tombstone was inherited under the path that kept its bytes, and
+        # the diverged path got a row of its own.
+        assert by_path[kept]["file_md5"] == "M_x"
+        assert by_path[diverged]["file_md5"] == "M_z"
+        said = "".join(c.args[0] for c in out.call_args_list)
+        assert f"UNCONSOLIDATED: {diverged}" in said
+        # No live row speaks for a path that another live row owns.
+        owned = set(by_path)
+        for row in live:
+            assert not (set(row["consolidated_paths"] or []) & owned)
+
+    def test_a_tombstone_is_linked_to_the_row_that_claimed_its_path(self, test_db):
+        """An edit whose new bytes already exist elsewhere still leaves a trail.
+
+        The replacement never becomes a row of its own: it is rescued onto the
+        row that already holds those bytes, which then lists this path as a
+        duplicate. Nothing holds the path any more, so a link by path finds
+        nothing and a lookup by the old MD5 would stop on the tombstone.
+        """
+        edited, twin = "tiles/a/p.stl", "tiles/a/q.stl"
+
+        with test_db.connection() as conn:
+            with conn.cursor(row_factory=dict_row) as curs:
+                for path, md5, name in (
+                    (edited, "M_old", "p.stl"),
+                    (twin, "M_new", "q.stl"),
+                ):
+                    curs.execute(
+                        "INSERT INTO blueprints (blueprint_name, blueprint_type,"
+                        " full_name, file_md5, file_name, config)"
+                        " VALUES (%s,'model',%s,%s,%s,'{}')",
+                        (name, path, md5, name),
+                    )
+            conn.commit()
+
+        with test_db.connection() as conn:
+            with conn.cursor(row_factory=dict_row) as curs:
+                with patch("openforge.db.fixtures.incremental.write_output") as out:
+                    loader = IncrementalFixturesLoader(conn, verbose=False)
+                    changes = loader.compare_fixture_data(
+                        [self._item_at(edited, "M_new"), self._item_at(twin, "M_new")],
+                        curs=curs,
+                    )
+                    loader.apply_incremental_changes(changes, curs=curs)
+            conn.commit()
+
+        with test_db.connection() as conn:
+            with conn.cursor(row_factory=dict_row) as curs:
+                curs.execute(
+                    "SELECT id, file_md5, deprecated, successor_id, full_name,"
+                    " consolidated_paths FROM blueprints ORDER BY file_md5"
+                )
+                rows = {r["file_md5"]: r for r in curs.fetchall()}
+
+        said = "".join(c.args[0] for c in out.call_args_list)
+        # A successor at another path is deducible from nothing else said.
+        assert f"LINKED: {edited} -> {twin}" in said
+
+        old, new = rows["M_old"], rows["M_new"]
+        assert old["deprecated"] is True
+        # The row that took the path over is the one the chain has to reach.
+        assert old["successor_id"] == new["id"]
+        assert new["deprecated"] is False
+        assert edited in (new["consolidated_paths"] or [])
+
+    def test_a_file_moved_across_fixtures_inherits_the_tombstone(self, test_db):
+        """A tombstone is inheritable wherever it lies.
+
+        The subtree test guards a live row's path, and a tombstone has no path
+        to guard. Declining the inheritance appends this live file's path to
+        the dead row instead, which leaves the file with no live row at all
+        and reports it as added.
+        """
+        old_path, new_path = "tiles/old/moved.stl", "tiles/new/moved.stl"
+
+        with test_db.connection() as conn:
+            with conn.cursor(row_factory=dict_row) as curs:
+                curs.execute(
+                    "INSERT INTO blueprints (blueprint_name, blueprint_type,"
+                    " full_name, file_md5, file_name, config, deprecated)"
+                    " VALUES ('moved.stl','model',%s,'M_moved','moved.stl','{}',true)",
+                    (old_path,),
+                )
+            conn.commit()
+
+        with test_db.connection() as conn:
+            with conn.cursor(row_factory=dict_row) as curs:
+                loader = IncrementalFixturesLoader(conn, verbose=False)
+                changes = loader.compare_fixture_data(
+                    [self._item_at(new_path, "M_moved")], curs=curs
+                )
+                loader.apply_incremental_changes(changes, curs=curs)
+            conn.commit()
+
+        with test_db.connection() as conn:
+            with conn.cursor(row_factory=dict_row) as curs:
+                curs.execute(
+                    "SELECT full_name, consolidated_paths FROM blueprints"
+                    " WHERE NOT deprecated"
+                )
+                live = curs.fetchall()
+                curs.execute("SELECT count(*) AS n FROM blueprints")
+                total = curs.fetchone()["n"]
+
+        # The file has a row of its own, and it is the one that already held
+        # these bytes rather than a second row beside it.
+        assert [r["full_name"] for r in live] == [new_path]
+        assert total == 1
+        assert not (live[0]["consolidated_paths"] or [])
+
+    def test_the_listing_index_holds_every_row_that_claims_a_path(self, test_db):
+        """More than one live row can list one path, and all of them matter.
+
+        The successor lookup chooses among claimants by content, so the step
+        that collects them has to collect all of them. Two listers arise
+        whenever the prune skips one, which it does whenever the row carrying
+        the right bytes sorts first by path.
+        """
+        claimed = "tiles/beta/p.stl"
+
+        with test_db.connection() as conn:
+            with conn.cursor(row_factory=dict_row) as curs:
+                for name, md5 in (("aaa.stl", "M_good"), ("zzz.stl", "M_stale")):
+                    curs.execute(
+                        "INSERT INTO blueprints (blueprint_name, blueprint_type,"
+                        " full_name, file_md5, file_name, config,"
+                        " consolidated_paths)"
+                        " VALUES (%s,'model',%s,%s,%s,'{}',%s)",
+                        (name, f"tiles/beta/{name}", md5, name, [claimed]),
+                    )
+                # A listing-free row and a tombstone that lists it: neither
+                # belongs in the index.
+                curs.execute(
+                    "INSERT INTO blueprints (blueprint_name, blueprint_type,"
+                    " full_name, file_md5, file_name, config)"
+                    " VALUES ('plain.stl','model','tiles/beta/plain.stl','M_p',"
+                    " 'plain.stl','{}')"
+                )
+                curs.execute(
+                    "INSERT INTO blueprints (blueprint_name, blueprint_type,"
+                    " full_name, file_md5, file_name, config,"
+                    " consolidated_paths, deprecated)"
+                    " VALUES ('dead.stl','model','tiles/beta/dead.stl','M_d',"
+                    " 'dead.stl','{}',%s,true)",
+                    ([claimed],),
+                )
+            conn.commit()
+
+        with test_db.connection() as conn:
+            with conn.cursor(row_factory=dict_row) as curs:
+                loader = IncrementalFixturesLoader(conn, verbose=False)
+                index = loader._listing_index(curs)
+
+        assert set(index) == {claimed}
+        assert {r["file_md5"] for r in index[claimed]} == {"M_good", "M_stale"}
+
+    def test_a_modification_keeps_the_duplicates_the_row_speaks_for(self, test_db):
+        """The listing is this loader's bookkeeping, and no fixture declares it.
+
+        The munge defaults the key to empty and the update writes any key it
+        is given, so sending it on a modification drops every path the row
+        holds — and those paths have no row of their own to fall back on.
+        """
+        holder, dupe = "tiles/a/p.stl", "tiles/a/q.stl"
+
+        with test_db.connection() as conn:
+            with conn.cursor(row_factory=dict_row) as curs:
+                # An mtime the fixture disagrees with, so the load reports a
+                # modification rather than no change.
+                curs.execute(
+                    "INSERT INTO blueprints (blueprint_name, blueprint_type,"
+                    " full_name, file_md5, file_name, config, consolidated_paths,"
+                    " file_modified_at)"
+                    " VALUES ('p.stl','model',%s,'M_same','p.stl','{}',%s,"
+                    " '2019-01-01 00:00:00')",
+                    (holder, [dupe]),
+                )
+            conn.commit()
+
+        with test_db.connection() as conn:
+            with conn.cursor(row_factory=dict_row) as curs:
+                loader = IncrementalFixturesLoader(conn, verbose=False)
+                changes = loader.compare_fixture_data(
+                    [self._item_at(holder, "M_same")], curs=curs
+                )
+                assert len(changes.modified) == 1
+                loader.apply_incremental_changes(changes, curs=curs)
+            conn.commit()
+
+        with test_db.connection() as conn:
+            with conn.cursor(row_factory=dict_row) as curs:
+                curs.execute(
+                    "SELECT consolidated_paths, file_modified_at FROM blueprints"
+                    " WHERE full_name = %s",
+                    (holder,),
+                )
+                row = curs.fetchone()
+
+        # The duplicate is still spoken for. Asked as a set, because the
+        # question is which paths the row holds, not their array order.
+        assert set(row["consolidated_paths"] or []) == {dupe}
+        # And the modification itself landed: the mtime is the fixture's now,
+        # which is the field the seeded row disagreed on.
+        assert row["file_modified_at"].isoformat().startswith("2020-01-01T12:00")
+
     def test_the_stranding_warning_waits_for_the_additions(self, test_db):
         """The warning has to describe what happened, not what was attempted.
 
@@ -1739,10 +2269,9 @@ class TestEditThenLoadAgainstTheDatabase:
         """The row is the new item now, so its fields have to be the new item's.
 
         An inherited modification time makes the next load of an unchanged
-        fixture report a modification, and a modification resets
-        consolidated_paths — so the holder's other duplicates lose every
-        representation for a load. Real duplicate groups disagree on mtime, so
-        this is the common case rather than a contrived one.
+        fixture report a modification, so the row never settles. Real
+        duplicate groups disagree on mtime, so this is the common case rather
+        than a contrived one.
         """
         holder, dupe = "tiles/a/holder.stl", "tiles/a/dupe.stl"
 
