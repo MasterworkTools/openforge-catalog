@@ -246,11 +246,15 @@ resource "aws_lambda_function" "fixtures" {
   image_uri     = "${local.infra.ecr_repository_urls["openforge_catalog/api"]}:${var.image_tag}"
   architectures = ["x86_64"]
 
-  # Memory is settled and is not the resource at risk: a measured full load of
-  # the real catalog peaks at ~225 MiB, and the answerable-path walk is 0.3 s
-  # and ~95 MiB of that. 2048 is for the CPU it buys, since Lambda scales them
-  # together and bills duration — a larger size makes a job measured in
-  # minutes shorter for the same money.
+  # Not for the memory: a measured full load of the real catalog peaks at
+  # ~231 MiB, so 512 would hold it. This is for the CPU, because the load is
+  # 81% CPU-bound and at 512 MB (~0.29 vCPU) its ~183 s of CPU becomes ~630 s
+  # against the 900 s ceiling.
+  #
+  # Note where that argument stops: Lambda scales CPU with memory only up to
+  # 1769 MB, which is one full vCPU, and this handler is single-threaded
+  # Python. So 2048 buys nothing over 1769 — it is 16% of fractions of a cent
+  # per deploy, kept for the round number, and not a reason to go higher.
   #
   # TIME is the one to watch. A measured no-op load of all 45 fixtures is
   # ~175 s against this 900 s ceiling, and it grows with files x catalog size:
