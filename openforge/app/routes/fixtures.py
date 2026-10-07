@@ -371,7 +371,6 @@ def _process_guide_fixture(data: Dict, curs, dry_run: bool, verbose: bool) -> Di
         "modified": [{"name": key}],
         "deprecated": [],
         "consolidated": [],
-        "errors": [],
     }
 
 
@@ -403,7 +402,6 @@ def _process_tag_description_fixture(
         "modified": [{"name": key} for key in data.keys()],
         "deprecated": [],
         "consolidated": [],
-        "errors": [],
     }
 
 
@@ -436,7 +434,6 @@ def _process_tag_documentation_fixture(
         "modified": [{"name": key} for key in data.keys()],
         "deprecated": [],
         "consolidated": [],
-        "errors": [],
     }
 
 
