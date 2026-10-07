@@ -105,6 +105,32 @@ def test_expected_paths_skips_what_the_fixture_marks_deprecated(blueprint_fixtur
     assert handler._expected_paths([f]) == {"tiles/h/live.stl"}
 
 
+def test_a_bad_guide_fails_the_gate_before_any_blueprint_is_written(tmp_path):
+    """The gate has to cover the files that sort last.
+
+    Fixtures load in path order, so every blueprint commits before the first
+    guide is read. A gate that skipped non-blueprint files, or that only
+    checked they parse, would find a bad guide after all of that — and the
+    retry reads the same file, so it never converges.
+
+    Valid YAML that the guide schema rejects is the likelier fault than a
+    syntax error, which is why parsing alone is not enough.
+    """
+    blueprints = tmp_path / "blueprints"
+    guides = tmp_path / "guides"
+    blueprints.mkdir()
+    guides.mkdir()
+    (blueprints / "a.json").write_text(json.dumps([_item("tiles/h/a.stl", "M_a")]))
+    # Parses cleanly, and is not a guide.
+    (guides / "wall.yaml").write_text("title: a guide with no steps\n")
+
+    with pytest.raises(Exception) as exc:
+        handler._expected_paths([blueprints / "a.json", guides / "wall.yaml"])
+
+    # Named, so the operator is not left bisecting the tree.
+    assert "wall.yaml" in str(exc.value) or "wall.yaml" in repr(exc.value)
+
+
 def test_the_gate_reads_a_yaml_blueprint_fixture(tmp_path):
     """The shipped `.yaml` files in `blueprints/` go through this arm.
 

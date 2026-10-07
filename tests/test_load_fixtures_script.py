@@ -73,6 +73,10 @@ def test_a_healthy_no_op_passes(run_with):
 
     assert result.returncode == 0, result.stderr
     assert "no blueprint changes" in result.stdout
+    # Without this the CLI imposes a 60 s read timeout on a load measured in
+    # minutes, and the deploy fails a load that actually completed.
+    assert "--cli-read-timeout" in result.aws_args
+    assert result.aws_args[result.aws_args.index("--cli-read-timeout") + 1] == "0"
 
 
 def test_a_raise_fails_even_though_the_cli_exits_zero(run_with):

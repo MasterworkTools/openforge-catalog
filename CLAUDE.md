@@ -249,13 +249,20 @@ reader that understands a construct in one release, and the documents using it
 in the next. Shipping both together is the broken case, because during the
 window the old reader serves documents written for the new one.
 
-**`config` is the wider of the two**, and worth its own sentence. A guide has a
-Python reader, so its window closes at the second apply. `config` has no Python
-reader at all — the only thing that interprets it is the frontend bundle — so
-its window runs past `frontend-deploy`, past CloudFront's cache on `current/`,
-and on until every open tab has picked up the new bundle. There is no step
-after which it is over. So "new blueprints are additive and safe" holds for
-rows and tags, and **not** for a new `config` construct.
+**Both windows run to the browser**, which is the part that is easy to get
+wrong. A guide document is returned whole and interpreted in the bundle too —
+the accepted query parameters are built from the document's own step,
+refinement and role keys, and anything else is silently dropped — so an old
+bundle ignores a new guide construct just as it ignores a new `config` one.
+Neither window closes at the second apply; both run past `frontend-deploy`,
+past CloudFront's cache on `current/`, and on until every open tab has the new
+bundle. There is no step after which either is over.
+
+The difference is which readers must lead. `config` has no Python reader at
+all, so only the bundle has to. A guide has both, so **both** must — which
+makes a guide construct the stricter case, not the safer one. And "new
+blueprints are additive and safe" holds for rows and tags, **not** for a new
+`config` construct.
 
 **Fixtures load in the deploy**, between the migration and the apply that
 promotes the API image, so data arrives behind the schema it needs and ahead of
@@ -275,13 +282,24 @@ The load fails the release if any path the fixtures list is left neither a live
 row nor listed as a duplicate by one. That is the failure worth gating on,
 because it otherwise looks like a healthy no-op.
 
-**If the load fails**, what to do depends on why. The load commits per fixture
-file, so a failure part way leaves some loaded, and because it is incremental a
-re-run of the `Load Fixtures` workflow converges — *if the cause was
-transient*. A malformed fixture and a failed answerable-path gate both re-fail
-identically, because the next run reads the same files: those need a fix and a
-new deploy, not a re-run. A production run must
-be dispatched from `main` — that environment's only protection rule is a branch
+**If the load fails during a deploy, re-run the failed jobs on that deploy
+run** — not the `Load Fixtures` workflow. `tofu-apply` and `frontend-deploy`
+are gated on the load succeeding, so a failed load leaves them *skipped*, and
+the manual workflow has no apply and no frontend sync: it would converge the
+data and leave the release stranded on the old image and the old frontend,
+reporting green, with nothing left to promote. That is the state the job's
+20-minute cap exists to keep short, so do not re-enter it on purpose.
+
+The `Load Fixtures` workflow is for after a deploy has finished — a load you
+want to re-run against an environment that is otherwise current.
+
+Either way, what to do depends on why it failed. The load commits per fixture
+file and is incremental, so a re-run converges *if the cause was transient*. A
+bad fixture or a failed answerable-path gate re-fail identically, because the
+next run reads the same files: those need a fix and a new deploy.
+
+A production run must be dispatched from `main` — that environment's only
+protection rule is a branch
 policy, so a dispatch from anywhere else is rejected before a role is assumed,
 and from `main` it is *not* reviewed.
 
@@ -341,8 +359,10 @@ single apply makes the new API image live before the migration runs.
   or any payload without `ok: true`; the handler asserts the schema reached head.
 - **Fixtures load in the deploy**, in the same place as production's, with the
   same all-or-nothing invoke and the same answerable-path gate. The `Load
-  Fixtures` workflow re-runs a load that failed; it cannot load data that is
-  not in the deployed image. See the production section.
+  Fixtures` workflow re-runs a load against an environment that is otherwise
+  current; a load that failed *inside* a deploy is recovered by re-running
+  that deploy's failed jobs. It cannot load data that is not in the deployed
+  image. See the production section.
 - The old hand-built `Openforge-Catalog-API` function and role still exist until
   `openforge_catalog-rc2` deletes them.
 - The migration function sets `PGCONNECT_TIMEOUT = 120` (Aurora resumes from

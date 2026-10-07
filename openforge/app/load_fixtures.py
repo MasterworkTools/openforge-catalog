@@ -33,7 +33,13 @@ import os
 from yaml import safe_load
 
 from openforge.db import PgDB
-from openforge.db.fixtures import find_fixtures, load_fixtures
+from openforge.db.fixtures import (
+    _get_fixture_type,
+    check_guide_fixture,
+    find_fixtures,
+    is_blueprint_fixture,
+    load_fixtures,
+)
 from openforge.db.fixtures.utils import write_output
 
 
@@ -65,13 +71,17 @@ def _fixture_files(fixture):
 
 
 def _expected_paths(files):
-    """Parse every fixture, and return the paths that must stay answerable.
+    """Validate every fixture, and return the paths that must stay answerable.
 
-    Two jobs in one pass, deliberately. Parsing is what makes this crash
+    Two jobs in one pass, deliberately. This is what makes a bad fixture crash
     before the first write rather than after some files have committed, so it
-    has to cover every fixture — a malformed guide used to be found only once
-    every blueprint file had landed. Re-parsing them separately would double
-    the cost of the one expensive part.
+    has to cover every fixture — a bad guide would otherwise be found only
+    once every blueprint file had landed, since they sort first. Re-reading
+    them separately would double the cost of the one expensive part.
+
+    It checks what the loader checks, not merely that the file parses. A guide
+    that is valid YAML and invalid against its schema is the likelier fault
+    than a syntax error, and a syntax-only gate lets it through.
 
     The paths come from the blueprint fixtures only, since they are the ones
     that own rows. An entry a fixture marks deprecated is excluded: asking for
@@ -96,7 +106,13 @@ def _expected_paths(files):
         # formats, so testing the extension would leave a YAML blueprint
         # fixture ungated. None carries paths today; the rule should not
         # depend on that.
-        if f.parent.name != "blueprints":
+        fixture_type = _get_fixture_type(f)
+        if fixture_type == "blueprint":
+            is_blueprint_fixture(loaded)
+        elif fixture_type == "guide":
+            check_guide_fixture(loaded, f.name)
+
+        if fixture_type != "blueprint":
             continue
         for item in loaded:
             if item.get("deprecated"):
