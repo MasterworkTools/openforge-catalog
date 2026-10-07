@@ -134,8 +134,15 @@ def load_fixtures(
     incremental: bool = True,
     dry_run: bool = False,
     verbose: bool = False,
-):
+) -> list:
+    """Load fixtures, and report per file what landed.
+
+    The return value exists for callers that have to decide something from it
+    rather than print it — the deploy's load reads it to tell a release that
+    changed data apart from one that did not. Printing callers ignore it.
+    """
     ffiles = files if files is not None else find_fixtures(alt)
+    results = []
 
     if incremental:
         # Import here to avoid circular imports
@@ -159,6 +166,16 @@ def load_fixtures(
                             loader.apply_incremental_changes(
                                 changes, curs=curs, filename=f.name
                             )
+                            results.append(
+                                {
+                                    "file": f.name,
+                                    "type": fixture_type,
+                                    "added": len(changes.added),
+                                    "modified": len(changes.modified),
+                                    "deprecated": changes.applied_deprecations,
+                                    "consolidated": len(changes.consolidated),
+                                }
+                            )
             elif fixture_type == "tag_description":
                 # Validate tag description fixture
                 is_tag_description_fixture(data)
@@ -173,6 +190,9 @@ def load_fixtures(
                             count = load_tag_description_fixture(curs, data)
                             write_output(
                                 f"{f.name}: Applied {count} tag descriptions\n"
+                            )
+                            results.append(
+                                {"file": f.name, "type": fixture_type, "count": count}
                             )
                             if verbose:
                                 write_output(f"Loaded tag description fixture: {f}\n")
@@ -192,6 +212,9 @@ def load_fixtures(
                                 f"{f.name}: Applied {count} tag documentation entries\n"
                             )
                             write_output(msg)
+                            results.append(
+                                {"file": f.name, "type": fixture_type, "count": count}
+                            )
                             if verbose:
                                 write_output(f"Loaded tag documentation fixture: {f}\n")
             elif fixture_type == "guide":
@@ -205,6 +228,9 @@ def load_fixtures(
                         else:
                             key = load_guide_fixture(curs, data, f.name)
                             write_output(f"{f.name}: Applied guide {key}\n")
+                            results.append(
+                                {"file": f.name, "type": fixture_type, "guide": key}
+                            )
             else:
                 raise ValueError(f"Unknown fixture type for file: {f}")
     else:
@@ -239,6 +265,8 @@ def load_fixtures(
                         write_output(f"{f.name}: Applied guide {key}\n")
                     else:
                         raise ValueError(f"Unknown fixture type for file: {f}")
+
+    return results
 
 
 def _load_data(f, verbose=False):
