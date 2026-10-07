@@ -406,6 +406,11 @@ resource "aws_sqs_queue" "fixtures_result" {
   # Long enough to outlive a load. What keeps one load's record from being
   # read as another's is the nonce each invoke carries, not this.
   message_retention_seconds = 3600
+
+  # Stated rather than defaulted, because the deploy depends on it: a record
+  # belonging to another run is left where it is, and this is how long until
+  # its own waiter can see it again.
+  visibility_timeout_seconds = 30
 }
 
 resource "aws_lambda_function_event_invoke_config" "fixtures" {

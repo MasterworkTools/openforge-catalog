@@ -47,16 +47,11 @@ if args[:2] == ["sqs", "get-queue-url"]:
     print("https://sqs.example/q")
 
 elif args[:2] == ["sqs", "receive-message"]:
-    # A drain reads a batch; the wait reads one. Discriminated on that rather
-    # than on the wait, so that adding a wait to the drain does not change
-    # which branch a call takes.
-    draining = arg("--max-number-of-messages") == "10"
-    if draining and spec.get("short_poll_misses"):
-        # What a short poll does: answer empty although a record is there.
-        spec["short_poll_misses"] -= 1
+    if spec.get("receive_failures"):
+        # SQS answering 5xx. Not a failed load, and the script must say so.
+        spec["receive_failures"] -= 1
         save()
-        print("")
-        sys.exit(0)
+        sys.exit("ServiceUnavailable")
     pending = spec["queue"]
     if pending:
         body = pending.pop(0)
@@ -133,7 +128,7 @@ def run_with(tmp_path):
         ack=None,
         fixture=None,
         deadline="2",
-        short_poll_misses=0,
+        receive_failures=0,
         function="openforge-catalog-fixtures",
     ):
         spec = {
@@ -141,7 +136,7 @@ def run_with(tmp_path):
             "on_invoke": [result] if result else [],
             "queue_name": f"{function}-result",
             "function": function,
-            "short_poll_misses": short_poll_misses,
+            "receive_failures": receive_failures,
         }
         if ack is not None:
             spec["ack"] = ack
@@ -149,7 +144,7 @@ def run_with(tmp_path):
         spec_path.write_text(json.dumps(spec))
 
         fake_bin = tmp_path / "bin"
-        fake_bin.mkdir()
+        fake_bin.mkdir(exist_ok=True)
         (fake_bin / "aws").write_text(STUB)
         (fake_bin / "aws").chmod(0o755)
 
@@ -272,48 +267,71 @@ def test_no_result_before_the_deadline_fails_and_warns_about_re_running(run_with
     assert "still be running" in proc.stdout + proc.stderr
 
 
-def test_a_stale_record_is_discarded_before_the_invoke(run_with):
-    """Otherwise a previous load's record costs this one a full wait."""
-    proc = run_with(result=_record(OK_NO_CHANGE), stale=[_record(OK_NO_CHANGE)])
+def test_a_leftover_record_is_skipped_and_this_loads_result_still_found(run_with):
+    """What replaced draining the queue.
 
-    assert proc.returncode == 0, proc.stderr
-    assert "discarding a stale result record" in proc.stdout
-    kinds = [c[1] for c in proc.calls]
-    assert kinds.index("delete-message") < kinds.index("invoke")
-
-
-def test_the_drain_survives_a_short_polls_false_empty_answer(run_with):
-    """A short poll samples a subset of servers and can answer empty.
-
-    So the drain long-polls. With a short poll the stale record here outlives
-    the drain, and the wait then reads a record from a load it never
-    invoked — which is why the nonce check exists as well.
+    An uncollected record from an earlier run is on the queue before this
+    load starts. The wait draws it first, fails the nonce check, leaves it
+    where it is, and goes on to find its own — so a leftover costs a poll
+    rather than a wrong verdict. The stub does not redeliver the skipped
+    record, which stands for its visibility timeout not having lapsed yet.
     """
     proc = run_with(
         result=_record(OK_NO_CHANGE),
-        stale=[_record(OK_NO_CHANGE)],
-        short_poll_misses=1,
+        stale=[_record(OK_NO_CHANGE, nonce="an-earlier-run")],
     )
 
     assert proc.returncode == 0, proc.stderr
-    drains = [c for c in proc.calls if c[1] == "receive-message" and "10" in c]
-    assert drains, proc.calls
-    assert all("--wait-time-seconds" in c for c in drains)
+    assert "a record from another run" in proc.stdout
+    assert "no blueprint changes" in proc.stdout
+    # Only this load's record is consumed; the other is left for its owner.
+    assert [c[1] for c in proc.calls].count("delete-message") == 1
 
 
-def test_another_runs_record_is_left_alone_rather_than_consumed(run_with):
+def test_only_another_runs_record_fails_rather_than_being_consumed(run_with):
     """The nonce is the only way to tell two loads' records apart.
 
     An Event invoke returns a status and no request id, so without this a
-    collision's expiry record fails the healthy run. Not deleted either: its
-    visibility timeout has to return it to whoever is waiting for it.
+    collision's expiry record would fail the healthy run. The record is not
+    deleted either: its visibility timeout has to return it to whoever is
+    waiting for it.
     """
     proc = run_with(result=_record(OK_NO_CHANGE, nonce="someone-else"), deadline="1")
 
     assert proc.returncode != 0
-    assert "another run" in proc.stdout
+    assert "a record from another run" in proc.stdout
     assert "no result after" in proc.stdout + proc.stderr
     assert "delete-message" not in [c[1] for c in proc.calls]
+
+
+def test_a_failed_receive_is_retried_rather_than_failing_the_load(run_with):
+    """One SQS error is not a failed load.
+
+    Aborting here would reintroduce the fragility this script exists to
+    remove, and with one chance per poll rather than one for the whole load
+    it would be worse than what it replaced.
+    """
+    proc = run_with(result=_record(OK_NO_CHANGE), receive_failures=1, deadline="60")
+
+    assert proc.returncode == 0, proc.stderr
+    assert "receive failed; retrying" in proc.stdout
+    assert "no blueprint changes" in proc.stdout
+
+
+def test_each_run_sends_a_different_nonce(run_with):
+    """A run-scoped value is not enough, and is the plausible wrong edit.
+
+    Anything derived from the commit — the sha, say — is identical for the
+    staging and production deploys of one release, which is exactly the pair
+    the correlation exists to separate.
+    """
+    first = run_with(result=_record(OK_NO_CHANGE))
+    second = run_with(result=_record(OK_NO_CHANGE))
+
+    assert first.returncode == 0, first.stderr
+    assert second.returncode == 0, second.stderr
+    assert first.nonce and second.nonce
+    assert first.nonce != second.nonce
 
 
 def test_changes_are_named_rather_than_counted(run_with):
@@ -363,23 +381,83 @@ def test_an_empty_fixture_means_everything(run_with):
     assert json.loads(_payload_of(proc)) == {"nonce": proc.nonce}
 
 
+def _blocks(env):
+    """The fixture-load blocks of one environment's terraform, by name."""
+    tf = (REPO / f"terraform/environments/{env}/main.tf").read_text()
+    out = {}
+    for head in (
+        'resource "aws_sqs_queue" "fixtures_result"',
+        'resource "aws_lambda_function_event_invoke_config" "fixtures"',
+        'resource "aws_lambda_function" "fixtures"',
+        'resource "aws_iam_role_policy" "fixtures_result"',
+    ):
+        assert head in tf, (env, head)
+        out[head] = tf.split(head, 1)[1].split("\n}\n", 1)[0]
+    return out
+
+
+def _number(block, key):
+    """A terraform numeric attribute, whatever `fmt` did to the spacing."""
+    line = next(line for line in block.splitlines() if line.strip().startswith(key))
+    return int(line.split("=", 1)[1].strip())
+
+
+def test_the_two_environments_configure_the_load_identically():
+    """Otherwise a value held in one is unheld in the other.
+
+    These four blocks are byte-identical today and there is no reason for
+    them to diverge, so comparing them is what stops a production-only edit
+    going unnoticed by every test that reads staging.
+    """
+    assert _blocks("staging") == _blocks("production")
+
+
 def test_the_queue_and_the_deadline_match_the_infrastructure():
-    """Two couplings the script cannot see, and nothing else holds.
+    """Couplings the script cannot see, and nothing else holds.
 
     The script composes the queue name from the function name; terraform
-    composes it from the deployment name. They agree only by spelling. And
-    the script's default wait has to exceed the function's own ceiling plus
-    the event's maximum age, or a load that times out reports nothing.
+    composes it from the deployment name, so they agree only by spelling.
+    The script's default wait has to exceed the function's own ceiling plus
+    the event's maximum age, or a load that times out reports nothing. And a
+    record left for another run has to become visible again well inside a
+    load, or its owner never sees it.
+
+    Every number is read out of the block it belongs to. Searching the file
+    finds the migration function's ceiling first, which is the same value
+    today and would pass for the wrong reason.
     """
     script = SCRIPT.read_text()
-    tf = (REPO / "terraform/environments/production/main.tf").read_text()
+    blocks = _blocks("production")
+    function_block = blocks['resource "aws_lambda_function" "fixtures"']
+    config_block = blocks[
+        'resource "aws_lambda_function_event_invoke_config" "fixtures"'
+    ]
+    queue_block = blocks['resource "aws_sqs_queue" "fixtures_result"']
 
-    function = script.split('FUNCTION="${FUNCTION:-', 1)[1].split("}", 1)[0]
-    assert 'name = "${local.name}-fixtures-result"' in tf
-    assert function == "openforge-catalog-fixtures"
-    assert 'name  = "openforge-catalog"' in tf
+    name = script.split('FUNCTION="${FUNCTION:-', 1)[1].split("}", 1)[0]
+    assert name == "openforge-catalog-fixtures"
+    assert 'name = "${local.name}-fixtures-result"' in queue_block
+    assert (
+        'name  = "openforge-catalog"'
+        in (REPO / "terraform/environments/production/main.tf").read_text()
+    )
 
     deadline = int(script.split("DEADLINE_SECONDS:-", 1)[1].split("}", 1)[0])
-    timeout = int(tf.split("timeout     = ", 1)[1].split("\n", 1)[0])
-    age = int(tf.split("maximum_event_age_in_seconds = ", 1)[1].split("\n", 1)[0])
+    timeout = _number(function_block, "timeout")
+    age = _number(config_block, "maximum_event_age_in_seconds")
+    retention = _number(queue_block, "message_retention_seconds")
+    visibility = _number(queue_block, "visibility_timeout_seconds")
+
     assert deadline > timeout + age, (deadline, timeout, age)
+    assert retention > timeout + age, (retention, timeout, age)
+    assert visibility < timeout, (visibility, timeout)
+
+    # Not bounds but outright requirements, and an identical edit to both
+    # environments would slip past comparing them with each other.
+    assert _number(config_block, "maximum_retry_attempts") == 0
+    assert "function_name = aws_lambda_function.fixtures.function_name" in (
+        config_block.replace("  ", " ")
+    )
+    assert 'function_name = "${local.name}-fixtures"' in (
+        function_block.replace("  ", " ")
+    )

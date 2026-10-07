@@ -15,6 +15,11 @@
 # function's on-success and on-failure destination. The record carries the
 # handler's own return value, so this still gates on what the handler decided.
 #
+# Each invoke carries a nonce that the record echoes back, which is what tells
+# this load's result from another run's — an Event invoke returns a status and
+# no request id, so there is nothing else to correlate on. A record that does
+# not match is left where it is, for its own waiter to collect.
+#
 # Reads FIXTURE from the environment: empty loads everything, which is what a
 # deploy does.
 set -euo pipefail
@@ -32,23 +37,6 @@ DEADLINE_SECONDS="${DEADLINE_SECONDS:-1080}"
 NONCE=$(python3 -c 'import uuid; print(uuid.uuid4().hex)')
 
 queue_url=$(aws sqs get-queue-url --queue-name "$QUEUE" --output text --query QueueUrl)
-
-# Long polling, because a short poll samples a subset of the queue's servers
-# and answers immediately — so it reports an empty queue that is not empty,
-# and a record left by an earlier run would survive the drain and then be read
-# as this load's result. Drained as well as correlated: a record nobody
-# collects costs a later run a full wait before it skips it.
-while true; do
-  stale=$(aws sqs receive-message --queue-url "$queue_url" \
-    --max-number-of-messages 10 --wait-time-seconds 1 --output json)
-  handles=$(printf '%s' "$stale" | python3 -c \
-    'import json,sys; d=sys.stdin.read().strip(); print("\n".join(m["ReceiptHandle"] for m in (json.loads(d).get("Messages") or [])) if d else "")')
-  [ -z "$handles" ] && break
-  echo "discarding a stale result record"
-  while IFS= read -r handle; do
-    aws sqs delete-message --queue-url "$queue_url" --receipt-handle "$handle"
-  done <<< "$handles"
-done
 
 if [ -n "${FIXTURE:-}" ]; then
   # Built with json.dumps rather than string interpolation so a name
@@ -86,8 +74,14 @@ while [ "$(date +%s)" -lt "$deadline" ]; do
   # A failed receive is not a failed load. Tolerated rather than fatal,
   # because aborting here would reintroduce the fragility this script exists
   # to remove, with one chance per poll instead of one for the whole load.
-  aws sqs receive-message --queue-url "$queue_url" --wait-time-seconds 20 \
-    --max-number-of-messages 1 --output json > result.json || true
+  # The sleep stands in for the long poll a failed call never paid for;
+  # without it the loop re-polls at process-startup speed until the deadline.
+  if ! aws sqs receive-message --queue-url "$queue_url" --wait-time-seconds 20 \
+    --max-number-of-messages 1 --output json > result.json; then
+    echo "  receive failed; retrying"
+    sleep 20
+    continue
+  fi
 
   if ! grep -q ReceiptHandle result.json 2>/dev/null; then
     echo "  still loading"
