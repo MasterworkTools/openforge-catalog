@@ -1636,6 +1636,160 @@ class TestEditThenLoadAgainstTheDatabase:
         load()
         assert live_paths() == [(holder, "M_new"), (dupe, "M_old")]
 
+    def test_every_live_fixture_path_is_answerable_after_a_load(self, test_db):
+        """The property a load exists to establish, stated positively.
+
+        A path is answerable if a live row holds it or a live row lists it as
+        a duplicate. An entry the fixture itself marks deprecated is excluded:
+        asking for no live row is the whole point of that flag, and exactly
+        one path in the catalog is in that position.
+        """
+        plain = "tiles/inv/plain.stl"
+        holder, twin = "tiles/inv/holder.stl", "tiles/inv/twin.stl"
+        retired = "tiles/inv/retired.stl"
+
+        items = [
+            self._item_at(plain, "M_plain"),
+            self._item_at(holder, "M_shared"),
+            self._item_at(twin, "M_shared"),
+            self._item_at(retired, "M_retired"),
+        ]
+        items[3]["deprecated"] = True
+
+        with test_db.connection() as conn:
+            with conn.cursor(row_factory=dict_row) as curs:
+                curs.execute("TRUNCATE blueprints CASCADE")
+            conn.commit()
+
+        with test_db.connection() as conn:
+            with conn.cursor(row_factory=dict_row) as curs:
+                loader = IncrementalFixturesLoader(conn, verbose=False)
+                changes = loader.compare_fixture_data(items, curs=curs)
+                loader.apply_incremental_changes(changes, curs=curs)
+            conn.commit()
+
+        with test_db.connection() as conn:
+            with conn.cursor(row_factory=dict_row) as curs:
+                curs.execute(
+                    "SELECT full_name, consolidated_paths FROM blueprints"
+                    " WHERE NOT deprecated AND full_name IS NOT NULL"
+                )
+                live = curs.fetchall()
+
+        answerable = {r["full_name"] for r in live}
+        for row in live:
+            answerable |= set(row["consolidated_paths"] or [])
+
+        expected = {
+            item["file_metadata"]["full_name"]
+            for item in items
+            if not item.get("deprecated")
+        }
+        assert expected <= answerable, expected - answerable
+        # And the retired one is genuinely absent rather than quietly live.
+        assert retired not in answerable
+
+    def test_a_revived_row_drops_duplicates_that_diverged(self, test_db):
+        """A revived row must not claim a path that now has its own row.
+
+        The prune that normally removes a diverged duplicate only sees live
+        rows, so a holder tombstoned earlier in the same directory load is
+        invisible to it and comes back carrying a listing that is no longer
+        true.
+        """
+        holder = "tiles/alpha/h.stl"
+        kept, diverged = "tiles/beta/p.stl", "tiles/beta/q.stl"
+
+        with test_db.connection() as conn:
+            with conn.cursor(row_factory=dict_row) as curs:
+                curs.execute("TRUNCATE blueprints CASCADE")
+                curs.execute(
+                    "INSERT INTO blueprints (blueprint_name, blueprint_type,"
+                    " full_name, file_md5, file_name, config, consolidated_paths,"
+                    " deprecated)"
+                    " VALUES ('h.stl','model',%s,'M_x','h.stl','{}',%s,true)",
+                    (holder, [kept, diverged]),
+                )
+            conn.commit()
+
+        with test_db.connection() as conn:
+            with conn.cursor(row_factory=dict_row) as curs:
+                loader = IncrementalFixturesLoader(conn, verbose=False)
+                changes = loader.compare_fixture_data(
+                    [self._item_at(kept, "M_x"), self._item_at(diverged, "M_z")],
+                    curs=curs,
+                )
+                loader.apply_incremental_changes(changes, curs=curs)
+            conn.commit()
+
+        with test_db.connection() as conn:
+            with conn.cursor(row_factory=dict_row) as curs:
+                curs.execute(
+                    "SELECT full_name, file_md5, consolidated_paths FROM blueprints"
+                    " WHERE NOT deprecated ORDER BY full_name"
+                )
+                live = curs.fetchall()
+
+        by_path = {r["full_name"]: r for r in live}
+        # The tombstone was inherited under the path that kept its bytes, and
+        # the diverged path got a row of its own.
+        assert by_path[kept]["file_md5"] == "M_x"
+        assert by_path[diverged]["file_md5"] == "M_z"
+        # No live row speaks for a path that another live row owns.
+        owned = set(by_path)
+        for row in live:
+            assert not (set(row["consolidated_paths"] or []) & owned)
+
+    def test_a_tombstone_is_linked_to_the_row_that_claimed_its_path(self, test_db):
+        """An edit whose new bytes already exist elsewhere still leaves a trail.
+
+        The replacement never becomes a row of its own: it is rescued onto the
+        row that already holds those bytes, which then lists this path as a
+        duplicate. Nothing holds the path any more, so a link by path finds
+        nothing and a lookup by the old MD5 would stop on the tombstone.
+        """
+        edited, twin = "tiles/a/p.stl", "tiles/a/q.stl"
+
+        with test_db.connection() as conn:
+            with conn.cursor(row_factory=dict_row) as curs:
+                curs.execute("TRUNCATE blueprints CASCADE")
+                for path, md5, name in (
+                    (edited, "M_old", "p.stl"),
+                    (twin, "M_new", "q.stl"),
+                ):
+                    curs.execute(
+                        "INSERT INTO blueprints (blueprint_name, blueprint_type,"
+                        " full_name, file_md5, file_name, config)"
+                        " VALUES (%s,'model',%s,%s,%s,'{}')",
+                        (name, path, md5, name),
+                    )
+            conn.commit()
+
+        with test_db.connection() as conn:
+            with conn.cursor(row_factory=dict_row) as curs:
+                loader = IncrementalFixturesLoader(conn, verbose=False)
+                changes = loader.compare_fixture_data(
+                    [self._item_at(edited, "M_new"), self._item_at(twin, "M_new")],
+                    curs=curs,
+                )
+                loader.apply_incremental_changes(changes, curs=curs)
+            conn.commit()
+
+        with test_db.connection() as conn:
+            with conn.cursor(row_factory=dict_row) as curs:
+                curs.execute(
+                    "SELECT id, file_md5, deprecated, successor_id, full_name,"
+                    " consolidated_paths FROM blueprints ORDER BY file_md5"
+                )
+                rows = {r["file_md5"]: r for r in curs.fetchall()}
+
+        old, new = rows["M_old"], rows["M_new"]
+        assert old["deprecated"] is True
+        # The row that took the path over is the one the chain has to reach.
+        assert old["successor_id"] == new["id"]
+        assert new["deprecated"] is False
+        assert edited in (new["consolidated_paths"] or [])
+
     def test_a_file_moved_across_fixtures_inherits_the_tombstone(self, test_db):
         """A tombstone is inheritable wherever it lies.
 

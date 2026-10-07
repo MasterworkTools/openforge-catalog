@@ -943,19 +943,22 @@ class IncrementalFixturesLoader:
 
         return True
 
-    def _outlives_this_load(self, bp: Dict) -> bool:
-        """Whether this load leaves that row live under the path it has.
+    def _content_survives_at(self, full_name: str, md5: Optional[str]) -> bool:
+        """Whether this load leaves that content live under that path.
 
-        A path the fixture still lists survives only if the content matches:
-        different bytes at the same path replace the row rather than update it.
-        A path the fixture has dropped survives only if this load's sweep
-        cannot reach it.
+        A path the fixture still lists keeps that content only if the content
+        matches: different bytes at the same path replace the row rather than
+        update it. A path the fixture has dropped keeps it only if this load's
+        sweep cannot reach the path at all.
         """
-        full_name = bp["full_name"]
         listed_md5 = self.current_fixture_md5s.get(full_name)
         if listed_md5 is not None:
-            return listed_md5 == bp.get("file_md5")
+            return listed_md5 == md5
         return not self._in_deprecation_sweep(full_name)
+
+    def _outlives_this_load(self, bp: Dict) -> bool:
+        """Whether this load leaves that row live under the path it has."""
+        return self._content_survives_at(bp["full_name"], bp.get("file_md5"))
 
     def _is_rename(self, bp: Dict, new_full_name: str) -> bool:
         """Whether this path should take over an existing row, not just join it.
@@ -1060,11 +1063,15 @@ class IncrementalFixturesLoader:
                             # keeps a successor sends the chain reader off it.
                             "successor_id": None,
                             # The row now owns this path, so it is no longer
-                            # one of the row's duplicates.
+                            # one of the row's duplicates. A listed path the
+                            # fixture gave different bytes has its own row
+                            # now, and one the sweep reached is gone, so
+                            # neither is still a duplicate of this row.
                             "consolidated_paths": [
                                 path
                                 for path in (bp.get("consolidated_paths") or [])
                                 if path != new_full_name
+                                and self._content_survives_at(path, bp.get("file_md5"))
                             ],
                         }
                         blueprint_sql.update_blueprint(curs, bp["id"], update_data)
@@ -1260,6 +1267,39 @@ class IncrementalFixturesLoader:
         )
         write_output(f"UNCONSOLIDATED: {remove_path} <- {bp['full_name']}\n")
 
+    def _find_successor(self, curs: cursor, full_name: str) -> Optional[Dict]:
+        """The live row that carries what this path used to hold.
+
+        Usually a row took the path over. Failing that, the path's content
+        was rescued onto a row at another path, which then lists this one as
+        a duplicate — so the row claiming the path is the successor, and
+        without this the tombstone never gets linked and a lookup by the old
+        MD5 stops on a dead row.
+        """
+        by_path = """
+            SELECT id, file_md5
+            FROM blueprints
+            WHERE deprecated = false
+            AND full_name = %s
+            ORDER BY created_at DESC
+            LIMIT 1
+        """
+        curs.execute(by_path, (full_name,))
+        found = curs.fetchone()
+        if found:
+            return found
+
+        by_listing = """
+            SELECT id, file_md5
+            FROM blueprints
+            WHERE deprecated = false
+            AND %s = ANY(consolidated_paths)
+            ORDER BY created_at DESC
+            LIMIT 1
+        """
+        curs.execute(by_listing, (full_name,))
+        return curs.fetchone()
+
     def _link_deprecated_to_successors(self, curs: cursor):
         """Link deprecated blueprints to successors by file path.
 
@@ -1290,17 +1330,7 @@ class IncrementalFixturesLoader:
             if not full_name:
                 continue  # Skip blueprints without full_name
 
-            # Find non-deprecated blueprint with same file path
-            query = """
-                SELECT id, file_md5
-                FROM blueprints
-                WHERE deprecated = false
-                AND full_name = %s
-                ORDER BY created_at DESC
-                LIMIT 1
-            """
-            curs.execute(query, (full_name,))
-            successor_bp = curs.fetchone()
+            successor_bp = self._find_successor(curs, full_name)
 
             if successor_bp:
                 # Link the deprecated blueprint to the successor
