@@ -243,9 +243,9 @@ resource "aws_lambda_function" "fixtures" {
   memory_size = 2048
   timeout     = 900
 
-  # One at a time. Two deploys landing together would interleave loads of the
-  # same tables; the second invoke is throttled instead, which fails that
-  # deploy loudly.
+  # One at a time. Two loads landing together would interleave writes to the
+  # same tables. The second is not rejected outright, because the invoke is
+  # asynchronous — it waits for this slot and expires if it cannot have it.
   reserved_concurrent_executions = 1
 
   image_config {
@@ -403,8 +403,8 @@ resource "aws_s3_bucket_policy" "site" {
 resource "aws_sqs_queue" "fixtures_result" {
   name = "${local.name}-fixtures-result"
 
-  # Long enough to outlive a load, short enough that a record nobody collected
-  # cannot be mistaken for a later load's.
+  # Long enough to outlive a load. What keeps one load's record from being
+  # read as another's is the nonce each invoke carries, not this.
   message_retention_seconds = 3600
 }
 
@@ -416,9 +416,12 @@ resource "aws_lambda_function_event_invoke_config" "fixtures" {
   # about a failure.
   maximum_retry_attempts = 0
 
-  # And it would otherwise keep a throttled event for six hours. A load that
-  # cannot start now must not start after the apply has promoted the image —
-  # expiring instead sends a failure to the queue, which fails the deploy.
+  # Throttles are not function errors: Lambda returns a throttled event to its
+  # own queue and retries for six hours, bounded only by this. Without the cap
+  # a collision could sit there and then run during someone's later re-run,
+  # against whatever is live by then. Expiring instead delivers an
+  # EventAgeExceeded record, which fails the deploy. 60 is the minimum AWS
+  # allows.
   maximum_event_age_in_seconds = 60
 
   destination_config {
@@ -440,8 +443,10 @@ data "aws_iam_policy_document" "fixtures_result" {
   }
 }
 
-# On the shared role, so the internet-facing API gains it too. It is one
-# queue and one action, and the API has no code that writes to it.
+# On the shared role, so the internet-facing API gains it too: IAM bounds what
+# the credentials permit, not what the shipped code calls. One action on one
+# queue, and the deploy correlates records by nonce rather than trusting the
+# queue — openforge_catalog-2029 is the dedicated role that would end this.
 resource "aws_iam_role_policy" "fixtures_result" {
   name   = "${local.name}-fixtures-result"
   role   = aws_iam_role.api.id

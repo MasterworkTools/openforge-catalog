@@ -21,19 +21,26 @@ set -euo pipefail
 
 FUNCTION="${FUNCTION:-openforge-catalog-fixtures}"
 QUEUE="${QUEUE:-${FUNCTION}-result}"
-# Above the function's own 900 s ceiling, so a load that genuinely runs out of
-# time reports its own timeout rather than being cut off here.
+# Above the function's own ceiling plus the event's maximum age, so a load
+# that genuinely runs out of time reports its own timeout rather than being
+# cut off here. Both callers allow 20 minutes, which is above this.
 DEADLINE_SECONDS="${DEADLINE_SECONDS:-1080}"
+
+# Echoed back in the record's requestPayload, which is the only way to tell
+# this load's result from another run's: an Event invoke returns a status and
+# no request id, so there is nothing else to correlate on.
+NONCE=$(python3 -c 'import uuid; print(uuid.uuid4().hex)')
 
 queue_url=$(aws sqs get-queue-url --queue-name "$QUEUE" --output text --query QueueUrl)
 
-# Drain by receiving rather than purging: purge-queue is rate limited to once a
-# minute and takes effect asynchronously, so it cannot be relied on to have
-# finished before the invoke. A stale record here would otherwise be read as
-# this load's result.
+# Long polling, because a short poll samples a subset of the queue's servers
+# and answers immediately — so it reports an empty queue that is not empty,
+# and a record left by an earlier run would survive the drain and then be read
+# as this load's result. Drained as well as correlated: a record nobody
+# collects costs a later run a full wait before it skips it.
 while true; do
   stale=$(aws sqs receive-message --queue-url "$queue_url" \
-    --max-number-of-messages 10 --output json)
+    --max-number-of-messages 10 --wait-time-seconds 1 --output json)
   handles=$(printf '%s' "$stale" | python3 -c \
     'import json,sys; d=sys.stdin.read().strip(); print("\n".join(m["ReceiptHandle"] for m in (json.loads(d).get("Messages") or [])) if d else "")')
   [ -z "$handles" ] && break
@@ -46,11 +53,12 @@ done
 if [ -n "${FIXTURE:-}" ]; then
   # Built with json.dumps rather than string interpolation so a name
   # containing a quote cannot malform the payload.
-  payload=$(FIXTURE="$FIXTURE" python3 -c \
-    'import json, os; print(json.dumps({"fixture": os.environ["FIXTURE"]}))')
+  payload=$(FIXTURE="$FIXTURE" NONCE="$NONCE" python3 -c \
+    'import json, os; print(json.dumps({"fixture": os.environ["FIXTURE"], "nonce": os.environ["NONCE"]}))')
   echo "loading one fixture: $FIXTURE"
 else
-  payload='{}'
+  payload=$(NONCE="$NONCE" python3 -c \
+    'import json, os; print(json.dumps({"nonce": os.environ["NONCE"]}))')
   echo "loading every fixture"
 fi
 
@@ -73,21 +81,41 @@ PY
 
 echo "waiting for the load to report"
 deadline=$(( $(date +%s) + DEADLINE_SECONDS ))
+found=""
 while [ "$(date +%s)" -lt "$deadline" ]; do
-  # Long polling, so this is a handful of calls over a load's lifetime rather
-  # than a busy loop.
+  # A failed receive is not a failed load. Tolerated rather than fatal,
+  # because aborting here would reintroduce the fragility this script exists
+  # to remove, with one chance per poll instead of one for the whole load.
   aws sqs receive-message --queue-url "$queue_url" --wait-time-seconds 20 \
-    --max-number-of-messages 1 --output json > result.json
-  if [ -s result.json ] && grep -q ReceiptHandle result.json; then
-    break
+    --max-number-of-messages 1 --output json > result.json || true
+
+  if ! grep -q ReceiptHandle result.json 2>/dev/null; then
+    echo "  still loading"
+    continue
   fi
-  echo "  still loading"
+
+  # Another run's record. Left alone rather than deleted, so its visibility
+  # timeout returns it to whoever is waiting for it.
+  if ! NONCE="$NONCE" python3 -c '
+import json, os, sys
+m = json.load(open("result.json"))["Messages"][0]
+record = json.loads(m["Body"])
+sent = (record.get("requestPayload") or {}).get("nonce")
+sys.exit(0 if sent == os.environ["NONCE"] else 1)
+'; then
+    echo "  a record from another run; leaving it"
+    continue
+  fi
+
+  found=yes
+  break
 done
 
-if ! grep -q ReceiptHandle result.json 2>/dev/null; then
+if [ -z "$found" ]; then
   echo "no result after ${DEADLINE_SECONDS}s; the load may still be running" >&2
   echo "check /aws/lambda/${FUNCTION} before re-running, because a second" >&2
-  echo "load would be rejected while the first holds the concurrency slot" >&2
+  echo "load would be queued behind the one concurrency slot and, if it" >&2
+  echo "cannot start in time, reports itself as expired" >&2
   exit 1
 fi
 
@@ -102,15 +130,15 @@ record = json.loads(json.load(open("result.json"))["Messages"][0]["Body"])
 print("--- result record")
 print(json.dumps({k: v for k, v in record.items() if k != "requestPayload"}, indent=2))
 
-# Lambda says why it delivered this record. Anything but Success means the
-# handler raised, or the event expired without ever running — which is what a
-# collision with a manual load looks like.
+# Lambda says why it delivered this record, and it is the only field that
+# distinguishes "the handler ran and returned" from "the event never ran". A
+# handler that raised arrives as RetriesExhausted, an expiry as
+# EventAgeExceeded, and neither carries a payload worth reading — so there is
+# no separate functionError check, because a function error cannot reach here
+# with a Success condition.
 condition = record.get("requestContext", {}).get("condition")
 if condition != "Success":
     sys.exit(f"fixture load failed ({condition}); see the record above")
-
-if record.get("responseContext", {}).get("functionError"):
-    sys.exit("fixture load failed; see the record above")
 
 payload = record.get("responsePayload") or {}
 if payload.get("ok") is not True:

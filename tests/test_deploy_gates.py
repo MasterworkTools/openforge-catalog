@@ -39,6 +39,39 @@ def test_every_step_is_gated_on_the_one_before_it(jobs):
         assert f"needs.{earlier}.result == 'success'" in job["if"]
 
 
+def test_the_first_apply_creates_everything_the_load_needs(jobs):
+    """`-target` walks dependencies, not dependents.
+
+    The second apply is gated on the load succeeding, so anything the load
+    step touches that the first apply does not create cannot be created at
+    all: the load fails, the apply is skipped, and re-running the failed jobs
+    re-fails because the apply that would fix it is behind the gate.
+    """
+    step = next(
+        s
+        for s in jobs["tofu-apply-migrate"]["steps"]
+        if "-target=" in str(s.get("run", ""))
+    )
+    targeted = {
+        line.split("-target=", 1)[1].strip().rstrip("\\").strip()
+        for line in step["run"].splitlines()
+        if "-target=" in line
+    }
+
+    # Everything the load's own invoke depends on existing.
+    assert "aws_lambda_function.fixtures" in targeted
+    assert "aws_lambda_function_event_invoke_config.fixtures" in targeted
+    # The queue and the send grant are dependencies of that config, so
+    # -target pulls them in; this fails if that stops being true.
+    tf = (
+        Path(__file__).resolve().parents[1] / "terraform/environments/staging/main.tf"
+    ).read_text()
+    marker = 'resource "aws_lambda_function_event_invoke_config" "fixtures"'
+    config = tf.split(marker, 1)[1].split("\nresource ", 1)[0]
+    assert "aws_sqs_queue.fixtures_result" in config
+    assert "aws_iam_role_policy.fixtures_result" in config
+
+
 def test_the_two_environments_run_the_same_chain():
     graphs = []
     for env in ("staging", "production"):

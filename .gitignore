@@ -30,9 +30,9 @@ scratch
 # Written into the working directory by .github/scripts/load-fixtures.sh.
 # Harmless on a runner, but these jobs check out now, so the files land in the
 # tree — and an invoke failure puts the Aurora endpoint and the DB secret ARN
-# in response.json, in a public repo.
+# in result.json, in a public repo.
 invoke.json
-response.json
+result.json
 captures/
 
 # debug
