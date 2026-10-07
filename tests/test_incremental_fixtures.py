@@ -2071,6 +2071,52 @@ class TestEditThenLoadAgainstTheDatabase:
         assert total == 1
         assert not (live[0]["consolidated_paths"] or [])
 
+    def test_the_listing_index_holds_every_row_that_claims_a_path(self, test_db):
+        """More than one live row can list one path, and all of them matter.
+
+        The successor lookup chooses among claimants by content, so the step
+        that collects them has to collect all of them. Two listers arise
+        whenever the prune skips one, which it does whenever the row carrying
+        the right bytes sorts first by path.
+        """
+        claimed = "tiles/beta/p.stl"
+
+        with test_db.connection() as conn:
+            with conn.cursor(row_factory=dict_row) as curs:
+                for name, md5 in (("aaa.stl", "M_good"), ("zzz.stl", "M_stale")):
+                    curs.execute(
+                        "INSERT INTO blueprints (blueprint_name, blueprint_type,"
+                        " full_name, file_md5, file_name, config,"
+                        " consolidated_paths)"
+                        " VALUES (%s,'model',%s,%s,%s,'{}',%s)",
+                        (name, f"tiles/beta/{name}", md5, name, [claimed]),
+                    )
+                # A listing-free row and a tombstone that lists it: neither
+                # belongs in the index.
+                curs.execute(
+                    "INSERT INTO blueprints (blueprint_name, blueprint_type,"
+                    " full_name, file_md5, file_name, config)"
+                    " VALUES ('plain.stl','model','tiles/beta/plain.stl','M_p',"
+                    " 'plain.stl','{}')"
+                )
+                curs.execute(
+                    "INSERT INTO blueprints (blueprint_name, blueprint_type,"
+                    " full_name, file_md5, file_name, config,"
+                    " consolidated_paths, deprecated)"
+                    " VALUES ('dead.stl','model','tiles/beta/dead.stl','M_d',"
+                    " 'dead.stl','{}',%s,true)",
+                    ([claimed],),
+                )
+            conn.commit()
+
+        with test_db.connection() as conn:
+            with conn.cursor(row_factory=dict_row) as curs:
+                loader = IncrementalFixturesLoader(conn, verbose=False)
+                index = loader._listing_index(curs)
+
+        assert set(index) == {claimed}
+        assert {r["file_md5"] for r in index[claimed]} == {"M_good", "M_stale"}
+
     def test_a_modification_keeps_the_duplicates_the_row_speaks_for(self, test_db):
         """The listing is this loader's bookkeeping, and no fixture declares it.
 
