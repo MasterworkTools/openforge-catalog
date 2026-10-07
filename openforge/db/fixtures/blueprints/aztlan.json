@@ -4449,6 +4449,7 @@
         "tags": [
             "build|s2w",
             "component|door",
+            "component|wall",
             "connection|openforge",
             "connection|side",
             "connection|side|dragonlock",
@@ -4577,6 +4578,7 @@
         "tags": [
             "build|s2w",
             "component|door",
+            "component|wall",
             "connection|openforge",
             "connection|side",
             "connection|side|filament",
@@ -4705,6 +4707,7 @@
         "tags": [
             "build|s2w",
             "component|door",
+            "component|wall",
             "connection|openforge",
             "connection|side",
             "connection|side|openlock",
@@ -6975,6 +6978,7 @@
         "metadata": false,
         "tags": [
             "build|s2w",
+            "component|wall",
             "component|window",
             "connection|openforge",
             "connection|side",
@@ -7103,6 +7107,7 @@
         "metadata": false,
         "tags": [
             "build|s2w",
+            "component|wall",
             "component|window",
             "connection|openforge",
             "connection|side",
@@ -7231,6 +7236,7 @@
         "metadata": false,
         "tags": [
             "build|s2w",
+            "component|wall",
             "component|window",
             "connection|openforge",
             "connection|side",
@@ -10806,6 +10812,7 @@
         "tags": [
             "build|separate wall",
             "component|door",
+            "component|wall",
             "connection|openforge",
             "shape|square",
             "shape|wall",
@@ -10958,6 +10965,7 @@
         "tags": [
             "build|separate wall",
             "component|door",
+            "component|wall",
             "connection|openforge",
             "shape|square",
             "shape|wall",
@@ -11110,6 +11118,7 @@
         "tags": [
             "build|separate wall",
             "component|door",
+            "component|wall",
             "connection|openforge",
             "shape|square",
             "shape|wall",
@@ -11262,6 +11271,7 @@
         "tags": [
             "build|separate wall",
             "component|door",
+            "component|wall",
             "connection|openforge",
             "shape|square",
             "shape|wall",
@@ -11414,6 +11424,7 @@
         "tags": [
             "build|separate wall",
             "component|door",
+            "component|wall",
             "connection|openforge",
             "shape|square",
             "shape|wall",
@@ -11566,6 +11577,7 @@
         "tags": [
             "build|separate wall",
             "component|door",
+            "component|wall",
             "connection|openforge",
             "connection|side",
             "connection|side|dragonlock",
@@ -11720,6 +11732,7 @@
         "tags": [
             "build|separate wall",
             "component|door",
+            "component|wall",
             "connection|openforge",
             "connection|side",
             "connection|side|openlock",
@@ -11848,6 +11861,7 @@
         "tags": [
             "build|separate wall",
             "component|door",
+            "component|wall",
             "connection|openlock",
             "connection|openlock|unsupported",
             "shape|square",
@@ -11975,6 +11989,7 @@
         "tags": [
             "build|separate wall",
             "component|door",
+            "component|wall",
             "connection|openlock",
             "connection|openlock|unsupported",
             "shape|square",
@@ -12102,6 +12117,7 @@
         "tags": [
             "build|separate wall",
             "component|door",
+            "component|wall",
             "connection|openlock",
             "connection|openlock|unsupported",
             "shape|square",
@@ -12229,6 +12245,7 @@
         "tags": [
             "build|separate wall",
             "component|door",
+            "component|wall",
             "connection|openlock",
             "connection|openlock|unsupported",
             "shape|square",
@@ -12356,6 +12373,7 @@
         "tags": [
             "build|separate wall",
             "component|door",
+            "component|wall",
             "connection|openlock",
             "connection|openlock|unsupported",
             "shape|square",
@@ -12483,6 +12501,7 @@
         "tags": [
             "build|separate wall",
             "component|door",
+            "component|wall",
             "connection|openlock",
             "connection|openlock|unsupported",
             "connection|side",
@@ -12612,6 +12631,7 @@
         "tags": [
             "build|separate wall",
             "component|door",
+            "component|wall",
             "connection|openlock",
             "shape|square",
             "shape|wall",
@@ -12738,6 +12758,7 @@
         "tags": [
             "build|separate wall",
             "component|door",
+            "component|wall",
             "connection|openlock",
             "shape|square",
             "shape|wall",
@@ -12864,6 +12885,7 @@
         "tags": [
             "build|separate wall",
             "component|door",
+            "component|wall",
             "connection|openlock",
             "shape|square",
             "shape|wall",
@@ -12990,6 +13012,7 @@
         "tags": [
             "build|separate wall",
             "component|door",
+            "component|wall",
             "connection|openlock",
             "shape|square",
             "shape|wall",
@@ -13116,6 +13139,7 @@
         "tags": [
             "build|separate wall",
             "component|door",
+            "component|wall",
             "connection|openlock",
             "shape|square",
             "shape|wall",
@@ -13242,6 +13266,7 @@
         "tags": [
             "build|separate wall",
             "component|door",
+            "component|wall",
             "connection|openlock",
             "connection|side",
             "connection|side|openlock",
@@ -35724,6 +35749,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "component|window",
             "connection|openforge",
             "shape|square",
@@ -35876,6 +35902,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "component|window",
             "connection|openforge",
             "shape|square",
@@ -36028,6 +36055,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "component|window",
             "connection|openforge",
             "shape|square",
@@ -36180,6 +36208,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "component|window",
             "connection|openforge",
             "shape|square",
@@ -36332,6 +36361,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "component|window",
             "connection|openforge",
             "shape|square",
@@ -36484,6 +36514,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "component|window",
             "connection|openforge",
             "connection|side",
@@ -36638,6 +36669,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "component|window",
             "connection|openforge",
             "connection|side",
@@ -36792,6 +36824,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "component|window",
             "connection|openforge",
             "connection|side",
@@ -36946,6 +36979,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "component|window",
             "connection|openforge",
             "connection|side",
@@ -37100,6 +37134,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "component|window",
             "connection|openforge",
             "connection|side",
@@ -37254,6 +37289,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "component|window",
             "connection|openforge",
             "connection|side",
@@ -37408,6 +37444,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "component|window",
             "connection|openforge",
             "connection|side",
@@ -37562,6 +37599,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "component|window",
             "connection|openforge",
             "connection|side",
@@ -37690,6 +37728,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "component|window",
             "connection|openlock",
             "connection|openlock|unsupported",
@@ -37817,6 +37856,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "component|window",
             "connection|openlock",
             "connection|openlock|unsupported",
@@ -37944,6 +37984,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "component|window",
             "connection|openlock",
             "connection|openlock|unsupported",
@@ -38071,6 +38112,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "component|window",
             "connection|openlock",
             "connection|openlock|unsupported",
@@ -38198,6 +38240,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "component|window",
             "connection|openlock",
             "connection|openlock|unsupported",
@@ -38325,6 +38368,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "component|window",
             "connection|openlock",
             "connection|openlock|unsupported",
@@ -38454,6 +38498,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "component|window",
             "connection|openlock",
             "connection|openlock|unsupported",
@@ -38583,6 +38628,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "component|window",
             "connection|openlock",
             "connection|openlock|unsupported",
@@ -38712,6 +38758,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "component|window",
             "connection|openlock",
             "connection|openlock|unsupported",
@@ -38841,6 +38888,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "component|window",
             "connection|openlock",
             "shape|square",
@@ -38967,6 +39015,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "component|window",
             "connection|openlock",
             "shape|square",
@@ -39093,6 +39142,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "component|window",
             "connection|openlock",
             "shape|square",
@@ -39219,6 +39269,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "component|window",
             "connection|openlock",
             "shape|square",
@@ -39345,6 +39396,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "component|window",
             "connection|openlock",
             "shape|square",
@@ -39471,6 +39523,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "component|window",
             "connection|openlock",
             "connection|side",
@@ -39599,6 +39652,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "component|window",
             "connection|openlock",
             "connection|side",
@@ -39727,6 +39781,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "component|window",
             "connection|openlock",
             "connection|side",
@@ -39855,6 +39910,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "component|window",
             "connection|openlock",
             "connection|side",
