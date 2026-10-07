@@ -167,6 +167,22 @@ def test_a_bad_guide_fails_the_gate_before_any_blueprint_is_written(tmp_path):
     assert "wall.yaml" in str(exc.value) or "wall.yaml" in repr(exc.value)
 
 
+def test_the_gate_reads_a_composition_blueprint(blueprint_fixture):
+    """A composition carries no `file_metadata` at all.
+
+    Half the shipped blueprint files are compositions and the schema asks
+    only for `type`, so the gate reads a shape no synthetic item here has.
+    """
+    f = blueprint_fixture(
+        [
+            _item("tiles/h/a.stl", "M_a"),
+            {"type": "blueprint", "name": "S2W: Wall", "tags": ["object|tile"]},
+        ]
+    )
+
+    assert handler._expected_paths([f]) == {"tiles/h/a.stl"}
+
+
 def test_the_gate_reads_a_yaml_blueprint_fixture(tmp_path):
     """The shipped `.yaml` files in `blueprints/` go through this arm.
 
