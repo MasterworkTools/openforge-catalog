@@ -1,12 +1,12 @@
 """The invoke-and-verify script both deploys and the manual re-run share.
 
-`aws lambda invoke` exits 0 for a function that raised, so the metadata has to
-be read or a failed load passes as a success. That check is the only thing
-standing between a broken load and a green release, and it used to be inlined
-in three workflows — three chances to get it right in only two.
+The load is invoked asynchronously and reports through an SQS queue, so the
+script's job is to drain whatever was there before, invoke, wait, and read the
+one record Lambda delivers. Each of those has a way of passing a failure off
+as a success, which is what these tests hold.
 
-The tests stub `aws` with a script that writes canned files, which is the
-whole of what the real one contributes here.
+`aws` is stubbed by a script that records every call and answers from a spec
+file, which is the whole of what the real one contributes here.
 """
 
 import json
@@ -18,31 +18,96 @@ import pytest
 
 SCRIPT = Path(__file__).resolve().parents[1] / ".github/scripts/load-fixtures.sh"
 
+STUB = """#!/usr/bin/env python3
+import json, os, sys
+
+args = sys.argv[1:]
+spec = json.load(open(os.environ["STUB_SPEC"]))
+with open("calls.jsonl", "a") as fh:
+    fh.write(json.dumps(args) + "\\n")
+
+
+def arg(name, default=None):
+    return args[args.index(name) + 1] if name in args else default
+
+
+if args[:2] == ["sqs", "get-queue-url"]:
+    print("https://sqs.example/q")
+elif args[:2] == ["sqs", "receive-message"]:
+    # A drain reads a batch without waiting; the poll waits. Telling them
+    # apart is what lets a spec seed stale records without also answering
+    # the poll.
+    draining = arg("--wait-time-seconds") is None
+    key = "stale" if draining else "result"
+    pending = spec.get(key) or []
+    if pending:
+        body = pending.pop(0)
+        spec[key] = pending
+        with open(os.environ["STUB_SPEC"], "w") as fh:
+            json.dump(spec, fh)
+        print(json.dumps({"Messages": [
+            {"ReceiptHandle": f"rh-{key}", "Body": json.dumps(body)}
+        ]}))
+    else:
+        print("")
+elif args[:2] == ["sqs", "delete-message"]:
+    pass
+elif args[:2] == ["lambda", "invoke"]:
+    print(json.dumps(spec.get("ack", {"StatusCode": 202})))
+else:
+    sys.exit(f"unexpected aws call: {args}")
+"""
+
+
+def _record(payload, condition="Success", function_error=None):
+    """A Lambda async destination record, in the shape Lambda delivers."""
+    response_context = {"statusCode": 200, "executedVersion": "$LATEST"}
+    if function_error:
+        response_context["functionError"] = function_error
+    return {
+        "version": "1.0",
+        "requestContext": {
+            "requestId": "req-1",
+            "condition": condition,
+            "approximateInvokeCount": 1,
+        },
+        "requestPayload": {},
+        "responseContext": response_context,
+        "responsePayload": payload,
+    }
+
+
+OK_NO_CHANGE = {"ok": True, "files": 45, "blueprints_changed": False, "applied": []}
+
 
 @pytest.fixture
 def run_with(tmp_path):
-    """Run the script against a canned invoke result."""
+    """Run the script against a canned queue and invoke result."""
 
-    def run(metadata, payload, fixture=None):
+    def run(result=None, stale=None, ack=None, fixture=None, deadline="2"):
+        spec = {"result": [result] if result else [], "stale": stale or []}
+        if ack is not None:
+            spec["ack"] = ack
+        spec_path = tmp_path / "spec.json"
+        spec_path.write_text(json.dumps(spec))
+
         fake_bin = tmp_path / "bin"
         fake_bin.mkdir()
-        (fake_bin / "aws").write_text(
-            "#!/usr/bin/env bash\n"
-            # Recorded, because the payload the script builds is the half of
-            # the contract a stub that ignores "$@" cannot check.
-            'printf "%s\\n" "$@" > args.txt\n'
-            f"cat > response.json <<'EOF'\n{json.dumps(payload)}\nEOF\n"
-            f"cat <<'EOF'\n{json.dumps(metadata)}\nEOF\n"
-        )
+        (fake_bin / "aws").write_text(STUB)
         (fake_bin / "aws").chmod(0o755)
 
-        env = dict(os.environ, PATH=f"{fake_bin}:{os.environ['PATH']}")
+        env = dict(
+            os.environ,
+            PATH=f"{fake_bin}:{os.environ['PATH']}",
+            STUB_SPEC=str(spec_path),
+            DEADLINE_SECONDS=deadline,
+        )
         if fixture is not None:
             env["FIXTURE"] = fixture
         else:
             env.pop("FIXTURE", None)
 
-        result = subprocess.run(
+        proc = subprocess.run(
             # Run the file, as all four call sites do, so the executable bit
             # and the shebang are part of what these tests hold.
             [str(SCRIPT)],
@@ -51,99 +116,150 @@ def run_with(tmp_path):
             capture_output=True,
             text=True,
         )
-        args_file = tmp_path / "args.txt"
-        result.aws_args = (
-            args_file.read_text().split("\n") if args_file.exists() else []
+        calls_file = tmp_path / "calls.jsonl"
+        proc.calls = (
+            [json.loads(line) for line in calls_file.read_text().splitlines()]
+            if calls_file.exists()
+            else []
         )
-        return result
+        return proc
 
     return run
 
 
-def _payload_of(result):
-    """The argument the script handed to `--payload`."""
-    args = result.aws_args
+def _invoke(proc):
+    """The arguments of the one `lambda invoke` call."""
+    invokes = [c for c in proc.calls if c[:2] == ["lambda", "invoke"]]
+    assert len(invokes) == 1, invokes
+    return invokes[0]
+
+
+def _payload_of(proc):
+    args = _invoke(proc)
     return args[args.index("--payload") + 1]
-
-
-OK_NO_CHANGE = {"ok": True, "files": 45, "blueprints_changed": False, "applied": []}
 
 
 def test_a_healthy_no_op_passes(run_with):
     """The common case: a release that carried no data change."""
-    result = run_with({"StatusCode": 200}, OK_NO_CHANGE)
+    proc = run_with(result=_record(OK_NO_CHANGE))
 
-    assert result.returncode == 0, result.stderr
-    assert "no blueprint changes" in result.stdout
-    # Without this the CLI imposes a 60 s read timeout on a load measured in
-    # minutes, and the deploy fails a load that actually completed.
-    assert "--cli-read-timeout" in result.aws_args
-    assert result.aws_args[result.aws_args.index("--cli-read-timeout") + 1] == "0"
+    assert proc.returncode == 0, proc.stderr
+    assert "no blueprint changes" in proc.stdout
+    # Asynchronous, which is the reason this script does not simply read the
+    # invoke's response: a load outlives the socket a synchronous call needs.
+    assert "--invocation-type" in _invoke(proc)
+    assert _invoke(proc)[_invoke(proc).index("--invocation-type") + 1] == "Event"
 
 
-def test_a_raise_fails_even_though_the_cli_exits_zero(run_with):
-    """The reason this check exists at all."""
-    result = run_with(
-        {"StatusCode": 200, "FunctionError": "Unhandled"},
-        {"errorMessage": "3 fixture paths are neither a live row nor listed by one"},
+def test_a_raise_is_read_off_the_record(run_with):
+    """The handler's failures arrive as a record, not as a call that errored."""
+    proc = run_with(
+        result=_record(
+            {"errorMessage": "3 fixture paths are neither a live row nor listed"},
+            function_error="Unhandled",
+        )
     )
 
-    assert result.returncode != 0
-    assert "fixture load failed" in result.stdout + result.stderr
+    assert proc.returncode != 0
+    assert "fixture load failed" in proc.stdout + proc.stderr
+
+
+def test_an_expired_event_fails_rather_than_looking_absent(run_with):
+    """A load that never ran because it collided with another one.
+
+    Lambda expires the event and delivers a record saying so. The payload here
+    is a healthy one on purpose: the condition is what decides, and a record
+    whose payload reads fine must still be refused when Lambda says it did not
+    succeed.
+    """
+    proc = run_with(result=_record(OK_NO_CHANGE, condition="RetriesExhausted"))
+
+    assert proc.returncode != 0
+    assert "RetriesExhausted" in proc.stdout + proc.stderr
 
 
 def test_a_payload_that_does_not_report_ok_fails(run_with):
-    """Belt to the FunctionError brace: a tidy failure is still a failure."""
-    result = run_with({"StatusCode": 200}, {"ok": False})
+    """Belt to the condition's brace: a tidy failure is still a failure."""
+    proc = run_with(result=_record({"ok": False}))
 
-    assert result.returncode != 0
-    assert "did not report ok" in result.stdout + result.stderr
+    assert proc.returncode != 0
+    assert "did not report ok" in proc.stdout + proc.stderr
+
+
+def test_an_invoke_that_was_not_accepted_fails_immediately(run_with):
+    """No record will ever arrive, so waiting for one would waste the job."""
+    proc = run_with(result=_record(OK_NO_CHANGE), ack={"StatusCode": 500})
+
+    assert proc.returncode != 0
+    assert "not accepted" in proc.stdout + proc.stderr
+    # It did not go on to wait out the deadline.
+    assert not [c for c in proc.calls if "--wait-time-seconds" in c]
+
+
+def test_no_result_before_the_deadline_fails_and_warns_about_re_running(run_with):
+    """The load may still hold the one concurrency slot there is."""
+    proc = run_with(result=None, deadline="1")
+
+    assert proc.returncode != 0
+    assert "no result after" in proc.stdout + proc.stderr
+    assert "still be running" in proc.stdout + proc.stderr
+
+
+def test_a_stale_record_is_discarded_before_the_invoke(run_with):
+    """Otherwise a previous load's record passes as this one's.
+
+    The stale record here would pass every later check, so a script that read
+    it would report success for a load it never waited for.
+    """
+    proc = run_with(result=_record(OK_NO_CHANGE), stale=[_record(OK_NO_CHANGE)])
+
+    assert proc.returncode == 0, proc.stderr
+    assert "discarding a stale result record" in proc.stdout
+    # Drained before invoking, not after.
+    kinds = [c[1] for c in proc.calls]
+    assert kinds.index("delete-message") < kinds.index("invoke")
 
 
 def test_changes_are_named_rather_than_counted(run_with):
     """An operator reading the log should see which fixtures moved."""
-    result = run_with(
-        {"StatusCode": 200},
-        {
-            "ok": True,
-            "files": 45,
-            "blueprints_changed": True,
-            "applied": [
-                {
-                    "file": "bases.json",
-                    "type": "blueprint",
-                    "added": 7,
-                    "modified": 0,
-                    "deprecated": 0,
-                    "consolidated": 2,
-                }
-            ],
-        },
+    proc = run_with(
+        result=_record(
+            {
+                "ok": True,
+                "files": 45,
+                "blueprints_changed": True,
+                "applied": [
+                    {
+                        "file": "bases.json",
+                        "type": "blueprint",
+                        "added": 7,
+                        "modified": 0,
+                        "deprecated": 0,
+                        "consolidated": 2,
+                    }
+                ],
+            }
+        )
     )
 
-    assert result.returncode == 0, result.stderr
-    assert "bases.json" in result.stdout
+    assert proc.returncode == 0, proc.stderr
+    assert "bases.json" in proc.stdout
 
 
 def test_a_named_fixture_is_passed_through_as_json(run_with):
-    """The manual re-run's single-file mode, and the quoting it needs.
+    """The manual re-run's single-file mode, and the quoting it needs."""
+    proc = run_with(result=_record(OK_NO_CHANGE), fixture='odd"name.json')
 
-    Asserted on what reached `aws`, not on the script's own echo: a quote in
-    the name has to survive into the payload, which is what `json.dumps`
-    is there for.
-    """
-    result = run_with({"StatusCode": 200}, OK_NO_CHANGE, fixture='odd"name.json')
-
-    assert result.returncode == 0, result.stderr
-    assert 'loading one fixture: odd"name.json' in result.stdout
-    assert json.loads(_payload_of(result)) == {"fixture": 'odd"name.json'}
-    assert "openforge-catalog-fixtures" in result.aws_args
+    assert proc.returncode == 0, proc.stderr
+    assert 'loading one fixture: odd"name.json' in proc.stdout
+    assert json.loads(_payload_of(proc)) == {"fixture": 'odd"name.json'}
+    assert "openforge-catalog-fixtures" in _invoke(proc)
 
 
 def test_an_empty_fixture_means_everything(run_with):
     """Which is what a deploy passes."""
-    result = run_with({"StatusCode": 200}, OK_NO_CHANGE, fixture="")
+    proc = run_with(result=_record(OK_NO_CHANGE), fixture="")
 
-    assert result.returncode == 0, result.stderr
-    assert "loading every fixture" in result.stdout
-    assert json.loads(_payload_of(result)) == {}
+    assert proc.returncode == 0, proc.stderr
+    assert "loading every fixture" in proc.stdout
+    assert json.loads(_payload_of(proc)) == {}

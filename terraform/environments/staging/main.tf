@@ -414,3 +414,59 @@ resource "aws_s3_bucket_policy" "site" {
   policy     = data.aws_iam_policy_document.site_public_read.json
   depends_on = [aws_s3_bucket_public_access_block.site]
 }
+
+# ─── Fixture load result channel ──────────────────────────────────────────────
+
+# The load runs for minutes, and a deploy job cannot hold one socket open for
+# it: a dropped connection fails the job while the load is still working, and
+# the retry it provokes is rejected by the reserved concurrency of 1. So the
+# load is invoked asynchronously and reports here instead. Lambda writes the
+# handler's own return value on success and the error on failure, so the
+# deploy still gates on exactly what the handler decided.
+resource "aws_sqs_queue" "fixtures_result" {
+  name = "${local.name}-fixtures-result"
+
+  # Long enough to outlive a load, short enough that a record nobody collected
+  # cannot be mistaken for a later load's.
+  message_retention_seconds = 3600
+}
+
+resource "aws_lambda_function_event_invoke_config" "fixtures" {
+  function_name = aws_lambda_function.fixtures.function_name
+
+  # Lambda retries a failed async invoke twice by default, which would start
+  # the load again behind the deploy's back. The deploy decides what to do
+  # about a failure.
+  maximum_retry_attempts = 0
+
+  # And it would otherwise keep a throttled event for six hours. A load that
+  # cannot start now must not start after the apply has promoted the image —
+  # expiring instead sends a failure to the queue, which fails the deploy.
+  maximum_event_age_in_seconds = 60
+
+  destination_config {
+    on_success {
+      destination = aws_sqs_queue.fixtures_result.arn
+    }
+    on_failure {
+      destination = aws_sqs_queue.fixtures_result.arn
+    }
+  }
+
+  depends_on = [aws_iam_role_policy.fixtures_result]
+}
+
+data "aws_iam_policy_document" "fixtures_result" {
+  statement {
+    actions   = ["sqs:SendMessage"]
+    resources = [aws_sqs_queue.fixtures_result.arn]
+  }
+}
+
+# On the shared role, so the internet-facing API gains it too. It is one
+# queue and one action, and the API has no code that writes to it.
+resource "aws_iam_role_policy" "fixtures_result" {
+  name   = "${local.name}-fixtures-result"
+  role   = aws_iam_role.api.id
+  policy = data.aws_iam_policy_document.fixtures_result.json
+}
