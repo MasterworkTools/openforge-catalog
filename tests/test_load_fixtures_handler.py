@@ -257,8 +257,8 @@ def test_a_path_left_unanswerable_fails_the_load(
 
     A load that drops a path returns an ordinary payload — the catalog simply
     has no way to answer for a file the fixtures still list. Simulated by
-    tombstoning the row after the load, which is the shape the real incident
-    took: a load left 76 paths with their only row deprecated.
+    tombstoning the row after the load, which is the shape it takes in
+    practice.
     """
     f = blueprint_fixture([_item("tiles/h/a.stl", "M_a")])
     monkeypatch.setattr(handler, "find_fixtures", lambda _: [f])
@@ -392,8 +392,8 @@ def test_a_duplicate_counts_as_answerable(test_db, blueprint_fixture, monkeypatc
     """A path a live row speaks for is answerable without a row of its own.
 
     Two fixture entries sharing an MD5 produce one row listing the other
-    path, which is the normal state for roughly 349 catalog paths — so a
-    gate that demanded a row each would fail every real load.
+    path, which is an ordinary state in the catalog — so a gate that demanded
+    a row each would fail every real load.
     """
     f = blueprint_fixture(
         [_item("tiles/h/a.stl", "M_same"), _item("tiles/h/b.stl", "M_same")]
