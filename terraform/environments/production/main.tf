@@ -202,6 +202,83 @@ resource "aws_lambda_function" "migrate" {
   ]
 }
 
+# The fixtures a release carries, loaded the same way its migrations are: a
+# function from the same image, invoked between the schema and the API image.
+# Data had been manual in both environments, and a release whose content is a
+# fixture shipped nothing until someone ran bin/fixtures on the bastion
+# (openforge_catalog-25m).
+#
+# No upload: Dockerfile.api.deploy copies the whole openforge package, so the
+# fixtures are already on this function's filesystem.
+
+resource "aws_cloudwatch_log_group" "fixtures" {
+  name              = "/aws/lambda/${local.name}-fixtures"
+  retention_in_days = 30
+}
+
+resource "aws_lambda_function" "fixtures" {
+  function_name = "${local.name}-fixtures"
+  role          = aws_iam_role.api.arn
+  package_type  = "Image"
+  image_uri     = "${local.infra.ecr_repository_urls["openforge_catalog/api"]}:${var.image_tag}"
+  architectures = ["x86_64"]
+
+  # Larger than the migration's 512 for two measured reasons, not a guess.
+  # _load_existing_blueprints peaks around 110 MiB at this catalog's size and
+  # the loader builds one per fixture file, and this handler then walks the
+  # fixtures again to check every path is answerable. The headroom is cheap:
+  # Lambda bills duration, and memory buys proportional CPU, which shortens a
+  # job measured in minutes.
+  #
+  # openforge_catalog-nhf is the 128 MB API Lambda being asked to do this
+  # work. A dedicated function is the fix for that, so it should not inherit
+  # the ceiling.
+  memory_size = 2048
+  timeout     = 900
+
+  # One at a time. Two deploys landing together would interleave loads of the
+  # same tables; the second invoke is throttled instead, which fails that
+  # deploy loudly.
+  reserved_concurrent_executions = 1
+
+  image_config {
+    command = ["openforge.app.load_fixtures.lambda_handler"]
+  }
+
+  vpc_config {
+    subnet_ids         = local.infra.subnet_ids
+    security_group_ids = [local.infra.application_security_group_id]
+  }
+
+  # Only what it needs to reach the database — no Cloudflare credentials and
+  # no API_TOKEN. PGCONNECT_TIMEOUT for the same reason the migration sets it:
+  # Aurora resumes from min_capacity 0 and a resume from zero takes ~20 s, so
+  # each of this function's connects gets a budget matched to the measured
+  # normal case rather than psycopg's 130 s default.
+  environment {
+    variables = {
+      PGHOST            = local.infra.db_cluster_endpoint
+      DB_SECRET_ARN     = local.infra.db_secret_arn
+      PGCONNECT_TIMEOUT = 120
+    }
+  }
+
+  logging_config {
+    log_format = "Text"
+    log_group  = aws_cloudwatch_log_group.fixtures.name
+  }
+
+  # Named for the same reason as the migration's: the deploy's first apply is
+  # -target'ed at these functions, and -target walks dependencies rather than
+  # dependents, so without this edge a change to the only grant of
+  # secretsmanager:GetSecretValue would be skipped by the apply that runs
+  # before this is invoked.
+  depends_on = [
+    aws_iam_role_policy_attachment.api_vpc,
+    aws_iam_role_policy.api_db_secret,
+  ]
+}
+
 # ─── ALB ──────────────────────────────────────────────────────────────────────
 # ponytail: HTTP only. CloudFront reaches the ALB over port 80 (origin_protocol_policy
 # http-only, as staging), so no listener cert is needed here. Add a 443 listener with

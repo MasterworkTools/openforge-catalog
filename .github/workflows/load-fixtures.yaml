@@ -1,0 +1,103 @@
+name: Load Fixtures
+
+# Fixtures between releases. The deploy loads them on every merge, which
+# covers a release; this covers a scanner pass landing new blueprints when no
+# code changed, which was the bastion by hand (openforge_catalog-25m).
+#
+# Same function the deploy invokes, so there is one code path and one set of
+# guarantees. The handler asserts every fixture path is answerable afterwards,
+# so a load that drops one fails here too.
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: Which environment to load into
+        type: choice
+        required: true
+        default: staging
+        options: [staging, production]
+      fixture:
+        description: >-
+          One fixture file to load, e.g. bases.json. Leave empty to load them
+          all, which is what a deploy does and what you want unless you know
+          the change is confined to one file. A texture's parts span fixtures:
+          loading only the file named after the texture is how production ends
+          up serving a guide whose wall bases are missing.
+        type: string
+        required: false
+
+concurrency:
+  # Serialised against itself per environment. The function's reserved
+  # concurrency of 1 would reject a second invoke anyway; this queues rather
+  # than failing someone's run.
+  group: load-fixtures-${{ inputs.environment }}
+  cancel-in-progress: false
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  load:
+    name: Load fixtures into ${{ inputs.environment }}
+    runs-on: ubuntu-latest
+    # Gates on whatever protection rules that environment carries, which is
+    # how a production load gets a review without this workflow enforcing one.
+    environment: ${{ inputs.environment }}
+    steps:
+      - name: Configure deploy role
+        uses: aws-actions/configure-aws-credentials@v5
+        with:
+          role-to-assume: >-
+            ${{ inputs.environment == 'production'
+            && secrets.AWS_ROLE_ARN_PRODUCTION
+            || secrets.AWS_ROLE_ARN_STAGING }}
+          role-session-name: ${{ inputs.environment }}-fixtures-manual
+          aws-region: us-east-1
+
+      # The function is created by the deploy's targeted apply, so a brand new
+      # environment must deploy once before this will find it. A wrong or
+      # absent name fails at invoke rather than silently doing nothing.
+      - name: Load fixtures
+        env:
+          FUNCTION: openforge-catalog-fixtures
+          FIXTURE: ${{ inputs.fixture }}
+        run: |
+          if [ -n "$FIXTURE" ]; then
+            payload=$(python3 -c 'import json,os; print(json.dumps({"fixture": os.environ["FIXTURE"]}))')
+            echo "loading one fixture: $FIXTURE"
+          else
+            payload='{}'
+            echo "loading every fixture"
+          fi
+
+          aws lambda invoke --function-name "$FUNCTION" \
+            --cli-read-timeout 0 \
+            --cli-binary-format raw-in-base64-out --payload "$payload" \
+            response.json > invoke.json
+
+          echo "--- invoke metadata"; cat invoke.json; echo
+          echo "--- payload";         cat response.json; echo
+
+          # `aws lambda invoke` exits 0 for a function that raised, so the
+          # metadata has to be read. A fixture name that matches nothing is a
+          # raise, not an empty load.
+          python3 - <<'PY'
+          import json, sys
+
+          meta = json.load(open("invoke.json"))
+          if meta.get("FunctionError"):
+              sys.exit(f"fixture load failed ({meta['FunctionError']}); see the payload above")
+
+          payload = json.load(open("response.json"))
+          if payload.get("ok") is not True:
+              sys.exit(f"fixture load did not report ok: {payload}")
+
+          if payload["blueprints_changed"]:
+              print(f"loaded {payload['files']} fixtures; blueprints changed in:")
+              for entry in payload["applied"]:
+                  print(f"  {entry['file']}: {entry}")
+          else:
+              print(f"loaded {payload['files']} fixtures; no blueprint changes")
+          PY

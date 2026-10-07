@@ -209,14 +209,16 @@ gh pr create --base main --title "release: deploy to production"
 
 ### Production infrastructure (`terraform/environments/production`)
 
-The API Lambda, its migration sibling, the ALB and the frontend bucket are
-OpenTofu here, layered on openforge-infra's state (network, Aurora, ECR, deploy
-role). Release PRs get a plan comment from the `Production Plan` workflow.
+The API Lambda, its migration and fixtures siblings, the ALB and the frontend
+bucket are OpenTofu here, layered on openforge-infra's state (network, Aurora,
+ECR, deploy role). Release PRs get a plan comment from the `Production Plan`
+workflow.
 
 A merge to `main` runs the whole chain, the same way staging does, each step
-gated on the last: **docker-build → tofu-apply (migration function only) →
-migrate → tofu-apply → frontend-deploy**. The last step syncs the frontend to a
-per-sha prefix and promotes it to `current/`, which is what CloudFront serves.
+gated on the last: **docker-build → tofu-apply (migration and fixtures
+functions only) → migrate → load-fixtures → tofu-apply → frontend-deploy**.
+The last step syncs the frontend to a per-sha prefix and promotes it to
+`current/`, which is what CloudFront serves.
 No bastion step, and nothing to do before the merge.
 
 The apply is split for the same reason as staging's: `aws_lambda_function` waits
@@ -228,15 +230,31 @@ second apply, the old API image serves against the new schema. Additive changes
 are free; a `DROP COLUMN` or `RENAME` breaks the running code. So does a
 constraint the old image's writes would violate.
 
-**Fixtures are still manual**, and still last, because a load POSTs to the
-*deployed* app and an older image misreads a format it doesn't know.
-`openforge_catalog-25m` automates it.
+**Fixtures load in the deploy**, between the migration and the apply that
+promotes the API image, so data arrives behind the schema it needs and ahead of
+the code that reads it. Every fixture, every deploy, in one invoke: a human
+choosing which files a release needs gets it wrong, because a texture's parts
+span fixtures and the dependency is invisible — `nova_trail.json` left
+production briefly broken when its wall bases turned out to live in
+`bases.json`. An incremental load of unchanged data is a no-op, so loading
+everything is cheap enough to be unconditional.
 
-Use `bin/fixtures` against the database, through a tunnel to the bastion — not
-`bin/upload_fixture`. That tool sends YAML as `application/x-yaml`, which the
-WSGI adapter leaves base64-encoded so the route 500s, and anything over roughly
-3.5 MB is rejected at the edge, which is most of a release
-(`openforge_catalog-ot6`).
+There is no upload step. `Dockerfile.api.deploy` copies the whole `openforge`
+package, so the fixtures are already on the function's filesystem — which is
+why `openforge_catalog-ot6`, the API's limits on fixture uploads, does not
+apply to this path.
+
+The load fails the release if any path the fixtures list is left neither a live
+row nor listed as a duplicate by one. That is the failure worth gating on,
+because it otherwise looks like a healthy no-op.
+
+**For fixtures between releases** — a scanner pass landing new blueprints with
+no code change — run the `Load Fixtures` workflow, which invokes the same
+function. It takes an optional single fixture; leave it empty unless you know
+the change is confined to one file, for the `bases.json` reason above. Never
+`bin/upload_fixture`: it sends YAML as `application/x-yaml`, which the WSGI
+adapter leaves base64-encoded so the route 500s, and it rejects anything over
+roughly 3.5 MB, which is most of a release.
 
 To tell whether a release carries a migration:
 `git diff --stat origin/main origin/test -- openforge/db/schema/` (two-dot; the
@@ -252,9 +270,9 @@ openforge-infra's `deploy_role_arns["openforge-catalog"]`.
 ### Staging infrastructure (`terraform/environments/staging`)
 
 A merge to `test` deploys staging the whole way, each step gated on the last:
-**docker-build → tofu-apply (migration function only) → migrate → tofu-apply →
-frontend-deploy**. The apply is split because a single apply makes the new API
-image live before the migration runs.
+**docker-build → tofu-apply (migration and fixtures functions only) → migrate
+→ load-fixtures → tofu-apply → frontend-deploy**. The apply is split because a
+single apply makes the new API image live before the migration runs.
 
 - **Schema changes must be expand/contract.** Between the migration and the
   second apply, the old API image serves against the new schema. Additive
@@ -264,7 +282,9 @@ image live before the migration runs.
   API, `openforge/app/migrate.py`), because Aurora's security group only admits
   the app and bastion. Reserved concurrency 1. The job fails on `FunctionError`
   or any payload without `ok: true`; the handler asserts the schema reached head.
-- **Nothing loads fixtures** — `bin/upload_fixture` by hand, as in production.
+- **Fixtures load in the deploy**, in the same place as production's, with the
+  same all-or-nothing invoke and the same answerable-path gate. The `Load
+  Fixtures` workflow covers loads between releases.
 - The old hand-built `Openforge-Catalog-API` function and role still exist until
   `openforge_catalog-rc2` deletes them.
 - The migration function sets `PGCONNECT_TIMEOUT = 120` (Aurora resumes from

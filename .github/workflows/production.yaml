@@ -144,7 +144,7 @@ jobs:
           tags: "908027381953.dkr.ecr.us-east-1.amazonaws.com/openforge_catalog/api:${{ github.sha }}"
 
   tofu-apply-migrate:
-    name: Production Tofu Apply — migration function
+    name: Production Tofu Apply — migration and fixtures functions
     needs: docker-build
     if: ${{ needs.docker-build.result == 'success' }}
     runs-on: ubuntu-latest
@@ -182,13 +182,14 @@ jobs:
       #
       # `-target` is normally a smell. Here it is the mechanism: it is scoped to one
       # resource and the full apply follows two jobs later, before anything ships.
-      - name: tofu apply — migration function only
+      - name: tofu apply — migration and fixtures functions only
         working-directory: terraform/environments/production
         run: |
           tofu init -input=false -lockfile=readonly
           tofu apply -input=false -auto-approve \
             -var image_tag=${{ github.sha }} \
-            -target=aws_lambda_function.migrate
+            -target=aws_lambda_function.migrate \
+            -target=aws_lambda_function.fixtures
 
   migrate:
     name: Production Migrate
@@ -252,10 +253,79 @@ jobs:
           print(f"schema {before} -> {after}; applied {applied or 'nothing'}")
           PY
 
-  tofu-apply:
-    name: Production Tofu Apply
+  load-fixtures:
+    name: Production Load Fixtures
     needs: migrate
     if: ${{ needs.migrate.result == 'success' }}
+    runs-on: ubuntu-latest
+    environment: production
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - name: Configure Production deploy role
+        uses: aws-actions/configure-aws-credentials@v5
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN_PRODUCTION }}
+          role-session-name: production-fixtures
+          aws-region: us-east-1
+
+      # Data after the schema, before the API image. A fixture that arrived
+      # after the new image went live would be read by code expecting it; one
+      # that arrived before the migration would hit a table that did not have
+      # its columns yet.
+      #
+      # Every fixture, every deploy, in one invoke. A human choosing which
+      # files a release needs gets it wrong, because a texture's parts span
+      # fixtures and the dependency is invisible — that is what left
+      # production briefly broken when nova_trail's wall bases turned out to
+      # live in bases.json. An incremental load of unchanged data is a no-op,
+      # so loading everything is cheap enough to be unconditional.
+      #
+      # --cli-read-timeout 0 for the same reason as the migration: botocore's
+      # 60 s default is well under the function's 900 s budget, so a long load
+      # would fail the deploy it had actually completed, and the retry would
+      # throttle against reserved concurrency 1.
+      - name: Load fixtures
+        env:
+          FUNCTION: openforge-catalog-fixtures
+        run: |
+          aws lambda invoke --function-name "$FUNCTION" \
+            --cli-read-timeout 0 \
+            --cli-binary-format raw-in-base64-out --payload '{}' \
+            response.json > invoke.json
+
+          echo "--- invoke metadata"; cat invoke.json; echo
+          echo "--- payload";         cat response.json; echo
+
+          # `aws lambda invoke` exits 0 for a function that raised, so the
+          # metadata has to be read. The handler asserts every fixture path is
+          # answerable, so a load that dropped one arrives here as a
+          # FunctionError rather than a clean payload.
+          python3 - <<'PY'
+          import json, sys
+
+          meta = json.load(open("invoke.json"))
+          if meta.get("FunctionError"):
+              sys.exit(f"fixture load failed ({meta['FunctionError']}); see the payload above")
+
+          payload = json.load(open("response.json"))
+          if payload.get("ok") is not True:
+              sys.exit(f"fixture load did not report ok: {payload}")
+
+          applied = payload["applied"]
+          if payload["blueprints_changed"]:
+              print(f"loaded {payload['files']} fixtures; blueprints changed in:")
+              for entry in applied:
+                  print(f"  {entry['file']}: {entry}")
+          else:
+              print(f"loaded {payload['files']} fixtures; no blueprint changes")
+          PY
+
+  tofu-apply:
+    name: Production Tofu Apply
+    needs: load-fixtures
+    if: ${{ needs.load-fixtures.result == 'success' }}
     runs-on: ubuntu-latest
     environment: production
     permissions:
