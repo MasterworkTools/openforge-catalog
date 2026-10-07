@@ -65,6 +65,14 @@ jobs:
     name: Load fixtures into staging
     if: ${{ inputs.environment == 'staging' }}
     runs-on: ubuntu-latest
+    # The invoke is synchronous and multi-minute, and --cli-read-timeout 0
+    # removes the only clock on it: nothing flows on that connection until the
+    # function returns. A dropped socket would otherwise sit here to the job
+    # default of six hours — six hours of the old API image serving the new
+    # schema, and six hours of this ref's concurrency group blocking every
+    # later push. Above the function's own 900 s ceiling, so a function that
+    # genuinely runs out of time still reports it rather than being killed.
+    timeout-minutes: 20
     environment: staging
     steps:
       # For the invoke script only. The fixtures themselves come off the
@@ -88,6 +96,14 @@ jobs:
     name: Load fixtures into production
     if: ${{ inputs.environment == 'production' }}
     runs-on: ubuntu-latest
+    # The invoke is synchronous and multi-minute, and --cli-read-timeout 0
+    # removes the only clock on it: nothing flows on that connection until the
+    # function returns. A dropped socket would otherwise sit here to the job
+    # default of six hours — six hours of the old API image serving the new
+    # schema, and six hours of this ref's concurrency group blocking every
+    # later push. Above the function's own 900 s ceiling, so a function that
+    # genuinely runs out of time still reports it rather than being killed.
+    timeout-minutes: 20
     # The `production` environment's protection rule is a deployment branch
     # policy naming `main`, so a dispatch from any other ref is rejected
     # before the job starts and before a role is assumed. It is not a required

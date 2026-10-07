@@ -258,6 +258,14 @@ jobs:
     needs: migrate
     if: ${{ needs.migrate.result == 'success' }}
     runs-on: ubuntu-latest
+    # The invoke is synchronous and multi-minute, and --cli-read-timeout 0
+    # removes the only clock on it: nothing flows on that connection until the
+    # function returns. A dropped socket would otherwise sit here to the job
+    # default of six hours — six hours of the old API image serving the new
+    # schema, and six hours of this ref's concurrency group blocking every
+    # later push. Above the function's own 900 s ceiling, so a function that
+    # genuinely runs out of time still reports it rather than being killed.
+    timeout-minutes: 20
     environment: production
     permissions:
       id-token: write
