@@ -13,6 +13,7 @@ invoke carried.
 
 import json
 import os
+import re
 import subprocess
 from pathlib import Path
 
@@ -304,6 +305,33 @@ def test_only_another_runs_record_fails_rather_than_being_consumed(run_with):
     assert "delete-message" not in [c[1] for c in proc.calls]
 
 
+def test_the_wait_long_polls_one_record_at_a_time(run_with):
+    """Both flags are load-bearing and neither was held.
+
+    Without the long poll the loop spins; with a batch above one, a record
+    belonging to another run is drawn alongside this one's and skipping it
+    discards both.
+    """
+    proc = run_with(result=_record(OK_NO_CHANGE))
+
+    waits = [c for c in proc.calls if c[1] == "receive-message"]
+    assert waits, proc.calls
+    for call in waits:
+        assert call[call.index("--wait-time-seconds") + 1] == "20"
+        assert call[call.index("--max-number-of-messages") + 1] == "1"
+
+
+def test_a_failed_receive_pauses_for_what_the_poll_would_have_cost():
+    """Asserted on the text, because the alternative is a 20 s test.
+
+    A failed receive never pays the long poll it skipped, so without this the
+    loop re-polls at process-startup speed until the deadline.
+    """
+    script = SCRIPT.read_text()
+    branch = script.split("receive failed; retrying", 1)[1].split("fi", 1)[0]
+    assert "sleep 20" in branch
+
+
 def test_a_failed_receive_is_retried_rather_than_failing_the_load(run_with):
     """One SQS error is not a failed load.
 
@@ -381,15 +409,27 @@ def test_an_empty_fixture_means_everything(run_with):
     assert json.loads(_payload_of(proc)) == {"nonce": proc.nonce}
 
 
+def _without_comments(text):
+    """HCL block comments removed.
+
+    `/* ... */` is valid HCL and `terraform fmt` accepts it, so a commented
+    attribute on its own line would be read as the real value — and the real
+    one would then be checked by nothing.
+    """
+    return re.sub(r"/\*.*?\*/", "", text, flags=re.S)
+
+
 def _blocks(env):
     """The fixture-load blocks of one environment's terraform, by name."""
     tf = (REPO / f"terraform/environments/{env}/main.tf").read_text()
+    tf = _without_comments(tf)
     out = {}
     for head in (
         'resource "aws_sqs_queue" "fixtures_result"',
         'resource "aws_lambda_function_event_invoke_config" "fixtures"',
         'resource "aws_lambda_function" "fixtures"',
         'resource "aws_iam_role_policy" "fixtures_result"',
+        'data "aws_iam_policy_document" "fixtures_result"',
     ):
         assert head in tf, (env, head)
         out[head] = tf.split(head, 1)[1].split("\n}\n", 1)[0]
@@ -426,6 +466,61 @@ OWN_IDENTIFIERS = {
         'bucket = "production-${local.name}-website"',
     ],
 }
+
+
+def test_a_commented_out_attribute_is_not_read_as_the_real_one():
+    """The suite cannot catch this, so the helper is tested directly.
+
+    With comments stripped, adding one changes no assertion — which is the
+    point, and also why no mutant on the terraform can prove it. The reviewer
+    that found it measured the unstripped reader returning the commented
+    value while the real attribute went unchecked.
+    """
+    real = (REPO / "terraform/environments/staging/main.tf").read_text()
+    commented = real.replace(
+        "  memory_size = 2048", "  /*\n  timeout = 400\n  */\n  memory_size = 2048", 1
+    )
+    assert commented != real, "anchor for this test has moved"
+
+    head = 'resource "aws_lambda_function" "fixtures"'
+    block = _without_comments(commented).split(head, 1)[1].split("\n}\n", 1)[0]
+
+    assert _number(block, "timeout") == 900
+    # And without the strip it reads the comment, which is the defect.
+    unstripped = commented.split(head, 1)[1].split("\n}\n", 1)[0]
+    assert _number(unstripped, "timeout") == 400
+
+
+@pytest.mark.parametrize("env", ["staging", "production"])
+def test_a_record_can_reach_the_queue_at_all(env):
+    """The delivery path, asserted rather than inferred from equality.
+
+    Two tests in this suite exercise a record that exists only because the
+    failure destination is configured. Cross-environment equality holds none
+    of this: an identical edit to both files passes it.
+    """
+    blocks = _blocks(env)
+    config = blocks['resource "aws_lambda_function_event_invoke_config" "fixtures"']
+    policy = blocks['resource "aws_iam_role_policy" "fixtures_result"']
+    document = blocks['data "aws_iam_policy_document" "fixtures_result"']
+    function = blocks['resource "aws_lambda_function" "fixtures"']
+
+    # Both outcomes have somewhere to go, or the deploy waits for a record
+    # Lambda was never asked to send.
+    for outcome in ("on_success", "on_failure"):
+        arm = config.split(outcome, 1)
+        assert len(arm) == 2, f"{env}: no {outcome} destination"
+        assert "aws_sqs_queue.fixtures_result.arn" in arm[1].split("}", 1)[0]
+
+    # And the function may actually send it, on the role it actually runs as.
+    assert '"sqs:SendMessage"' in document
+    assert "aws_sqs_queue.fixtures_result.arn" in document
+    assert "aws_iam_role.api.id" in policy
+    assert "data.aws_iam_policy_document.fixtures_result.json" in policy
+
+    # One load at a time: the loader's successor search is table-wide, so two
+    # concurrent loads race on it.
+    assert _number(function, "reserved_concurrent_executions") == 1
 
 
 @pytest.mark.parametrize("name", sorted(OWN_IDENTIFIERS))

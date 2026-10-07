@@ -77,6 +77,37 @@ def test_the_first_apply_creates_everything_the_load_needs(env):
     assert "aws_iam_role_policy.fixtures_result" in config
 
 
+def test_the_job_cap_is_above_the_wait_it_backs(env):
+    """The cap is a backstop, so it has to be above what it backs.
+
+    The script gives up first and says the load may still be running. Below
+    its deadline the job is killed mid-wait instead, with nothing said about
+    why — and the release strands on a load that may have succeeded.
+    """
+    _, jobs = env
+    script = (
+        Path(__file__).resolve().parents[1] / ".github/scripts/load-fixtures.sh"
+    ).read_text()
+    deadline = int(script.split("DEADLINE_SECONDS:-", 1)[1].split("}", 1)[0])
+
+    cap = jobs["load-fixtures"]["timeout-minutes"] * 60
+    assert cap > deadline, (cap, deadline)
+
+
+def test_the_manual_workflow_caps_itself_the_same_way():
+    """It runs the same script, so it needs the same headroom."""
+    with open(WORKFLOWS / "load-fixtures.yaml") as f:
+        jobs = yaml.safe_load(f)["jobs"]
+    script = (
+        Path(__file__).resolve().parents[1] / ".github/scripts/load-fixtures.sh"
+    ).read_text()
+    deadline = int(script.split("DEADLINE_SECONDS:-", 1)[1].split("}", 1)[0])
+
+    assert jobs, "no jobs in the manual workflow"
+    for name, job in jobs.items():
+        assert job["timeout-minutes"] * 60 > deadline, (name, job["timeout-minutes"])
+
+
 def test_the_two_environments_run_the_same_chain():
     graphs = []
     for env in ("staging", "production"):
