@@ -90,3 +90,6 @@ crash.*.log
 .dolt/
 *.db
 .beads-credential-key
+
+# Claude Code worktrees: separate checkouts, never part of this tree.
+.claude/worktrees/
