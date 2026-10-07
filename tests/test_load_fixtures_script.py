@@ -412,6 +412,34 @@ def test_the_two_environments_configure_the_load_identically():
     assert _blocks("staging") == _blocks("production")
 
 
+# What each environment must say about itself. Equality above constrains
+# divergence only, so one file overwritten with the other's contents passes
+# it — which is exactly how a mutation harness keyed on basenames replaced
+# staging's terraform with production's and no test noticed.
+OWN_IDENTIFIERS = {
+    "staging": [
+        'key    = "infra/staging/terraform.tfstate"',
+        'bucket = "staging-${local.name}-website"',
+    ],
+    "production": [
+        'key    = "infra/production/terraform.tfstate"',
+        'bucket = "production-${local.name}-website"',
+    ],
+}
+
+
+@pytest.mark.parametrize("name", sorted(OWN_IDENTIFIERS))
+def test_each_environment_is_still_itself(name):
+    """An environment that stops naming its own state is pointed at another's."""
+    tf = (REPO / f"terraform/environments/{name}/main.tf").read_text()
+    other = "production" if name == "staging" else "staging"
+
+    for wanted in OWN_IDENTIFIERS[name]:
+        assert wanted in tf, f"{name} no longer says: {wanted}"
+    for foreign in OWN_IDENTIFIERS[other]:
+        assert foreign not in tf, f"{name} carries {other}'s: {foreign}"
+
+
 def test_the_queue_and_the_deadline_match_the_infrastructure():
     """Couplings the script cannot see, and nothing else holds.
 

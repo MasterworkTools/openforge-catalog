@@ -1,12 +1,21 @@
-# openforge-catalog, production: the API Lambda behind an ALB, and the bucket the
-# static frontend is synced to. Networking, the database, ECR and the deploy
-# role's permissions boundary come from openforge-infra's state.
+# openforge-catalog, staging: the API Lambda behind an ALB, the migration Lambda the
+# deploy invokes, and the bucket the static frontend is synced to. Networking, the
+# database, ECR and the deploy role's permissions boundary come from openforge-infra.
+#
+# Deliberately kept diffable against ../production: the two files should differ only
+# in account, environment name, bucket prefix, and the migration function — which
+# lives here first because staging is where a new deploy step ought to be proven
+# (openforge_catalog-jag).
+#
+# Staging predates tofu, so most of this is adopting what is already running. See
+# imports.tf for what is adopted, and for the one adopted attribute that does not
+# match live (the ALB's subnet set, widened on purpose).
 
 data "terraform_remote_state" "infra" {
   backend = "s3"
   config = {
     bucket = "openforge-infra-tfstate-${var.aws_account_id}"
-    key    = "infra/production/terraform.tfstate"
+    key    = "infra/staging/terraform.tfstate"
     region = "us-east-1"
   }
 }
@@ -17,20 +26,31 @@ locals {
 }
 
 # ─── Runtime secrets ──────────────────────────────────────────────────────────
-# openforge-catalog/production/app is created once by scripts/create-app-secret.sh
+# openforge-catalog/staging/app is created once by scripts/create-app-secret.sh
 # (API_TOKEN, SECRET_KEY, CLOUDFLARE_*). The database password is NOT copied here:
 # the RDS-managed master secret can rotate, so the Lambda reads it at cold start
 # from DB_SECRET_ARN (openforge/db/__init__.py).
+#
+# The hand-built function this replaces carried a literal PGPASSWORD instead. That
+# is the thing to keep out of the replacement: the value happened to still be
+# current, but nothing would have told anyone the day it stopped being.
 
 data "aws_secretsmanager_secret_version" "app" {
-  secret_id = "${local.name}/production/app"
+  secret_id = "${local.name}/staging/app"
 }
 
 locals {
   app_secret = jsondecode(data.aws_secretsmanager_secret_version.app.secret_string)
 }
 
-# ─── API Lambda ───────────────────────────────────────────────────────────────
+# ─── Lambda IAM ───────────────────────────────────────────────────────────────
+# One role for all three functions: they need exactly the same two things — ENI
+# management for the VPC attachment and the database secret. A separate role
+# would differ only in name.
+#
+# Worth knowing rather than changing: this is also the internet-facing API's
+# identity, so a grant added here for a background function is a grant the API
+# gains too.
 
 data "aws_iam_policy_document" "api_assume" {
   statement {
@@ -67,6 +87,8 @@ resource "aws_iam_role_policy" "api_db_secret" {
   policy = data.aws_iam_policy_document.api_db_secret.json
 }
 
+# ─── API Lambda ───────────────────────────────────────────────────────────────
+
 resource "aws_cloudwatch_log_group" "api" {
   name              = "/aws/lambda/${local.name}-api"
   retention_in_days = 30
@@ -78,7 +100,7 @@ resource "aws_lambda_function" "api" {
   package_type  = "Image"
   image_uri     = "${local.infra.ecr_repository_urls["openforge_catalog/api"]}:${var.image_tag}"
   architectures = ["x86_64"]
-  memory_size   = 128 # as staging runs it (openforge_catalog-gvw: tune after Power Tuning)
+  memory_size   = 128 # openforge_catalog-gvw: tune after Power Tuning
   timeout       = 30
 
   # Each warm container holds a 4-connection pool; 50 containers is 200 sessions,
@@ -107,11 +129,6 @@ resource "aws_lambda_function" "api" {
     log_group  = aws_cloudwatch_log_group.api.name
   }
 
-  # api_db_secret named explicitly as well as the VPC attachment: a graph-only
-  # no-op for this full apply, but staging's deploy runs a `-target`ed first stage
-  # and -target walks dependencies rather than dependents, so without this edge the
-  # only grant of secretsmanager:GetSecretValue is skipped. Kept here so the two
-  # environments stay diffable and so copying staging's split job is safe.
   depends_on = [
     aws_iam_role_policy_attachment.api_vpc,
     aws_iam_role_policy.api_db_secret,
@@ -119,16 +136,16 @@ resource "aws_lambda_function" "api" {
 }
 
 # ─── Migration Lambda ─────────────────────────────────────────────────────────
-# The same image as the API with a different command, because nothing in CI can
-# reach Aurora: the cluster's security group admits the application and bastion
-# groups and a GitHub runner is in neither. The API Lambda is inside and already
-# reads the password from DB_SECRET_ARN, so further functions from the same image
-# is the cheapest way in — no extra build, nothing to keep in step.
+# The same image with a different command. Aurora only accepts connections from
+# inside the VPC — its security group admits the application and bastion groups
+# and nothing else — and a GitHub runner is outside it, which is why migrations
+# were manual. This function is inside, so it is the way in.
+#
+# (Not because the subnets are private: staging is the default VPC and all six
+# subnets are MapPublicIpOnLaunch. The security group is what closes the door.)
 #
 # The deploy invokes it between the apply that creates it and the apply that
 # promotes the API image, so the schema is ahead of the code that needs it.
-# Production previously had no migration step at all and applied schema changes
-# from the bastion by hand.
 
 resource "aws_cloudwatch_log_group" "migrate" {
   name              = "/aws/lambda/${local.name}-migrate"
@@ -142,28 +159,24 @@ resource "aws_lambda_function" "migrate" {
   image_uri     = "${local.infra.ecr_repository_urls["openforge_catalog/api"]}:${var.image_tag}"
   architectures = ["x86_64"]
 
-  # A migration is not a request: DDL on a table with data can take minutes and
-  # no client is waiting on a 30 s budget. The ceiling rather than a guess, since
-  # Lambda bills actual duration — and a statement that outran a smaller budget
-  # would restart from zero on every retry and wedge every release at this gate.
-  # Lock waits are bounded by the SET lock_timeout migrate.py issues per
-  # version, not by this budget.
+  # A migration is not a request: DDL on a table with data can take minutes, and
+  # there is no client waiting on a 30 s budget. The ceiling rather than a guess —
+  # Lambda bills actual duration, so a larger budget costs nothing, and a statement
+  # that outran a smaller one would restart from zero on every retry and wedge
+  # every merge to test at this gate. Bound lock waits with SET lock_timeout, not
+  # with the function timeout, which migrate.py does per version.
   memory_size = 512
   timeout     = 900
 
-  # Exactly one at a time, so two releases landing together cannot run DDL
-  # concurrently. The second invoke is throttled, which fails that release
-  # loudly rather than interleaving migrations.
+  # Exactly one at a time. Two deploys landing together would otherwise run DDL
+  # concurrently; the second invoke is throttled instead, which fails that
+  # deploy loudly rather than interleaving migrations.
   reserved_concurrent_executions = 1
 
   image_config {
     command = ["openforge.app.migrate.lambda_handler"]
   }
 
-  # The same subnets and the same single security group as the API, which is
-  # worth keeping identical: Lambda then reuses the API's Hyperplane ENIs rather
-  # than creating its own, so this costs no subnet addresses and no ENI stall on
-  # a first invoke.
   vpc_config {
     subnet_ids         = local.infra.subnet_ids
     security_group_ids = [local.infra.application_security_group_id]
@@ -171,16 +184,26 @@ resource "aws_lambda_function" "migrate" {
 
   # Only what it needs to reach the database. No Cloudflare credentials and no
   # API_TOKEN: this function answers to nobody and writes no files.
+  # libpq reads PGCONNECT_TIMEOUT itself, so this needs no code change.
   #
-  # No PGCONNECT_TIMEOUT, which is the one deliberate difference from staging.
-  # There it is set to 120 because that cluster runs at min_capacity 0 with a
-  # one-hour auto-pause and a resume takes about 20 s. This cluster has a
-  # min_capacity of 0.5 and no auto-pause configured, so there is no resume to
-  # wait for and psycopg's own 130 s default is the bound.
+  # Not because the alternative is waiting forever — that was this comment's first
+  # version and it was wrong. psycopg substitutes its own 130 s default when
+  # connect_timeout is absent or <= 0 (conninfo.py), so libpq's 0 never applies and
+  # the pre-existing bound was already 130 s, comfortably inside this function's 900.
+  #
+  # What 120 buys is a bound matched to the *measured* normal case: staging Aurora
+  # runs at min_capacity 0 with a one-hour auto-pause, and a resume from zero takes
+  # about 20 s. 120 is ~6x that, and each of the ~21 sequential connects gets its own
+  # budget inside 900 s. Only this function sets it: use_pool=False means
+  # psycopg.connect raises ConnectionTimeout straight out of the handler, whereas the
+  # API's pool catches it, logs a warning and reschedules — so there the value would
+  # never reach a caller, would burn aborted attempts on every idle cold start, and
+  # would diverge from production for nothing.
   environment {
     variables = {
-      PGHOST        = local.infra.db_cluster_endpoint
-      DB_SECRET_ARN = local.infra.db_secret_arn
+      PGHOST            = local.infra.db_cluster_endpoint
+      DB_SECRET_ARN     = local.infra.db_secret_arn
+      PGCONNECT_TIMEOUT = 120
     }
   }
 
@@ -189,13 +212,13 @@ resource "aws_lambda_function" "migrate" {
     log_group  = aws_cloudwatch_log_group.migrate.name
   }
 
-  # api_db_secret named explicitly, not just implied. The first apply is
-  # `-target`ed at this function, and -target walks dependencies rather than
+  # api_db_secret is named explicitly, not just implied. The deploy's first apply
+  # is `-target`ed at this function, and -target walks dependencies rather than
   # dependents: this policy is attached *to* aws_iam_role.api rather than
   # referenced *by* it, so without this edge a change to the only grant of
-  # secretsmanager:GetSecretValue would be skipped by the apply that runs before
-  # the invoke — and the invoke would fail to read its password for a reason
-  # nothing in the plan mentioned.
+  # secretsmanager:GetSecretValue would be skipped by the one apply that runs
+  # before the migration is invoked — and the invoke would fail to read its
+  # password for a reason nothing in the plan mentioned.
   depends_on = [
     aws_iam_role_policy_attachment.api_vpc,
     aws_iam_role_policy.api_db_secret,
@@ -288,8 +311,9 @@ resource "aws_lambda_function" "fixtures" {
 
 # ─── ALB ──────────────────────────────────────────────────────────────────────
 # ponytail: HTTP only. CloudFront reaches the ALB over port 80 (origin_protocol_policy
-# http-only, as staging), so no listener cert is needed here. Add a 443 listener with
-# the catalog's own ACM cert if the ALB is ever exposed without CloudFront in front.
+# http-only), so no listener cert is needed here. The ALB this adopts also carries a
+# port 443 listener that nothing uses; it is left out of tofu on purpose and removed
+# by hand (openforge_catalog-rc2) rather than modelled.
 
 resource "aws_lb" "api" {
   name               = local.name
@@ -349,12 +373,11 @@ resource "aws_lb_listener_rule" "api" {
 }
 
 # ─── Frontend bucket ──────────────────────────────────────────────────────────
-# The Production workflow uploads the static export to s3://<bucket>/<git sha>/ and then
-# promotes it to s3://<bucket>/current/, which is what openforge-infra-frontend's
-# CloudFront serves.
+# The Staging workflow uploads the static export to s3://<bucket>/<git sha>/ and then
+# promotes it to s3://<bucket>/current/, which is what CloudFront serves.
 
 resource "aws_s3_bucket" "site" {
-  bucket = "production-${local.name}-website"
+  bucket = "staging-${local.name}-website"
 }
 
 resource "aws_s3_bucket_website_configuration" "site" {
