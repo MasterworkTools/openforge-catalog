@@ -377,7 +377,6 @@ def print_comparison_results(changes):
     print(f"  Modified: {len(changes.modified)}")
     print(f"  Deprecation candidates: {len(changes.deprecated)}")
     print(f"  Consolidated: {len(changes.consolidated)}")
-    print(f"  Errors: {len(changes.errors)}")
 
     if changes.added:
         print("\nAdded blueprints:")
@@ -403,8 +402,3 @@ def print_comparison_results(changes):
         for item in changes.deprecated:
             name = item.get("full_name", "unknown")
             print(f"  - {name}")
-
-    if changes.errors:
-        print("\nErrors:")
-        for error in changes.errors:
-            print(f"  - {error}")

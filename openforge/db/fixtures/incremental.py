@@ -76,7 +76,6 @@ class ComparisonResult:
         # `applied_deprecations` reconcilable against `deprecated`. None until
         # it runs, for the same reason the count is.
         self.declined_deprecations = None
-        self.errors = []  # Processing errors
         self.version_changes = {}  # Map of deprecated blueprint ID to new fixture item
         # How many of `deprecated` the apply step tombstoned. None until it runs.
         self.applied_deprecations = None
@@ -111,8 +110,6 @@ class ComparisonResult:
             parts.append(self._deprecated_part())
         if self.consolidated:
             parts.append(f"{len(self.consolidated)} consolidated")
-        if self.errors:
-            parts.append(f"{len(self.errors)} errors")
 
         return ", ".join(parts) if parts else "no changes"
 
@@ -1213,6 +1210,10 @@ class IncrementalFixturesLoader:
         bp_data["search_text"] = blueprint_sql.blueprint_search_text(
             bp_data, self._get_words(modified_item)
         )
+        # The duplicates a row holds are this loader's bookkeeping, not
+        # something a fixture declares, and the munge defaults the key to
+        # empty. Sending it would drop every path this row speaks for.
+        bp_data.pop("consolidated_paths", None)
         blueprint_sql.update_blueprint(curs, blueprint_id, bp_data)
 
         # Update tags (delete old, insert new)

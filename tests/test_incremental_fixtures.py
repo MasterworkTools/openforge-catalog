@@ -1636,6 +1636,48 @@ class TestEditThenLoadAgainstTheDatabase:
         load()
         assert live_paths() == [(holder, "M_new"), (dupe, "M_old")]
 
+    def test_a_modification_keeps_the_duplicates_the_row_speaks_for(self, test_db):
+        """The listing is this loader's bookkeeping, and no fixture declares it.
+
+        The munge defaults the key to empty and the update writes any key it
+        is given, so sending it on a modification drops every path the row
+        holds — and those paths have no row of their own to fall back on.
+        """
+        holder, dupe = "tiles/a/p.stl", "tiles/a/q.stl"
+
+        with test_db.connection() as conn:
+            with conn.cursor(row_factory=dict_row) as curs:
+                curs.execute("TRUNCATE blueprints CASCADE")
+                # An mtime the fixture disagrees with, so the load reports a
+                # modification rather than no change.
+                curs.execute(
+                    "INSERT INTO blueprints (blueprint_name, blueprint_type,"
+                    " full_name, file_md5, file_name, config, consolidated_paths,"
+                    " file_modified_at)"
+                    " VALUES ('p.stl','model',%s,'M_same','p.stl','{}',%s,"
+                    " '2019-01-01 00:00:00')",
+                    (holder, [dupe]),
+                )
+            conn.commit()
+
+        with test_db.connection() as conn:
+            with conn.cursor(row_factory=dict_row) as curs:
+                loader = IncrementalFixturesLoader(conn, verbose=False)
+                changes = loader.compare_fixture_data(
+                    [self._item_at(holder, "M_same")], curs=curs
+                )
+                assert len(changes.modified) == 1
+                loader.apply_incremental_changes(changes, curs=curs)
+            conn.commit()
+
+        with test_db.connection() as conn:
+            with conn.cursor(row_factory=dict_row) as curs:
+                curs.execute(
+                    "SELECT consolidated_paths FROM blueprints WHERE full_name = %s",
+                    (holder,),
+                )
+                assert curs.fetchone()["consolidated_paths"] == [dupe]
+
     def test_the_stranding_warning_waits_for_the_additions(self, test_db):
         """The warning has to describe what happened, not what was attempted.
 

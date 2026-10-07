@@ -334,7 +334,6 @@ def _process_blueprint_fixture(
             else [_format_item(item) for item in changes.declined_deprecations]
         ),
         "consolidated": [_format_item(item) for item in changes.consolidated],
-        "errors": changes.errors,
     }
 
 

@@ -300,7 +300,6 @@ paths:
                   - modified
                   - deprecated
                   - consolidated
-                  - errors
                   - output
                 properties:
                   success:
@@ -343,11 +342,6 @@ paths:
                     description: Paths a blueprint stopped claiming, because their content no longer matches it
                     items:
                       type: object
-                  errors:
-                    type: array
-                    description: Any errors encountered during processing
-                    items:
-                      type: string
                   output:
                     type: array
                     description: Captured log messages from processing
@@ -362,7 +356,6 @@ paths:
                 modified: []
                 deprecated: []
                 consolidated: []
-                errors: []
                 output:
                   - "Processing fixture type: blueprint"
                   - "Loaded 7709 existing blueprints with tags and images"
@@ -1850,7 +1843,6 @@ components:
               - modified
               - deprecated
               - consolidated
-              - errors
               - output
             properties:
               success:
@@ -1872,10 +1864,6 @@ components:
                 type: array
                 items:
                   type: object
-              errors:
-                type: array
-                items:
-                  type: string
               output:
                 type: array
                 items:
