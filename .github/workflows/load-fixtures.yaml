@@ -4,11 +4,17 @@ name: Load Fixtures
 # function the deploy does, so there is one code path and one set of
 # guarantees.
 #
-# WHAT THIS IS FOR: recovering a deploy whose `load-fixtures` job failed. That
-# job commits per fixture file, so a failure part way leaves some files loaded;
-# the load is incremental, so re-running it converges.
+# WHAT THIS IS FOR: re-running a load against an environment that is already
+# current — after its deploy finished, not during one.
 #
-# WHAT IT CANNOT DO, despite being the obvious place to look: load fixtures
+# WHAT IT CANNOT DO, and this is the mistake it invites: recover a deploy whose
+# `load-fixtures` job failed. Re-run the failed jobs on that deploy run
+# instead. `tofu-apply` and `frontend-deploy` are gated on the load, so a
+# failed load leaves them skipped, and there is no apply and no frontend sync
+# here — this would converge the data, report green, and leave the release
+# stranded on the old image and the old frontend with nothing left to promote.
+#
+# WHAT IT ALSO CANNOT DO, despite being the obvious place to look: load fixtures
 # that are not in the deployed image. The function reads them off its own
 # filesystem (`find_fixtures_package`), and that filesystem is the last
 # deployed sha — there is no checkout here and adding one would not help,

@@ -124,8 +124,25 @@ def test_a_schema_invalid_blueprint_fails_the_gate(tmp_path):
         handler._expected_paths([f])
 
 
+def test_an_unquoted_yes_in_the_tag_descriptions_fails_the_gate(tmp_path):
+    """The file that really does sort last, and the fault it invites.
+
+    `tag_descriptions.yaml` is hand-authored YAML whose schema wants a string
+    for every key, so an unquoted `yes` parses as a boolean and the loader
+    rejects it. It sorts after the blueprints and the guides, so an ungated
+    one raises with everything else already committed.
+    """
+    descriptions = tmp_path / "tag_descriptions"
+    descriptions.mkdir()
+    f = descriptions / "tag_descriptions.yaml"
+    f.write_text("shape|wall: yes\nbuild|s2w: a wall built on a tile\n")
+
+    with pytest.raises(Exception):
+        handler._expected_paths([f])
+
+
 def test_a_bad_guide_fails_the_gate_before_any_blueprint_is_written(tmp_path):
-    """The gate has to cover the files that sort last.
+    """The gate has to cover the files that do not sort first.
 
     Fixtures load in path order, so every blueprint commits before the first
     guide is read. A gate that skipped non-blueprint files, or that only

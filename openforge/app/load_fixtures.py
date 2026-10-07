@@ -38,6 +38,8 @@ from openforge.db.fixtures import (
     check_guide_fixture,
     find_fixtures,
     is_blueprint_fixture,
+    is_tag_description_fixture,
+    is_tag_documentation_fixture,
     load_fixtures,
 )
 from openforge.db.fixtures.utils import write_output
@@ -75,8 +77,8 @@ def _expected_paths(files):
 
     Two jobs in one pass, deliberately. This is what makes a bad fixture crash
     before the first write rather than after some files have committed, so it
-    has to cover every fixture — a bad guide would otherwise be found only
-    once every blueprint file had landed, since they sort first. Re-reading
+    has to cover every fixture — a fault in a file that sorts late would
+    otherwise be found only once everything ahead of it had landed. Re-reading
     them separately would double the cost of the one expensive part.
 
     It checks what the loader checks, not merely that the file parses. A guide
@@ -106,11 +108,20 @@ def _expected_paths(files):
         # formats, so testing the extension would leave a YAML blueprint
         # fixture ungated. None carries paths today; the rule should not
         # depend on that.
+        #
+        # Every type `_get_fixture_type` returns is validated here, so none is
+        # gated by where its directory happens to sort. The tag descriptions
+        # sort after everything else, and their schema demands a string value
+        # for every key — which is where YAML's bare `yes` lands.
         fixture_type = _get_fixture_type(f)
         if fixture_type == "blueprint":
             is_blueprint_fixture(loaded)
         elif fixture_type == "guide":
             check_guide_fixture(loaded, f.name)
+        elif fixture_type == "tag_description":
+            is_tag_description_fixture(loaded)
+        elif fixture_type == "tag_documentation":
+            is_tag_documentation_fixture(loaded)
 
         if fixture_type != "blueprint":
             continue
