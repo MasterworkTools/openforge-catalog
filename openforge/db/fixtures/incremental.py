@@ -978,6 +978,12 @@ class IncrementalFixturesLoader:
             # another is simply elsewhere.
             return bp.get("deprecated") or bp["id"] in self._deprecation_candidates
 
+        # The subtree test below guards a live row's path. A tombstone has no
+        # path to guard, so inheriting it is safe wherever it lies — and the
+        # alternative is appending this live file's path to a dead row.
+        if bp.get("deprecated"):
+            return True
+
         if not self.fixture_subset_path:
             return False
         subtree = self.fixture_subset_path + "/"

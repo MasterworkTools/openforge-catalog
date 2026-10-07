@@ -1636,6 +1636,52 @@ class TestEditThenLoadAgainstTheDatabase:
         load()
         assert live_paths() == [(holder, "M_new"), (dupe, "M_old")]
 
+    def test_a_file_moved_across_fixtures_inherits_the_tombstone(self, test_db):
+        """A tombstone is inheritable wherever it lies.
+
+        The subtree test guards a live row's path, and a tombstone has no path
+        to guard. Declining the inheritance appends this live file's path to
+        the dead row instead, which leaves the file with no live row at all
+        and reports it as added.
+        """
+        old_path, new_path = "tiles/old/moved.stl", "tiles/new/moved.stl"
+
+        with test_db.connection() as conn:
+            with conn.cursor(row_factory=dict_row) as curs:
+                curs.execute("TRUNCATE blueprints CASCADE")
+                curs.execute(
+                    "INSERT INTO blueprints (blueprint_name, blueprint_type,"
+                    " full_name, file_md5, file_name, config, deprecated)"
+                    " VALUES ('moved.stl','model',%s,'M_moved','moved.stl','{}',true)",
+                    (old_path,),
+                )
+            conn.commit()
+
+        with test_db.connection() as conn:
+            with conn.cursor(row_factory=dict_row) as curs:
+                loader = IncrementalFixturesLoader(conn, verbose=False)
+                changes = loader.compare_fixture_data(
+                    [self._item_at(new_path, "M_moved")], curs=curs
+                )
+                loader.apply_incremental_changes(changes, curs=curs)
+            conn.commit()
+
+        with test_db.connection() as conn:
+            with conn.cursor(row_factory=dict_row) as curs:
+                curs.execute(
+                    "SELECT full_name, consolidated_paths FROM blueprints"
+                    " WHERE NOT deprecated"
+                )
+                live = curs.fetchall()
+                curs.execute("SELECT count(*) AS n FROM blueprints")
+                total = curs.fetchone()["n"]
+
+        # The file has a row of its own, and it is the one that already held
+        # these bytes rather than a second row beside it.
+        assert [r["full_name"] for r in live] == [new_path]
+        assert total == 1
+        assert not (live[0]["consolidated_paths"] or [])
+
     def test_a_modification_keeps_the_duplicates_the_row_speaks_for(self, test_db):
         """The listing is this loader's bookkeeping, and no fixture declares it.
 
