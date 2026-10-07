@@ -28,6 +28,9 @@ def run_with(tmp_path):
         fake_bin.mkdir()
         (fake_bin / "aws").write_text(
             "#!/usr/bin/env bash\n"
+            # Recorded, because the payload the script builds is the half of
+            # the contract a stub that ignores "$@" cannot check.
+            'printf "%s\\n" "$@" > args.txt\n'
             f"cat > response.json <<'EOF'\n{json.dumps(payload)}\nEOF\n"
             f"cat <<'EOF'\n{json.dumps(metadata)}\nEOF\n"
         )
@@ -39,15 +42,26 @@ def run_with(tmp_path):
         else:
             env.pop("FIXTURE", None)
 
-        return subprocess.run(
+        result = subprocess.run(
             ["bash", str(SCRIPT)],
             cwd=tmp_path,
             env=env,
             capture_output=True,
             text=True,
         )
+        args_file = tmp_path / "args.txt"
+        result.aws_args = (
+            args_file.read_text().split("\n") if args_file.exists() else []
+        )
+        return result
 
     return run
+
+
+def _payload_of(result):
+    """The argument the script handed to `--payload`."""
+    args = result.aws_args
+    return args[args.index("--payload") + 1]
 
 
 OK_NO_CHANGE = {"ok": True, "files": 45, "blueprints_changed": False, "applied": []}
@@ -106,11 +120,18 @@ def test_changes_are_named_rather_than_counted(run_with):
 
 
 def test_a_named_fixture_is_passed_through_as_json(run_with):
-    """The manual re-run's single-file mode, and the quoting it needs."""
+    """The manual re-run's single-file mode, and the quoting it needs.
+
+    Asserted on what reached `aws`, not on the script's own echo: a quote in
+    the name has to survive into the payload, which is what `json.dumps`
+    is there for.
+    """
     result = run_with({"StatusCode": 200}, OK_NO_CHANGE, fixture='odd"name.json')
 
     assert result.returncode == 0, result.stderr
     assert 'loading one fixture: odd"name.json' in result.stdout
+    assert json.loads(_payload_of(result)) == {"fixture": 'odd"name.json'}
+    assert "openforge-catalog-fixtures" in result.aws_args
 
 
 def test_an_empty_fixture_means_everything(run_with):
@@ -119,3 +140,4 @@ def test_an_empty_fixture_means_everything(run_with):
 
     assert result.returncode == 0, result.stderr
     assert "loading every fixture" in result.stdout
+    assert json.loads(_payload_of(result)) == {}

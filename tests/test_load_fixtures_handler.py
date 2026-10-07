@@ -6,12 +6,13 @@ So the tests here are mostly about what it refuses: a fixture name that
 matches nothing, a package with no fixtures in it, and a load that left a
 path the fixtures still list with no way to answer for it.
 
-Loading the real 45 fixtures takes minutes, so the tests that need a load
+Loading the real fixture tree takes minutes, so the tests that need a load
 point the handler at a small set of files it builds itself.
 """
 
 import json
 from pathlib import Path
+from unittest.mock import patch
 
 import pytest
 from psycopg.rows import dict_row
@@ -102,6 +103,67 @@ def test_expected_paths_skips_what_the_fixture_marks_deprecated(blueprint_fixtur
     )
 
     assert handler._expected_paths([f]) == {"tiles/h/live.stl"}
+
+
+def test_the_gate_reads_a_yaml_blueprint_fixture(tmp_path):
+    """The shipped `.yaml` files in `blueprints/` go through this arm.
+
+    They are composition blueprints and carry no paths, so a broken YAML arm
+    contributes nothing and looks identical to a working one — until the first
+    YAML blueprint fixture with paths, which would then sit outside the only
+    gate that catches a dropped path.
+    """
+    blueprints = tmp_path / "blueprints"
+    blueprints.mkdir()
+    f = blueprints / "s2w.yaml"
+    f.write_text(
+        "- type: model\n"
+        "  file_metadata:\n"
+        "    full_name: tiles/y/wall.stl\n"
+        "    md5: M_y\n"
+    )
+
+    assert handler._expected_paths([f]) == {"tiles/y/wall.stl"}
+
+
+def test_the_fixture_list_is_sorted(monkeypatch):
+    """`find_fixtures` walks `iterdir()`.
+
+    Unsorted, a load that fails part way commits a different set on each
+    image and the retry starts from a state nobody can predict.
+    """
+    monkeypatch.setattr(
+        handler,
+        "find_fixtures",
+        lambda _: [
+            Path("guides/wall.yaml"),
+            Path("blueprints/zz.json"),
+            Path("blueprints/aa.json"),
+        ],
+    )
+
+    assert [str(f) for f in handler._fixture_files(None)] == [
+        "blueprints/aa.json",
+        "blueprints/zz.json",
+        "guides/wall.yaml",
+    ]
+
+
+def test_the_gate_names_each_fixture_before_parsing_it(blueprint_fixture):
+    """The gate is the first code to touch a fixture, and it can raise.
+
+    Nothing it raises carries the filename — `json.load` reports a line and
+    column of a stream it will not name, and a structurally wrong file raises
+    from inside the loop, and there are dozens of candidates — the
+    difference between a named file and a search.
+    """
+    f = blueprint_fixture([_item("tiles/h/a.stl", "M_a")], name="named.json")
+
+    with patch("openforge.app.load_fixtures.write_output") as out:
+        handler._expected_paths([f])
+
+    said = "".join(c.args[0] for c in out.call_args_list)
+    assert "named.json" in said
 
 
 def test_a_load_reports_what_moved_and_not_the_files_it_read(

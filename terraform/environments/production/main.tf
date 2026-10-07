@@ -223,21 +223,19 @@ resource "aws_lambda_function" "fixtures" {
   image_uri     = "${local.infra.ecr_repository_urls["openforge_catalog/api"]}:${var.image_tag}"
   architectures = ["x86_64"]
 
-  # Not for the memory: a measured full load of the real catalog peaks at
-  # ~231 MiB, so 512 would hold it. This is for the CPU, because the load is
-  # 81% CPU-bound and at 512 MB (~0.29 vCPU) its ~183 s of CPU becomes ~630 s
-  # against the 900 s ceiling.
+  # Not for the memory, which a measured load leaves far short of even 512.
+  # It is for the CPU: the load is mostly CPU-bound, and a fraction of a vCPU
+  # would push its CPU time alone past the timeout.
   #
-  # Note where that argument stops: Lambda scales CPU with memory only up to
+  # Note where that argument stops. Lambda scales CPU with memory only up to
   # 1769 MB, which is one full vCPU, and this handler is single-threaded
-  # Python. So 2048 buys nothing over 1769 — it is 16% of fractions of a cent
-  # per deploy, kept for the round number, and not a reason to go higher.
+  # Python — so 2048 buys nothing over 1769, and is not a reason to go higher.
   #
-  # TIME is the one to watch. A measured no-op load of all 45 fixtures is
-  # ~175 s against this 900 s ceiling, and it grows with files x catalog size:
-  # _load_existing_blueprints is uncached and the loader builds one per
-  # blueprint fixture file. There is headroom now; a catalog several times
-  # this size would not have it.
+  # TIME is the resource to watch, not memory. A no-op load already spends a
+  # meaningful fraction of this ceiling, and the cost grows with files times
+  # catalog size because _load_existing_blueprints is uncached and the loader
+  # builds one per blueprint fixture file. 900 is Lambda's maximum, so the
+  # next lever is a cheaper load rather than a bigger function.
   #
   # openforge_catalog-nhf is the 128 MB API Lambda being asked to do this
   # work. A dedicated function is the fix for that, so it should not inherit

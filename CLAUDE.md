@@ -233,21 +233,29 @@ constraint the old image's writes would violate.
 **Data formats need the same discipline, but the mirror image of it.** The
 fixtures land before that apply, so the old image — and, until
 `frontend-deploy` finishes and browsers pick up the new bundle, the old
-frontend — serves the new rows. New blueprints are additive and safe.
+frontend — serves the new rows. New rows and new tags are additive and safe.
 
-A *changed guide document shape* is not, and not for the reason you would
-guess: nothing validates a stored guide on read. `validate_guide_document` has
-one caller, the fixtures loader, which runs on the **new** image; `resolve()`
-calls only `reject_bad_recommendations`. So the old engine does not reject an
-unknown construct, it **ignores** it — answering 200 with the wrong parts, no
-500, nothing in CloudWatch. That is the `nova_trail` symptom in a narrower
-window.
+A **changed shape in a stored document** is not, and not for the reason you
+would guess. There are two such documents — a guide, and a blueprint's
+`config` — and both have the same three properties: the schema that forbids
+unknown constructs is checked only on *write*, by the loader, which runs on the
+**new** image; nothing validates either on read; and the reader therefore does
+not reject an unknown construct, it **ignores** it. The answer is 200 with the
+wrong parts, no 500, nothing in CloudWatch. That is the `nova_trail` symptom.
 
 Which inverts the rule. For the schema, the data leads and the code follows.
-For guide documents the **code must lead and the data follow**: ship the engine
-that understands a construct in one release, and the documents that use it in
-the next. Shipping both together is the broken case, because during the window
-the old engine serves documents written for the new one.
+For a stored document the **code must lead and the data follow**: ship the
+reader that understands a construct in one release, and the documents using it
+in the next. Shipping both together is the broken case, because during the
+window the old reader serves documents written for the new one.
+
+**`config` is the wider of the two**, and worth its own sentence. A guide has a
+Python reader, so its window closes at the second apply. `config` has no Python
+reader at all — the only thing that interprets it is the frontend bundle — so
+its window runs past `frontend-deploy`, past CloudFront's cache on `current/`,
+and on until every open tab has picked up the new bundle. There is no step
+after which it is over. So "new blueprints are additive and safe" holds for
+rows and tags, and **not** for a new `config` construct.
 
 **Fixtures load in the deploy**, between the migration and the apply that
 promotes the API image, so data arrives behind the schema it needs and ahead of
@@ -267,9 +275,12 @@ The load fails the release if any path the fixtures list is left neither a live
 row nor listed as a duplicate by one. That is the failure worth gating on,
 because it otherwise looks like a healthy no-op.
 
-**If the load fails**, re-run the `Load Fixtures` workflow, which invokes the
-same function. The load commits per fixture file, so a failure part way leaves
-some loaded; it is incremental, so re-running converges. A production run must
+**If the load fails**, what to do depends on why. The load commits per fixture
+file, so a failure part way leaves some loaded, and because it is incremental a
+re-run of the `Load Fixtures` workflow converges — *if the cause was
+transient*. A malformed fixture and a failed answerable-path gate both re-fail
+identically, because the next run reads the same files: those need a fix and a
+new deploy, not a re-run. A production run must
 be dispatched from `main` — that environment's only protection rule is a branch
 policy, so a dispatch from anywhere else is rejected before a role is assumed,
 and from `main` it is *not* reviewed.
@@ -330,7 +341,8 @@ single apply makes the new API image live before the migration runs.
   or any payload without `ok: true`; the handler asserts the schema reached head.
 - **Fixtures load in the deploy**, in the same place as production's, with the
   same all-or-nothing invoke and the same answerable-path gate. The `Load
-  Fixtures` workflow covers loads between releases.
+  Fixtures` workflow re-runs a load that failed; it cannot load data that is
+  not in the deployed image. See the production section.
 - The old hand-built `Openforge-Catalog-API` function and role still exist until
   `openforge_catalog-rc2` deletes them.
 - The migration function sets `PGCONNECT_TIMEOUT = 120` (Aurora resumes from

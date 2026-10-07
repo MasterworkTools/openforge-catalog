@@ -34,6 +34,7 @@ from yaml import safe_load
 
 from openforge.db import PgDB
 from openforge.db.fixtures import find_fixtures, load_fixtures
+from openforge.db.fixtures.utils import write_output
 
 
 def _fixture_files(fixture):
@@ -64,32 +65,45 @@ def _fixture_files(fixture):
 
 
 def _expected_paths(files):
-    """The paths the blueprint fixtures say should be answerable.
+    """Parse every fixture, and return the paths that must stay answerable.
 
-    An entry the fixture marks deprecated is excluded: asking for no live row
-    is what that flag means, and exactly one path in the catalog is in that
-    position.
+    Two jobs in one pass, deliberately. Parsing is what makes this crash
+    before the first write rather than after some files have committed, so it
+    has to cover every fixture — a malformed guide used to be found only once
+    every blueprint file had landed. Re-parsing them separately would double
+    the cost of the one expensive part.
+
+    The paths come from the blueprint fixtures only, since they are the ones
+    that own rows. An entry a fixture marks deprecated is excluded: asking for
+    no live row is what that flag means.
 
     Only the path strings are kept. The fixtures are tens of megabytes and
-    this runs beside a load that has its own appetite, so each file is parsed
-    and dropped rather than held.
+    this runs beside a load with its own appetite, so each file is parsed and
+    dropped rather than held.
     """
     paths = set()
     for f in files:
-        # The loader decides a fixture's type by its directory and reads both
-        # formats, so testing the extension here would leave a YAML blueprint
-        # fixture outside the gate. None carries paths today; the rule should
-        # not depend on that.
-        if f.parent.name != "blueprints":
-            continue
+        # Named before it is parsed, for the same reason the loader names its
+        # files: this is the first code to touch a fixture, and nothing it
+        # raises carries the filename. `json.load` reports a line and column
+        # of a stream it will not name, and a structurally wrong file raises
+        # from inside the loop below.
+        write_output(f"{f.name}: checking\n")
         with open(f) as fh:
             loaded = json.load(fh) if f.suffix == ".json" else safe_load(fh)
-            for item in loaded:
-                if item.get("deprecated"):
-                    continue
-                metadata = item.get("file_metadata") or {}
-                if metadata.get("full_name"):
-                    paths.add(metadata["full_name"])
+
+        # The loader decides a fixture's type by its directory and reads both
+        # formats, so testing the extension would leave a YAML blueprint
+        # fixture ungated. None carries paths today; the rule should not
+        # depend on that.
+        if f.parent.name != "blueprints":
+            continue
+        for item in loaded:
+            if item.get("deprecated"):
+                continue
+            metadata = item.get("file_metadata") or {}
+            if metadata.get("full_name"):
+                paths.add(metadata["full_name"])
     return paths
 
 
