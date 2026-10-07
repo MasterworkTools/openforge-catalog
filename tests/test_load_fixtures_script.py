@@ -1,14 +1,14 @@
 """The invoke-and-verify script both deploys and the manual re-run share.
 
 The load is invoked asynchronously and reports through an SQS queue, so the
-script's job is to drain whatever was there before, invoke, wait, and read the
-one record that belongs to *its* invoke. Each of those has a way of passing a
-failure off as a success, which is what these tests hold.
+script's job is to invoke, wait, and read the one record that belongs to *its*
+invoke. Each of those has a way of passing a failure off as a success, which
+is what these tests hold.
 
 `aws` is stubbed by a script that records every call and answers from a spec
-file. The stub models the two SQS behaviours that matter: a short poll may
-answer empty although the queue is not, and a record is identified by the
-nonce the invoke carried.
+file. The stub models the two behaviours that matter: a receive can fail
+without the load having failed, and a record is identified by the nonce the
+invoke carried.
 """
 
 import json
