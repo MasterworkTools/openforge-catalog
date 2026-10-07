@@ -665,14 +665,66 @@ def test_collapsed_wall_keeps_component_wall():
     assert ("component", "collapsed", "low") in tags
 
 
-def test_collapsed_is_the_only_exception_to_wall_alone():
-    """A real second component still takes component|wall away."""
+def test_a_second_part_still_takes_component_wall_away():
+    """Only a wall's own traits are exempt; a drain is a second part."""
     tags = _wall_on_tile_tags(
-        "rough_stone+ruined#wall,window,collapsed+low.2x.openforge.stl"
+        "rough_stone+ruined#wall,drain,collapsed+low.2x.openforge.stl"
     )
 
     assert ("component", "wall") not in tags
-    assert ("component", "window") in tags
+    assert ("component", "drain") in tags
+
+
+@pytest.mark.parametrize(
+    "form, trait",
+    [
+        ("wall,window", ("component", "window")),
+        ("wall+window", ("component", "wall", "window")),
+        ("wall,door+sliding+slot", ("component", "door", "slot")),
+        ("wall+door", ("component", "wall", "door")),
+        ("wall,swappable", ("component", "swappable")),
+    ],
+)
+def test_an_opening_does_not_stop_a_wall_being_a_wall(form, trait):
+    tags = _wall_on_tile_tags(f"nova_trail#{form}.A.openforge.stl")
+
+    assert ("component", "wall") in tags
+    assert trait in tags
+
+
+@pytest.mark.parametrize("form", ["wall,console", "wall+console"])
+def test_a_wall_feature_is_a_decoration(form):
+    """Detailing on a plain wall: an option, never the default."""
+    tags = _wall_on_tile_tags(f"nova_trail#{form}.A.openforge.stl")
+
+    assert ("decoration", "console") in tags
+    assert ("component", "wall") in tags
+    assert not any("console" in t for t in tags if t[0] == "component")
+
+
+# Written out, not WALL_DECORATIONS: dropping one from the code must not
+# drop its case from the test.
+@pytest.mark.parametrize(
+    "feature",
+    [
+        "bypass",
+        "conference_room",
+        "console",
+        "dedication",
+        "engineering",
+        "environmental_controls",
+        "fancy",
+        "monitor",
+        "pipe_access",
+        "pipe_access2",
+        "replicator",
+        "tube",
+    ],
+)
+def test_every_wall_feature_is_a_decoration(feature):
+    tags = _wall_on_tile_tags(f"nova_trail#wall,{feature}.A.openforge.stl")
+
+    assert ("decoration", feature) in tags
 
 
 @pytest.mark.parametrize("shape", ["curved", "diagonal"])
