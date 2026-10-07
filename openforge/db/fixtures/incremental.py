@@ -965,22 +965,22 @@ class IncrementalFixturesLoader:
                 kept.append(path)
         return kept, dropped
 
-    def _content_survives_at(self, full_name: str, md5: Optional[str]) -> bool:
-        """Whether this load leaves that content live under that path.
+    def _outlives_this_load(self, bp: Dict) -> bool:
+        """Whether this load leaves that row live under the path it has.
 
-        A path the fixture still lists keeps that content only if the content
-        matches: different bytes at the same path replace the row rather than
-        update it. A path the fixture has dropped keeps it only if this load's
-        sweep cannot reach the path at all.
+        A path the fixture still lists survives only if the content matches:
+        different bytes at the same path replace the row rather than update
+        it. A path the fixture has dropped survives only if this load's sweep
+        cannot reach it.
+
+        This asks about a row. A listed duplicate has no row, so the sweep
+        half does not apply to one and `_split_listing` must not use this.
         """
+        full_name = bp["full_name"]
         listed_md5 = self.current_fixture_md5s.get(full_name)
         if listed_md5 is not None:
-            return listed_md5 == md5
+            return listed_md5 == bp.get("file_md5")
         return not self._in_deprecation_sweep(full_name)
-
-    def _outlives_this_load(self, bp: Dict) -> bool:
-        """Whether this load leaves that row live under the path it has."""
-        return self._content_survives_at(bp["full_name"], bp.get("file_md5"))
 
     def _is_rename(self, bp: Dict, new_full_name: str) -> bool:
         """Whether this path should take over an existing row, not just join it.
