@@ -111,7 +111,7 @@ def _expected_paths(files):
         #
         # Every type `_get_fixture_type` returns is validated here, so none is
         # gated by where its directory happens to sort. The tag descriptions
-        # sort after everything else, and their schema demands a string value
+        # are the last file of a load, and their schema demands a string value
         # for every key — which is where YAML's bare `yes` lands.
         fixture_type = _get_fixture_type(f)
         if fixture_type == "blueprint":

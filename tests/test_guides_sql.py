@@ -212,7 +212,11 @@ def test_the_fixtures_command_loads_a_guide_file(test_db, tmp_path):
     path = write_guide_fixture(tmp_path, a_guide())
 
     with test_db.connection() as conn:
-        load_fixtures(conn, "", [path])
+        # The deploy reads `type` off every result, so a guide result without
+        # one fails the release after the load has committed.
+        assert load_fixtures(conn, "", [path]) == [
+            {"file": "wall.yaml", "type": "guide", "guide": "wall"}
+        ]
         with conn.cursor(row_factory=dict_row) as curs:
             assert (
                 guide_sql.get_guide_by_key(curs, "wall")["document"]["title"]

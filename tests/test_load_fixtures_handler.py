@@ -364,6 +364,30 @@ def test_any_blueprint_figure_counts_as_changed(field):
     assert [r["file"] for r in moved] == ["x.json"]
 
 
+def test_the_gate_runs_before_the_first_write(test_db, blueprint_fixture, monkeypatch):
+    """Through the handler, which is the only place the ordering lives.
+
+    The gate's own tests call `_expected_paths` directly, so they hold what it
+    checks and not when it is called. With the call after the load, a bad
+    guide leaves every blueprint committed and the retry reads the same file.
+    """
+    a = blueprint_fixture([_item("tiles/h/a.stl", "M_a")], name="a.json")
+    guides = a.parent.parent / "guides"
+    guides.mkdir()
+    # Parses cleanly, and is not a guide.
+    (guides / "wall.yaml").write_text("title: a guide with no steps\n")
+    monkeypatch.setattr(handler, "find_fixtures", lambda _: [a, guides / "wall.yaml"])
+    monkeypatch.setattr(handler, "PgDB", lambda *x, **k: test_db)
+
+    with pytest.raises(Exception):
+        handler.lambda_handler({}, None)
+
+    with test_db.connection() as conn:
+        with conn.cursor(row_factory=dict_row) as curs:
+            curs.execute("SELECT count(*) AS n FROM blueprints")
+            assert curs.fetchone()["n"] == 0
+
+
 def test_a_duplicate_counts_as_answerable(test_db, blueprint_fixture, monkeypatch):
     """A path a live row speaks for is answerable without a row of its own.
 

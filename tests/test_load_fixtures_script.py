@@ -43,7 +43,9 @@ def run_with(tmp_path):
             env.pop("FIXTURE", None)
 
         result = subprocess.run(
-            ["bash", str(SCRIPT)],
+            # Run the file, as all four call sites do, so the executable bit
+            # and the shebang are part of what these tests hold.
+            [str(SCRIPT)],
             cwd=tmp_path,
             env=env,
             capture_output=True,
