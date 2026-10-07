@@ -122,7 +122,7 @@ resource "aws_lambda_function" "api" {
 # The same image as the API with a different command, because nothing in CI can
 # reach Aurora: the cluster's security group admits the application and bastion
 # groups and a GitHub runner is in neither. The API Lambda is inside and already
-# reads the password from DB_SECRET_ARN, so a second function from the same image
+# reads the password from DB_SECRET_ARN, so further functions from the same image
 # is the cheapest way in — no extra build, nothing to keep in step.
 #
 # The deploy invokes it between the apply that creates it and the apply that
@@ -196,6 +196,90 @@ resource "aws_lambda_function" "migrate" {
   # secretsmanager:GetSecretValue would be skipped by the apply that runs before
   # the invoke — and the invoke would fail to read its password for a reason
   # nothing in the plan mentioned.
+  depends_on = [
+    aws_iam_role_policy_attachment.api_vpc,
+    aws_iam_role_policy.api_db_secret,
+  ]
+}
+
+# The fixtures a release carries, loaded the same way its migrations are: a
+# function from the same image, invoked between the schema and the API image.
+# Data had been manual in both environments, and a release whose content is a
+# fixture shipped nothing until someone ran bin/fixtures on the bastion
+# (openforge_catalog-25m).
+#
+# No upload: Dockerfile.api.deploy copies the whole openforge package, so the
+# fixtures are already on this function's filesystem.
+
+resource "aws_cloudwatch_log_group" "fixtures" {
+  name              = "/aws/lambda/${local.name}-fixtures"
+  retention_in_days = 30
+}
+
+resource "aws_lambda_function" "fixtures" {
+  function_name = "${local.name}-fixtures"
+  role          = aws_iam_role.api.arn
+  package_type  = "Image"
+  image_uri     = "${local.infra.ecr_repository_urls["openforge_catalog/api"]}:${var.image_tag}"
+  architectures = ["x86_64"]
+
+  # Not for the memory, which a measured load leaves far short of even 512.
+  # It is for the CPU: the load is mostly CPU-bound, and a fraction of a vCPU
+  # would push its CPU time alone past the timeout.
+  #
+  # Note where that argument stops. Lambda scales CPU with memory only up to
+  # 1769 MB, which is one full vCPU, and this handler is single-threaded
+  # Python — so 2048 buys nothing over 1769, and is not a reason to go higher.
+  #
+  # TIME is the resource to watch, not memory. A no-op load already spends a
+  # meaningful fraction of this ceiling, and the cost grows with files times
+  # catalog size because _load_existing_blueprints is uncached and the loader
+  # builds one per blueprint fixture file. 900 is Lambda's maximum, so the
+  # next lever is a cheaper load rather than a bigger function.
+  #
+  # openforge_catalog-nhf is the 128 MB API Lambda being asked to do this
+  # work. A dedicated function is the fix for that, so it should not inherit
+  # the ceiling.
+  memory_size = 2048
+  timeout     = 900
+
+  # One at a time. Two deploys landing together would interleave loads of the
+  # same tables; the second invoke is throttled instead, which fails that
+  # deploy loudly.
+  reserved_concurrent_executions = 1
+
+  image_config {
+    command = ["openforge.app.load_fixtures.lambda_handler"]
+  }
+
+  vpc_config {
+    subnet_ids         = local.infra.subnet_ids
+    security_group_ids = [local.infra.application_security_group_id]
+  }
+
+  # Only what it needs to reach the database — no Cloudflare credentials and
+  # no API_TOKEN. PGCONNECT_TIMEOUT for the same reason the migration sets it:
+  # Aurora resumes from min_capacity 0 and a resume from zero takes ~20 s, so
+  # each of this function's connects gets a budget matched to the measured
+  # normal case rather than psycopg's 130 s default.
+  environment {
+    variables = {
+      PGHOST            = local.infra.db_cluster_endpoint
+      DB_SECRET_ARN     = local.infra.db_secret_arn
+      PGCONNECT_TIMEOUT = 120
+    }
+  }
+
+  logging_config {
+    log_format = "Text"
+    log_group  = aws_cloudwatch_log_group.fixtures.name
+  }
+
+  # Named for the same reason as the migration's: the deploy's first apply is
+  # -target'ed at these functions, and -target walks dependencies rather than
+  # dependents, so without this edge a change to the only grant of
+  # secretsmanager:GetSecretValue would be skipped by the apply that runs
+  # before this is invoked.
   depends_on = [
     aws_iam_role_policy_attachment.api_vpc,
     aws_iam_role_policy.api_db_secret,
