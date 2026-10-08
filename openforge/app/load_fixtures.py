@@ -125,6 +125,7 @@ def _expected_paths(files):
 
         if fixture_type != "blueprint":
             continue
+        _single_namespace(loaded)
         for item in loaded:
             if item.get("deprecated"):
                 continue
@@ -132,6 +133,35 @@ def _expected_paths(files):
             if metadata.get("full_name"):
                 paths.add(metadata["full_name"])
     return paths
+
+
+def _single_namespace(loaded):
+    """The one namespace a blueprint fixture's file paths sit under.
+
+    The loader infers this to scope its missing-file sweep, and falls back to
+    sweeping the whole catalog when a file yields no single answer. That
+    fallback is survivable in one invocation, because a later file re-adds
+    what an earlier sweep tombstoned. It is not survivable once each file
+    commits on its own, so the gate refuses the shape instead.
+    """
+    namespaces = set()
+    has_file_blueprints = False
+    for item in loaded:
+        if item.get("deprecated") or "file_metadata" not in item:
+            continue
+        has_file_blueprints = True
+        parts = (item["file_metadata"].get("full_name") or "").split("/")
+        if len(parts) >= 2 and parts[0] == "tiles":
+            namespaces.add(parts[1])
+    if not has_file_blueprints:
+        return None
+    if len(namespaces) != 1:
+        raise RuntimeError(
+            f"a blueprint fixture must sit under exactly one tiles/<namespace>/; "
+            f"this one gives {sorted(namespaces) or 'none'}, which makes the "
+            f"loader's missing-file sweep cover the whole catalog"
+        )
+    return namespaces.pop()
 
 
 def _answerable(db):

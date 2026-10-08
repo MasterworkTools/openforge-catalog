@@ -124,6 +124,48 @@ def test_a_schema_invalid_blueprint_fails_the_gate(tmp_path):
         handler._expected_paths([f])
 
 
+def test_a_fixture_spanning_two_namespaces_fails_the_gate(tmp_path):
+    """The loader would sweep the whole catalog for such a file.
+
+    It infers a namespace to scope its missing-file sweep and falls back to
+    the whole catalog when a file gives no single answer. One invocation
+    survives that because a later file re-adds what an earlier sweep
+    tombstoned; a load that commits per file does not.
+    """
+    blueprints = tmp_path / "blueprints"
+    blueprints.mkdir()
+    f = blueprints / "mixed.json"
+    f.write_text(
+        json.dumps(
+            [
+                _item("tiles/dungeon_stone/a.stl", "M_a"),
+                _item("tiles/towne/b.stl", "M_b"),
+            ]
+        )
+    )
+
+    with pytest.raises(Exception) as exc:
+        handler._expected_paths([f])
+
+    assert "namespace" in str(exc.value)
+
+
+def test_a_composition_only_fixture_needs_no_namespace(tmp_path):
+    """Half the shipped files are these, and they never sweep.
+
+    A file with no file-based blueprints does not reach the loader's
+    deprecation logic at all, so demanding a namespace of it would reject
+    twenty files that are already correct.
+    """
+    blueprints = tmp_path / "blueprints"
+    blueprints.mkdir()
+    f = blueprints / "compositions.json"
+    composition = {"type": "blueprint", "name": "S2W: Wall", "tags": ["object|tile"]}
+    f.write_text(json.dumps([composition]))
+
+    assert handler._expected_paths([f]) == set()
+
+
 def test_an_unquoted_yes_in_the_tag_descriptions_fails_the_gate(tmp_path):
     """The file that really does sort last, and the fault it invites.
 
