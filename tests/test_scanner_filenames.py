@@ -665,14 +665,19 @@ def test_collapsed_wall_keeps_component_wall():
     assert ("component", "collapsed", "low") in tags
 
 
-def test_a_second_part_still_takes_component_wall_away():
-    """Only a wall's own traits are exempt; a drain is a second part."""
-    tags = _wall_on_tile_tags(
-        "rough_stone+ruined#wall,drain,collapsed+low.2x.openforge.stl"
-    )
+@pytest.mark.parametrize(
+    "form, part",
+    [
+        ("wall,drain,collapsed+low", ("component", "drain")),
+        ("wall+fountain", ("component", "wall", "fountain")),
+    ],
+)
+def test_a_second_part_still_takes_component_wall_away(form, part):
+    """Only a wall's own traits are exempt, in either spelling."""
+    tags = _wall_on_tile_tags(f"rough_stone+ruined#{form}.2x.openforge.stl")
 
     assert ("component", "wall") not in tags
-    assert ("component", "drain") in tags
+    assert part in tags
 
 
 @pytest.mark.parametrize(
