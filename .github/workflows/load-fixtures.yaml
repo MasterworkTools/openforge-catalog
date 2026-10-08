@@ -44,12 +44,14 @@ on:
         required: false
 
 concurrency:
-  # Shared with the deploy, not just with other manual runs. Both invoke the
-  # same function, whose reserved concurrency of 1 would reject the second
-  # outright; queueing here fails nobody's run. The deploy workflows group on
-  # their ref, so this cannot be the same key as theirs — it serialises manual
-  # runs against each other and relies on the reserved concurrency to reject a
-  # genuine collision with a deploy, loudly.
+  # Serialises manual runs against each other only. The deploy workflows group
+  # on their ref, so this cannot share their key.
+  #
+  # A collision with a deploy is therefore still possible, and asynchronous
+  # invocation makes it quieter than it was: the second event is accepted,
+  # queued behind the one concurrency slot, and expires into the shared result
+  # queue — where the healthy run may read the expiry as its own failure. The
+  # nonce in each invoke's payload is what stops that; see load-fixtures.sh.
   group: load-fixtures-${{ inputs.environment }}
   cancel-in-progress: false
 
@@ -71,12 +73,10 @@ jobs:
     name: Load fixtures into staging
     if: ${{ inputs.environment == 'staging' }}
     runs-on: ubuntu-latest
-    # The invoke is synchronous and multi-minute, and --cli-read-timeout 0
-    # removes the only clock on it: nothing flows on that connection until the
-    # function returns. A dropped socket would otherwise sit here to the job
-    # default of six hours, holding this environment's load queued behind it.
-    # Above the function's own 900 s ceiling, so a function that genuinely
-    # runs out of time still reports it rather than being killed.
+    # The script waits on a queue for a load that may run for minutes, and it
+    # gives up before this does. This is the backstop: without it a wait that
+    # somehow outlived its own deadline would sit to the job default of six
+    # hours, holding this environment's load queued behind it.
     timeout-minutes: 20
     environment: staging
     steps:
@@ -101,12 +101,10 @@ jobs:
     name: Load fixtures into production
     if: ${{ inputs.environment == 'production' }}
     runs-on: ubuntu-latest
-    # The invoke is synchronous and multi-minute, and --cli-read-timeout 0
-    # removes the only clock on it: nothing flows on that connection until the
-    # function returns. A dropped socket would otherwise sit here to the job
-    # default of six hours, holding this environment's load queued behind it.
-    # Above the function's own 900 s ceiling, so a function that genuinely
-    # runs out of time still reports it rather than being killed.
+    # The script waits on a queue for a load that may run for minutes, and it
+    # gives up before this does. This is the backstop: without it a wait that
+    # somehow outlived its own deadline would sit to the job default of six
+    # hours, holding this environment's load queued behind it.
     timeout-minutes: 20
     # The `production` environment's protection rule is a deployment branch
     # policy naming `main`, so a dispatch from any other ref is rejected

@@ -298,6 +298,16 @@ file and is incremental, so a re-run converges *if the cause was transient*. A
 bad fixture or a failed answerable-path gate re-fail identically, because the
 next run reads the same files: those need a fix and a new deploy.
 
+**One failure is not safe to re-run blind.** The load is invoked
+asynchronously and reports through an SQS queue, so the job can time out
+waiting while the load is still going. It says so when that happens.
+
+A second load started then is **not** rejected — asynchronous invokes are not
+throttled back at the caller. It is accepted, queued behind the one
+concurrency slot, and expires after a minute into the same result queue, where
+it can only be told from the healthy load's record by the nonce each invoke
+carries. Look at the function's log group and let the first one finish.
+
 A production run must be dispatched from `main` — that environment's only
 protection rule is a branch
 policy, so a dispatch from anywhere else is rejected before a role is assumed,
