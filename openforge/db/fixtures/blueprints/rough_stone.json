@@ -19804,6 +19804,7 @@
             "build|wall on tile",
             "component|door",
             "component|door|rectangular",
+            "component|wall",
             "connection|openforge",
             "shape|wall",
             "size|openlock|A",
@@ -19930,6 +19931,7 @@
             "build|wall on tile",
             "component|door",
             "component|door|rectangular",
+            "component|wall",
             "connection|openforge",
             "shape|wall",
             "size|openlock|D",
@@ -23028,6 +23030,7 @@
         "metadata": false,
         "tags": [
             "build|wall on tile",
+            "component|wall",
             "component|wall|window",
             "connection|openforge",
             "shape|wall",
@@ -23153,6 +23156,7 @@
         "metadata": false,
         "tags": [
             "build|wall on tile",
+            "component|wall",
             "component|wall|window",
             "connection|openforge",
             "shape|wall",
@@ -23278,6 +23282,7 @@
         "metadata": false,
         "tags": [
             "build|wall on tile",
+            "component|wall",
             "component|wall|window",
             "connection|openforge",
             "shape|wall",

@@ -252,6 +252,24 @@ def filter_s_system(tags):
 
 
 SYMBOLS = ("air", "beezlebub", "earth", "fire", "lamashtu", "spirit", "water")
+# Things a wall has rather than parts beside it, so they do not make it
+# stop being only a wall.
+WALL_TRAITS = ("collapsed", "door", "swappable", "window")
+# Detailing on a plain wall, the way a carved symbol is.
+WALL_DECORATIONS = (
+    "bypass",
+    "conference_room",
+    "console",
+    "dedication",
+    "engineering",
+    "environmental_controls",
+    "fancy",
+    "monitor",
+    "pipe_access",
+    "pipe_access2",
+    "replicator",
+    "tube",
+)
 # A floor's shape means one of two things. On an s2w or wall-on-tile
 # tile it is the shape of the cut-out the wall sits in, so it belongs
 # under `shape|floor|wall`. On any other floor it is the floor's own
@@ -273,20 +291,14 @@ CUT_OUT_BUILDS = {("build", "s2w"), ("build", "wall on tile")}
 
 def filter_shape(tags):
     def _check_wall_alone(tags):
-        count = 0
         for tag in tags:
-            if tag[0] == "component":
-                # A collapsed wall is still only a wall: `collapsed+low`
-                # says how much of it is left standing, not that a
-                # second piece is attached. Counting it cost every
-                # ruined wall its `component|wall`.
-                if tag[1] == "collapsed":
-                    continue
-                if tag != ("component", "wall"):
-                    count += 1
-        if count == 0:
-            return True
-        return False
+            if tag[0] != "component" or tag == ("component", "wall"):
+                continue
+            # `wall,door` and `wall+door` both name the trait.
+            name = tag[2] if tag[1] == "wall" and len(tag) > 2 else tag[1]
+            if name not in WALL_TRAITS:
+                return False
+        return True
 
     def _check_wall_low(tags):
         if ("component", "wall", "low") in tags:
@@ -385,6 +397,9 @@ def filter_shape(tags):
         # These run while the floor is still `component|floor`; the old
         # `shape|floor|air_symbol` sources ran before that move and never
         # matched a single file.
+        for feature in WALL_DECORATIONS:
+            for source in ([feature], ["wall", feature]):
+                _move_tag_chain(tags, ["component", *source], ["decoration", feature])
         for symbol in SYMBOLS:
             for source in (
                 [symbol],
