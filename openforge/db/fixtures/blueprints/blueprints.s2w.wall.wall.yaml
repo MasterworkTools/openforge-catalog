@@ -24,6 +24,7 @@
             - tag: component|swappable
             - tag: component|wall|door
             - tag: component|wall|window
+            - tag: component|wall|swappable
           constrain:
             - tag: size|width
         fulfills:
@@ -75,6 +76,7 @@
             - tag: component|swappable
             - tag: component|wall|door
             - tag: component|wall|window
+            - tag: component|wall|swappable
           constrain:
             - tag: size|width
       - name: floor
