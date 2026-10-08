@@ -189,7 +189,8 @@ jobs:
           tofu apply -input=false -auto-approve \
             -var image_tag=${{ github.sha }} \
             -target=aws_lambda_function.migrate \
-            -target=aws_lambda_function.fixtures
+            -target=aws_lambda_function.fixtures \
+            -target=aws_lambda_function_event_invoke_config.fixtures
 
   migrate:
     name: Production Migrate
@@ -258,13 +259,11 @@ jobs:
     needs: migrate
     if: ${{ needs.migrate.result == 'success' }}
     runs-on: ubuntu-latest
-    # The invoke is synchronous and multi-minute, and --cli-read-timeout 0
-    # removes the only clock on it: nothing flows on that connection until the
-    # function returns. A dropped socket would otherwise sit here to the job
-    # default of six hours — six hours of the old API image serving the new
-    # schema, and six hours of this ref's concurrency group blocking every
-    # later push. Above the function's own 900 s ceiling, so a function that
-    # genuinely runs out of time still reports it rather than being killed.
+    # The script waits on a queue for a load that may run for minutes, and it
+    # gives up before this does. This is the backstop: without it a wait that
+    # somehow outlived its own deadline would sit to the job default of six
+    # hours — six hours of the old API image serving the new schema, and six
+    # hours of this ref's concurrency group blocking every later push.
     timeout-minutes: 20
     environment: production
     permissions:
