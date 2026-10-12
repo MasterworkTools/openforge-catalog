@@ -9,6 +9,7 @@ key: corner
 title: Corner
 hero_image: https://objects.openforge.tools/guides/guide.corner.webp
 summary: An outside corner
+position: 3
 
 steps:
   - key: method

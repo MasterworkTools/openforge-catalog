@@ -23,6 +23,7 @@ hero_image: https://objects.openforge.tools/guides/guide.wall.webp
 # way in rather than a place to read: it says which of Floor, Wall and
 # Corner this is, and the guide itself explains the three methods.
 summary: A standard wall
+position: 2
 
 steps:
   - key: method

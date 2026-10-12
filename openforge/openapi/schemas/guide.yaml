@@ -28,6 +28,15 @@ properties:
     minLength: 1
   summary:
     type: string
+  position:
+    type: integer
+    minimum: 0
+    description: >
+      Where this guide's card sits on the entry page, ascending. A
+      curated order rather than an alphabetical or chronological one:
+      the cards are a way in, and which thing to build first is an
+      editorial decision. A guide without one sorts after those that
+      have one, by key.
   hero_image:
     type: string
     format: uri
