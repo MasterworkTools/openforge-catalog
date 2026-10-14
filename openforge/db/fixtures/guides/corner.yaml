@@ -128,15 +128,18 @@ steps:
   # door exists only in filament.
   - key: side-lock
     prompt: How do the corner pieces clip to each other?
-    default: openlock
+    # Wall on tile glues its wings and pillar down onto one base, so the
+    # edges only have to line up while the glue goes off. The other two
+    # methods have no filament parts to offer.
+    default:
+      - when:
+          selected:
+            method: [wall-on-tile]
+        value: filament
+      - value: openlock
     blurb: >
       The wings and the pillar join along their vertical edges, and
       whichever system you pick has to be the same on all three.
-
-      OpenLOCK is the most widespread. Dragonbite clips hold a little
-      better. Filament is the newest: it takes a short length of your
-      own filament instead of a printed clip, so there is nothing extra
-      to print and nothing to snap out.
 
       Print printed clips in PETG, not PLA — PLA is rigid and brittle,
       so a clip snaps where it should flex.
@@ -147,18 +150,42 @@ steps:
     options:
       - key: openlock
         title: OpenLOCK
+        blurb: >
+          The most widespread system, and the only one every texture
+          makes every corner part in. The safe answer if you are mixing
+          these pieces with a collection you already have.
         roles:
           left-wall: {require: ['connection|side|openlock']}
           right-wall: {require: ['connection|side|openlock']}
           pillar: {require: ['connection|side|openlock']}
       - key: dragonlock
         title: DragonLock
+        blurb: >
+          Dragonbite clips hold a little better, and this is the answer
+          for mixing with a DragonLock collection.
+
+          Be warned that a lot of the corner parts have not been made in
+          it. No low corner pillar exists in DragonLock in any texture,
+          so low walls are not buildable this way, and some of the plain
+          pillars are missing it too. Expect answers further down to
+          disappear.
         roles:
           left-wall: {require: ['connection|side|dragonlock']}
           right-wall: {require: ['connection|side|dragonlock']}
           pillar: {require: ['connection|side|dragonlock']}
       - key: filament
         title: Filament
+        blurb: >
+          Recommended here. There is no clip: a short length of your own
+          filament drops through the holes and lines the two pieces up,
+          so nothing extra prints and there is nothing to snap out.
+
+          It does not hold anything together, and on this method it does
+          not need to. The wings and the pillar are glued down onto one
+          base, so the filament is only a gluing guide — it keeps the
+          faces aligned while the glue sets, and the base does the rest.
+          That is also why this is the wall on tile answer and not an
+          option on the methods where the walls stand on their own.
         # Only the s2w corner wings and corner pillars are made for it.
         # No straight wall and no plain pillar carries a filament edge,
         # so on the other two methods there is nothing to offer.
