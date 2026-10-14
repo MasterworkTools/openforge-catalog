@@ -21,7 +21,7 @@ Review PRs against this project's **cost-conscious serverless architecture** (CL
 
 6. **Work that scales with catalog size inside a single request (P2):** a request handler that scans all 12,000 files or recomputes catalog-wide aggregates per call. Precompute at fixture-load/scan time, store the result, or paginate.
 
-7. **Package data located via `__file__` (P2):** `Path(__file__).parent`, `os.path.dirname(__file__)` or `__file__.parents[N]` used to find bundled data in `openforge/**/*.py`. It breaks in the Lambda image; use `importlib.resources` as `openforge/db/fixtures/__init__.py` does (`from importlib import resources as impresources`). A new data file type under `openforge/` must also be matched by `package_data` in `setup.py`. Not flagged: write paths, tests, `bin/`, external config paths.
+7. **Package data located via `__file__` (P2):** `Path(__file__).parent`, `os.path.dirname(__file__)` or `__file__.parents[N]` used to find bundled data in `openforge/**/*.py`. It breaks in the Lambda image; use `importlib.resources` as `openforge/db/fixtures/__init__.py` does (`from importlib import resources as impresources`). Not flagged: write paths, tests, `bin/`, external config paths.
 
 8. **Unbounded Lambda invocation patterns (P3):** client code that polls an endpoint in a tight loop, or fan-out that turns one user action into many invocations, where batching or caching would do.
 
