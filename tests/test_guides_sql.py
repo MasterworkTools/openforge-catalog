@@ -89,6 +89,31 @@ def test_the_list_carries_titles_but_not_documents(test_db):
             assert "document" not in guides[0]
 
 
+def test_the_list_is_ordered_by_position_not_by_key(test_db):
+    """Card order on the entry page is editorial, so the document sets it."""
+    with test_db.connection() as conn:
+        with conn.cursor(row_factory=dict_row) as curs:
+            guide_sql.upsert_guide(curs, {**a_guide(key="corner"), "position": 3})
+            guide_sql.upsert_guide(curs, {**a_guide(key="wall"), "position": 1})
+            guide_sql.upsert_guide(curs, {**a_guide(key="floor"), "position": 2})
+
+            guides = guide_sql.get_all_guides(curs)
+
+            assert [g["guide_key"] for g in guides] == ["wall", "floor", "corner"]
+
+
+def test_a_guide_without_a_position_sorts_after_one_with_it(test_db):
+    """`arch` leads alphabetically, so this fails if the sort falls back."""
+    with test_db.connection() as conn:
+        with conn.cursor(row_factory=dict_row) as curs:
+            guide_sql.upsert_guide(curs, a_guide(key="arch"))
+            guide_sql.upsert_guide(curs, {**a_guide(key="wall"), "position": 1})
+
+            guides = guide_sql.get_all_guides(curs)
+
+            assert [g["guide_key"] for g in guides] == ["wall", "arch"]
+
+
 def test_delete_all_guides_empties_the_table(test_db):
     with test_db.connection() as conn:
         with conn.cursor(row_factory=dict_row) as curs:

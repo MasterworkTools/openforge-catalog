@@ -1,0 +1,488 @@
+# The third guide: how do I make a corner?
+#
+# DRAFT — the parts each method needs were resolved against the fixtures,
+# so every method recommends pieces of the right kind in every texture
+# that has them. The prose is a first pass and the `prefer` lists are
+# inherited from the wall guide, which means this guide shares that
+# guide's open question about whether they recommend the *right* part.
+key: corner
+title: Corner
+hero_image: https://objects.openforge.tools/guides/guide.corner.webp
+summary: An outside corner
+position: 3
+
+steps:
+  - key: method
+    prompt: How do you want to build it?
+    default: s2w
+    # Same three methods as the wall guide, in the same order and for the
+    # same reason. A corner differs from a wall in needing a pillar at
+    # the angle, and the three methods disagree about which pillar and
+    # how wide the walls beside it are.
+    options:
+      - key: wall-on-tile
+        title: Wall on Tile
+        blurb: >
+          The corner is two wings and a pillar glued to one base, with
+          the floor's half tile carrying them. The wings are corner
+          pieces rather than straight walls, so they wrap the angle and
+          the pillar closes it.
+
+          These are the traditional tiles: set them down and go. In a
+          combined set this is the one to use for interior corners.
+        roles:
+          # An s2w corner floor, as the composition blueprints use: a
+          # wall-on-tile build is assembled from s2w parts, and
+          # `build|wall on tile` names legacy pieces being retired.
+          floor:
+            require: ['build|s2w', 'shape|floor|wall|corner']
+            allow: ['shape|floor|s2w', 'shape|floor|wall|corner']
+          # Corner wings, not straight walls. The side tag is not
+          # required here: it is the first entry in each wing's
+          # `prefer`, so a texture with distinct halves gets the right
+          # half and a texture whose wing works either way gets its one
+          # reversible piece.
+          left-wall:
+            require: ['build|s2w', 'shape|corner', 'connection|openforge']
+          right-wall:
+            require: ['build|s2w', 'shape|corner', 'connection|openforge']
+          # This pillar carries the openforge socket, so it stands on the
+          # one shared base with everything else.
+          pillar:
+            require: ['build|s2w', 'shape|column|corner', 'connection|openforge']
+          # One full square base, shared. The wings and the pillar are
+          # part of the tile, so there is one openforge piece here
+          # rather than four.
+          floor-base:
+            require: ['shape|base|square']
+            deny: ['build|s2w', 'shape|wall']
+
+      - key: separate-wall
+        title: Separate Wall
+        blurb: >
+          Two ordinary two-inch walls meeting at a pillar, standing
+          beside a plain tile rather than on it. Every square stays
+          whole, which is what gets you closest to a drawn map.
+
+          Recommended for corners you build ahead of time: clipped
+          together, the two walls and the pillar come to the table as
+          one rigid piece.
+        roles:
+          # A plain tile. The walls stand beside the floor, not on it,
+          # so nothing here is corner-shaped.
+          floor:
+            deny: ['build|s2w']
+          # Full two-inch walls, which the catalog also calls A.
+          # Denying shape|corner is what keeps the s2w corner wings out:
+          # they are two inches wide and carry shape|wall too, so
+          # without this the width alone lets them answer, and the side
+          # tag at the head of each wing's `prefer` actively pulls them
+          # in.
+          left-wall:
+            require: ['size|width|2']
+            deny: ['shape|corner']
+          right-wall:
+            require: ['size|width|2']
+            deny: ['shape|corner']
+          # Not the s2w pillar: this one has no openforge socket and
+          # needs no base, standing on its own side clips.
+          pillar:
+            deny: ['build|s2w']
+          floor-base:
+            require: ['shape|base|square']
+            deny: ['build|s2w', 'shape|wall']
+
+      - key: s2w
+        title: Modular (S2W)
+        blurb: >
+          The compromise. The floor carries the half tile, as it does
+          for wall on tile, but the walls are ordinary separate walls —
+          here the inch-and-a-half ones, because the pillar takes the
+          other half inch of the two inch run.
+
+          The same walls build either layout, so this is the flexible
+          one, and it is the approach I recommend.
+        roles:
+          floor:
+            require: ['build|s2w', 'shape|floor|wall|corner']
+            allow: ['shape|floor|s2w', 'shape|floor|wall|corner']
+          # Inch-and-a-half walls, which the catalog also calls BA.
+          # Not corner wings, for the reason separate wall gives.
+          left-wall:
+            require: ['size|width|1.5']
+            deny: ['shape|corner']
+          right-wall:
+            require: ['size|width|1.5']
+            deny: ['shape|corner']
+          pillar:
+            deny: ['build|s2w']
+          # The s2w corner base, which is the corner-shaped one. It does
+          # not carry a wall base, so the walls keep their own.
+          floor-base:
+            require: ['shape|base|corner', 'shape|base|s2w']
+            deny: ['shape|wall', 'shape|base|wall']
+
+  # Asked before the wings and the pillar are chosen, because they all
+  # clip to each other and a corner whose three pieces disagree does not
+  # go together. Not every wing is made in all three: the arched corner
+  # door exists only in filament.
+  - key: side-lock
+    prompt: How do the corner pieces clip to each other?
+    # Wall on tile glues its wings and pillar down onto one base, so the
+    # edges only have to line up while the glue goes off. The other two
+    # methods have no filament parts to offer.
+    default:
+      - when:
+          selected:
+            method: [wall-on-tile]
+        value: filament
+      - value: openlock
+    blurb: >
+      The wings and the pillar join along their vertical edges, and
+      whichever system you pick has to be the same on all three.
+
+      Print printed clips in PETG, not PLA — PLA is rigid and brittle,
+      so a clip snaps where it should flex.
+
+      OpenLOCK is the one answer every texture has for every method. The
+      others are made for fewer of them, so an answer that disappears
+      when you change method or texture has not gone wrong.
+    options:
+      - key: openlock
+        title: OpenLOCK
+        blurb: >
+          The most widespread system, and the only one every texture
+          makes every corner part in. The safe answer if you are mixing
+          these pieces with a collection you already have.
+        roles:
+          left-wall: {require: ['connection|side|openlock']}
+          right-wall: {require: ['connection|side|openlock']}
+          pillar: {require: ['connection|side|openlock']}
+      - key: dragonlock
+        title: DragonLock
+        blurb: >
+          Dragonbite clips hold a little better, and this is the answer
+          for mixing with a DragonLock collection.
+
+          Be warned that a lot of the corner parts have not been made in
+          it. No low corner pillar exists in DragonLock in any texture,
+          so low walls are not buildable this way, and some of the plain
+          pillars are missing it too. Expect answers further down to
+          disappear.
+        roles:
+          left-wall: {require: ['connection|side|dragonlock']}
+          right-wall: {require: ['connection|side|dragonlock']}
+          pillar: {require: ['connection|side|dragonlock']}
+      - key: filament
+        title: Filament
+        blurb: >
+          Recommended here. There is no clip: a short length of your own
+          filament drops through the holes and lines the two pieces up,
+          so nothing extra prints and there is nothing to snap out.
+
+          It does not hold anything together, and on this method it does
+          not need to. The wings and the pillar are glued down onto one
+          base, so the filament is only a gluing guide — it keeps the
+          faces aligned while the glue sets, and the base does the rest.
+          That is also why this is the wall on tile answer and not an
+          option on the methods where the walls stand on their own.
+        # Only the s2w corner wings and corner pillars are made for it.
+        # No straight wall and no plain pillar carries a filament edge,
+        # so on the other two methods there is nothing to offer.
+        when:
+          selected:
+            method: [wall-on-tile]
+        roles:
+          left-wall: {require: ['connection|side|filament']}
+          right-wall: {require: ['connection|side|filament']}
+          pillar: {require: ['connection|side|filament']}
+
+  # Wall on tile has no wall-print question: the wings are part of the
+  # tile and share its base. The other two methods stand their walls
+  # beside the floor, so each wall either takes a base or has one built
+  # in, exactly as in the wall guide.
+  - key: wall-print
+    prompt: How should the walls print?
+    default: with-base
+    when:
+      selected:
+        method: [separate-wall, s2w]
+    options:
+      - key: with-base
+        title: Walls plus bases
+        blurb: >
+          Each wall prints bare and sits in a base that carries the
+          clips.
+        roles:
+          left-wall: {require: ['connection|openforge']}
+          right-wall: {require: ['connection|openforge']}
+          wall-base: null
+      - key: single-piece
+        title: One piece, bases included
+        blurb: >
+          Each wall is printed with its base already part of it. Fewer
+          pieces to lose.
+        roles:
+          left-wall:
+            deny: ['connection|openforge']
+            allow: ['connection|openlock']
+          right-wall:
+            deny: ['connection|openforge']
+            allow: ['connection|openlock']
+
+  - key: floor-print
+    prompt: How should the floor print?
+    default: with-base
+    options:
+      - key: with-base
+        title: Floor plus a base
+        blurb: >
+          The tile prints bare and sits in a base. The usual openforge
+          arrangement, and the only one for wall on tile, where the base
+          carries the wings and the pillar too.
+        roles:
+          floor: {require: ['connection|openforge']}
+          floor-base: null
+      - key: single-piece
+        title: One piece, base included
+        blurb: >
+          The tile is printed with its base already part of it.
+        # Separate wall only. Wall on tile glues its wings and pillar to
+        # the floor's base, so there has to be one; and every s2w corner
+        # floor carries the openforge socket, which is the thing this
+        # option denies, so offering it there is offering nothing.
+        when:
+          selected:
+            method: [separate-wall]
+        roles:
+          floor:
+            deny: ['connection|openforge']
+            allow: ['connection|openlock']
+
+  - key: height
+    prompt: How tall are the walls?
+    default: normal
+    options:
+      - key: normal
+        title: Normal walls
+        roles:
+          left-wall: {require: ['component|wall']}
+          right-wall: {require: ['component|wall']}
+          pillar: {deny: ['shape|column|low']}
+      - key: low
+        title: Low walls
+        blurb: >
+          Half height, so you can see over them. Useful for balconies
+          and for a corner you want to look past.
+        roles:
+          left-wall: {require: ['component|wall|low']}
+          right-wall: {require: ['component|wall|low']}
+          pillar: {require: ['shape|column|low']}
+
+roles:
+  floor:
+    title: Floor
+    query:
+      # Same sweep as the floor and wall guides: shape|floor and nothing
+      # else beneath it, because which children are wanted is the
+      # method's business. Wall on tile and s2w ask for the corner
+      # floor; separate wall asks for a plain tile.
+      require: ['shape|floor']
+      deny_children: ['shape', 'component']
+      allow: ['shape|square', 'component|wall', 'shape|floor|wall|corner', 'shape|floor|s2w']
+      # A base is not a floor: the parser gives a shape|base piece the
+      # plain shape beside it, and the sweep above is scoped to
+      # shape|floor.
+      deny: ['shape|base']
+    # No texture here. The floor texture question already requires one,
+    # and a preferred tag that contradicts it can never match — which
+    # costs more than the preference, because `prefer` is required as a
+    # prefix and a term that cannot match takes every term after it
+    # down with it. That is what left a corner floor at 1x1.
+    #
+    # connection|openforge last, because the single-piece option denies
+    # it and a term an option denies has to be the least wanted.
+    prefer:
+      - 'size|width|2'
+      - 'size|depth|2'
+      - 'connection|openforge'
+    avoid: ['decoration']
+  left-wall:
+    title: Left wing
+    query:
+      # The opposite side is denied rather than this one required,
+      # because an absent side tag means the wing works either way
+      # round. Denying `right` keeps the left halves and the reversible
+      # wings and refuses only what cannot go on this side. Requiring
+      # `left` instead would throw away every reversible wing, and
+      # ranking by side rather than filtering offers each wing both
+      # halves to choose from.
+      #
+      # A plain wall, by the wall guide's rule: component|wall is what
+      # makes it a wall rather than a wall-shaped feature, and sweeping
+      # the component namespace is what makes it plain. The height
+      # question names which component marker it keeps, so neither is
+      # required here.
+      require: ['shape|wall']
+      # `both` is the whole corner in one piece — it stands in for
+      # the pillar and both wings at once — so it is not a wing and
+      # carries no side to deny it by.
+      deny: ['shape|corner|right', 'shape|corner|both']
+      deny_children: ['component', 'component|wall', 'connection', 'shape']
+      allow:
+        - 'shape|square'
+        - 'shape|wall'
+        - 'shape|wall|low'
+        - 'shape|corner'
+        - 'shape|corner|left'
+        - 'component|wall'
+        - 'component|wall|low'
+        - 'connection|openforge'
+        - 'connection|openlock'
+        - 'connection|side'
+    prefer: ['size|width|2']
+    avoid: ['decoration']
+  right-wall:
+    title: Right wing
+    query:
+      # Mirror of the left wing above.
+      require: ['shape|wall']
+      # `both` is the whole corner in one piece — it stands in for
+      # the pillar and both wings at once — so it is not a wing and
+      # carries no side to deny it by.
+      deny: ['shape|corner|left', 'shape|corner|both']
+      deny_children: ['component', 'component|wall', 'connection', 'shape']
+      allow:
+        - 'shape|square'
+        - 'shape|wall'
+        - 'shape|wall|low'
+        - 'shape|corner'
+        - 'shape|corner|right'
+        - 'component|wall'
+        - 'component|wall|low'
+        - 'connection|openforge'
+        - 'connection|openlock'
+        - 'connection|side'
+    prefer: ['size|width|2']
+    avoid: ['decoration']
+  pillar:
+    title: Pillar
+    query:
+      # The L shape is what makes it a corner pillar. The other junction
+      # shapes — I, T, O, X — are the straight, tee, post and cross
+      # pieces, and a corner wants none of them.
+      require: ['shape|column', 'size|column_shape|L']
+      # The building facade columns are the other L pillars in the
+      # catalog: corbelled, flared, or a foundation block. The sweep
+      # keeps them out without naming a build method, which matters
+      # because two of the three methods ask only that this is not an
+      # s2w piece.
+      deny_children: ['shape|column', 'component', 'shape']
+      allow: ['shape|column|corner', 'shape|column|low', 'shape|square', 'shape|wall']
+    # Nothing to prefer: the shape is required by the query and the
+    # texture by the question.
+  floor-base:
+    title: Base for the floor
+    query:
+      # Which child of shape|base is wanted is the method's business:
+      # wall on tile and separate wall take the full square, s2w takes
+      # the corner-shaped one.
+      require: ['shape|base']
+      deny_children: ['shape|base']
+      allow: ['shape|base|square', 'shape|base|corner', 'shape|base|s2w']
+    prefer: ['texture|plain']
+    under: floor
+    # A base matches the footprint of the tile standing on it, and that
+    # tile is not chosen until the person answers.
+    match: ['size|width', 'size|depth']
+  wall-base:
+    title: Bases for the walls
+    query:
+      require: ['shape|base']
+      deny_children: ['shape|base']
+      allow: ['shape|base|wall']
+    under: left-wall
+    # Width only. A wall is a line along an edge: it has a width and no
+    # depth, and its base is the same shape.
+    match: ['size|width']
+
+refinements:
+  - key: texture
+    role: '*'
+    browsable: true
+    prompt: Corner texture
+    default: texture|dungeon_stone
+    from_namespace: texture
+    # The floor has its own texture question below. Bases are structural
+    # and mostly plain, so the wall texture does not drive them.
+    except_roles:
+      - floor-base
+      - floor
+    # Towne's wall bases are filed under `texture|wood`, not
+    # `texture|towne`, so asking for towne by name finds no base at all.
+    substitute:
+      'texture|towne':
+        wall-base: 'texture|wood'
+    blurb: >
+      The texture has to carry across the back of the pillar, which is
+      why some of these have a distinct left and right wing and others
+      have one wing that works either way round. Dungeon stone and cut
+      stone are cut flags, so the courses have to line up and the wings
+      are handed. Towne's stucco and stone finishes have clean borders,
+      so one wing does both sides.
+    choices:
+      - tag: texture|dungeon_stone
+        title: Dungeon stone
+      - tag: texture|cut-stone
+        title: Cut stone
+      - tag: texture|towne
+        title: Wood and plaster
+      - tag: texture|aztlan
+        title: Aztlan
+      - tag: texture|nova_trail
+        title: Nova Trail
+
+  - key: floor-texture
+    role: floor
+    browsable: true
+    prompt: Floor texture
+    default: texture|dungeon_stone
+    from_namespace: texture
+
+  - key: base-clips
+    role: '*'
+    browsable: true
+    except_roles:
+      - floor
+      - left-wall
+      - right-wall
+      - pillar
+    group: How do the pieces clip together?
+    prompt: The bases
+    default: connection|magnetic,connection|openlock,connection|openlock|topless
+    blurb: >
+      Clips are how the bases join to each other, and this is a separate
+      question from how the wings clip to the pillar. The honest answer
+      is that it rarely matters: Dragonbite clips hold better, OpenLOCK
+      clips are easier for rapid swapping, and most people find them
+      close enough not to worry about.
+
+      Magnets are better if you lay a corner down at game time. The flex
+      magnetic bases take 5mm spheres and five cylindrical sizes, and
+      they spin in place, so polarity never comes up.
+
+      Print your clips in PETG, not PLA.
+    links:
+      5mm×3mm: https://amzn.to/3TiebAV
+      5mm×2mm: https://amzn.to/3n2prFa
+      4mm×3mm: https://amzn.to/3JOtXzd
+      4mm×2mm: https://amzn.to/3looXJl
+      3/16"×1/8": https://www.kjmagnetics.com/proddetail.asp?prod=D32AH
+    titles:
+      connection|openlock: OpenLOCK
+      connection|dragonlock: DragonLock
+      connection|magnetic: Magnets
+    from_combination: connection
+    exclude:
+      - connection|magnetic|flex
+      - connection|side

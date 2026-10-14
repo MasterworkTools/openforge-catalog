@@ -33,7 +33,7 @@ SELECT id, guide_key,
        hero_image,
        created_at, updated_at
   FROM guides
-  ORDER BY guide_key
+  ORDER BY (document->>'position')::int NULLS LAST, guide_key
 """
     )
     curs.execute(query)

@@ -371,6 +371,28 @@ describe('GuidePage', () => {
   });
 
   describe('with a guide in the URL', () => {
+    it('collapses the prose column and brings it back', async () => {
+      // The words are the widest column and the first thing someone
+      // stops needing, so the heading shuts them. Asserted through
+      // aria-expanded rather than a class, which is what a screen
+      // reader is told and what survives restyling.
+      visit('?guide=wall');
+      mockFetch((url) => (url.includes('/resolve') ? RESOLVED : GUIDE_DOCUMENT));
+
+      render(<GuidePage />);
+
+      const toggle = await screen.findByRole('button', {
+        name: 'What these mean',
+      });
+      expect(toggle).toHaveAttribute('aria-expanded', 'true');
+
+      fireEvent.click(toggle);
+      expect(toggle).toHaveAttribute('aria-expanded', 'false');
+
+      fireEvent.click(toggle);
+      expect(toggle).toHaveAttribute('aria-expanded', 'true');
+    });
+
     it('asks the first question', async () => {
       visit('?guide=wall');
       mockFetch((url) => (url.includes('/resolve') ? RESOLVED : GUIDE_DOCUMENT));

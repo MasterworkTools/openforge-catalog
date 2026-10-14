@@ -90,6 +90,8 @@ crash.*.log
 .dolt/
 *.db
 .beads-credential-key
+# A lock bd takes while it writes; present only while a command is running.
+.beads.gate.lock
 
 # Claude Code worktrees: separate checkouts, never part of this tree.
 .claude/worktrees/
