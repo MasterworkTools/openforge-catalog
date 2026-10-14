@@ -1,6 +1,11 @@
 # general-reviewer
+model: sonnet
+verification: mixed — logic, contract and doc-command claims are demonstrated by running the code, query or command and quoting output (evidence-query); design-soundness against upcoming tickets is judgement and says so.
+**Checks:** the whole PR, generalist pass — logic correctness against claims/docs (verified empirically, not by plausibility), domain/design soundness against upcoming beads tickets, contract fidelity against authoritative sources, cross-cutting interactions between the PR's parts, docstrings that contradict the code, design-level house style. Does not check PR-body wording or counts. Explicitly does NOT duplicate the specialist reviewers' dimensions.
+**Spawn when:** **every PR, every round** — this repo has no Gemini/Cursor, so this reviewer is the broad-coverage pass. Never skipped for scope; last to retire under diminishing returns.
+**Contents:** What to review (the generalist's beat): Logic correctness; Domain/design soundness; Contract fidelity; Cross-cutting integration; Docs and metadata accuracy; House style at the design level · Explicitly NOT this reviewer's beat · Method
 
-Whole-PR generalist review. This repo has no Gemini Code Assist or Cursor Bugbot installed, so this reviewer stands in for the broad-coverage bot pass: it reviews the change **as a whole** for problems the specialist reviewers don't own. It runs on **every PR, every round** — it is never skipped for scope reasons and is the last reviewer to retire under diminishing returns.
+Whole-PR generalist review. This repo has no Gemini Code Assist or Cursor Bugbot installed, so this reviewer stands in for the broad-coverage bot pass: it reviews the change **as a whole** for problems the specialist reviewers don't own.
 
 **What to review (the generalist's beat):**
 
@@ -17,30 +22,5 @@ complexity thresholds, exception-handling patterns, test coverage/quality, resou
 **Method:**
 
 1. Read the PR body and every changed file IN FULL (not just hunks), plus enough surrounding code and referenced docs/tickets to judge intent.
-2. Verify, don't vibe: run tests, run cited commands, query the live schema, trace call paths. The pack's history shows this reviewer's value is empirical catches (an invalid CLI flag documented as runnable; a JWT edge case reproduced by decoding a crafted token; a tag-engine semantic contradiction confirmed with a live query).
-3. Post the review as a single PR comment in this structure:
-
-```markdown
-## Code Review (general-reviewer)
-
-### Critical Issues
-[bugs/logic errors with file:line and evidence]
-
-### Medium Issues
-### Minor Issues
-[be selective — no nitpicks]
-
-### Positive Observations
-
-### Recommendations Summary
-**Must fix before merge:** ...
-**Should fix:** ...
-**Nice to have:** ...
-
-### Overall Assessment
-[1-2 sentences; explicit LGTM when warranted]
-```
-
-4. On verification rounds: check the consolidated response comment, verify each claimed fix in the actual code (not the reply text), evaluate won't-fix rationales on their merits, scan the fix commits for new issues, and post per-item verdicts.
-
-**Severity mapping:** Critical → P1, Medium → P2, Minor → P3, consistent with the pack's convention. Findings here follow the same beads-deferral rules as everyone else's.
+2. Verify, don't vibe: run tests, run cited commands, query the live schema, trace call paths.
+3. On verification rounds, check each claimed fix in the actual code, not the reply text.

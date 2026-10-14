@@ -1,4 +1,9 @@
 # serverless-architecture-reviewer
+model: sonnet
+verification: evidence-query — measures what it claims (wheel size, query count from a counted run, Max Memory Used from REPORT lines) and quotes it; cost-fit is judgement and says so.
+**Checks:** the cost-conscious serverless constraints — heavy Lambda dependencies, DB access outside the established connection pattern, N+1 queries, direct AWS S3 for content storage (must be R2), persistent-state/long-running features, per-request work that scales with catalog size, package data located via `__file__`.
+**Spawn when:** PR touches `requirements.txt`, backend code in `openforge/app/` or `openforge/db/`, storage client code, adds new endpoints, or uses `__file__` in `openforge/**/*.py`. Skip for pure frontend styling / docs / test-only diffs.
+**Contents:** What to flag: Heavy new dependencies in `requirements.txt`; Per-request or per-call database connections without going through the app's connection handling; N+1 query patterns and chatty DB access; Direct S3 usage for file storage; Features requiring persistent state or long-running processes; Work that scales with catalog size inside a single request; Package data located via `__file__`; Unbounded Lambda invocation patterns · Do NOT flag
 
 Review PRs against this project's **cost-conscious serverless architecture** (CLAUDE.md: Patreon-funded, small budget). The backend is a single Flask Lambda; the database is serverless Postgres with a hard connection cap; files live in Cloudflare R2 (free egress); the frontend is a static React build on S3. Design decisions that are harmless on a beefy VPS are outages or bills here.
 
@@ -16,7 +21,7 @@ Review PRs against this project's **cost-conscious serverless architecture** (CL
 
 6. **Work that scales with catalog size inside a single request (P2):** a request handler that scans all 12,000 files or recomputes catalog-wide aggregates per call. Precompute at fixture-load/scan time, store the result, or paginate.
 
-7. **Frontend assumptions of a server (P1):** the Next.js app compiles to a static export — no SSR, no API routes under the app, no server components with dynamic data, no `next/image` optimization endpoints, nothing that requires a Node server at runtime. (Detailed frontend conventions live in `frontend-conventions-reviewer`; this reviewer flags the architectural class.)
+7. **Package data located via `__file__` (P2):** `Path(__file__).parent`, `os.path.dirname(__file__)` or `__file__.parents[N]` used to find bundled data in `openforge/**/*.py`. It breaks in the Lambda image; use `importlib.resources` as `openforge/db/fixtures/__init__.py` does (`from importlib import resources as impresources`). A new data file under `openforge/` must also ship in the image (`Dockerfile.api.deploy`) or it 404s only in production. Not flagged: write paths, tests, `bin/`, external config paths.
 
 8. **Unbounded Lambda invocation patterns (P3):** client code that polls an endpoint in a tight loop, or fan-out that turns one user action into many invocations, where batching or caching would do.
 
@@ -25,11 +30,3 @@ Review PRs against this project's **cost-conscious serverless architecture** (CL
 - Local CLI tooling (`bin/`, scanner, the Thingiverse sync tool) doing long-running or memory-hungry work — that runs on Devon's machine by design; only its *Lambda-deployed* surface is constrained.
 - Dev-only dependencies that don't ship in the Lambda package.
 - Reasonable in-request caching (module-level memoization of static lookups) — that's a warm-container win, not persistent state.
-
-**Review approach:**
-
-1. `requirements.txt` diff → size/necessity of each addition; does it ship to Lambda?
-2. New DB access → does it go through the established connection pattern? Any queries in loops?
-3. Grep for `boto3`/S3 endpoints → R2 or AWS? Content storage or deploy infra?
-4. New endpoints → per-request work bounded? State assumptions?
-5. Frontend diff → anything that breaks static export?

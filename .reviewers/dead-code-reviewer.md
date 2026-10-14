@@ -1,6 +1,13 @@
 # dead-code-reviewer
+model: sonnet
+verification: evidence-query — greps the whole workspace for each flagged symbol and quotes the result (Review approach 4); a "guard is unreachable" claim quotes the call chain that proves it.
+**Checks:** unused module-level symbols, unused `__init__.py` re-exports, commented-out code, partial refactors leaving the old name, stale `__all__` entries, `pass`-only stubs, unused React components/props/types.
+**Spawn when:** PR touches `*.py` or `src/**/*.ts(x)`, especially when it removes call sites, renames functions, or extracts/moves code. Skip for pure additive changes with no refactor surface.
+**Contents:** What to flag: Unused module-level functions, classes, constants; Unused exported names; Unused fixtures in `conftest.py`; Commented-out code; Partial refactors; Stale `__all__` entries; Unused parameters with default values; `if False; `def f(); Frontend equivalents · Review approach · Do NOT flag
 
 Review PRs for **dead code introduction**. `ruff` catches unused imports (`F401`) and unused variables (`F841`); this reviewer fills the gaps — public APIs, reflection-driven code, and partial refactors.
+
+Default severity P3; P2 when the dead code is a partial refactor left behind; P1 only when removal of a sibling is incomplete and the leftover is user-visible.
 
 **What to flag:**
 
