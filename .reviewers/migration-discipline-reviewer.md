@@ -1,4 +1,9 @@
 # migration-discipline-reviewer
+model: sonnet
+verification: mixed — replays the new `version_NN` up, down, up on a scratch Postgres (not the dev DB) and quotes the schema diff; naming, docstring and helper-size findings are judgement.
+**Checks:** schema changes go through `openforge/db/schema/version_NN.py` (`@SchemaVersionDecorator`, paired `up_impl`/`down_impl`, docstring changelog, small named helpers, correct version numbering); no DDL from application code; new columns/tables have consumers or are explicitly staged.
+**Spawn when:** PR touches `openforge/db/schema/`, or the diff contains DDL keywords (`CREATE TABLE`, `ALTER TABLE`, `CREATE INDEX`, `DROP`) anywhere outside it. Skip otherwise.
+**Contents:** The pattern (see `openforge/db/schema/version_12.py` as the reference) · What to flag: DDL outside the migration system; Missing or stubbed `down_impl`; Version number problems; Missing module docstring; Monolithic `up_impl`; Schema change without downstream updates; Data migrations mixed silently into schema migrations; Raw string interpolation in migration SQL; Not expand/contract · Do NOT flag · Review approach
 
 Review PRs for **database schema discipline**. All schema changes go through the versioned migration system in `openforge/db/schema/` — never ad-hoc DDL from application code, fixtures, or scripts.
 
@@ -22,7 +27,7 @@ class SchemaVersionNN(SchemaBase):
 
 2. **Missing or stubbed `down_impl` (P2):** every migration must reverse cleanly. A `down_impl` that's `pass` or that doesn't mirror `up_impl` step-for-step (in reverse order) leaves the test↔main promotion path without a rollback. If a step is genuinely irreversible (data-destroying), it must say so in a comment and the docstring.
 
-3. **Version number problems (P1):** duplicate `@SchemaVersionDecorator(NN)` numbers, or a number that doesn't follow the current maximum. Check existing files in `openforge/db/schema/` for the highest version before assigning. (Note: version 15 is historically absent — gaps exist; duplicates are the bug.)
+3. **Version number problems (P1):** duplicate `@SchemaVersionDecorator(NN)` numbers, or a number that doesn't follow the current maximum. Check existing files in `openforge/db/schema/` for the highest version before assigning. Gaps are fine; duplicates are the bug.
 
 4. **Missing module docstring (P3):** each migration opens with a docstring summarizing every change it makes (see version_12.py). The docstring is the changelog — it must list all tables/columns/indexes/functions touched.
 
@@ -33,6 +38,8 @@ class SchemaVersionNN(SchemaBase):
 7. **Data migrations mixed silently into schema migrations (P3):** backfills/UPDATEs inside a schema migration are allowed but must be called out in the docstring, be idempotent where possible, and be sized for serverless (a full-table rewrite on the production DB should be flagged for discussion, not discovered).
 
 8. **Raw string interpolation in migration SQL (P1):** use `psycopg.sql` composition (`sql.SQL`, `sql.Identifier`) for any dynamic identifiers, matching the existing imports in migration files. Static DDL strings are fine.
+
+9. **Not expand/contract (P1):** `DROP COLUMN`, `RENAME`, or a new NOT NULL / CHECK / UNIQUE that the previous release's writes would violate. The migration runs before the new API image is live, so the old image serves the new schema. Prove it by running the old image's insert shape (from the base ref) against the migrated scratch database.
 
 **Do NOT flag:**
 

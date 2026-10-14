@@ -1,8 +1,15 @@
 # test-coverage-reviewer
+model: sonnet
+verification: mixed — "no test names this function" is a grep over tests/ and __tests__/ quoted; "the test does not cover the new branch" is shown by reverting or mutating the branch in a scratch copy and quoting the still-passing test run; test-quality patterns are judgement.
+**Checks:** every PR-touched function has a test that exercises it (pytest for `openforge/`, Jest for `src/`); flags missing tests for new branches/exceptions, weak mocking (patch point-of-use, don't mock third parties), tests that don't assert, skips without reasons.
+**Spawn when:** PR modifies any `*.py` outside `tests/` or any `src/**/*.ts(x)` outside `__tests__/` (and ideally also when test files change — to lint the new tests themselves).
+**Contents:** Core rule: Code touched by a PR must be covered by tests. Either the coverage already exists, or this PR adds it. · Where tests live in this repo · Rules to enforce: Coverage required for all touched code; Refactors preserve coverage, not duplicate it; New behavior needs new assertions; Recognize as valid coverage; Bug fixes · Integration tests as coverage — acceptable boundary · Test quality patterns to flag (P2): `mock.patch` at point-of-definition instead of point-of-use; Mocking what you don't own; Over-mocking; `@pytest.mark.skip` without `reason=`; Tests that don't assert · Review approach · Do NOT allow · Acceptable exceptions (each requires a beads ticket created before merge)
 
 Review code changes to **ensure the code touched by the PR has test coverage**. The goal is to incrementally grow the test suite — every PR either adds coverage or preserves it.
 
 **Core rule: Code touched by a PR must be covered by tests. Either the coverage already exists, or this PR adds it.**
+
+Default severity P2; P1 never.
 
 The unit of obligation is *coverage of the touched code*, not *net-new test functions for every diff*. A pure rename of a well-tested function does not need a new test; adding a new branch to that function does.
 
@@ -22,7 +29,7 @@ The unit of obligation is *coverage of the touched code*, not *net-new test func
 
 4. **Recognize as valid coverage:** `def test_*` functions, `class Test...:` methods, `@pytest.mark.parametrize` entries, Jest `it`/`test` blocks, fixtures consumed by actual tests (fixtures alone are infrastructure, not tests).
 
-5. **Bug fix documentation.** If the change fixes a bug: require a comment or commit message explaining what was broken and why the fix works, plus a regression test that would have failed before the fix.
+5. **Bug fixes** need a regression test that fails before the fix.
 
 **Integration tests as coverage — acceptable boundary:**
 

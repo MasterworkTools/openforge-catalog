@@ -1,6 +1,11 @@
 # complexity-reviewer
+model: sonnet
+verification: mixed — floor violations are evidence-queries (ruff C901 / eslint complexity on base and head, output quoted); And/Or, one-screen and naming findings are judgement and say so.
+**Checks:** McCabe complexity > 10 (hard floor), the CLAUDE.md "And/Or" test and one-screen rule, nesting depth ≥ 4, parameter count > 5, class size > 20 public methods, nested ternaries, redundant single-call wrappers, generic identifiers in long functions. Covers Python and TypeScript/React.
+**Spawn when:** PR touches production `*.py`, `*.ts`, or `*.tsx` (skip `tests/`, `integration_tests/`, `__tests__/`). Skip if the diff is data / docs / SQL / config only.
+**Contents:** Posting gates (read before flagging anything): Introduced or worsened only — not pre-existing; Hard violations always; soft heuristics only when they compound; "And/Or" test; One-screen rule; Extractable inner structures; Nesting depth; Parameter count; Class size; Nested ternaries; Redundant single-call wrappers; Generic identifiers in long functions · Do NOT flag
 
-Review **production code only** for function complexity. **Skip all files in `tests/`, `integration_tests/`, and `__tests__/`** — test files often have long fixtures, parametrize tables, and assertion blocks that don't need the same complexity constraints.
+Review **production code only** for function complexity.
 
 This reviewer enforces the project's Code Organization Philosophy (CLAUDE.md): *"Functions should be describable with as few uses of 'and' or 'or' as possible."* It applies to both Python (`*.py`) and TypeScript/React (`*.ts`, `*.tsx`).
 
@@ -9,7 +14,7 @@ This reviewer enforces the project's Code Organization Philosophy (CLAUDE.md): *
 1. **Introduced or worsened only — not pre-existing.** Flag complexity this PR *creates* or *materially worsens*. If a function was already over a threshold before this PR (it was long/complex on the base branch) and this PR only edits a few lines inside it without pushing it further over, it is **out of scope** — do not post it. (You may note it once as a P3 defer-to-beads suggestion, but not as a finding that blocks the PR.) Check the diff: is the threshold breach in *added* lines, or did the PR push an already-borderline function past the limit? If neither, skip.
 2. **Hard violations always; soft heuristics only when they compound.** The objective complexity floor and unambiguous structural smells (depth ≥ 4, > 5 params, > 20 public methods, nested ternaries ≥ 2 levels) post on every occurrence. The **"And/Or" test** and the **one-screen rule** are *advisory*: do **not** post them as standalone findings for a function that passes the objective floor and sits within ~50–60 lines. Raise a soft heuristic only when it compounds a hard violation on the same function.
 
-**Objective floor (Python): McCabe complexity > 10.** Run `ruff check --select C901 .` against the PR head (never a stale local checkout) and flag every function that exceeds it. (Ruff's mccabe `max-complexity` defaults to 10; it is a `pyproject.toml` setting — `[tool.ruff.lint.mccabe]` — not a CLI flag.) For TypeScript, apply the same threshold by inspection (or `eslint` `complexity` rule output if configured).
+**Objective floor (Python): McCabe complexity > 10.** Run `ruff check --select C901 .` against the PR head (never a stale local checkout) and flag every function that exceeds it. (Ruff's mccabe `max-complexity` defaults to 10; it is a `pyproject.toml` setting — `[tool.ruff.lint.mccabe]` — not a CLI flag.) For TypeScript: `npx eslint --rule '{"complexity":["warn",{"max":10}]}' <file>` on the head and, via `git show origin/test:<file> | npx eslint --stdin --stdin-filename <file> --rule '{"complexity":["warn",{"max":10}]}'`, on the base. `complexity` is not in `eslint.config.js`; Python C901 is not in `pyproject.toml` either, so quote both outputs.
 
 Apply these heuristics on top of the objective floor:
 
@@ -46,5 +51,3 @@ Apply these heuristics on top of the objective floor:
 - JSX render bodies that are long but flat markup — flag only when logic (conditionals, mapping, state juggling) is interleaved with the markup and could move to hooks/helpers.
 
 **DO flag (dispatch-specific):** `match`/`elif`/`switch` chains with multi-statement branch bodies that do their own branching — the flatness exemption applies to dispatch tables, not chains of mini-functions in disguise.
-
-**Note:** It is acceptable to acknowledge complexity and defer refactoring by creating a beads ticket rather than fixing in the current PR. This applies to heuristic findings; objective floor violations should be resolved in-PR unless there's a documented reason.
