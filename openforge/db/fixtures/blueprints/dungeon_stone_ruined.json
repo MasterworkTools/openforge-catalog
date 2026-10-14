@@ -12500,9 +12500,9 @@
     },
     {
         "file_metadata": {
-            "file": "dungeon_stone+ruined#corner,collapsed+full-low.2x2.openforge.stl",
+            "file": "dungeon_stone+ruined#corner+both,collapsed+full-low.2x2.openforge.stl",
             "file_modified_at": "2025-08-24T22:24:59.041676",
-            "full_name": "tiles/dungeon_stone+ruined/s2w/corner/corner/openforge/dungeon_stone+ruined#corner,collapsed+full-low.2x2.openforge.stl",
+            "full_name": "tiles/dungeon_stone+ruined/s2w/corner/corner/openforge/dungeon_stone+ruined#corner+both,collapsed+full-low.2x2.openforge.stl",
             "md5": "d88f99d120de0a071c438dd9699153d9",
             "size": 14728384,
             "storage_address": "https://objects.openforge.tools/models/d88f99/d88f99d120de0a071c438dd9699153d9.stl"
@@ -12618,6 +12618,7 @@
             "component|collapsed|full-low",
             "connection|openforge",
             "shape|corner",
+            "shape|corner|both",
             "size|depth|2",
             "size|width|2",
             "texture|dungeon_stone",
@@ -12627,9 +12628,9 @@
     },
     {
         "file_metadata": {
-            "file": "dungeon_stone+ruined#corner,collapsed+full-minimal-full.2x2.openforge.stl",
+            "file": "dungeon_stone+ruined#corner+both,collapsed+full-minimal-full.2x2.openforge.stl",
             "file_modified_at": "2025-08-24T22:37:49.393650",
-            "full_name": "tiles/dungeon_stone+ruined/s2w/corner/corner/openforge/dungeon_stone+ruined#corner,collapsed+full-minimal-full.2x2.openforge.stl",
+            "full_name": "tiles/dungeon_stone+ruined/s2w/corner/corner/openforge/dungeon_stone+ruined#corner+both,collapsed+full-minimal-full.2x2.openforge.stl",
             "md5": "0143c553582b91f497f3dc8c820685c0",
             "size": 15611684,
             "storage_address": "https://objects.openforge.tools/models/0143c5/0143c553582b91f497f3dc8c820685c0.stl"
@@ -12745,6 +12746,7 @@
             "component|collapsed|full-minimal-full",
             "connection|openforge",
             "shape|corner",
+            "shape|corner|both",
             "size|depth|2",
             "size|width|2",
             "texture|dungeon_stone",
@@ -12754,9 +12756,9 @@
     },
     {
         "file_metadata": {
-            "file": "dungeon_stone+ruined#corner,collapsed+full.2x2.openforge.stl",
+            "file": "dungeon_stone+ruined#corner+both,collapsed+full.2x2.openforge.stl",
             "file_modified_at": "2025-08-24T22:16:12.624193",
-            "full_name": "tiles/dungeon_stone+ruined/s2w/corner/corner/openforge/dungeon_stone+ruined#corner,collapsed+full.2x2.openforge.stl",
+            "full_name": "tiles/dungeon_stone+ruined/s2w/corner/corner/openforge/dungeon_stone+ruined#corner+both,collapsed+full.2x2.openforge.stl",
             "md5": "521407dfcf42d5f207248c7571230e13",
             "size": 18963184,
             "storage_address": "https://objects.openforge.tools/models/521407/521407dfcf42d5f207248c7571230e13.stl"
@@ -12872,6 +12874,7 @@
             "component|collapsed|full",
             "connection|openforge",
             "shape|corner",
+            "shape|corner|both",
             "size|depth|2",
             "size|width|2",
             "texture|dungeon_stone",
@@ -12881,9 +12884,9 @@
     },
     {
         "file_metadata": {
-            "file": "dungeon_stone+ruined#corner,collapsed+low-full.2x2.openforge.stl",
+            "file": "dungeon_stone+ruined#corner+both,collapsed+low-full.2x2.openforge.stl",
             "file_modified_at": "2025-08-24T23:00:19.660588",
-            "full_name": "tiles/dungeon_stone+ruined/s2w/corner/corner/openforge/dungeon_stone+ruined#corner,collapsed+low-full.2x2.openforge.stl",
+            "full_name": "tiles/dungeon_stone+ruined/s2w/corner/corner/openforge/dungeon_stone+ruined#corner+both,collapsed+low-full.2x2.openforge.stl",
             "md5": "539924401b91c066fcdc039f0ac89f84",
             "size": 15429584,
             "storage_address": "https://objects.openforge.tools/models/539924/539924401b91c066fcdc039f0ac89f84.stl"
@@ -12999,6 +13002,7 @@
             "component|collapsed|low-full",
             "connection|openforge",
             "shape|corner",
+            "shape|corner|both",
             "size|depth|2",
             "size|width|2",
             "texture|dungeon_stone",
@@ -13008,9 +13012,9 @@
     },
     {
         "file_metadata": {
-            "file": "dungeon_stone+ruined#corner,collapsed+minimal-full-minimal.2x2.openforge.stl",
+            "file": "dungeon_stone+ruined#corner+both,collapsed+minimal-full-minimal.2x2.openforge.stl",
             "file_modified_at": "2025-08-24T22:45:30.389413",
-            "full_name": "tiles/dungeon_stone+ruined/s2w/corner/corner/openforge/dungeon_stone+ruined#corner,collapsed+minimal-full-minimal.2x2.openforge.stl",
+            "full_name": "tiles/dungeon_stone+ruined/s2w/corner/corner/openforge/dungeon_stone+ruined#corner+both,collapsed+minimal-full-minimal.2x2.openforge.stl",
             "md5": "93b42b1a5075d17e3dc9285554357d2e",
             "size": 13715484,
             "storage_address": "https://objects.openforge.tools/models/93b42b/93b42b1a5075d17e3dc9285554357d2e.stl"
@@ -13126,6 +13130,7 @@
             "component|collapsed|minimal-full-minimal",
             "connection|openforge",
             "shape|corner",
+            "shape|corner|both",
             "size|depth|2",
             "size|width|2",
             "texture|dungeon_stone",
@@ -13135,9 +13140,9 @@
     },
     {
         "file_metadata": {
-            "file": "dungeon_stone+ruined#corner,collapsed+minimal-low-minimal.2x2.openforge.stl",
+            "file": "dungeon_stone+ruined#corner+both,collapsed+minimal-low-minimal.2x2.openforge.stl",
             "file_modified_at": "2025-08-24T22:44:03.391227",
-            "full_name": "tiles/dungeon_stone+ruined/s2w/corner/corner/openforge/dungeon_stone+ruined#corner,collapsed+minimal-low-minimal.2x2.openforge.stl",
+            "full_name": "tiles/dungeon_stone+ruined/s2w/corner/corner/openforge/dungeon_stone+ruined#corner+both,collapsed+minimal-low-minimal.2x2.openforge.stl",
             "md5": "bd30e2c87ed9b97e0cdd8e7649f28d35",
             "size": 9835584,
             "storage_address": "https://objects.openforge.tools/models/bd30e2/bd30e2c87ed9b97e0cdd8e7649f28d35.stl"
@@ -13253,6 +13258,7 @@
             "component|collapsed|minimal-low-minimal",
             "connection|openforge",
             "shape|corner",
+            "shape|corner|both",
             "size|depth|2",
             "size|width|2",
             "texture|dungeon_stone",
@@ -13262,9 +13268,9 @@
     },
     {
         "file_metadata": {
-            "file": "dungeon_stone+ruined#corner,collapsed+minimal.2x2.openforge.stl",
+            "file": "dungeon_stone+ruined#corner+both,collapsed+minimal.2x2.openforge.stl",
             "file_modified_at": "2025-08-24T22:42:56.603744",
-            "full_name": "tiles/dungeon_stone+ruined/s2w/corner/corner/openforge/dungeon_stone+ruined#corner,collapsed+minimal.2x2.openforge.stl",
+            "full_name": "tiles/dungeon_stone+ruined/s2w/corner/corner/openforge/dungeon_stone+ruined#corner+both,collapsed+minimal.2x2.openforge.stl",
             "md5": "736c640fee119eda282ea89ba632a56d",
             "size": 10298284,
             "storage_address": "https://objects.openforge.tools/models/736c64/736c640fee119eda282ea89ba632a56d.stl"
@@ -13380,6 +13386,7 @@
             "component|collapsed|minimal",
             "connection|openforge",
             "shape|corner",
+            "shape|corner|both",
             "size|depth|2",
             "size|width|2",
             "texture|dungeon_stone",
@@ -13389,9 +13396,9 @@
     },
     {
         "file_metadata": {
-            "file": "dungeon_stone+ruined#corner,collapsed+full-low.2x2.openforge,side+dragonlock.stl",
+            "file": "dungeon_stone+ruined#corner+both,collapsed+full-low.2x2.openforge,side+dragonlock.stl",
             "file_modified_at": "2025-08-24T22:25:31.643557",
-            "full_name": "tiles/dungeon_stone+ruined/s2w/corner/corner/openforge/side+dragonlock/dungeon_stone+ruined#corner,collapsed+full-low.2x2.openforge,side+dragonlock.stl",
+            "full_name": "tiles/dungeon_stone+ruined/s2w/corner/corner/openforge/side+dragonlock/dungeon_stone+ruined#corner+both,collapsed+full-low.2x2.openforge,side+dragonlock.stl",
             "md5": "bc2c3d171ec8bc32d9f739df51d75c5c",
             "size": 14816484,
             "storage_address": "https://objects.openforge.tools/models/bc2c3d/bc2c3d171ec8bc32d9f739df51d75c5c.stl"
@@ -13509,6 +13516,7 @@
             "connection|side",
             "connection|side|dragonlock",
             "shape|corner",
+            "shape|corner|both",
             "size|depth|2",
             "size|width|2",
             "texture|dungeon_stone",
@@ -13518,9 +13526,9 @@
     },
     {
         "file_metadata": {
-            "file": "dungeon_stone+ruined#corner,collapsed+full-minimal-full.2x2.openforge,side+dragonlock.stl",
+            "file": "dungeon_stone+ruined#corner+both,collapsed+full-minimal-full.2x2.openforge,side+dragonlock.stl",
             "file_modified_at": "2025-08-24T22:38:25.081013",
-            "full_name": "tiles/dungeon_stone+ruined/s2w/corner/corner/openforge/side+dragonlock/dungeon_stone+ruined#corner,collapsed+full-minimal-full.2x2.openforge,side+dragonlock.stl",
+            "full_name": "tiles/dungeon_stone+ruined/s2w/corner/corner/openforge/side+dragonlock/dungeon_stone+ruined#corner+both,collapsed+full-minimal-full.2x2.openforge,side+dragonlock.stl",
             "md5": "503a539de557a288cdab2f27a4829535",
             "size": 15788034,
             "storage_address": "https://objects.openforge.tools/models/503a53/503a539de557a288cdab2f27a4829535.stl"
@@ -13638,6 +13646,7 @@
             "connection|side",
             "connection|side|dragonlock",
             "shape|corner",
+            "shape|corner|both",
             "size|depth|2",
             "size|width|2",
             "texture|dungeon_stone",
@@ -13647,9 +13656,9 @@
     },
     {
         "file_metadata": {
-            "file": "dungeon_stone+ruined#corner,collapsed+full.2x2.openforge,side+dragonlock.stl",
+            "file": "dungeon_stone+ruined#corner+both,collapsed+full.2x2.openforge,side+dragonlock.stl",
             "file_modified_at": "2025-08-24T22:16:53.842663",
-            "full_name": "tiles/dungeon_stone+ruined/s2w/corner/corner/openforge/side+dragonlock/dungeon_stone+ruined#corner,collapsed+full.2x2.openforge,side+dragonlock.stl",
+            "full_name": "tiles/dungeon_stone+ruined/s2w/corner/corner/openforge/side+dragonlock/dungeon_stone+ruined#corner+both,collapsed+full.2x2.openforge,side+dragonlock.stl",
             "md5": "f22be777550e4fe0e10c75c7e21794f8",
             "size": 19213484,
             "storage_address": "https://objects.openforge.tools/models/f22be7/f22be777550e4fe0e10c75c7e21794f8.stl"
@@ -13767,6 +13776,7 @@
             "connection|side",
             "connection|side|dragonlock",
             "shape|corner",
+            "shape|corner|both",
             "size|depth|2",
             "size|width|2",
             "texture|dungeon_stone",
@@ -13776,9 +13786,9 @@
     },
     {
         "file_metadata": {
-            "file": "dungeon_stone+ruined#corner,collapsed+low-full.2x2.openforge,side+dragonlock.stl",
+            "file": "dungeon_stone+ruined#corner+both,collapsed+low-full.2x2.openforge,side+dragonlock.stl",
             "file_modified_at": "2025-08-24T23:01:01.531276",
-            "full_name": "tiles/dungeon_stone+ruined/s2w/corner/corner/openforge/side+dragonlock/dungeon_stone+ruined#corner,collapsed+low-full.2x2.openforge,side+dragonlock.stl",
+            "full_name": "tiles/dungeon_stone+ruined/s2w/corner/corner/openforge/side+dragonlock/dungeon_stone+ruined#corner+both,collapsed+low-full.2x2.openforge,side+dragonlock.stl",
             "md5": "a4b35be5a04c34dc54467fe988be03d3",
             "size": 15483234,
             "storage_address": "https://objects.openforge.tools/models/a4b35b/a4b35be5a04c34dc54467fe988be03d3.stl"
@@ -13896,6 +13906,7 @@
             "connection|side",
             "connection|side|dragonlock",
             "shape|corner",
+            "shape|corner|both",
             "size|depth|2",
             "size|width|2",
             "texture|dungeon_stone",
@@ -13905,9 +13916,9 @@
     },
     {
         "file_metadata": {
-            "file": "dungeon_stone+ruined#corner,collapsed+full-low.2x2.openforge,side.stl",
+            "file": "dungeon_stone+ruined#corner+both,collapsed+full-low.2x2.openforge,side.stl",
             "file_modified_at": "2025-08-24T22:25:12.721035",
-            "full_name": "tiles/dungeon_stone+ruined/s2w/corner/corner/openforge/side/dungeon_stone+ruined#corner,collapsed+full-low.2x2.openforge,side.stl",
+            "full_name": "tiles/dungeon_stone+ruined/s2w/corner/corner/openforge/side/dungeon_stone+ruined#corner+both,collapsed+full-low.2x2.openforge,side.stl",
             "md5": "5e4569beb5bd66e9d9b5ad2b92678bbd",
             "size": 14649484,
             "storage_address": "https://objects.openforge.tools/models/5e4569/5e4569beb5bd66e9d9b5ad2b92678bbd.stl"
@@ -14025,6 +14036,7 @@
             "connection|side",
             "connection|side|openlock",
             "shape|corner",
+            "shape|corner|both",
             "size|depth|2",
             "size|width|2",
             "texture|dungeon_stone",
@@ -14034,9 +14046,9 @@
     },
     {
         "file_metadata": {
-            "file": "dungeon_stone+ruined#corner,collapsed+full-minimal-full.2x2.openforge,side.stl",
+            "file": "dungeon_stone+ruined#corner+both,collapsed+full-minimal-full.2x2.openforge,side.stl",
             "file_modified_at": "2025-08-24T22:38:09.877879",
-            "full_name": "tiles/dungeon_stone+ruined/s2w/corner/corner/openforge/side/dungeon_stone+ruined#corner,collapsed+full-minimal-full.2x2.openforge,side.stl",
+            "full_name": "tiles/dungeon_stone+ruined/s2w/corner/corner/openforge/side/dungeon_stone+ruined#corner+both,collapsed+full-minimal-full.2x2.openforge,side.stl",
             "md5": "a46387950cdfbca6a5f197c8d53c892d",
             "size": 15453084,
             "storage_address": "https://objects.openforge.tools/models/a46387/a46387950cdfbca6a5f197c8d53c892d.stl"
@@ -14154,6 +14166,7 @@
             "connection|side",
             "connection|side|openlock",
             "shape|corner",
+            "shape|corner|both",
             "size|depth|2",
             "size|width|2",
             "texture|dungeon_stone",
@@ -14163,9 +14176,9 @@
     },
     {
         "file_metadata": {
-            "file": "dungeon_stone+ruined#corner,collapsed+full.2x2.openforge,side.stl",
+            "file": "dungeon_stone+ruined#corner+both,collapsed+full.2x2.openforge,side.stl",
             "file_modified_at": "2025-08-24T22:16:30.358273",
-            "full_name": "tiles/dungeon_stone+ruined/s2w/corner/corner/openforge/side/dungeon_stone+ruined#corner,collapsed+full.2x2.openforge,side.stl",
+            "full_name": "tiles/dungeon_stone+ruined/s2w/corner/corner/openforge/side/dungeon_stone+ruined#corner+both,collapsed+full.2x2.openforge,side.stl",
             "md5": "92f510ef6dfac82f8b33a4c849888273",
             "size": 18701584,
             "storage_address": "https://objects.openforge.tools/models/92f510/92f510ef6dfac82f8b33a4c849888273.stl"
@@ -14283,6 +14296,7 @@
             "connection|side",
             "connection|side|openlock",
             "shape|corner",
+            "shape|corner|both",
             "size|depth|2",
             "size|width|2",
             "texture|dungeon_stone",
@@ -14292,9 +14306,9 @@
     },
     {
         "file_metadata": {
-            "file": "dungeon_stone+ruined#corner,collapsed+low-full.2x2.openforge,side.stl",
+            "file": "dungeon_stone+ruined#corner+both,collapsed+low-full.2x2.openforge,side.stl",
             "file_modified_at": "2025-08-24T23:00:45.516557",
-            "full_name": "tiles/dungeon_stone+ruined/s2w/corner/corner/openforge/side/dungeon_stone+ruined#corner,collapsed+low-full.2x2.openforge,side.stl",
+            "full_name": "tiles/dungeon_stone+ruined/s2w/corner/corner/openforge/side/dungeon_stone+ruined#corner+both,collapsed+low-full.2x2.openforge,side.stl",
             "md5": "0a71daf5c65a235ebfe207e63e695e56",
             "size": 15316184,
             "storage_address": "https://objects.openforge.tools/models/0a71da/0a71daf5c65a235ebfe207e63e695e56.stl"
@@ -14412,6 +14426,7 @@
             "connection|side",
             "connection|side|openlock",
             "shape|corner",
+            "shape|corner|both",
             "size|depth|2",
             "size|width|2",
             "texture|dungeon_stone",
@@ -14421,9 +14436,9 @@
     },
     {
         "file_metadata": {
-            "file": "dungeon_stone+ruined#corner,collapsed+full-low.2x2.openlock.stl",
+            "file": "dungeon_stone+ruined#corner+both,collapsed+full-low.2x2.openlock.stl",
             "file_modified_at": "2025-08-24T22:24:40.768946",
-            "full_name": "tiles/dungeon_stone+ruined/s2w/corner/corner/openlock/dungeon_stone+ruined#corner,collapsed+full-low.2x2.openlock.stl",
+            "full_name": "tiles/dungeon_stone+ruined/s2w/corner/corner/openlock/dungeon_stone+ruined#corner+both,collapsed+full-low.2x2.openlock.stl",
             "md5": "ae026a2eafb2a2e262fa2d121c0be5f1",
             "size": 13631084,
             "storage_address": "https://objects.openforge.tools/models/ae026a/ae026a2eafb2a2e262fa2d121c0be5f1.stl"
@@ -14539,6 +14554,7 @@
             "component|collapsed|full-low",
             "connection|openlock",
             "shape|corner",
+            "shape|corner|both",
             "size|depth|2",
             "size|width|2",
             "texture|dungeon_stone",
@@ -14548,9 +14564,9 @@
     },
     {
         "file_metadata": {
-            "file": "dungeon_stone+ruined#corner,collapsed+full-minimal-full.2x2.openforge.stl",
+            "file": "dungeon_stone+ruined#corner+both,collapsed+full-minimal-full.2x2.openforge.stl",
             "file_modified_at": "2025-08-24T22:38:55.735706",
-            "full_name": "tiles/dungeon_stone+ruined/s2w/corner/corner/openlock/dungeon_stone+ruined#corner,collapsed+full-minimal-full.2x2.openforge.stl",
+            "full_name": "tiles/dungeon_stone+ruined/s2w/corner/corner/openlock/dungeon_stone+ruined#corner+both,collapsed+full-minimal-full.2x2.openforge.stl",
             "md5": "20418ce1460f833d99b5fb2b5f55cb53",
             "size": 14295084,
             "storage_address": "https://objects.openforge.tools/models/20418c/20418ce1460f833d99b5fb2b5f55cb53.stl"
@@ -14666,6 +14682,7 @@
             "component|collapsed|full-minimal-full",
             "connection|openforge",
             "shape|corner",
+            "shape|corner|both",
             "size|depth|2",
             "size|width|2",
             "texture|dungeon_stone",
@@ -14675,9 +14692,9 @@
     },
     {
         "file_metadata": {
-            "file": "dungeon_stone+ruined#corner,collapsed+full.2x2.openlock.stl",
+            "file": "dungeon_stone+ruined#corner+both,collapsed+full.2x2.openlock.stl",
             "file_modified_at": "2025-08-24T22:18:10.982651",
-            "full_name": "tiles/dungeon_stone+ruined/s2w/corner/corner/openlock/dungeon_stone+ruined#corner,collapsed+full.2x2.openlock.stl",
+            "full_name": "tiles/dungeon_stone+ruined/s2w/corner/corner/openlock/dungeon_stone+ruined#corner+both,collapsed+full.2x2.openlock.stl",
             "md5": "2e65846b6901bdb102bae244114351fa",
             "size": 17833684,
             "storage_address": "https://objects.openforge.tools/models/2e6584/2e65846b6901bdb102bae244114351fa.stl"
@@ -14793,6 +14810,7 @@
             "component|collapsed|full",
             "connection|openlock",
             "shape|corner",
+            "shape|corner|both",
             "size|depth|2",
             "size|width|2",
             "texture|dungeon_stone",
@@ -14802,9 +14820,9 @@
     },
     {
         "file_metadata": {
-            "file": "dungeon_stone+ruined#corner,collapsed+low-full.2x2.openforge.stl",
+            "file": "dungeon_stone+ruined#corner+both,collapsed+low-full.2x2.openforge.stl",
             "file_modified_at": "2025-08-24T23:01:31.908212",
-            "full_name": "tiles/dungeon_stone+ruined/s2w/corner/corner/openlock/dungeon_stone+ruined#corner,collapsed+low-full.2x2.openforge.stl",
+            "full_name": "tiles/dungeon_stone+ruined/s2w/corner/corner/openlock/dungeon_stone+ruined#corner+both,collapsed+low-full.2x2.openforge.stl",
             "md5": "be8eb9cf607dd5d2e08a6508d689ce8e",
             "size": 14204484,
             "storage_address": "https://objects.openforge.tools/models/be8eb9/be8eb9cf607dd5d2e08a6508d689ce8e.stl"
@@ -14920,6 +14938,7 @@
             "component|collapsed|low-full",
             "connection|openforge",
             "shape|corner",
+            "shape|corner|both",
             "size|depth|2",
             "size|width|2",
             "texture|dungeon_stone",
@@ -14929,9 +14948,9 @@
     },
     {
         "file_metadata": {
-            "file": "dungeon_stone+ruined#corner,collapsed+low.2x2.openforge.stl",
+            "file": "dungeon_stone+ruined#corner+both,collapsed+low.2x2.openforge.stl",
             "file_modified_at": "2025-08-24T22:40:25.871877",
-            "full_name": "tiles/dungeon_stone+ruined/s2w/corner/corner/openlock/dungeon_stone+ruined#corner,collapsed+low.2x2.openforge.stl",
+            "full_name": "tiles/dungeon_stone+ruined/s2w/corner/corner/openlock/dungeon_stone+ruined#corner+both,collapsed+low.2x2.openforge.stl",
             "md5": "eef3f10f92ecdd618bf6724cc5178af1",
             "size": 11682184,
             "storage_address": "https://objects.openforge.tools/models/eef3f1/eef3f10f92ecdd618bf6724cc5178af1.stl"
@@ -15047,6 +15066,7 @@
             "component|collapsed|low",
             "connection|openforge",
             "shape|corner",
+            "shape|corner|both",
             "size|depth|2",
             "size|width|2",
             "texture|dungeon_stone",
@@ -15056,9 +15076,9 @@
     },
     {
         "file_metadata": {
-            "file": "dungeon_stone+ruined#corner,collapsed+low.2x2.openlock.stl",
+            "file": "dungeon_stone+ruined#corner+both,collapsed+low.2x2.openlock.stl",
             "file_modified_at": "2025-08-24T22:40:42.325552",
-            "full_name": "tiles/dungeon_stone+ruined/s2w/corner/corner/openlock/dungeon_stone+ruined#corner,collapsed+low.2x2.openlock.stl",
+            "full_name": "tiles/dungeon_stone+ruined/s2w/corner/corner/openlock/dungeon_stone+ruined#corner+both,collapsed+low.2x2.openlock.stl",
             "md5": "304c2061ef46e4d290efc6ba5b9be5b4",
             "size": 10565284,
             "storage_address": "https://objects.openforge.tools/models/304c20/304c2061ef46e4d290efc6ba5b9be5b4.stl"
@@ -15174,6 +15194,7 @@
             "component|collapsed|low",
             "connection|openlock",
             "shape|corner",
+            "shape|corner|both",
             "size|depth|2",
             "size|width|2",
             "texture|dungeon_stone",
@@ -15183,9 +15204,9 @@
     },
     {
         "file_metadata": {
-            "file": "dungeon_stone+ruined#corner,collapsed+minimal-full-minimal.2x2.openlock.stl",
+            "file": "dungeon_stone+ruined#corner+both,collapsed+minimal-full-minimal.2x2.openlock.stl",
             "file_modified_at": "2025-08-24T22:45:15.551635",
-            "full_name": "tiles/dungeon_stone+ruined/s2w/corner/corner/openlock/dungeon_stone+ruined#corner,collapsed+minimal-full-minimal.2x2.openlock.stl",
+            "full_name": "tiles/dungeon_stone+ruined/s2w/corner/corner/openlock/dungeon_stone+ruined#corner+both,collapsed+minimal-full-minimal.2x2.openlock.stl",
             "md5": "14932e01c1a8b3631b492da02563b2ce",
             "size": 12636884,
             "storage_address": "https://objects.openforge.tools/models/14932e/14932e01c1a8b3631b492da02563b2ce.stl"
@@ -15301,6 +15322,7 @@
             "component|collapsed|minimal-full-minimal",
             "connection|openlock",
             "shape|corner",
+            "shape|corner|both",
             "size|depth|2",
             "size|width|2",
             "texture|dungeon_stone",
@@ -15310,9 +15332,9 @@
     },
     {
         "file_metadata": {
-            "file": "dungeon_stone+ruined#corner,collapsed+minimal-low-minimal.2x2.openlock.stl",
+            "file": "dungeon_stone+ruined#corner+both,collapsed+minimal-low-minimal.2x2.openlock.stl",
             "file_modified_at": "2025-08-24T22:44:17.291025",
-            "full_name": "tiles/dungeon_stone+ruined/s2w/corner/corner/openlock/dungeon_stone+ruined#corner,collapsed+minimal-low-minimal.2x2.openlock.stl",
+            "full_name": "tiles/dungeon_stone+ruined/s2w/corner/corner/openlock/dungeon_stone+ruined#corner+both,collapsed+minimal-low-minimal.2x2.openlock.stl",
             "md5": "5af14eba013606f06d441274c6acabbb",
             "size": 8771084,
             "storage_address": "https://objects.openforge.tools/models/5af14e/5af14eba013606f06d441274c6acabbb.stl"
@@ -15428,6 +15450,7 @@
             "component|collapsed|minimal-low-minimal",
             "connection|openlock",
             "shape|corner",
+            "shape|corner|both",
             "size|depth|2",
             "size|width|2",
             "texture|dungeon_stone",
@@ -15437,9 +15460,9 @@
     },
     {
         "file_metadata": {
-            "file": "dungeon_stone+ruined#corner,collapsed+minimal.2x2.openlock.stl",
+            "file": "dungeon_stone+ruined#corner+both,collapsed+minimal.2x2.openlock.stl",
             "file_modified_at": "2025-08-24T22:42:41.824175",
-            "full_name": "tiles/dungeon_stone+ruined/s2w/corner/corner/openlock/dungeon_stone+ruined#corner,collapsed+minimal.2x2.openlock.stl",
+            "full_name": "tiles/dungeon_stone+ruined/s2w/corner/corner/openlock/dungeon_stone+ruined#corner+both,collapsed+minimal.2x2.openlock.stl",
             "md5": "a7ca75c95e8ea08040889023640a2f1f",
             "size": 9201684,
             "storage_address": "https://objects.openforge.tools/models/a7ca75/a7ca75c95e8ea08040889023640a2f1f.stl"
@@ -15555,6 +15578,7 @@
             "component|collapsed|minimal",
             "connection|openlock",
             "shape|corner",
+            "shape|corner|both",
             "size|depth|2",
             "size|width|2",
             "texture|dungeon_stone",
@@ -15564,9 +15588,9 @@
     },
     {
         "file_metadata": {
-            "file": "dungeon_stone+ruined#corner,collapsed+full-low.2x2.openlock,side.stl",
+            "file": "dungeon_stone+ruined#corner+both,collapsed+full-low.2x2.openlock,side.stl",
             "file_modified_at": "2025-08-24T22:24:26.308316",
-            "full_name": "tiles/dungeon_stone+ruined/s2w/corner/corner/openlock/side/dungeon_stone+ruined#corner,collapsed+full-low.2x2.openlock,side.stl",
+            "full_name": "tiles/dungeon_stone+ruined/s2w/corner/corner/openlock/side/dungeon_stone+ruined#corner+both,collapsed+full-low.2x2.openlock,side.stl",
             "md5": "7a2adf521df682c8d267607b58bb8069",
             "size": 13552184,
             "storage_address": "https://objects.openforge.tools/models/7a2adf/7a2adf521df682c8d267607b58bb8069.stl"
@@ -15684,6 +15708,7 @@
             "connection|side",
             "connection|side|openlock",
             "shape|corner",
+            "shape|corner|both",
             "size|depth|2",
             "size|width|2",
             "texture|dungeon_stone",
@@ -15693,9 +15718,9 @@
     },
     {
         "file_metadata": {
-            "file": "dungeon_stone+ruined#corner,collapsed+full-minimal-full.2x2.openforge,side.stl",
+            "file": "dungeon_stone+ruined#corner+both,collapsed+full-minimal-full.2x2.openforge,side.stl",
             "file_modified_at": "2025-08-24T22:38:41.307547",
-            "full_name": "tiles/dungeon_stone+ruined/s2w/corner/corner/openlock/side/dungeon_stone+ruined#corner,collapsed+full-minimal-full.2x2.openforge,side.stl",
+            "full_name": "tiles/dungeon_stone+ruined/s2w/corner/corner/openlock/side/dungeon_stone+ruined#corner+both,collapsed+full-minimal-full.2x2.openforge,side.stl",
             "md5": "56c3f3dbeb5423bac036a0c3ce09f107",
             "size": 14136484,
             "storage_address": "https://objects.openforge.tools/models/56c3f3/56c3f3dbeb5423bac036a0c3ce09f107.stl"
@@ -15813,6 +15838,7 @@
             "connection|side",
             "connection|side|openlock",
             "shape|corner",
+            "shape|corner|both",
             "size|depth|2",
             "size|width|2",
             "texture|dungeon_stone",
@@ -15822,9 +15848,9 @@
     },
     {
         "file_metadata": {
-            "file": "dungeon_stone+ruined#corner,collapsed+full.2x2.openlock,side.stl",
+            "file": "dungeon_stone+ruined#corner+both,collapsed+full.2x2.openlock,side.stl",
             "file_modified_at": "2025-08-24T22:18:46.374497",
-            "full_name": "tiles/dungeon_stone+ruined/s2w/corner/corner/openlock/side/dungeon_stone+ruined#corner,collapsed+full.2x2.openlock,side.stl",
+            "full_name": "tiles/dungeon_stone+ruined/s2w/corner/corner/openlock/side/dungeon_stone+ruined#corner+both,collapsed+full.2x2.openlock,side.stl",
             "md5": "b52565f7ab79eb74462c1b4043925418",
             "size": 17562184,
             "storage_address": "https://objects.openforge.tools/models/b52565/b52565f7ab79eb74462c1b4043925418.stl"
@@ -15942,6 +15968,7 @@
             "connection|side",
             "connection|side|openlock",
             "shape|corner",
+            "shape|corner|both",
             "size|depth|2",
             "size|width|2",
             "texture|dungeon_stone",
@@ -15951,9 +15978,9 @@
     },
     {
         "file_metadata": {
-            "file": "dungeon_stone+ruined#corner,collapsed+low-full.2x2.openforge,side.stl",
+            "file": "dungeon_stone+ruined#corner+both,collapsed+low-full.2x2.openforge,side.stl",
             "file_modified_at": "2025-08-24T23:01:18.551510",
-            "full_name": "tiles/dungeon_stone+ruined/s2w/corner/corner/openlock/side/dungeon_stone+ruined#corner,collapsed+low-full.2x2.openforge,side.stl",
+            "full_name": "tiles/dungeon_stone+ruined/s2w/corner/corner/openlock/side/dungeon_stone+ruined#corner+both,collapsed+low-full.2x2.openforge,side.stl",
             "md5": "31e5a438f93fc3d3f7492f5e04741a46",
             "size": 14091084,
             "storage_address": "https://objects.openforge.tools/models/31e5a4/31e5a438f93fc3d3f7492f5e04741a46.stl"
@@ -16071,6 +16098,7 @@
             "connection|side",
             "connection|side|openlock",
             "shape|corner",
+            "shape|corner|both",
             "size|depth|2",
             "size|width|2",
             "texture|dungeon_stone",
