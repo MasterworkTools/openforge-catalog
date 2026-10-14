@@ -247,11 +247,13 @@ steps:
         title: One piece, base included
         blurb: >
           The tile is printed with its base already part of it.
-        # Wall on tile glues its wings and pillar to the floor's base,
-        # so there has to be one.
+        # Separate wall only. Wall on tile glues its wings and pillar to
+        # the floor's base, so there has to be one; and every s2w corner
+        # floor carries the openforge socket, which is the thing this
+        # option denies, so offering it there is offering nothing.
         when:
           selected:
-            method: [separate-wall, s2w]
+            method: [separate-wall]
         roles:
           floor:
             deny: ['connection|openforge']
@@ -292,9 +294,15 @@ roles:
       # plain shape beside it, and the sweep above is scoped to
       # shape|floor.
       deny: ['shape|base']
+    # No texture here. The floor texture question already requires one,
+    # and a preferred tag that contradicts it can never match — which
+    # costs more than the preference, because `prefer` is required as a
+    # prefix and a term that cannot match takes every term after it
+    # down with it. That is what left a corner floor at 1x1.
+    #
+    # connection|openforge last, because the single-piece option denies
+    # it and a term an option denies has to be the least wanted.
     prefer:
-      - 'texture|dungeon_stone|block'
-      - 'texture|dungeon_stone'
       - 'size|width|2'
       - 'size|depth|2'
       - 'connection|openforge'
@@ -332,7 +340,7 @@ roles:
         - 'connection|openforge'
         - 'connection|openlock'
         - 'connection|side'
-    prefer: ['texture|dungeon_stone', 'size|width|2']
+    prefer: ['size|width|2']
     avoid: ['decoration']
   right-wall:
     title: Right wing
@@ -355,7 +363,7 @@ roles:
         - 'connection|openforge'
         - 'connection|openlock'
         - 'connection|side'
-    prefer: ['texture|dungeon_stone', 'size|width|2']
+    prefer: ['size|width|2']
     avoid: ['decoration']
   pillar:
     title: Pillar
@@ -371,7 +379,8 @@ roles:
       # s2w piece.
       deny_children: ['shape|column', 'component', 'shape']
       allow: ['shape|column|corner', 'shape|column|low', 'shape|square', 'shape|wall']
-    prefer: ['texture|dungeon_stone', 'size|column_shape|L']
+    # Nothing to prefer: the shape is required by the query and the
+    # texture by the question.
   floor-base:
     title: Base for the floor
     query:
@@ -392,7 +401,6 @@ roles:
       require: ['shape|base']
       deny_children: ['shape|base']
       allow: ['shape|base|wall']
-    prefer: ['texture|dungeon_stone']
     under: left-wall
     # Width only. A wall is a line along an edge: it has a width and no
     # depth, and its base is the same shape.
