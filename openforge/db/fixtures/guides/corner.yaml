@@ -302,11 +302,13 @@ roles:
   left-wall:
     title: Left wing
     query:
-      # Neither side tag is required: the side is the first entry in
-      # `prefer` below, which is required first and dropped last. A
-      # texture with distinct halves yields its left half; one whose
-      # wing works either way yields the single piece that carries both
-      # side tags, or none.
+      # The opposite side is denied rather than this one required,
+      # because an absent side tag means the wing works either way
+      # round. Denying `right` keeps the left halves and the reversible
+      # wings and refuses only what cannot go on this side. Requiring
+      # `left` instead would throw away every reversible wing, and
+      # ranking by side rather than filtering offers each wing both
+      # halves to choose from.
       #
       # A plain wall, by the wall guide's rule: component|wall is what
       # makes it a wall rather than a wall-shaped feature, and sweeping
@@ -314,6 +316,10 @@ roles:
       # question names which component marker it keeps, so neither is
       # required here.
       require: ['shape|wall']
+      # `both` is the whole corner in one piece — it stands in for
+      # the pillar and both wings at once — so it is not a wing and
+      # carries no side to deny it by.
+      deny: ['shape|corner|right', 'shape|corner|both']
       deny_children: ['component', 'component|wall', 'connection', 'shape']
       allow:
         - 'shape|square'
@@ -321,32 +327,35 @@ roles:
         - 'shape|wall|low'
         - 'shape|corner'
         - 'shape|corner|left'
-        - 'shape|corner|right'
         - 'component|wall'
         - 'component|wall|low'
         - 'connection|openforge'
         - 'connection|openlock'
         - 'connection|side'
-    prefer: ['shape|corner|left', 'texture|dungeon_stone', 'size|width|2']
+    prefer: ['texture|dungeon_stone', 'size|width|2']
     avoid: ['decoration']
   right-wall:
     title: Right wing
     query:
+      # Mirror of the left wing above.
       require: ['shape|wall']
+      # `both` is the whole corner in one piece — it stands in for
+      # the pillar and both wings at once — so it is not a wing and
+      # carries no side to deny it by.
+      deny: ['shape|corner|left', 'shape|corner|both']
       deny_children: ['component', 'component|wall', 'connection', 'shape']
       allow:
         - 'shape|square'
         - 'shape|wall'
         - 'shape|wall|low'
         - 'shape|corner'
-        - 'shape|corner|left'
         - 'shape|corner|right'
         - 'component|wall'
         - 'component|wall|low'
         - 'connection|openforge'
         - 'connection|openlock'
         - 'connection|side'
-    prefer: ['shape|corner|right', 'texture|dungeon_stone', 'size|width|2']
+    prefer: ['texture|dungeon_stone', 'size|width|2']
     avoid: ['decoration']
   pillar:
     title: Pillar

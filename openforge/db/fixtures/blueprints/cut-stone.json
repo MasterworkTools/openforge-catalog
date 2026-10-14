@@ -28047,9 +28047,9 @@
             ]
         },
         "file_metadata": {
-            "file": "cut-stone#corner+both+right+left,grate+widened.2x2.openforge.stl",
+            "file": "cut-stone#corner+both,grate+widened.2x2.openforge.stl",
             "file_modified_at": "2024-07-27T09:53:43.169175",
-            "full_name": "tiles/cut-stone/s2w/corner/grate#corner+s2w/widened/cut-stone#corner+both+right+left,grate+widened.2x2.openforge.stl",
+            "full_name": "tiles/cut-stone/s2w/corner/grate#corner+s2w/widened/cut-stone#corner+both,grate+widened.2x2.openforge.stl",
             "md5": "137560527ca26d2c07dc0eaf648f0045",
             "size": 11623984,
             "storage_address": "https://objects.openforge.tools/models/137560/137560527ca26d2c07dc0eaf648f0045.stl"
@@ -28166,8 +28166,6 @@
             "connection|openforge",
             "shape|corner",
             "shape|corner|both",
-            "shape|corner|left",
-            "shape|corner|right",
             "size|depth|2",
             "size|width|2",
             "texture|cut-stone"

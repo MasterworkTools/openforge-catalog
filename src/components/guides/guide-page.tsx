@@ -47,6 +47,10 @@ export default function GuidePage() {
   // every resolution. Here rather than in the parts list, because the
   // questions on the left open it too.
   const [inspecting, setInspecting] = useState<string | null>(null);
+  // The prose column, open until someone shuts it. Deliberately not in
+  // the URL: the answers there describe a build and are worth sharing,
+  // and whether the reader wanted the words is not part of it.
+  const [wordsOpen, setWordsOpen] = useState(true);
 
   // Put focus on the heading when a click brought us here.
   //
@@ -303,12 +307,14 @@ export default function GuidePage() {
               Reset build
             </button>
           </div>
-          {/* The questions keep a fixed width — they are a list of
-              short labels and do not want more. The pieces and the
-              words split what is left evenly: `min-w-0` because a flex
-              child will not shrink below its content otherwise, and a
-              long filename under a part would push the text column
-              off the side. */}
+          {/* The questions and the words keep the same fixed width,
+              one down each side, and the pieces take everything left
+              over: `min-w-0` because a flex child will not shrink
+              below its content otherwise, and a long filename under a
+              part would push the columns off the side.
+
+              Collapsing the words gives that width to the pieces,
+              which is the point of offering it. */}
           <div className="lg:flex-1 lg:min-w-0 lg:overflow-y-auto lg:min-h-0 pr-2">
             <GuideParts
               parts={resolved.parts}
@@ -322,12 +328,18 @@ export default function GuidePage() {
               onSelectAll={selectAll}
             />
           </div>
-          <div className="lg:flex-1 lg:min-w-0 lg:overflow-y-auto lg:min-h-0 pr-2">
+          <div
+            className={`${
+              wordsOpen ? 'lg:w-72' : 'lg:w-10'
+            } lg:shrink-0 lg:overflow-y-auto lg:min-h-0 pr-2`}
+          >
             <GuideExplainer
               steps={resolved.steps}
               refinements={resolved.refinements}
               unavailable={unavailable}
               opened={opened}
+              open={wordsOpen}
+              onOpenChange={setWordsOpen}
             />
           </div>
         </div>

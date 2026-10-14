@@ -87696,6 +87696,9 @@
                                 "tag": "interface|grate"
                             },
                             {
+                                "tag": "shape|square"
+                            },
+                            {
                                 "tag": "size|width|2"
                             }
                         ]
@@ -87721,9 +87724,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone%block#corner+both+right+left,grate+widened.2x2.openforge.stl",
+            "file": "dungeon_stone%block#corner+both,grate+widened.2x2.openforge.stl",
             "file_modified_at": "2024-07-27T09:55:00.678212",
-            "full_name": "tiles/dungeon_stone/s2w/corner/grate%block#corner+s2w/widened/dungeon_stone%block#corner+both+right+left,grate+widened.2x2.openforge.stl",
+            "full_name": "tiles/dungeon_stone/s2w/corner/grate%block#corner+s2w/widened/dungeon_stone%block#corner+both,grate+widened.2x2.openforge.stl",
             "md5": "0f9f3c6db72cced9c0305cdcfd4c6435",
             "size": 10955584,
             "storage_address": "https://objects.openforge.tools/models/0f9f3c/0f9f3c6db72cced9c0305cdcfd4c6435.stl"
@@ -87840,8 +87843,6 @@
             "connection|openforge",
             "shape|corner",
             "shape|corner|both",
-            "shape|corner|left",
-            "shape|corner|right",
             "size|depth|2",
             "size|width|2",
             "texture|dungeon_stone",
@@ -89571,6 +89572,9 @@
                                 "tag": "interface|grate"
                             },
                             {
+                                "tag": "shape|square"
+                            },
+                            {
                                 "tag": "size|width|2"
                             }
                         ]
@@ -89596,9 +89600,9 @@
             ]
         },
         "file_metadata": {
-            "file": "dungeon_stone%eroded#corner+both+right+left,grate+widened.2x2.openforge.stl",
+            "file": "dungeon_stone%eroded#corner+both,grate+widened.2x2.openforge.stl",
             "file_modified_at": "2024-07-27T09:59:02.220047",
-            "full_name": "tiles/dungeon_stone/s2w/corner/grate%eroded#corner+s2w/widened/dungeon_stone%eroded#corner+both+right+left,grate+widened.2x2.openforge.stl",
+            "full_name": "tiles/dungeon_stone/s2w/corner/grate%eroded#corner+s2w/widened/dungeon_stone%eroded#corner+both,grate+widened.2x2.openforge.stl",
             "md5": "b3d06a89d374d3940c739fefabb8ede3",
             "size": 11187884,
             "storage_address": "https://objects.openforge.tools/models/b3d06a/b3d06a89d374d3940c739fefabb8ede3.stl"
@@ -89715,8 +89719,6 @@
             "connection|openforge",
             "shape|corner",
             "shape|corner|both",
-            "shape|corner|left",
-            "shape|corner|right",
             "size|depth|2",
             "size|width|2",
             "texture|dungeon_stone",
