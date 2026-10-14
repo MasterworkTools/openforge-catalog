@@ -22,7 +22,7 @@ PRs target **`test`** (the development default branch), never `main`. `main` is 
 
 ## Tooling assumed in CI
 
-CI runs (see `.github/workflows/test.yaml`): `pytest tests/ --cov=openforge`, `npm test`, `npm run lint:all` (ESLint + `tsc --noEmit`), `ruff check .`, `ruff format --check .`. Pre-commit mirrors these locally.
+CI runs (see `.github/workflows/test.yaml`): `pytest tests/ --cov=openforge`, `npm test`, `npm run lint:all` (ESLint + `tsc --noEmit`), `ruff check .`, `ruff format --check .`.
 
 Reviewers do not duplicate what CI already enforces — they cover what it misses (C901 complexity, bandit-class security checks, dead-code detection have no CI gate here, so the corresponding reviewers carry that weight themselves). Suggesting a new CI tool is a P3 advisory, not a blocking finding.
 

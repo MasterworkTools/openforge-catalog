@@ -19,6 +19,8 @@ Whole-PR generalist review. This repo has no Gemini Code Assist or Cursor Bugbot
 **Explicitly NOT this reviewer's beat** (the specialists own these — do not duplicate):
 complexity thresholds, exception-handling patterns, test coverage/quality, resource leaks, dead code, logging discipline, package-data loading, migration mechanics, serverless cost rules, frontend conventions, hooks/async patterns, credentials hygiene. If a finding belongs to a specialist's spec, leave it to them; post it only if that specialist is not spawned for this PR and the issue is P1/P2.
 
+**Severity:** P1 for a defect that ships wrong behaviour or breaks a deploy, P2 for one a reader or caller would trip on, P3 otherwise. Comment, docstring and doc wording is P3, and P2 only if the text would lead a reader to write a bug.
+
 **Method:**
 
 1. Read the PR body and every changed file IN FULL (not just hunks), plus enough surrounding code and referenced docs/tickets to judge intent.
