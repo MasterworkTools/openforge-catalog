@@ -54,13 +54,23 @@ def authenticate(
 
             # Check for session authentication (if not disabled for this method)
             if not disable_sessions_for_method:
+                # Check for session token in cookie first
                 session_token = request.cookies.get("session_token")
+
+                # If not in cookie, check for Bearer token (for user sessions)
+                if not session_token:
+                    auth_header = request.headers.get("Authorization", "")
+                    if auth_header.startswith("Bearer "):
+                        session_token = auth_header[7:]
+
                 if session_token:
                     session_data = current_app.session_service.validate_session(
                         session_token
                     )
                     if session_data:
                         authenticated = True
+                        # Store session data in g for use by routes
+                        g.session = session_data
                         # Set CSRF token in g for CSRF protection
                         # (if not disabled for this method)
                         if not disable_csrf_for_method:
