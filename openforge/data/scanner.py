@@ -427,8 +427,9 @@ def filter_shape(tags):
     _move_tag_chain(
         tags, ["component", "internal_corner"], ["shape", "internal_corner"]
     )
-    _move_tag_chain(tags, ["component", "curved"], ["shape", "curved"])
-    _move_tag_chain(tags, ["component", "diagonal"], ["shape", "diagonal"])
+    for shape in ("curved", "diagonal"):
+        _move_tag_chain(tags, ["component", shape], ["shape", shape])
+        _move_tag_chain(tags, ["component", "wall", shape], ["shape", shape])
     # Before the wall and floor checks, not after. Those checks ask
     # "is this only a wall?" by counting component tags, and a carving
     # is not a second component — it is the same wall with a dragon
