@@ -680,6 +680,15 @@ def test_a_second_part_still_takes_component_wall_away(form, part):
     assert part in tags
 
 
+@pytest.mark.parametrize("shape", ["curved", "diagonal"])
+def test_a_wall_plus_shape_is_a_wall_of_that_shape(shape):
+    tags = _wall_on_tile_tags(f"cut-stone#wall+{shape}.2x2.openforge.stl")
+
+    assert ("component", "wall") in tags
+    assert ("shape", shape) in tags
+    assert ("component", "wall", shape) not in tags
+
+
 @pytest.mark.parametrize(
     "form, trait",
     [
