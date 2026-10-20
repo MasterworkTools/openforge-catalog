@@ -42,10 +42,10 @@ Integration tests do **not** count when the unit being touched has its own branc
 1. **`mock.patch` at point-of-definition instead of point-of-use:**
 
    ```python
-   # BAD — doesn't intercept the call inside openforge.data.scanner
+   # BAD — doesn't intercept the call inside openforge.db.fixtures.incremental
    @mock.patch("os.path.exists")
    # GOOD — patches the symbol the module actually consults
-   @mock.patch("openforge.data.scanner.os.path.exists")
+   @mock.patch("openforge.db.fixtures.incremental.os.path.exists")
    ```
 
    The consuming module has its OWN reference from its import — patching the origin doesn't rebind it. The single most common reason `mock.patch` "doesn't work."

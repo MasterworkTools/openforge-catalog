@@ -169,8 +169,9 @@ rest of the epic.**
 
 Whoever does it should know:
 
-- The three helpers in `openforge/data/metadata.py` are *the only place in the repo that
-  knows which pieces take bases under which method*. That knowledge must move somewhere
+- The three helpers in `openforge_library/metadata.py`, in the openforge-library
+  repo, are *the only place that knows which pieces take bases under which
+  method*. That knowledge must move somewhere
   the guide can read, not be deleted. Their mechanisms differ: `apply_openforge_wall`
   constrains shape, width and texture, while `apply_openforge_floor` and
   `apply_thick_wall` constrain shape, width and depth and add `deny: build|s2w` —
@@ -530,7 +531,8 @@ selection resolve silently against the wrong state.
    list, the shareable URL.
 6. **Drop the synthesised base slot** — cleanup, and Devon's decision is that it lands
    last in this epic rather than in parallel, while the base rules are fresh. Parser
-   change in `openforge/data/metadata.py`, fixtures regenerated, and the blueprint UI
+   change in `openforge_library/metadata.py`, in openforge-library, fixtures
+   regenerated, and the blueprint UI
    switched to deriving bases from the build method and `connection|openforge`
    together — never from the connection tag alone, which is true of 4,368 records and
    wrong for 1,913 of them. The verification number is 47 authored base parts that
