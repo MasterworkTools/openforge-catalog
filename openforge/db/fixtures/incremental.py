@@ -16,7 +16,7 @@ from psycopg.rows import dict_row
 import openforge.db.sql.blueprints as blueprint_sql
 import openforge.db.sql.images as image_sql
 import openforge.db.sql.tags as tag_sql
-from openforge.data.transformers import DeprecatedEntryTransformer
+from openforge.db.fixtures.transformers import DeprecatedEntryTransformer
 from openforge.db.sql.tag_utils import array_to_tag, process_tag
 
 from .utils import get_words, munge_blueprint, write_output

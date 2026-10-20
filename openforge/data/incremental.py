@@ -16,7 +16,7 @@ from typing import Dict, List, Optional, Set, Tuple
 
 from yaml import safe_load
 
-from openforge.data.transformers import DeprecatedEntryTransformer
+from openforge.db.fixtures.transformers import DeprecatedEntryTransformer
 from openforge.db.sql.tag_utils import process_tag
 from openforge.openapi import validate_schema
 

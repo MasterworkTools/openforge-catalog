@@ -4,13 +4,13 @@ Unit tests for fixture transformers.
 
 import pytest
 
-from openforge.data.transformers import (
+from openforge.db.fixtures import print_comparison_results
+from openforge.db.fixtures.incremental import ComparisonResult
+from openforge.db.fixtures.transformers import (
     DeprecatedEntryTransformer,
     TagArrayToPipeTransformer,
     TimestampFieldTransformer,
 )
-from openforge.db.fixtures import print_comparison_results
-from openforge.db.fixtures.incremental import ComparisonResult
 
 
 class TestTagArrayToPipeTransformer:
