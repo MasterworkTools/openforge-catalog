@@ -18,12 +18,18 @@ import openforge.app.routes.tags as tag_routes
 import openforge.app.routes.tags_documentation as tags_doc_routes
 from openforge.app.middleware.csrf import csrf_protect
 from openforge.app.routes import authenticate
+from openforge.app.routes.auth import auth_bp
+from openforge.app.routes.users import users_bp
 
 app = Flask(__name__)
 
 # Initialize CORS only in development/testing environments
 if os.environ.get("FLASK_DEBUG") == "1":
     CORS(app, origins=["http://localhost:3000", "http://127.0.0.1:3000"])
+
+# Register blueprints
+app.register_blueprint(auth_bp, url_prefix="/api")
+app.register_blueprint(users_bp, url_prefix="/api")
 
 # Don't initialize the rest of the app at module level to avoid pool creation
 # during testing - init_app will be called when the app is actually used
