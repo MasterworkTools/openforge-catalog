@@ -80,19 +80,18 @@ def upsert_guide(curs: cursor, document: dict, hero_image: str | None = None) ->
     `Applied guide wall`. Uploading from a checkout older than the line
     blanks the card with a success message. That is the rule working as
     intended — the fixture is the authored state — but it is worth
-    knowing before a release, because the release ritual
-    (`openforge_catalog-jag`) is a human running `bin/upload_fixture` on
-    the bastion against whatever ref is checked out there.
+    knowing before a release, because the release ritual is a human
+    running `bin/upload_fixture` on the bastion against whatever ref is
+    checked out there.
 
     **A writer must read `hero_image` from somewhere other than
     `get_guide_by_key`.** That query selects the document and not this
     column, so read-modify-write through it loses the URL: the row comes
     back without a picture, and writing it back clears one. Before the
     column existed the round trip was lossless because the URL rode
-    inside the document. The guide editor in `openforge_catalog-kcm` is
-    exactly the caller that will do this, and it is the reason the
-    constraint is written here, in the function that would silently
-    honour it, rather than left to be rediscovered.
+    inside the document. A guide editor is exactly the caller that will
+    do this, and it is the reason the constraint is written here, in the
+    function that would silently honour it.
     """
     query = sql.SQL(
         """

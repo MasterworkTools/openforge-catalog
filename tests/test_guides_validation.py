@@ -180,6 +180,43 @@ def test_an_option_may_not_name_a_role_that_does_not_exist(guide):
     assert "option 's2w-modular'" in str(excinfo.value)
 
 
+def test_an_option_may_not_draw_a_role_that_does_not_exist(guide):
+    """A `views` typo drew nothing and said nothing.
+
+    The same typo in `roles` was already refused, so the two halves of
+    an option disagreed about whether a misspelt role was an error.
+    """
+    guide["steps"][0]["options"][0]["views"] = {"plinth": "back-left"}
+
+    with pytest.raises(ValueError) as excinfo:
+        validate_guide_document(guide)
+
+    assert "`views` names unknown role 'plinth'" in str(excinfo.value)
+    assert "option 's2w-modular'" in str(excinfo.value)
+
+
+def test_an_option_may_draw_a_role_another_step_puts_in_play(guide):
+    """`views` is not scoped to the option's own roles.
+
+    A method names what it builds; a later step can add a base to it,
+    and the method may still say which way round that base is drawn.
+    """
+    guide["steps"][0]["options"][0]["views"] = {"base": "front-right"}
+
+    assert validate_guide_document(guide) is guide
+
+
+def test_an_angle_for_the_reversible_piece_needs_the_tag_that_finds_it(guide):
+    """One without the other is inert: the angle says how to draw the
+    reversible piece and the tag is what decides which piece that is."""
+    guide["roles"]["wall"]["reversible_view"] = "back-right"
+
+    with pytest.raises(ValueError) as excinfo:
+        validate_guide_document(guide)
+
+    assert "reversible_without" in str(excinfo.value)
+
+
 def test_a_role_may_not_sit_under_a_role_that_does_not_exist(guide):
     guide["roles"]["base"]["under"] = "terrace"
 

@@ -2,7 +2,7 @@
 key: wall
 # Named for the thing you build, not for the question the guide asks:
 # the entry page is a catalog of cards, and "Wall" sits beside "Floor"
-# and "Corner" the way `openforge_catalog-faz` describes.
+# and "Corner".
 title: Wall
 # A wall-on-tile build, drybrushed, rendered square at 640 so the entry
 # page card draws it well above 1x on a 2x display. Authored here and
