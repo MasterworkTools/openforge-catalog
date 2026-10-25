@@ -37,8 +37,7 @@ def reject_bad_recommendations(data: dict) -> None:
     The same check `validate_guide_document` makes when a guide is
     written, made again when one is read. The write is not guaranteed
     to have gone through it: `guide_sql.upsert_guide` stores a document
-    without passing the loader, and a guide editor would be a second way
-    in. A recommendation
+    without passing the loader. A recommendation
     naming an option that was renamed away is otherwise a predicate
     asking for a tag nothing has, on the first screen, with nothing on
     the page to say that a default did it.

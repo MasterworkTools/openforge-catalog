@@ -48,9 +48,8 @@ properties:
       Authoring input, not part of the stored document. The loader
       validates it here and then writes it to the `hero_image` column on
       `guides`, so the URL is in the database once rather than in a JSONB
-      blob as well. A column is what an authoring interface would
-      update — changing a picture should not mean rewriting the document
-      that says how to build a wall.
+      blob as well, so changing a picture does not mean rewriting the
+      document that says how to build a wall.
 
       Absolute, because production and staging share the object bucket:
       one URL describes the object for both environments, so there is no

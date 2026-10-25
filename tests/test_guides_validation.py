@@ -200,8 +200,13 @@ def test_an_option_may_draw_a_role_another_step_puts_in_play(guide):
 
     A method names what it builds; a later step can add a base to it,
     and the method may still say which way round that base is drawn.
+    The separate wall option is the one that shows this: `base` is a
+    role of the guide but not one of that option's own, so scoping the
+    check to an option's `roles` would refuse it.
     """
-    guide["steps"][0]["options"][0]["views"] = {"base": "front-right"}
+    separate_wall = guide["steps"][0]["options"][1]
+    assert "base" not in separate_wall["roles"]
+    separate_wall["views"] = {"base": "front-right"}
 
     assert validate_guide_document(guide) is guide
 

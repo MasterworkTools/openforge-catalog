@@ -340,9 +340,9 @@ def _process_blueprint_fixture(
 def _process_guide_fixture(data: Dict, curs, dry_run: bool, verbose: bool) -> Dict:
     """Process a guide fixture.
 
-    This is how a guide reaches staging and production: the deploy
-    workflows do not run bin/fixtures, so bin/upload_fixture posting
-    here is the only path a repo fixture has.
+    A guide reaches staging and production through the deploy's own
+    load-fixtures step, which loads every fixture off the image. This
+    route is a second way in, not that one.
 
     Args:
         data: A guide document (see openapi/schemas/guide.yaml)

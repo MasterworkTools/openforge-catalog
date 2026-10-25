@@ -69,28 +69,18 @@ def upsert_guide(curs: cursor, document: dict, hero_image: str | None = None) ->
     authored state" means everywhere else in the loader.
 
     The default is for tests. `load_guide_fixture` is the only caller
-    outside them and always passes it — but it is reachable from a
-    route: `POST /api/admin/fixtures` lands in `_process_guide_fixture`,
-    which is, by its own docstring, the only path a repo fixture has to
-    staging and production, since the deploy workflows do not run
-    `bin/fixtures`.
-
-    So a picture *can* be cleared, and quietly. Posting a `wall.yaml`
-    with no `hero_image:` line sets the column to NULL and answers
-    `Applied guide wall`. Uploading from a checkout older than the line
-    blanks the card with a success message. That is the rule working as
-    intended — the fixture is the authored state — but it is worth
-    knowing before a release, because the release ritual is a human
-    running `bin/upload_fixture` on the bastion against whatever ref is
-    checked out there.
+    outside them and always passes it — but it is reachable from
+    `POST /api/admin/fixtures`, so a picture *can* be cleared, and
+    quietly: a `wall.yaml` with no `hero_image:` line sets the column
+    to NULL and answers `Applied guide wall`. That is the rule working
+    as intended — the fixture is the authored state.
 
     **A writer must read `hero_image` from somewhere other than
     `get_guide_by_key`.** That query selects the document and not this
     column, so read-modify-write through it loses the URL: the row comes
     back without a picture, and writing it back clears one. Before the
     column existed the round trip was lossless because the URL rode
-    inside the document. A guide editor is exactly the caller that will
-    do this, and it is the reason the constraint is written here, in the
+    inside the document. The constraint is written here, in the
     function that would silently honour it.
     """
     query = sql.SQL(
