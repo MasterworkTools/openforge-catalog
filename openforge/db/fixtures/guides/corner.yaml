@@ -437,6 +437,16 @@ refinements:
       stone are cut flags, so the courses have to line up and the wings
       are handed. Towne's stucco and stone finishes have clean borders,
       so one wing does both sides.
+    # Listed rather than derived, and it has to be: this question
+    # substitutes wood for towne on the wall base, and derivation
+    # intersects what each role carries, which describes nothing when
+    # the roles are asked for different tags. Deriving it dropped towne
+    # from two methods that build it perfectly well.
+    #
+    # Which of these a method can actually use is still the catalog's
+    # answer rather than this list's: an answer that would leave a role
+    # empty is marked unavailable and not offered. Rough stone has no
+    # wall on tile corner, and says so that way.
     choices:
       - tag: texture|dungeon_stone
         title: Dungeon stone
@@ -448,6 +458,8 @@ refinements:
         title: Aztlan
       - tag: texture|nova_trail
         title: Nova Trail
+      - tag: texture|rough_stone
+        title: Rough stone
 
   - key: floor-texture
     role: floor
