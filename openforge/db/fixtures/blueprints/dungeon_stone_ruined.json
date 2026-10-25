@@ -25141,6 +25141,136 @@
     {
         "file_metadata": {
             "file": "dungeon_stone+ruined%block#floor+s2w+wall.1x1.openforge.stl",
+            "file_modified_at": "2026-10-25T13:10:30.753836",
+            "full_name": "tiles/dungeon_stone+ruined/s2w/wall/floor%block/dungeon_stone+ruined%block#floor+s2w+wall.1x1.openforge.stl",
+            "md5": "3d3cd2ba164686fa609bee5afa4d0273",
+            "size": 1233584,
+            "storage_address": "https://objects.openforge.tools/models/3d3cd2/3d3cd2ba164686fa609bee5afa4d0273.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/3d3cd2/3d3cd2ba164686fa609bee5afa4d0273.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "build|s2w",
+            "connection|openforge",
+            "shape|floor",
+            "shape|floor|s2w",
+            "shape|floor|wall",
+            "shape|square",
+            "size|depth|1",
+            "size|width|1",
+            "texture|dungeon_stone",
+            "texture|dungeon_stone|block",
+            "texture|dungeon_stone|ruined"
+        ],
+        "type": "model"
+    },
+    {
+        "deprecated": true,
+        "file_metadata": {
+            "file": "dungeon_stone+ruined%block#floor+s2w+wall.1x1.openforge.stl",
             "file_modified_at": "2025-04-29T20:32:39.894726",
             "full_name": "tiles/dungeon_stone+ruined/s2w/wall/floor%block/dungeon_stone+ruined%block#floor+s2w+wall.1x1.openforge.stl",
             "md5": "91e64c1b04447fdaa5b2a3523f592c13",
@@ -25270,6 +25400,136 @@
     {
         "file_metadata": {
             "file": "dungeon_stone+ruined%block#floor+s2w+wall.2x1.openforge.stl",
+            "file_modified_at": "2026-10-25T13:10:30.892980",
+            "full_name": "tiles/dungeon_stone+ruined/s2w/wall/floor%block/dungeon_stone+ruined%block#floor+s2w+wall.2x1.openforge.stl",
+            "md5": "163709c860efad0eff18baf559ac7ac4",
+            "size": 2416384,
+            "storage_address": "https://objects.openforge.tools/models/163709/163709c860efad0eff18baf559ac7ac4.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/163709/163709c860efad0eff18baf559ac7ac4.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "build|s2w",
+            "connection|openforge",
+            "shape|floor",
+            "shape|floor|s2w",
+            "shape|floor|wall",
+            "shape|square",
+            "size|depth|1",
+            "size|width|2",
+            "texture|dungeon_stone",
+            "texture|dungeon_stone|block",
+            "texture|dungeon_stone|ruined"
+        ],
+        "type": "model"
+    },
+    {
+        "deprecated": true,
+        "file_metadata": {
+            "file": "dungeon_stone+ruined%block#floor+s2w+wall.2x1.openforge.stl",
             "file_modified_at": "2025-04-29T20:33:30.759801",
             "full_name": "tiles/dungeon_stone+ruined/s2w/wall/floor%block/dungeon_stone+ruined%block#floor+s2w+wall.2x1.openforge.stl",
             "md5": "d911b959dd4d3f0b2848845b5ee541c2",
@@ -25397,6 +25657,136 @@
         "type": "model"
     },
     {
+        "file_metadata": {
+            "file": "dungeon_stone+ruined%block#floor+s2w+wall.3x1.openforge.stl",
+            "file_modified_at": "2026-10-25T13:10:31.088206",
+            "full_name": "tiles/dungeon_stone+ruined/s2w/wall/floor%block/dungeon_stone+ruined%block#floor+s2w+wall.3x1.openforge.stl",
+            "md5": "a68ce033b4cd02d77c474a600e97d0f4",
+            "size": 3551184,
+            "storage_address": "https://objects.openforge.tools/models/a68ce0/a68ce033b4cd02d77c474a600e97d0f4.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/a68ce0/a68ce033b4cd02d77c474a600e97d0f4.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "build|s2w",
+            "connection|openforge",
+            "shape|floor",
+            "shape|floor|s2w",
+            "shape|floor|wall",
+            "shape|square",
+            "size|depth|1",
+            "size|width|3",
+            "texture|dungeon_stone",
+            "texture|dungeon_stone|block",
+            "texture|dungeon_stone|ruined"
+        ],
+        "type": "model"
+    },
+    {
+        "deprecated": true,
         "file_metadata": {
             "file": "dungeon_stone+ruined%block#floor+s2w+wall.3x1.openforge.stl",
             "file_modified_at": "2025-04-29T20:34:52.000120",
@@ -25785,6 +26175,136 @@
         "type": "model"
     },
     {
+        "file_metadata": {
+            "file": "dungeon_stone+ruined%block#floor+s2w+wall.4x1.openforge.stl",
+            "file_modified_at": "2026-10-25T13:10:31.283181",
+            "full_name": "tiles/dungeon_stone+ruined/s2w/wall/floor%block/dungeon_stone+ruined%block#floor+s2w+wall.4x1.openforge.stl",
+            "md5": "a1284425e62e9d9ffe2cd580752183fd",
+            "size": 4698884,
+            "storage_address": "https://objects.openforge.tools/models/a12844/a1284425e62e9d9ffe2cd580752183fd.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/a12844/a1284425e62e9d9ffe2cd580752183fd.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "build|s2w",
+            "connection|openforge",
+            "shape|floor",
+            "shape|floor|s2w",
+            "shape|floor|wall",
+            "shape|square",
+            "size|depth|1",
+            "size|width|4",
+            "texture|dungeon_stone",
+            "texture|dungeon_stone|block",
+            "texture|dungeon_stone|ruined"
+        ],
+        "type": "model"
+    },
+    {
+        "deprecated": true,
         "file_metadata": {
             "file": "dungeon_stone+ruined%block#floor+s2w+wall.4x1.openforge.stl",
             "file_modified_at": "2025-04-29T20:35:31.001360",
@@ -28530,6 +29050,136 @@
     {
         "file_metadata": {
             "file": "dungeon_stone+ruined%eroded#floor+s2w+wall.1x1.openforge.stl",
+            "file_modified_at": "2026-10-25T13:10:31.424118",
+            "full_name": "tiles/dungeon_stone+ruined/s2w/wall/floor%eroded/dungeon_stone+ruined%eroded#floor+s2w+wall.1x1.openforge.stl",
+            "md5": "17fd9f931ef64e2703e413b24e3d95a8",
+            "size": 1056084,
+            "storage_address": "https://objects.openforge.tools/models/17fd9f/17fd9f931ef64e2703e413b24e3d95a8.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/17fd9f/17fd9f931ef64e2703e413b24e3d95a8.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "build|s2w",
+            "connection|openforge",
+            "shape|floor",
+            "shape|floor|s2w",
+            "shape|floor|wall",
+            "shape|square",
+            "size|depth|1",
+            "size|width|1",
+            "texture|dungeon_stone",
+            "texture|dungeon_stone|eroded",
+            "texture|dungeon_stone|ruined"
+        ],
+        "type": "model"
+    },
+    {
+        "deprecated": true,
+        "file_metadata": {
+            "file": "dungeon_stone+ruined%eroded#floor+s2w+wall.1x1.openforge.stl",
             "file_modified_at": "2025-04-29T18:32:12.470745",
             "full_name": "tiles/dungeon_stone+ruined/s2w/wall/floor%eroded/dungeon_stone+ruined%eroded#floor+s2w+wall.1x1.openforge.stl",
             "md5": "d2e64432b7142ebf745e421a0db3c311",
@@ -28659,6 +29309,136 @@
     {
         "file_metadata": {
             "file": "dungeon_stone+ruined%eroded#floor+s2w+wall.2x1.openforge.stl",
+            "file_modified_at": "2026-10-25T13:10:31.641071",
+            "full_name": "tiles/dungeon_stone+ruined/s2w/wall/floor%eroded/dungeon_stone+ruined%eroded#floor+s2w+wall.2x1.openforge.stl",
+            "md5": "ff4f81a149e85726ef3b005656afd351",
+            "size": 3114084,
+            "storage_address": "https://objects.openforge.tools/models/ff4f81/ff4f81a149e85726ef3b005656afd351.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/ff4f81/ff4f81a149e85726ef3b005656afd351.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "build|s2w",
+            "connection|openforge",
+            "shape|floor",
+            "shape|floor|s2w",
+            "shape|floor|wall",
+            "shape|square",
+            "size|depth|1",
+            "size|width|2",
+            "texture|dungeon_stone",
+            "texture|dungeon_stone|eroded",
+            "texture|dungeon_stone|ruined"
+        ],
+        "type": "model"
+    },
+    {
+        "deprecated": true,
+        "file_metadata": {
+            "file": "dungeon_stone+ruined%eroded#floor+s2w+wall.2x1.openforge.stl",
             "file_modified_at": "2025-04-29T18:32:40.022337",
             "full_name": "tiles/dungeon_stone+ruined/s2w/wall/floor%eroded/dungeon_stone+ruined%eroded#floor+s2w+wall.2x1.openforge.stl",
             "md5": "b998f7daf3ad57c7de7e09b7c4e82063",
@@ -28786,6 +29566,136 @@
         "type": "model"
     },
     {
+        "file_metadata": {
+            "file": "dungeon_stone+ruined%eroded#floor+s2w+wall.3x1.openforge.stl",
+            "file_modified_at": "2026-10-25T13:10:31.950559",
+            "full_name": "tiles/dungeon_stone+ruined/s2w/wall/floor%eroded/dungeon_stone+ruined%eroded#floor+s2w+wall.3x1.openforge.stl",
+            "md5": "d9bdca157f639fedd9641fe47187aad2",
+            "size": 7641684,
+            "storage_address": "https://objects.openforge.tools/models/d9bdca/d9bdca157f639fedd9641fe47187aad2.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/d9bdca/d9bdca157f639fedd9641fe47187aad2.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "build|s2w",
+            "connection|openforge",
+            "shape|floor",
+            "shape|floor|s2w",
+            "shape|floor|wall",
+            "shape|square",
+            "size|depth|1",
+            "size|width|3",
+            "texture|dungeon_stone",
+            "texture|dungeon_stone|eroded",
+            "texture|dungeon_stone|ruined"
+        ],
+        "type": "model"
+    },
+    {
+        "deprecated": true,
         "file_metadata": {
             "file": "dungeon_stone+ruined%eroded#floor+s2w+wall.3x1.openforge.stl",
             "file_modified_at": "2025-04-29T18:34:42.011921",
@@ -29174,6 +30084,136 @@
         "type": "model"
     },
     {
+        "file_metadata": {
+            "file": "dungeon_stone+ruined%eroded#floor+s2w+wall.4x1.openforge.stl",
+            "file_modified_at": "2026-10-25T13:10:32.283494",
+            "full_name": "tiles/dungeon_stone+ruined/s2w/wall/floor%eroded/dungeon_stone+ruined%eroded#floor+s2w+wall.4x1.openforge.stl",
+            "md5": "7399a74f3f1b3e55ba4d75c862efdfcc",
+            "size": 8787984,
+            "storage_address": "https://objects.openforge.tools/models/7399a7/7399a74f3f1b3e55ba4d75c862efdfcc.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/7399a7/7399a74f3f1b3e55ba4d75c862efdfcc.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "build|s2w",
+            "connection|openforge",
+            "shape|floor",
+            "shape|floor|s2w",
+            "shape|floor|wall",
+            "shape|square",
+            "size|depth|1",
+            "size|width|4",
+            "texture|dungeon_stone",
+            "texture|dungeon_stone|eroded",
+            "texture|dungeon_stone|ruined"
+        ],
+        "type": "model"
+    },
+    {
+        "deprecated": true,
         "file_metadata": {
             "file": "dungeon_stone+ruined%eroded#floor+s2w+wall.4x1.openforge.stl",
             "file_modified_at": "2025-04-29T18:36:06.703756",
