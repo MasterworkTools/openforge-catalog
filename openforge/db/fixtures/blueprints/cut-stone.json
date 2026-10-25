@@ -58480,38 +58480,6 @@
         "config": {
             "parts": [
                 {
-                    "name": "door",
-                    "tags": {
-                        "require": [
-                            {
-                                "tag": "interface|door|rectangular"
-                            },
-                            {
-                                "tag": "size|double"
-                            }
-                        ]
-                    }
-                },
-                {
-                    "name": "lintel",
-                    "tags": {
-                        "require": [
-                            {
-                                "tag": "interface|lintel"
-                            },
-                            {
-                                "tag": "shape|square"
-                            },
-                            {
-                                "tag": "size|double"
-                            },
-                            {
-                                "tag": "size|width|sw"
-                            }
-                        ]
-                    }
-                },
-                {
                     "name": "base",
                     "optional": true,
                     "tags": {
@@ -58647,7 +58615,7 @@
                 }
             }
         ],
-        "metadata": true,
+        "metadata": false,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -59044,38 +59012,6 @@
         "config": {
             "parts": [
                 {
-                    "name": "door",
-                    "tags": {
-                        "require": [
-                            {
-                                "tag": "interface|door|rectangular"
-                            },
-                            {
-                                "tag": "size|double"
-                            }
-                        ]
-                    }
-                },
-                {
-                    "name": "lintel",
-                    "tags": {
-                        "require": [
-                            {
-                                "tag": "interface|lintel"
-                            },
-                            {
-                                "tag": "shape|square"
-                            },
-                            {
-                                "tag": "size|double"
-                            },
-                            {
-                                "tag": "size|width|sw"
-                            }
-                        ]
-                    }
-                },
-                {
                     "name": "base",
                     "optional": true,
                     "tags": {
@@ -59211,7 +59147,7 @@
                 }
             }
         ],
-        "metadata": true,
+        "metadata": false,
         "tags": [
             "build|separate wall",
             "component|door",
