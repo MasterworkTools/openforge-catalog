@@ -2,6 +2,7 @@ key: floor
 title: Floor
 hero_image: https://objects.openforge.tools/guides/guide.floor.webp
 summary: A plain floor tile
+position: 1
 
 # The floor half of the wall guide, on its own, for laying a floor rather
 # than building a wall. Same prose; the predicates differ where noted.

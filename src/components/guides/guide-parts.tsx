@@ -7,7 +7,12 @@ import {
   impliedBy,
   pinKey,
 } from '@/services/guide-service';
-import { stepView, useDragRotation } from '@/hooks/use-drag-rotation';
+import {
+  START_VIEW,
+  stepView,
+  useDragRotation,
+  viewFor,
+} from '@/hooks/use-drag-rotation';
 import { ConfigTags } from '@/types';
 import { downloadFiles, downloadUrl } from '@/utils/blueprint-utils';
 import PartSelectionModal from '../part-selection-modal';
@@ -88,7 +93,7 @@ export function GuideParts({
   // front-left, not front: a wall or a floor tile seen face-on is close
   // to a flat rectangle, and the three-quarter view shows the top face
   // and one side, which is what tells you what you are printing.
-  const [view, setView] = useState<string>('front-left');
+  const [view, setView] = useState<string>(START_VIEW);
   // Where the drag began, so each move is measured from there rather
   // than accumulating rounding as the pointer travels.
   const viewAtStart = useRef(view);
@@ -314,7 +319,7 @@ function Part({
         title="Open the tag search for this part"
         className="block cursor-zoom-in"
       >
-        <GuideSprite blueprint={part.blueprint} view={view} />
+        <GuideSprite blueprint={part.blueprint} view={viewFor(part, view)} />
       </button>
       <div className="mt-2 font-semibold">{part.title}</div>
       {/* Why changing a texture leaves this piece alone. */}

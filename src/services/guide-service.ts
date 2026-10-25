@@ -188,6 +188,12 @@ export interface GuidePart {
   relaxable: string[];
   /** True when this part is the one the person picked, not the search's. */
   pinned: boolean;
+  /**
+   * The angle this piece reads best from, when it is not the one the
+   * list is turned to. Held as an offset from the list's angle rather
+   * than as a fixed one, so the parts still turn together.
+   */
+  view?: string | null;
   blueprint: GuideBlueprint | null;
 }
 

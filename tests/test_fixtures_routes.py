@@ -426,9 +426,6 @@ class TestResponseFormat:
         assert isinstance(data["error"], str)
 
 
-# A guide document, which reaches deployed environments only through
-# this endpoint: the deploy workflows do not run bin/fixtures, so
-# bin/upload_fixture posting here is the wall guide's only path.
 SAMPLE_GUIDE_FIXTURE = {
     "key": "wall",
     "title": "How do I make a wall?",

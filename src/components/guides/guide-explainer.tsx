@@ -18,6 +18,8 @@ export function GuideExplainer({
   refinements = [],
   unavailable,
   opened,
+  open = true,
+  onOpenChange,
 }: GuideExplainerProps) {
   // Steps and refinements are one queue from here: the column
   // explains whatever question is open, and to the person answering
@@ -63,10 +65,25 @@ export function GuideExplainer({
   return (
     <section className="guide-explainer mb-8" aria-labelledby="explainer">
       {/* Not the step's own prompt — that is asked on the left, and
-          repeating it here would read as two questions. */}
+          repeating it here would read as two questions. The heading is
+          itself the collapse control. */}
       <h2 id="explainer" className="text-xl font-bold mb-3">
-        {heading}
+        <button
+          type="button"
+          aria-expanded={open}
+          aria-controls="explainer-body"
+          onClick={() => onOpenChange?.(!open)}
+          title={heading}
+          className="flex w-full items-center gap-2 text-left
+                     hover:text-gray-600"
+        >
+          <span aria-hidden="true" className="text-sm text-gray-500">
+            {open ? '▾' : '▸'}
+          </span>
+          {open ? heading : <span className="sr-only">{heading}</span>}
+        </button>
       </h2>
+      <div id="explainer-body" hidden={!open}>
       {explaining && preamble && (
         <div className="mb-4">
           {paragraphs(preamble).map((para, i) => (
@@ -99,6 +116,7 @@ export function GuideExplainer({
             ))}
           </article>
         ))}
+        </div>
       </div>
     </section>
   );
@@ -158,6 +176,9 @@ interface GuideExplainerProps {
   unavailable?: Record<string, string[]> | null;
   /** An answered question the person has gone back to. */
   opened?: string | null;
+  /** Whether the prose is showing. The heading collapses it. */
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
 }
 
 /**

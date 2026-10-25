@@ -28,6 +28,15 @@ properties:
     minLength: 1
   summary:
     type: string
+  position:
+    type: integer
+    minimum: 0
+    description: >
+      Where this guide's card sits on the entry page, ascending. A
+      curated order rather than an alphabetical or chronological one:
+      the cards are a way in, and which thing to build first is an
+      editorial decision. A guide without one sorts after those that
+      have one, by key.
   hero_image:
     type: string
     format: uri
@@ -39,10 +48,8 @@ properties:
       Authoring input, not part of the stored document. The loader
       validates it here and then writes it to the `hero_image` column on
       `guides`, so the URL is in the database once rather than in a JSONB
-      blob as well. A column is what the interface will update when
-      guides are authored there (`openforge_catalog-kcm`) — changing a
-      picture should not mean rewriting the document that says how to
-      build a wall.
+      blob as well, so changing a picture does not mean rewriting the
+      document that says how to build a wall.
 
       Absolute, because production and staging share the object bucket:
       one URL describes the object for both environments, so there is no
@@ -86,6 +93,22 @@ $defs:
       Underscores are allowed because the catalog's own vocabulary is
       full of them — an author naming an option after `wall_on_tile`
       or `dungeon_stone` should not have to respell it.
+
+  view_angle:
+    type: string
+    enum:
+      - front
+      - front-right
+      - right
+      - back-right
+      - back
+      - back-left
+      - left
+      - front-left
+    description: >
+      One of the eight angles around the equator that every sprite
+      sheet carries, named rather than numbered because the parts list
+      draws different sheets together and the name is all they share.
 
   question_key:
     description: >
@@ -288,6 +311,20 @@ $defs:
           the explainer shows prose. Kept because the paths are real
           and the intent is to show them; a reviewer will otherwise
           keep reporting it as an orphan.
+      views:
+        type: object
+        minProperties: 1
+        description: >
+          The angle each named role is drawn from under this method,
+          overriding the role's own. A method decides what its roles
+          are made of, and two methods can want the same role drawn
+          differently: a corner's wings are corner pieces when they are
+          glued to one tile, and ordinary straight walls when they
+          stand beside it, which read from the opposite side.
+        propertyNames:
+          $ref: "#/$defs/url_key"
+        additionalProperties:
+          $ref: "#/$defs/view_angle"
       when:
         $ref: "#/$defs/when"
         description: >
@@ -336,6 +373,10 @@ $defs:
       - title
       - query
     additionalProperties: false
+    # An angle for the reversible piece says nothing without the tag
+    # that decides which piece is the reversible one.
+    dependentRequired:
+      reversible_view: [reversible_without]
     properties:
       title:
         type: string
@@ -369,6 +410,57 @@ $defs:
         items:
           type: string
           pattern: "^[^|]+(\\|[^|]+)*$"
+      position:
+        type: integer
+        minimum: 0
+        description: >
+          Where this part sits in the list, ascending. Without one the
+          order is not the author's: the document is stored as JSONB,
+          which sorts object keys by length and then bytewise, so
+          whatever order the roles were written in is lost and the
+          parts come out ordered by how long their names happen to be.
+
+          A corner reads left to right the way it is built -- the left
+          wing, the pillar it meets, then the right wing -- and that
+          cannot be said by writing them in that order.
+      view:
+        $ref: "#/$defs/view_angle"
+        description: >
+          The angle this part reads best from, as a name from the ring
+          the sprite sheets turn through. The parts list draws every
+          piece from one direction so they can be compared, and a part
+          named here keeps a fixed offset from it rather than a fixed
+          angle — so the list still turns as one, with this piece held
+          a few steps round.
+
+          For a corner, whose pieces face outward in different
+          directions: the two wings are held a quarter turn apart, at
+          the angle each occupies in the finished corner, and the
+          pillar sits with them. Drawn from one angle they overlap
+          into something that does not look like a corner.
+      reversible_view:
+        $ref: "#/$defs/view_angle"
+        description: >
+          The angle to draw this part from when it is the reversible
+          piece, in place of `view`.
+
+          The reversible piece is the other side's model turned over,
+          so at the angle this side's own piece uses it shows the face
+          that ends up inward, and the two wings draw much the same
+          picture. Turning it elsewhere is what tells them apart.
+      reversible_without:
+        type: string
+        pattern: "^[^|]+(\\|[^|]+)*$"
+        description: >
+          A tag marking the hand this role asks for, whose namespace is
+          the family that hand belongs to. Within the family, a piece
+          without the tag is the one that serves either side, and
+          `reversible_view` is the angle it is drawn from.
+
+          A piece outside the family has no hand to lack: the same
+          corner role answers with an ordinary straight wall under the
+          methods that stand two walls beside a pillar, and a straight
+          wall is not a turned-over anything.
       under:
         type: string
         description: The role this one sits beneath, when it sits under one.

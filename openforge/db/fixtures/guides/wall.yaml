@@ -1,16 +1,5 @@
 # The first guide: how do I make a wall?
-#
-# DRAFT — the structure is settled and every role/method pair below was
-# resolved against the fixtures, so each recommends a part of the right
-# kind. What is not settled is whether they recommend the *right* part:
-# the prefer lists are a guess, and with the current ones the wall guide
-# leans toward ruined and collapsed variants because those sort first by
-# name once prefer runs out. That, and whether a "method" should be a
-# build tag at all, is Devon's call (openforge_catalog-z76).
 key: wall
-# Named for the thing you build, not for the question the guide asks:
-# the entry page is a catalog of cards, and "Wall" sits beside "Floor"
-# and "Corner" the way `openforge_catalog-faz` describes.
 title: Wall
 # A wall-on-tile build, drybrushed, rendered square at 640 so the entry
 # page card draws it well above 1x on a 2x display. Authored here and
@@ -23,6 +12,7 @@ hero_image: https://objects.openforge.tools/guides/guide.wall.webp
 # way in rather than a place to read: it says which of Floor, Wall and
 # Corner this is, and the guide itself explains the three methods.
 summary: A standard wall
+position: 2
 
 steps:
   - key: method
@@ -483,12 +473,13 @@ roles:
     # block or eroded, so "dungeon stone" on its own is a coin toss
     # and this is which way it lands. First, so it is the last thing
     # dropped — the tie is about looks rather than fit.
+    # One term, and it has to stay that way. Preferred tags are required
+    # as a prefix and dropped from the end, so a term that cannot match
+    # discards every term after it. This one picks block over eroded for
+    # dungeon stone and simply fails elsewhere, with nothing behind it to
+    # lose.
     prefer:
       - 'texture|dungeon_stone|block'
-      - 'texture|dungeon_stone'
-      - 'size|width|2'
-      - 'size|depth|2'
-      - 'connection|openforge'
     # A celtic knot or a carved symbol is still a floor, and one of the
     # options; it is just never the one the guide hands you first.
     avoid: ['decoration']
@@ -561,7 +552,8 @@ roles:
         - 'component|wall|low'
         - 'connection|openforge'
         - 'connection|openlock'
-    prefer: ['texture|dungeon_stone', 'size|width|2']
+    # Nothing to prefer: the texture question requires the texture and
+    # the size step requires the width.
     # Corbels, timber framing and symbols: options, never the default.
     avoid: ['decoration']
   floor-base:
@@ -591,8 +583,8 @@ roles:
     query: {require: ['shape|base']}
     # Dungeon stone like the wall it sits under: a parts list that mixes
     # textures looks like a mistake even when every piece fits.
-    prefer:
-      - 'texture|dungeon_stone'
+    # Nothing to prefer: the texture question reaches this role too, and
+    # substitutes wood for towne where the bases are filed that way.
     under: wall
     # Width only. A wall is a line along an edge: it has a width and no
     # depth, and its base is the same shape.
@@ -678,13 +670,28 @@ refinements:
     role: floor
     browsable: true
     prompt: Floor texture
-    # The floor to recommend depends on the wall standing on it. A
-    # wooden-framed building wants a wooden floor, and mortar and
-    # stone has no floor of its own name at all, so it borrows the
-    # blockwork that reads closest to it.
+    # The floor follows the wall standing on it. A parts list that mixes
+    # textures reads as a mistake even when every piece fits, and anyone
+    # who wants a dungeon stone floor under a towne wall can still say
+    # so.
+    #
+    # Three wall textures have no floor of their own name and borrow
+    # one. A wooden-framed building wants a wooden floor, so stone brick
+    # takes towne's planking; mortar and stone and the ossuary take the
+    # blockwork that reads closest to them.
     default:
+      - when: {selected: {texture: ['texture|cut-stone']}}
+        value: 'texture|cut-stone'
+      - when: {selected: {texture: ['texture|rough_stone']}}
+        value: 'texture|rough_stone'
+      - when: {selected: {texture: ['texture|aztlan']}}
+        value: 'texture|aztlan'
+      - when: {selected: {texture: ['texture|nova_trail']}}
+        value: 'texture|nova_trail'
       - when: {selected: {texture: ['texture|towne', 'texture|stone_brick']}}
         value: 'texture|towne'
+      - when: {selected: {texture: ['texture|mortar_and_stone', 'texture|necro']}}
+        value: 'texture|dungeon_stone'
       - {value: 'texture|dungeon_stone'}
     when: {selected: {method: [s2w, wall-on-tile, separate-wall]}}
     from_namespace: texture

@@ -180,6 +180,48 @@ def test_an_option_may_not_name_a_role_that_does_not_exist(guide):
     assert "option 's2w-modular'" in str(excinfo.value)
 
 
+def test_an_option_may_not_draw_a_role_that_does_not_exist(guide):
+    """A `views` typo drew nothing and said nothing.
+
+    The same typo in `roles` was already refused, so the two halves of
+    an option disagreed about whether a misspelt role was an error.
+    """
+    guide["steps"][0]["options"][0]["views"] = {"plinth": "back-left"}
+
+    with pytest.raises(ValueError) as excinfo:
+        validate_guide_document(guide)
+
+    assert "`views` names unknown role 'plinth'" in str(excinfo.value)
+    assert "option 's2w-modular'" in str(excinfo.value)
+
+
+def test_an_option_may_draw_a_role_another_step_puts_in_play(guide):
+    """`views` is not scoped to the option's own roles.
+
+    A method names what it builds; a later step can add a base to it,
+    and the method may still say which way round that base is drawn.
+    The separate wall option is the one that shows this: `base` is a
+    role of the guide but not one of that option's own, so scoping the
+    check to an option's `roles` would refuse it.
+    """
+    separate_wall = guide["steps"][0]["options"][1]
+    assert "base" not in separate_wall["roles"]
+    separate_wall["views"] = {"base": "front-right"}
+
+    assert validate_guide_document(guide) is guide
+
+
+def test_an_angle_for_the_reversible_piece_needs_the_tag_that_finds_it(guide):
+    """One without the other is inert: the angle says how to draw the
+    reversible piece and the tag is what decides which piece that is."""
+    guide["roles"]["wall"]["reversible_view"] = "back-right"
+
+    with pytest.raises(ValueError) as excinfo:
+        validate_guide_document(guide)
+
+    assert "reversible_without" in str(excinfo.value)
+
+
 def test_a_role_may_not_sit_under_a_role_that_does_not_exist(guide):
     guide["roles"]["base"]["under"] = "terrace"
 
@@ -879,3 +921,54 @@ def test_an_option_when_must_name_an_option_that_exists(guide):
         validate_guide_document(guide)
 
     assert "s2w-modlar" in str(excinfo.value)
+
+
+def test_every_offered_texture_says_which_floor_it_wants():
+    """A floor default that answers for a texture by saying nothing.
+
+    The floor's texture is recommended by clauses keyed on the texture
+    chosen for the walls. A texture that no clause names still gets an
+    answer -- the clause with no `when` catches it -- so adding one to
+    the list and forgetting its clause is silent, and looks like the
+    question simply ignoring the choice. That is exactly how rough
+    stone shipped recommending a dungeon stone floor.
+
+    Falling through is allowed; doing it without saying so is not.
+    """
+    fixtures = [
+        entry
+        for entry in impresources.files(guide_fixtures).iterdir()
+        if entry.name.endswith(".yaml")
+    ]
+    assert fixtures, "no guide fixtures found — this test must not pass quietly"
+
+    checked = 0
+    for path in fixtures:
+        document = yaml.safe_load(path.read_text())
+        by_key = {r["key"]: r for r in document.get("refinements", [])}
+        for refinement in by_key.values():
+            default = refinement.get("default")
+            if not isinstance(default, list):
+                continue
+            named, fallback = set(), None
+            source_keys = set()
+            for clause in default:
+                if "when" in clause:
+                    for key, values in clause["when"]["selected"].items():
+                        source_keys.add(key)
+                        named |= set(values)
+                else:
+                    fallback = clause["value"]
+            for source in source_keys:
+                choices = by_key.get(source, {}).get("choices") or []
+                offered = [c["tag"] for c in choices]
+                if not offered:
+                    continue
+                checked += 1
+                silent = [t for t in offered if t not in named and t != fallback]
+                assert not silent, (
+                    f"{path.name}: {refinement['key']} answers for "
+                    f"{silent} by saying nothing. Name them in a clause, even "
+                    f"one that repeats the fallback, so the choice is visible."
+                )
+    assert checked, "found no clause-driven defaults to check"

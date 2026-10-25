@@ -2190,3 +2190,152 @@ def test_avoid_falls_back_when_every_candidate_carries_it():
     )
 
     assert chosen["id"] == "knot"
+
+
+MIRROR_GUIDE = {
+    "key": "corner",
+    "title": "How do I make a corner?",
+    "steps": [
+        {
+            "key": "method",
+            "prompt": "How?",
+            "options": [
+                {
+                    "key": "only",
+                    "title": "The one way",
+                    "roles": {"left-wing": None, "right-wing": None},
+                },
+                {
+                    "key": "straight",
+                    "title": "Two straight walls",
+                    "roles": {"left-wing": None, "right-wing": None},
+                    "views": {"right-wing": "front-right"},
+                },
+            ],
+        }
+    ],
+    "roles": {
+        "left-wing": {
+            "title": "Left wing",
+            "query": {"require": ["shape|wall"], "deny": ["shape|corner|right"]},
+        },
+        "right-wing": {
+            "title": "Right wing",
+            "view": "back-left",
+            "reversible_view": "back-right",
+            "reversible_without": "shape|corner|right",
+            "query": {"require": ["shape|wall"], "deny": ["shape|corner|left"]},
+        },
+    },
+}
+
+HANDED = [
+    {
+        "id": "l",
+        "blueprint_name": "a left wing",
+        "tags": ["shape|wall", "shape|corner|left"],
+    },
+    {
+        "id": "r",
+        "blueprint_name": "b right wing",
+        "tags": ["shape|wall", "shape|corner|right"],
+    },
+]
+
+REVERSIBLE = [
+    # A corner wing with no side of its own: the same model serves
+    # either hand, which is how the catalog carries a reversible wing.
+    {"id": "w", "blueprint_name": "a wing", "tags": ["shape|wall", "shape|corner"]},
+]
+
+
+PLAIN = [
+    # A straight wall: no corner tag at all, so no hand to lack.
+    {"id": "p", "blueprint_name": "a plain wall", "tags": ["shape|wall"]},
+]
+
+
+def test_a_handed_wing_is_drawn_at_its_own_angle():
+    resolved = resolve(MIRROR_GUIDE, {"method": "only"}, matching_finder(HANDED))
+    parts = parts_by_role(resolved)
+
+    assert parts["right-wing"]["blueprint"]["id"] == "r"
+    assert parts["right-wing"]["view"] == "back-left"
+
+
+def test_the_reversible_piece_is_turned_elsewhere():
+    """It is the left wing's model, so at the right wing's own angle
+    the two would draw much the same picture."""
+    resolved = resolve(MIRROR_GUIDE, {"method": "only"}, matching_finder(REVERSIBLE))
+    parts = parts_by_role(resolved)
+
+    assert parts["right-wing"]["blueprint"]["id"] == "w"
+    assert parts["right-wing"]["view"] == "back-right"
+    # The left wing answers with the same piece and keeps its own
+    # angle: only the role that asked for a hand turns what lacks one.
+    assert parts["left-wing"]["blueprint"]["id"] == "w"
+    assert parts["left-wing"]["view"] is None
+
+
+def test_a_role_that_resolved_to_nothing_keeps_its_own_angle():
+    resolved = resolve(MIRROR_GUIDE, {"method": "only"}, matching_finder([]))
+
+    assert parts_by_role(resolved)["right-wing"]["view"] == "back-left"
+
+
+def test_a_method_can_draw_a_role_from_its_own_angle():
+    """The same role is a corner piece one way and a straight wall another."""
+    glued = resolve(MIRROR_GUIDE, {"method": "only"}, matching_finder(HANDED))
+    straight = resolve(MIRROR_GUIDE, {"method": "straight"}, matching_finder(HANDED))
+
+    assert parts_by_role(glued)["right-wing"]["view"] == "back-left"
+    assert parts_by_role(straight)["right-wing"]["view"] == "front-right"
+    # A role the method says nothing about keeps its own angle.
+    assert parts_by_role(straight)["left-wing"]["view"] is None
+
+
+def test_a_piece_outside_the_handed_family_keeps_the_ordinary_angle():
+    """A straight wall is not a turned-over corner wing.
+
+    The role asks for a hand within `shape|corner`. A piece carrying no
+    corner tag at all was never in that family, so it has no hand to
+    lack and nothing to turn.
+    """
+    resolved = resolve(MIRROR_GUIDE, {"method": "only"}, matching_finder(PLAIN))
+    parts = parts_by_role(resolved)
+
+    assert parts["right-wing"]["blueprint"]["id"] == "p"
+    assert parts["right-wing"]["view"] == "back-left"
+
+
+def test_the_parts_come_back_in_the_order_the_document_asks_for():
+    """JSONB loses the order the roles were written in.
+
+    Postgres sorts object keys by length and then bytewise, so a stored
+    document's role order is gone by the time the engine reads it, and
+    `position` is the only thing that puts the parts back.
+    """
+    guide = copy.deepcopy(MIRROR_GUIDE)
+    guide["roles"]["left-wing"]["position"] = 2
+    guide["roles"]["right-wing"]["position"] = 1
+
+    resolved = resolve(guide, {"method": "only"}, matching_finder(HANDED))
+
+    assert [p["role"] for p in resolved["parts"]] == ["right-wing", "left-wing"]
+
+
+def test_the_reversible_angle_outranks_the_method_s_own():
+    """Both can name an angle for the same role, and they disagree.
+
+    The method says how it builds the role; the reversible angle is
+    about which piece answered. The piece wins, or a method that names
+    an angle would draw the turned-over wing at the wrong one.
+    """
+    guide = copy.deepcopy(MIRROR_GUIDE)
+    guide["steps"][0]["options"][0]["views"] = {"right-wing": "front"}
+
+    handed = resolve(guide, {"method": "only"}, matching_finder(HANDED))
+    reversible = resolve(guide, {"method": "only"}, matching_finder(REVERSIBLE))
+
+    assert parts_by_role(handed)["right-wing"]["view"] == "front"
+    assert parts_by_role(reversible)["right-wing"]["view"] == "back-right"
