@@ -1614,9 +1614,9 @@
     },
     {
         "file_metadata": {
-            "file": "necro#corner,wall+left.2x.openforge,side+dragonlock.stl",
+            "file": "necro#corner+left,wall.2x.openforge,side+dragonlock.stl",
             "file_modified_at": "2024-03-18T21:47:33.020041",
-            "full_name": "tiles/encounters/necromancers_ossuary/s2w/corner/necro#corner,wall+left.2x.openforge,side+dragonlock.stl",
+            "full_name": "tiles/encounters/necromancers_ossuary/s2w/corner/necro#corner+left,wall.2x.openforge,side+dragonlock.stl",
             "md5": "049e3718f5b6204440ac198c7dc4edad",
             "size": 13014484,
             "storage_address": "https://objects.openforge.tools/models/049e37/049e3718f5b6204440ac198c7dc4edad.stl"
@@ -1728,11 +1728,12 @@
         "metadata": false,
         "tags": [
             "build|s2w",
-            "component|wall|left",
+            "component|wall",
             "connection|openforge",
             "connection|side",
             "connection|side|dragonlock",
             "shape|corner",
+            "shape|corner|left",
             "shape|wall",
             "size|openlock|A",
             "size|width|2",
@@ -1742,9 +1743,9 @@
     },
     {
         "file_metadata": {
-            "file": "necro#corner,wall+left.2x.openforge,side.stl",
+            "file": "necro#corner+left,wall.2x.openforge,side.stl",
             "file_modified_at": "2024-03-18T21:47:14.927022",
-            "full_name": "tiles/encounters/necromancers_ossuary/s2w/corner/necro#corner,wall+left.2x.openforge,side.stl",
+            "full_name": "tiles/encounters/necromancers_ossuary/s2w/corner/necro#corner+left,wall.2x.openforge,side.stl",
             "md5": "2d5fada50208b23b0288c31d3a41d2ac",
             "size": 12679084,
             "storage_address": "https://objects.openforge.tools/models/2d5fad/2d5fada50208b23b0288c31d3a41d2ac.stl"
@@ -1856,11 +1857,12 @@
         "metadata": false,
         "tags": [
             "build|s2w",
-            "component|wall|left",
+            "component|wall",
             "connection|openforge",
             "connection|side",
             "connection|side|openlock",
             "shape|corner",
+            "shape|corner|left",
             "shape|wall",
             "size|openlock|A",
             "size|width|2",
@@ -1870,9 +1872,9 @@
     },
     {
         "file_metadata": {
-            "file": "necro#corner,wall+right.2x.openforge,side+dragonlock.stl",
+            "file": "necro#corner+right,wall.2x.openforge,side+dragonlock.stl",
             "file_modified_at": "2024-03-18T21:47:24.515548",
-            "full_name": "tiles/encounters/necromancers_ossuary/s2w/corner/necro#corner,wall+right.2x.openforge,side+dragonlock.stl",
+            "full_name": "tiles/encounters/necromancers_ossuary/s2w/corner/necro#corner+right,wall.2x.openforge,side+dragonlock.stl",
             "md5": "f5100a649185ffdd2759fc1b9dbd5700",
             "size": 13001084,
             "storage_address": "https://objects.openforge.tools/models/f5100a/f5100a649185ffdd2759fc1b9dbd5700.stl"
@@ -1984,11 +1986,12 @@
         "metadata": false,
         "tags": [
             "build|s2w",
-            "component|wall|right",
+            "component|wall",
             "connection|openforge",
             "connection|side",
             "connection|side|dragonlock",
             "shape|corner",
+            "shape|corner|right",
             "shape|wall",
             "size|openlock|A",
             "size|width|2",
@@ -1998,9 +2001,9 @@
     },
     {
         "file_metadata": {
-            "file": "necro#corner_wall+right.2x.openforge,side.stl",
+            "file": "necro#corner+right,wall.2x.openforge,side.stl",
             "file_modified_at": "2024-03-18T21:47:02.545080",
-            "full_name": "tiles/encounters/necromancers_ossuary/s2w/corner/necro#corner_wall+right.2x.openforge,side.stl",
+            "full_name": "tiles/encounters/necromancers_ossuary/s2w/corner/necro#corner+right,wall.2x.openforge,side.stl",
             "md5": "4a59e295db9bb1e160a8cc15b92ef7c6",
             "size": 12664884,
             "storage_address": "https://objects.openforge.tools/models/4a59e2/4a59e295db9bb1e160a8cc15b92ef7c6.stl"
@@ -2112,11 +2115,12 @@
         "metadata": false,
         "tags": [
             "build|s2w",
-            "component|corner_wall",
-            "component|corner_wall|right",
+            "component|wall",
             "connection|openforge",
             "connection|side",
             "connection|side|openlock",
+            "shape|corner",
+            "shape|corner|right",
             "shape|wall",
             "size|openlock|A",
             "size|width|2",
@@ -2254,6 +2258,134 @@
     {
         "file_metadata": {
             "file": "necro#corner,floor+s2w.2x2.openforge.stl",
+            "file_modified_at": "2026-10-25T12:00:43.961051",
+            "full_name": "tiles/encounters/necromancers_ossuary/s2w/floor#corner+s2w/necro#corner,floor+s2w.2x2.openforge.stl",
+            "md5": "28061ad8b26364871a89f51a4787fb81",
+            "size": 5287184,
+            "storage_address": "https://objects.openforge.tools/models/28061a/28061ad8b26364871a89f51a4787fb81.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/28061a/28061ad8b26364871a89f51a4787fb81.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "build|s2w",
+            "connection|openforge",
+            "shape|floor",
+            "shape|floor|s2w",
+            "shape|floor|wall|corner",
+            "shape|square",
+            "size|depth|2",
+            "size|width|2",
+            "texture|necro"
+        ],
+        "type": "model"
+    },
+    {
+        "deprecated": true,
+        "file_metadata": {
+            "file": "necro#corner,floor+s2w.2x2.openforge.stl",
             "file_modified_at": "2024-03-14T14:53:33.113921",
             "full_name": "tiles/encounters/necromancers_ossuary/s2w/floor#corner+s2w/necro#corner,floor+s2w.2x2.openforge.stl",
             "md5": "c77ba8878b575426c6b542084025cdfc",
@@ -2381,6 +2513,134 @@
     {
         "file_metadata": {
             "file": "necro#corner,floor+s2w.3x3.openforge.stl",
+            "file_modified_at": "2026-10-25T12:00:44.518929",
+            "full_name": "tiles/encounters/necromancers_ossuary/s2w/floor#corner+s2w/necro#corner,floor+s2w.3x3.openforge.stl",
+            "md5": "c52585bb5c6dc6d097078316ed5be5e3",
+            "size": 13573384,
+            "storage_address": "https://objects.openforge.tools/models/c52585/c52585bb5c6dc6d097078316ed5be5e3.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/c52585/c52585bb5c6dc6d097078316ed5be5e3.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "build|s2w",
+            "connection|openforge",
+            "shape|floor",
+            "shape|floor|s2w",
+            "shape|floor|wall|corner",
+            "shape|square",
+            "size|depth|3",
+            "size|width|3",
+            "texture|necro"
+        ],
+        "type": "model"
+    },
+    {
+        "deprecated": true,
+        "file_metadata": {
+            "file": "necro#corner,floor+s2w.3x3.openforge.stl",
             "file_modified_at": "2024-03-14T15:03:55.349599",
             "full_name": "tiles/encounters/necromancers_ossuary/s2w/floor#corner+s2w/necro#corner,floor+s2w.3x3.openforge.stl",
             "md5": "7d490381589be2906cd95b6139908141",
@@ -2506,6 +2766,134 @@
         "type": "model"
     },
     {
+        "file_metadata": {
+            "file": "necro#corner,floor+s2w.4x4.openforge.stl",
+            "file_modified_at": "2026-10-25T12:00:45.675953",
+            "full_name": "tiles/encounters/necromancers_ossuary/s2w/floor#corner+s2w/necro#corner,floor+s2w.4x4.openforge.stl",
+            "md5": "67ada722761544c16e9af93f2b61c694",
+            "size": 25630384,
+            "storage_address": "https://objects.openforge.tools/models/67ada7/67ada722761544c16e9af93f2b61c694.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/67ada7/67ada722761544c16e9af93f2b61c694.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "build|s2w",
+            "connection|openforge",
+            "shape|floor",
+            "shape|floor|s2w",
+            "shape|floor|wall|corner",
+            "shape|square",
+            "size|depth|4",
+            "size|width|4",
+            "texture|necro"
+        ],
+        "type": "model"
+    },
+    {
+        "deprecated": true,
         "file_metadata": {
             "file": "necro#corner,floor+s2w.4x4.openforge.stl",
             "file_modified_at": "2024-03-14T15:15:24.063949",
@@ -2887,6 +3275,133 @@
     {
         "file_metadata": {
             "file": "necro#wall,floor+s2w.2x2.openforge.stl",
+            "file_modified_at": "2026-10-25T12:00:21.866486",
+            "full_name": "tiles/encounters/necromancers_ossuary/s2w/floor#wall+s2w/necro#wall,floor+s2w.2x2.openforge.stl",
+            "md5": "0b8297928f665d13683acb740ce1ae42",
+            "size": 6705384,
+            "storage_address": "https://objects.openforge.tools/models/0b8297/0b8297928f665d13683acb740ce1ae42.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/0b8297/0b8297928f665d13683acb740ce1ae42.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "build|s2w",
+            "component|wall",
+            "connection|openforge",
+            "shape|floor",
+            "shape|floor|s2w",
+            "size|depth|2",
+            "size|width|2",
+            "texture|necro"
+        ],
+        "type": "model"
+    },
+    {
+        "deprecated": true,
+        "file_metadata": {
+            "file": "necro#wall,floor+s2w.2x2.openforge.stl",
             "file_modified_at": "2024-03-14T10:14:33.873255",
             "full_name": "tiles/encounters/necromancers_ossuary/s2w/floor#wall+s2w/necro#wall,floor+s2w.2x2.openforge.stl",
             "md5": "762654b6ca18b00c00a94ca77fe1c723",
@@ -3137,6 +3652,133 @@
         "type": "model"
     },
     {
+        "file_metadata": {
+            "file": "necro#wall,floor+s2w.3x3.openforge.stl",
+            "file_modified_at": "2026-10-25T12:00:22.410963",
+            "full_name": "tiles/encounters/necromancers_ossuary/s2w/floor#wall+s2w/necro#wall,floor+s2w.3x3.openforge.stl",
+            "md5": "eff30757ad2d6cebd32835db08d65489",
+            "size": 16668384,
+            "storage_address": "https://objects.openforge.tools/models/eff307/eff30757ad2d6cebd32835db08d65489.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/eff307/eff30757ad2d6cebd32835db08d65489.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "build|s2w",
+            "component|wall",
+            "connection|openforge",
+            "shape|floor",
+            "shape|floor|s2w",
+            "size|depth|3",
+            "size|width|3",
+            "texture|necro"
+        ],
+        "type": "model"
+    },
+    {
+        "deprecated": true,
         "file_metadata": {
             "file": "necro#wall,floor+s2w.3x3.openforge.stl",
             "file_modified_at": "2024-03-14T10:13:00.076230",
@@ -3391,6 +4033,133 @@
     {
         "file_metadata": {
             "file": "necro#wall,floor+s2w.4x2.openforge.stl",
+            "file_modified_at": "2026-10-25T12:00:22.931370",
+            "full_name": "tiles/encounters/necromancers_ossuary/s2w/floor#wall+s2w/necro#wall,floor+s2w.4x2.openforge.stl",
+            "md5": "4d7eabf96a2af7d8f7711479b3686b8a",
+            "size": 13663984,
+            "storage_address": "https://objects.openforge.tools/models/4d7eab/4d7eabf96a2af7d8f7711479b3686b8a.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/4d7eab/4d7eabf96a2af7d8f7711479b3686b8a.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "build|s2w",
+            "component|wall",
+            "connection|openforge",
+            "shape|floor",
+            "shape|floor|s2w",
+            "size|depth|2",
+            "size|width|4",
+            "texture|necro"
+        ],
+        "type": "model"
+    },
+    {
+        "deprecated": true,
+        "file_metadata": {
+            "file": "necro#wall,floor+s2w.4x2.openforge.stl",
             "file_modified_at": "2024-03-14T10:09:27.523972",
             "full_name": "tiles/encounters/necromancers_ossuary/s2w/floor#wall+s2w/necro#wall,floor+s2w.4x2.openforge.stl",
             "md5": "b83d1a0ab3cf21def4532814cceac5d5",
@@ -3515,6 +4284,133 @@
         "type": "model"
     },
     {
+        "file_metadata": {
+            "file": "necro#wall,floor+s2w.4x4.openforge.stl",
+            "file_modified_at": "2026-10-25T12:00:23.787869",
+            "full_name": "tiles/encounters/necromancers_ossuary/s2w/floor#wall+s2w/necro#wall,floor+s2w.4x4.openforge.stl",
+            "md5": "49b12064ae832aaf7b4dcc3e1c610483",
+            "size": 30353684,
+            "storage_address": "https://objects.openforge.tools/models/49b120/49b12064ae832aaf7b4dcc3e1c610483.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/49b120/49b12064ae832aaf7b4dcc3e1c610483.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "build|s2w",
+            "component|wall",
+            "connection|openforge",
+            "shape|floor",
+            "shape|floor|s2w",
+            "size|depth|4",
+            "size|width|4",
+            "texture|necro"
+        ],
+        "type": "model"
+    },
+    {
+        "deprecated": true,
         "file_metadata": {
             "file": "necro#wall,floor+s2w.4x4.openforge.stl",
             "file_modified_at": "2024-03-14T10:18:36.089667",

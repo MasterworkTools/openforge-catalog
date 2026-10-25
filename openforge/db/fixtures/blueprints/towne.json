@@ -17724,6 +17724,135 @@
     {
         "file_metadata": {
             "file": "towne%wood#floor+corner+s2w.2x2.openforge.stl",
+            "file_modified_at": "2026-10-25T12:00:39.923525",
+            "full_name": "tiles/towne/s2w/corner/floor#corner+s2w/towne%wood#floor+corner+s2w.2x2.openforge.stl",
+            "md5": "b79ffd2fe1c293f57130ce42c28307ee",
+            "size": 9097784,
+            "storage_address": "https://objects.openforge.tools/models/b79ffd/b79ffd2fe1c293f57130ce42c28307ee.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/b79ffd/b79ffd2fe1c293f57130ce42c28307ee.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "build|s2w",
+            "connection|openforge",
+            "shape|floor",
+            "shape|floor|s2w",
+            "shape|floor|wall|corner",
+            "shape|square",
+            "size|depth|2",
+            "size|width|2",
+            "texture|towne",
+            "texture|towne|wood"
+        ],
+        "type": "model"
+    },
+    {
+        "deprecated": true,
+        "file_metadata": {
+            "file": "towne%wood#floor+corner+s2w.2x2.openforge.stl",
             "file_modified_at": "2024-03-16T21:38:02.197472",
             "full_name": "tiles/towne/s2w/corner/floor#corner+s2w/towne%wood#floor+corner+s2w.2x2.openforge.stl",
             "md5": "9905c76c35d980ce419f8745494c235b",
@@ -17852,6 +17981,135 @@
     {
         "file_metadata": {
             "file": "towne%wood#floor+corner+s2w.3x3.openforge.stl",
+            "file_modified_at": "2026-10-25T12:00:41.058375",
+            "full_name": "tiles/towne/s2w/corner/floor#corner+s2w/towne%wood#floor+corner+s2w.3x3.openforge.stl",
+            "md5": "8dca3a1df780b0a69bf6312ed8279633",
+            "size": 25284284,
+            "storage_address": "https://objects.openforge.tools/models/8dca3a/8dca3a1df780b0a69bf6312ed8279633.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/8dca3a/8dca3a1df780b0a69bf6312ed8279633.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "build|s2w",
+            "connection|openforge",
+            "shape|floor",
+            "shape|floor|s2w",
+            "shape|floor|wall|corner",
+            "shape|square",
+            "size|depth|3",
+            "size|width|3",
+            "texture|towne",
+            "texture|towne|wood"
+        ],
+        "type": "model"
+    },
+    {
+        "deprecated": true,
+        "file_metadata": {
+            "file": "towne%wood#floor+corner+s2w.3x3.openforge.stl",
             "file_modified_at": "2024-03-16T21:38:14.944136",
             "full_name": "tiles/towne/s2w/corner/floor#corner+s2w/towne%wood#floor+corner+s2w.3x3.openforge.stl",
             "md5": "5d9f99d5d0aac9e55ccfdcb201df8b24",
@@ -17978,6 +18236,135 @@
         "type": "model"
     },
     {
+        "file_metadata": {
+            "file": "towne%wood#floor+corner+s2w.4x4.openforge.stl",
+            "file_modified_at": "2026-10-25T12:00:43.056755",
+            "full_name": "tiles/towne/s2w/corner/floor#corner+s2w/towne%wood#floor+corner+s2w.4x4.openforge.stl",
+            "md5": "5feaeb7545a0f4b4343e9528bc1c8a43",
+            "size": 49593484,
+            "storage_address": "https://objects.openforge.tools/models/5feaeb/5feaeb7545a0f4b4343e9528bc1c8a43.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/5feaeb/5feaeb7545a0f4b4343e9528bc1c8a43.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "build|s2w",
+            "connection|openforge",
+            "shape|floor",
+            "shape|floor|s2w",
+            "shape|floor|wall|corner",
+            "shape|square",
+            "size|depth|4",
+            "size|width|4",
+            "texture|towne",
+            "texture|towne|wood"
+        ],
+        "type": "model"
+    },
+    {
+        "deprecated": true,
         "file_metadata": {
             "file": "towne%wood#floor+corner+s2w.4x4.openforge.stl",
             "file_modified_at": "2024-03-16T21:38:32.810514",
@@ -19013,9 +19400,9 @@
     },
     {
         "file_metadata": {
-            "file": "towne+stone#corner+left+right,wall.2x.openforge,side+dragonlock.stl",
+            "file": "towne+stone#corner,wall.2x.openforge,side+dragonlock.stl",
             "file_modified_at": "2025-01-28T16:19:23.514695",
-            "full_name": "tiles/towne/s2w/corner/wall#corner+s2w/openforge,side+dragonlock/towne+stone#corner+left+right,wall.2x.openforge,side+dragonlock.stl",
+            "full_name": "tiles/towne/s2w/corner/wall#corner+s2w/openforge,side+dragonlock/towne+stone#corner,wall.2x.openforge,side+dragonlock.stl",
             "md5": "c137160b65b5a60871c4ada586dbe0d0",
             "size": 8035834,
             "storage_address": "https://objects.openforge.tools/models/c13716/c137160b65b5a60871c4ada586dbe0d0.stl"
@@ -19132,8 +19519,6 @@
             "connection|side",
             "connection|side|dragonlock",
             "shape|corner",
-            "shape|corner|left",
-            "shape|corner|right",
             "shape|wall",
             "size|openlock|A",
             "size|width|2",
@@ -19144,9 +19529,9 @@
     },
     {
         "file_metadata": {
-            "file": "towne+stone-stucco#corner+left+right,wall.2x.openforge,side+dragonlock.stl",
+            "file": "towne+stone-stucco#corner,wall.2x.openforge,side+dragonlock.stl",
             "file_modified_at": "2025-01-28T16:42:01.408746",
-            "full_name": "tiles/towne/s2w/corner/wall#corner+s2w/openforge,side+dragonlock/towne+stone-stucco#corner+left+right,wall.2x.openforge,side+dragonlock.stl",
+            "full_name": "tiles/towne/s2w/corner/wall#corner+s2w/openforge,side+dragonlock/towne+stone-stucco#corner,wall.2x.openforge,side+dragonlock.stl",
             "md5": "65606988fda6750872052a29cb6c43c5",
             "size": 7414934,
             "storage_address": "https://objects.openforge.tools/models/656069/65606988fda6750872052a29cb6c43c5.stl"
@@ -19263,8 +19648,6 @@
             "connection|side",
             "connection|side|dragonlock",
             "shape|corner",
-            "shape|corner|left",
-            "shape|corner|right",
             "shape|wall",
             "size|openlock|A",
             "size|width|2",
@@ -19275,9 +19658,9 @@
     },
     {
         "file_metadata": {
-            "file": "towne+stucco#corner+left+right,wall.2x.openforge,side+dragonlock.stl",
+            "file": "towne+stucco#corner,wall.2x.openforge,side+dragonlock.stl",
             "file_modified_at": "2025-01-28T17:02:01.216457",
-            "full_name": "tiles/towne/s2w/corner/wall#corner+s2w/openforge,side+dragonlock/towne+stucco#corner+left+right,wall.2x.openforge,side+dragonlock.stl",
+            "full_name": "tiles/towne/s2w/corner/wall#corner+s2w/openforge,side+dragonlock/towne+stucco#corner,wall.2x.openforge,side+dragonlock.stl",
             "md5": "a59c9bf63d6f944a9a52bb2d9f121e28",
             "size": 6999584,
             "storage_address": "https://objects.openforge.tools/models/a59c9b/a59c9bf63d6f944a9a52bb2d9f121e28.stl"
@@ -19394,8 +19777,6 @@
             "connection|side",
             "connection|side|dragonlock",
             "shape|corner",
-            "shape|corner|left",
-            "shape|corner|right",
             "shape|wall",
             "size|openlock|A",
             "size|width|2",
@@ -19406,9 +19787,9 @@
     },
     {
         "file_metadata": {
-            "file": "towne+stucco-stone#corner+left+right,wall.2x.openforge,side+dragonlock.stl",
+            "file": "towne+stucco-stone#corner,wall.2x.openforge,side+dragonlock.stl",
             "file_modified_at": "2025-01-28T17:15:52.693735",
-            "full_name": "tiles/towne/s2w/corner/wall#corner+s2w/openforge,side+dragonlock/towne+stucco-stone#corner+left+right,wall.2x.openforge,side+dragonlock.stl",
+            "full_name": "tiles/towne/s2w/corner/wall#corner+s2w/openforge,side+dragonlock/towne+stucco-stone#corner,wall.2x.openforge,side+dragonlock.stl",
             "md5": "d9c6c7b92d21e67613c0e574131a41ff",
             "size": 78253384,
             "storage_address": "https://objects.openforge.tools/models/d9c6c7/d9c6c7b92d21e67613c0e574131a41ff.stl"
@@ -19525,8 +19906,6 @@
             "connection|side",
             "connection|side|dragonlock",
             "shape|corner",
-            "shape|corner|left",
-            "shape|corner|right",
             "shape|wall",
             "size|openlock|A",
             "size|width|2",
@@ -20057,9 +20436,9 @@
     },
     {
         "file_metadata": {
-            "file": "towne+stone#corner+left+right,wall.2x.openforge,side+filament.stl",
+            "file": "towne+stone#corner,wall.2x.openforge,side+filament.stl",
             "file_modified_at": "2025-01-28T16:19:01.866789",
-            "full_name": "tiles/towne/s2w/corner/wall#corner+s2w/openforge,side+filament/towne+stone#corner+left+right,wall.2x.openforge,side+filament.stl",
+            "full_name": "tiles/towne/s2w/corner/wall#corner+s2w/openforge,side+filament/towne+stone#corner,wall.2x.openforge,side+filament.stl",
             "md5": "a610434c7b0cc3686502cb033abc45fa",
             "size": 8053334,
             "storage_address": "https://objects.openforge.tools/models/a61043/a610434c7b0cc3686502cb033abc45fa.stl"
@@ -20176,8 +20555,6 @@
             "connection|side",
             "connection|side|filament",
             "shape|corner",
-            "shape|corner|left",
-            "shape|corner|right",
             "shape|wall",
             "size|openlock|A",
             "size|width|2",
@@ -20188,9 +20565,9 @@
     },
     {
         "file_metadata": {
-            "file": "towne+stone-stucco#corner+left+right,wall.2x.openforge,side+filament.stl",
+            "file": "towne+stone-stucco#corner,wall.2x.openforge,side+filament.stl",
             "file_modified_at": "2025-01-28T16:41:44.593247",
-            "full_name": "tiles/towne/s2w/corner/wall#corner+s2w/openforge,side+filament/towne+stone-stucco#corner+left+right,wall.2x.openforge,side+filament.stl",
+            "full_name": "tiles/towne/s2w/corner/wall#corner+s2w/openforge,side+filament/towne+stone-stucco#corner,wall.2x.openforge,side+filament.stl",
             "md5": "c1da4f1b40272fc6146bcc56bd324826",
             "size": 7432334,
             "storage_address": "https://objects.openforge.tools/models/c1da4f/c1da4f1b40272fc6146bcc56bd324826.stl"
@@ -20307,8 +20684,6 @@
             "connection|side",
             "connection|side|filament",
             "shape|corner",
-            "shape|corner|left",
-            "shape|corner|right",
             "shape|wall",
             "size|openlock|A",
             "size|width|2",
@@ -20319,9 +20694,9 @@
     },
     {
         "file_metadata": {
-            "file": "towne+stucco#corner+left+right,wall.2x.openforge,side+filament.stl",
+            "file": "towne+stucco#corner,wall.2x.openforge,side+filament.stl",
             "file_modified_at": "2025-01-28T17:02:16.888004",
-            "full_name": "tiles/towne/s2w/corner/wall#corner+s2w/openforge,side+filament/towne+stucco#corner+left+right,wall.2x.openforge,side+filament.stl",
+            "full_name": "tiles/towne/s2w/corner/wall#corner+s2w/openforge,side+filament/towne+stucco#corner,wall.2x.openforge,side+filament.stl",
             "md5": "cf311e0ac94c05b9f14a560077e3e910",
             "size": 7019384,
             "storage_address": "https://objects.openforge.tools/models/cf311e/cf311e0ac94c05b9f14a560077e3e910.stl"
@@ -20438,8 +20813,6 @@
             "connection|side",
             "connection|side|filament",
             "shape|corner",
-            "shape|corner|left",
-            "shape|corner|right",
             "shape|wall",
             "size|openlock|A",
             "size|width|2",
@@ -20450,9 +20823,9 @@
     },
     {
         "file_metadata": {
-            "file": "towne+stucco-stone#corner+left+right,wall.2x.openforge,side+filament.stl",
+            "file": "towne+stucco-stone#corner,wall.2x.openforge,side+filament.stl",
             "file_modified_at": "2025-01-28T17:15:28.936424",
-            "full_name": "tiles/towne/s2w/corner/wall#corner+s2w/openforge,side+filament/towne+stucco-stone#corner+left+right,wall.2x.openforge,side+filament.stl",
+            "full_name": "tiles/towne/s2w/corner/wall#corner+s2w/openforge,side+filament/towne+stucco-stone#corner,wall.2x.openforge,side+filament.stl",
             "md5": "b9ceb4c8045d40b7e6d73c4990595c92",
             "size": 79821184,
             "storage_address": "https://objects.openforge.tools/models/b9ceb4/b9ceb4c8045d40b7e6d73c4990595c92.stl"
@@ -20569,8 +20942,6 @@
             "connection|side",
             "connection|side|filament",
             "shape|corner",
-            "shape|corner|left",
-            "shape|corner|right",
             "shape|wall",
             "size|openlock|A",
             "size|width|2",
@@ -21101,9 +21472,9 @@
     },
     {
         "file_metadata": {
-            "file": "towne+stone#corner+left+right,wall.2x.openforge,side.stl",
+            "file": "towne+stone#corner,wall.2x.openforge,side.stl",
             "file_modified_at": "2025-01-28T16:19:39.022473",
-            "full_name": "tiles/towne/s2w/corner/wall#corner+s2w/openforge,side+openlock/towne+stone#corner+left+right,wall.2x.openforge,side.stl",
+            "full_name": "tiles/towne/s2w/corner/wall#corner+s2w/openforge,side+openlock/towne+stone#corner,wall.2x.openforge,side.stl",
             "md5": "77bc19d9ea21c1d09198ae6f59b1773e",
             "size": 8005634,
             "storage_address": "https://objects.openforge.tools/models/77bc19/77bc19d9ea21c1d09198ae6f59b1773e.stl"
@@ -21220,8 +21591,6 @@
             "connection|side",
             "connection|side|openlock",
             "shape|corner",
-            "shape|corner|left",
-            "shape|corner|right",
             "shape|wall",
             "size|openlock|A",
             "size|width|2",
@@ -21232,9 +21601,9 @@
     },
     {
         "file_metadata": {
-            "file": "towne+stone-stucco#corner+left+right,wall.2x.openforge,side.stl",
+            "file": "towne+stone-stucco#corner,wall.2x.openforge,side.stl",
             "file_modified_at": "2025-01-28T16:41:24.059291",
-            "full_name": "tiles/towne/s2w/corner/wall#corner+s2w/openforge,side+openlock/towne+stone-stucco#corner+left+right,wall.2x.openforge,side.stl",
+            "full_name": "tiles/towne/s2w/corner/wall#corner+s2w/openforge,side+openlock/towne+stone-stucco#corner,wall.2x.openforge,side.stl",
             "md5": "d08da84a5d25e75c54425df91c29912e",
             "size": 7388434,
             "storage_address": "https://objects.openforge.tools/models/d08da8/d08da84a5d25e75c54425df91c29912e.stl"
@@ -21351,8 +21720,6 @@
             "connection|side",
             "connection|side|openlock",
             "shape|corner",
-            "shape|corner|left",
-            "shape|corner|right",
             "shape|wall",
             "size|openlock|A",
             "size|width|2",
@@ -21363,9 +21730,9 @@
     },
     {
         "file_metadata": {
-            "file": "towne+stucco#corner+left+right,wall.2x.openforge,side.stl",
+            "file": "towne+stucco#corner,wall.2x.openforge,side.stl",
             "file_modified_at": "2025-01-28T17:01:43.069453",
-            "full_name": "tiles/towne/s2w/corner/wall#corner+s2w/openforge,side+openlock/towne+stucco#corner+left+right,wall.2x.openforge,side.stl",
+            "full_name": "tiles/towne/s2w/corner/wall#corner+s2w/openforge,side+openlock/towne+stucco#corner,wall.2x.openforge,side.stl",
             "md5": "bcd0d198dc38ec07a352f41799bfa58d",
             "size": 6974884,
             "storage_address": "https://objects.openforge.tools/models/bcd0d1/bcd0d198dc38ec07a352f41799bfa58d.stl"
@@ -21482,8 +21849,6 @@
             "connection|side",
             "connection|side|openlock",
             "shape|corner",
-            "shape|corner|left",
-            "shape|corner|right",
             "shape|wall",
             "size|openlock|A",
             "size|width|2",
@@ -21494,9 +21859,9 @@
     },
     {
         "file_metadata": {
-            "file": "towne+stucco-stone#corner+left+right,wall.2x.openforge,side.stl",
+            "file": "towne+stucco-stone#corner,wall.2x.openforge,side.stl",
             "file_modified_at": "2025-01-28T17:16:16.768512",
-            "full_name": "tiles/towne/s2w/corner/wall#corner+s2w/openforge,side+openlock/towne+stucco-stone#corner+left+right,wall.2x.openforge,side.stl",
+            "full_name": "tiles/towne/s2w/corner/wall#corner+s2w/openforge,side+openlock/towne+stucco-stone#corner,wall.2x.openforge,side.stl",
             "md5": "bf7f1281d351f452d9fca4cd48863f57",
             "size": 77619184,
             "storage_address": "https://objects.openforge.tools/models/bf7f12/bf7f1281d351f452d9fca4cd48863f57.stl"
@@ -21613,8 +21978,6 @@
             "connection|side",
             "connection|side|openlock",
             "shape|corner",
-            "shape|corner|left",
-            "shape|corner|right",
             "shape|wall",
             "size|openlock|A",
             "size|width|2",
@@ -22145,9 +22508,9 @@
     },
     {
         "file_metadata": {
-            "file": "towne+stone#corner+left+right,wall+low.2x.openforge,side+dragonlock.stl",
+            "file": "towne+stone#corner,wall+low.2x.openforge,side+dragonlock.stl",
             "file_modified_at": "2025-01-28T18:15:11.979675",
-            "full_name": "tiles/towne/s2w/corner/wall#corner,low+s2w/openforge,side+dragonlock/towne+stone#corner+left+right,wall+low.2x.openforge,side+dragonlock.stl",
+            "full_name": "tiles/towne/s2w/corner/wall#corner,low+s2w/openforge,side+dragonlock/towne+stone#corner,wall+low.2x.openforge,side+dragonlock.stl",
             "md5": "4c51fd16e5856292018b06f4edd792b7",
             "size": 3937084,
             "storage_address": "https://objects.openforge.tools/models/4c51fd/4c51fd16e5856292018b06f4edd792b7.stl"
@@ -22264,8 +22627,6 @@
             "connection|side",
             "connection|side|dragonlock",
             "shape|corner",
-            "shape|corner|left",
-            "shape|corner|right",
             "shape|wall|low",
             "size|openlock|A",
             "size|width|2",
@@ -22276,9 +22637,9 @@
     },
     {
         "file_metadata": {
-            "file": "towne+stucco#corner+left+right,wall+low.2x.openforge,side+dragonlock.stl",
+            "file": "towne+stucco#corner,wall+low.2x.openforge,side+dragonlock.stl",
             "file_modified_at": "2025-01-28T21:37:05.468883",
-            "full_name": "tiles/towne/s2w/corner/wall#corner,low+s2w/openforge,side+dragonlock/towne+stucco#corner+left+right,wall+low.2x.openforge,side+dragonlock.stl",
+            "full_name": "tiles/towne/s2w/corner/wall#corner,low+s2w/openforge,side+dragonlock/towne+stucco#corner,wall+low.2x.openforge,side+dragonlock.stl",
             "md5": "aec1baee95965315c54faf66f6e0f125",
             "size": 3527534,
             "storage_address": "https://objects.openforge.tools/models/aec1ba/aec1baee95965315c54faf66f6e0f125.stl"
@@ -22395,8 +22756,6 @@
             "connection|side",
             "connection|side|dragonlock",
             "shape|corner",
-            "shape|corner|left",
-            "shape|corner|right",
             "shape|wall|low",
             "size|openlock|A",
             "size|width|2",
@@ -22927,9 +23286,9 @@
     },
     {
         "file_metadata": {
-            "file": "towne+stone#corner+left+right,wall+low.2x.openforge,side+filament.stl",
+            "file": "towne+stone#corner,wall+low.2x.openforge,side+filament.stl",
             "file_modified_at": "2025-01-28T18:15:26.884358",
-            "full_name": "tiles/towne/s2w/corner/wall#corner,low+s2w/openforge,side+filament/towne+stone#corner+left+right,wall+low.2x.openforge,side+filament.stl",
+            "full_name": "tiles/towne/s2w/corner/wall#corner,low+s2w/openforge,side+filament/towne+stone#corner,wall+low.2x.openforge,side+filament.stl",
             "md5": "a955ca91284dda2ce4e7a471e0b17ea9",
             "size": 3947884,
             "storage_address": "https://objects.openforge.tools/models/a955ca/a955ca91284dda2ce4e7a471e0b17ea9.stl"
@@ -23046,8 +23405,6 @@
             "connection|side",
             "connection|side|filament",
             "shape|corner",
-            "shape|corner|left",
-            "shape|corner|right",
             "shape|wall|low",
             "size|openlock|A",
             "size|width|2",
@@ -23058,9 +23415,9 @@
     },
     {
         "file_metadata": {
-            "file": "towne+stucco#corner+left+right,wall+low.2x.openforge,side+filament.stl",
+            "file": "towne+stucco#corner,wall+low.2x.openforge,side+filament.stl",
             "file_modified_at": "2025-01-28T21:36:52.379817",
-            "full_name": "tiles/towne/s2w/corner/wall#corner,low+s2w/openforge,side+filament/towne+stucco#corner+left+right,wall+low.2x.openforge,side+filament.stl",
+            "full_name": "tiles/towne/s2w/corner/wall#corner,low+s2w/openforge,side+filament/towne+stucco#corner,wall+low.2x.openforge,side+filament.stl",
             "md5": "c917bef313c1be4cb22cfee3e6a6d8ba",
             "size": 3538034,
             "storage_address": "https://objects.openforge.tools/models/c917be/c917bef313c1be4cb22cfee3e6a6d8ba.stl"
@@ -23177,8 +23534,6 @@
             "connection|side",
             "connection|side|filament",
             "shape|corner",
-            "shape|corner|left",
-            "shape|corner|right",
             "shape|wall|low",
             "size|openlock|A",
             "size|width|2",
@@ -23711,9 +24066,9 @@
     },
     {
         "file_metadata": {
-            "file": "towne+stone#corner+left+right,wall+low.2x.openforge,side.stl",
+            "file": "towne+stone#corner,wall+low.2x.openforge,side.stl",
             "file_modified_at": "2025-01-28T18:14:54.770815",
-            "full_name": "tiles/towne/s2w/corner/wall#corner,low+s2w/openforge,side+openlock/towne+stone#corner+left+right,wall+low.2x.openforge,side.stl",
+            "full_name": "tiles/towne/s2w/corner/wall#corner,low+s2w/openforge,side+openlock/towne+stone#corner,wall+low.2x.openforge,side.stl",
             "md5": "076602d1f697386f2e1a0aded8b7bc92",
             "size": 3920484,
             "storage_address": "https://objects.openforge.tools/models/076602/076602d1f697386f2e1a0aded8b7bc92.stl"
@@ -23830,8 +24185,6 @@
             "connection|side",
             "connection|side|openlock",
             "shape|corner",
-            "shape|corner|left",
-            "shape|corner|right",
             "shape|wall|low",
             "size|openlock|A",
             "size|width|2",
@@ -23842,9 +24195,9 @@
     },
     {
         "file_metadata": {
-            "file": "towne+stucco#corner+left+right,wall+low.2x.openforge,side.stl",
+            "file": "towne+stucco#corner,wall+low.2x.openforge,side.stl",
             "file_modified_at": "2025-01-28T21:37:18.847936",
-            "full_name": "tiles/towne/s2w/corner/wall#corner,low+s2w/openforge,side+openlock/towne+stucco#corner+left+right,wall+low.2x.openforge,side.stl",
+            "full_name": "tiles/towne/s2w/corner/wall#corner,low+s2w/openforge,side+openlock/towne+stucco#corner,wall+low.2x.openforge,side.stl",
             "md5": "283014dec86afb8fb2b89327b237285d",
             "size": 3510434,
             "storage_address": "https://objects.openforge.tools/models/283014/283014dec86afb8fb2b89327b237285d.stl"
@@ -23961,8 +24314,6 @@
             "connection|side",
             "connection|side|openlock",
             "shape|corner",
-            "shape|corner|left",
-            "shape|corner|right",
             "shape|wall|low",
             "size|openlock|A",
             "size|width|2",
@@ -24613,6 +24964,134 @@
     {
         "file_metadata": {
             "file": "towne#floor+wall+s2w.2x2.openforge.stl",
+            "file_modified_at": "2026-10-25T12:00:17.398242",
+            "full_name": "tiles/towne/s2w/wall/floor#wall+s2w/towne#floor+wall+s2w.2x2.openforge.stl",
+            "md5": "6a9a3f000e2686f1ed1fd22170ed7f6a",
+            "size": 12030584,
+            "storage_address": "https://objects.openforge.tools/models/6a9a3f/6a9a3f000e2686f1ed1fd22170ed7f6a.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/6a9a3f/6a9a3f000e2686f1ed1fd22170ed7f6a.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "build|s2w",
+            "connection|openforge",
+            "shape|floor",
+            "shape|floor|s2w",
+            "shape|floor|wall",
+            "shape|square",
+            "size|depth|2",
+            "size|width|2",
+            "texture|towne"
+        ],
+        "type": "model"
+    },
+    {
+        "deprecated": true,
+        "file_metadata": {
+            "file": "towne#floor+wall+s2w.2x2.openforge.stl",
             "file_modified_at": "2024-03-16T21:39:24.426788",
             "full_name": "tiles/towne/s2w/wall/floor#wall+s2w/towne#floor+wall+s2w.2x2.openforge.stl",
             "md5": "d6f936794ea3fe2bd3e421b642a2c8ec",
@@ -24740,6 +25219,134 @@
     {
         "file_metadata": {
             "file": "towne#floor+wall+s2w.3x1.openforge.stl",
+            "file_modified_at": "2026-10-25T13:10:33.190007",
+            "full_name": "tiles/towne/s2w/wall/floor#wall+s2w/towne#floor+wall+s2w.3x1.openforge.stl",
+            "md5": "7a19e0004935566cc83b7c099ff170d6",
+            "size": 6120184,
+            "storage_address": "https://objects.openforge.tools/models/7a19e0/7a19e0004935566cc83b7c099ff170d6.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/7a19e0/7a19e0004935566cc83b7c099ff170d6.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "build|s2w",
+            "connection|openforge",
+            "shape|floor",
+            "shape|floor|s2w",
+            "shape|floor|wall",
+            "shape|square",
+            "size|depth|1",
+            "size|width|3",
+            "texture|towne"
+        ],
+        "type": "model"
+    },
+    {
+        "deprecated": true,
+        "file_metadata": {
+            "file": "towne#floor+wall+s2w.3x1.openforge.stl",
             "file_modified_at": "2024-03-16T21:39:35.265312",
             "full_name": "tiles/towne/s2w/wall/floor#wall+s2w/towne#floor+wall+s2w.3x1.openforge.stl",
             "md5": "7a39f06b961fb8182b0f70f9ab9fb48c",
@@ -24865,6 +25472,134 @@
         "type": "model"
     },
     {
+        "file_metadata": {
+            "file": "towne#floor+wall+s2w.3x3.openforge.stl",
+            "file_modified_at": "2026-10-25T12:00:18.425275",
+            "full_name": "tiles/towne/s2w/wall/floor#wall+s2w/towne#floor+wall+s2w.3x3.openforge.stl",
+            "md5": "68220882725e5930f0f9d2b2908c9419",
+            "size": 30245484,
+            "storage_address": "https://objects.openforge.tools/models/682208/68220882725e5930f0f9d2b2908c9419.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/682208/68220882725e5930f0f9d2b2908c9419.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "build|s2w",
+            "connection|openforge",
+            "shape|floor",
+            "shape|floor|s2w",
+            "shape|floor|wall",
+            "shape|square",
+            "size|depth|3",
+            "size|width|3",
+            "texture|towne"
+        ],
+        "type": "model"
+    },
+    {
+        "deprecated": true,
         "file_metadata": {
             "file": "towne#floor+wall+s2w.3x3.openforge.stl",
             "file_modified_at": "2024-03-16T21:39:51.671700",
@@ -25121,6 +25856,134 @@
     {
         "file_metadata": {
             "file": "towne#floor+wall+s2w.4x2.openforge.stl",
+            "file_modified_at": "2026-10-25T12:00:19.348303",
+            "full_name": "tiles/towne/s2w/wall/floor#wall+s2w/towne#floor+wall+s2w.4x2.openforge.stl",
+            "md5": "760513f48157e82b5dd951f5ed1b70f6",
+            "size": 24158884,
+            "storage_address": "https://objects.openforge.tools/models/760513/760513f48157e82b5dd951f5ed1b70f6.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/760513/760513f48157e82b5dd951f5ed1b70f6.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "build|s2w",
+            "connection|openforge",
+            "shape|floor",
+            "shape|floor|s2w",
+            "shape|floor|wall",
+            "shape|square",
+            "size|depth|2",
+            "size|width|4",
+            "texture|towne"
+        ],
+        "type": "model"
+    },
+    {
+        "deprecated": true,
+        "file_metadata": {
+            "file": "towne#floor+wall+s2w.4x2.openforge.stl",
             "file_modified_at": "2024-03-16T21:40:18.602100",
             "full_name": "tiles/towne/s2w/wall/floor#wall+s2w/towne#floor+wall+s2w.4x2.openforge.stl",
             "md5": "0f74f3d43c52c53f8937bbdc0cd0886e",
@@ -25246,6 +26109,134 @@
         "type": "model"
     },
     {
+        "file_metadata": {
+            "file": "towne#floor+wall+s2w.4x4.openforge.stl",
+            "file_modified_at": "2026-10-25T12:00:21.030860",
+            "full_name": "tiles/towne/s2w/wall/floor#wall+s2w/towne#floor+wall+s2w.4x4.openforge.stl",
+            "md5": "3110aa8d7bf9a3ebe156952b8a956dec",
+            "size": 56580284,
+            "storage_address": "https://objects.openforge.tools/models/3110aa/3110aa8d7bf9a3ebe156952b8a956dec.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/3110aa/3110aa8d7bf9a3ebe156952b8a956dec.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "build|s2w",
+            "connection|openforge",
+            "shape|floor",
+            "shape|floor|s2w",
+            "shape|floor|wall",
+            "shape|square",
+            "size|depth|4",
+            "size|width|4",
+            "texture|towne"
+        ],
+        "type": "model"
+    },
+    {
+        "deprecated": true,
         "file_metadata": {
             "file": "towne#floor+wall+s2w.4x4.openforge.stl",
             "file_modified_at": "2024-03-16T21:40:34.773360",

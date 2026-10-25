@@ -2443,9 +2443,9 @@
     },
     {
         "file_metadata": {
-            "file": "cut-stone+ruined#corner,collapsed+full-low.2x2.openforge.stl",
+            "file": "cut-stone+ruined#corner+both,collapsed+full-low.2x2.openforge.stl",
             "file_modified_at": "2025-08-31T13:47:58.702215",
-            "full_name": "tiles/cut-stone+ruined/s2w/corner/corner/openforge/cut-stone+ruined#corner,collapsed+full-low.2x2.openforge.stl",
+            "full_name": "tiles/cut-stone+ruined/s2w/corner/corner/openforge/cut-stone+ruined#corner+both,collapsed+full-low.2x2.openforge.stl",
             "md5": "f67406ce825fae4ebed3b8a59077fdb3",
             "size": 12028984,
             "storage_address": "https://objects.openforge.tools/models/f67406/f67406ce825fae4ebed3b8a59077fdb3.stl"
@@ -2561,6 +2561,7 @@
             "component|collapsed|full-low",
             "connection|openforge",
             "shape|corner",
+            "shape|corner|both",
             "size|depth|2",
             "size|width|2",
             "texture|cut-stone",
@@ -2570,9 +2571,9 @@
     },
     {
         "file_metadata": {
-            "file": "cut-stone+ruined#corner,collapsed+full-minimal-full.2x2.openforge.stl",
+            "file": "cut-stone+ruined#corner+both,collapsed+full-minimal-full.2x2.openforge.stl",
             "file_modified_at": "2025-08-31T13:52:21.304101",
-            "full_name": "tiles/cut-stone+ruined/s2w/corner/corner/openforge/cut-stone+ruined#corner,collapsed+full-minimal-full.2x2.openforge.stl",
+            "full_name": "tiles/cut-stone+ruined/s2w/corner/corner/openforge/cut-stone+ruined#corner+both,collapsed+full-minimal-full.2x2.openforge.stl",
             "md5": "922870e3009fee4b629f88a7de23e0e1",
             "size": 17291284,
             "storage_address": "https://objects.openforge.tools/models/922870/922870e3009fee4b629f88a7de23e0e1.stl"
@@ -2688,6 +2689,7 @@
             "component|collapsed|full-minimal-full",
             "connection|openforge",
             "shape|corner",
+            "shape|corner|both",
             "size|depth|2",
             "size|width|2",
             "texture|cut-stone",
@@ -2697,9 +2699,9 @@
     },
     {
         "file_metadata": {
-            "file": "cut-stone+ruined#corner,collapsed+full.2x2.openforge.stl",
+            "file": "cut-stone+ruined#corner+both,collapsed+full.2x2.openforge.stl",
             "file_modified_at": "2025-08-31T13:43:31.433151",
-            "full_name": "tiles/cut-stone+ruined/s2w/corner/corner/openforge/cut-stone+ruined#corner,collapsed+full.2x2.openforge.stl",
+            "full_name": "tiles/cut-stone+ruined/s2w/corner/corner/openforge/cut-stone+ruined#corner+both,collapsed+full.2x2.openforge.stl",
             "md5": "faada240fbe2d0455eef4e69aaa4f488",
             "size": 15688184,
             "storage_address": "https://objects.openforge.tools/models/faada2/faada240fbe2d0455eef4e69aaa4f488.stl"
@@ -2815,6 +2817,7 @@
             "component|collapsed|full",
             "connection|openforge",
             "shape|corner",
+            "shape|corner|both",
             "size|depth|2",
             "size|width|2",
             "texture|cut-stone",
@@ -2824,9 +2827,9 @@
     },
     {
         "file_metadata": {
-            "file": "cut-stone+ruined#corner,collapsed+low-full.2x2.openforge.stl",
+            "file": "cut-stone+ruined#corner+both,collapsed+low-full.2x2.openforge.stl",
             "file_modified_at": "2025-08-31T13:56:06.864614",
-            "full_name": "tiles/cut-stone+ruined/s2w/corner/corner/openforge/cut-stone+ruined#corner,collapsed+low-full.2x2.openforge.stl",
+            "full_name": "tiles/cut-stone+ruined/s2w/corner/corner/openforge/cut-stone+ruined#corner+both,collapsed+low-full.2x2.openforge.stl",
             "md5": "3cb5d504f32c365b36e87da2be70b86e",
             "size": 16186684,
             "storage_address": "https://objects.openforge.tools/models/3cb5d5/3cb5d504f32c365b36e87da2be70b86e.stl"
@@ -2942,6 +2945,7 @@
             "component|collapsed|low-full",
             "connection|openforge",
             "shape|corner",
+            "shape|corner|both",
             "size|depth|2",
             "size|width|2",
             "texture|cut-stone",
@@ -2951,9 +2955,9 @@
     },
     {
         "file_metadata": {
-            "file": "cut-stone+ruined#corner,collapsed+low.2x2.openforge.stl",
+            "file": "cut-stone+ruined#corner+both,collapsed+low.2x2.openforge.stl",
             "file_modified_at": "2025-08-31T13:58:43.374745",
-            "full_name": "tiles/cut-stone+ruined/s2w/corner/corner/openforge/cut-stone+ruined#corner,collapsed+low.2x2.openforge.stl",
+            "full_name": "tiles/cut-stone+ruined/s2w/corner/corner/openforge/cut-stone+ruined#corner+both,collapsed+low.2x2.openforge.stl",
             "md5": "6b8a3d18a274b7fb81887179962f6498",
             "size": 13250884,
             "storage_address": "https://objects.openforge.tools/models/6b8a3d/6b8a3d18a274b7fb81887179962f6498.stl"
@@ -3069,6 +3073,7 @@
             "component|collapsed|low",
             "connection|openforge",
             "shape|corner",
+            "shape|corner|both",
             "size|depth|2",
             "size|width|2",
             "texture|cut-stone",
@@ -3078,9 +3083,9 @@
     },
     {
         "file_metadata": {
-            "file": "cut-stone+ruined#corner,collapsed+minimal-full-minimal.2x2.openforge.stl",
+            "file": "cut-stone+ruined#corner+both,collapsed+minimal-full-minimal.2x2.openforge.stl",
             "file_modified_at": "2025-08-31T14:02:41.004421",
-            "full_name": "tiles/cut-stone+ruined/s2w/corner/corner/openforge/cut-stone+ruined#corner,collapsed+minimal-full-minimal.2x2.openforge.stl",
+            "full_name": "tiles/cut-stone+ruined/s2w/corner/corner/openforge/cut-stone+ruined#corner+both,collapsed+minimal-full-minimal.2x2.openforge.stl",
             "md5": "ca50f5407553ad1c70e4368171a17f50",
             "size": 15269084,
             "storage_address": "https://objects.openforge.tools/models/ca50f5/ca50f5407553ad1c70e4368171a17f50.stl"
@@ -3196,6 +3201,7 @@
             "component|collapsed|minimal-full-minimal",
             "connection|openforge",
             "shape|corner",
+            "shape|corner|both",
             "size|depth|2",
             "size|width|2",
             "texture|cut-stone",
@@ -3205,9 +3211,9 @@
     },
     {
         "file_metadata": {
-            "file": "cut-stone+ruined#corner,collapsed+minimal-low-minimal.2x2.openforge.stl",
+            "file": "cut-stone+ruined#corner+both,collapsed+minimal-low-minimal.2x2.openforge.stl",
             "file_modified_at": "2025-08-31T14:05:49.502006",
-            "full_name": "tiles/cut-stone+ruined/s2w/corner/corner/openforge/cut-stone+ruined#corner,collapsed+minimal-low-minimal.2x2.openforge.stl",
+            "full_name": "tiles/cut-stone+ruined/s2w/corner/corner/openforge/cut-stone+ruined#corner+both,collapsed+minimal-low-minimal.2x2.openforge.stl",
             "md5": "40558f490f6cc66a17ce53592df652b8",
             "size": 77875784,
             "storage_address": "https://objects.openforge.tools/models/40558f/40558f490f6cc66a17ce53592df652b8.stl"
@@ -3323,6 +3329,7 @@
             "component|collapsed|minimal-low-minimal",
             "connection|openforge",
             "shape|corner",
+            "shape|corner|both",
             "size|depth|2",
             "size|width|2",
             "texture|cut-stone",
@@ -3332,9 +3339,9 @@
     },
     {
         "file_metadata": {
-            "file": "cut-stone+ruined#corner,collapsed+minimal.2x2.openforge.stl",
+            "file": "cut-stone+ruined#corner+both,collapsed+minimal.2x2.openforge.stl",
             "file_modified_at": "2025-08-31T14:01:13.129741",
-            "full_name": "tiles/cut-stone+ruined/s2w/corner/corner/openforge/cut-stone+ruined#corner,collapsed+minimal.2x2.openforge.stl",
+            "full_name": "tiles/cut-stone+ruined/s2w/corner/corner/openforge/cut-stone+ruined#corner+both,collapsed+minimal.2x2.openforge.stl",
             "md5": "d5faf2cabe24d21fbd046f041419b771",
             "size": 10339584,
             "storage_address": "https://objects.openforge.tools/models/d5faf2/d5faf2cabe24d21fbd046f041419b771.stl"
@@ -3450,6 +3457,7 @@
             "component|collapsed|minimal",
             "connection|openforge",
             "shape|corner",
+            "shape|corner|both",
             "size|depth|2",
             "size|width|2",
             "texture|cut-stone",
@@ -3459,9 +3467,9 @@
     },
     {
         "file_metadata": {
-            "file": "cut-stone+ruined#corner,collapsed+full-low.2x2.openforge,side+dragonlock.stl",
+            "file": "cut-stone+ruined#corner+both,collapsed+full-low.2x2.openforge,side+dragonlock.stl",
             "file_modified_at": "2025-08-31T13:48:27.258874",
-            "full_name": "tiles/cut-stone+ruined/s2w/corner/corner/openforge/side+dragonlock/cut-stone+ruined#corner,collapsed+full-low.2x2.openforge,side+dragonlock.stl",
+            "full_name": "tiles/cut-stone+ruined/s2w/corner/corner/openforge/side+dragonlock/cut-stone+ruined#corner+both,collapsed+full-low.2x2.openforge,side+dragonlock.stl",
             "md5": "3b475ad37f4294660d8acfd79341b731",
             "size": 12406434,
             "storage_address": "https://objects.openforge.tools/models/3b475a/3b475ad37f4294660d8acfd79341b731.stl"
@@ -3579,6 +3587,7 @@
             "connection|side",
             "connection|side|dragonlock",
             "shape|corner",
+            "shape|corner|both",
             "size|depth|2",
             "size|width|2",
             "texture|cut-stone",
@@ -3588,9 +3597,9 @@
     },
     {
         "file_metadata": {
-            "file": "cut-stone+ruined#corner,collapsed+full-minimal-full.2x2.openforge,side+dragonlock.stl",
+            "file": "cut-stone+ruined#corner+both,collapsed+full-minimal-full.2x2.openforge,side+dragonlock.stl",
             "file_modified_at": "2025-08-31T13:52:54.929496",
-            "full_name": "tiles/cut-stone+ruined/s2w/corner/corner/openforge/side+dragonlock/cut-stone+ruined#corner,collapsed+full-minimal-full.2x2.openforge,side+dragonlock.stl",
+            "full_name": "tiles/cut-stone+ruined/s2w/corner/corner/openforge/side+dragonlock/cut-stone+ruined#corner+both,collapsed+full-minimal-full.2x2.openforge,side+dragonlock.stl",
             "md5": "3632e585c8321f54bffb8db50b2e3745",
             "size": 17721884,
             "storage_address": "https://objects.openforge.tools/models/3632e5/3632e585c8321f54bffb8db50b2e3745.stl"
@@ -3708,6 +3717,7 @@
             "connection|side",
             "connection|side|dragonlock",
             "shape|corner",
+            "shape|corner|both",
             "size|depth|2",
             "size|width|2",
             "texture|cut-stone",
@@ -3717,9 +3727,9 @@
     },
     {
         "file_metadata": {
-            "file": "cut-stone+ruined#corner,collapsed+full.2x2.openforge,side+dragonlock.stl",
+            "file": "cut-stone+ruined#corner+both,collapsed+full.2x2.openforge,side+dragonlock.stl",
             "file_modified_at": "2025-08-31T13:44:08.364430",
-            "full_name": "tiles/cut-stone+ruined/s2w/corner/corner/openforge/side+dragonlock/cut-stone+ruined#corner,collapsed+full.2x2.openforge,side+dragonlock.stl",
+            "full_name": "tiles/cut-stone+ruined/s2w/corner/corner/openforge/side+dragonlock/cut-stone+ruined#corner+both,collapsed+full.2x2.openforge,side+dragonlock.stl",
             "md5": "da2e647eb727bb7b4d1611cf0985803d",
             "size": 16218484,
             "storage_address": "https://objects.openforge.tools/models/da2e64/da2e647eb727bb7b4d1611cf0985803d.stl"
@@ -3837,6 +3847,7 @@
             "connection|side",
             "connection|side|dragonlock",
             "shape|corner",
+            "shape|corner|both",
             "size|depth|2",
             "size|width|2",
             "texture|cut-stone",
@@ -3846,9 +3857,9 @@
     },
     {
         "file_metadata": {
-            "file": "cut-stone+ruined#corner,collapsed+low-full.2x2.openforge,side+dragonlock.stl",
+            "file": "cut-stone+ruined#corner+both,collapsed+low-full.2x2.openforge,side+dragonlock.stl",
             "file_modified_at": "2025-08-31T13:56:35.279904",
-            "full_name": "tiles/cut-stone+ruined/s2w/corner/corner/openforge/side+dragonlock/cut-stone+ruined#corner,collapsed+low-full.2x2.openforge,side+dragonlock.stl",
+            "full_name": "tiles/cut-stone+ruined/s2w/corner/corner/openforge/side+dragonlock/cut-stone+ruined#corner+both,collapsed+low-full.2x2.openforge,side+dragonlock.stl",
             "md5": "2c656dab4a952f33c3f3ba17cdfb5124",
             "size": 16497184,
             "storage_address": "https://objects.openforge.tools/models/2c656d/2c656dab4a952f33c3f3ba17cdfb5124.stl"
@@ -3966,6 +3977,7 @@
             "connection|side",
             "connection|side|dragonlock",
             "shape|corner",
+            "shape|corner|both",
             "size|depth|2",
             "size|width|2",
             "texture|cut-stone",
@@ -3975,9 +3987,9 @@
     },
     {
         "file_metadata": {
-            "file": "cut-stone+ruined#corner,collapsed+low.2x2.openforge,side+dragonlock.stl",
+            "file": "cut-stone+ruined#corner+both,collapsed+low.2x2.openforge,side+dragonlock.stl",
             "file_modified_at": "2025-08-31T13:59:12.820835",
-            "full_name": "tiles/cut-stone+ruined/s2w/corner/corner/openforge/side+dragonlock/cut-stone+ruined#corner,collapsed+low.2x2.openforge,side+dragonlock.stl",
+            "full_name": "tiles/cut-stone+ruined/s2w/corner/corner/openforge/side+dragonlock/cut-stone+ruined#corner+both,collapsed+low.2x2.openforge,side+dragonlock.stl",
             "md5": "d059679afbafb2a631a7b4ab1244e965",
             "size": 13472434,
             "storage_address": "https://objects.openforge.tools/models/d05967/d059679afbafb2a631a7b4ab1244e965.stl"
@@ -4095,6 +4107,7 @@
             "connection|side",
             "connection|side|dragonlock",
             "shape|corner",
+            "shape|corner|both",
             "size|depth|2",
             "size|width|2",
             "texture|cut-stone",
@@ -4104,9 +4117,9 @@
     },
     {
         "file_metadata": {
-            "file": "cut-stone+ruined#corner,collapsed+full-low.2x2.openforge,side.stl",
+            "file": "cut-stone+ruined#corner+both,collapsed+full-low.2x2.openforge,side.stl",
             "file_modified_at": "2025-08-31T13:48:12.175939",
-            "full_name": "tiles/cut-stone+ruined/s2w/corner/corner/openforge/side/cut-stone+ruined#corner,collapsed+full-low.2x2.openforge,side.stl",
+            "full_name": "tiles/cut-stone+ruined/s2w/corner/corner/openforge/side/cut-stone+ruined#corner+both,collapsed+full-low.2x2.openforge,side.stl",
             "md5": "6f25d1107884232c7a00a981b9a5b1e7",
             "size": 11901284,
             "storage_address": "https://objects.openforge.tools/models/6f25d1/6f25d1107884232c7a00a981b9a5b1e7.stl"
@@ -4224,6 +4237,7 @@
             "connection|side",
             "connection|side|openlock",
             "shape|corner",
+            "shape|corner|both",
             "size|depth|2",
             "size|width|2",
             "texture|cut-stone",
@@ -4233,9 +4247,9 @@
     },
     {
         "file_metadata": {
-            "file": "cut-stone+ruined#corner,collapsed+full-minimal-full.2x2.openforge,side.stl",
+            "file": "cut-stone+ruined#corner+both,collapsed+full-minimal-full.2x2.openforge,side.stl",
             "file_modified_at": "2025-08-31T13:52:39.585574",
-            "full_name": "tiles/cut-stone+ruined/s2w/corner/corner/openforge/side/cut-stone+ruined#corner,collapsed+full-minimal-full.2x2.openforge,side.stl",
+            "full_name": "tiles/cut-stone+ruined/s2w/corner/corner/openforge/side/cut-stone+ruined#corner+both,collapsed+full-minimal-full.2x2.openforge,side.stl",
             "md5": "a8f538cc951f07289c97f1d2f39d51aa",
             "size": 17043784,
             "storage_address": "https://objects.openforge.tools/models/a8f538/a8f538cc951f07289c97f1d2f39d51aa.stl"
@@ -4353,6 +4367,7 @@
             "connection|side",
             "connection|side|openlock",
             "shape|corner",
+            "shape|corner|both",
             "size|depth|2",
             "size|width|2",
             "texture|cut-stone",
@@ -4362,9 +4377,9 @@
     },
     {
         "file_metadata": {
-            "file": "cut-stone+ruined#corner,collapsed+full.2x2.openforge,side.stl",
+            "file": "cut-stone+ruined#corner+both,collapsed+full.2x2.openforge,side.stl",
             "file_modified_at": "2025-08-31T13:43:50.460358",
-            "full_name": "tiles/cut-stone+ruined/s2w/corner/corner/openforge/side/cut-stone+ruined#corner,collapsed+full.2x2.openforge,side.stl",
+            "full_name": "tiles/cut-stone+ruined/s2w/corner/corner/openforge/side/cut-stone+ruined#corner+both,collapsed+full.2x2.openforge,side.stl",
             "md5": "a20daa018864f78a94dd97df0ccf7f1f",
             "size": 15543384,
             "storage_address": "https://objects.openforge.tools/models/a20daa/a20daa018864f78a94dd97df0ccf7f1f.stl"
@@ -4482,6 +4497,7 @@
             "connection|side",
             "connection|side|openlock",
             "shape|corner",
+            "shape|corner|both",
             "size|depth|2",
             "size|width|2",
             "texture|cut-stone",
@@ -4491,9 +4507,9 @@
     },
     {
         "file_metadata": {
-            "file": "cut-stone+ruined#corner,collapsed+low-full.2x2.openforge,side.stl",
+            "file": "cut-stone+ruined#corner+both,collapsed+low-full.2x2.openforge,side.stl",
             "file_modified_at": "2025-08-31T13:56:21.490561",
-            "full_name": "tiles/cut-stone+ruined/s2w/corner/corner/openforge/side/cut-stone+ruined#corner,collapsed+low-full.2x2.openforge,side.stl",
+            "full_name": "tiles/cut-stone+ruined/s2w/corner/corner/openforge/side/cut-stone+ruined#corner+both,collapsed+low-full.2x2.openforge,side.stl",
             "md5": "3a451abfcbb969d81d1a8ef60b0b73a3",
             "size": 15991084,
             "storage_address": "https://objects.openforge.tools/models/3a451a/3a451abfcbb969d81d1a8ef60b0b73a3.stl"
@@ -4611,6 +4627,7 @@
             "connection|side",
             "connection|side|openlock",
             "shape|corner",
+            "shape|corner|both",
             "size|depth|2",
             "size|width|2",
             "texture|cut-stone",
@@ -4620,9 +4637,9 @@
     },
     {
         "file_metadata": {
-            "file": "cut-stone+ruined#corner,collapsed+low.2x2.openforge,side.stl",
+            "file": "cut-stone+ruined#corner+both,collapsed+low.2x2.openforge,side.stl",
             "file_modified_at": "2025-08-31T13:58:56.908540",
-            "full_name": "tiles/cut-stone+ruined/s2w/corner/corner/openforge/side/cut-stone+ruined#corner,collapsed+low.2x2.openforge,side.stl",
+            "full_name": "tiles/cut-stone+ruined/s2w/corner/corner/openforge/side/cut-stone+ruined#corner+both,collapsed+low.2x2.openforge,side.stl",
             "md5": "e60e0dfee06428cf65111bb2930572a5",
             "size": 13132484,
             "storage_address": "https://objects.openforge.tools/models/e60e0d/e60e0dfee06428cf65111bb2930572a5.stl"
@@ -4740,6 +4757,7 @@
             "connection|side",
             "connection|side|openlock",
             "shape|corner",
+            "shape|corner|both",
             "size|depth|2",
             "size|width|2",
             "texture|cut-stone",
@@ -4749,9 +4767,9 @@
     },
     {
         "file_metadata": {
-            "file": "cut-stone+ruined#corner,collapsed+full-low.2x2.openlock.stl",
+            "file": "cut-stone+ruined#corner+both,collapsed+full-low.2x2.openlock.stl",
             "file_modified_at": "2025-08-31T13:48:46.065397",
-            "full_name": "tiles/cut-stone+ruined/s2w/corner/corner/openlock/cut-stone+ruined#corner,collapsed+full-low.2x2.openlock.stl",
+            "full_name": "tiles/cut-stone+ruined/s2w/corner/corner/openlock/cut-stone+ruined#corner+both,collapsed+full-low.2x2.openlock.stl",
             "md5": "a3b4bc9b0b4e3a6e645e2022a7133641",
             "size": 13431584,
             "storage_address": "https://objects.openforge.tools/models/a3b4bc/a3b4bc9b0b4e3a6e645e2022a7133641.stl"
@@ -4867,6 +4885,7 @@
             "component|collapsed|full-low",
             "connection|openlock",
             "shape|corner",
+            "shape|corner|both",
             "size|depth|2",
             "size|width|2",
             "texture|cut-stone",
@@ -4876,9 +4895,9 @@
     },
     {
         "file_metadata": {
-            "file": "cut-stone+ruined#corner,collapsed+full-minimal-full.2x2.openlock.stl",
+            "file": "cut-stone+ruined#corner+both,collapsed+full-minimal-full.2x2.openlock.stl",
             "file_modified_at": "2025-08-31T13:53:16.941894",
-            "full_name": "tiles/cut-stone+ruined/s2w/corner/corner/openlock/cut-stone+ruined#corner,collapsed+full-minimal-full.2x2.openlock.stl",
+            "full_name": "tiles/cut-stone+ruined/s2w/corner/corner/openlock/cut-stone+ruined#corner+both,collapsed+full-minimal-full.2x2.openlock.stl",
             "md5": "8972e8ea3ee51ce338f99df809b84bf8",
             "size": 15305084,
             "storage_address": "https://objects.openforge.tools/models/8972e8/8972e8ea3ee51ce338f99df809b84bf8.stl"
@@ -4994,6 +5013,7 @@
             "component|collapsed|full-minimal-full",
             "connection|openlock",
             "shape|corner",
+            "shape|corner|both",
             "size|depth|2",
             "size|width|2",
             "texture|cut-stone",
@@ -5003,9 +5023,9 @@
     },
     {
         "file_metadata": {
-            "file": "cut-stone+ruined#corner,collapsed+full.2x2.openlock.stl",
+            "file": "cut-stone+ruined#corner+both,collapsed+full.2x2.openlock.stl",
             "file_modified_at": "2025-08-31T13:44:34.554838",
-            "full_name": "tiles/cut-stone+ruined/s2w/corner/corner/openlock/cut-stone+ruined#corner,collapsed+full.2x2.openlock.stl",
+            "full_name": "tiles/cut-stone+ruined/s2w/corner/corner/openlock/cut-stone+ruined#corner+both,collapsed+full.2x2.openlock.stl",
             "md5": "7a1c569286155da5fbf7831767f7e4b4",
             "size": 17103684,
             "storage_address": "https://objects.openforge.tools/models/7a1c56/7a1c569286155da5fbf7831767f7e4b4.stl"
@@ -5121,6 +5141,7 @@
             "component|collapsed|full",
             "connection|openlock",
             "shape|corner",
+            "shape|corner|both",
             "size|depth|2",
             "size|width|2",
             "texture|cut-stone",
@@ -5130,9 +5151,9 @@
     },
     {
         "file_metadata": {
-            "file": "cut-stone+ruined#corner,collapsed+low-full.2x2.openlock.stl",
+            "file": "cut-stone+ruined#corner+both,collapsed+low-full.2x2.openlock.stl",
             "file_modified_at": "2025-08-31T13:56:52.384110",
-            "full_name": "tiles/cut-stone+ruined/s2w/corner/corner/openlock/cut-stone+ruined#corner,collapsed+low-full.2x2.openlock.stl",
+            "full_name": "tiles/cut-stone+ruined/s2w/corner/corner/openlock/cut-stone+ruined#corner+both,collapsed+low-full.2x2.openlock.stl",
             "md5": "5c8996b5d4ea940f23d9d95349b52a45",
             "size": 14267184,
             "storage_address": "https://objects.openforge.tools/models/5c8996/5c8996b5d4ea940f23d9d95349b52a45.stl"
@@ -5248,6 +5269,7 @@
             "component|collapsed|low-full",
             "connection|openlock",
             "shape|corner",
+            "shape|corner|both",
             "size|depth|2",
             "size|width|2",
             "texture|cut-stone",
@@ -5257,9 +5279,9 @@
     },
     {
         "file_metadata": {
-            "file": "cut-stone+ruined#corner,collapsed+low.2x2.openlock.stl",
+            "file": "cut-stone+ruined#corner+both,collapsed+low.2x2.openlock.stl",
             "file_modified_at": "2025-08-31T13:59:28.332617",
-            "full_name": "tiles/cut-stone+ruined/s2w/corner/corner/openlock/cut-stone+ruined#corner,collapsed+low.2x2.openlock.stl",
+            "full_name": "tiles/cut-stone+ruined/s2w/corner/corner/openlock/cut-stone+ruined#corner+both,collapsed+low.2x2.openlock.stl",
             "md5": "cffc9fe9b592400de79087c55fcf979e",
             "size": 11334284,
             "storage_address": "https://objects.openforge.tools/models/cffc9f/cffc9fe9b592400de79087c55fcf979e.stl"
@@ -5375,6 +5397,7 @@
             "component|collapsed|low",
             "connection|openlock",
             "shape|corner",
+            "shape|corner|both",
             "size|depth|2",
             "size|width|2",
             "texture|cut-stone",
@@ -5384,9 +5407,9 @@
     },
     {
         "file_metadata": {
-            "file": "cut-stone+ruined#corner,collapsed+minimal-full-minimal.2x2.openlock.stl",
+            "file": "cut-stone+ruined#corner+both,collapsed+minimal-full-minimal.2x2.openlock.stl",
             "file_modified_at": "2025-08-31T14:02:27.741802",
-            "full_name": "tiles/cut-stone+ruined/s2w/corner/corner/openlock/cut-stone+ruined#corner,collapsed+minimal-full-minimal.2x2.openlock.stl",
+            "full_name": "tiles/cut-stone+ruined/s2w/corner/corner/openlock/cut-stone+ruined#corner+both,collapsed+minimal-full-minimal.2x2.openlock.stl",
             "md5": "d28f37efa2e90fc8d944371a48190676",
             "size": 13317884,
             "storage_address": "https://objects.openforge.tools/models/d28f37/d28f37efa2e90fc8d944371a48190676.stl"
@@ -5502,6 +5525,7 @@
             "component|collapsed|minimal-full-minimal",
             "connection|openlock",
             "shape|corner",
+            "shape|corner|both",
             "size|depth|2",
             "size|width|2",
             "texture|cut-stone",
@@ -5511,9 +5535,9 @@
     },
     {
         "file_metadata": {
-            "file": "cut-stone+ruined#corner,collapsed+minimal-low-minimal.2x2.openlock.stl",
+            "file": "cut-stone+ruined#corner+both,collapsed+minimal-low-minimal.2x2.openlock.stl",
             "file_modified_at": "2025-08-31T14:06:13.830213",
-            "full_name": "tiles/cut-stone+ruined/s2w/corner/corner/openlock/cut-stone+ruined#corner,collapsed+minimal-low-minimal.2x2.openlock.stl",
+            "full_name": "tiles/cut-stone+ruined/s2w/corner/corner/openlock/cut-stone+ruined#corner+both,collapsed+minimal-low-minimal.2x2.openlock.stl",
             "md5": "acf0e189c58088316f8adf3e18fad47e",
             "size": 97854184,
             "storage_address": "https://objects.openforge.tools/models/acf0e1/acf0e189c58088316f8adf3e18fad47e.stl"
@@ -5629,6 +5653,7 @@
             "component|collapsed|minimal-low-minimal",
             "connection|openlock",
             "shape|corner",
+            "shape|corner|both",
             "size|depth|2",
             "size|width|2",
             "texture|cut-stone",
@@ -5638,9 +5663,9 @@
     },
     {
         "file_metadata": {
-            "file": "cut-stone+ruined#corner,collapsed+minimal.2x2.openlock.stl",
+            "file": "cut-stone+ruined#corner+both,collapsed+minimal.2x2.openlock.stl",
             "file_modified_at": "2025-08-31T14:01:26.014742",
-            "full_name": "tiles/cut-stone+ruined/s2w/corner/corner/openlock/cut-stone+ruined#corner,collapsed+minimal.2x2.openlock.stl",
+            "full_name": "tiles/cut-stone+ruined/s2w/corner/corner/openlock/cut-stone+ruined#corner+both,collapsed+minimal.2x2.openlock.stl",
             "md5": "50f041121b7ffc1d38063f7224b5a0cb",
             "size": 8574884,
             "storage_address": "https://objects.openforge.tools/models/50f041/50f041121b7ffc1d38063f7224b5a0cb.stl"
@@ -5756,6 +5781,7 @@
             "component|collapsed|minimal",
             "connection|openlock",
             "shape|corner",
+            "shape|corner|both",
             "size|depth|2",
             "size|width|2",
             "texture|cut-stone",
@@ -5765,9 +5791,9 @@
     },
     {
         "file_metadata": {
-            "file": "cut-stone+ruined#corner,collapsed+full-low.2x2.openlock,side.stl",
+            "file": "cut-stone+ruined#corner+both,collapsed+full-low.2x2.openlock,side.stl",
             "file_modified_at": "2025-08-31T13:49:01.729109",
-            "full_name": "tiles/cut-stone+ruined/s2w/corner/corner/openlock/side/cut-stone+ruined#corner,collapsed+full-low.2x2.openlock,side.stl",
+            "full_name": "tiles/cut-stone+ruined/s2w/corner/corner/openlock/side/cut-stone+ruined#corner+both,collapsed+full-low.2x2.openlock,side.stl",
             "md5": "0ea822d65547e936d5dffffe4871bbfd",
             "size": 13303484,
             "storage_address": "https://objects.openforge.tools/models/0ea822/0ea822d65547e936d5dffffe4871bbfd.stl"
@@ -5885,6 +5911,7 @@
             "connection|side",
             "connection|side|openlock",
             "shape|corner",
+            "shape|corner|both",
             "size|depth|2",
             "size|width|2",
             "texture|cut-stone",
@@ -5894,9 +5921,9 @@
     },
     {
         "file_metadata": {
-            "file": "cut-stone+ruined#corner,collapsed+full-minimal-full.2x2.openlock,side.stl",
+            "file": "cut-stone+ruined#corner+both,collapsed+full-minimal-full.2x2.openlock,side.stl",
             "file_modified_at": "2025-08-31T13:53:30.516144",
-            "full_name": "tiles/cut-stone+ruined/s2w/corner/corner/openlock/side/cut-stone+ruined#corner,collapsed+full-minimal-full.2x2.openlock,side.stl",
+            "full_name": "tiles/cut-stone+ruined/s2w/corner/corner/openlock/side/cut-stone+ruined#corner+both,collapsed+full-minimal-full.2x2.openlock,side.stl",
             "md5": "582f4b9805a039616278f0fc4727485a",
             "size": 15057784,
             "storage_address": "https://objects.openforge.tools/models/582f4b/582f4b9805a039616278f0fc4727485a.stl"
@@ -6014,6 +6041,7 @@
             "connection|side",
             "connection|side|openlock",
             "shape|corner",
+            "shape|corner|both",
             "size|depth|2",
             "size|width|2",
             "texture|cut-stone",
@@ -6023,9 +6051,9 @@
     },
     {
         "file_metadata": {
-            "file": "cut-stone+ruined#corner,collapsed+full.2x2.openlock,side.stl",
+            "file": "cut-stone+ruined#corner+both,collapsed+full.2x2.openlock,side.stl",
             "file_modified_at": "2025-08-31T13:45:21.451620",
-            "full_name": "tiles/cut-stone+ruined/s2w/corner/corner/openlock/side/cut-stone+ruined#corner,collapsed+full.2x2.openlock,side.stl",
+            "full_name": "tiles/cut-stone+ruined/s2w/corner/corner/openlock/side/cut-stone+ruined#corner+both,collapsed+full.2x2.openlock,side.stl",
             "md5": "478d666554c4d9b066438f8714fa1bea",
             "size": 16958284,
             "storage_address": "https://objects.openforge.tools/models/478d66/478d666554c4d9b066438f8714fa1bea.stl"
@@ -6143,6 +6171,7 @@
             "connection|side",
             "connection|side|openlock",
             "shape|corner",
+            "shape|corner|both",
             "size|depth|2",
             "size|width|2",
             "texture|cut-stone",
@@ -6152,9 +6181,9 @@
     },
     {
         "file_metadata": {
-            "file": "cut-stone+ruined#corner,collapsed+low-full.2x2.openlock,side.stl",
+            "file": "cut-stone+ruined#corner+both,collapsed+low-full.2x2.openlock,side.stl",
             "file_modified_at": "2025-08-31T13:57:09.477659",
-            "full_name": "tiles/cut-stone+ruined/s2w/corner/corner/openlock/side/cut-stone+ruined#corner,collapsed+low-full.2x2.openlock,side.stl",
+            "full_name": "tiles/cut-stone+ruined/s2w/corner/corner/openlock/side/cut-stone+ruined#corner+both,collapsed+low-full.2x2.openlock,side.stl",
             "md5": "3038974be032a3dd17e8a48ac3de4123",
             "size": 14071584,
             "storage_address": "https://objects.openforge.tools/models/303897/3038974be032a3dd17e8a48ac3de4123.stl"
@@ -6272,6 +6301,7 @@
             "connection|side",
             "connection|side|openlock",
             "shape|corner",
+            "shape|corner|both",
             "size|depth|2",
             "size|width|2",
             "texture|cut-stone",
@@ -6281,9 +6311,9 @@
     },
     {
         "file_metadata": {
-            "file": "cut-stone+ruined#corner,collapsed+low.2x2.openlock,side.stl",
+            "file": "cut-stone+ruined#corner+both,collapsed+low.2x2.openlock,side.stl",
             "file_modified_at": "2025-08-31T13:59:42.148512",
-            "full_name": "tiles/cut-stone+ruined/s2w/corner/corner/openlock/side/cut-stone+ruined#corner,collapsed+low.2x2.openlock,side.stl",
+            "full_name": "tiles/cut-stone+ruined/s2w/corner/corner/openlock/side/cut-stone+ruined#corner+both,collapsed+low.2x2.openlock,side.stl",
             "md5": "0dcb1d48fc06c37b6343854ea646d4a4",
             "size": 11215884,
             "storage_address": "https://objects.openforge.tools/models/0dcb1d/0dcb1d48fc06c37b6343854ea646d4a4.stl"
@@ -6401,6 +6431,7 @@
             "connection|side",
             "connection|side|openlock",
             "shape|corner",
+            "shape|corner|both",
             "size|depth|2",
             "size|width|2",
             "texture|cut-stone",
@@ -6409,6 +6440,137 @@
         "type": "model"
     },
     {
+        "file_metadata": {
+            "file": "cut-stone+ruined%collapsed_blocks+a#floor+s2w+corner.2x2.openforge.stl",
+            "file_modified_at": "2026-10-25T12:00:24.357309",
+            "full_name": "tiles/cut-stone+ruined/s2w/corner/floor+collapsed_blocks/cut-stone+ruined%collapsed_blocks+a#floor+s2w+corner.2x2.openforge.stl",
+            "md5": "1b6251d55b6191093941cded801747b7",
+            "size": 7883884,
+            "storage_address": "https://objects.openforge.tools/models/1b6251/1b6251d55b6191093941cded801747b7.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/1b6251/1b6251d55b6191093941cded801747b7.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "build|s2w",
+            "connection|openforge",
+            "shape|floor",
+            "shape|floor|s2w",
+            "shape|floor|wall|corner",
+            "shape|square",
+            "size|depth|2",
+            "size|width|2",
+            "texture|cut-stone",
+            "texture|cut-stone|collapsed_blocks",
+            "texture|cut-stone|collapsed_blocks|a",
+            "texture|cut-stone|ruined"
+        ],
+        "type": "model"
+    },
+    {
+        "deprecated": true,
         "file_metadata": {
             "file": "cut-stone+ruined%collapsed_blocks+a#floor+s2w+corner.2x2.openforge.stl",
             "file_modified_at": "2025-08-31T09:59:57.510439",
@@ -6541,6 +6703,137 @@
     {
         "file_metadata": {
             "file": "cut-stone+ruined%collapsed_blocks+b#floor+s2w+corner.2x2.openforge.stl",
+            "file_modified_at": "2026-10-25T12:00:24.660812",
+            "full_name": "tiles/cut-stone+ruined/s2w/corner/floor+collapsed_blocks/cut-stone+ruined%collapsed_blocks+b#floor+s2w+corner.2x2.openforge.stl",
+            "md5": "33d89a6b85ee1fc414d3b2c0960907f3",
+            "size": 7297484,
+            "storage_address": "https://objects.openforge.tools/models/33d89a/33d89a6b85ee1fc414d3b2c0960907f3.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/33d89a/33d89a6b85ee1fc414d3b2c0960907f3.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "build|s2w",
+            "connection|openforge",
+            "shape|floor",
+            "shape|floor|s2w",
+            "shape|floor|wall|corner",
+            "shape|square",
+            "size|depth|2",
+            "size|width|2",
+            "texture|cut-stone",
+            "texture|cut-stone|collapsed_blocks",
+            "texture|cut-stone|collapsed_blocks|b",
+            "texture|cut-stone|ruined"
+        ],
+        "type": "model"
+    },
+    {
+        "deprecated": true,
+        "file_metadata": {
+            "file": "cut-stone+ruined%collapsed_blocks+b#floor+s2w+corner.2x2.openforge.stl",
             "file_modified_at": "2025-08-31T10:04:27.760050",
             "full_name": "tiles/cut-stone+ruined/s2w/corner/floor+collapsed_blocks/cut-stone+ruined%collapsed_blocks+b#floor+s2w+corner.2x2.openforge.stl",
             "md5": "193e3c89ffe47d5d1ea44e08bd7b6779",
@@ -6669,6 +6962,137 @@
         "type": "model"
     },
     {
+        "file_metadata": {
+            "file": "cut-stone+ruined%collapsed_blocks+c#floor+s2w+corner.2x2.openforge.stl",
+            "file_modified_at": "2026-10-25T12:00:24.935055",
+            "full_name": "tiles/cut-stone+ruined/s2w/corner/floor+collapsed_blocks/cut-stone+ruined%collapsed_blocks+c#floor+s2w+corner.2x2.openforge.stl",
+            "md5": "a93bf9a1026db2423f3287ecd90eefda",
+            "size": 6824484,
+            "storage_address": "https://objects.openforge.tools/models/a93bf9/a93bf9a1026db2423f3287ecd90eefda.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/a93bf9/a93bf9a1026db2423f3287ecd90eefda.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "build|s2w",
+            "connection|openforge",
+            "shape|floor",
+            "shape|floor|s2w",
+            "shape|floor|wall|corner",
+            "shape|square",
+            "size|depth|2",
+            "size|width|2",
+            "texture|cut-stone",
+            "texture|cut-stone|collapsed_blocks",
+            "texture|cut-stone|collapsed_blocks|c",
+            "texture|cut-stone|ruined"
+        ],
+        "type": "model"
+    },
+    {
+        "deprecated": true,
         "file_metadata": {
             "file": "cut-stone+ruined%collapsed_blocks+c#floor+s2w+corner.2x2.openforge.stl",
             "file_modified_at": "2025-08-31T10:06:56.685022",
@@ -6801,6 +7225,137 @@
     {
         "file_metadata": {
             "file": "cut-stone+ruined%collapsed_blocks+d#floor+s2w+corner.2x2.openforge.stl",
+            "file_modified_at": "2026-10-25T12:00:25.203443",
+            "full_name": "tiles/cut-stone+ruined/s2w/corner/floor+collapsed_blocks/cut-stone+ruined%collapsed_blocks+d#floor+s2w+corner.2x2.openforge.stl",
+            "md5": "f92afce8cbdd3918055cc3c316a97ca5",
+            "size": 6685184,
+            "storage_address": "https://objects.openforge.tools/models/f92afc/f92afce8cbdd3918055cc3c316a97ca5.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/f92afc/f92afce8cbdd3918055cc3c316a97ca5.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "build|s2w",
+            "connection|openforge",
+            "shape|floor",
+            "shape|floor|s2w",
+            "shape|floor|wall|corner",
+            "shape|square",
+            "size|depth|2",
+            "size|width|2",
+            "texture|cut-stone",
+            "texture|cut-stone|collapsed_blocks",
+            "texture|cut-stone|collapsed_blocks|d",
+            "texture|cut-stone|ruined"
+        ],
+        "type": "model"
+    },
+    {
+        "deprecated": true,
+        "file_metadata": {
+            "file": "cut-stone+ruined%collapsed_blocks+d#floor+s2w+corner.2x2.openforge.stl",
             "file_modified_at": "2025-08-31T10:09:10.120096",
             "full_name": "tiles/cut-stone+ruined/s2w/corner/floor+collapsed_blocks/cut-stone+ruined%collapsed_blocks+d#floor+s2w+corner.2x2.openforge.stl",
             "md5": "d8a05d88c9b81843c2ca7685f7318252",
@@ -6929,6 +7484,135 @@
         "type": "model"
     },
     {
+        "file_metadata": {
+            "file": "cut-stone+ruined#floor+s2w+corner.2x2.openforge.stl",
+            "file_modified_at": "2026-10-25T12:00:26.433829",
+            "full_name": "tiles/cut-stone+ruined/s2w/corner/floor/cut-stone+ruined#floor+s2w+corner.2x2.openforge.stl",
+            "md5": "74b384eaa29072a06619edf21cc819dd",
+            "size": 48783484,
+            "storage_address": "https://objects.openforge.tools/models/74b384/74b384eaa29072a06619edf21cc819dd.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/74b384/74b384eaa29072a06619edf21cc819dd.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "build|s2w",
+            "connection|openforge",
+            "shape|floor",
+            "shape|floor|s2w",
+            "shape|floor|wall|corner",
+            "shape|square",
+            "size|depth|2",
+            "size|width|2",
+            "texture|cut-stone",
+            "texture|cut-stone|ruined"
+        ],
+        "type": "model"
+    },
+    {
+        "deprecated": true,
         "file_metadata": {
             "file": "cut-stone+ruined#floor+s2w+corner.2x2.openforge.stl",
             "file_modified_at": "2025-08-31T09:52:36.543889",
@@ -7575,6 +8259,137 @@
     {
         "file_metadata": {
             "file": "cut-stone+ruined%collapsed_blocks+a#floor+s2w+wall.2x2.openforge.stl",
+            "file_modified_at": "2026-10-25T11:59:56.027183",
+            "full_name": "tiles/cut-stone+ruined/s2w/wall/floor+collapsed_blocks/cut-stone+ruined%collapsed_blocks+a#floor+s2w+wall.2x2.openforge.stl",
+            "md5": "d29596fa0731dfad8e224629aaa1caed",
+            "size": 8704684,
+            "storage_address": "https://objects.openforge.tools/models/d29596/d29596fa0731dfad8e224629aaa1caed.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/d29596/d29596fa0731dfad8e224629aaa1caed.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "build|s2w",
+            "connection|openforge",
+            "shape|floor",
+            "shape|floor|s2w",
+            "shape|floor|wall",
+            "shape|square",
+            "size|depth|2",
+            "size|width|2",
+            "texture|cut-stone",
+            "texture|cut-stone|collapsed_blocks",
+            "texture|cut-stone|collapsed_blocks|a",
+            "texture|cut-stone|ruined"
+        ],
+        "type": "model"
+    },
+    {
+        "deprecated": true,
+        "file_metadata": {
+            "file": "cut-stone+ruined%collapsed_blocks+a#floor+s2w+wall.2x2.openforge.stl",
             "file_modified_at": "2025-04-29T17:00:09.423874",
             "full_name": "tiles/cut-stone+ruined/s2w/wall/floor+collapsed_blocks/cut-stone+ruined%collapsed_blocks+a#floor+s2w+wall.2x2.openforge.stl",
             "md5": "37559ae88677cd3914a8d2e059c022a1",
@@ -7703,6 +8518,137 @@
         "type": "model"
     },
     {
+        "file_metadata": {
+            "file": "cut-stone+ruined%collapsed_blocks+b#floor+s2w+wall.2x2.openforge.stl",
+            "file_modified_at": "2026-10-25T11:59:56.380565",
+            "full_name": "tiles/cut-stone+ruined/s2w/wall/floor+collapsed_blocks/cut-stone+ruined%collapsed_blocks+b#floor+s2w+wall.2x2.openforge.stl",
+            "md5": "acb18e45dad7d15c1d9a837ac8e12de3",
+            "size": 8250284,
+            "storage_address": "https://objects.openforge.tools/models/acb18e/acb18e45dad7d15c1d9a837ac8e12de3.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/acb18e/acb18e45dad7d15c1d9a837ac8e12de3.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "build|s2w",
+            "connection|openforge",
+            "shape|floor",
+            "shape|floor|s2w",
+            "shape|floor|wall",
+            "shape|square",
+            "size|depth|2",
+            "size|width|2",
+            "texture|cut-stone",
+            "texture|cut-stone|collapsed_blocks",
+            "texture|cut-stone|collapsed_blocks|b",
+            "texture|cut-stone|ruined"
+        ],
+        "type": "model"
+    },
+    {
+        "deprecated": true,
         "file_metadata": {
             "file": "cut-stone+ruined%collapsed_blocks+b#floor+s2w+wall.2x2.openforge.stl",
             "file_modified_at": "2025-04-29T17:00:25.148792",
@@ -7835,6 +8781,137 @@
     {
         "file_metadata": {
             "file": "cut-stone+ruined%collapsed_blocks+c#floor+s2w+wall.2x2.openforge.stl",
+            "file_modified_at": "2026-10-25T11:59:56.757276",
+            "full_name": "tiles/cut-stone+ruined/s2w/wall/floor+collapsed_blocks/cut-stone+ruined%collapsed_blocks+c#floor+s2w+wall.2x2.openforge.stl",
+            "md5": "c1a5131d0ca5e01ebddc4d670c15673a",
+            "size": 8250884,
+            "storage_address": "https://objects.openforge.tools/models/c1a513/c1a5131d0ca5e01ebddc4d670c15673a.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/c1a513/c1a5131d0ca5e01ebddc4d670c15673a.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "build|s2w",
+            "connection|openforge",
+            "shape|floor",
+            "shape|floor|s2w",
+            "shape|floor|wall",
+            "shape|square",
+            "size|depth|2",
+            "size|width|2",
+            "texture|cut-stone",
+            "texture|cut-stone|collapsed_blocks",
+            "texture|cut-stone|collapsed_blocks|c",
+            "texture|cut-stone|ruined"
+        ],
+        "type": "model"
+    },
+    {
+        "deprecated": true,
+        "file_metadata": {
+            "file": "cut-stone+ruined%collapsed_blocks+c#floor+s2w+wall.2x2.openforge.stl",
             "file_modified_at": "2025-04-29T17:00:39.832794",
             "full_name": "tiles/cut-stone+ruined/s2w/wall/floor+collapsed_blocks/cut-stone+ruined%collapsed_blocks+c#floor+s2w+wall.2x2.openforge.stl",
             "md5": "37dc06c0eeb8d57d64356fe74522c789",
@@ -7963,6 +9040,137 @@
         "type": "model"
     },
     {
+        "file_metadata": {
+            "file": "cut-stone+ruined%collapsed_blocks+d#floor+s2w+wall.2x2.openforge.stl",
+            "file_modified_at": "2026-10-25T11:59:57.079994",
+            "full_name": "tiles/cut-stone+ruined/s2w/wall/floor+collapsed_blocks/cut-stone+ruined%collapsed_blocks+d#floor+s2w+wall.2x2.openforge.stl",
+            "md5": "c28abbebff006aad7a07797480dc7f54",
+            "size": 8084084,
+            "storage_address": "https://objects.openforge.tools/models/c28abb/c28abbebff006aad7a07797480dc7f54.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/c28abb/c28abbebff006aad7a07797480dc7f54.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "build|s2w",
+            "connection|openforge",
+            "shape|floor",
+            "shape|floor|s2w",
+            "shape|floor|wall",
+            "shape|square",
+            "size|depth|2",
+            "size|width|2",
+            "texture|cut-stone",
+            "texture|cut-stone|collapsed_blocks",
+            "texture|cut-stone|collapsed_blocks|d",
+            "texture|cut-stone|ruined"
+        ],
+        "type": "model"
+    },
+    {
+        "deprecated": true,
         "file_metadata": {
             "file": "cut-stone+ruined%collapsed_blocks+d#floor+s2w+wall.2x2.openforge.stl",
             "file_modified_at": "2025-04-29T17:00:57.482795",
@@ -8351,6 +9559,135 @@
     {
         "file_metadata": {
             "file": "cut-stone+ruined#floor+s2w+wall.2x2.openforge.stl",
+            "file_modified_at": "2026-10-25T11:59:57.776680",
+            "full_name": "tiles/cut-stone+ruined/s2w/wall/floor/cut-stone+ruined#floor+s2w+wall.2x2.openforge.stl",
+            "md5": "04bbc306d97061f72a9f1bbcc82023d1",
+            "size": 16388984,
+            "storage_address": "https://objects.openforge.tools/models/04bbc3/04bbc306d97061f72a9f1bbcc82023d1.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/04bbc3/04bbc306d97061f72a9f1bbcc82023d1.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "build|s2w",
+            "connection|openforge",
+            "shape|floor",
+            "shape|floor|s2w",
+            "shape|floor|wall",
+            "shape|square",
+            "size|depth|2",
+            "size|width|2",
+            "texture|cut-stone",
+            "texture|cut-stone|ruined"
+        ],
+        "type": "model"
+    },
+    {
+        "deprecated": true,
+        "file_metadata": {
+            "file": "cut-stone+ruined#floor+s2w+wall.2x2.openforge.stl",
             "file_modified_at": "2025-04-29T16:57:50.002825",
             "full_name": "tiles/cut-stone+ruined/s2w/wall/floor/cut-stone+ruined#floor+s2w+wall.2x2.openforge.stl",
             "md5": "4de0a9af0b86dddce33d725adfa30c49",
@@ -8479,6 +9816,135 @@
     {
         "file_metadata": {
             "file": "cut-stone+ruined#floor+s2w+wall.3x1.openforge.stl",
+            "file_modified_at": "2026-10-25T13:10:30.443966",
+            "full_name": "tiles/cut-stone+ruined/s2w/wall/floor/cut-stone+ruined#floor+s2w+wall.3x1.openforge.stl",
+            "md5": "05d64ed04072f73356b0f0c4652520d7",
+            "size": 9802384,
+            "storage_address": "https://objects.openforge.tools/models/05d64e/05d64ed04072f73356b0f0c4652520d7.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/05d64e/05d64ed04072f73356b0f0c4652520d7.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "build|s2w",
+            "connection|openforge",
+            "shape|floor",
+            "shape|floor|s2w",
+            "shape|floor|wall",
+            "shape|square",
+            "size|depth|1",
+            "size|width|3",
+            "texture|cut-stone",
+            "texture|cut-stone|ruined"
+        ],
+        "type": "model"
+    },
+    {
+        "deprecated": true,
+        "file_metadata": {
+            "file": "cut-stone+ruined#floor+s2w+wall.3x1.openforge.stl",
             "file_modified_at": "2025-04-29T16:58:06.556656",
             "full_name": "tiles/cut-stone+ruined/s2w/wall/floor/cut-stone+ruined#floor+s2w+wall.3x1.openforge.stl",
             "md5": "ceab51e4225f860b0edecc3d35c16a61",
@@ -8605,6 +10071,135 @@
         "type": "model"
     },
     {
+        "file_metadata": {
+            "file": "cut-stone+ruined#floor+s2w+wall.3x3.openforge.stl",
+            "file_modified_at": "2026-10-25T11:59:58.461217",
+            "full_name": "tiles/cut-stone+ruined/s2w/wall/floor/cut-stone+ruined#floor+s2w+wall.3x3.openforge.stl",
+            "md5": "f5546fd81274480c404c4bc64d922105",
+            "size": 15570784,
+            "storage_address": "https://objects.openforge.tools/models/f5546f/f5546fd81274480c404c4bc64d922105.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/f5546f/f5546fd81274480c404c4bc64d922105.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "build|s2w",
+            "connection|openforge",
+            "shape|floor",
+            "shape|floor|s2w",
+            "shape|floor|wall",
+            "shape|square",
+            "size|depth|3",
+            "size|width|3",
+            "texture|cut-stone",
+            "texture|cut-stone|ruined"
+        ],
+        "type": "model"
+    },
+    {
+        "deprecated": true,
         "file_metadata": {
             "file": "cut-stone+ruined#floor+s2w+wall.3x3.openforge.stl",
             "file_modified_at": "2025-04-29T20:55:32.651036",
@@ -8863,6 +10458,135 @@
     {
         "file_metadata": {
             "file": "cut-stone+ruined#floor+s2w+wall.4x2.openforge.stl",
+            "file_modified_at": "2026-10-25T11:59:59.391482",
+            "full_name": "tiles/cut-stone+ruined/s2w/wall/floor/cut-stone+ruined#floor+s2w+wall.4x2.openforge.stl",
+            "md5": "c907c654a293fa1b7b7cf28523384d7f",
+            "size": 33168184,
+            "storage_address": "https://objects.openforge.tools/models/c907c6/c907c654a293fa1b7b7cf28523384d7f.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/c907c6/c907c654a293fa1b7b7cf28523384d7f.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "build|s2w",
+            "connection|openforge",
+            "shape|floor",
+            "shape|floor|s2w",
+            "shape|floor|wall",
+            "shape|square",
+            "size|depth|2",
+            "size|width|4",
+            "texture|cut-stone",
+            "texture|cut-stone|ruined"
+        ],
+        "type": "model"
+    },
+    {
+        "deprecated": true,
+        "file_metadata": {
+            "file": "cut-stone+ruined#floor+s2w+wall.4x2.openforge.stl",
             "file_modified_at": "2025-04-29T16:58:58.930816",
             "full_name": "tiles/cut-stone+ruined/s2w/wall/floor/cut-stone+ruined#floor+s2w+wall.4x2.openforge.stl",
             "md5": "97c2dd0bc9bc435c13ec44f9f378113e",
@@ -8989,6 +10713,135 @@
         "type": "model"
     },
     {
+        "file_metadata": {
+            "file": "cut-stone+ruined#floor+s2w+wall.4x4.openforge.stl",
+            "file_modified_at": "2026-10-25T12:00:02.158945",
+            "full_name": "tiles/cut-stone+ruined/s2w/wall/floor/cut-stone+ruined#floor+s2w+wall.4x4.openforge.stl",
+            "md5": "ced4a5a58edd92bab8f495d4e5696352",
+            "size": 77303484,
+            "storage_address": "https://objects.openforge.tools/models/ced4a5/ced4a5a58edd92bab8f495d4e5696352.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/ced4a5/ced4a5a58edd92bab8f495d4e5696352.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "build|s2w",
+            "connection|openforge",
+            "shape|floor",
+            "shape|floor|s2w",
+            "shape|floor|wall",
+            "shape|square",
+            "size|depth|4",
+            "size|width|4",
+            "texture|cut-stone",
+            "texture|cut-stone|ruined"
+        ],
+        "type": "model"
+    },
+    {
+        "deprecated": true,
         "file_metadata": {
             "file": "cut-stone+ruined#floor+s2w+wall.4x4.openforge.stl",
             "file_modified_at": "2025-04-29T16:59:20.794869",
