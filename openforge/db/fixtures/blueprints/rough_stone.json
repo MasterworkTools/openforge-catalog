@@ -3432,6 +3432,1530 @@
         "type": "model"
     },
     {
+        "file_metadata": {
+            "file": "rough_stone#floor+s2w+corner.1x1.openforge.stl",
+            "file_modified_at": "2026-10-25T11:20:16.949951",
+            "full_name": "tiles/rough_stone/s2w/corner/floor#corner+s2w/rough_stone#floor+s2w+corner.1x1.openforge.stl",
+            "md5": "4bc9223dca4a8c52a285f35bca186e82",
+            "size": 9206284,
+            "storage_address": "https://objects.openforge.tools/models/4bc922/4bc9223dca4a8c52a285f35bca186e82.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/4bc922/4bc9223dca4a8c52a285f35bca186e82.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "build|s2w",
+            "connection|openforge",
+            "shape|floor",
+            "shape|floor|s2w",
+            "shape|floor|wall|corner",
+            "shape|square",
+            "size|depth|1",
+            "size|width|1",
+            "texture|rough_stone"
+        ],
+        "type": "model"
+    },
+    {
+        "file_metadata": {
+            "file": "rough_stone#floor+s2w+corner.2x2.openforge.stl",
+            "file_modified_at": "2026-10-25T11:20:17.041548",
+            "full_name": "tiles/rough_stone/s2w/corner/floor#corner+s2w/rough_stone#floor+s2w+corner.2x2.openforge.stl",
+            "md5": "5766e2fe7f92e18122dd8cb8b7142196",
+            "size": 5295184,
+            "storage_address": "https://objects.openforge.tools/models/5766e2/5766e2fe7f92e18122dd8cb8b7142196.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/5766e2/5766e2fe7f92e18122dd8cb8b7142196.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "build|s2w",
+            "connection|openforge",
+            "shape|floor",
+            "shape|floor|s2w",
+            "shape|floor|wall|corner",
+            "shape|square",
+            "size|depth|2",
+            "size|width|2",
+            "texture|rough_stone"
+        ],
+        "type": "model"
+    },
+    {
+        "file_metadata": {
+            "file": "rough_stone#floor+s2w+corner.3x3.openforge.stl",
+            "file_modified_at": "2026-10-25T11:20:17.271278",
+            "full_name": "tiles/rough_stone/s2w/corner/floor#corner+s2w/rough_stone#floor+s2w+corner.3x3.openforge.stl",
+            "md5": "ba070f4809d25c42d8e1c00fc7e95aa3",
+            "size": 14080784,
+            "storage_address": "https://objects.openforge.tools/models/ba070f/ba070f4809d25c42d8e1c00fc7e95aa3.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/ba070f/ba070f4809d25c42d8e1c00fc7e95aa3.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "build|s2w",
+            "connection|openforge",
+            "shape|floor",
+            "shape|floor|s2w",
+            "shape|floor|wall|corner",
+            "shape|square",
+            "size|depth|3",
+            "size|width|3",
+            "texture|rough_stone"
+        ],
+        "type": "model"
+    },
+    {
+        "file_metadata": {
+            "file": "rough_stone#floor+s2w+corner.4x4.openforge.stl",
+            "file_modified_at": "2026-10-25T11:20:17.666745",
+            "full_name": "tiles/rough_stone/s2w/corner/floor#corner+s2w/rough_stone#floor+s2w+corner.4x4.openforge.stl",
+            "md5": "f8c69c6dda08c5df7ab7537e9816956a",
+            "size": 27084284,
+            "storage_address": "https://objects.openforge.tools/models/f8c69c/f8c69c6dda08c5df7ab7537e9816956a.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/f8c69c/f8c69c6dda08c5df7ab7537e9816956a.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "build|s2w",
+            "connection|openforge",
+            "shape|floor",
+            "shape|floor|s2w",
+            "shape|floor|wall|corner",
+            "shape|square",
+            "size|depth|4",
+            "size|width|4",
+            "texture|rough_stone"
+        ],
+        "type": "model"
+    },
+    {
+        "file_metadata": {
+            "file": "rough_stone#floor+s2w+wall.1x1.openforge.stl",
+            "file_modified_at": "2026-10-25T11:20:15.409136",
+            "full_name": "tiles/rough_stone/s2w/wall/floor#wall+s2w/rough_stone#floor+s2w+wall.1x1.openforge.stl",
+            "md5": "4053693209ed0379ea12318f20379c1b",
+            "size": 4408384,
+            "storage_address": "https://objects.openforge.tools/models/405369/4053693209ed0379ea12318f20379c1b.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/405369/4053693209ed0379ea12318f20379c1b.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "build|s2w",
+            "connection|openforge",
+            "shape|floor",
+            "shape|floor|s2w",
+            "shape|floor|wall",
+            "shape|square",
+            "size|depth|1",
+            "size|width|1",
+            "texture|rough_stone"
+        ],
+        "type": "model"
+    },
+    {
+        "file_metadata": {
+            "file": "rough_stone#floor+s2w+wall.2x1.openforge.stl",
+            "file_modified_at": "2026-10-25T11:20:15.469429",
+            "full_name": "tiles/rough_stone/s2w/wall/floor#wall+s2w/rough_stone#floor+s2w+wall.2x1.openforge.stl",
+            "md5": "ef60b0a87de9dfb2da86f25e1f950bc3",
+            "size": 2585484,
+            "storage_address": "https://objects.openforge.tools/models/ef60b0/ef60b0a87de9dfb2da86f25e1f950bc3.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/ef60b0/ef60b0a87de9dfb2da86f25e1f950bc3.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "build|s2w",
+            "connection|openforge",
+            "shape|floor",
+            "shape|floor|s2w",
+            "shape|floor|wall",
+            "shape|square",
+            "size|depth|1",
+            "size|width|2",
+            "texture|rough_stone"
+        ],
+        "type": "model"
+    },
+    {
+        "file_metadata": {
+            "file": "rough_stone#floor+s2w+wall.2x2.openforge.stl",
+            "file_modified_at": "2026-10-25T11:20:15.584251",
+            "full_name": "tiles/rough_stone/s2w/wall/floor#wall+s2w/rough_stone#floor+s2w+wall.2x2.openforge.stl",
+            "md5": "c04db87b929253c766e0bc8f1546cc51",
+            "size": 6641384,
+            "storage_address": "https://objects.openforge.tools/models/c04db8/c04db87b929253c766e0bc8f1546cc51.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/c04db8/c04db87b929253c766e0bc8f1546cc51.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "build|s2w",
+            "connection|openforge",
+            "shape|floor",
+            "shape|floor|s2w",
+            "shape|floor|wall",
+            "shape|square",
+            "size|depth|2",
+            "size|width|2",
+            "texture|rough_stone"
+        ],
+        "type": "model"
+    },
+    {
+        "file_metadata": {
+            "file": "rough_stone#floor+s2w+wall.3x1.openforge.stl",
+            "file_modified_at": "2026-10-25T11:20:15.663886",
+            "full_name": "tiles/rough_stone/s2w/wall/floor#wall+s2w/rough_stone#floor+s2w+wall.3x1.openforge.stl",
+            "md5": "7272aa048b64a49e10d13de940865853",
+            "size": 3879884,
+            "storage_address": "https://objects.openforge.tools/models/7272aa/7272aa048b64a49e10d13de940865853.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/7272aa/7272aa048b64a49e10d13de940865853.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "build|s2w",
+            "connection|openforge",
+            "shape|floor",
+            "shape|floor|s2w",
+            "shape|floor|wall",
+            "shape|square",
+            "size|depth|1",
+            "size|width|3",
+            "texture|rough_stone"
+        ],
+        "type": "model"
+    },
+    {
+        "file_metadata": {
+            "file": "rough_stone#floor+s2w+wall.3x3.openforge.stl",
+            "file_modified_at": "2026-10-25T11:20:16.006759",
+            "full_name": "tiles/rough_stone/s2w/wall/floor#wall+s2w/rough_stone#floor+s2w+wall.3x3.openforge.stl",
+            "md5": "0008296cf11c82938659a5f5ccaa9f20",
+            "size": 16248484,
+            "storage_address": "https://objects.openforge.tools/models/000829/0008296cf11c82938659a5f5ccaa9f20.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/000829/0008296cf11c82938659a5f5ccaa9f20.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "build|s2w",
+            "connection|openforge",
+            "shape|floor",
+            "shape|floor|s2w",
+            "shape|floor|wall",
+            "shape|square",
+            "size|depth|3",
+            "size|width|3",
+            "texture|rough_stone"
+        ],
+        "type": "model"
+    },
+    {
+        "file_metadata": {
+            "file": "rough_stone#floor+s2w+wall.4x1.openforge.stl",
+            "file_modified_at": "2026-10-25T11:20:16.110874",
+            "full_name": "tiles/rough_stone/s2w/wall/floor#wall+s2w/rough_stone#floor+s2w+wall.4x1.openforge.stl",
+            "md5": "1793f3a9f815e95c630c79a0f4466224",
+            "size": 5211484,
+            "storage_address": "https://objects.openforge.tools/models/1793f3/1793f3a9f815e95c630c79a0f4466224.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/1793f3/1793f3a9f815e95c630c79a0f4466224.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "build|s2w",
+            "connection|openforge",
+            "shape|floor",
+            "shape|floor|s2w",
+            "shape|floor|wall",
+            "shape|square",
+            "size|depth|1",
+            "size|width|4",
+            "texture|rough_stone"
+        ],
+        "type": "model"
+    },
+    {
+        "file_metadata": {
+            "file": "rough_stone#floor+s2w+wall.4x2.openforge.stl",
+            "file_modified_at": "2026-10-25T11:20:16.331394",
+            "full_name": "tiles/rough_stone/s2w/wall/floor#wall+s2w/rough_stone#floor+s2w+wall.4x2.openforge.stl",
+            "md5": "1e2ebce8300d561e332257564a91d137",
+            "size": 13612184,
+            "storage_address": "https://objects.openforge.tools/models/1e2ebc/1e2ebce8300d561e332257564a91d137.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/1e2ebc/1e2ebce8300d561e332257564a91d137.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "build|s2w",
+            "connection|openforge",
+            "shape|floor",
+            "shape|floor|s2w",
+            "shape|floor|wall",
+            "shape|square",
+            "size|depth|2",
+            "size|width|4",
+            "texture|rough_stone"
+        ],
+        "type": "model"
+    },
+    {
+        "file_metadata": {
+            "file": "rough_stone#floor+s2w+wall.4x4.openforge.stl",
+            "file_modified_at": "2026-10-25T11:20:16.803791",
+            "full_name": "tiles/rough_stone/s2w/wall/floor#wall+s2w/rough_stone#floor+s2w+wall.4x4.openforge.stl",
+            "md5": "0e248cd7258e0214133d25a947c9f029",
+            "size": 30122684,
+            "storage_address": "https://objects.openforge.tools/models/0e248c/0e248cd7258e0214133d25a947c9f029.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/0e248c/0e248cd7258e0214133d25a947c9f029.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "build|s2w",
+            "connection|openforge",
+            "shape|floor",
+            "shape|floor|s2w",
+            "shape|floor|wall",
+            "shape|square",
+            "size|depth|4",
+            "size|width|4",
+            "texture|rough_stone"
+        ],
+        "type": "model"
+    },
+    {
         "config": {
             "parts": [
                 {
