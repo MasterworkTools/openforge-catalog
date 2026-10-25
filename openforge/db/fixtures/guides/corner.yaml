@@ -287,25 +287,32 @@ roles:
       # else beneath it, because which children are wanted is the
       # method's business. Wall on tile and s2w ask for the corner
       # floor; separate wall asks for a plain tile.
-      require: ['shape|floor']
+      # Two inches each way, required rather than preferred. This guide
+      # builds one corner: its wings are two inches, its base is 2x2,
+      # and there is no size question to say otherwise. Preferring the
+      # footprint picked the right floor and still offered the 1x1, the
+      # 3x3 and the 4x4 beside it, because a preference orders
+      # candidates without excluding any.
+      require: ['shape|floor', 'size|width|2', 'size|depth|2']
       deny_children: ['shape', 'component']
       allow: ['shape|square', 'component|wall', 'shape|floor|wall|corner', 'shape|floor|s2w']
       # A base is not a floor: the parser gives a shape|base piece the
       # plain shape beside it, and the sweep above is scoped to
       # shape|floor.
       deny: ['shape|base']
-    # No texture here. The floor texture question already requires one,
-    # and a preferred tag that contradicts it can never match — which
-    # costs more than the preference, because `prefer` is required as a
-    # prefix and a term that cannot match takes every term after it
-    # down with it. That is what left a corner floor at 1x1.
+    # One term, and it has to stay that way. Preferred tags are required
+    # as a prefix and dropped from the end, so a term that cannot match
+    # takes every term after it down with it — which is why naming a
+    # texture here once left the footprint behind and resolved a corner
+    # to a 1x1. This term fails that way for every texture but towne,
+    # and nothing follows it to lose.
     #
-    # connection|openforge last, because the single-piece option denies
-    # it and a term an option denies has to be the least wanted.
+    # Towne boards its floors in two layouts and the wood one is the
+    # corner to print; the long planks sort first by name and would
+    # otherwise win. Nothing asks for the openforge socket here because
+    # the floor-print answer already requires it.
     prefer:
-      - 'size|width|2'
-      - 'size|depth|2'
-      - 'connection|openforge'
+      - 'texture|towne|wood'
     avoid: ['decoration']
   left-wall:
     title: Left wing
@@ -436,7 +443,7 @@ refinements:
       - tag: texture|cut-stone
         title: Cut stone
       - tag: texture|towne
-        title: Wood and plaster
+        title: Towne
       - tag: texture|aztlan
         title: Aztlan
       - tag: texture|nova_trail
@@ -446,7 +453,27 @@ refinements:
     role: floor
     browsable: true
     prompt: Floor texture
-    default: texture|dungeon_stone
+    # The floor follows the corner. A parts list that mixes textures
+    # reads as a mistake even when every piece fits, and whoever wants
+    # a dungeon stone floor under a towne corner can still say so.
+    default:
+      - when:
+          selected:
+            texture: [texture|cut-stone]
+        value: texture|cut-stone
+      - when:
+          selected:
+            texture: [texture|towne]
+        value: texture|towne
+      - when:
+          selected:
+            texture: [texture|aztlan]
+        value: texture|aztlan
+      - when:
+          selected:
+            texture: [texture|nova_trail]
+        value: texture|nova_trail
+      - value: texture|dungeon_stone
     from_namespace: texture
 
   - key: base-clips
