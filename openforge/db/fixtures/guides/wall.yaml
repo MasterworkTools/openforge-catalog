@@ -695,10 +695,7 @@ refinements:
     default:
       - when: {selected: {texture: ['texture|cut-stone']}}
         value: 'texture|cut-stone'
-      # Rough stone only where its own floor can be used. It has floors
-      # and no s2w ones, and both of the other methods ask the floor for
-      # the s2w tile with the half wall on it, so there it borrows.
-      - when: {selected: {texture: ['texture|rough_stone'], method: [separate-wall]}}
+      - when: {selected: {texture: ['texture|rough_stone']}}
         value: 'texture|rough_stone'
       - when: {selected: {texture: ['texture|aztlan']}}
         value: 'texture|aztlan'
