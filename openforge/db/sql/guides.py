@@ -78,10 +78,7 @@ def upsert_guide(curs: cursor, document: dict, hero_image: str | None = None) ->
     **A writer must read `hero_image` from somewhere other than
     `get_guide_by_key`.** That query selects the document and not this
     column, so read-modify-write through it loses the URL: the row comes
-    back without a picture, and writing it back clears one. Before the
-    column existed the round trip was lossless because the URL rode
-    inside the document. The constraint is written here, in the
-    function that would silently honour it.
+    back without a picture, and writing it back clears one.
     """
     query = sql.SQL(
         """
