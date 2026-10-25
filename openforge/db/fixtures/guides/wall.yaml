@@ -703,6 +703,8 @@ refinements:
         value: 'texture|nova_trail'
       - when: {selected: {texture: ['texture|towne', 'texture|stone_brick']}}
         value: 'texture|towne'
+      - when: {selected: {texture: ['texture|mortar_and_stone', 'texture|necro']}}
+        value: 'texture|dungeon_stone'
       - {value: 'texture|dungeon_stone'}
     when: {selected: {method: [s2w, wall-on-tile, separate-wall]}}
     from_namespace: texture

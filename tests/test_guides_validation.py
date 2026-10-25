@@ -879,3 +879,54 @@ def test_an_option_when_must_name_an_option_that_exists(guide):
         validate_guide_document(guide)
 
     assert "s2w-modlar" in str(excinfo.value)
+
+
+def test_every_offered_texture_says_which_floor_it_wants():
+    """A floor default that answers for a texture by saying nothing.
+
+    The floor's texture is recommended by clauses keyed on the texture
+    chosen for the walls. A texture that no clause names still gets an
+    answer -- the clause with no `when` catches it -- so adding one to
+    the list and forgetting its clause is silent, and looks like the
+    question simply ignoring the choice. That is exactly how rough
+    stone shipped recommending a dungeon stone floor.
+
+    Falling through is allowed; doing it without saying so is not.
+    """
+    fixtures = [
+        entry
+        for entry in impresources.files(guide_fixtures).iterdir()
+        if entry.name.endswith(".yaml")
+    ]
+    assert fixtures, "no guide fixtures found — this test must not pass quietly"
+
+    checked = 0
+    for path in fixtures:
+        document = yaml.safe_load(path.read_text())
+        by_key = {r["key"]: r for r in document.get("refinements", [])}
+        for refinement in by_key.values():
+            default = refinement.get("default")
+            if not isinstance(default, list):
+                continue
+            named, fallback = set(), None
+            source_keys = set()
+            for clause in default:
+                if "when" in clause:
+                    for key, values in clause["when"]["selected"].items():
+                        source_keys.add(key)
+                        named |= set(values)
+                else:
+                    fallback = clause["value"]
+            for source in source_keys:
+                choices = by_key.get(source, {}).get("choices") or []
+                offered = [c["tag"] for c in choices]
+                if not offered:
+                    continue
+                checked += 1
+                silent = [t for t in offered if t not in named and t != fallback]
+                assert not silent, (
+                    f"{path.name}: {refinement['key']} answers for "
+                    f"{silent} by saying nothing. Name them in a clause, even "
+                    f"one that repeats the fallback, so the choice is visible."
+                )
+    assert checked, "found no clause-driven defaults to check"

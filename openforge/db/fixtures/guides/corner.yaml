@@ -485,6 +485,10 @@ refinements:
           selected:
             texture: [texture|nova_trail]
         value: texture|nova_trail
+      - when:
+          selected:
+            texture: [texture|rough_stone]
+        value: texture|rough_stone
       - value: texture|dungeon_stone
     from_namespace: texture
 
