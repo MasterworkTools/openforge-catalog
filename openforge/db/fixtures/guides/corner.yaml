@@ -67,22 +67,30 @@ steps:
           Recommended for corners you build ahead of time: clipped
           together, the two walls and the pillar come to the table as
           one rigid piece.
+        # Two straight walls standing beside the tile rather than
+        # corner pieces wrapping it, so each reads from the side its
+        # face is on — half a turn from the wings of a glued corner.
+        views:
+          left-wall: front-left
+          right-wall: front-right
+          wall-base: front-left
+          wall-base-right: front-right
         roles:
           # A plain tile. The walls stand beside the floor, not on it,
           # so nothing here is corner-shaped.
           floor:
             deny: ['build|s2w']
-          # Full two-inch walls, which the catalog also calls A.
-          # Denying shape|corner is what keeps the s2w corner wings out:
-          # they are two inches wide and carry shape|wall too, so
-          # without this the width alone lets them answer, and the side
-          # tag at the head of each wing's `prefer` actively pulls them
-          # in.
+          # Full two-inch walls, which the catalog also calls A. The
+          # build tag is the anchor: two inches wide also admits the
+          # s-system walls, the thick walls and the legacy wall-on-tile
+          # pieces. shape|corner stays denied so that an s2w corner
+          # wing, which is two inches wide and carries shape|wall too,
+          # cannot answer here as a straight wall.
           left-wall:
-            require: ['size|width|2']
+            require: ['build|separate wall', 'size|width|2']
             deny: ['shape|corner']
           right-wall:
-            require: ['size|width|2']
+            require: ['build|separate wall', 'size|width|2']
             deny: ['shape|corner']
           # Not the s2w pillar: this one has no openforge socket and
           # needs no base, standing on its own side clips.
@@ -102,6 +110,13 @@ steps:
 
           The same walls build either layout, so this is the flexible
           one, and it is the approach I recommend.
+        # Straight walls here too, so they read the same way round as
+        # the separate wall build rather than as a glued corner's wings.
+        views:
+          left-wall: front-left
+          right-wall: front-right
+          wall-base: front-left
+          wall-base-right: front-right
         roles:
           floor:
             require: ['build|s2w', 'shape|floor|wall|corner']
@@ -328,6 +343,10 @@ roles:
   left-wall:
     title: Left wing
     position: 2
+    # Each wing is held at the angle it occupies in the finished corner,
+    # a quarter turn apart, so the pair reads as a corner rather than as
+    # two of the same wall.
+    view: back-right
     query:
       # The opposite side is denied rather than this one required,
       # because an absent side tag means the wing works either way
@@ -364,10 +383,16 @@ roles:
   right-wall:
     title: Right wing
     position: 4
-    # Held two steps round from the rest. The right wing faces the
-    # other way from the left one, so drawn from the same angle the
-    # pair reads as two of the same wall rather than a corner.
-    view: front-right
+    # A quarter turn from the left wing, which is the angle between
+    # them in the corner.
+    view: back-left
+    # Where a texture has no distinct right half, the wing that answers
+    # here is the reversible one: the left-hand model, turned over.
+    reversible_without: 'shape|corner|right'
+    # The reversible wing is the left wing's model turned over, so at
+    # the angle above it shows the face that ends up inward and the
+    # pair reads as one wall twice.
+    reversible_view: front-right
     query:
       # Mirror of the left wing above.
       require: ['shape|wall']
@@ -432,6 +457,8 @@ roles:
   wall-base:
     title: Base for the left wing
     position: 6
+    # With the wing it sits under.
+    view: back-right
     query:
       require: ['shape|base']
       deny_children: ['shape|base']
@@ -444,7 +471,7 @@ roles:
     title: Base for the right wing
     position: 7
     # With the wing it sits under.
-    view: front-right
+    view: back-left
     query:
       require: ['shape|base']
       deny_children: ['shape|base']
