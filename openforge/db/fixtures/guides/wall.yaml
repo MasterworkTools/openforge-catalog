@@ -683,11 +683,27 @@ refinements:
     role: floor
     browsable: true
     prompt: Floor texture
-    # The floor to recommend depends on the wall standing on it. A
-    # wooden-framed building wants a wooden floor, and mortar and
-    # stone has no floor of its own name at all, so it borrows the
-    # blockwork that reads closest to it.
+    # The floor follows the wall standing on it. A parts list that mixes
+    # textures reads as a mistake even when every piece fits, and anyone
+    # who wants a dungeon stone floor under a towne wall can still say
+    # so.
+    #
+    # Three wall textures have no floor of their own name and borrow
+    # one. A wooden-framed building wants a wooden floor, so stone brick
+    # takes towne's planking; mortar and stone and the ossuary take the
+    # blockwork that reads closest to them.
     default:
+      - when: {selected: {texture: ['texture|cut-stone']}}
+        value: 'texture|cut-stone'
+      # Rough stone only where its own floor can be used. It has floors
+      # and no s2w ones, and both of the other methods ask the floor for
+      # the s2w tile with the half wall on it, so there it borrows.
+      - when: {selected: {texture: ['texture|rough_stone'], method: [separate-wall]}}
+        value: 'texture|rough_stone'
+      - when: {selected: {texture: ['texture|aztlan']}}
+        value: 'texture|aztlan'
+      - when: {selected: {texture: ['texture|nova_trail']}}
+        value: 'texture|nova_trail'
       - when: {selected: {texture: ['texture|towne', 'texture|stone_brick']}}
         value: 'texture|towne'
       - {value: 'texture|dungeon_stone'}
