@@ -47,9 +47,8 @@ export default function GuidePage() {
   // every resolution. Here rather than in the parts list, because the
   // questions on the left open it too.
   const [inspecting, setInspecting] = useState<string | null>(null);
-  // The prose column, open until someone shuts it. Deliberately not in
-  // the URL: the answers there describe a build and are worth sharing,
-  // and whether the reader wanted the words is not part of it.
+  // Deliberately not in the URL: the answers there describe a build and
+  // are worth sharing; whether the reader wanted the words is not.
   const [wordsOpen, setWordsOpen] = useState(true);
 
   // Put focus on the heading when a click brought us here.

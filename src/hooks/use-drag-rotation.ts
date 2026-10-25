@@ -137,18 +137,10 @@ export const START_VIEW = 'front-left';
 /**
  * The angle to draw one part at, given the angle the list is turned to.
  *
- * A corner's pieces face outward in different directions, so drawing
- * them all from one angle overlaps them into something that does not
- * read as a corner. A role can name the angle it reads best from, and
- * that is held as an OFFSET from the list's angle rather than as a
- * fixed one: turn the list and every piece turns with it, each keeping
- * its own quarter.
- *
- * The offset is measured from the angle the list starts at, so a part
- * naming that angle sits flush with the rest and names nothing in
- * effect. Anything outside the ring -- `top`, `bottom`, or a sheet
- * with an angle nobody else has -- turns with the list unchanged,
- * because an offset into a ring it is not on has no meaning.
+ * A part's own angle is held as an OFFSET from `START_VIEW`, not as a
+ * fixed angle, so turning the list turns every piece with it while
+ * each keeps its own quarter. An angle off the ring -- `top`,
+ * `bottom`, or one nobody else has -- turns with the list unchanged.
  */
 export function viewFor(part: { view?: string | null }, view: string): string {
   const ring = HORIZONTAL_VIEWS as readonly string[];

@@ -375,6 +375,10 @@ $defs:
       - title
       - query
     additionalProperties: false
+    # An angle for the reversible piece says nothing without the tag
+    # that decides which piece is the reversible one.
+    dependentRequired:
+      reversible_view: [reversible_without]
     properties:
       title:
         type: string

@@ -1,12 +1,4 @@
 # The first guide: how do I make a wall?
-#
-# DRAFT — the structure is settled and every role/method pair below was
-# resolved against the fixtures, so each recommends a part of the right
-# kind. What is not settled is whether they recommend the *right* part:
-# the prefer lists are a guess, and with the current ones the wall guide
-# leans toward ruined and collapsed variants because those sort first by
-# name once prefer runs out. That, and whether a "method" should be a
-# build tag at all, is Devon's call (openforge_catalog-z76).
 key: wall
 # Named for the thing you build, not for the question the guide asks:
 # the entry page is a catalog of cards, and "Wall" sits beside "Floor"
@@ -488,9 +480,7 @@ roles:
     # as a prefix and dropped from the end, so a term that cannot match
     # discards every term after it. This one picks block over eroded for
     # dungeon stone and simply fails elsewhere, with nothing behind it to
-    # lose. What used to sit here was already required: the texture by
-    # its question, the footprint by the size step, the socket by the
-    # print answer.
+    # lose.
     prefer:
       - 'texture|dungeon_stone|block'
     # A celtic knot or a carved symbol is still a floor, and one of the

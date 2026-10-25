@@ -65,13 +65,8 @@ export function GuideExplainer({
   return (
     <section className="guide-explainer mb-8" aria-labelledby="explainer">
       {/* Not the step's own prompt — that is asked on the left, and
-          repeating it here would read as two questions.
-
-          The heading is the collapse control. A separate button would
-          be a second thing to aim at in a column whose only landmark
-          this already is, and collapsing is worth offering because the
-          prose is the widest thing here and the one part someone
-          stops needing once they know the system. */}
+          repeating it here would read as two questions. The heading is
+          itself the collapse control. */}
       <h2 id="explainer" className="text-xl font-bold mb-3">
         <button
           type="button"

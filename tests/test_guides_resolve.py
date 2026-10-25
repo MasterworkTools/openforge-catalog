@@ -2306,3 +2306,36 @@ def test_a_piece_outside_the_handed_family_keeps_the_ordinary_angle():
 
     assert parts["right-wing"]["blueprint"]["id"] == "p"
     assert parts["right-wing"]["view"] == "back-left"
+
+
+def test_the_parts_come_back_in_the_order_the_document_asks_for():
+    """JSONB loses the order the roles were written in.
+
+    Postgres sorts object keys by length and then bytewise, so a stored
+    document's role order is gone by the time the engine reads it, and
+    `position` is the only thing that puts the parts back.
+    """
+    guide = copy.deepcopy(MIRROR_GUIDE)
+    guide["roles"]["left-wing"]["position"] = 2
+    guide["roles"]["right-wing"]["position"] = 1
+
+    resolved = resolve(guide, {"method": "only"}, matching_finder(HANDED))
+
+    assert [p["role"] for p in resolved["parts"]] == ["right-wing", "left-wing"]
+
+
+def test_the_reversible_angle_outranks_the_method_s_own():
+    """Both can name an angle for the same role, and they disagree.
+
+    The method says how it builds the role; the reversible angle is
+    about which piece answered. The piece wins, or a method that names
+    an angle would draw the turned-over wing at the wrong one.
+    """
+    guide = copy.deepcopy(MIRROR_GUIDE)
+    guide["steps"][0]["options"][0]["views"] = {"right-wing": "front"}
+
+    handed = resolve(guide, {"method": "only"}, matching_finder(HANDED))
+    reversible = resolve(guide, {"method": "only"}, matching_finder(REVERSIBLE))
+
+    assert parts_by_role(handed)["right-wing"]["view"] == "front"
+    assert parts_by_role(reversible)["right-wing"]["view"] == "back-right"

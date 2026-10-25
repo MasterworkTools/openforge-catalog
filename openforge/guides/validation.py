@@ -159,6 +159,12 @@ def _role_reference_errors(data: dict) -> list[str]:
                 for role in option.get("roles") or {}
                 if role not in roles
             ]  # option["roles"] is a map; iterating gives its role names
+            errors += [
+                f"step {step['key']!r} option {option['key']!r}: "
+                f"`views` names unknown role {role!r}"
+                for role in option.get("views") or {}
+                if role not in roles
+            ]
     errors += [
         f"role {name!r}: `under` names unknown role {role['under']!r}"
         for name, role in roles.items()

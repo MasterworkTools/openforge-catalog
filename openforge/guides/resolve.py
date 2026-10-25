@@ -1280,7 +1280,7 @@ def _answered_with(dead: dict, because: dict, recommended: dict):
 
 
 def _view(
-    role: dict, chosen: list[dict], role_name: str, reversible: bool = False
+    role: dict, chosen: list[dict], role_name: str, reversible: bool
 ) -> str | None:
     """The angle a role is drawn from, with the method having the say.
 

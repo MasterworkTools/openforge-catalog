@@ -1,10 +1,4 @@
 # The third guide: how do I make a corner?
-#
-# DRAFT — the parts each method needs were resolved against the fixtures,
-# so every method recommends pieces of the right kind in every texture
-# that has them. The prose is a first pass and the `prefer` lists are
-# inherited from the wall guide, which means this guide shares that
-# guide's open question about whether they recommend the *right* part.
 key: corner
 title: Corner
 hero_image: https://objects.openforge.tools/guides/guide.corner.webp
@@ -313,12 +307,8 @@ roles:
       # else beneath it, because which children are wanted is the
       # method's business. Wall on tile and s2w ask for the corner
       # floor; separate wall asks for a plain tile.
-      # Two inches each way, required rather than preferred. This guide
-      # builds one corner: its wings are two inches, its base is 2x2,
-      # and there is no size question to say otherwise. Preferring the
-      # footprint picked the right floor and still offered the 1x1, the
-      # 3x3 and the 4x4 beside it, because a preference orders
-      # candidates without excluding any.
+      # Two inches each way, required rather than preferred: this guide
+      # builds one corner and has no size question to say otherwise.
       require: ['shape|floor', 'size|width|2', 'size|depth|2']
       deny_children: ['shape', 'component']
       allow: ['shape|square', 'component|wall', 'shape|floor|wall|corner', 'shape|floor|s2w']
@@ -328,10 +318,8 @@ roles:
       deny: ['shape|base']
     # One term, and it has to stay that way. Preferred tags are required
     # as a prefix and dropped from the end, so a term that cannot match
-    # takes every term after it down with it — which is why naming a
-    # texture here once left the footprint behind and resolved a corner
-    # to a 1x1. This term fails that way for every texture but towne,
-    # and nothing follows it to lose.
+    # takes every term after it down with it. This one fails that way
+    # for every texture but towne, and nothing follows it to lose.
     #
     # Towne boards its floors in two layouts and the wood one is the
     # corner to print; the long planks sort first by name and would
@@ -351,10 +339,7 @@ roles:
       # The opposite side is denied rather than this one required,
       # because an absent side tag means the wing works either way
       # round. Denying `right` keeps the left halves and the reversible
-      # wings and refuses only what cannot go on this side. Requiring
-      # `left` instead would throw away every reversible wing, and
-      # ranking by side rather than filtering offers each wing both
-      # halves to choose from.
+      # wings and refuses only what cannot go on this side.
       #
       # A plain wall, by the wall guide's rule: component|wall is what
       # makes it a wall rather than a wall-shaped feature, and sweeping
@@ -507,8 +492,7 @@ refinements:
     # Listed rather than derived, and it has to be: this question
     # substitutes wood for towne on the wall base, and derivation
     # intersects what each role carries, which describes nothing when
-    # the roles are asked for different tags. Deriving it dropped towne
-    # from two methods that build it perfectly well.
+    # the roles are asked for different tags.
     #
     # Which of these a method can actually use is still the catalog's
     # answer rather than this list's: an answer that would leave a role
