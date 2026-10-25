@@ -378,6 +378,43 @@ $defs:
         items:
           type: string
           pattern: "^[^|]+(\\|[^|]+)*$"
+      position:
+        type: integer
+        minimum: 0
+        description: >
+          Where this part sits in the list, ascending. Without one the
+          order is not the author's: the document is stored as JSONB,
+          which sorts object keys by length and then bytewise, so
+          whatever order the roles were written in is lost and the
+          parts come out ordered by how long their names happen to be.
+
+          A corner reads left to right the way it is built -- the left
+          wing, the pillar it meets, then the right wing -- and that
+          cannot be said by writing them in that order.
+      view:
+        type: string
+        enum:
+          - front
+          - front-right
+          - right
+          - back-right
+          - back
+          - back-left
+          - left
+          - front-left
+        description: >
+          The angle this part reads best from, as a name from the ring
+          the sprite sheets turn through. The parts list draws every
+          piece from one direction so they can be compared, and a part
+          named here keeps a fixed offset from it rather than a fixed
+          angle — so the list still turns as one, with this piece held
+          a few steps round.
+
+          For a corner, whose pieces face outward in different
+          directions: the right wing and its base read from the front
+          right while the left pair read from the front left, and the
+          pillar from behind them both. Drawn from one angle they
+          overlap into something that does not look like a corner.
       under:
         type: string
         description: The role this one sits beneath, when it sits under one.

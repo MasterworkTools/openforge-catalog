@@ -114,6 +114,12 @@ steps:
           right-wall:
             require: ['size|width|1.5']
             deny: ['shape|corner']
+          # A narrow wall sits off centre against the pillar, so the
+          # two bases are a handed pair rather than two of a kind.
+          wall-base:
+            deny: ['shape|option|mirror']
+          wall-base-right:
+            require: ['shape|option|mirror']
           pillar:
             deny: ['build|s2w']
           # The s2w corner base, which is the corner-shaped one. It does
@@ -217,11 +223,15 @@ steps:
           left-wall: {require: ['connection|openforge']}
           right-wall: {require: ['connection|openforge']}
           wall-base: null
+          wall-base-right: null
       - key: single-piece
         title: One piece, bases included
         blurb: >
           Each wall is printed with its base already part of it. Fewer
           pieces to lose.
+        # No handed pair here, unlike the bases on the answer above. A
+        # built-in base takes no magnets, and the magnet bays are what
+        # the mirrored version exists for.
         roles:
           left-wall:
             deny: ['connection|openforge']
@@ -282,6 +292,7 @@ steps:
 roles:
   floor:
     title: Floor
+    position: 1
     query:
       # Same sweep as the floor and wall guides: shape|floor and nothing
       # else beneath it, because which children are wanted is the
@@ -316,6 +327,7 @@ roles:
     avoid: ['decoration']
   left-wall:
     title: Left wing
+    position: 2
     query:
       # The opposite side is denied rather than this one required,
       # because an absent side tag means the wing works either way
@@ -351,6 +363,11 @@ roles:
     avoid: ['decoration']
   right-wall:
     title: Right wing
+    position: 4
+    # Held two steps round from the rest. The right wing faces the
+    # other way from the left one, so drawn from the same angle the
+    # pair reads as two of the same wall rather than a corner.
+    view: front-right
     query:
       # Mirror of the left wing above.
       require: ['shape|wall']
@@ -374,6 +391,10 @@ roles:
     avoid: ['decoration']
   pillar:
     title: Pillar
+    position: 3
+    # Further round again: the pillar stands behind both wings, and
+    # that is the face the courses have to match.
+    view: back-right
     query:
       # The L shape is what makes it a corner pillar. The other junction
       # shapes — I, T, O, X — are the straight, tee, post and cross
@@ -390,6 +411,7 @@ roles:
     # texture by the question.
   floor-base:
     title: Base for the floor
+    position: 5
     query:
       # Which child of shape|base is wanted is the method's business:
       # wall on tile and separate wall take the full square, s2w takes
@@ -402,8 +424,14 @@ roles:
     # A base matches the footprint of the tile standing on it, and that
     # tile is not chosen until the person answers.
     match: ['size|width', 'size|depth']
+  # Two bases, one under each wing. Whether they are a handed pair is
+  # the method's business: only the inch-and-a-half bases are made in
+  # mirror, because a wall that narrow sits off centre against the
+  # pillar. A full two inch wall spans its edge and its base is the
+  # same either side, so that method asks for no hand at all.
   wall-base:
-    title: Bases for the walls
+    title: Base for the left wing
+    position: 6
     query:
       require: ['shape|base']
       deny_children: ['shape|base']
@@ -411,6 +439,17 @@ roles:
     under: left-wall
     # Width only. A wall is a line along an edge: it has a width and no
     # depth, and its base is the same shape.
+    match: ['size|width']
+  wall-base-right:
+    title: Base for the right wing
+    position: 7
+    # With the wing it sits under.
+    view: front-right
+    query:
+      require: ['shape|base']
+      deny_children: ['shape|base']
+      allow: ['shape|base|wall']
+    under: right-wall
     match: ['size|width']
 
 refinements:
@@ -430,6 +469,7 @@ refinements:
     substitute:
       'texture|towne':
         wall-base: 'texture|wood'
+        wall-base-right: 'texture|wood'
     blurb: >
       The texture has to carry across the back of the pillar, which is
       why some of these have a distinct left and right wing and others

@@ -1219,6 +1219,9 @@ def _parts(
             "role": name,
             "title": role["title"],
             "under": role.get("under"),
+            # The angle this piece reads best from, when it is not the
+            # one the list is turned to. Held as an offset by the page.
+            "view": role.get("view"),
             "query": predicate,
             # Which of those terms the catalog dialog may take off
             # again, so that browsing starts inside the family you
@@ -1231,7 +1234,20 @@ def _parts(
         }
     # Reported in the order the options called for them, not the order
     # they had to be resolved in: a parts list reads floor, wall, base.
-    return [parts[name] for name in in_play]
+    # Ordered by what the document asks for, not by what survives being
+    # stored: JSONB sorts object keys by length then bytewise, so the
+    # order the roles were written in is gone by the time this reads
+    # them. A role without a position keeps its place after the ones
+    # that have one.
+    order = {name: document["roles"][name].get("position") for name in in_play}
+    return sorted(
+        (parts[name] for name in in_play),
+        key=lambda part: (
+            order[part["role"]] is None,
+            order[part["role"]] or 0,
+            in_play.index(part["role"]),
+        ),
+    )
 
 
 def _answered_with(dead: dict, because: dict, recommended: dict):
