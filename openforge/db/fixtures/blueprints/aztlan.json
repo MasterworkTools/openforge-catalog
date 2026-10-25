@@ -4333,6 +4333,23 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|aztlan_door"
+                            },
+                            {
+                                "tag": "size|narrow"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "aztlan#corner,door.2x.openforge,side+dragonlock.stl",
             "file_modified_at": "2026-05-30T13:39:21.393690",
@@ -4445,7 +4462,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|s2w",
             "component|door",
@@ -4462,6 +4479,23 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|aztlan_door"
+                            },
+                            {
+                                "tag": "size|narrow"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "aztlan#corner,door.2x.openforge,side+filament.stl",
             "file_modified_at": "2026-05-30T13:40:44.244385",
@@ -4574,7 +4608,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|s2w",
             "component|door",
@@ -4591,6 +4625,23 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|aztlan_door"
+                            },
+                            {
+                                "tag": "size|narrow"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "aztlan#corner,door.2x.openforge,side.stl",
             "file_modified_at": "2026-05-30T13:37:59.494702",
@@ -4703,7 +4754,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|s2w",
             "component|door",
@@ -11313,6 +11364,19 @@
         "config": {
             "parts": [
                 {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|aztlan_door"
+                            },
+                            {
+                                "tag": "size|single"
+                            }
+                        ]
+                    }
+                },
+                {
                     "name": "base",
                     "optional": true,
                     "tags": {
@@ -11448,7 +11512,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -11465,6 +11529,19 @@
     {
         "config": {
             "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|aztlan_door"
+                            },
+                            {
+                                "tag": "size|narrow"
+                            }
+                        ]
+                    }
+                },
                 {
                     "name": "base",
                     "optional": true,
@@ -11601,7 +11678,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -11618,6 +11695,19 @@
     {
         "config": {
             "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|aztlan_door"
+                            },
+                            {
+                                "tag": "size|single"
+                            }
+                        ]
+                    }
+                },
                 {
                     "name": "base",
                     "optional": true,
@@ -11754,7 +11844,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -11771,6 +11861,19 @@
     {
         "config": {
             "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|aztlan_door"
+                            },
+                            {
+                                "tag": "size|narrow"
+                            }
+                        ]
+                    }
+                },
                 {
                     "name": "base",
                     "optional": true,
@@ -11907,7 +12010,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -11924,6 +12027,19 @@
     {
         "config": {
             "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|aztlan_door"
+                            },
+                            {
+                                "tag": "size|wide"
+                            }
+                        ]
+                    }
+                },
                 {
                     "name": "base",
                     "optional": true,
@@ -12060,7 +12176,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -12077,6 +12193,19 @@
     {
         "config": {
             "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|aztlan_door"
+                            },
+                            {
+                                "tag": "size|single"
+                            }
+                        ]
+                    }
+                },
                 {
                     "name": "base",
                     "optional": true,
@@ -12213,7 +12342,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -12232,6 +12361,19 @@
     {
         "config": {
             "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|aztlan_door"
+                            },
+                            {
+                                "tag": "size|single"
+                            }
+                        ]
+                    }
+                },
                 {
                     "name": "base",
                     "optional": true,
@@ -12368,7 +12510,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -12385,6 +12527,23 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|aztlan_door"
+                            },
+                            {
+                                "tag": "size|single"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "aztlan#door.A.openlock+unsupported.stl",
             "file_modified_at": "2026-05-30T12:21:59.099422",
@@ -12497,7 +12656,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -12513,6 +12672,23 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|aztlan_door"
+                            },
+                            {
+                                "tag": "size|narrow"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "aztlan#door.BA.openlock+unsupported.stl",
             "file_modified_at": "2026-05-30T12:06:40.854540",
@@ -12625,7 +12801,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -12641,6 +12817,23 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|aztlan_door"
+                            },
+                            {
+                                "tag": "size|single"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "aztlan#door.D.openlock+unsupported.stl",
             "file_modified_at": "2026-05-30T12:07:15.377831",
@@ -12753,7 +12946,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -12769,6 +12962,23 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|aztlan_door"
+                            },
+                            {
+                                "tag": "size|narrow"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "aztlan#door.IA.openlock+unsupported.stl",
             "file_modified_at": "2026-05-30T12:06:49.948696",
@@ -12881,7 +13091,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -12897,6 +13107,23 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|aztlan_door"
+                            },
+                            {
+                                "tag": "size|wide"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "aztlan#door.Q.openlock+unsupported.stl",
             "file_modified_at": "2026-05-30T12:07:25.898557",
@@ -13009,7 +13236,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -13025,6 +13252,23 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|aztlan_door"
+                            },
+                            {
+                                "tag": "size|single"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "aztlan#door.D.openlock+unsupported,side.stl",
             "file_modified_at": "2026-05-30T12:29:52.372566",
@@ -13137,7 +13381,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -13155,6 +13399,23 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|aztlan_door"
+                            },
+                            {
+                                "tag": "size|single"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "aztlan#door.A.openlock.stl",
             "file_modified_at": "2026-05-30T12:06:54.882377",
@@ -13267,7 +13528,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -13282,6 +13543,23 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|aztlan_door"
+                            },
+                            {
+                                "tag": "size|narrow"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "aztlan#door.BA.openlock.stl",
             "file_modified_at": "2026-05-30T12:06:35.741878",
@@ -13394,7 +13672,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -13409,6 +13687,23 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|aztlan_door"
+                            },
+                            {
+                                "tag": "size|single"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "aztlan#door.D.openlock.stl",
             "file_modified_at": "2026-05-30T12:07:08.092116",
@@ -13521,7 +13816,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -13536,6 +13831,23 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|aztlan_door"
+                            },
+                            {
+                                "tag": "size|narrow"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "aztlan#door.IA.openlock.stl",
             "file_modified_at": "2026-05-30T12:06:46.189961",
@@ -13648,7 +13960,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -13663,6 +13975,23 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|aztlan_door"
+                            },
+                            {
+                                "tag": "size|wide"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "aztlan#door.Q.openlock.stl",
             "file_modified_at": "2026-05-30T12:07:20.980523",
@@ -13775,7 +14104,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -13790,6 +14119,23 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|aztlan_door"
+                            },
+                            {
+                                "tag": "size|single"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "aztlan#door.D.openlock,side.stl",
             "file_modified_at": "2026-05-30T12:29:40.073950",
@@ -13902,7 +14248,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
