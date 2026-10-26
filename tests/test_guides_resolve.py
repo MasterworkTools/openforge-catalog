@@ -2491,13 +2491,121 @@ def test_a_role_that_does_not_ask_for_its_slots_derives_none():
     assert not [name for name in parts if name.startswith("wall.")]
 
 
+def test_a_selector_names_the_part_that_brought_it_as_its_owner():
+    """`under` is what piles the selector with its part in the list."""
+    parts = _resolved(_wall("a rectangular wall", "door", "lintel"))
+
+    assert parts["wall.door"]["under"] == "wall"
+    assert parts["wall.lintel"]["under"] == "wall"
+
+
+def test_a_slot_named_in_prose_becomes_a_key_a_url_can_carry():
+    parts = _resolved(_wall("a rectangular wall", "grate (right)"))
+
+    assert "wall.grate-right" in parts
+    assert parts["wall.grate-right"]["title"] == "grate (right)"
+
+
+def test_two_slots_whose_names_collapse_alike_offer_one_selector():
+    """Both would pin to `part.wall.grate-right`, which names one part."""
+    parts = _resolved(_wall("a wall", "grate (right)", "grate right"))
+
+    assert [name for name in parts if name.startswith("wall.")] == ["wall.grate-right"]
+
+
+def test_a_slot_whose_name_carries_no_key_offers_no_selector():
+    """`part.wall.` is a pin the engine cannot answer, so nothing
+    should ever hand someone a link holding one."""
+    parts = _resolved(_wall("a wall", "()"))
+
+    assert not [name for name in parts if name.startswith("wall.")]
+
+
+def test_a_role_that_resolves_to_nothing_offers_no_selector():
+    parts = parts_by_role(
+        resolve(SLOT_GUIDE, {"method": "separate"}, matching_finder([BASE]))
+    )
+
+    assert not [name for name in parts if name.startswith("wall.")]
+
+
+def test_a_fitting_is_not_asked_the_width_the_build_was_asked():
+    """No door or lintel in the catalog carries a tile width, so an
+    option that narrows every role in play would empty the fitting."""
+    guide = copy.deepcopy(SLOT_GUIDE)
+    guide["steps"].append(
+        {
+            "key": "size",
+            "prompt": "How wide?",
+            "options": [{"key": "2", "title": "2x2", "tags": {"require": ["size|2"]}}],
+        }
+    )
+
+    wall = _wall("a rectangular wall", "door")
+    wall["tags"].append("size|2")
+
+    parts = parts_by_role(
+        resolve(
+            guide,
+            {"method": "separate", "size": "2"},
+            matching_finder([wall, BASE]),
+        )
+    )
+
+    assert parts["wall"]["query"]["require"] == [
+        "shape|wall",
+        "component|door",
+        "size|2",
+    ]
+    assert parts["wall.door"]["query"]["require"] == ["interface|door"]
+
+
+def test_a_fitting_is_not_asked_the_texture_the_build_was_asked():
+    """A refinement reaching every role would ask a wooden door for
+    the wall's stone."""
+    guide = copy.deepcopy(SLOT_GUIDE)
+    guide["refinements"] = [
+        {
+            "key": "texture",
+            "role": "*",
+            "prompt": "Which texture?",
+            "from_namespace": "texture",
+        }
+    ]
+
+    wall = _wall("a rectangular wall", "door")
+    wall["tags"].append("texture|dungeon_stone")
+
+    parts = parts_by_role(
+        resolve(
+            guide,
+            {"method": "separate", "texture": "texture|dungeon_stone"},
+            matching_finder([wall, BASE]),
+        )
+    )
+
+    assert "texture|dungeon_stone" in parts["wall"]["query"]["require"]
+    assert parts["wall.door"]["query"]["require"] == ["interface|door"]
+
+
 def test_a_slot_pin_is_a_selection_the_guide_recognises():
     """Rejecting it would answer 400 to a shared link naming a door."""
-    resolve(
-        SLOT_GUIDE,
-        {"method": "separate", "part.wall.door": "a" * 32},
-        matching_finder([_wall("a rectangular wall", "door"), BASE]),
+    handpicked = {
+        "id": "h",
+        "blueprint_name": "a handpicked door",
+        "tags": ["interface|door"],
+    }
+
+    parts = parts_by_role(
+        resolve(
+            SLOT_GUIDE,
+            {"method": "separate", "part.wall.door": "a" * 32},
+            matching_finder([_wall("a rectangular wall", "door"), BASE, handpicked]),
+            find_pinned=lambda md5: handpicked,
+        )
     )
+
+    assert parts["wall.door"]["blueprint"]["blueprint_name"] == "a handpicked door"
 
 
 def test_a_pin_on_a_role_that_offers_no_slots_is_still_refused():

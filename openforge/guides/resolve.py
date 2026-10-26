@@ -1156,12 +1156,8 @@ def _reject_unknown_selections(
     # with a step: a question key is a url_key and has no dot in it.
     known |= {f"{PIN}{name}" for name in document["roles"]}
     # A selector derived from a slot is a role the document never
-    # names, so its pin has to be recognised by shape instead: the
-    # role it hangs off, a dot, and the slot. Rejecting it outright
-    # would answer 400 to someone sharing a link to their own build,
-    # and the selections for a role not in play are ignored below
-    # rather than composed, which is what happens to this one when the
-    # part that offered the slot is no longer the part chosen.
+    # names, so its pin is recognised by shape instead: the role it
+    # hangs off, a dot, and the slot.
     known |= {
         key
         for key in selections
@@ -1183,9 +1179,7 @@ def _reject_unknown_selections(
 def _owner_of_slot(key: str, document: dict) -> str | None:
     """The role a slot pin hangs off, if the document offers its slots.
 
-    `part.wall.door` is the door slot of the wall role. The role has
-    to exist and have asked for its slots to be offered; anything else
-    with a dot in it is a key this guide has no answer for.
+    `part.wall.door` is the door slot of the wall role.
     """
     owner, _, slot = key[len(PIN) :].partition(".")
     if not slot:
@@ -1235,8 +1229,7 @@ def _parts(
     in_play = _roles_in_play(chosen)
     parts = {}
     # A role that offers its slots adds more roles as it resolves, so
-    # the list is walked rather than iterated: a selector is appended
-    # behind the part that brought it, and resolved on the next pass.
+    # the list is walked rather than iterated.
     roles = dict(document["roles"])
     order = list(_resolution_order(in_play, document["roles"]))
     position = 0
@@ -1244,7 +1237,15 @@ def _parts(
         name = order[position]
         position += 1
         role = roles[name]
-        predicate = _compose(role["query"], chosen, refinements, selections, name)
+        # A fitting asks only what its slot asks. The guide's questions
+        # are about the build — a wall's texture, a tile's width — and
+        # no door or lintel in the catalog carries either tag, so
+        # composing them in would leave every fitting with nothing.
+        predicate = (
+            role["query"]
+            if role.get("fitting")
+            else _compose(role["query"], chosen, refinements, selections, name)
+        )
         inherited = _matched(role, parts)
         if inherited is not None:
             predicate = _union([predicate, inherited])
@@ -1478,20 +1479,18 @@ INTERFACE = "interface|"
 def _slot_roles(role_name: str, role: dict, blueprint) -> list[tuple[str, dict]]:
     """The selectors a resolved part brings with it, one per fitting.
 
-    A door wall carries its door as a slot, and a rectangular one
-    carries a lintel beside it, so which selectors belong on the page
-    is a property of the piece that landed rather than of the guide.
-    An arched wall brings one, a built-in door brings none, and
-    switching between them is what replaces them.
+    Which selectors belong on the page is a property of the piece that
+    landed rather than of the guide, so they are built here, from the
+    blueprint, and resolved on the same pass.
 
-    Only slots asking for an `interface` tag. The base slot is a
-    fitting of nothing — it is the thing the wall stands in, which the
-    guide names as a role of its own — and it is the one slot that
-    uses `constrain`, which guides do not read.
+    Only slots asking for an `interface` tag. The base slot is the
+    thing the wall stands in, which the guide names as a role of its
+    own, and it is the one slot that uses `constrain`, which guides do
+    not read.
     """
     if not role.get("slots") or blueprint is None:
         return []
-    derived = []
+    derived = {}
     for slot in (blueprint.get("config") or {}).get("parts") or []:
         tags = slot.get("tags") or {}
         query = {
@@ -1501,18 +1500,20 @@ def _slot_roles(role_name: str, role: dict, blueprint) -> list[tuple[str, dict]]
         }
         if not any(t.startswith(INTERFACE) for t in query.get("require", [])):
             continue
-        derived.append(
-            (
-                f"{role_name}.{_slot_key(slot['name'])}",
-                {
-                    "title": slot["name"],
-                    "query": query,
-                    "under": role_name,
-                    "optional": bool(slot.get("optional")),
-                },
-            )
-        )
-    return derived
+        # Prose names collapse to the same key — `grate (right)` and
+        # `grate right` both give `grate-right` — and a name of nothing
+        # but punctuation gives none at all. A pin names one slot, so
+        # the key is what there is one selector per.
+        key = _slot_key(slot.get("name") or "")
+        if not key:
+            continue
+        derived[key] = {
+            "title": slot["name"],
+            "query": query,
+            "under": role_name,
+            "fitting": True,
+        }
+    return [(f"{role_name}.{key}", slot) for key, slot in derived.items()]
 
 
 def _slot_key(name: str) -> str:

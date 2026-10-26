@@ -136,6 +136,14 @@ describe('answersTo', () => {
     expect(answersTo(document, 'part.wall.door')).toBe(false);
   });
 
+  // The server answers 400 to this one, so keeping it in a link would
+  // show the person an error instead of their build.
+  it('does not answer to a pin that names an owner but no slot', () => {
+    const document = { ...DOCUMENT, roles: { wall: { slots: true } } };
+
+    expect(answersTo(document, 'part.wall.')).toBe(false);
+  });
+
   // `wall-base` starts with `wall`, so matching the owner without the
   // separator would hand one role's slots to the other.
   it('does not answer to a slot of a role whose name merely starts the same', () => {

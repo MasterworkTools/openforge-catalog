@@ -478,6 +478,12 @@ $defs:
           of it, the guide names that as a role of its own, and it is
           the one slot that uses `constrain`, which guides do not read.
 
+          A fitting is asked only what its slot asks: the steps and
+          refinements of the guide are about the build, and no door or
+          lintel in the catalog carries a wall texture or a tile
+          width, so composing them in would leave every fitting with
+          nothing to offer.
+
           A derived role is named for the role it hangs off and the
           slot — `wall.door` — so its pin is `part.wall.door`. That
           name is not in this document, which is why an engine and a

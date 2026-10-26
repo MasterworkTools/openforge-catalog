@@ -304,14 +304,14 @@ function selectionKeys(document: GuideDocument): Set<string> {
  *
  * A role that offers its chosen part's fittings grows a role per slot
  * as it resolves — `part.wall.door` — so which ones exist depends on
- * the part that lands and they cannot be listed from the document.
- * Matching them by their owner keeps the door in a shared link.
+ * the part that lands and cannot be listed from the document.
  */
 export function answersTo(document: GuideDocument, key: string): boolean {
   if (selectionKeys(document).has(key)) return true;
-  return Object.entries(document.roles ?? {}).some(
-    ([name, role]) => role.slots && key.startsWith(`${pinKey(name)}.`),
-  );
+  return Object.entries(document.roles ?? {}).some(([name, role]) => {
+    const prefix = `${pinKey(name)}.`;
+    return role.slots && key.startsWith(prefix) && key.length > prefix.length;
+  });
 }
 
 /**
