@@ -526,9 +526,7 @@ describe('impliedBy', () => {
 });
 
 describe('isFitting', () => {
-  // The two sides have to agree. A question that releases a fitting's
-  // pin on the page but not in the engine drops the part someone
-  // chose and resolves it to the same thing again.
+  // The two sides have to agree.
   it('tells a derived role from one the document names', () => {
     expect(isFitting('wall.door')).toBe(true);
     expect(isFitting('wall-base')).toBe(false);

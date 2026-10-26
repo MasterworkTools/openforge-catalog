@@ -2655,8 +2655,7 @@ def test_a_fitting_is_not_asked_the_width_the_build_was_asked():
 
 def test_a_fitting_is_not_asked_the_texture_the_build_was_asked():
     """A refinement reaching every role would ask a wooden door for
-    the wall's stone, and no door carries a texture a wall guide
-    offers, so it would come back with nothing."""
+    the wall's stone."""
     guide = copy.deepcopy(SLOT_GUIDE)
     guide["refinements"] = [
         {
