@@ -148199,6 +148199,19 @@
         "config": {
             "parts": [
                 {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|arched"
+                            },
+                            {
+                                "tag": "size|narrow"
+                            }
+                        ]
+                    }
+                },
+                {
                     "name": "base",
                     "optional": true,
                     "tags": {
@@ -148334,7 +148347,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -148357,6 +148370,19 @@
     {
         "config": {
             "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|arched"
+                            },
+                            {
+                                "tag": "size|narrow"
+                            }
+                        ]
+                    }
+                },
                 {
                     "name": "base",
                     "optional": true,
@@ -148493,7 +148519,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -148515,6 +148541,19 @@
     {
         "config": {
             "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|arched"
+                            },
+                            {
+                                "tag": "size|standard"
+                            }
+                        ]
+                    }
+                },
                 {
                     "name": "base",
                     "optional": true,
@@ -148651,7 +148690,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -148674,6 +148713,19 @@
     {
         "config": {
             "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|arched"
+                            },
+                            {
+                                "tag": "size|standard"
+                            }
+                        ]
+                    }
+                },
                 {
                     "name": "base",
                     "optional": true,
@@ -148810,7 +148862,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -148833,6 +148885,19 @@
     {
         "config": {
             "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|arched"
+                            },
+                            {
+                                "tag": "size|standard"
+                            }
+                        ]
+                    }
+                },
                 {
                     "name": "base",
                     "optional": true,
@@ -148969,7 +149034,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -148993,6 +149058,19 @@
     {
         "config": {
             "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|arched"
+                            },
+                            {
+                                "tag": "size|standard"
+                            }
+                        ]
+                    }
+                },
                 {
                     "name": "base",
                     "optional": true,
@@ -149129,7 +149207,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -149153,6 +149231,19 @@
     {
         "config": {
             "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|arched"
+                            },
+                            {
+                                "tag": "size|standard"
+                            }
+                        ]
+                    }
+                },
                 {
                     "name": "base",
                     "optional": true,
@@ -149289,7 +149380,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -149313,6 +149404,19 @@
     {
         "config": {
             "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|arched"
+                            },
+                            {
+                                "tag": "size|standard"
+                            }
+                        ]
+                    }
+                },
                 {
                     "name": "base",
                     "optional": true,
@@ -149449,7 +149553,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -149473,6 +149577,19 @@
     {
         "config": {
             "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|arched"
+                            },
+                            {
+                                "tag": "size|wide"
+                            }
+                        ]
+                    }
+                },
                 {
                     "name": "base",
                     "optional": true,
@@ -149609,7 +149726,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -149632,6 +149749,19 @@
     {
         "config": {
             "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|arched"
+                            },
+                            {
+                                "tag": "size|wide"
+                            }
+                        ]
+                    }
+                },
                 {
                     "name": "base",
                     "optional": true,
@@ -149768,7 +149898,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -149792,6 +149922,19 @@
     {
         "config": {
             "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|arched"
+                            },
+                            {
+                                "tag": "size|wide"
+                            }
+                        ]
+                    }
+                },
                 {
                     "name": "base",
                     "optional": true,
@@ -149928,7 +150071,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -149952,6 +150095,19 @@
     {
         "config": {
             "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|arched"
+                            },
+                            {
+                                "tag": "size|wide"
+                            }
+                        ]
+                    }
+                },
                 {
                     "name": "base",
                     "optional": true,
@@ -150088,7 +150244,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -150110,6 +150266,19 @@
     {
         "config": {
             "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|arched"
+                            },
+                            {
+                                "tag": "size|standard"
+                            }
+                        ]
+                    }
+                },
                 {
                     "name": "base",
                     "optional": true,
@@ -150246,7 +150415,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -150271,6 +150440,19 @@
     {
         "config": {
             "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|arched"
+                            },
+                            {
+                                "tag": "size|standard"
+                            }
+                        ]
+                    }
+                },
                 {
                     "name": "base",
                     "optional": true,
@@ -150407,7 +150589,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -150433,6 +150615,19 @@
     {
         "config": {
             "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|arched"
+                            },
+                            {
+                                "tag": "size|standard"
+                            }
+                        ]
+                    }
+                },
                 {
                     "name": "base",
                     "optional": true,
@@ -150569,7 +150764,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -150595,6 +150790,19 @@
     {
         "config": {
             "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|arched"
+                            },
+                            {
+                                "tag": "size|standard"
+                            }
+                        ]
+                    }
+                },
                 {
                     "name": "base",
                     "optional": true,
@@ -150731,7 +150939,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -150757,6 +150965,19 @@
     {
         "config": {
             "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|arched"
+                            },
+                            {
+                                "tag": "size|standard"
+                            }
+                        ]
+                    }
+                },
                 {
                     "name": "base",
                     "optional": true,
@@ -150893,7 +151114,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -150919,6 +151140,19 @@
     {
         "config": {
             "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|arched"
+                            },
+                            {
+                                "tag": "size|wide"
+                            }
+                        ]
+                    }
+                },
                 {
                     "name": "base",
                     "optional": true,
@@ -151055,7 +151289,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -151078,6 +151312,23 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|arched"
+                            },
+                            {
+                                "tag": "size|narrow"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "dungeon_stone%eroded#door+arched+narrow.PA.openlock.stl",
             "file_modified_at": "2018-06-05T22:33:43",
@@ -151190,7 +151441,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -151211,6 +151462,23 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|arched"
+                            },
+                            {
+                                "tag": "size|narrow"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "dungeon_stone%eroded#door+arched+narrow.ZA.openlock.stl",
             "file_modified_at": "2018-06-05T22:39:41",
@@ -151323,7 +151591,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -151343,6 +151611,23 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|arched"
+                            },
+                            {
+                                "tag": "size|standard"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "dungeon_stone%eroded#door+arched+standard.P.openlock.stl",
             "file_modified_at": "2018-06-05T22:50:02",
@@ -151455,7 +151740,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -151476,6 +151761,23 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|arched"
+                            },
+                            {
+                                "tag": "size|standard"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "dungeon_stone%eroded#door+arched+standard.PA.openlock.stl",
             "file_modified_at": "2018-06-05T22:44:55",
@@ -151588,7 +151890,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -151609,6 +151911,23 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|arched"
+                            },
+                            {
+                                "tag": "size|standard"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "dungeon_stone%eroded#door+arched+standard.PB+mirror.openlock.stl",
             "file_modified_at": "2018-06-05T22:46:33",
@@ -151721,7 +152040,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -151743,6 +152062,23 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|arched"
+                            },
+                            {
+                                "tag": "size|standard"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "dungeon_stone%eroded#door+arched+standard.PB.openlock.stl",
             "file_modified_at": "2018-06-05T22:47:48",
@@ -151855,7 +152191,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -151877,6 +152213,23 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|arched"
+                            },
+                            {
+                                "tag": "size|standard"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "dungeon_stone%eroded#door+arched+standard.PC+mirror.openlock.stl",
             "file_modified_at": "2018-09-17T15:37:42",
@@ -151989,7 +152342,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -152011,6 +152364,23 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|arched"
+                            },
+                            {
+                                "tag": "size|standard"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "dungeon_stone%eroded#door+arched+standard.PC.openlock.stl",
             "file_modified_at": "2018-09-17T15:42:51",
@@ -152123,7 +152493,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -152145,6 +152515,23 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|arched"
+                            },
+                            {
+                                "tag": "size|wide"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "dungeon_stone%eroded#door+arched+wide.P.openlock.stl",
             "file_modified_at": "2018-06-05T22:54:01",
@@ -152257,7 +152644,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -152278,6 +152665,23 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|arched"
+                            },
+                            {
+                                "tag": "size|wide"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "dungeon_stone%eroded#door+arched+wide.PC+mirror.openlock.stl",
             "file_modified_at": "2018-09-17T16:07:56",
@@ -152390,7 +152794,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -152412,6 +152816,23 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|arched"
+                            },
+                            {
+                                "tag": "size|wide"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "dungeon_stone%eroded#door+arched+wide.PC.openlock.stl",
             "file_modified_at": "2018-09-17T16:10:56",
@@ -152524,7 +152945,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -152546,6 +152967,23 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|arched"
+                            },
+                            {
+                                "tag": "size|wide"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "dungeon_stone%eroded#door+arched+wide.Z.openlock.stl",
             "file_modified_at": "2018-06-05T22:55:09",
@@ -152658,7 +153096,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -152678,6 +153116,23 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|arched"
+                            },
+                            {
+                                "tag": "size|standard"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "dungeon_stone%eroded#door+arched+standard.P.openlock,side.stl",
             "file_modified_at": "2018-09-17T15:55:50",
@@ -152790,7 +153245,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -152813,6 +153268,23 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|arched"
+                            },
+                            {
+                                "tag": "size|standard"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "dungeon_stone%eroded#door+arched+standard.PB+mirror.openlock,side.stl",
             "file_modified_at": "2018-09-17T14:06:11",
@@ -152925,7 +153397,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -152949,6 +153421,23 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|arched"
+                            },
+                            {
+                                "tag": "size|standard"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "dungeon_stone%eroded#door+arched+standard.PB.openlock,side.stl",
             "file_modified_at": "2018-09-17T14:10:45",
@@ -153061,7 +153550,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -153085,6 +153574,23 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|arched"
+                            },
+                            {
+                                "tag": "size|standard"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "dungeon_stone%eroded#door+arched+standard.PC+mirror.openlock,side.stl",
             "file_modified_at": "2018-09-17T15:36:50",
@@ -153197,7 +153703,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -153221,6 +153727,23 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|arched"
+                            },
+                            {
+                                "tag": "size|standard"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "dungeon_stone%eroded#door+arched+standard.PC.openlock,side.stl",
             "file_modified_at": "2018-09-17T15:41:34",
@@ -153333,7 +153856,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -153357,6 +153880,23 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|arched"
+                            },
+                            {
+                                "tag": "size|wide"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "dungeon_stone%eroded#door+arched+wide.P.openlock,side.stl",
             "file_modified_at": "2021-09-27T21:24:03.139758",
@@ -153469,7 +154009,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -179328,6 +179868,19 @@
         "config": {
             "parts": [
                 {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|arched"
+                            },
+                            {
+                                "tag": "size|standard"
+                            }
+                        ]
+                    }
+                },
+                {
                     "name": "base",
                     "optional": true,
                     "tags": {
@@ -179463,7 +180016,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -179486,6 +180039,19 @@
     {
         "config": {
             "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|arched"
+                            },
+                            {
+                                "tag": "size|wide"
+                            }
+                        ]
+                    }
+                },
                 {
                     "name": "base",
                     "optional": true,
@@ -179622,7 +180188,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -179818,6 +180384,19 @@
         "config": {
             "parts": [
                 {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|arched"
+                            },
+                            {
+                                "tag": "size|standard"
+                            }
+                        ]
+                    }
+                },
+                {
                     "name": "base",
                     "optional": true,
                     "tags": {
@@ -179953,7 +180532,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -179976,6 +180555,19 @@
     {
         "config": {
             "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|arched"
+                            },
+                            {
+                                "tag": "size|wide"
+                            }
+                        ]
+                    }
+                },
                 {
                     "name": "base",
                     "optional": true,
@@ -180112,7 +180704,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -180135,6 +180727,19 @@
     {
         "config": {
             "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|arched"
+                            },
+                            {
+                                "tag": "size|narrow"
+                            }
+                        ]
+                    }
+                },
                 {
                     "name": "base",
                     "optional": true,
@@ -180271,7 +180876,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -180467,6 +181072,19 @@
         "config": {
             "parts": [
                 {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|arched"
+                            },
+                            {
+                                "tag": "size|standard"
+                            }
+                        ]
+                    }
+                },
+                {
                     "name": "base",
                     "optional": true,
                     "tags": {
@@ -180602,7 +181220,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -180625,6 +181243,19 @@
     {
         "config": {
             "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|arched"
+                            },
+                            {
+                                "tag": "size|wide"
+                            }
+                        ]
+                    }
+                },
                 {
                     "name": "base",
                     "optional": true,
@@ -180761,7 +181392,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -180957,6 +181588,19 @@
         "config": {
             "parts": [
                 {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|arched"
+                            },
+                            {
+                                "tag": "size|standard"
+                            }
+                        ]
+                    }
+                },
+                {
                     "name": "base",
                     "optional": true,
                     "tags": {
@@ -181092,7 +181736,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -181115,6 +181759,19 @@
     {
         "config": {
             "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|arched"
+                            },
+                            {
+                                "tag": "size|wide"
+                            }
+                        ]
+                    }
+                },
                 {
                     "name": "base",
                     "optional": true,
@@ -181251,7 +181908,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -181445,6 +182102,19 @@
         "config": {
             "parts": [
                 {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|arched"
+                            },
+                            {
+                                "tag": "size|narrow"
+                            }
+                        ]
+                    }
+                },
+                {
                     "name": "base",
                     "optional": true,
                     "tags": {
@@ -181580,7 +182250,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -181772,6 +182442,19 @@
         "config": {
             "parts": [
                 {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|arched"
+                            },
+                            {
+                                "tag": "size|standard"
+                            }
+                        ]
+                    }
+                },
+                {
                     "name": "base",
                     "optional": true,
                     "tags": {
@@ -181907,7 +182590,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -181928,6 +182611,19 @@
     {
         "config": {
             "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|arched"
+                            },
+                            {
+                                "tag": "size|wide"
+                            }
+                        ]
+                    }
+                },
                 {
                     "name": "base",
                     "optional": true,
@@ -182064,7 +182760,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -182085,6 +182781,19 @@
     {
         "config": {
             "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|arched"
+                            },
+                            {
+                                "tag": "size|narrow"
+                            }
+                        ]
+                    }
+                },
                 {
                     "name": "base",
                     "optional": true,
@@ -182221,7 +182930,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -182413,6 +183122,19 @@
         "config": {
             "parts": [
                 {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|arched"
+                            },
+                            {
+                                "tag": "size|standard"
+                            }
+                        ]
+                    }
+                },
+                {
                     "name": "base",
                     "optional": true,
                     "tags": {
@@ -182548,7 +183270,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -182727,6 +183449,19 @@
         "config": {
             "parts": [
                 {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|arched"
+                            },
+                            {
+                                "tag": "size|wide"
+                            }
+                        ]
+                    }
+                },
+                {
                     "name": "base",
                     "optional": true,
                     "tags": {
@@ -182862,7 +183597,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -183054,6 +183789,19 @@
         "config": {
             "parts": [
                 {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|arched"
+                            },
+                            {
+                                "tag": "size|narrow"
+                            }
+                        ]
+                    }
+                },
+                {
                     "name": "base",
                     "optional": true,
                     "tags": {
@@ -183189,7 +183937,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -183381,6 +184129,19 @@
         "config": {
             "parts": [
                 {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|arched"
+                            },
+                            {
+                                "tag": "size|standard"
+                            }
+                        ]
+                    }
+                },
+                {
                     "name": "base",
                     "optional": true,
                     "tags": {
@@ -183516,7 +184277,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -183537,6 +184298,19 @@
     {
         "config": {
             "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|arched"
+                            },
+                            {
+                                "tag": "size|wide"
+                            }
+                        ]
+                    }
+                },
                 {
                     "name": "base",
                     "optional": true,
@@ -183673,7 +184447,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -183694,6 +184468,19 @@
     {
         "config": {
             "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|arched"
+                            },
+                            {
+                                "tag": "size|narrow"
+                            }
+                        ]
+                    }
+                },
                 {
                     "name": "base",
                     "optional": true,
@@ -183830,7 +184617,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -184022,6 +184809,19 @@
         "config": {
             "parts": [
                 {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|arched"
+                            },
+                            {
+                                "tag": "size|standard"
+                            }
+                        ]
+                    }
+                },
+                {
                     "name": "base",
                     "optional": true,
                     "tags": {
@@ -184157,7 +184957,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -184336,6 +185136,19 @@
         "config": {
             "parts": [
                 {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|arched"
+                            },
+                            {
+                                "tag": "size|wide"
+                            }
+                        ]
+                    }
+                },
+                {
                     "name": "base",
                     "optional": true,
                     "tags": {
@@ -184471,7 +185284,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -184665,6 +185478,19 @@
         "config": {
             "parts": [
                 {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|arched"
+                            },
+                            {
+                                "tag": "size|standard"
+                            }
+                        ]
+                    }
+                },
+                {
                     "name": "base",
                     "optional": true,
                     "tags": {
@@ -184800,7 +185626,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -184823,6 +185649,19 @@
     {
         "config": {
             "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|arched"
+                            },
+                            {
+                                "tag": "size|wide"
+                            }
+                        ]
+                    }
+                },
                 {
                     "name": "base",
                     "optional": true,
@@ -184959,7 +185798,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -185155,6 +185994,19 @@
         "config": {
             "parts": [
                 {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|arched"
+                            },
+                            {
+                                "tag": "size|standard"
+                            }
+                        ]
+                    }
+                },
+                {
                     "name": "base",
                     "optional": true,
                     "tags": {
@@ -185290,7 +186142,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -185313,6 +186165,19 @@
     {
         "config": {
             "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|arched"
+                            },
+                            {
+                                "tag": "size|wide"
+                            }
+                        ]
+                    }
+                },
                 {
                     "name": "base",
                     "optional": true,
@@ -185449,7 +186314,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -185472,6 +186337,19 @@
     {
         "config": {
             "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|arched"
+                            },
+                            {
+                                "tag": "size|narrow"
+                            }
+                        ]
+                    }
+                },
                 {
                     "name": "base",
                     "optional": true,
@@ -185608,7 +186486,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -185804,6 +186682,19 @@
         "config": {
             "parts": [
                 {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|arched"
+                            },
+                            {
+                                "tag": "size|standard"
+                            }
+                        ]
+                    }
+                },
+                {
                     "name": "base",
                     "optional": true,
                     "tags": {
@@ -185939,7 +186830,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -185962,6 +186853,19 @@
     {
         "config": {
             "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|arched"
+                            },
+                            {
+                                "tag": "size|wide"
+                            }
+                        ]
+                    }
+                },
                 {
                     "name": "base",
                     "optional": true,
@@ -186098,7 +187002,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -186294,6 +187198,19 @@
         "config": {
             "parts": [
                 {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|arched"
+                            },
+                            {
+                                "tag": "size|standard"
+                            }
+                        ]
+                    }
+                },
+                {
                     "name": "base",
                     "optional": true,
                     "tags": {
@@ -186429,7 +187346,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -186452,6 +187369,19 @@
     {
         "config": {
             "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|arched"
+                            },
+                            {
+                                "tag": "size|wide"
+                            }
+                        ]
+                    }
+                },
                 {
                     "name": "base",
                     "optional": true,
@@ -186588,7 +187518,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -186757,6 +187687,23 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|arched"
+                            },
+                            {
+                                "tag": "size|narrow"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "dungeon_stone%block#curved+concave,door+arched+narrow.4r22.5\u00b0.openlock+unsupported.stl",
             "file_modified_at": "2025-11-28T13:16:07.672262",
@@ -186869,7 +187816,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -186889,6 +187836,23 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|arched"
+                            },
+                            {
+                                "tag": "size|narrow"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "dungeon_stone%block#curved+concave,door+arched+narrow.4r22.5\u00b0.openlock.stl",
             "file_modified_at": "2025-11-28T13:15:21.226121",
@@ -187001,7 +187965,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -187168,6 +188132,23 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|arched"
+                            },
+                            {
+                                "tag": "size|standard"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "dungeon_stone%block#curved+concave,door+arched+standard.4r45\u00b0.openlock+unsupported.stl",
             "file_modified_at": "2025-11-28T13:19:23.323243",
@@ -187280,7 +188261,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -187300,6 +188281,23 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|arched"
+                            },
+                            {
+                                "tag": "size|standard"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "dungeon_stone%block#curved+concave,door+arched+standard.4r45\u00b0.openlock.stl",
             "file_modified_at": "2025-11-28T13:14:01.987706",
@@ -187412,7 +188410,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -187431,6 +188429,23 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|arched"
+                            },
+                            {
+                                "tag": "size|wide"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "dungeon_stone%block#curved+concave,door+arched+wide.4r90\u00b0.openlock+unsupported.stl",
             "file_modified_at": "2025-11-28T13:18:45.291327",
@@ -187543,7 +188558,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -187563,6 +188578,23 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|arched"
+                            },
+                            {
+                                "tag": "size|wide"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "dungeon_stone%block#curved+concave,door+arched+wide.4r90\u00b0.openlock.stl",
             "file_modified_at": "2025-11-28T13:14:40.507484",
@@ -187675,7 +188707,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -187694,6 +188726,23 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|arched"
+                            },
+                            {
+                                "tag": "size|narrow"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "dungeon_stone%block#curved+convex,door+arched+narrow.2r22.5\u00b0.openlock+unsupported.stl",
             "file_modified_at": "2025-11-28T12:13:48.105424",
@@ -187806,7 +188855,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -187826,6 +188875,23 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|arched"
+                            },
+                            {
+                                "tag": "size|narrow"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "dungeon_stone%block#curved+convex,door+arched+narrow.2r22.5\u00b0.openlock.stl",
             "file_modified_at": "2025-11-28T12:13:32.758045",
@@ -187938,7 +189004,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -187957,23 +189023,6 @@
         "type": "model"
     },
     {
-        "config": {
-            "parts": [
-                {
-                    "name": "door",
-                    "tags": {
-                        "require": [
-                            {
-                                "tag": "interface|door|arched"
-                            },
-                            {
-                                "tag": "size|narrow"
-                            }
-                        ]
-                    }
-                }
-            ]
-        },
         "file_metadata": {
             "file": "dungeon_stone%block#curved+convex,door+arched+narrow.2r45\u00b0.openlock.stl",
             "file_modified_at": "2023-09-24T21:08:32.245793",
@@ -188086,7 +189135,7 @@
                 }
             }
         ],
-        "metadata": true,
+        "metadata": false,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -188105,6 +189154,23 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|arched"
+                            },
+                            {
+                                "tag": "size|narrow"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "dungeon_stone%block#curved+convex,door+arched+narrow.4r22.5\u00b0.openlock+unsupported.stl",
             "file_modified_at": "2025-11-28T13:18:05.821927",
@@ -188217,7 +189283,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -188237,6 +189303,23 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|arched"
+                            },
+                            {
+                                "tag": "size|narrow"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "dungeon_stone%block#curved+convex,door+arched+narrow.4r22.5\u00b0.openlock.stl",
             "file_modified_at": "2025-11-28T13:17:21.113673",
@@ -188349,7 +189432,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -188516,6 +189599,23 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|arched"
+                            },
+                            {
+                                "tag": "size|standard"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "dungeon_stone%block#curved+convex,door+arched+standard.4r45\u00b0.openlock+unsupported.stl",
             "file_modified_at": "2025-11-28T13:19:50.636255",
@@ -188628,7 +189728,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -188648,6 +189748,23 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|arched"
+                            },
+                            {
+                                "tag": "size|standard"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "dungeon_stone%block#curved+convex,door+arched+standard.4r45\u00b0.openlock.stl",
             "file_modified_at": "2025-11-28T13:13:16.519910",
@@ -188760,7 +189877,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -188779,6 +189896,23 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|arched"
+                            },
+                            {
+                                "tag": "size|wide"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "dungeon_stone%block#curved+convex,door+arched+wide.4r90\u00b0.openlock+unsupported.stl",
             "file_modified_at": "2025-11-28T13:20:25.477612",
@@ -188891,7 +190025,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -188911,6 +190045,23 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|arched"
+                            },
+                            {
+                                "tag": "size|wide"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "dungeon_stone%block#curved+convex,door+arched+wide.4r90\u00b0.openlock.stl",
             "file_modified_at": "2025-11-28T13:12:32.472687",
@@ -189023,7 +190174,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -189190,6 +190341,23 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|arched"
+                            },
+                            {
+                                "tag": "size|narrow"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "dungeon_stone%eroded#curved+concave,door+arched+narrow.4r22.5\u00b0.openlock+unsupported.stl",
             "file_modified_at": "2025-11-28T11:49:59.978502",
@@ -189302,7 +190470,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -189322,6 +190490,23 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|arched"
+                            },
+                            {
+                                "tag": "size|narrow"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "dungeon_stone%eroded#curved+concave,door+arched+narrow.4r22.5\u00b0.openlock.stl",
             "file_modified_at": "2025-11-28T11:50:13.879353",
@@ -189434,7 +190619,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -189601,6 +190786,23 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|arched"
+                            },
+                            {
+                                "tag": "size|standard"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "dungeon_stone%eroded#curved+concave,door+arched+standard.4r45\u00b0.openlock+unsupported.stl",
             "file_modified_at": "2025-11-28T13:19:12.248979",
@@ -189713,7 +190915,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -189733,6 +190935,23 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|arched"
+                            },
+                            {
+                                "tag": "size|standard"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "dungeon_stone%eroded#curved+concave,door+arched+standard.4r45\u00b0.openlock.stl",
             "file_modified_at": "2025-11-28T13:14:13.978846",
@@ -189845,7 +191064,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -189864,6 +191083,23 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|arched"
+                            },
+                            {
+                                "tag": "size|wide"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "dungeon_stone%eroded#curved+concave,door+arched+wide.4r90\u00b0.openlock+unsupported.stl",
             "file_modified_at": "2025-11-28T13:18:26.971128",
@@ -189976,7 +191212,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -189996,6 +191232,23 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|arched"
+                            },
+                            {
+                                "tag": "size|wide"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "dungeon_stone%eroded#curved+concave,door+arched+wide.4r90\u00b0.openlock.stl",
             "file_modified_at": "2025-11-28T13:14:54.129428",
@@ -190108,7 +191361,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -190127,6 +191380,23 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|arched"
+                            },
+                            {
+                                "tag": "size|narrow"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "dungeon_stone%eroded#curved+convex,door+arched+narrow.2r22.5\u00b0.openlock+unsupported.stl",
             "file_modified_at": "2025-11-28T12:13:59.942071",
@@ -190239,7 +191509,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -190259,6 +191529,23 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|arched"
+                            },
+                            {
+                                "tag": "size|narrow"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "dungeon_stone%eroded#curved+convex,door+arched+narrow.2r22.5\u00b0.openlock.stl",
             "file_modified_at": "2025-11-28T12:13:21.009274",
@@ -190371,7 +191658,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -190390,23 +191677,6 @@
         "type": "model"
     },
     {
-        "config": {
-            "parts": [
-                {
-                    "name": "door",
-                    "tags": {
-                        "require": [
-                            {
-                                "tag": "interface|door|arched"
-                            },
-                            {
-                                "tag": "size|narrow"
-                            }
-                        ]
-                    }
-                }
-            ]
-        },
         "file_metadata": {
             "file": "dungeon_stone%eroded#curved+convex,door+arched+narrow.2r45\u00b0.openlock.stl",
             "file_modified_at": "2023-09-24T21:39:15.434269",
@@ -190519,7 +191789,7 @@
                 }
             }
         ],
-        "metadata": true,
+        "metadata": false,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -190538,6 +191808,23 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|arched"
+                            },
+                            {
+                                "tag": "size|narrow"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "dungeon_stone%eroded#curved+convex,door+arched+narrow.4r22.5\u00b0.openlock+unsupported.stl",
             "file_modified_at": "2025-11-28T13:17:52.923421",
@@ -190650,7 +191937,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -190670,6 +191957,23 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|arched"
+                            },
+                            {
+                                "tag": "size|narrow"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "dungeon_stone%eroded#curved+convex,door+arched+narrow.4r22.5\u00b0.openlock.stl",
             "file_modified_at": "2025-11-28T13:17:32.308420",
@@ -190782,7 +192086,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -190949,6 +192253,23 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|arched"
+                            },
+                            {
+                                "tag": "size|standard"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "dungeon_stone%eroded#curved+convex,door+arched+standard.4r45\u00b0.openlock+unsupported.stl",
             "file_modified_at": "2025-11-28T13:19:38.369150",
@@ -191061,7 +192382,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -191081,6 +192402,23 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|arched"
+                            },
+                            {
+                                "tag": "size|standard"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "dungeon_stone%eroded#curved+convex,door+arched+standard.4r45\u00b0.openlock.stl",
             "file_modified_at": "2025-11-28T13:13:29.533028",
@@ -191193,7 +192531,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -191212,6 +192550,23 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|arched"
+                            },
+                            {
+                                "tag": "size|wide"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "dungeon_stone%eroded#curved+convex,door+arched+wide.4r90\u00b0.openlock+unsupported.stl",
             "file_modified_at": "2025-11-28T13:20:12.324231",
@@ -191324,7 +192679,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -191344,6 +192699,23 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|arched"
+                            },
+                            {
+                                "tag": "size|wide"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "dungeon_stone%eroded#curved+convex,door+arched+wide.4r90\u00b0.openlock.stl",
             "file_modified_at": "2025-11-28T13:12:46.555974",
@@ -191456,7 +192828,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -191625,6 +192997,23 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|arched"
+                            },
+                            {
+                                "tag": "size|standard"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "dungeon_stone%block#curved+concave,door+arched+standard.4r45\u00b0.openlock+unsupported,side.stl",
             "file_modified_at": "2025-11-28T13:22:47.434162",
@@ -191737,7 +193126,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -191759,6 +193148,23 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|arched"
+                            },
+                            {
+                                "tag": "size|standard"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "dungeon_stone%block#curved+concave,door+arched+standard.4r45\u00b0.openlock,side.stl",
             "file_modified_at": "2025-11-28T13:23:40.764293",
@@ -191871,7 +193277,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -191892,6 +193298,23 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|arched"
+                            },
+                            {
+                                "tag": "size|wide"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "dungeon_stone%block#curved+concave,door+arched+wide.4r90\u00b0.openlock+unsupported,side.stl",
             "file_modified_at": "2025-11-28T13:24:02.561586",
@@ -192004,7 +193427,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -192026,6 +193449,23 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|arched"
+                            },
+                            {
+                                "tag": "size|wide"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "dungeon_stone%block#curved+concave,door+arched+wide.4r90\u00b0.openlock,side.stl",
             "file_modified_at": "2025-11-28T13:24:59.792629",
@@ -192138,7 +193578,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -192309,6 +193749,23 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|arched"
+                            },
+                            {
+                                "tag": "size|standard"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "dungeon_stone%block#curved+convex,door+arched+standard.4r45\u00b0.openlock+unsupported,side.stl",
             "file_modified_at": "2025-11-28T13:21:50.917366",
@@ -192421,7 +193878,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -192443,6 +193900,23 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|arched"
+                            },
+                            {
+                                "tag": "size|standard"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "dungeon_stone%block#curved+convex,door+arched+standard.4r45\u00b0.openlock,side.stl",
             "file_modified_at": "2025-11-28T13:22:32.002364",
@@ -192555,7 +194029,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -192576,6 +194050,23 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|arched"
+                            },
+                            {
+                                "tag": "size|wide"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "dungeon_stone%block#curved+convex,door+arched+wide.4r90\u00b0.openlock+unsupported,side.stl",
             "file_modified_at": "2025-11-28T13:20:44.813070",
@@ -192688,7 +194179,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -192710,6 +194201,23 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|arched"
+                            },
+                            {
+                                "tag": "size|wide"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "dungeon_stone%block#curved+convex,door+arched+wide.4r90\u00b0.openlock,side.stl",
             "file_modified_at": "2025-11-28T13:21:30.784159",
@@ -192822,7 +194330,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -192993,6 +194501,23 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|arched"
+                            },
+                            {
+                                "tag": "size|standard"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "dungeon_stone%eroded#curved+concave,door+arched+standard.4r45\u00b0.openlock+unsupported,side.stl",
             "file_modified_at": "2025-11-28T13:22:59.819709",
@@ -193105,7 +194630,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -193127,6 +194652,23 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|arched"
+                            },
+                            {
+                                "tag": "size|standard"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "dungeon_stone%eroded#curved+concave,door+arched+standard.4r45\u00b0.openlock,side.stl",
             "file_modified_at": "2025-11-28T13:23:27.461610",
@@ -193239,7 +194781,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -193260,6 +194802,23 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|arched"
+                            },
+                            {
+                                "tag": "size|wide"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "dungeon_stone%eroded#curved+concave,door+arched+wide.4r90\u00b0.openlock+unsupported,side.stl",
             "file_modified_at": "2025-11-28T13:24:18.496682",
@@ -193372,7 +194931,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -193394,6 +194953,23 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|arched"
+                            },
+                            {
+                                "tag": "size|wide"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "dungeon_stone%eroded#curved+concave,door+arched+wide.4r90\u00b0.openlock,side.stl",
             "file_modified_at": "2025-11-28T13:24:38.472745",
@@ -193506,7 +195082,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -193677,6 +195253,23 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|arched"
+                            },
+                            {
+                                "tag": "size|standard"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "dungeon_stone%eroded#curved+convex,door+arched+standard.4r45\u00b0.openlock+unsupported,side.stl",
             "file_modified_at": "2025-11-28T13:22:02.904880",
@@ -193789,7 +195382,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -193811,6 +195404,23 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|arched"
+                            },
+                            {
+                                "tag": "size|standard"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "dungeon_stone%eroded#curved+convex,door+arched+standard.4r45\u00b0.openlock,side.stl",
             "file_modified_at": "2025-11-28T13:22:19.052243",
@@ -193923,7 +195533,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -193944,6 +195554,23 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|arched"
+                            },
+                            {
+                                "tag": "size|wide"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "dungeon_stone%eroded#curved+convex,door+arched+wide.4r90\u00b0.openlock+unsupported,side.stl",
             "file_modified_at": "2025-11-28T13:21:00.286156",
@@ -194056,7 +195683,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -194078,6 +195705,23 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|arched"
+                            },
+                            {
+                                "tag": "size|wide"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "dungeon_stone%eroded#curved+convex,door+arched+wide.4r90\u00b0.openlock,side.stl",
             "file_modified_at": "2025-11-28T13:21:16.471901",
@@ -194190,7 +195834,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -196219,44 +197863,6 @@
         "config": {
             "parts": [
                 {
-                    "name": "door",
-                    "tags": {
-                        "require": [
-                            {
-                                "tag": "interface|door|rectangular"
-                            },
-                            {
-                                "tag": "size|single"
-                            }
-                        ]
-                    }
-                },
-                {
-                    "name": "lintel",
-                    "tags": {
-                        "require": [
-                            {
-                                "tag": "interface|lintel"
-                            },
-                            {
-                                "tag": "shape|curved"
-                            },
-                            {
-                                "tag": "shape|curved|convex"
-                            },
-                            {
-                                "tag": "size|radius|2"
-                            },
-                            {
-                                "tag": "size|single"
-                            },
-                            {
-                                "tag": "size|width|sw"
-                            }
-                        ]
-                    }
-                },
-                {
                     "name": "base",
                     "optional": true,
                     "tags": {
@@ -196392,7 +197998,7 @@
                 }
             }
         ],
-        "metadata": true,
+        "metadata": false,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -196996,44 +198602,6 @@
         "config": {
             "parts": [
                 {
-                    "name": "door",
-                    "tags": {
-                        "require": [
-                            {
-                                "tag": "interface|door|rectangular"
-                            },
-                            {
-                                "tag": "size|single"
-                            }
-                        ]
-                    }
-                },
-                {
-                    "name": "lintel",
-                    "tags": {
-                        "require": [
-                            {
-                                "tag": "interface|lintel"
-                            },
-                            {
-                                "tag": "shape|curved"
-                            },
-                            {
-                                "tag": "shape|curved|convex"
-                            },
-                            {
-                                "tag": "size|radius|2"
-                            },
-                            {
-                                "tag": "size|single"
-                            },
-                            {
-                                "tag": "size|width|sw"
-                            }
-                        ]
-                    }
-                },
-                {
                     "name": "base",
                     "optional": true,
                     "tags": {
@@ -197169,7 +198737,7 @@
                 }
             }
         ],
-        "metadata": true,
+        "metadata": false,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -199294,48 +200862,6 @@
         "type": "model"
     },
     {
-        "config": {
-            "parts": [
-                {
-                    "name": "door",
-                    "tags": {
-                        "require": [
-                            {
-                                "tag": "interface|door|rectangular"
-                            },
-                            {
-                                "tag": "size|single"
-                            }
-                        ]
-                    }
-                },
-                {
-                    "name": "lintel",
-                    "tags": {
-                        "require": [
-                            {
-                                "tag": "interface|lintel"
-                            },
-                            {
-                                "tag": "shape|curved"
-                            },
-                            {
-                                "tag": "shape|curved|convex"
-                            },
-                            {
-                                "tag": "size|radius|2"
-                            },
-                            {
-                                "tag": "size|single"
-                            },
-                            {
-                                "tag": "size|width|sw"
-                            }
-                        ]
-                    }
-                }
-            ]
-        },
         "file_metadata": {
             "file": "dungeon_stone%block#curved+convex,door+rectangular+narrow.2r45\u00b0.openlock.stl",
             "file_modified_at": "2024-02-10T18:15:06.178916",
@@ -199448,7 +200974,7 @@
                 }
             }
         ],
-        "metadata": true,
+        "metadata": false,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -199983,48 +201509,6 @@
         "type": "model"
     },
     {
-        "config": {
-            "parts": [
-                {
-                    "name": "door",
-                    "tags": {
-                        "require": [
-                            {
-                                "tag": "interface|door|rectangular"
-                            },
-                            {
-                                "tag": "size|single"
-                            }
-                        ]
-                    }
-                },
-                {
-                    "name": "lintel",
-                    "tags": {
-                        "require": [
-                            {
-                                "tag": "interface|lintel"
-                            },
-                            {
-                                "tag": "shape|curved"
-                            },
-                            {
-                                "tag": "shape|curved|convex"
-                            },
-                            {
-                                "tag": "size|radius|2"
-                            },
-                            {
-                                "tag": "size|single"
-                            },
-                            {
-                                "tag": "size|width|sw"
-                            }
-                        ]
-                    }
-                }
-            ]
-        },
         "file_metadata": {
             "file": "dungeon_stone%eroded#curved+convex,door+rectangular+narrow.2r45\u00b0.openlock.stl",
             "file_modified_at": "2024-02-10T18:35:04.871806",
@@ -200137,7 +201621,7 @@
                 }
             }
         ],
-        "metadata": true,
+        "metadata": false,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -291499,38 +292983,6 @@
         "config": {
             "parts": [
                 {
-                    "name": "door",
-                    "tags": {
-                        "require": [
-                            {
-                                "tag": "interface|door|rectangular"
-                            },
-                            {
-                                "tag": "size|single"
-                            }
-                        ]
-                    }
-                },
-                {
-                    "name": "lintel",
-                    "tags": {
-                        "require": [
-                            {
-                                "tag": "interface|lintel"
-                            },
-                            {
-                                "tag": "shape|square"
-                            },
-                            {
-                                "tag": "size|single"
-                            },
-                            {
-                                "tag": "size|width|sw"
-                            }
-                        ]
-                    }
-                },
-                {
                     "name": "base",
                     "optional": true,
                     "tags": {
@@ -291666,7 +293118,7 @@
                 }
             }
         ],
-        "metadata": true,
+        "metadata": false,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -291879,38 +293331,6 @@
         "config": {
             "parts": [
                 {
-                    "name": "door",
-                    "tags": {
-                        "require": [
-                            {
-                                "tag": "interface|door|rectangular"
-                            },
-                            {
-                                "tag": "size|single"
-                            }
-                        ]
-                    }
-                },
-                {
-                    "name": "lintel",
-                    "tags": {
-                        "require": [
-                            {
-                                "tag": "interface|lintel"
-                            },
-                            {
-                                "tag": "shape|square"
-                            },
-                            {
-                                "tag": "size|single"
-                            },
-                            {
-                                "tag": "size|width|sw"
-                            }
-                        ]
-                    }
-                },
-                {
                     "name": "base",
                     "optional": true,
                     "tags": {
@@ -292046,7 +293466,7 @@
                 }
             }
         ],
-        "metadata": true,
+        "metadata": false,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -293758,6 +295178,38 @@
         "config": {
             "parts": [
                 {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|rectangular"
+                            },
+                            {
+                                "tag": "size|double"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "name": "lintel",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|lintel"
+                            },
+                            {
+                                "tag": "shape|square"
+                            },
+                            {
+                                "tag": "size|double"
+                            },
+                            {
+                                "tag": "size|width|sw"
+                            }
+                        ]
+                    }
+                },
+                {
                     "name": "base",
                     "optional": true,
                     "tags": {
@@ -293893,7 +295345,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -293913,6 +295365,38 @@
     {
         "config": {
             "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|rectangular"
+                            },
+                            {
+                                "tag": "size|double"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "name": "lintel",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|lintel"
+                            },
+                            {
+                                "tag": "shape|square"
+                            },
+                            {
+                                "tag": "size|double"
+                            },
+                            {
+                                "tag": "size|width|sw"
+                            }
+                        ]
+                    }
+                },
                 {
                     "name": "base",
                     "optional": true,
@@ -294049,7 +295533,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -294257,38 +295741,6 @@
         "config": {
             "parts": [
                 {
-                    "name": "door",
-                    "tags": {
-                        "require": [
-                            {
-                                "tag": "interface|door|rectangular"
-                            },
-                            {
-                                "tag": "size|single"
-                            }
-                        ]
-                    }
-                },
-                {
-                    "name": "lintel",
-                    "tags": {
-                        "require": [
-                            {
-                                "tag": "interface|lintel"
-                            },
-                            {
-                                "tag": "shape|square"
-                            },
-                            {
-                                "tag": "size|single"
-                            },
-                            {
-                                "tag": "size|width|sw"
-                            }
-                        ]
-                    }
-                },
-                {
                     "name": "base",
                     "optional": true,
                     "tags": {
@@ -294424,7 +295876,7 @@
                 }
             }
         ],
-        "metadata": true,
+        "metadata": false,
         "tags": [
             "build|separate wall",
             "component|door",
@@ -294826,38 +296278,6 @@
         "config": {
             "parts": [
                 {
-                    "name": "door",
-                    "tags": {
-                        "require": [
-                            {
-                                "tag": "interface|door|rectangular"
-                            },
-                            {
-                                "tag": "size|single"
-                            }
-                        ]
-                    }
-                },
-                {
-                    "name": "lintel",
-                    "tags": {
-                        "require": [
-                            {
-                                "tag": "interface|lintel"
-                            },
-                            {
-                                "tag": "shape|square"
-                            },
-                            {
-                                "tag": "size|single"
-                            },
-                            {
-                                "tag": "size|width|sw"
-                            }
-                        ]
-                    }
-                },
-                {
                     "name": "base",
                     "optional": true,
                     "tags": {
@@ -294993,7 +296413,7 @@
                 }
             }
         ],
-        "metadata": true,
+        "metadata": false,
         "tags": [
             "build|separate wall",
             "component|door",
