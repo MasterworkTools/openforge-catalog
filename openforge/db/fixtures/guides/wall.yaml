@@ -660,6 +660,10 @@ refinements:
   # The floor asks separately, and that is the point rather than a
   # concession: some wall textures have no floor of their own name, so
   # one question for both would empty the floor for those answers.
+  #
+  # The answers are parent textures, so "dungeon stone" here is not a
+  # floor anyone pictures — it is block or eroded, which look nothing
+  # alike, and the part that resolves says which.
   - key: floor-texture
     role: floor
     browsable: true
@@ -693,25 +697,14 @@ refinements:
     # build in hand rather than the whole catalog, which is the number
     # worth showing beside an answer.
 
-  # How the bases clip down — one question, whose answers are the
-  # combinations that actually exist.
+  # One question, whose answers are the combinations that exist: the
+  # clip tags are not independent, and no base in the catalog is both
+  # topless and unsupported.
   #
-  # It was three chained yes/nos (which system, then topless, then
-  # unsupported) and that was wrong twice over. It forced an answer to
-  # each before the next appeared, and it could offer topless *and*
-  # unsupported, which no base in the catalog is. The tags are not
-  # independent: a base is OpenLOCK or DragonLock, with magnets or
-  # without, and the OpenLOCK one may be topless or unsupported but
-  # never both. Asking which combination you want says all of that and
-  # cannot express the pairings that do not exist.
-  #
-  # Derived, so it follows the build rather than a list written here:
-  # a 1-inch dungeon stone wall base offers four, a 2-inch one seven,
-  # and aztlan offers a different set again because it has unsupported
-  # bases where dungeon stone does not. Deriving is also why nothing
-  # here gates topless to OpenLOCK: no DragonLock base is topless, so
-  # the combination never comes up to be offered, and a rule saying so
-  # would be a second copy of that fact and the one that goes stale.
+  # Deriving is why nothing here gates topless to OpenLOCK. No
+  # DragonLock base is topless, so the combination never comes up to
+  # be offered, and a rule saying so would be a second copy of that
+  # fact and the one that goes stale.
   - key: base-clips
     role: '*'
     # Which clip a base carries is a preference — every base of the

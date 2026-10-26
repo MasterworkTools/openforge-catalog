@@ -197,8 +197,7 @@ refinements:
     default: texture|dungeon_stone
     from_namespace: texture
     # Derived, which is the default: the question offers whatever the
-    # floors themselves carry, with a count beside each. A listed set
-    # here hid textures that build perfectly well.
+    # floors themselves carry, with a count beside each.
 
   - key: base-clips
     role: "*"

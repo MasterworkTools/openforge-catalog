@@ -900,21 +900,15 @@ function ChoicePicker({
 }
 
 /**
- * What to call a derived answer.
+ * An answer's name, and the count behind it.
  *
- * A curated choice carries its own title. A derived one carries only
- * the tag, so the label is its last element with the underscores taken
- * out — and the count beside it, because "OpenLOCK (135)" and
- * "DragonLock (46)" is the difference between two answers that
- * otherwise look equally good.
+ * The count separates two answers that otherwise look equally good. A
+ * curated title is the whole label without one: the author wrote what
+ * they wanted the button to say.
  */
 function labelFor(choice: GuideChoice): string {
-  // A curated title is the whole label, count included or not: the
-  // author wrote what they wanted the button to say.
   if (choice.title) return choice.title;
   const pretty = nameFor(choice);
-  // The count is the difference between two answers that otherwise
-  // look equally good: 135 pieces behind one and 46 behind another.
   return choice.count === undefined ? pretty : `${pretty} (${choice.count})`;
 }
 

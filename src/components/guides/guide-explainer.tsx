@@ -217,8 +217,6 @@ function asQuestion(q: GuideStep | GuideRefinement, dead: string[]): Question {
     })) ??
     choices?.map((c) => ({
       key: c.tag,
-      // A derived answer has no title of its own, and the raw tag is
-      // not a heading: `texture|cave` where "Cave" was meant.
       title: nameFor(c),
       blurb: c.blurb,
     })) ??
