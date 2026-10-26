@@ -2390,7 +2390,8 @@ def _wall(name, *slots):
         "id": name,
         "blueprint_name": name,
         "tags": ["shape|wall", "component|door"],
-        "config": {"parts": parts},
+        # The key the finders actually produce, via `_convert_config`.
+        "blueprint_config": {"parts": parts},
     }
 
 
@@ -2497,7 +2498,7 @@ def test_each_selector_sits_behind_its_own_part():
         "id": "f",
         "blueprint_name": "a floor",
         "tags": ["shape|floor"],
-        "config": {
+        "blueprint_config": {
             "parts": [
                 {"name": "gate", "tags": {"require": [{"tag": "interface|gate"}]}}
             ]
