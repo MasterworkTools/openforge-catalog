@@ -8,8 +8,8 @@ import {
   impliedBy,
   narrows,
   releasedBy,
+  answersTo,
   resolveGuide,
-  selectionKeys,
   thumbnailOf,
 } from '../guide-service';
 
@@ -99,20 +99,52 @@ describe('fetchGuide', () => {
   });
 });
 
-describe('selectionKeys', () => {
-  it('is every step key and every refinement key', () => {
-    expect(selectionKeys(DOCUMENT)).toEqual(
-      new Set(['method', 'width', 'texture'])
-    );
+describe('answersTo', () => {
+  it('answers to every step key and every refinement key', () => {
+    expect(answersTo(DOCUMENT, 'method')).toBe(true);
+    expect(answersTo(DOCUMENT, 'width')).toBe(true);
+    expect(answersTo(DOCUMENT, 'texture')).toBe(true);
+  });
+
+  it('does not answer to a tracker a shared link picked up', () => {
+    expect(answersTo(DOCUMENT, 'fbclid')).toBe(false);
   });
 
   it('copes with a guide that defines no refinements', () => {
     const { refinements, ...withoutRefinements } = DOCUMENT;
     void refinements;
 
-    expect(selectionKeys(withoutRefinements)).toEqual(
-      new Set(['method', 'width'])
-    );
+    expect(answersTo(withoutRefinements, 'texture')).toBe(false);
+    expect(answersTo(withoutRefinements, 'method')).toBe(true);
+  });
+
+  it('answers to a pin on a role', () => {
+    const document = { ...DOCUMENT, roles: { wall: {} } };
+
+    expect(answersTo(document, 'part.wall')).toBe(true);
+  });
+
+  it('answers to a pin on a slot of a role that offers its fittings', () => {
+    const document = { ...DOCUMENT, roles: { wall: { slots: true } } };
+
+    expect(answersTo(document, 'part.wall.door')).toBe(true);
+  });
+
+  it('does not answer to a slot of a role that keeps its fittings', () => {
+    const document = { ...DOCUMENT, roles: { wall: {} } };
+
+    expect(answersTo(document, 'part.wall.door')).toBe(false);
+  });
+
+  // `wall-base` starts with `wall`, so matching the owner without the
+  // separator would hand one role's slots to the other.
+  it('does not answer to a slot of a role whose name merely starts the same', () => {
+    const document = {
+      ...DOCUMENT,
+      roles: { wall: { slots: true }, 'wall-base': {} },
+    };
+
+    expect(answersTo(document, 'part.wall-base.door')).toBe(false);
   });
 });
 

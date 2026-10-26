@@ -1155,6 +1155,18 @@ def _reject_unknown_selections(
     # part of the key space — `part.wall` — where it cannot collide
     # with a step: a question key is a url_key and has no dot in it.
     known |= {f"{PIN}{name}" for name in document["roles"]}
+    # A selector derived from a slot is a role the document never
+    # names, so its pin has to be recognised by shape instead: the
+    # role it hangs off, a dot, and the slot. Rejecting it outright
+    # would answer 400 to someone sharing a link to their own build,
+    # and the selections for a role not in play are ignored below
+    # rather than composed, which is what happens to this one when the
+    # part that offered the slot is no longer the part chosen.
+    known |= {
+        key
+        for key in selections
+        if key.startswith(PIN) and _owner_of_slot(key, document) is not None
+    }
     unknown = sorted(set(selections) - known)
     if unknown:
         # `repr` and bounded, like every other message that echoes a
@@ -1166,6 +1178,20 @@ def _reject_unknown_selections(
         )
     for refinement in refinements:
         _reject_bad_refinement_value(refinement, selections)
+
+
+def _owner_of_slot(key: str, document: dict) -> str | None:
+    """The role a slot pin hangs off, if the document offers its slots.
+
+    `part.wall.door` is the door slot of the wall role. The role has
+    to exist and have asked for its slots to be offered; anything else
+    with a dot in it is a key this guide has no answer for.
+    """
+    owner, _, slot = key[len(PIN) :].partition(".")
+    if not slot:
+        return None
+    role = document["roles"].get(owner)
+    return owner if role and role.get("slots") else None
 
 
 def _reject_bad_refinement_value(refinement: dict, selections: dict) -> None:
@@ -1208,8 +1234,16 @@ def _parts(
 ) -> list[dict]:
     in_play = _roles_in_play(chosen)
     parts = {}
-    for name in _resolution_order(in_play, document["roles"]):
-        role = document["roles"][name]
+    # A role that offers its slots adds more roles as it resolves, so
+    # the list is walked rather than iterated: a selector is appended
+    # behind the part that brought it, and resolved on the next pass.
+    roles = dict(document["roles"])
+    order = list(_resolution_order(in_play, document["roles"]))
+    position = 0
+    while position < len(order):
+        name = order[position]
+        position += 1
+        role = roles[name]
         predicate = _compose(role["query"], chosen, refinements, selections, name)
         inherited = _matched(role, parts)
         if inherited is not None:
@@ -1219,6 +1253,16 @@ def _parts(
             pinned, inherited, predicate, role, find_candidates
         )
         reversible = _reversible(role, blueprint)
+        # A selector sits with the part that brought it, so it takes
+        # that part's position and its place in the list just behind.
+        after = in_play.index(name)
+        for offset, (slot_name, slot_role) in enumerate(
+            _slot_roles(name, role, blueprint)
+        ):
+            slot_role["position"] = role.get("position")
+            roles[slot_name] = slot_role
+            order.insert(position + offset, slot_name)
+            in_play.insert(after + 1 + offset, slot_name)
         parts[name] = {
             "role": name,
             "title": role["title"],
@@ -1241,12 +1285,12 @@ def _parts(
     # order the roles were written in is gone by the time this reads
     # them. A role without a position keeps its place after the ones
     # that have one.
-    order = {name: document["roles"][name].get("position") for name in in_play}
+    at = {name: roles[name].get("position") for name in in_play}
     return sorted(
         (parts[name] for name in in_play),
         key=lambda part: (
-            order[part["role"]] is None,
-            order[part["role"]] or 0,
+            at[part["role"]] is None,
+            at[part["role"]] or 0,
             in_play.index(part["role"]),
         ),
     )
@@ -1423,6 +1467,63 @@ def _pinned(role_name: str, selections: dict, find_pinned) -> dict | None:
     if not isinstance(md5, str) or not md5:
         return None
     return find_pinned(md5)
+
+
+#: A blueprint's slot is a fitting rather than a part of the build when
+#: it asks for an interface. The base slot every wall carries asks for a
+#: shape, and the guide has a role for that already.
+INTERFACE = "interface|"
+
+
+def _slot_roles(role_name: str, role: dict, blueprint) -> list[tuple[str, dict]]:
+    """The selectors a resolved part brings with it, one per fitting.
+
+    A door wall carries its door as a slot, and a rectangular one
+    carries a lintel beside it, so which selectors belong on the page
+    is a property of the piece that landed rather than of the guide.
+    An arched wall brings one, a built-in door brings none, and
+    switching between them is what replaces them.
+
+    Only slots asking for an `interface` tag. The base slot is a
+    fitting of nothing — it is the thing the wall stands in, which the
+    guide names as a role of its own — and it is the one slot that
+    uses `constrain`, which guides do not read.
+    """
+    if not role.get("slots") or blueprint is None:
+        return []
+    derived = []
+    for slot in (blueprint.get("config") or {}).get("parts") or []:
+        tags = slot.get("tags") or {}
+        query = {
+            term: [t["tag"] for t in tags.get(term, []) if "tag" in t]
+            for term in PREDICATES
+            if tags.get(term)
+        }
+        if not any(t.startswith(INTERFACE) for t in query.get("require", [])):
+            continue
+        derived.append(
+            (
+                f"{role_name}.{_slot_key(slot['name'])}",
+                {
+                    "title": slot["name"],
+                    "query": query,
+                    "under": role_name,
+                    "optional": bool(slot.get("optional")),
+                },
+            )
+        )
+    return derived
+
+
+def _slot_key(name: str) -> str:
+    """A slot's name as a role name, which is half of a query key.
+
+    Slot names are prose — `grate (right)`, `grate flange` — and a pin
+    is `part.<role>`, so what survives here ends up in a URL someone
+    shares.
+    """
+    key = "".join(c if c.isalnum() else "-" for c in name.lower())
+    return "-".join(part for part in key.split("-") if part)
 
 
 def _roles_in_play(chosen: list[dict]) -> list[str]:

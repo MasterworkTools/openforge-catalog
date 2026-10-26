@@ -461,6 +461,29 @@ $defs:
           corner role answers with an ordinary straight wall under the
           methods that stand two walls beside a pillar, and a straight
           wall is not a turned-over anything.
+      slots:
+        type: boolean
+        description: >
+          Offer a selector for each fitting the chosen part carries.
+
+          A blueprint describes its fittings as slots, and which ones
+          exist is a property of the piece rather than of the guide: a
+          rectangular door wall carries a door and a lintel, an arched
+          one carries a door, and a wall with the door moulded in
+          carries neither. So the selectors are derived as the part
+          resolves, and switching the part replaces them.
+
+          Only slots asking for an `interface` tag. The base slot a
+          wall carries is the thing it stands in rather than a fitting
+          of it, the guide names that as a role of its own, and it is
+          the one slot that uses `constrain`, which guides do not read.
+
+          A derived role is named for the role it hangs off and the
+          slot — `wall.door` — so its pin is `part.wall.door`. That
+          name is not in this document, which is why an engine and a
+          bundle that do not know the construct have to ship before
+          any guide that uses it: the one answers 400 to the pin and
+          the other drops it from the link.
       under:
         type: string
         description: The role this one sits beneath, when it sits under one.

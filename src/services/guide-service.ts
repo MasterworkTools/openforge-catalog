@@ -210,7 +210,7 @@ export interface GuideDocument {
   summary?: string;
   steps: { key: string; prompt: string; options: GuideOption[] }[];
   refinements?: { key: string }[];
-  roles: Record<string, unknown>;
+  roles: Record<string, { slots?: boolean }>;
 }
 
 export interface ResolvedGuide {
@@ -264,7 +264,7 @@ export async function fetchGuides(): Promise<GuideSummary[]> {
  * The whole document, not just its title.
  *
  * The page needs the keys it defines before it can resolve anything —
- * see `selectionKeys` — so fetching the title alone would mean asking
+ * see `answersTo` — so fetching the title alone would mean asking
  * twice.
  */
 export async function fetchGuide(guideKey: string): Promise<GuideDocument> {
@@ -289,7 +289,7 @@ export async function fetchGuide(guideKey: string): Promise<GuideDocument> {
  * let a typo'd selection resolve silently against the wrong state — so
  * the filtering belongs here, where the guide's own vocabulary is known.
  */
-export function selectionKeys(document: GuideDocument): Set<string> {
+function selectionKeys(document: GuideDocument): Set<string> {
   return new Set([
     ...document.steps.map((step) => step.key),
     ...(document.refinements ?? []).map((refinement) => refinement.key),
@@ -297,6 +297,21 @@ export function selectionKeys(document: GuideDocument): Set<string> {
     // is as much a part of a shared link as any answer is.
     ...Object.keys(document.roles ?? {}).map(pinKey),
   ]);
+}
+
+/**
+ * Does this guide answer to this query key?
+ *
+ * A role that offers its chosen part's fittings grows a role per slot
+ * as it resolves — `part.wall.door` — so which ones exist depends on
+ * the part that lands and they cannot be listed from the document.
+ * Matching them by their owner keeps the door in a shared link.
+ */
+export function answersTo(document: GuideDocument, key: string): boolean {
+  if (selectionKeys(document).has(key)) return true;
+  return Object.entries(document.roles ?? {}).some(
+    ([name, role]) => role.slots && key.startsWith(`${pinKey(name)}.`),
+  );
 }
 
 /**

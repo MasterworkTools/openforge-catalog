@@ -2339,3 +2339,173 @@ def test_the_reversible_angle_outranks_the_method_s_own():
 
     assert parts_by_role(handed)["right-wing"]["view"] == "front"
     assert parts_by_role(reversible)["right-wing"]["view"] == "back-right"
+
+
+SLOT_GUIDE = {
+    "key": "door",
+    "title": "How do I make a door?",
+    "steps": [
+        {
+            "key": "method",
+            "prompt": "How?",
+            "options": [
+                {
+                    "key": "separate",
+                    "title": "Separate wall",
+                    "roles": {"wall": None, "base": None},
+                }
+            ],
+        }
+    ],
+    "roles": {
+        "wall": {
+            "title": "Door wall",
+            "position": 1,
+            "slots": True,
+            "query": {"require": ["shape|wall", "component|door"]},
+        },
+        "base": {"title": "Base", "position": 2, "query": {"require": ["shape|base"]}},
+    },
+}
+
+
+def _wall(name, *slots):
+    """A door wall carrying the slots named, plus the base every wall has."""
+    parts = [
+        {"name": slot, "tags": {"require": [{"tag": f"interface|{slot}"}]}}
+        for slot in slots
+    ]
+    parts.append(
+        {
+            "name": "base",
+            "optional": True,
+            "tags": {
+                "constrain": [{"tag": "texture"}],
+                "require": [{"tag": "shape|base"}],
+            },
+        }
+    )
+    return {
+        "id": name,
+        "blueprint_name": name,
+        "tags": ["shape|wall", "component|door"],
+        "config": {"parts": parts},
+    }
+
+
+BASE = {"id": "b", "blueprint_name": "z base", "tags": ["shape|base"]}
+
+
+def _resolved(wall):
+    return parts_by_role(
+        resolve(SLOT_GUIDE, {"method": "separate"}, matching_finder([wall, BASE]))
+    )
+
+
+def test_a_rectangular_door_wall_offers_a_door_and_a_lintel():
+    parts = _resolved(_wall("a rectangular wall", "door", "lintel"))
+
+    assert "wall.door" in parts
+    assert "wall.lintel" in parts
+    assert parts["wall.door"]["query"]["require"] == ["interface|door"]
+    assert parts["wall.door"]["title"] == "door"
+
+
+def test_an_arched_door_wall_offers_only_a_door():
+    parts = _resolved(_wall("a arched wall", "door"))
+
+    assert "wall.door" in parts
+    assert "wall.lintel" not in parts
+
+
+def test_a_wall_with_the_door_moulded_in_offers_no_fitting():
+    """The slots a part carries decide, so a wall with none adds none."""
+    parts = _resolved(_wall("a built in wall"))
+
+    assert not [name for name in parts if name.startswith("wall.")]
+
+
+def test_the_base_slot_is_not_a_fitting():
+    """Every wall carries one, the guide names it as a role of its own,
+    and it is the slot that uses `constrain`, which guides do not read."""
+    parts = _resolved(_wall("a rectangular wall", "door", "lintel"))
+
+    assert "wall.base" not in parts
+    assert "base" in parts
+
+
+def test_a_selector_sits_with_the_part_that_brought_it():
+    resolved = resolve(
+        SLOT_GUIDE,
+        {"method": "separate"},
+        matching_finder([_wall("a rectangular wall", "door", "lintel"), BASE]),
+    )
+
+    assert [p["role"] for p in resolved["parts"]] == [
+        "wall",
+        "wall.door",
+        "wall.lintel",
+        "base",
+    ]
+
+
+def test_a_selector_sits_with_its_part_when_nothing_else_orders_them():
+    """The position the selector inherits is not what puts it there.
+
+    With positions, a selector sorts beside its owner whatever order
+    it was added in, so a guide that gives none is the case that can
+    tell the two apart: here only the order the roles were put in play
+    decides, and the selector has to land behind the part that brought
+    it rather than at the end.
+    """
+    guide = copy.deepcopy(SLOT_GUIDE)
+    for role in guide["roles"].values():
+        del role["position"]
+
+    resolved = resolve(
+        guide,
+        {"method": "separate"},
+        matching_finder([_wall("a rectangular wall", "door", "lintel"), BASE]),
+    )
+
+    assert [p["role"] for p in resolved["parts"]] == [
+        "wall",
+        "wall.door",
+        "wall.lintel",
+        "base",
+    ]
+
+
+def test_a_role_that_does_not_ask_for_its_slots_derives_none():
+    guide = copy.deepcopy(SLOT_GUIDE)
+    del guide["roles"]["wall"]["slots"]
+
+    parts = parts_by_role(
+        resolve(
+            guide,
+            {"method": "separate"},
+            matching_finder([_wall("a rectangular wall", "door", "lintel"), BASE]),
+        )
+    )
+
+    assert not [name for name in parts if name.startswith("wall.")]
+
+
+def test_a_slot_pin_is_a_selection_the_guide_recognises():
+    """Rejecting it would answer 400 to a shared link naming a door."""
+    resolve(
+        SLOT_GUIDE,
+        {"method": "separate", "part.wall.door": "a" * 32},
+        matching_finder([_wall("a rectangular wall", "door"), BASE]),
+    )
+
+
+def test_a_pin_on_a_role_that_offers_no_slots_is_still_refused():
+    with pytest.raises(GuideSelectionError) as excinfo:
+        resolve(
+            SLOT_GUIDE,
+            {"method": "separate", "part.base.handle": "a" * 32},
+            matching_finder([_wall("a arched wall", "door"), BASE]),
+        )
+
+    assert "part.base.handle" in str(excinfo.value)
