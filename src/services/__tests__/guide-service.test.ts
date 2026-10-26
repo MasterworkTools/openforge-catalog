@@ -6,7 +6,9 @@ import {
   fetchGuide,
   fetchGuides,
   impliedBy,
+  isFitting,
   narrows,
+  reaches,
   releasedBy,
   answersTo,
   resolveGuide,
@@ -520,6 +522,35 @@ describe('impliedBy', () => {
     const size = refinement({ key: 'size', browsable: false, selected: 'a' });
 
     expect(impliedBy({ tags: ['size|width|2'] }, 'wall', [size])).toEqual({});
+  });
+});
+
+describe('isFitting', () => {
+  // The two sides have to agree. A question that releases a fitting's
+  // pin on the page but not in the engine drops the part someone
+  // chose and resolves it to the same thing again.
+  it('tells a derived role from one the document names', () => {
+    expect(isFitting('wall.door')).toBe(true);
+    expect(isFitting('wall-base')).toBe(false);
+  });
+
+  it('keeps every question off a fitting', () => {
+    const texture = refinement({ key: 'texture', role: '*', selected: 'a' });
+    const size = {
+      key: 'size',
+      prompt: 'What size tiles?',
+      selected: null,
+      unavailable: [],
+      because: {},
+      recommended: null,
+      options: [{ key: '2x2', title: '2x2' }],
+    };
+
+    expect(reaches(texture, 'wall.door')).toBe(false);
+    expect(narrows(size, 'wall.door')).toBe(false);
+    expect(releasedBy(size, ['wall', 'wall.door'])).toEqual({
+      'part.wall': null,
+    });
   });
 });
 

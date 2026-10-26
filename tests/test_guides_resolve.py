@@ -2476,6 +2476,76 @@ def test_a_selector_sits_with_its_part_when_nothing_else_orders_them():
     ]
 
 
+def test_each_selector_sits_behind_its_own_part():
+    """Two parts each bring their own, so the place one selector goes
+    is not the place the other does."""
+    guide = copy.deepcopy(SLOT_GUIDE)
+    del guide["roles"]["wall"]["position"]
+    del guide["roles"]["base"]["position"]
+    guide["roles"]["floor"] = {
+        "title": "Floor",
+        "slots": True,
+        "query": {"require": ["shape|floor"]},
+    }
+    guide["steps"][0]["options"][0]["roles"] = {
+        "wall": None,
+        "floor": None,
+        "base": None,
+    }
+    floor = {
+        "id": "f",
+        "blueprint_name": "a floor",
+        "tags": ["shape|floor"],
+        "config": {
+            "parts": [
+                {"name": "gate", "tags": {"require": [{"tag": "interface|gate"}]}}
+            ]
+        },
+    }
+
+    resolved = resolve(
+        guide,
+        {"method": "separate"},
+        matching_finder([_wall("a rectangular wall", "door", "lintel"), floor, BASE]),
+    )
+
+    assert [p["role"] for p in resolved["parts"]] == [
+        "wall",
+        "wall.door",
+        "wall.lintel",
+        "floor",
+        "floor.gate",
+        "base",
+    ]
+
+
+def test_a_fitting_is_offered_no_chip_for_a_tag_it_never_had():
+    """The catalog dialog peels tags off the part's own query, so a
+    chip for a tag the fitting was never asked removes nothing."""
+    guide = copy.deepcopy(SLOT_GUIDE)
+    guide["steps"].append(
+        {
+            "key": "size",
+            "prompt": "How wide?",
+            "browsable": True,
+            "options": [{"key": "2", "title": "2x2", "tags": {"require": ["size|2"]}}],
+        }
+    )
+    wall = _wall("a rectangular wall", "door")
+    wall["tags"].append("size|2")
+
+    parts = parts_by_role(
+        resolve(
+            guide,
+            {"method": "separate", "size": "2"},
+            matching_finder([wall, BASE]),
+        )
+    )
+
+    assert parts["wall"]["relaxable"] == ["size|2"]
+    assert parts["wall.door"]["relaxable"] == []
+
+
 def test_a_role_that_does_not_ask_for_its_slots_derives_none():
     guide = copy.deepcopy(SLOT_GUIDE)
     del guide["roles"]["wall"]["slots"]
@@ -2530,8 +2600,8 @@ def test_a_role_that_resolves_to_nothing_offers_no_selector():
 
 
 def test_a_fitting_is_not_asked_the_width_the_build_was_asked():
-    """No door or lintel in the catalog carries a tile width, so an
-    option that narrows every role in play would empty the fitting."""
+    """An option with no roles narrows every role in play, which would
+    reach a fitting the question was never about."""
     guide = copy.deepcopy(SLOT_GUIDE)
     guide["steps"].append(
         {
@@ -2562,7 +2632,8 @@ def test_a_fitting_is_not_asked_the_width_the_build_was_asked():
 
 def test_a_fitting_is_not_asked_the_texture_the_build_was_asked():
     """A refinement reaching every role would ask a wooden door for
-    the wall's stone."""
+    the wall's stone, and no door carries a texture a wall guide
+    offers, so it would come back with nothing."""
     guide = copy.deepcopy(SLOT_GUIDE)
     guide["refinements"] = [
         {

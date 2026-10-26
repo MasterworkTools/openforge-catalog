@@ -276,19 +276,7 @@ export async function fetchGuide(guideKey: string): Promise<GuideDocument> {
   return body.document;
 }
 
-/**
- * Every query key this guide answers to.
- *
- * The API refuses a key it does not recognise, so the page builds its
- * request from these rather than forwarding the browser's query string.
- * A shared link that has been through Facebook or a campaign tracker
- * arrives carrying `fbclid` or `utm_source`, and forwarding it would
- * answer 400 and show the person an error instead of their build.
- *
- * The API stays strict on purpose — ignoring unknown keys there would
- * let a typo'd selection resolve silently against the wrong state — so
- * the filtering belongs here, where the guide's own vocabulary is known.
- */
+/** The keys the document names outright. */
 function selectionKeys(document: GuideDocument): Set<string> {
   return new Set([
     ...document.steps.map((step) => step.key),
@@ -301,6 +289,14 @@ function selectionKeys(document: GuideDocument): Set<string> {
 
 /**
  * Does this guide answer to this query key?
+ *
+ * The API refuses a key it does not recognise, and it stays strict on
+ * purpose — ignoring unknown keys there would let a typo'd selection
+ * resolve silently against the wrong state — so the page filters here,
+ * where the guide's own vocabulary is known. A link that has been
+ * through Facebook or a campaign tracker arrives carrying `fbclid` or
+ * `utm_source`, and forwarding it would answer 400 and show the person
+ * an error instead of their build.
  *
  * A role that offers its chosen part's fittings grows a role per slot
  * as it resolves — `part.wall.door` — so which ones exist depends on
@@ -547,8 +543,24 @@ export function askedOf(
   );
 }
 
+/**
+ * Is this a role a part brought with it, rather than one the guide names?
+ *
+ * A derived name is `<role>.<slot>`, and a document's role names have
+ * no dot, so the name alone says which kind of role it is. None of the
+ * guide's own questions reach a fitting: they are about the build, and
+ * a fitting is asked only what its slot asks. `_is_fitting` in
+ * `resolve.py` is the same test, and the two have to agree — a
+ * question that releases a fitting's pin here but not there drops the
+ * part someone chose and then resolves it to the same thing again.
+ */
+export function isFitting(role: string): boolean {
+  return role.includes('.');
+}
+
 /** Does this question apply to that role? Same test the engine makes. */
 export function reaches(refinement: GuideRefinement, role: string): boolean {
+  if (isFitting(role)) return false;
   if (refinement.role !== '*' && refinement.role !== role) return false;
   return !(refinement.except_roles ?? []).includes(role);
 }
@@ -585,6 +597,7 @@ export function releasedBy(
  * whatever the earlier answers put in play, which is every role.
  */
 export function narrows(question: GuideStep | GuideRefinement, role: string): boolean {
+  if (isFitting(role)) return false;
   if (!('options' in question)) return reaches(question, role);
   return question.options.some(
     (option) => !option.roles || role in option.roles

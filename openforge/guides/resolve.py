@@ -1056,6 +1056,22 @@ def _applies_to_any(refinement: dict, in_play: list[str]) -> bool:
     return any(_reaches(refinement, name) for name in in_play)
 
 
+def _is_fitting(role_name: str) -> bool:
+    """Is this a role a part brought with it, rather than one the guide names?
+
+    A derived name is `<role>.<slot>`, and a document's role names are
+    `url_key`, which has no dot — so the name alone says which kind of
+    role it is, anywhere one is in hand. `isFitting` in
+    `guide-service.ts` is the same test.
+
+    None of the guide's own questions reach a fitting: they are about
+    the build, and a fitting is asked only what its slot asks. Keeping
+    that here rather than at the call sites is what stops the next
+    reader of a role from having to remember it.
+    """
+    return "." in role_name
+
+
 def _reaches(refinement: dict, role_name: str) -> bool:
     """Does this refinement ask anything of that role?
 
@@ -1063,6 +1079,8 @@ def _reaches(refinement: dict, role_name: str) -> bool:
     the contract: it decides which pins a click lets go of, so a
     disagreement here offers an answer the click cannot deliver.
     """
+    if _is_fitting(role_name):
+        return False
     if refinement["role"] not in ("*", role_name):
         return False
     return role_name not in refinement.get("except_roles", [])
@@ -1081,6 +1099,8 @@ def _narrows(question: dict, role_name: str) -> bool:
     answers put in play, while an option that names roles says nothing
     about the ones it leaves out.
     """
+    if _is_fitting(role_name):
+        return False
     if "options" not in question:
         return _reaches(question, role_name)
     return any(
@@ -1237,15 +1257,7 @@ def _parts(
         name = order[position]
         position += 1
         role = roles[name]
-        # A fitting asks only what its slot asks. The guide's questions
-        # are about the build — a wall's texture, a tile's width — and
-        # no door or lintel in the catalog carries either tag, so
-        # composing them in would leave every fitting with nothing.
-        predicate = (
-            role["query"]
-            if role.get("fitting")
-            else _compose(role["query"], chosen, refinements, selections, name)
-        )
+        predicate = _compose(role["query"], chosen, refinements, selections, name)
         inherited = _matched(role, parts)
         if inherited is not None:
             predicate = _union([predicate, inherited])
@@ -1511,7 +1523,6 @@ def _slot_roles(role_name: str, role: dict, blueprint) -> list[tuple[str, dict]]
             "title": slot["name"],
             "query": query,
             "under": role_name,
-            "fitting": True,
         }
     return [(f"{role_name}.{key}", slot) for key, slot in derived.items()]
 
@@ -1608,6 +1619,8 @@ def _option_predicates(option: dict, role_name: str) -> list[dict]:
     the shorthand for the part that is true of every role the option
     names, and an option says nothing about a role it does not name.
     """
+    if _is_fitting(role_name):
+        return []
     roles = option.get("roles")
     if roles is None:
         # An option with no roles of its own narrows whatever the
