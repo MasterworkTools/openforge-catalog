@@ -1,4 +1,9 @@
 # js-async-reviewer
+model: sonnet
+verification: mixed — floating promises, `fetch` without `resp.ok` and empty catches are greps quoted from added lines (evidence-query); `Promise.all` semantics and waterfalls are judgement.
+**Checks:** floating promises, `fetch` without `resp.ok` handling, swallowed rejections (P1 — the JS `except: pass`), async event handlers with no error path, `Promise.all` vs `allSettled` semantics, serial awaits for independent work, missing loading/error states, async promise-executor anti-pattern.
+**Spawn when:** PR touches `src/**/*.ts(x)` containing `async`, `await`, `.then(`, or `fetch(`. Skip otherwise.
+**Contents:** Patterns to FLAG: Floating promises; `fetch` without checking `resp.ok`; Swallowed rejections; Async event handlers with no error path; `Promise.all` where one failure should not sink the batch; Sequential awaits for independent work; Missing loading/error UI states for new async flows; `async` executor / promise-constructor anti-pattern · Do NOT flag
 
 Review TypeScript/JavaScript (`src/**/*.ts`, `src/**/*.tsx`) for **async and promise correctness** — the JS counterpart of `error-handling-reviewer`. Promise bugs fail silently: an unawaited rejection disappears into the console (or nowhere), and the UI shows stale data or a spinner that never resolves. In a static SPA there is no server log — the browser is the only witness, so errors that vanish client-side vanish entirely.
 
@@ -72,11 +77,3 @@ Review TypeScript/JavaScript (`src/**/*.ts`, `src/**/*.tsx`) for **async and pro
 - Rejections handled by an established shared wrapper (verify the wrapper actually handles them before crediting it).
 - Test code awaiting patterns that Jest manages.
 - Top-level orchestration in scripts where an unhandled rejection crashing the process is the desired behavior.
-
-**Review approach:**
-
-1. Grep added lines for promise-returning calls (`fetch(`, `.then(`, `async ` functions invoked bare); for each, find the await/catch/void disposition.
-2. For each `fetch`: `resp.ok` handled here or in the wrapper it uses?
-3. For each `catch` block: does the error reach the user, a rethrow, or a documented ignore?
-4. For each async handler in JSX props: error path?
-5. For `Promise.all`: is fail-fast the right semantic for that batch?

@@ -1,4 +1,9 @@
 # react-hooks-reviewer
+model: sonnet
+verification: mixed — missing deps and cleanup are checked by running the repo's `react-hooks/exhaustive-deps` lint on the file and by reading the effect body (evidence-query); render-performance findings are judgement.
+**Checks:** hook correctness and render performance — missing/wrong dependency arrays, missing effect cleanup (listeners, timers, observers), setState-after-unmount and fetch races (missing abort), conditional hooks, unstable references into memoized children/effect deps, catalog-scale list rendering without stable keys/memo, `useEffect` chains as data-flow.
+**Spawn when:** PR touches `src/**/*.tsx` or hook files (`use*.ts`) in `src/`. Skip for backend-only or non-component TS diffs.
+**Contents:** Patterns to FLAG: Missing or wrong dependency arrays; Missing effect cleanup; State updates after unmount / unaborted fetches; Conditional hooks; Derived state stored in state; Unstable references re-triggering children; Expensive list rendering without keys/memo; `useEffect` as a data-flow bus; Custom hooks that break the contract · Do NOT flag
 
 Review React code (`src/**/*.tsx`, hook files in `src/**/*.ts`) for **hook correctness and render performance**. Hooks bugs are the SPA's equivalent of concurrency bugs: they compile clean, pass type-check, work in the happy path, and fail as stale UI, phantom re-renders, or memory leaks. The catalog renders large collections (1,400+ designs, sprite sheets, tag trees), so render performance is a correctness concern, not a nicety.
 
@@ -39,7 +44,7 @@ Review React code (`src/**/*.tsx`, hook files in `src/**/*.ts`) for **hook corre
 
 4. **Conditional hooks (P1):** hooks called inside `if`/loops/early-return paths violate the Rules of Hooks and corrupt hook state across renders. ESLint usually catches this; flag it if the disable comment shows up instead.
 
-5. **Derived state stored in state (P3):** `useState` + `useEffect` to keep a computed value in sync with props/state. Compute during render, or `useMemo` if expensive. (Shared with `frontend-conventions-reviewer` — post under whichever found it first.)
+5. **Derived state stored in state (P3):** `useState` + `useEffect` to keep a computed value in sync with props/state. Compute during render, or `useMemo` if expensive.
 
 6. **Unstable references re-triggering children (P3 — P2 in list-rendering paths):** new object/array/function literals passed as props to memoized children or used as effect deps (`style={{...}}`, `onSelect={() => ...}` into a 1,400-row list). Flag when the receiver is memoized, is an effect dep, or renders in a large list; don't flag for cheap leaf components.
 
@@ -54,10 +59,3 @@ Review React code (`src/**/*.tsx`, hook files in `src/**/*.ts`) for **hook corre
 - Intentionally-empty deps (`[]`) for genuinely mount-only effects with cleanup, when nothing from component scope is used inside.
 - Unstable props into cheap unmemoized leaves — memoizing everything is its own disease.
 - Existing patterns in `src/` that already work — match the codebase's conventions (this repo delegates event handling to custom hooks per CLAUDE.md; recommend that shape).
-
-**Review approach:**
-
-1. For each `useEffect`/`useCallback`/`useMemo` in the diff: deps complete? cleanup present when it registers anything? disable-comments justified?
-2. For each fetch-in-effect: abort/staleness handling on param change and unmount?
-3. For each list render: stable keys, per-item cost, memo boundaries.
-4. For each new custom hook: stable return identity, cleanup ownership, no conditional hooks.

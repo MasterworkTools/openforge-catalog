@@ -79,6 +79,17 @@ def _apply(db, versions):
     """
     for schema in versions:
         with db.connection() as conn:
+            # Bound the wait for a conflicting lock, which is the one thing that
+            # turns a fast migration into an outage. A CREATE INDEX wants ACCESS
+            # EXCLUSIVE, and a *pending* ACCESS EXCLUSIVE parks every reader
+            # behind it — so without this, a release landing during a fixture
+            # upload wedges reads for as long as the upload holds its
+            # transaction, up to this function's whole budget. Failing fast
+            # instead halts the release with the old image still serving.
+            #
+            # It bounds the wait, not the work: a statement that has the lock
+            # runs as long as it needs.
+            conn.execute("SET lock_timeout = '10s'")
             if not schema(conn).up():
                 raise RuntimeError(
                     f"migration {schema.version} reported failure without raising"

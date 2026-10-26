@@ -1,4 +1,9 @@
 # resource-leak-reviewer
+model: sonnet
+verification: evidence-query — for each connection acquisition quotes the return or exception path that skips release; a growth claim names the unbounded structure and its key space.
+**Checks:** psycopg connections/cursors not released (P1 — serverless Postgres connection cap), unbounded caches and `/tmp` files in the warm-Lambda process, per-call boto3/R2 client construction.
+**Spawn when:** diff in `openforge/**/*.py` acquires a DB connection or cursor, builds a boto3/R2 client, or adds a module-level cache or `/tmp` file. Skip otherwise.
+**Contents:** Patterns to FLAG: Database connections/cursors not closed or returned; `functools.lru_cache` without `maxsize=` on unbounded key spaces; Long-lived module-level dicts/sets as caches without eviction; `tempfile.NamedTemporaryFile(delete=False)` without explicit cleanup; boto3/R2 clients constructed per call · Do NOT flag · Review approach
 
 Review Python code for **resource leaks**. Two contexts matter in this repo, and the second raises the stakes:
 
@@ -23,34 +28,20 @@ Review Python code for **resource leaks**. Two contexts matter in this repo, and
 
    Follow the existing connection-handling pattern in `openforge/app/` — new code must not invent its own connection lifecycle. Every code path (including exception paths) must release the connection.
 
-2. **`open()` without a context manager:** `with open(path) as f:` — always. In scanner code iterating thousands of files, a leaked handle per file exhausts the fd limit mid-run.
+2. **`functools.lru_cache` without `maxsize=` on unbounded key spaces:** set a cap when keys derive from external input. In Lambda, module-level caches survive across invocations.
 
-3. **HTTP responses/sessions not closed:** for `requests`, use a `requests.Session` reused across calls (module/app level) rather than per-call construction in loops; use `with requests.get(url, stream=True) as resp:` for streamed downloads (STL files are large).
+3. **Long-lived module-level dicts/sets as caches without eviction:** grows for the life of the warm container. Use `lru_cache` with maxsize or explicit eviction.
 
-4. **`subprocess.Popen` without `.wait()` or context manager:** use `subprocess.run(...)` for one-shot commands.
+4. **`tempfile.NamedTemporaryFile(delete=False)` without explicit cleanup:** pair with `finally: os.unlink(name)` or use `tempfile.TemporaryDirectory()`. Lambda's `/tmp` is limited and persists across warm invocations.
 
-5. **Unbounded `resp.content` / `.read()` from external sources:** an API or R2 object can be gigabytes. Check `Content-Length` or stream with bounded chunks when the size isn't controlled by us.
-
-6. **`functools.lru_cache` without `maxsize=` on unbounded key spaces:** set a cap when keys derive from external input. In Lambda, module-level caches survive across invocations.
-
-7. **Long-lived module-level dicts/sets as caches without eviction:** grows for the life of the warm container. Use `lru_cache` with maxsize or explicit eviction.
-
-8. **`tempfile.NamedTemporaryFile(delete=False)` without explicit cleanup:** pair with `finally: os.unlink(name)` or use `tempfile.TemporaryDirectory()`. Lambda's `/tmp` is limited and persists across warm invocations.
-
-9. **Manual `try/finally` chains protecting two or more resources:** use `contextlib.ExitStack`.
-
-10. **boto3/R2 clients constructed per call:** construct S3-compatible clients once (module/app level) and reuse — per-call construction defeats connection pooling and slows every invocation.
+5. **boto3/R2 clients constructed per call:** construct S3-compatible clients once (module/app level) and reuse — per-call construction defeats connection pooling and slows every invocation.
 
 **Do NOT flag:**
 
-- `pathlib.Path.read_text()` / `read_bytes()` — closes internally.
-- `with` blocks that close resources in normal flow.
 - Bounded `lru_cache` with explicit `maxsize`.
 - One-shot scripts that exit within seconds — EXCEPT database connections, which are always in scope given the serverless Postgres cap.
 
 **Review approach:**
 
 1. For each `psycopg.connect` / cursor acquisition: verify release on every return path, and that it follows the app's established pattern. P1 on violation.
-2. For each `open()`, `subprocess.Popen`, `requests.*`: verify a `with` block or explicit close.
-3. For each `.read()` / `.content` from external input: verify a size bound.
-4. For each module-level cache: ask about eviction; remember Lambda containers are long-lived.
+2. For each module-level cache: ask about eviction; remember Lambda containers are long-lived.

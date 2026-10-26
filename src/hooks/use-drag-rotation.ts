@@ -130,3 +130,22 @@ export function stepView(from: string, steps: number): HorizontalView {
   const n = HORIZONTAL_VIEWS.length;
   return HORIZONTAL_VIEWS[(((start + steps) % n) + n) % n];
 }
+
+/** Where the list starts, and what a part's own angle is measured from. */
+export const START_VIEW = 'front-left';
+
+/**
+ * The angle to draw one part at, given the angle the list is turned to.
+ *
+ * A part's own angle is held as an OFFSET from `START_VIEW`, not as a
+ * fixed angle, so turning the list turns every piece with it while
+ * each keeps its own quarter. An angle off the ring -- `top`,
+ * `bottom`, or one nobody else has -- turns with the list unchanged.
+ */
+export function viewFor(part: { view?: string | null }, view: string): string {
+  const ring = HORIZONTAL_VIEWS as readonly string[];
+  const wanted = part.view ? ring.indexOf(part.view) : -1;
+  const from = ring.indexOf(START_VIEW);
+  if (wanted === -1 || from === -1 || !ring.includes(view)) return view;
+  return stepView(view, wanted - from);
+}

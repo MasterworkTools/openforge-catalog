@@ -2057,6 +2057,867 @@
             ]
         },
         "file_metadata": {
+            "file": "sewer%sewer_brick#floor.1x1.openforge.stl",
+            "file_modified_at": "2021-07-30T14:29:37.014650",
+            "full_name": "tiles/sewers/floors/floor%sewer_brick/openforge/sewer%sewer_brick#floor.1x1.openforge.stl",
+            "md5": "aac0b05381bf1688e2d2f47387b81ebd",
+            "size": 8304684,
+            "storage_address": "https://objects.openforge.tools/models/aac0b0/aac0b05381bf1688e2d2f47387b81ebd.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/aac0b0/aac0b05381bf1688e2d2f47387b81ebd.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "connection|openforge",
+            "shape|floor",
+            "shape|square",
+            "size|depth|1",
+            "size|width|1",
+            "texture|sewer",
+            "texture|sewer|sewer_brick"
+        ],
+        "type": "model"
+    },
+    {
+        "config": {
+            "parts": [
+                {
+                    "name": "base",
+                    "optional": true,
+                    "tags": {
+                        "constrain": [
+                            {
+                                "filter": "shape|floor"
+                            },
+                            {
+                                "filter": "shape|wall"
+                            },
+                            {
+                                "tag": "shape"
+                            },
+                            {
+                                "tag": "size|depth"
+                            },
+                            {
+                                "tag": "size|width"
+                            }
+                        ],
+                        "deny": [
+                            {
+                                "tag": "build|s2w"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "shape|base"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        "file_metadata": {
+            "file": "sewer%sewer_brick#floor.2x1.openforge.stl",
+            "file_modified_at": "2021-07-30T14:29:50.115228",
+            "full_name": "tiles/sewers/floors/floor%sewer_brick/openforge/sewer%sewer_brick#floor.2x1.openforge.stl",
+            "md5": "41a192b19a09a2d27cfa044c5ce551ff",
+            "size": 16547384,
+            "storage_address": "https://objects.openforge.tools/models/41a192/41a192b19a09a2d27cfa044c5ce551ff.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/41a192/41a192b19a09a2d27cfa044c5ce551ff.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "connection|openforge",
+            "shape|floor",
+            "shape|square",
+            "size|depth|1",
+            "size|width|2",
+            "texture|sewer",
+            "texture|sewer|sewer_brick"
+        ],
+        "type": "model"
+    },
+    {
+        "config": {
+            "parts": [
+                {
+                    "name": "base",
+                    "optional": true,
+                    "tags": {
+                        "constrain": [
+                            {
+                                "filter": "shape|floor"
+                            },
+                            {
+                                "filter": "shape|wall"
+                            },
+                            {
+                                "tag": "shape"
+                            },
+                            {
+                                "tag": "size|depth"
+                            },
+                            {
+                                "tag": "size|width"
+                            }
+                        ],
+                        "deny": [
+                            {
+                                "tag": "build|s2w"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "shape|base"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        "file_metadata": {
+            "file": "sewer%sewer_brick#floor.2x2.openforge.stl",
+            "file_modified_at": "2021-07-30T14:30:37.661034",
+            "full_name": "tiles/sewers/floors/floor%sewer_brick/openforge/sewer%sewer_brick#floor.2x2.openforge.stl",
+            "md5": "7f3a536d58d006e165a8b8941e0dc568",
+            "size": 30053384,
+            "storage_address": "https://objects.openforge.tools/models/7f3a53/7f3a536d58d006e165a8b8941e0dc568.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/7f3a53/7f3a536d58d006e165a8b8941e0dc568.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "connection|openforge",
+            "shape|floor",
+            "shape|square",
+            "size|depth|2",
+            "size|width|2",
+            "texture|sewer",
+            "texture|sewer|sewer_brick"
+        ],
+        "type": "model"
+    },
+    {
+        "file_metadata": {
+            "file": "sewer%sewer_brick#floor.1x1.openlock.stl",
+            "file_modified_at": "2021-07-30T14:29:26.126112",
+            "full_name": "tiles/sewers/floors/floor%sewer_brick/openlock/sewer%sewer_brick#floor.1x1.openlock.stl",
+            "md5": "fc6f942a376289061649f109338d0243",
+            "size": 8681284,
+            "storage_address": "https://objects.openforge.tools/models/fc6f94/fc6f942a376289061649f109338d0243.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/fc6f94/fc6f942a376289061649f109338d0243.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "connection|openlock",
+            "shape|floor",
+            "shape|square",
+            "size|depth|1",
+            "size|width|1",
+            "texture|sewer",
+            "texture|sewer|sewer_brick"
+        ],
+        "type": "model"
+    },
+    {
+        "file_metadata": {
+            "file": "sewer%sewer_brick#floor.2x1.openlock.stl",
+            "file_modified_at": "2021-07-30T14:30:00.208197",
+            "full_name": "tiles/sewers/floors/floor%sewer_brick/openlock/sewer%sewer_brick#floor.2x1.openlock.stl",
+            "md5": "c1d3a0e731b6b007efb1e97f6ed50c63",
+            "size": 17282484,
+            "storage_address": "https://objects.openforge.tools/models/c1d3a0/c1d3a0e731b6b007efb1e97f6ed50c63.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/c1d3a0/c1d3a0e731b6b007efb1e97f6ed50c63.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "connection|openlock",
+            "shape|floor",
+            "shape|square",
+            "size|depth|1",
+            "size|width|2",
+            "texture|sewer",
+            "texture|sewer|sewer_brick"
+        ],
+        "type": "model"
+    },
+    {
+        "file_metadata": {
+            "file": "sewer%sewer_brick#floor.2x2.openlock.stl",
+            "file_modified_at": "2021-07-30T14:30:43.884674",
+            "full_name": "tiles/sewers/floors/floor%sewer_brick/openlock/sewer%sewer_brick#floor.2x2.openlock.stl",
+            "md5": "e844c9b2c87267f7da338a6b1bb07402",
+            "size": 30860684,
+            "storage_address": "https://objects.openforge.tools/models/e844c9/e844c9b2c87267f7da338a6b1bb07402.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/e844c9/e844c9b2c87267f7da338a6b1bb07402.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "connection|openlock",
+            "shape|floor",
+            "shape|square",
+            "size|depth|2",
+            "size|width|2",
+            "texture|sewer",
+            "texture|sewer|sewer_brick"
+        ],
+        "type": "model"
+    },
+    {
+        "config": {
+            "parts": [
+                {
+                    "name": "base",
+                    "optional": true,
+                    "tags": {
+                        "constrain": [
+                            {
+                                "filter": "shape|floor"
+                            },
+                            {
+                                "filter": "shape|wall"
+                            },
+                            {
+                                "tag": "shape"
+                            },
+                            {
+                                "tag": "size|depth"
+                            },
+                            {
+                                "tag": "size|width"
+                            }
+                        ],
+                        "deny": [
+                            {
+                                "tag": "build|s2w"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "shape|base"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        "file_metadata": {
             "file": "sewer#floor.1x1.openforge.stl",
             "file_modified_at": "2021-07-25T20:50:25.551775",
             "full_name": "tiles/sewers/floors/floor/openforge/sewer#floor.1x1.openforge.stl",
@@ -4696,381 +5557,6 @@
     },
     {
         "file_metadata": {
-            "file": "sewer%sewer_brick#riser+platform.1x1.openforge.stl",
-            "file_modified_at": "2021-07-30T14:29:37.014650",
-            "full_name": "tiles/sewers/misc/riser/openforge/sewer%sewer_brick#riser+platform.1x1.openforge.stl",
-            "md5": "aac0b05381bf1688e2d2f47387b81ebd",
-            "size": 8304684,
-            "storage_address": "https://objects.openforge.tools/models/aac0b0/aac0b05381bf1688e2d2f47387b81ebd.stl"
-        },
-        "images": [
-            {
-                "image_name": "thumbnail",
-                "image_url": "https://objects.openforge.tools/sprites/aac0b0/aac0b05381bf1688e2d2f47387b81ebd.png",
-                "sprite_metadata": {
-                    "angles": [
-                        {
-                            "camera_pos": [
-                                -4,
-                                0,
-                                2
-                            ],
-                            "index": 0,
-                            "name": "front"
-                        },
-                        {
-                            "camera_pos": [
-                                -3,
-                                2,
-                                3
-                            ],
-                            "index": 1,
-                            "name": "front-right"
-                        },
-                        {
-                            "camera_pos": [
-                                0,
-                                2,
-                                4
-                            ],
-                            "index": 2,
-                            "name": "right"
-                        },
-                        {
-                            "camera_pos": [
-                                2,
-                                3,
-                                3
-                            ],
-                            "index": 3,
-                            "name": "back-right"
-                        },
-                        {
-                            "camera_pos": [
-                                0,
-                                2,
-                                4
-                            ],
-                            "index": 4,
-                            "name": "back"
-                        },
-                        {
-                            "camera_pos": [
-                                -3,
-                                2,
-                                3
-                            ],
-                            "index": 5,
-                            "name": "back-left"
-                        },
-                        {
-                            "camera_pos": [
-                                -4,
-                                0,
-                                2
-                            ],
-                            "index": 6,
-                            "name": "left"
-                        },
-                        {
-                            "camera_pos": [
-                                -3,
-                                -3,
-                                2
-                            ],
-                            "index": 7,
-                            "name": "front-left"
-                        },
-                        {
-                            "camera_pos": [
-                                -2,
-                                0,
-                                5
-                            ],
-                            "index": 8,
-                            "name": "top"
-                        },
-                        {
-                            "camera_pos": [
-                                -2,
-                                -3,
-                                0
-                            ],
-                            "index": 9,
-                            "name": "bottom"
-                        }
-                    ],
-                    "default_angle": 0,
-                    "grid_cols": 5,
-                    "grid_rows": 2,
-                    "tile_size": 512
-                }
-            }
-        ],
-        "metadata": false,
-        "tags": [
-            "connection|openforge",
-            "shape|riser",
-            "shape|riser|platform",
-            "size|depth|1",
-            "size|width|1",
-            "texture|sewer",
-            "texture|sewer|sewer_brick"
-        ],
-        "type": "model"
-    },
-    {
-        "file_metadata": {
-            "file": "sewer%sewer_brick#riser+platform.2x1.openforge.stl",
-            "file_modified_at": "2021-07-30T14:29:50.115228",
-            "full_name": "tiles/sewers/misc/riser/openforge/sewer%sewer_brick#riser+platform.2x1.openforge.stl",
-            "md5": "41a192b19a09a2d27cfa044c5ce551ff",
-            "size": 16547384,
-            "storage_address": "https://objects.openforge.tools/models/41a192/41a192b19a09a2d27cfa044c5ce551ff.stl"
-        },
-        "images": [
-            {
-                "image_name": "thumbnail",
-                "image_url": "https://objects.openforge.tools/sprites/41a192/41a192b19a09a2d27cfa044c5ce551ff.png",
-                "sprite_metadata": {
-                    "angles": [
-                        {
-                            "camera_pos": [
-                                -4,
-                                0,
-                                2
-                            ],
-                            "index": 0,
-                            "name": "front"
-                        },
-                        {
-                            "camera_pos": [
-                                -3,
-                                2,
-                                3
-                            ],
-                            "index": 1,
-                            "name": "front-right"
-                        },
-                        {
-                            "camera_pos": [
-                                0,
-                                2,
-                                4
-                            ],
-                            "index": 2,
-                            "name": "right"
-                        },
-                        {
-                            "camera_pos": [
-                                2,
-                                3,
-                                3
-                            ],
-                            "index": 3,
-                            "name": "back-right"
-                        },
-                        {
-                            "camera_pos": [
-                                0,
-                                2,
-                                4
-                            ],
-                            "index": 4,
-                            "name": "back"
-                        },
-                        {
-                            "camera_pos": [
-                                -3,
-                                2,
-                                3
-                            ],
-                            "index": 5,
-                            "name": "back-left"
-                        },
-                        {
-                            "camera_pos": [
-                                -4,
-                                0,
-                                2
-                            ],
-                            "index": 6,
-                            "name": "left"
-                        },
-                        {
-                            "camera_pos": [
-                                -3,
-                                -3,
-                                2
-                            ],
-                            "index": 7,
-                            "name": "front-left"
-                        },
-                        {
-                            "camera_pos": [
-                                -2,
-                                0,
-                                5
-                            ],
-                            "index": 8,
-                            "name": "top"
-                        },
-                        {
-                            "camera_pos": [
-                                -2,
-                                -3,
-                                0
-                            ],
-                            "index": 9,
-                            "name": "bottom"
-                        }
-                    ],
-                    "default_angle": 0,
-                    "grid_cols": 5,
-                    "grid_rows": 2,
-                    "tile_size": 512
-                }
-            }
-        ],
-        "metadata": false,
-        "tags": [
-            "connection|openforge",
-            "shape|riser",
-            "shape|riser|platform",
-            "size|depth|1",
-            "size|width|2",
-            "texture|sewer",
-            "texture|sewer|sewer_brick"
-        ],
-        "type": "model"
-    },
-    {
-        "file_metadata": {
-            "file": "sewer%sewer_brick#riser+platform.2x2.openforge.stl",
-            "file_modified_at": "2021-07-30T14:30:37.661034",
-            "full_name": "tiles/sewers/misc/riser/openforge/sewer%sewer_brick#riser+platform.2x2.openforge.stl",
-            "md5": "7f3a536d58d006e165a8b8941e0dc568",
-            "size": 30053384,
-            "storage_address": "https://objects.openforge.tools/models/7f3a53/7f3a536d58d006e165a8b8941e0dc568.stl"
-        },
-        "images": [
-            {
-                "image_name": "thumbnail",
-                "image_url": "https://objects.openforge.tools/sprites/7f3a53/7f3a536d58d006e165a8b8941e0dc568.png",
-                "sprite_metadata": {
-                    "angles": [
-                        {
-                            "camera_pos": [
-                                -4,
-                                0,
-                                2
-                            ],
-                            "index": 0,
-                            "name": "front"
-                        },
-                        {
-                            "camera_pos": [
-                                -3,
-                                2,
-                                3
-                            ],
-                            "index": 1,
-                            "name": "front-right"
-                        },
-                        {
-                            "camera_pos": [
-                                0,
-                                2,
-                                4
-                            ],
-                            "index": 2,
-                            "name": "right"
-                        },
-                        {
-                            "camera_pos": [
-                                2,
-                                3,
-                                3
-                            ],
-                            "index": 3,
-                            "name": "back-right"
-                        },
-                        {
-                            "camera_pos": [
-                                0,
-                                2,
-                                4
-                            ],
-                            "index": 4,
-                            "name": "back"
-                        },
-                        {
-                            "camera_pos": [
-                                -3,
-                                2,
-                                3
-                            ],
-                            "index": 5,
-                            "name": "back-left"
-                        },
-                        {
-                            "camera_pos": [
-                                -4,
-                                0,
-                                2
-                            ],
-                            "index": 6,
-                            "name": "left"
-                        },
-                        {
-                            "camera_pos": [
-                                -3,
-                                -3,
-                                2
-                            ],
-                            "index": 7,
-                            "name": "front-left"
-                        },
-                        {
-                            "camera_pos": [
-                                -2,
-                                0,
-                                5
-                            ],
-                            "index": 8,
-                            "name": "top"
-                        },
-                        {
-                            "camera_pos": [
-                                -2,
-                                -3,
-                                0
-                            ],
-                            "index": 9,
-                            "name": "bottom"
-                        }
-                    ],
-                    "default_angle": 0,
-                    "grid_cols": 5,
-                    "grid_rows": 2,
-                    "tile_size": 512
-                }
-            }
-        ],
-        "metadata": false,
-        "tags": [
-            "connection|openforge",
-            "shape|riser",
-            "shape|riser|platform",
-            "size|depth|2",
-            "size|width|2",
-            "texture|sewer",
-            "texture|sewer|sewer_brick"
-        ],
-        "type": "model"
-    },
-    {
-        "file_metadata": {
             "file": "sewer%sewer_brick#riser+high.1x1.openlock.stl",
             "file_modified_at": "2021-07-30T14:25:49.003236",
             "full_name": "tiles/sewers/misc/riser/openlock/sewer%sewer_brick#riser+high.1x1.openlock.stl",
@@ -6313,381 +6799,6 @@
             "connection|openlock",
             "shape|riser",
             "shape|riser|mid",
-            "size|depth|2",
-            "size|width|2",
-            "texture|sewer",
-            "texture|sewer|sewer_brick"
-        ],
-        "type": "model"
-    },
-    {
-        "file_metadata": {
-            "file": "sewer%sewer_brick#riser+platform.1x1.openlock.stl",
-            "file_modified_at": "2021-07-30T14:29:26.126112",
-            "full_name": "tiles/sewers/misc/riser/openlock/sewer%sewer_brick#riser+platform.1x1.openlock.stl",
-            "md5": "fc6f942a376289061649f109338d0243",
-            "size": 8681284,
-            "storage_address": "https://objects.openforge.tools/models/fc6f94/fc6f942a376289061649f109338d0243.stl"
-        },
-        "images": [
-            {
-                "image_name": "thumbnail",
-                "image_url": "https://objects.openforge.tools/sprites/fc6f94/fc6f942a376289061649f109338d0243.png",
-                "sprite_metadata": {
-                    "angles": [
-                        {
-                            "camera_pos": [
-                                -4,
-                                0,
-                                2
-                            ],
-                            "index": 0,
-                            "name": "front"
-                        },
-                        {
-                            "camera_pos": [
-                                -3,
-                                2,
-                                3
-                            ],
-                            "index": 1,
-                            "name": "front-right"
-                        },
-                        {
-                            "camera_pos": [
-                                0,
-                                2,
-                                4
-                            ],
-                            "index": 2,
-                            "name": "right"
-                        },
-                        {
-                            "camera_pos": [
-                                2,
-                                3,
-                                3
-                            ],
-                            "index": 3,
-                            "name": "back-right"
-                        },
-                        {
-                            "camera_pos": [
-                                0,
-                                2,
-                                4
-                            ],
-                            "index": 4,
-                            "name": "back"
-                        },
-                        {
-                            "camera_pos": [
-                                -3,
-                                2,
-                                3
-                            ],
-                            "index": 5,
-                            "name": "back-left"
-                        },
-                        {
-                            "camera_pos": [
-                                -4,
-                                0,
-                                2
-                            ],
-                            "index": 6,
-                            "name": "left"
-                        },
-                        {
-                            "camera_pos": [
-                                -3,
-                                -3,
-                                2
-                            ],
-                            "index": 7,
-                            "name": "front-left"
-                        },
-                        {
-                            "camera_pos": [
-                                -2,
-                                0,
-                                5
-                            ],
-                            "index": 8,
-                            "name": "top"
-                        },
-                        {
-                            "camera_pos": [
-                                -2,
-                                -3,
-                                0
-                            ],
-                            "index": 9,
-                            "name": "bottom"
-                        }
-                    ],
-                    "default_angle": 0,
-                    "grid_cols": 5,
-                    "grid_rows": 2,
-                    "tile_size": 512
-                }
-            }
-        ],
-        "metadata": false,
-        "tags": [
-            "connection|openlock",
-            "shape|riser",
-            "shape|riser|platform",
-            "size|depth|1",
-            "size|width|1",
-            "texture|sewer",
-            "texture|sewer|sewer_brick"
-        ],
-        "type": "model"
-    },
-    {
-        "file_metadata": {
-            "file": "sewer%sewer_brick#riser+platform.2x1.openlock.stl",
-            "file_modified_at": "2021-07-30T14:30:00.208197",
-            "full_name": "tiles/sewers/misc/riser/openlock/sewer%sewer_brick#riser+platform.2x1.openlock.stl",
-            "md5": "c1d3a0e731b6b007efb1e97f6ed50c63",
-            "size": 17282484,
-            "storage_address": "https://objects.openforge.tools/models/c1d3a0/c1d3a0e731b6b007efb1e97f6ed50c63.stl"
-        },
-        "images": [
-            {
-                "image_name": "thumbnail",
-                "image_url": "https://objects.openforge.tools/sprites/c1d3a0/c1d3a0e731b6b007efb1e97f6ed50c63.png",
-                "sprite_metadata": {
-                    "angles": [
-                        {
-                            "camera_pos": [
-                                -4,
-                                0,
-                                2
-                            ],
-                            "index": 0,
-                            "name": "front"
-                        },
-                        {
-                            "camera_pos": [
-                                -3,
-                                2,
-                                3
-                            ],
-                            "index": 1,
-                            "name": "front-right"
-                        },
-                        {
-                            "camera_pos": [
-                                0,
-                                2,
-                                4
-                            ],
-                            "index": 2,
-                            "name": "right"
-                        },
-                        {
-                            "camera_pos": [
-                                2,
-                                3,
-                                3
-                            ],
-                            "index": 3,
-                            "name": "back-right"
-                        },
-                        {
-                            "camera_pos": [
-                                0,
-                                2,
-                                4
-                            ],
-                            "index": 4,
-                            "name": "back"
-                        },
-                        {
-                            "camera_pos": [
-                                -3,
-                                2,
-                                3
-                            ],
-                            "index": 5,
-                            "name": "back-left"
-                        },
-                        {
-                            "camera_pos": [
-                                -4,
-                                0,
-                                2
-                            ],
-                            "index": 6,
-                            "name": "left"
-                        },
-                        {
-                            "camera_pos": [
-                                -3,
-                                -3,
-                                2
-                            ],
-                            "index": 7,
-                            "name": "front-left"
-                        },
-                        {
-                            "camera_pos": [
-                                -2,
-                                0,
-                                5
-                            ],
-                            "index": 8,
-                            "name": "top"
-                        },
-                        {
-                            "camera_pos": [
-                                -2,
-                                -3,
-                                0
-                            ],
-                            "index": 9,
-                            "name": "bottom"
-                        }
-                    ],
-                    "default_angle": 0,
-                    "grid_cols": 5,
-                    "grid_rows": 2,
-                    "tile_size": 512
-                }
-            }
-        ],
-        "metadata": false,
-        "tags": [
-            "connection|openlock",
-            "shape|riser",
-            "shape|riser|platform",
-            "size|depth|1",
-            "size|width|2",
-            "texture|sewer",
-            "texture|sewer|sewer_brick"
-        ],
-        "type": "model"
-    },
-    {
-        "file_metadata": {
-            "file": "sewer%sewer_brick#riser+platform.2x2.openlock.stl",
-            "file_modified_at": "2021-07-30T14:30:43.884674",
-            "full_name": "tiles/sewers/misc/riser/openlock/sewer%sewer_brick#riser+platform.2x2.openlock.stl",
-            "md5": "e844c9b2c87267f7da338a6b1bb07402",
-            "size": 30860684,
-            "storage_address": "https://objects.openforge.tools/models/e844c9/e844c9b2c87267f7da338a6b1bb07402.stl"
-        },
-        "images": [
-            {
-                "image_name": "thumbnail",
-                "image_url": "https://objects.openforge.tools/sprites/e844c9/e844c9b2c87267f7da338a6b1bb07402.png",
-                "sprite_metadata": {
-                    "angles": [
-                        {
-                            "camera_pos": [
-                                -4,
-                                0,
-                                2
-                            ],
-                            "index": 0,
-                            "name": "front"
-                        },
-                        {
-                            "camera_pos": [
-                                -3,
-                                2,
-                                3
-                            ],
-                            "index": 1,
-                            "name": "front-right"
-                        },
-                        {
-                            "camera_pos": [
-                                0,
-                                2,
-                                4
-                            ],
-                            "index": 2,
-                            "name": "right"
-                        },
-                        {
-                            "camera_pos": [
-                                2,
-                                3,
-                                3
-                            ],
-                            "index": 3,
-                            "name": "back-right"
-                        },
-                        {
-                            "camera_pos": [
-                                0,
-                                2,
-                                4
-                            ],
-                            "index": 4,
-                            "name": "back"
-                        },
-                        {
-                            "camera_pos": [
-                                -3,
-                                2,
-                                3
-                            ],
-                            "index": 5,
-                            "name": "back-left"
-                        },
-                        {
-                            "camera_pos": [
-                                -4,
-                                0,
-                                2
-                            ],
-                            "index": 6,
-                            "name": "left"
-                        },
-                        {
-                            "camera_pos": [
-                                -3,
-                                -3,
-                                2
-                            ],
-                            "index": 7,
-                            "name": "front-left"
-                        },
-                        {
-                            "camera_pos": [
-                                -2,
-                                0,
-                                5
-                            ],
-                            "index": 8,
-                            "name": "top"
-                        },
-                        {
-                            "camera_pos": [
-                                -2,
-                                -3,
-                                0
-                            ],
-                            "index": 9,
-                            "name": "bottom"
-                        }
-                    ],
-                    "default_angle": 0,
-                    "grid_cols": 5,
-                    "grid_rows": 2,
-                    "tile_size": 512
-                }
-            }
-        ],
-        "metadata": false,
-        "tags": [
-            "connection|openlock",
-            "shape|riser",
-            "shape|riser|platform",
             "size|depth|2",
             "size|width|2",
             "texture|sewer",

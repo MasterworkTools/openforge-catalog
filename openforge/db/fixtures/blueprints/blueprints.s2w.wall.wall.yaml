@@ -19,6 +19,12 @@
           deny:
             - tag: shape|curved
             - tag: size|width|1.5
+            - tag: component|door
+            - tag: component|window
+            - tag: component|swappable
+            - tag: component|wall|door
+            - tag: component|wall|window
+            - tag: component|wall|swappable
           constrain:
             - tag: size|width
         fulfills:
@@ -65,6 +71,12 @@
           deny:
             - tag: shape|curved
             - tag: size|width|1.5
+            - tag: component|door
+            - tag: component|window
+            - tag: component|swappable
+            - tag: component|wall|door
+            - tag: component|wall|window
+            - tag: component|wall|swappable
           constrain:
             - tag: size|width
       - name: floor

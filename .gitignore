@@ -26,6 +26,13 @@ scratch
 # Raw request/response dumps of ANY extension belong in captures/ (ignored)
 # or the session scratchpad, never elsewhere in the repo tree.
 *.har
+
+# Written into the working directory by .github/scripts/load-fixtures.sh.
+# Harmless on a runner, but these jobs check out now, so the files land in the
+# tree — and an invoke failure puts the Aurora endpoint and the DB secret ARN
+# in result.json, in a public repo.
+invoke.json
+result.json
 captures/
 
 # debug
@@ -78,3 +85,15 @@ plan-output.txt
 crash.log
 crash.*.log
 *.auto.tfvars
+
+# Beads / Dolt files (added by bd init)
+.dolt/
+*.db
+.beads-credential-key
+# A lock bd takes while it writes; present only while a command is running.
+.beads.gate.lock
+
+# Claude Code worktrees: separate checkouts, never part of this tree.
+.claude/worktrees/
+
+.beads.gate.lock

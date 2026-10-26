@@ -1,4 +1,9 @@
 # error-handling-reviewer
+model: sonnet
+verification: mixed — swallowed excepts, `return` in `finally`, bare `except` and missing `from` are grep hits quoted (evidence-query); custom-exception and context-manager suggestions are judgement.
+**Checks:** silent exception swallows, `return` inside `finally`, generic `except Exception` without re-raise, bare `except:`, missing `raise ... from`, `assert` used for runtime validation.
+**Spawn when:** PR touches production `*.py` (skip if changes are docs / configs / tests only).
+**Contents:** Patterns to FLAG: Silent exception swallowing — the most damaging pattern; `return` statement inside a `finally` block; Generic `except Exception` without re-raise; Bare `except; Missing exception chaining; Custom exception classes for caller-handleable cases; `try/finally` for cleanup when a context manager would do; `assert` used for runtime validation · Acceptable patterns · Review approach
 
 Review Python code for **error handling correctness**. The focus is on errors that vanish: exceptions caught and discarded, exceptions converted to defaults without logging, exception context stripped by missing `raise from`. Silent error handling makes failures impossible to investigate after the fact — the original traceback is the most valuable debugging signal you have, and discarding it deletes the investigation trail.
 
@@ -76,11 +81,4 @@ This matters doubly here: the backend is a single Lambda where you can't attach 
 - Bare `except` + `raise` for cleanup (re-raises the original).
 - `contextlib.suppress(FileNotFoundError)` for genuinely-ignorable cases — intent is explicit.
 
-**Review approach:**
-
-1. Grep for `except` patterns; for each, confirm the handler either logs AND re-raises, returns the correct value for a documented case (with comment), or has another defensible justification.
-2. Grep for `pass` immediately after `except`. Flag as P1.
-3. Grep for `return` inside `finally`. Flag as P1.
-4. Grep for `try` blocks that could be `with` statements.
-5. Grep for `raise X(...)` after `except`; verify `from e` (or justified `from None`).
-6. For ad-hoc `raise ValueError(...)` where callers need to detect the case, suggest a custom exception class.
+**Review approach:** for each `except`, confirm the handler logs and re-raises, returns a documented value, or is otherwise justified; where callers need to detect a case, suggest a custom exception class.

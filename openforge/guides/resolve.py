@@ -1215,23 +1215,41 @@ def _parts(
         if inherited is not None:
             predicate = _union([predicate, inherited])
         pinned = _pinned(name, selections, find_pinned)
+        blueprint = _chosen_blueprint(
+            pinned, inherited, predicate, role, find_candidates
+        )
+        reversible = _reversible(role, blueprint)
         parts[name] = {
             "role": name,
             "title": role["title"],
             "under": role.get("under"),
+            # The angle this piece reads best from, when it is not the
+            # one the list is turned to. Held as an offset by the page.
+            "view": _view(role, chosen, name, reversible),
             "query": predicate,
             # Which of those terms the catalog dialog may take off
             # again, so that browsing starts inside the family you
             # chose rather than outside it.
             "relaxable": _relaxable(document, chosen, refinements, selections, name),
             "pinned": pinned is not None,
-            "blueprint": _chosen_blueprint(
-                pinned, inherited, predicate, role, find_candidates
-            ),
+            "blueprint": blueprint,
         }
     # Reported in the order the options called for them, not the order
     # they had to be resolved in: a parts list reads floor, wall, base.
-    return [parts[name] for name in in_play]
+    # Ordered by what the document asks for, not by what survives being
+    # stored: JSONB sorts object keys by length then bytewise, so the
+    # order the roles were written in is gone by the time this reads
+    # them. A role without a position keeps its place after the ones
+    # that have one.
+    order = {name: document["roles"][name].get("position") for name in in_play}
+    return sorted(
+        (parts[name] for name in in_play),
+        key=lambda part: (
+            order[part["role"]] is None,
+            order[part["role"]] or 0,
+            in_play.index(part["role"]),
+        ),
+    )
 
 
 def _answered_with(dead: dict, because: dict, recommended: dict):
@@ -1259,6 +1277,53 @@ def _answered_with(dead: dict, because: dict, recommended: dict):
         }
 
     return described
+
+
+def _view(
+    role: dict, chosen: list[dict], role_name: str, reversible: bool
+) -> str | None:
+    """The angle a role is drawn from, with the method having the say.
+
+    A role names the angle it usually reads from, and a method that
+    builds it out of something else may name another: the same wing
+    role is a corner piece glued to a tile under one method and a
+    straight wall standing beside it under the others.
+
+    The reversible piece gets its own angle where the role names one.
+    It is the other side's model, so drawn from the angle its own side
+    uses it shows the face that ends up inward.
+    """
+    if reversible and role.get("reversible_view"):
+        return role["reversible_view"]
+    view = role.get("view")
+    for option in chosen:
+        named = (option.get("views") or {}).get(role_name)
+        if named is not None:
+            view = named
+    return view
+
+
+def _reversible(role: dict, blueprint) -> bool:
+    """Whether the piece here is the one that serves either side.
+
+    A role names the tag that marks the hand it asks for, and the
+    namespace above that tag is the family the hand belongs to. Within
+    the family, a piece without the tag is the reversible one: the
+    same model, turned over on the bench to serve this side.
+
+    A piece outside the family has no hand to lack. The same role
+    answers with a straight wall under the methods that stand two
+    walls beside a pillar, and a straight wall is not a turned-over
+    anything.
+    """
+    tag = role.get("reversible_without")
+    if tag is None or blueprint is None:
+        return False
+    family = tag.rsplit("|", 1)[0]
+    tags = blueprint.get("tags") or []
+    if not any(t == family or t.startswith(f"{family}|") for t in tags):
+        return False
+    return tag not in tags
 
 
 def _chosen_blueprint(pinned, inherited, predicate, role, find_candidates):

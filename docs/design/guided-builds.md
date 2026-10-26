@@ -491,12 +491,11 @@ the observed signature is `Http response code: 413` against Lambda's **6 MB** li
 payload is over 6 MB and a function URL would not rescue it either. Do not build the guide
 on top of an endpoint that returns the whole catalog.
 
-**How a guide reaches a deployed environment.** Neither deploy workflow runs
-`bin/fixtures`, so a repo fixture gets to staging and production exactly one way:
-`bin/upload_fixture` posting it to `/api/admin/fixtures`, which auto-detects the type.
-That route knows about guides as of the loader slice — it did not at first, and a guide
-uploaded to it was classified as a tag description. Anyone adding a fixture type needs
-to teach both the file loader and that route, or the new type has no deploy path.
+**How a guide reaches a deployed environment.** Every deploy runs a
+`load-fixtures` job that loads all fixtures off the deployed image, so a guide
+reaches staging and production by being merged. `/api/admin/fixtures` is a
+second way in, auto-detecting the type. Anyone adding a fixture type needs to
+teach both the file loader and that route, or the new type has no deploy path.
 
 ## What the user gets
 

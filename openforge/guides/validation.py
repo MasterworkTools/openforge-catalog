@@ -37,8 +37,7 @@ def reject_bad_recommendations(data: dict) -> None:
     The same check `validate_guide_document` makes when a guide is
     written, made again when one is read. The write is not guaranteed
     to have gone through it: `guide_sql.upsert_guide` stores a document
-    without passing the loader, and the guide editor in
-    `openforge_catalog-kcm` will be a second way in. A recommendation
+    without passing the loader. A recommendation
     naming an option that was renamed away is otherwise a predicate
     asking for a tag nothing has, on the first screen, with nothing on
     the page to say that a default did it.
@@ -159,6 +158,12 @@ def _role_reference_errors(data: dict) -> list[str]:
                 for role in option.get("roles") or {}
                 if role not in roles
             ]  # option["roles"] is a map; iterating gives its role names
+            errors += [
+                f"step {step['key']!r} option {option['key']!r}: "
+                f"`views` names unknown role {role!r}"
+                for role in option.get("views") or {}
+                if role not in roles
+            ]
     errors += [
         f"role {name!r}: `under` names unknown role {role['under']!r}"
         for name, role in roles.items()

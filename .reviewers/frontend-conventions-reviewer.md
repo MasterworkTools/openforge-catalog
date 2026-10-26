@@ -1,4 +1,9 @@
 # frontend-conventions-reviewer
+model: sonnet
+verification: mixed — hardcoded base URLs, `any`/`@ts-ignore`, static-export violations are greps quoted from added lines (evidence-query); component-responsibility is judgement.
+**Checks:** hardcoded API base URLs (must be relative `/api` — CLAUDE.md hard rule), static-export violations (API routes, SSR, `next/image` optimizer), inline logic that belongs in custom hooks, `any`/`@ts-ignore` type escapes, duplication of `src/utils/` helpers.
+**Spawn when:** PR touches `src/**/*.ts` or `src/**/*.tsx`. Skip for backend-only diffs.
+**Contents:** What to flag: Hardcoded API base URLs; Static-export violations; Component responsibility; Type discipline; Prop drilling; Duplicating utilities that exist in `src/utils/` · Do NOT flag
 
 Review TypeScript/React changes (`src/**/*.ts`, `src/**/*.tsx`) for this repo's frontend conventions. The frontend is a **Next.js app compiled to a static export** served from S3 — there is no Node server at runtime, and the API is a separate Flask Lambda reached through `/api`.
 
@@ -17,22 +22,12 @@ Review TypeScript/React changes (`src/**/*.ts`, `src/**/*.tsx`) for this repo's 
 
 4. **Type discipline (P2):** new `any` (explicit or via untyped boundaries), `as unknown as X` double-casts, `@ts-ignore`/`@ts-expect-error` without a comment explaining why, `!` non-null assertions where a runtime check is warranted. `npm run type-check` must pass — but these patterns pass the checker while defeating it.
 
-5. **State anti-patterns (P3):** derived state stored in `useState` + synced with `useEffect` (compute it during render or `useMemo`); `useEffect` with missing/over-broad dependencies as a data-flow mechanism; prop drilling through 3+ layers where the existing context/patterns in `src/` offer a home. (Derived-state and deps findings are shared ground with `react-hooks-reviewer` — post under whichever reviewer found it first, don't double-post.)
+5. **Prop drilling (P3):** prop drilling through 3+ layers where the existing context/patterns in `src/` offer a home.
 
-6. **Data fetching in render paths without cancellation/guards (P2):** fetches in `useEffect` that set state after unmount, missing loading/error states for user-visible data, refetching on every render due to unstable dependencies.
-
-7. **Duplicating utilities that exist in `src/utils/` (P3):** tag parsing, blueprint helpers, clipboard, config processing already have tested homes — grep `src/utils/` before accepting a new inline implementation.
+6. **Duplicating utilities that exist in `src/utils/` (P3):** tag parsing, blueprint helpers, clipboard, config processing already have tested homes — grep `src/utils/` before accepting a new inline implementation.
 
 **Do NOT flag:**
 
 - Build-time data fetching that static export supports.
 - `any` in existing code the PR merely brushes against (pre-existing debt — beads ticket at most).
 - Small components keeping trivial handlers inline — hook extraction is for meaningful logic, not `onClick={() => setOpen(true)}`.
-
-**Review approach:**
-
-1. Grep the diff for `http://`, `https://`, `localhost`, `process.env.*URL` in fetch paths.
-2. Check new files/routes against the static-export constraint list.
-3. For each component touched: is new stateful/event logic inline where a hook should be?
-4. Grep for `any`, `@ts-ignore`, `as unknown`, `!` assertions in added lines.
-5. Cross-check new utility-shaped code against `src/utils/`.

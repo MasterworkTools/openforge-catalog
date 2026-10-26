@@ -1,4 +1,9 @@
 # credentials-hygiene-reviewer
+model: sonnet
+verification: evidence-query — greps added lines for `eyJ`, `Bearer <literal>`, `client_secret=`, connection strings and `*.har`, lists `git ls-files` hits and the `.gitignore` coverage, and quotes each; "realistic-looking" values are judgement.
+**Checks:** literal secrets/JWTs committed anywhere (P1), HAR/traffic captures with live tokens in the diff (P1 — this project uses HAR captures for Thingiverse reverse-engineering; they carry live credentials and stay out of the repo), tokens in URLs when a header works, tokens echoed to output, insecure persistence of refresh tokens, realistic credentials in test fixtures.
+**Spawn when:** diff touches auth/token code, `*.har`/capture artifacts, `.gitignore`/env handling, the Thingiverse integration, `terraform/**`, `.github/workflows/**` or `.github/scripts/**`. Skip when the only credential-adjacent change is request-echo code (no tokens, captures or env handling).
+**Contents:** What to flag: Literal secrets in code or config; Captured traffic artifacts committed; Secrets in URLs; Secrets echoed to output; Insecure storage of tokens the tool persists; Test fixtures with realistic-looking credentials; New env var credentials without documentation · Do NOT flag · Review approach
 
 Review PRs for **secrets and credential handling**. This repo integrates with external services holding real credentials — Thingiverse (client id/secret, app token, JWT access/refresh tokens), the OpenForge API token, AWS, and Cloudflare R2. Credentials live in the environment (`~/.profile.d/`, gitignored `.env`) and must never enter the repo, its fixtures, its logs, or its test data.
 
@@ -10,7 +15,7 @@ Review PRs for **secrets and credential handling**. This repo integrates with ex
 
 3. **Secrets in URLs (P2):** tokens as query parameters (`?access_token=...`, `?token=...`) in code when a header alternative exists. URLs land in server logs, browser history, and proxies. The Thingiverse v1 API accepts `?access_token=` — use the `Authorization: Bearer` header form instead. Runtime-only exceptions (an API that *requires* a URL token) must confine the URL construction to one place and never log the assembled URL.
 
-4. **Secrets echoed to output (P1):** tokens in exception messages, `print()` diagnostics, CLI output, or assertion messages. (Log-call interpolation is `logging-reviewer`'s beat — this covers the non-logging leak paths.) Also flag debug endpoints or CLI flags that dump full config including credentials.
+4. **Secrets echoed to output (P1):** tokens in exception messages, `print()` diagnostics, CLI output, or assertion messages. Includes log calls: flag `token`, `password`, `secret`, `api_key`, `cookie`, `jwt`, `bearer`, `client_secret` interpolated into any log call, and whole request headers dumped to a log (explicit redaction or a fingerprint is fine). Also flag debug endpoints or CLI flags that dump full config including credentials.
 
 5. **Insecure storage of tokens the tool persists (P2):** the Thingiverse auth manager persists refresh tokens. Flag: tokens written into the repo tree, into fixture files, into world-readable paths, or into files not covered by `.gitignore`. Acceptable: env files outside the repo, `~/.config`/`~/.openforge`-style dotfiles with `0600`-style expectations, OS keyring.
 
@@ -32,3 +37,4 @@ Review PRs for **secrets and credential handling**. This repo integrates with ex
 3. For code that builds authenticated requests: header vs URL token placement; is the assembled URL ever logged/printed?
 4. For token persistence code: where does it write, and is that location inside the repo or gitignored?
 5. For tests/fixtures touching auth: are the values obviously fake?
+6. In workflows, grep `run:` blocks for echoes of `secrets.*` and for `pull_request_target`.

@@ -1,4 +1,7 @@
 {
-  "database": "beads.db",
-  "jsonl_export": "issues.jsonl"
+  "database": "dolt",
+  "backend": "dolt",
+  "dolt_mode": "embedded",
+  "dolt_database": "openforge_catalog",
+  "project_id": "0598f8d6-c1b1-4020-b586-7895ab4044cb"
 }

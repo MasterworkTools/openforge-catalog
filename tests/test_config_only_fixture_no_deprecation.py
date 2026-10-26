@@ -145,9 +145,6 @@ class TestConfigOnlyFixtureNoDeprecation:
         # Mock _load_existing_blueprints to return our test data
         loader._load_existing_blueprints = MagicMock(return_value=existing_blueprints)
 
-        # Mock _find_deprecated_blueprint_by_md5 to return None (no existing deprecated)
-        loader._find_deprecated_blueprint_by_md5 = MagicMock(return_value=None)
-
         # Mixed fixture with both file and config blueprints
         fixture_data = [
             {

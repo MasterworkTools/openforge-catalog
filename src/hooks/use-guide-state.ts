@@ -188,6 +188,10 @@ export function useGuideState(guideKey: string | null | undefined) {
   return {
     guide,
     resolved: mine?.resolved ?? null,
+    // The answers as the URL has them, which is ahead of `resolved`
+    // between a click and the resolution landing. The page draws the
+    // chosen answer from this so a click is visibly taken immediately.
+    selections,
     unavailable: myDead?.unavailable ?? null,
     because: myDead?.because ?? null,
     options: myDead?.options ?? null,

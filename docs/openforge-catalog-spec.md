@@ -190,7 +190,6 @@ The system handles complex real-world scenarios like doorways that need both wal
     "modified": [...],
     "deprecated": [...],
     "consolidated": [...],
-    "errors": [],
     "output": ["captured log messages"]
   }
   ```

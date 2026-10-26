@@ -4,7 +4,7 @@ Handles the password login flow (including 2FA), persists the long-lived
 refresh token to a local dotfile, and transparently refreshes the
 short-lived access JWT for API calls.
 
-Token lifecycle (see docs/thingiverse-api-v2.md):
+Token lifecycle (see openforge-process docs/thingiverse-api-v2.md):
 - POST /v2/auth/login {usernameOrEmail, password} -> 200 AuthTokensResponse
   or 202 (2FA required, complete via POST /v2/auth/2fa/login {code})
 - POST /v2/auth/refresh {refresh_token} -> JwtTokenResponse {access, refresh}
@@ -244,7 +244,7 @@ class TokenManager:
     def write_token(self) -> str:
         """Return the opaque token used to authorize v1 write-API calls.
 
-        This is the `token` field from login (see
+        This is the `token` field from login (see openforge-process
         docs/thingiverse-api-v2-private.md), distinct from the access JWT.
 
         Raises:
@@ -307,8 +307,8 @@ class TokenManager:
             "stored_at": int(time.time()),
         }
         # The `token` field is the opaque write token used against the v1
-        # write API (docs/thingiverse-api-v2-private.md). It's only present
-        # on login responses, NOT on refresh — carry the existing one
+        # write API (openforge-process docs/thingiverse-api-v2-private.md).
+        # It's only present on login responses, NOT on refresh — carry the existing one
         # forward on refresh so a JWT refresh doesn't drop the write token.
         if body.get("token"):
             stored["session_token"] = body["token"]

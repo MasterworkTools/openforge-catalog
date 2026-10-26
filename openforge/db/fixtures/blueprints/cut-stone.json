@@ -25094,6 +25094,7 @@
             "component|door",
             "component|door|arched",
             "component|door|narrow",
+            "component|wall",
             "connection|openforge",
             "connection|side",
             "connection|side|filament",
@@ -25242,6 +25243,7 @@
             "component|door",
             "component|door|arched",
             "component|door|narrow",
+            "component|wall",
             "connection|openforge",
             "connection|side",
             "connection|side|filament",
@@ -25619,6 +25621,7 @@
             "component|door",
             "component|door|narrow",
             "component|door|rectangular",
+            "component|wall",
             "connection|openforge",
             "connection|side",
             "connection|side|dragonlock",
@@ -25750,6 +25753,7 @@
             "component|door",
             "component|door|narrow",
             "component|door|rectangular",
+            "component|wall",
             "connection|openforge",
             "connection|side",
             "connection|side|filament",
@@ -25881,6 +25885,7 @@
             "component|door",
             "component|door|narrow",
             "component|door|rectangular",
+            "component|wall",
             "connection|openforge",
             "connection|side",
             "connection|side|openlock",
@@ -26012,6 +26017,7 @@
             "component|door",
             "component|door|narrow",
             "component|door|rectangular",
+            "component|wall",
             "connection|openforge",
             "connection|side",
             "connection|side|dragonlock",
@@ -26143,6 +26149,7 @@
             "component|door",
             "component|door|narrow",
             "component|door|rectangular",
+            "component|wall",
             "connection|openforge",
             "connection|side",
             "connection|side|filament",
@@ -26274,6 +26281,7 @@
             "component|door",
             "component|door|narrow",
             "component|door|rectangular",
+            "component|wall",
             "connection|openforge",
             "connection|side",
             "connection|side|openlock",
@@ -27190,6 +27198,134 @@
     {
         "file_metadata": {
             "file": "cut-stone#floor+s2w+corner.2x2.openforge.stl",
+            "file_modified_at": "2026-10-25T12:00:26.988911",
+            "full_name": "tiles/cut-stone/s2w/corner/floor#corner+s2w/cut-stone#floor+s2w+corner.2x2.openforge.stl",
+            "md5": "a1a38d11f07633a761ede913d8255149",
+            "size": 2811584,
+            "storage_address": "https://objects.openforge.tools/models/a1a38d/a1a38d11f07633a761ede913d8255149.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/a1a38d/a1a38d11f07633a761ede913d8255149.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "build|s2w",
+            "connection|openforge",
+            "shape|floor",
+            "shape|floor|s2w",
+            "shape|floor|wall|corner",
+            "shape|square",
+            "size|depth|2",
+            "size|width|2",
+            "texture|cut-stone"
+        ],
+        "type": "model"
+    },
+    {
+        "deprecated": true,
+        "file_metadata": {
+            "file": "cut-stone#floor+s2w+corner.2x2.openforge.stl",
             "file_modified_at": "2024-03-16T17:56:39.093156",
             "full_name": "tiles/cut-stone/s2w/corner/floor#corner+s2w/cut-stone#floor+s2w+corner.2x2.openforge.stl",
             "md5": "5fe43c423159ba8272a3921b7a616cc6",
@@ -27317,6 +27453,134 @@
     {
         "file_metadata": {
             "file": "cut-stone#floor+s2w+corner.3x3.openforge.stl",
+            "file_modified_at": "2026-10-25T12:00:27.243998",
+            "full_name": "tiles/cut-stone/s2w/corner/floor#corner+s2w/cut-stone#floor+s2w+corner.3x3.openforge.stl",
+            "md5": "e6fbf76d587c259b86037b01528b0c0c",
+            "size": 7227684,
+            "storage_address": "https://objects.openforge.tools/models/e6fbf7/e6fbf76d587c259b86037b01528b0c0c.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/e6fbf7/e6fbf76d587c259b86037b01528b0c0c.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "build|s2w",
+            "connection|openforge",
+            "shape|floor",
+            "shape|floor|s2w",
+            "shape|floor|wall|corner",
+            "shape|square",
+            "size|depth|3",
+            "size|width|3",
+            "texture|cut-stone"
+        ],
+        "type": "model"
+    },
+    {
+        "deprecated": true,
+        "file_metadata": {
+            "file": "cut-stone#floor+s2w+corner.3x3.openforge.stl",
             "file_modified_at": "2024-03-16T17:55:56.368618",
             "full_name": "tiles/cut-stone/s2w/corner/floor#corner+s2w/cut-stone#floor+s2w+corner.3x3.openforge.stl",
             "md5": "0864ec2891a29f2e26271114fc752e1f",
@@ -27442,6 +27706,134 @@
         "type": "model"
     },
     {
+        "file_metadata": {
+            "file": "cut-stone#floor+s2w+corner.4x4.openforge.stl",
+            "file_modified_at": "2026-10-25T12:00:27.733191",
+            "full_name": "tiles/cut-stone/s2w/corner/floor#corner+s2w/cut-stone#floor+s2w+corner.4x4.openforge.stl",
+            "md5": "3cb4674da0912424ecc9cc5ab4ef107e",
+            "size": 13628784,
+            "storage_address": "https://objects.openforge.tools/models/3cb467/3cb4674da0912424ecc9cc5ab4ef107e.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/3cb467/3cb4674da0912424ecc9cc5ab4ef107e.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "build|s2w",
+            "connection|openforge",
+            "shape|floor",
+            "shape|floor|s2w",
+            "shape|floor|wall|corner",
+            "shape|square",
+            "size|depth|4",
+            "size|width|4",
+            "texture|cut-stone"
+        ],
+        "type": "model"
+    },
+    {
+        "deprecated": true,
         "file_metadata": {
             "file": "cut-stone#floor+s2w+corner.4x4.openforge.stl",
             "file_modified_at": "2024-03-16T17:50:22.074417",
@@ -28039,9 +28431,9 @@
             ]
         },
         "file_metadata": {
-            "file": "cut-stone#corner+both+right+left,grate+widened.2x2.openforge.stl",
+            "file": "cut-stone#corner+both,grate+widened.2x2.openforge.stl",
             "file_modified_at": "2024-07-27T09:53:43.169175",
-            "full_name": "tiles/cut-stone/s2w/corner/grate#corner+s2w/widened/cut-stone#corner+both+right+left,grate+widened.2x2.openforge.stl",
+            "full_name": "tiles/cut-stone/s2w/corner/grate#corner+s2w/widened/cut-stone#corner+both,grate+widened.2x2.openforge.stl",
             "md5": "137560527ca26d2c07dc0eaf648f0045",
             "size": 11623984,
             "storage_address": "https://objects.openforge.tools/models/137560/137560527ca26d2c07dc0eaf648f0045.stl"
@@ -28158,8 +28550,6 @@
             "connection|openforge",
             "shape|corner",
             "shape|corner|both",
-            "shape|corner|left",
-            "shape|corner|right",
             "size|depth|2",
             "size|width|2",
             "texture|cut-stone"
@@ -28193,9 +28583,9 @@
             ]
         },
         "file_metadata": {
-            "file": "cut-stone#corner+left,grate+widened.2x2.openforge,side+dragonlock.stl",
+            "file": "cut-stone#corner+left+column,grate+widened.2x2.openforge,side+dragonlock.stl",
             "file_modified_at": "2024-07-27T09:52:33.958801",
-            "full_name": "tiles/cut-stone/s2w/corner/grate#corner+s2w/widened/cut-stone#corner+left,grate+widened.2x2.openforge,side+dragonlock.stl",
+            "full_name": "tiles/cut-stone/s2w/corner/grate#corner+s2w/widened/cut-stone#corner+left+column,grate+widened.2x2.openforge,side+dragonlock.stl",
             "md5": "8e02f88c19f324d9ac50331ac0fe2eca",
             "size": 7638684,
             "storage_address": "https://objects.openforge.tools/models/8e02f8/8e02f88c19f324d9ac50331ac0fe2eca.stl"
@@ -28313,6 +28703,7 @@
             "connection|side",
             "connection|side|dragonlock",
             "shape|corner",
+            "shape|corner|column",
             "shape|corner|left",
             "size|depth|2",
             "size|width|2",
@@ -28347,9 +28738,9 @@
             ]
         },
         "file_metadata": {
-            "file": "cut-stone#corner+left,grate+widened.2x2.openforge,side+filament.stl",
+            "file": "cut-stone#corner+left+column,grate+widened.2x2.openforge,side+filament.stl",
             "file_modified_at": "2024-07-27T09:52:48.032447",
-            "full_name": "tiles/cut-stone/s2w/corner/grate#corner+s2w/widened/cut-stone#corner+left,grate+widened.2x2.openforge,side+filament.stl",
+            "full_name": "tiles/cut-stone/s2w/corner/grate#corner+s2w/widened/cut-stone#corner+left+column,grate+widened.2x2.openforge,side+filament.stl",
             "md5": "d2e0010cc36ca41b02bfc102706529c7",
             "size": 7346484,
             "storage_address": "https://objects.openforge.tools/models/d2e001/d2e0010cc36ca41b02bfc102706529c7.stl"
@@ -28467,6 +28858,7 @@
             "connection|side",
             "connection|side|filament",
             "shape|corner",
+            "shape|corner|column",
             "shape|corner|left",
             "size|depth|2",
             "size|width|2",
@@ -28501,9 +28893,9 @@
             ]
         },
         "file_metadata": {
-            "file": "cut-stone#corner+left,grate+widened.2x2.openforge,side.stl",
+            "file": "cut-stone#corner+left+column,grate+widened.2x2.openforge,side.stl",
             "file_modified_at": "2024-07-27T09:52:17.974104",
-            "full_name": "tiles/cut-stone/s2w/corner/grate#corner+s2w/widened/cut-stone#corner+left,grate+widened.2x2.openforge,side.stl",
+            "full_name": "tiles/cut-stone/s2w/corner/grate#corner+s2w/widened/cut-stone#corner+left+column,grate+widened.2x2.openforge,side.stl",
             "md5": "2d1e76260993e7180afb6840530ef8db",
             "size": 7296684,
             "storage_address": "https://objects.openforge.tools/models/2d1e76/2d1e76260993e7180afb6840530ef8db.stl"
@@ -28621,6 +29013,7 @@
             "connection|side",
             "connection|side|openlock",
             "shape|corner",
+            "shape|corner|column",
             "shape|corner|left",
             "size|depth|2",
             "size|width|2",
@@ -28655,9 +29048,9 @@
             ]
         },
         "file_metadata": {
-            "file": "cut-stone#corner+right,grate+widened.2x2.openforge,side+dragonlock.stl",
+            "file": "cut-stone#corner+right+column,grate+widened.2x2.openforge,side+dragonlock.stl",
             "file_modified_at": "2024-07-27T09:53:18.426637",
-            "full_name": "tiles/cut-stone/s2w/corner/grate#corner+s2w/widened/cut-stone#corner+right,grate+widened.2x2.openforge,side+dragonlock.stl",
+            "full_name": "tiles/cut-stone/s2w/corner/grate#corner+s2w/widened/cut-stone#corner+right+column,grate+widened.2x2.openforge,side+dragonlock.stl",
             "md5": "3805b1453e8da55ea11ded6df0417d75",
             "size": 7688084,
             "storage_address": "https://objects.openforge.tools/models/3805b1/3805b1453e8da55ea11ded6df0417d75.stl"
@@ -28775,6 +29168,7 @@
             "connection|side",
             "connection|side|dragonlock",
             "shape|corner",
+            "shape|corner|column",
             "shape|corner|right",
             "size|depth|2",
             "size|width|2",
@@ -28809,9 +29203,9 @@
             ]
         },
         "file_metadata": {
-            "file": "cut-stone#corner+right,grate+widened.2x2.openforge,side+filament.stl",
+            "file": "cut-stone#corner+right+column,grate+widened.2x2.openforge,side+filament.stl",
             "file_modified_at": "2024-07-27T09:53:05.184637",
-            "full_name": "tiles/cut-stone/s2w/corner/grate#corner+s2w/widened/cut-stone#corner+right,grate+widened.2x2.openforge,side+filament.stl",
+            "full_name": "tiles/cut-stone/s2w/corner/grate#corner+s2w/widened/cut-stone#corner+right+column,grate+widened.2x2.openforge,side+filament.stl",
             "md5": "82a45070ce9f1b23c922c72de6003547",
             "size": 7387984,
             "storage_address": "https://objects.openforge.tools/models/82a450/82a45070ce9f1b23c922c72de6003547.stl"
@@ -28929,6 +29323,7 @@
             "connection|side",
             "connection|side|filament",
             "shape|corner",
+            "shape|corner|column",
             "shape|corner|right",
             "size|depth|2",
             "size|width|2",
@@ -28963,9 +29358,9 @@
             ]
         },
         "file_metadata": {
-            "file": "cut-stone#corner+right,grate+widened.2x2.openforge,side.stl",
+            "file": "cut-stone#corner+right+column,grate+widened.2x2.openforge,side.stl",
             "file_modified_at": "2024-07-27T09:53:29.101508",
-            "full_name": "tiles/cut-stone/s2w/corner/grate#corner+s2w/widened/cut-stone#corner+right,grate+widened.2x2.openforge,side.stl",
+            "full_name": "tiles/cut-stone/s2w/corner/grate#corner+s2w/widened/cut-stone#corner+right+column,grate+widened.2x2.openforge,side.stl",
             "md5": "513830b3e0eb92c667ef4859cd155a99",
             "size": 7347784,
             "storage_address": "https://objects.openforge.tools/models/513830/513830b3e0eb92c667ef4859cd155a99.stl"
@@ -29083,6 +29478,7 @@
             "connection|side",
             "connection|side|openlock",
             "shape|corner",
+            "shape|corner|column",
             "shape|corner|right",
             "size|depth|2",
             "size|width|2",
@@ -35989,6 +36385,7 @@
         "metadata": false,
         "tags": [
             "build|s2w",
+            "component|wall",
             "component|window",
             "component|window|arched",
             "component|window|narrow",
@@ -36120,6 +36517,7 @@
         "metadata": false,
         "tags": [
             "build|s2w",
+            "component|wall",
             "component|window",
             "component|window|arched",
             "component|window|narrow",
@@ -36251,6 +36649,7 @@
         "metadata": false,
         "tags": [
             "build|s2w",
+            "component|wall",
             "component|window",
             "component|window|arched",
             "component|window|narrow",
@@ -36382,6 +36781,7 @@
         "metadata": false,
         "tags": [
             "build|s2w",
+            "component|wall",
             "component|window",
             "component|window|arched",
             "component|window|standard",
@@ -36513,6 +36913,7 @@
         "metadata": false,
         "tags": [
             "build|s2w",
+            "component|wall",
             "component|window",
             "component|window|arched",
             "component|window|narrow",
@@ -36644,6 +37045,7 @@
         "metadata": false,
         "tags": [
             "build|s2w",
+            "component|wall",
             "component|window",
             "component|window|arched",
             "component|window|narrow",
@@ -36775,6 +37177,7 @@
         "metadata": false,
         "tags": [
             "build|s2w",
+            "component|wall",
             "component|window",
             "component|window|arched",
             "component|window|narrow",
@@ -36906,6 +37309,7 @@
         "metadata": false,
         "tags": [
             "build|s2w",
+            "component|wall",
             "component|window",
             "component|window|arched",
             "component|window|standard",
@@ -37037,6 +37441,7 @@
         "metadata": false,
         "tags": [
             "build|s2w",
+            "component|wall",
             "component|window",
             "component|window|square",
             "connection|openforge",
@@ -37167,6 +37572,7 @@
         "metadata": false,
         "tags": [
             "build|s2w",
+            "component|wall",
             "component|window",
             "component|window|square",
             "connection|openforge",
@@ -37565,6 +37971,134 @@
     {
         "file_metadata": {
             "file": "cut-stone#floor+s2w+wall.2x2.openforge.stl",
+            "file_modified_at": "2026-10-25T12:00:03.079598",
+            "full_name": "tiles/cut-stone/s2w/wall/floor#wall+s2w/cut-stone#floor+s2w+wall.2x2.openforge.stl",
+            "md5": "9bef4b5b92ba576976b1919b8d3f80c8",
+            "size": 3581784,
+            "storage_address": "https://objects.openforge.tools/models/9bef4b/9bef4b5b92ba576976b1919b8d3f80c8.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/9bef4b/9bef4b5b92ba576976b1919b8d3f80c8.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "build|s2w",
+            "connection|openforge",
+            "shape|floor",
+            "shape|floor|s2w",
+            "shape|floor|wall",
+            "shape|square",
+            "size|depth|2",
+            "size|width|2",
+            "texture|cut-stone"
+        ],
+        "type": "model"
+    },
+    {
+        "deprecated": true,
+        "file_metadata": {
+            "file": "cut-stone#floor+s2w+wall.2x2.openforge.stl",
             "file_modified_at": "2024-03-16T14:21:41.114826",
             "full_name": "tiles/cut-stone/s2w/wall/floor#wall+s2w/cut-stone#floor+s2w+wall.2x2.openforge.stl",
             "md5": "e5265bfc7c6fca46380ae3cf420e0190",
@@ -37692,6 +38226,134 @@
     {
         "file_metadata": {
             "file": "cut-stone#floor+s2w+wall.3x1.openforge.stl",
+            "file_modified_at": "2026-10-25T13:10:30.647793",
+            "full_name": "tiles/cut-stone/s2w/wall/floor#wall+s2w/cut-stone#floor+s2w+wall.3x1.openforge.stl",
+            "md5": "0e83649b7530462e3977a0bfe55730a8",
+            "size": 2027184,
+            "storage_address": "https://objects.openforge.tools/models/0e8364/0e83649b7530462e3977a0bfe55730a8.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/0e8364/0e83649b7530462e3977a0bfe55730a8.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "build|s2w",
+            "connection|openforge",
+            "shape|floor",
+            "shape|floor|s2w",
+            "shape|floor|wall",
+            "shape|square",
+            "size|depth|1",
+            "size|width|3",
+            "texture|cut-stone"
+        ],
+        "type": "model"
+    },
+    {
+        "deprecated": true,
+        "file_metadata": {
+            "file": "cut-stone#floor+s2w+wall.3x1.openforge.stl",
             "file_modified_at": "2024-03-16T14:24:40.690721",
             "full_name": "tiles/cut-stone/s2w/wall/floor#wall+s2w/cut-stone#floor+s2w+wall.3x1.openforge.stl",
             "md5": "734e3dcf2c3f83661b210c653b334f94",
@@ -37817,6 +38479,134 @@
         "type": "model"
     },
     {
+        "file_metadata": {
+            "file": "cut-stone#floor+s2w+wall.3x3.openforge.stl",
+            "file_modified_at": "2026-10-25T12:00:03.406112",
+            "full_name": "tiles/cut-stone/s2w/wall/floor#wall+s2w/cut-stone#floor+s2w+wall.3x3.openforge.stl",
+            "md5": "e78eaae4b6d32e03ac7de5ea076e8381",
+            "size": 8438884,
+            "storage_address": "https://objects.openforge.tools/models/e78eaa/e78eaae4b6d32e03ac7de5ea076e8381.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/e78eaa/e78eaae4b6d32e03ac7de5ea076e8381.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "build|s2w",
+            "connection|openforge",
+            "shape|floor",
+            "shape|floor|s2w",
+            "shape|floor|wall",
+            "shape|square",
+            "size|depth|3",
+            "size|width|3",
+            "texture|cut-stone"
+        ],
+        "type": "model"
+    },
+    {
+        "deprecated": true,
         "file_metadata": {
             "file": "cut-stone#floor+s2w+wall.3x3.openforge.stl",
             "file_modified_at": "2024-03-16T14:20:08.184647",
@@ -38073,6 +38863,134 @@
     {
         "file_metadata": {
             "file": "cut-stone#floor+s2w+wall.4x2.openforge.stl",
+            "file_modified_at": "2026-10-25T12:00:03.693687",
+            "full_name": "tiles/cut-stone/s2w/wall/floor#wall+s2w/cut-stone#floor+s2w+wall.4x2.openforge.stl",
+            "md5": "8fac2ca714b3259b7dec47f239f37188",
+            "size": 6868284,
+            "storage_address": "https://objects.openforge.tools/models/8fac2c/8fac2ca714b3259b7dec47f239f37188.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/8fac2c/8fac2ca714b3259b7dec47f239f37188.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "build|s2w",
+            "connection|openforge",
+            "shape|floor",
+            "shape|floor|s2w",
+            "shape|floor|wall",
+            "shape|square",
+            "size|depth|2",
+            "size|width|4",
+            "texture|cut-stone"
+        ],
+        "type": "model"
+    },
+    {
+        "deprecated": true,
+        "file_metadata": {
+            "file": "cut-stone#floor+s2w+wall.4x2.openforge.stl",
             "file_modified_at": "2024-03-16T14:18:10.334299",
             "full_name": "tiles/cut-stone/s2w/wall/floor#wall+s2w/cut-stone#floor+s2w+wall.4x2.openforge.stl",
             "md5": "5c11ef9ad1abfd48747114de0460ff7a",
@@ -38198,6 +39116,134 @@
         "type": "model"
     },
     {
+        "file_metadata": {
+            "file": "cut-stone#floor+s2w+wall.4x4.openforge.stl",
+            "file_modified_at": "2026-10-25T12:00:04.203324",
+            "full_name": "tiles/cut-stone/s2w/wall/floor#wall+s2w/cut-stone#floor+s2w+wall.4x4.openforge.stl",
+            "md5": "63b3da071681d54a9f4b617a9c519d3b",
+            "size": 15098184,
+            "storage_address": "https://objects.openforge.tools/models/63b3da/63b3da071681d54a9f4b617a9c519d3b.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/63b3da/63b3da071681d54a9f4b617a9c519d3b.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "build|s2w",
+            "connection|openforge",
+            "shape|floor",
+            "shape|floor|s2w",
+            "shape|floor|wall",
+            "shape|square",
+            "size|depth|4",
+            "size|width|4",
+            "texture|cut-stone"
+        ],
+        "type": "model"
+    },
+    {
+        "deprecated": true,
         "file_metadata": {
             "file": "cut-stone#floor+s2w+wall.4x4.openforge.stl",
             "file_modified_at": "2024-03-16T14:16:10.660347",
@@ -50710,6 +51756,7 @@
             "component|door",
             "component|door|arched",
             "component|door|narrow",
+            "component|wall",
             "connection|openforge",
             "shape|square",
             "shape|wall",
@@ -50877,6 +51924,7 @@
             "component|door",
             "component|door|arched",
             "component|door|narrow",
+            "component|wall",
             "connection|openforge",
             "shape|square",
             "shape|wall",
@@ -51044,6 +52092,7 @@
             "component|door",
             "component|door|arched",
             "component|door|standard",
+            "component|wall",
             "connection|openforge",
             "shape|square",
             "shape|wall",
@@ -51199,6 +52248,7 @@
             "component|door|arched",
             "component|door|open",
             "component|door|very_narrow",
+            "component|wall",
             "connection|openforge",
             "shape|square",
             "shape|wall",
@@ -51353,6 +52403,7 @@
             "component|door",
             "component|door|arched",
             "component|door|very_narrow",
+            "component|wall",
             "connection|openforge",
             "shape|square",
             "shape|wall",
@@ -51520,6 +52571,7 @@
             "component|door",
             "component|door|arched",
             "component|door|wide",
+            "component|wall",
             "connection|openforge",
             "shape|square",
             "shape|wall",
@@ -51687,6 +52739,7 @@
             "component|door",
             "component|door|arched",
             "component|door|wide",
+            "component|wall",
             "connection|openforge",
             "shape|square",
             "shape|wall",
@@ -51854,6 +52907,7 @@
             "component|door",
             "component|door|arched",
             "component|door|narrow",
+            "component|wall",
             "connection|openforge",
             "connection|side",
             "connection|side|dragonlock",
@@ -52023,6 +53077,7 @@
             "component|door",
             "component|door|arched",
             "component|door|wide",
+            "component|wall",
             "connection|openforge",
             "connection|side",
             "connection|side|dragonlock",
@@ -52192,6 +53247,7 @@
             "component|door",
             "component|door|arched",
             "component|door|wide",
+            "component|wall",
             "connection|openforge",
             "connection|side",
             "connection|side|dragonlock",
@@ -52361,6 +53417,7 @@
             "component|door",
             "component|door|arched",
             "component|door|narrow",
+            "component|wall",
             "connection|openforge",
             "connection|side",
             "connection|side|openlock",
@@ -52530,6 +53587,7 @@
             "component|door",
             "component|door|arched",
             "component|door|wide",
+            "component|wall",
             "connection|openforge",
             "connection|side",
             "connection|side|openlock",
@@ -52699,6 +53757,7 @@
             "component|door",
             "component|door|arched",
             "component|door|wide",
+            "component|wall",
             "connection|openforge",
             "connection|side",
             "connection|side|openlock",
@@ -52846,6 +53905,7 @@
             "component|door",
             "component|door|arched",
             "component|door|narrow",
+            "component|wall",
             "connection|openlock",
             "shape|square",
             "shape|wall",
@@ -52991,6 +54051,7 @@
             "component|door",
             "component|door|arched",
             "component|door|narrow",
+            "component|wall",
             "connection|openlock",
             "shape|square",
             "shape|wall",
@@ -53136,6 +54197,7 @@
             "component|door",
             "component|door|arched",
             "component|door|standard",
+            "component|wall",
             "connection|openlock",
             "shape|square",
             "shape|wall",
@@ -53265,6 +54327,7 @@
             "component|door|arched",
             "component|door|open",
             "component|door|very_narrow",
+            "component|wall",
             "connection|openlock",
             "shape|square",
             "shape|wall",
@@ -53393,6 +54456,7 @@
             "component|door",
             "component|door|arched",
             "component|door|very_narrow",
+            "component|wall",
             "connection|openlock",
             "shape|square",
             "shape|wall",
@@ -53538,6 +54602,7 @@
             "component|door",
             "component|door|arched",
             "component|door|wide",
+            "component|wall",
             "connection|openlock",
             "shape|square",
             "shape|wall",
@@ -53683,6 +54748,7 @@
             "component|door",
             "component|door|arched",
             "component|door|wide",
+            "component|wall",
             "connection|openlock",
             "shape|square",
             "shape|wall",
@@ -53828,6 +54894,7 @@
             "component|door",
             "component|door|arched",
             "component|door|narrow",
+            "component|wall",
             "connection|openlock",
             "connection|side",
             "connection|side|openlock",
@@ -53975,6 +55042,7 @@
             "component|door",
             "component|door|arched",
             "component|door|wide",
+            "component|wall",
             "connection|openlock",
             "connection|side",
             "connection|side|openlock",
@@ -54122,6 +55190,7 @@
             "component|door",
             "component|door|arched",
             "component|door|wide",
+            "component|wall",
             "connection|openlock",
             "connection|side",
             "connection|side|openlock",
@@ -56529,6 +57598,7 @@
             "build|separate wall",
             "component|door",
             "component|door|rectangular",
+            "component|wall",
             "connection|openforge",
             "shape|square",
             "shape|wall",
@@ -56682,6 +57752,7 @@
             "build|separate wall",
             "component|door",
             "component|door|rectangular",
+            "component|wall",
             "connection|openforge",
             "shape|square",
             "shape|wall",
@@ -56867,6 +57938,7 @@
             "build|separate wall",
             "component|door",
             "component|door|rectangular",
+            "component|wall",
             "connection|openforge",
             "shape|square",
             "shape|wall",
@@ -57020,6 +58092,7 @@
             "build|separate wall",
             "component|door",
             "component|door|rectangular",
+            "component|wall",
             "connection|openforge",
             "shape|square",
             "shape|wall",
@@ -57205,6 +58278,7 @@
             "build|separate wall",
             "component|door",
             "component|door|rectangular",
+            "component|wall",
             "connection|openforge",
             "shape|square",
             "shape|wall",
@@ -57390,6 +58464,7 @@
             "build|separate wall",
             "component|door",
             "component|door|rectangular",
+            "component|wall",
             "connection|openforge",
             "connection|side",
             "connection|side|dragonlock",
@@ -57404,38 +58479,6 @@
     {
         "config": {
             "parts": [
-                {
-                    "name": "door",
-                    "tags": {
-                        "require": [
-                            {
-                                "tag": "interface|door|rectangular"
-                            },
-                            {
-                                "tag": "size|double"
-                            }
-                        ]
-                    }
-                },
-                {
-                    "name": "lintel",
-                    "tags": {
-                        "require": [
-                            {
-                                "tag": "interface|lintel"
-                            },
-                            {
-                                "tag": "shape|square"
-                            },
-                            {
-                                "tag": "size|double"
-                            },
-                            {
-                                "tag": "size|width|sw"
-                            }
-                        ]
-                    }
-                },
                 {
                     "name": "base",
                     "optional": true,
@@ -57572,11 +58615,12 @@
                 }
             }
         ],
-        "metadata": true,
+        "metadata": false,
         "tags": [
             "build|separate wall",
             "component|door",
             "component|door|rectangular",
+            "component|wall",
             "connection|openforge",
             "connection|side",
             "connection|side|dragonlock",
@@ -57764,6 +58808,7 @@
             "build|separate wall",
             "component|door",
             "component|door|rectangular",
+            "component|wall",
             "connection|openforge",
             "connection|side",
             "connection|side|dragonlock",
@@ -57951,6 +58996,7 @@
             "build|separate wall",
             "component|door",
             "component|door|rectangular",
+            "component|wall",
             "connection|openforge",
             "connection|side",
             "connection|side|openlock",
@@ -57965,38 +59011,6 @@
     {
         "config": {
             "parts": [
-                {
-                    "name": "door",
-                    "tags": {
-                        "require": [
-                            {
-                                "tag": "interface|door|rectangular"
-                            },
-                            {
-                                "tag": "size|double"
-                            }
-                        ]
-                    }
-                },
-                {
-                    "name": "lintel",
-                    "tags": {
-                        "require": [
-                            {
-                                "tag": "interface|lintel"
-                            },
-                            {
-                                "tag": "shape|square"
-                            },
-                            {
-                                "tag": "size|double"
-                            },
-                            {
-                                "tag": "size|width|sw"
-                            }
-                        ]
-                    }
-                },
                 {
                     "name": "base",
                     "optional": true,
@@ -58133,11 +59147,12 @@
                 }
             }
         ],
-        "metadata": true,
+        "metadata": false,
         "tags": [
             "build|separate wall",
             "component|door",
             "component|door|rectangular",
+            "component|wall",
             "connection|openforge",
             "connection|side",
             "connection|side|openlock",
@@ -58325,6 +59340,7 @@
             "build|separate wall",
             "component|door",
             "component|door|rectangular",
+            "component|wall",
             "connection|openforge",
             "connection|side",
             "connection|side|openlock",
@@ -58490,6 +59506,7 @@
             "build|separate wall",
             "component|door",
             "component|door|rectangular",
+            "component|wall",
             "connection|openlock",
             "shape|square",
             "shape|wall",
@@ -58617,6 +59634,7 @@
             "build|separate wall",
             "component|door",
             "component|door|rectangular",
+            "component|wall",
             "connection|openlock",
             "shape|square",
             "shape|wall",
@@ -58780,6 +59798,7 @@
             "build|separate wall",
             "component|door",
             "component|door|rectangular",
+            "component|wall",
             "connection|openlock",
             "shape|square",
             "shape|wall",
@@ -58907,6 +59926,7 @@
             "build|separate wall",
             "component|door",
             "component|door|rectangular",
+            "component|wall",
             "connection|openlock",
             "shape|square",
             "shape|wall",
@@ -59070,6 +60090,7 @@
             "build|separate wall",
             "component|door",
             "component|door|rectangular",
+            "component|wall",
             "connection|openlock",
             "shape|square",
             "shape|wall",
@@ -59233,6 +60254,7 @@
             "build|separate wall",
             "component|door",
             "component|door|rectangular",
+            "component|wall",
             "connection|openlock",
             "connection|side",
             "connection|side|openlock",
@@ -59362,6 +60384,7 @@
             "build|separate wall",
             "component|door",
             "component|door|rectangular",
+            "component|wall",
             "connection|openlock",
             "connection|side",
             "connection|side|openlock",
@@ -59527,6 +60550,7 @@
             "build|separate wall",
             "component|door",
             "component|door|rectangular",
+            "component|wall",
             "connection|openlock",
             "connection|side",
             "connection|side|openlock",
@@ -98090,6 +99114,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "component|window",
             "component|window|arched",
             "component|window|narrow",
@@ -98244,6 +99269,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "component|window",
             "component|window|arched",
             "component|window|narrow",
@@ -98398,6 +99424,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "component|window",
             "component|window|arched",
             "component|window|double",
@@ -98552,6 +99579,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "component|window",
             "component|window|arched",
             "component|window|double",
@@ -98706,6 +99734,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "component|window",
             "component|window|arched",
             "component|window|standard",
@@ -98860,6 +99889,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "component|window",
             "component|window|arched",
             "component|window|standard",
@@ -99014,6 +100044,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "component|window",
             "component|window|arched",
             "component|window|narrow",
@@ -99170,6 +100201,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "component|window",
             "component|window|arched",
             "component|window|narrow",
@@ -99326,6 +100358,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "component|window",
             "component|window|arched",
             "component|window|double",
@@ -99482,6 +100515,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "component|window",
             "component|window|arched",
             "component|window|double",
@@ -99638,6 +100672,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "component|window",
             "component|window|arched",
             "component|window|standard",
@@ -99794,6 +100829,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "component|window",
             "component|window|arched",
             "component|window|narrow",
@@ -99950,6 +100986,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "component|window",
             "component|window|arched",
             "component|window|narrow",
@@ -100106,6 +101143,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "component|window",
             "component|window|arched",
             "component|window|double",
@@ -100262,6 +101300,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "component|window",
             "component|window|arched",
             "component|window|double",
@@ -100418,6 +101457,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "component|window",
             "component|window|arched",
             "component|window|standard",
@@ -100548,6 +101588,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "component|window",
             "component|window|arched",
             "component|window|narrow",
@@ -100676,6 +101717,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "component|window",
             "component|window|arched",
             "component|window|narrow",
@@ -100804,6 +101846,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "component|window",
             "component|window|arched",
             "component|window|double",
@@ -100932,6 +101975,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "component|window",
             "component|window|arched",
             "component|window|double",
@@ -101060,6 +102104,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "component|window",
             "component|window|arched",
             "component|window|standard",
@@ -101188,6 +102233,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "component|window",
             "component|window|arched",
             "component|window|standard",
@@ -101316,6 +102362,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "component|window",
             "component|window|arched",
             "component|window|narrow",
@@ -101446,6 +102493,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "component|window",
             "component|window|arched",
             "component|window|narrow",
@@ -101576,6 +102624,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "component|window",
             "component|window|arched",
             "component|window|double",
@@ -101706,6 +102755,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "component|window",
             "component|window|arched",
             "component|window|double",
@@ -101836,6 +102886,7 @@
         "metadata": false,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "component|window",
             "component|window|arched",
             "component|window|standard",
@@ -102261,6 +103312,7 @@
         "metadata": true,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "component|window",
             "component|window|narrow",
             "component|window|square",
@@ -102440,6 +103492,7 @@
         "metadata": true,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "component|window",
             "component|window|square",
             "connection|openforge",
@@ -102618,6 +103671,7 @@
         "metadata": true,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "component|window",
             "component|window|square",
             "connection|openforge",
@@ -102796,6 +103850,7 @@
         "metadata": true,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "component|window",
             "component|window|double",
             "component|window|square",
@@ -102975,6 +104030,7 @@
         "metadata": true,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "component|window",
             "component|window|double",
             "component|window|square",
@@ -103154,6 +104210,7 @@
         "metadata": true,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "component|window",
             "component|window|square",
             "connection|openforge",
@@ -103334,6 +104391,7 @@
         "metadata": true,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "component|window",
             "component|window|double",
             "component|window|square",
@@ -103515,6 +104573,7 @@
         "metadata": true,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "component|window",
             "component|window|square",
             "connection|openforge",
@@ -103695,6 +104754,7 @@
         "metadata": true,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "component|window",
             "component|window|double",
             "component|window|square",
@@ -103854,6 +104914,7 @@
         "metadata": true,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "component|window",
             "component|window|narrow",
             "component|window|square",
@@ -104011,6 +105072,7 @@
         "metadata": true,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "component|window",
             "component|window|square",
             "connection|openlock",
@@ -104167,6 +105229,7 @@
         "metadata": true,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "component|window",
             "component|window|square",
             "connection|openlock",
@@ -104323,6 +105386,7 @@
         "metadata": true,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "component|window",
             "component|window|double",
             "component|window|square",
@@ -104480,6 +105544,7 @@
         "metadata": true,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "component|window",
             "component|window|double",
             "component|window|square",
@@ -104637,6 +105702,7 @@
         "metadata": true,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "component|window",
             "component|window|square",
             "connection|openlock",
@@ -104795,6 +105861,7 @@
         "metadata": true,
         "tags": [
             "build|separate wall",
+            "component|wall",
             "component|window",
             "component|window|double",
             "component|window|square",
@@ -109781,9 +110848,9 @@
         "metadata": false,
         "tags": [
             "build|wall on tile",
-            "component|wall|curved",
             "component|wall|low",
             "connection|openforge",
+            "shape|curved",
             "shape|wall|low",
             "size|depth|1",
             "size|width|1",
@@ -109907,9 +110974,9 @@
         "metadata": false,
         "tags": [
             "build|wall on tile",
-            "component|wall|curved",
             "component|wall|low",
             "connection|openforge",
+            "shape|curved",
             "shape|wall|low",
             "size|depth|2",
             "size|width|2",
@@ -110033,9 +111100,9 @@
         "metadata": false,
         "tags": [
             "build|wall on tile",
-            "component|wall|curved",
             "component|wall|low",
             "connection|openforge",
+            "shape|curved",
             "shape|wall|low",
             "size|depth|4",
             "size|width|2",
@@ -110159,9 +111226,9 @@
         "metadata": false,
         "tags": [
             "build|wall on tile",
-            "component|wall|curved",
             "component|wall|low",
             "connection|openforge",
+            "shape|curved",
             "shape|wall|low",
             "size|depth|3",
             "size|width|3",
@@ -110285,9 +111352,9 @@
         "metadata": false,
         "tags": [
             "build|wall on tile",
-            "component|wall|curved",
             "component|wall|low",
             "connection|openforge",
+            "shape|curved",
             "shape|wall|low",
             "size|depth|2",
             "size|width|4",
@@ -110411,9 +111478,9 @@
         "metadata": false,
         "tags": [
             "build|wall on tile",
-            "component|wall|curved",
             "component|wall|low",
             "connection|openforge",
+            "shape|curved",
             "shape|wall|low",
             "size|depth|4",
             "size|width|4",
@@ -110537,7 +111604,6 @@
         "metadata": false,
         "tags": [
             "build|wall on tile",
-            "component|wall|curved",
             "component|wall|low",
             "connection|openforge",
             "shape|curved",
@@ -110665,7 +111731,6 @@
         "metadata": false,
         "tags": [
             "build|wall on tile",
-            "component|wall|curved",
             "component|wall|low",
             "connection|openforge",
             "shape|curved",
@@ -110793,7 +111858,6 @@
         "metadata": false,
         "tags": [
             "build|wall on tile",
-            "component|wall|curved",
             "component|wall|low",
             "connection|openforge",
             "shape|curved",
@@ -110921,7 +111985,6 @@
         "metadata": false,
         "tags": [
             "build|wall on tile",
-            "component|wall|curved",
             "component|wall|low",
             "connection|openforge",
             "shape|curved",
@@ -111049,7 +112112,6 @@
         "metadata": false,
         "tags": [
             "build|wall on tile",
-            "component|wall|curved",
             "component|wall|low",
             "connection|openforge",
             "shape|curved",
@@ -111177,7 +112239,6 @@
         "metadata": false,
         "tags": [
             "build|wall on tile",
-            "component|wall|curved",
             "component|wall|low",
             "connection|openforge",
             "shape|curved",
@@ -111305,8 +112366,9 @@
         "metadata": false,
         "tags": [
             "build|wall on tile",
-            "component|wall|curved",
+            "component|wall",
             "connection|openforge",
+            "shape|curved",
             "shape|wall",
             "size|depth|1",
             "size|width|1",
@@ -111430,8 +112492,9 @@
         "metadata": false,
         "tags": [
             "build|wall on tile",
-            "component|wall|curved",
+            "component|wall",
             "connection|openforge",
+            "shape|curved",
             "shape|wall",
             "size|depth|2",
             "size|width|2",
@@ -111555,8 +112618,9 @@
         "metadata": false,
         "tags": [
             "build|wall on tile",
-            "component|wall|curved",
+            "component|wall",
             "connection|openforge",
+            "shape|curved",
             "shape|wall",
             "size|depth|4",
             "size|width|2",
@@ -111680,8 +112744,9 @@
         "metadata": false,
         "tags": [
             "build|wall on tile",
-            "component|wall|curved",
+            "component|wall",
             "connection|openforge",
+            "shape|curved",
             "shape|wall",
             "size|depth|3",
             "size|width|3",
@@ -111805,8 +112870,9 @@
         "metadata": false,
         "tags": [
             "build|wall on tile",
-            "component|wall|curved",
+            "component|wall",
             "connection|openforge",
+            "shape|curved",
             "shape|wall",
             "size|depth|2",
             "size|width|4",
@@ -111930,8 +112996,9 @@
         "metadata": false,
         "tags": [
             "build|wall on tile",
-            "component|wall|curved",
+            "component|wall",
             "connection|openforge",
+            "shape|curved",
             "shape|wall",
             "size|depth|4",
             "size|width|4",
@@ -112055,7 +113122,7 @@
         "metadata": false,
         "tags": [
             "build|wall on tile",
-            "component|wall|curved",
+            "component|wall",
             "connection|openforge",
             "shape|curved",
             "shape|wall",
@@ -112182,7 +113249,7 @@
         "metadata": false,
         "tags": [
             "build|wall on tile",
-            "component|wall|curved",
+            "component|wall",
             "connection|openforge",
             "shape|curved",
             "shape|wall",
@@ -112309,7 +113376,7 @@
         "metadata": false,
         "tags": [
             "build|wall on tile",
-            "component|wall|curved",
+            "component|wall",
             "connection|openforge",
             "shape|curved",
             "shape|wall",
@@ -112436,7 +113503,7 @@
         "metadata": false,
         "tags": [
             "build|wall on tile",
-            "component|wall|curved",
+            "component|wall",
             "connection|openforge",
             "shape|curved",
             "shape|wall",
@@ -112563,7 +113630,7 @@
         "metadata": false,
         "tags": [
             "build|wall on tile",
-            "component|wall|curved",
+            "component|wall",
             "connection|openforge",
             "shape|curved",
             "shape|wall",
@@ -112690,7 +113757,7 @@
         "metadata": false,
         "tags": [
             "build|wall on tile",
-            "component|wall|curved",
+            "component|wall",
             "connection|openforge",
             "shape|curved",
             "shape|wall",
@@ -113795,9 +114862,9 @@
         "metadata": false,
         "tags": [
             "build|wall on tile",
-            "component|wall|diagonal",
             "component|wall|low",
             "connection|openforge",
+            "shape|diagonal",
             "shape|wall|low",
             "size|depth|1",
             "size|width|1",
@@ -113921,9 +114988,9 @@
         "metadata": false,
         "tags": [
             "build|wall on tile",
-            "component|wall|diagonal",
             "component|wall|low",
             "connection|openforge",
+            "shape|diagonal",
             "shape|wall|low",
             "size|depth|2",
             "size|width|2",
@@ -114047,9 +115114,9 @@
         "metadata": false,
         "tags": [
             "build|wall on tile",
-            "component|wall|diagonal",
             "component|wall|low",
             "connection|openforge",
+            "shape|diagonal",
             "shape|wall|low",
             "size|depth|4",
             "size|width|2",
@@ -114173,9 +115240,9 @@
         "metadata": false,
         "tags": [
             "build|wall on tile",
-            "component|wall|diagonal",
             "component|wall|low",
             "connection|openforge",
+            "shape|diagonal",
             "shape|wall|low",
             "size|depth|3",
             "size|width|3",
@@ -114299,9 +115366,9 @@
         "metadata": false,
         "tags": [
             "build|wall on tile",
-            "component|wall|diagonal",
             "component|wall|low",
             "connection|openforge",
+            "shape|diagonal",
             "shape|wall|low",
             "size|depth|2",
             "size|width|4",
@@ -114425,9 +115492,9 @@
         "metadata": false,
         "tags": [
             "build|wall on tile",
-            "component|wall|diagonal",
             "component|wall|low",
             "connection|openforge",
+            "shape|diagonal",
             "shape|wall|low",
             "size|depth|4",
             "size|width|4",
@@ -114551,8 +115618,9 @@
         "metadata": false,
         "tags": [
             "build|wall on tile",
-            "component|wall|diagonal",
+            "component|wall",
             "connection|openforge",
+            "shape|diagonal",
             "shape|wall",
             "size|depth|1",
             "size|width|1",
@@ -114676,8 +115744,9 @@
         "metadata": false,
         "tags": [
             "build|wall on tile",
-            "component|wall|diagonal",
+            "component|wall",
             "connection|openforge",
+            "shape|diagonal",
             "shape|wall",
             "size|depth|2",
             "size|width|2",
@@ -114801,8 +115870,9 @@
         "metadata": false,
         "tags": [
             "build|wall on tile",
-            "component|wall|diagonal",
+            "component|wall",
             "connection|openforge",
+            "shape|diagonal",
             "shape|wall",
             "size|depth|4",
             "size|width|2",
@@ -114926,8 +115996,9 @@
         "metadata": false,
         "tags": [
             "build|wall on tile",
-            "component|wall|diagonal",
+            "component|wall",
             "connection|openforge",
+            "shape|diagonal",
             "shape|wall",
             "size|depth|3",
             "size|width|3",
@@ -115051,8 +116122,9 @@
         "metadata": false,
         "tags": [
             "build|wall on tile",
-            "component|wall|diagonal",
+            "component|wall",
             "connection|openforge",
+            "shape|diagonal",
             "shape|wall",
             "size|depth|2",
             "size|width|4",
@@ -115176,8 +116248,9 @@
         "metadata": false,
         "tags": [
             "build|wall on tile",
-            "component|wall|diagonal",
+            "component|wall",
             "connection|openforge",
+            "shape|diagonal",
             "shape|wall",
             "size|depth|4",
             "size|width|4",
