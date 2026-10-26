@@ -363,7 +363,11 @@ roles:
         - 'connection|openforge'
         - 'connection|openlock'
         - 'connection|side'
-    prefer: ['size|width|2']
+    # Towne weathers its two broken stucco finishes differently, and a
+    # corner reads better with one on each wing than the same twice.
+    # Second, so it is the first dropped: it cannot match any other
+    # texture, and the footprint ahead of it has to survive that.
+    prefer: ['size|width|2', 'texture|towne|broken_stucco-a']
     avoid: ['decoration']
   right-wall:
     title: Right wing
@@ -397,7 +401,10 @@ roles:
         - 'connection|openforge'
         - 'connection|openlock'
         - 'connection|side'
-    prefer: ['size|width|2']
+    # The other broken stucco finish, so the two wings of a towne
+    # corner do not weather identically. Second for the same reason as
+    # the left wing's.
+    prefer: ['size|width|2', 'texture|towne|broken_stucco-b']
     avoid: ['decoration']
   pillar:
     title: Pillar
