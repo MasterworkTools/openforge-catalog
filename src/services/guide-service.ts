@@ -341,6 +341,20 @@ export function thumbnailOf(
   );
 }
 
+/**
+ * What to call an answer.
+ *
+ * A curated choice carries its own title. A derived one carries only
+ * the tag, so the name is its last element with the underscores taken
+ * out — not the brand's own capitalisation, since a list of those
+ * would be the stale thing deriving exists to avoid.
+ */
+export function nameFor(choice: GuideChoice): string {
+  if (choice.title) return choice.title;
+  const name = (choice.tag.split('|').pop() ?? choice.tag).replace(/_/g, ' ');
+  return name.charAt(0).toUpperCase() + name.slice(1);
+}
+
 /** What is not on offer, and why, by question; and how many each part has. */
 export interface Availability {
   unavailable: Record<string, string[]>;
