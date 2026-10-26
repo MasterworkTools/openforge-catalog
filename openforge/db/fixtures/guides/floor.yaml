@@ -196,27 +196,9 @@ refinements:
     prompt: Floor texture
     default: texture|dungeon_stone
     from_namespace: texture
-    # Blurbs carry no counts: the honest number depends on the size already
-    # chosen, and size is asked first.
-    choices:
-      - tag: texture|dungeon_stone
-        title: Dungeon stone
-        blurb: >
-          Cut flags, every one of them block or eroded; the recommendation
-          is block.
-      - tag: texture|rough_stone
-        title: Rough stone
-      - tag: texture|cut-stone
-        title: Cut stone
-      - tag: texture|towne
-        title: Wood
-        blurb: >
-          All boarded, in two plank layouts: long planks, or a shorter
-          wood.
-      - tag: texture|aztlan
-        title: Aztlan
-      - tag: texture|nova_trail
-        title: Nova Trail
+    # Derived, which is the default: the question offers whatever the
+    # floors themselves carry, with a live count beside each. A listed
+    # set here hid nine textures that build perfectly well.
 
   - key: base-clips
     role: "*"
