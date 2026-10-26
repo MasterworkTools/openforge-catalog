@@ -596,6 +596,21 @@ def test_keys_that_go_in_a_url_are_restricted(guide, break_it):
         validate_guide_document(guide)
 
 
+def test_a_role_name_may_not_carry_a_dot(guide):
+    """The dot is what tells a declared role from a derived one.
+
+    A role a part brought with it is named `<owner>.<slot>`, and both
+    the engine and the page read the name to decide which kind they
+    have. A declared role admitted with a dot would be classified as a
+    fitting, which no question reaches — a build with the wrong parts
+    and no error anywhere.
+    """
+    guide["roles"]["wall.door"] = guide["roles"]["wall"]
+
+    with pytest.raises(ValueError, match="does not match"):
+        validate_guide_document(guide)
+
+
 def test_a_key_may_not_carry_a_trailing_newline(guide):
     """`key: |` in YAML is a block scalar, and yields "wall\n".
 

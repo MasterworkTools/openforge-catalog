@@ -546,13 +546,11 @@ export function askedOf(
 /**
  * Is this a role a part brought with it, rather than one the guide names?
  *
- * A derived name is `<role>.<slot>`, and a document's role names have
- * no dot, so the name alone says which kind of role it is. None of the
- * guide's own questions reach a fitting: they are about the build, and
- * a fitting is asked only what its slot asks. `_is_fitting` in
- * `resolve.py` is the same test, and the two have to agree — a
- * question that releases a fitting's pin here but not there drops the
- * part someone chose and then resolves it to the same thing again.
+ * A derived name is `<role>.<slot>` and a declared one has no dot, so
+ * the name says which kind it is. None of the guide's own questions
+ * reach a fitting: they are about the build, and a fitting is asked
+ * only what its slot asks. `_is_fitting` in `resolve.py` is the same
+ * test, and the two have to agree.
  */
 export function isFitting(role: string): boolean {
   return role.includes('.');

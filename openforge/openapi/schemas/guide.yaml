@@ -87,8 +87,12 @@ $defs:
       A key that is safe in a URL and readable in one. Step and
       refinement keys become query-string keys, because selections are
       one flat map of key to answer; a guide's own key is a path
-      segment. Role names never appear in a URL and are held to the
-      same shape for consistency with the keys beside them.
+      segment. A role name reaches the URL as `part.<role>`, and the
+      absence of a dot is what tells a declared role from one derived
+      from a slot — `wall.door` — so the engine and the page both read
+      the name to decide which kind it is. Loosening this pattern to
+      admit a dot would silently reclassify a declared role as a
+      fitting, which no question reaches.
 
       Underscores are allowed because the catalog's own vocabulary is
       full of them — an author naming an option after `wall_on_tile`
@@ -478,12 +482,11 @@ $defs:
           of it, the guide names that as a role of its own, and it is
           the one slot that uses `constrain`, which guides do not read.
 
-          A fitting is asked only what its slot asks. The steps and
-          refinements of a guide are about the build, and no door or
-          lintel carries a texture any wall guide offers, so composing
-          them in would leave every fitting with nothing. The slot's
-          own `require` is what picks fittings that physically fit;
-          which of them suits a given wall is an authoring choice the
+          A fitting is asked only what its slot asks: the steps and
+          refinements of a guide are about the build, and a door is not
+          asked the wall's texture or the tile's width. The slot's own
+          `require` is what picks the fittings that physically fit, and
+          which of those suits a given wall is an authoring choice the
           slot cannot express.
 
           A derived role is named for the role it hangs off and the

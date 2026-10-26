@@ -6,6 +6,7 @@ import pytest
 from openforge.db.sql.tags import tag_search_blueprints
 from openforge.guides.resolve import (
     GuideSelectionError,
+    _is_fitting,
     _recommend,
     resolve,
     to_tag_query,
@@ -2519,6 +2520,13 @@ def test_each_selector_sits_behind_its_own_part():
     ]
 
 
+def test_a_name_says_whether_a_role_is_a_fitting():
+    """`isFitting` in `guide-service.ts` is this test, and the page's
+    answer and this one have to match."""
+    assert _is_fitting("wall.door")
+    assert not _is_fitting("wall-base")
+
+
 def test_a_fitting_is_offered_no_chip_for_a_tag_it_never_had():
     """The catalog dialog peels tags off the part's own query, so a
     chip for a tag the fitting was never asked removes nothing."""
@@ -2531,18 +2539,33 @@ def test_a_fitting_is_offered_no_chip_for_a_tag_it_never_had():
             "options": [{"key": "2", "title": "2x2", "tags": {"require": ["size|2"]}}],
         }
     )
+    # Both arms: the chips come from the chosen options and from the
+    # answered refinements, and each reaches a role by its own test.
+    guide["refinements"] = [
+        {
+            "key": "texture",
+            "role": "*",
+            "prompt": "Which texture?",
+            "browsable": True,
+            "from_namespace": "texture",
+        }
+    ]
     wall = _wall("a rectangular wall", "door")
-    wall["tags"].append("size|2")
+    wall["tags"] += ["size|2", "texture|dungeon_stone"]
 
     parts = parts_by_role(
         resolve(
             guide,
-            {"method": "separate", "size": "2"},
+            {
+                "method": "separate",
+                "size": "2",
+                "texture": "texture|dungeon_stone",
+            },
             matching_finder([wall, BASE]),
         )
     )
 
-    assert parts["wall"]["relaxable"] == ["size|2"]
+    assert parts["wall"]["relaxable"] == ["size|2", "texture|dungeon_stone"]
     assert parts["wall.door"]["relaxable"] == []
 
 

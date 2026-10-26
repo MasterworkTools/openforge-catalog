@@ -1059,15 +1059,9 @@ def _applies_to_any(refinement: dict, in_play: list[str]) -> bool:
 def _is_fitting(role_name: str) -> bool:
     """Is this a role a part brought with it, rather than one the guide names?
 
-    A derived name is `<role>.<slot>`, and a document's role names are
-    `url_key`, which has no dot — so the name alone says which kind of
-    role it is, anywhere one is in hand. `isFitting` in
-    `guide-service.ts` is the same test.
-
-    None of the guide's own questions reach a fitting: they are about
-    the build, and a fitting is asked only what its slot asks. Keeping
-    that here rather than at the call sites is what stops the next
-    reader of a role from having to remember it.
+    A derived name is `<role>.<slot>` and a declared one is a `url_key`,
+    which has no dot, so the name says which kind it is. `isFitting` in
+    `guide-service.ts` is the same test and has to stay that way.
     """
     return "." in role_name
 
