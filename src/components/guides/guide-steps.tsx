@@ -8,6 +8,7 @@ import {
   askedOf,
   deadAnswers,
   MissingReason,
+  nameFor,
   reaches,
   Selections,
 } from '@/services/guide-service';
@@ -908,13 +909,10 @@ function ChoicePicker({
  * otherwise look equally good.
  */
 function labelFor(choice: GuideChoice): string {
+  // A curated title is the whole label, count included or not: the
+  // author wrote what they wanted the button to say.
   if (choice.title) return choice.title;
-  // A derived answer is a tag: its last element, underscores out, and
-  // the first letter up. Not a brand's own capitalisation — a list of
-  // those would be the stale thing deriving exists to avoid — but
-  // enough that "openlock" does not read as a typo.
-  const name = (choice.tag.split('|').pop() ?? choice.tag).replace(/_/g, ' ');
-  const pretty = name.charAt(0).toUpperCase() + name.slice(1);
+  const pretty = nameFor(choice);
   // The count is the difference between two answers that otherwise
   // look equally good: 135 pieces behind one and 46 behind another.
   return choice.count === undefined ? pretty : `${pretty} (${choice.count})`;

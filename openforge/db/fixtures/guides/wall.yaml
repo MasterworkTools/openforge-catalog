@@ -608,10 +608,9 @@ refinements:
     # derivation intersects what each role carries, which describes
     # nothing when the roles are asked for different tags.
     #
-    # Deriving it would also offer the whole namespace, most of which
-    # no wall carries at all. Which of these a method can actually use
-    # is still the catalog's answer rather than this list's: an answer
-    # that would leave a role empty is marked unavailable.
+    # Which of these a method can actually use is still the catalog's
+    # answer rather than this list's: an answer that would leave a role
+    # empty is marked unavailable.
     choices:
       - {tag: 'texture|dungeon_stone', title: 'Dungeon stone', blurb: 'The default. Cut blocks, 121 walls.'}
       - {tag: 'texture|towne', title: 'Towne', blurb: 'Timber and plaster above the street. 229 walls, the largest set.'}
@@ -659,18 +658,8 @@ refinements:
         wall-base: 'texture|foundation'
 
   # The floor asks separately, and that is the point rather than a
-  # concession. Three of the eight wall textures have no floor of their
-  # own name at all — cave, stone brick and necro carry 110, 40 and 25
-  # walls and not one shape|floor|wall between them — so a single
-  # texture question would empty the floor for a third of its answers.
-  # Only the five that have both are offered here.
-  #
-  # The sub-textures matter here in a way they do not for the wall.
-  # Every dungeon stone floor in the catalog is block or eroded — 34
-  # and 37, which is the whole 71 — so "dungeon stone" alone is not a
-  # floor anyone pictures, it is a coin toss between two that look
-  # nothing alike. Towne divides the same way, into long planks and
-  # plain boards. The parent stays on the list as "either is fine".
+  # concession: some wall textures have no floor of their own name, so
+  # one question for both would empty the floor for those answers.
   - key: floor-texture
     role: floor
     browsable: true
@@ -700,11 +689,29 @@ refinements:
       - {value: 'texture|dungeon_stone'}
     when: {selected: {method: [s2w, wall-on-tile, separate-wall]}}
     from_namespace: texture
-    # Derived, which is the default. The list this replaces named the
-    # same six and carried counts in its blurbs that the catalog had
-    # long since left behind; a derived count is the live one, narrowed
-    # to the build in hand.
+    # Derived, which is the default. A derived count is narrowed to the
+    # build in hand rather than the whole catalog, which is the number
+    # worth showing beside an answer.
 
+  # How the bases clip down — one question, whose answers are the
+  # combinations that actually exist.
+  #
+  # It was three chained yes/nos (which system, then topless, then
+  # unsupported) and that was wrong twice over. It forced an answer to
+  # each before the next appeared, and it could offer topless *and*
+  # unsupported, which no base in the catalog is. The tags are not
+  # independent: a base is OpenLOCK or DragonLock, with magnets or
+  # without, and the OpenLOCK one may be topless or unsupported but
+  # never both. Asking which combination you want says all of that and
+  # cannot express the pairings that do not exist.
+  #
+  # Derived, so it follows the build rather than a list written here:
+  # a 1-inch dungeon stone wall base offers four, a 2-inch one seven,
+  # and aztlan offers a different set again because it has unsupported
+  # bases where dungeon stone does not. Deriving is also why nothing
+  # here gates topless to OpenLOCK: no DragonLock base is topless, so
+  # the combination never comes up to be offered, and a rule saying so
+  # would be a second copy of that fact and the one that goes stale.
   - key: base-clips
     role: '*'
     # Which clip a base carries is a preference — every base of the
