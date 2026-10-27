@@ -1523,6 +1523,13 @@ def _slot_roles(role_name: str, role: dict, blueprint) -> list[tuple[str, dict]]
             "query": query,
             "under": role_name,
         }
+        # A slot's own predicate says what fits, never which of those
+        # to recommend: a doorway takes any door of its shape and size,
+        # and the catalog has them in several materials. The owner says
+        # what its fittings should lean towards, because the slot
+        # cannot.
+        if role.get("slot_prefer"):
+            derived[key]["prefer"] = role["slot_prefer"]
     return [(f"{role_name}.{key}", slot) for key, slot in derived.items()]
 
 

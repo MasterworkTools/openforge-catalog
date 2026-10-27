@@ -2528,6 +2528,65 @@ def test_a_name_says_whether_a_role_is_a_fitting():
     assert not _is_fitting("wall-base")
 
 
+def test_a_fitting_leans_the_way_its_owner_says():
+    """A slot says what fits, never which of those to recommend.
+
+    A doorway takes any door of its shape, and the catalog carves
+    those in several materials, so without the owner saying so the
+    recommendation is whichever sorts first.
+    """
+    guide = copy.deepcopy(SLOT_GUIDE)
+    guide["roles"]["wall"]["slot_prefer"] = ["texture|wood"]
+    tudor = {
+        "id": "t",
+        "blueprint_name": "a tudor door",
+        "tags": ["interface|door", "texture|tudor"],
+    }
+    wooden = {
+        "id": "w",
+        "blueprint_name": "z wooden door",
+        "tags": ["interface|door", "texture|wood"],
+    }
+
+    parts = parts_by_role(
+        resolve(
+            guide,
+            {"method": "separate"},
+            matching_finder([_wall("a wall", "door"), BASE, tudor, wooden]),
+        )
+    )
+
+    assert parts["wall.door"]["blueprint"]["blueprint_name"] == "z wooden door", (
+        "the tudor door sorts first, so a preference is the only thing "
+        "that could have chosen the wooden one"
+    )
+
+
+def test_a_fitting_takes_the_first_candidate_when_its_owner_says_nothing():
+    """The premise of the test above: without `slot_prefer` the order
+    is the catalog's, so the preference is what does the work."""
+    tudor = {
+        "id": "t",
+        "blueprint_name": "a tudor door",
+        "tags": ["interface|door", "texture|tudor"],
+    }
+    wooden = {
+        "id": "w",
+        "blueprint_name": "z wooden door",
+        "tags": ["interface|door", "texture|wood"],
+    }
+
+    parts = parts_by_role(
+        resolve(
+            SLOT_GUIDE,
+            {"method": "separate"},
+            matching_finder([_wall("a wall", "door"), BASE, tudor, wooden]),
+        )
+    )
+
+    assert parts["wall.door"]["blueprint"]["blueprint_name"] == "a tudor door"
+
+
 def test_a_fitting_is_offered_no_chip_for_a_tag_it_never_had():
     """The catalog dialog peels tags off the part's own query, so a
     chip for a tag the fitting was never asked removes nothing."""

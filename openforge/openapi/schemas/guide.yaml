@@ -378,9 +378,11 @@ $defs:
       - query
     additionalProperties: false
     # An angle for the reversible piece says nothing without the tag
-    # that decides which piece is the reversible one.
+    # that decides which piece is the reversible one, and a preference
+    # for fittings says nothing on a role that offers none.
     dependentRequired:
       reversible_view: [reversible_without]
+      slot_prefer: [slots]
     properties:
       title:
         type: string
@@ -495,6 +497,25 @@ $defs:
           bundle that do not know the construct have to ship before
           any guide that uses it: the one answers 400 to the pin and
           the other drops it from the link.
+      slot_prefer:
+        type: array
+        minItems: 1
+        maxItems: 8
+        items:
+          type: string
+          pattern: "^[^|]+(\\|[^|]+)*$"
+        description: >
+          What the fittings of this role lean towards, most wanted
+          first. Ranks each derived role's candidates exactly as
+          `prefer` ranks this one's, and is the only way to say so: a
+          slot's predicate describes what physically fits, and the
+          slot cannot express a preference among those.
+
+          A doorway takes any door of its shape and size, and the
+          catalog carves those in wood, tudor and metal, so without
+          this the recommendation is whichever sorts first. A
+          preference no fitting can match is dropped, so one list
+          serves slots whose candidates have nothing in common.
       under:
         type: string
         description: The role this one sits beneath, when it sits under one.
