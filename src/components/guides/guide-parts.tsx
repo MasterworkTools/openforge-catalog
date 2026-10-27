@@ -273,8 +273,8 @@ function stacks(parts: GuidePart[]): GuidePart[][] {
   const piles = new Map<string, GuidePart[]>();
 
   for (const part of parts) {
-    const stacked = part.under && !isFitting(part.role);
-    const top = stacked && byRole.has(part.under!) ? part.under! : part.role;
+    const owner = isFitting(part.role) ? undefined : part.under;
+    const top = owner && byRole.has(owner) ? owner : part.role;
     if (!piles.has(top)) piles.set(top, [byRole.get(top)!]);
     if (top !== part.role) piles.get(top)!.push(part);
   }

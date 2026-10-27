@@ -1499,9 +1499,7 @@ def _slot_roles(role_name: str, role: dict, blueprint) -> list[tuple[str, dict]]
     derived = {}
     # `blueprint_config`, not `config`: every finder hands the engine a
     # blueprint that has been through `_convert_config`, which renames
-    # that column and deletes the original. Reading `config` here found
-    # nothing against a real catalog while every hand-built fixture
-    # passed.
+    # that column and deletes the original.
     for slot in (blueprint.get("blueprint_config") or {}).get("parts") or []:
         tags = slot.get("tags") or {}
         query = {

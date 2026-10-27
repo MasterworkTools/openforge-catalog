@@ -2562,6 +2562,85 @@ def test_a_fitting_leans_the_way_its_owner_says():
     )
 
 
+def _door(name, *tags):
+    return {"id": name, "blueprint_name": name, "tags": ["interface|door", *tags]}
+
+
+def test_a_fitting_still_takes_what_fits_when_no_preference_matches():
+    """A preference ranks the candidates; it never filters them.
+
+    Read as a requirement instead, a doorway whose doors are all the
+    wrong material would come back with no door at all rather than
+    with the one that fits.
+    """
+    guide = copy.deepcopy(SLOT_GUIDE)
+    guide["roles"]["wall"]["slot_prefer"] = ["texture|wood"]
+
+    parts = parts_by_role(
+        resolve(
+            guide,
+            {"method": "separate"},
+            matching_finder(
+                [_wall("a wall", "door"), BASE, _door("a tudor door", "texture|tudor")]
+            ),
+        )
+    )
+
+    assert parts["wall.door"]["blueprint"]["blueprint_name"] == "a tudor door"
+
+
+def test_a_fitting_narrows_by_every_preference_it_can_satisfy():
+    guide = copy.deepcopy(SLOT_GUIDE)
+    guide["roles"]["wall"]["slot_prefer"] = ["texture|wood", "build|braced"]
+
+    parts = parts_by_role(
+        resolve(
+            guide,
+            {"method": "separate"},
+            matching_finder(
+                [
+                    _wall("a wall", "door"),
+                    BASE,
+                    _door("a plain wooden door", "texture|wood"),
+                    _door("z braced wooden door", "texture|wood", "build|braced"),
+                ]
+            ),
+        )
+    )
+
+    assert (
+        parts["wall.door"]["blueprint"]["blueprint_name"] == "z braced wooden door"
+    ), (
+        "the plain one sorts first, so only the second preference could "
+        "have chosen the braced one"
+    )
+
+
+def test_a_fitting_drops_its_preferences_from_the_end():
+    """Which is why the order matters, and why the broad term goes
+    first: no candidate here carries both, so the last term is let go
+    and the first still decides."""
+    guide = copy.deepcopy(SLOT_GUIDE)
+    guide["roles"]["wall"]["slot_prefer"] = ["texture|wood", "build|braced"]
+
+    catalog = [
+        _wall("a wall", "door"),
+        BASE,
+        _door("a braced door", "build|braced"),
+        _door("z wooden door", "texture|wood"),
+    ]
+
+    parts = parts_by_role(
+        resolve(guide, {"method": "separate"}, matching_finder(catalog))
+    )
+
+    assert parts["wall.door"]["blueprint"]["blueprint_name"] == "z wooden door", (
+        "the braced door sorts first and satisfies the second term, so "
+        "anything but the wooden one means the terms were not dropped "
+        "from the end"
+    )
+
+
 def test_a_fitting_takes_the_first_candidate_when_its_owner_says_nothing():
     """The premise of the test above: without `slot_prefer` the order
     is the catalog's, so the preference is what does the work."""

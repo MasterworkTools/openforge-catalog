@@ -511,11 +511,14 @@ $defs:
           slot's predicate describes what physically fits, and the
           slot cannot express a preference among those.
 
-          A doorway takes any door of its shape and size, and the
-          catalog carves those in wood, tudor and metal, so without
-          this the recommendation is whichever sorts first. A
-          preference no fitting can match is dropped, so one list
-          serves slots whose candidates have nothing in common.
+          A doorway takes any door of its shape and size, so without
+          this the recommendation is whichever sorts first.
+
+          Preferences are dropped from the end, never individually, so
+          a term nothing carries takes every term after it with it.
+          Put what every fitting of this role could carry first and
+          the narrower terms after, or the narrow one silently costs
+          you the broad one.
       under:
         type: string
         description: The role this one sits beneath, when it sits under one.

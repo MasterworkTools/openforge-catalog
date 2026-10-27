@@ -222,6 +222,33 @@ def test_an_angle_for_the_reversible_piece_needs_the_tag_that_finds_it(guide):
     assert "reversible_without" in str(excinfo.value)
 
 
+def test_a_preference_for_fittings_needs_a_role_that_offers_them(guide):
+    """One without the other is inert: the preference ranks the roles
+    a slot brings, and only `slots` makes a role bring any."""
+    guide["roles"]["wall"]["slot_prefer"] = ["texture|wood"]
+
+    with pytest.raises(ValueError) as excinfo:
+        validate_guide_document(guide)
+
+    assert "slots" in str(excinfo.value)
+
+
+def test_a_preference_for_fittings_is_a_list_of_tags(guide):
+    """Same shape as `prefer`, because it becomes one."""
+    guide["roles"]["wall"]["slots"] = True
+
+    guide["roles"]["wall"]["slot_prefer"] = "texture|wood"
+    with pytest.raises(ValueError, match="not of type 'array'"):
+        validate_guide_document(guide)
+
+    guide["roles"]["wall"]["slot_prefer"] = []
+    with pytest.raises(ValueError, match="should be non-empty"):
+        validate_guide_document(guide)
+
+    guide["roles"]["wall"]["slot_prefer"] = ["texture|wood"]
+    assert validate_guide_document(guide) is guide
+
+
 def test_a_role_may_not_sit_under_a_role_that_does_not_exist(guide):
     guide["roles"]["base"]["under"] = "terrace"
 
