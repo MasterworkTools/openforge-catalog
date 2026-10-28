@@ -309247,6 +309247,164 @@
         "config": {
             "parts": [
                 {
+                    "name": "base",
+                    "optional": true,
+                    "tags": {
+                        "constrain": [
+                            {
+                                "tag": "shape"
+                            },
+                            {
+                                "tag": "size|width"
+                            },
+                            {
+                                "tag": "texture"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "shape|base"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        "file_metadata": {
+            "file": "dungeon_stone%block#wall,door+rectangular+narrow.BA.openforge,side+dragonlock.stl",
+            "file_modified_at": "2026-10-27T16:52:10.071897",
+            "full_name": "tiles/dungeon_stone/separate_wall/primary_walls/door+rectangular/openforge/side,dragonlock/dungeon_stone%block#wall,door+rectangular+narrow.BA.openforge,side+dragonlock.stl",
+            "md5": "1fe009dabc19db46d63c6b9dff527932",
+            "size": 14274884,
+            "storage_address": "https://objects.openforge.tools/models/1fe009/1fe009dabc19db46d63c6b9dff527932.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/1fe009/1fe009dabc19db46d63c6b9dff527932.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "build|separate wall",
+            "component|door",
+            "component|door|narrow",
+            "component|door|rectangular",
+            "component|wall",
+            "connection|openforge",
+            "connection|side",
+            "connection|side|dragonlock",
+            "shape|square",
+            "shape|wall",
+            "size|openlock|BA",
+            "size|width|1.5",
+            "texture|dungeon_stone",
+            "texture|dungeon_stone|block"
+        ],
+        "type": "model"
+    },
+    {
+        "config": {
+            "parts": [
+                {
                     "name": "door",
                     "tags": {
                         "require": [
@@ -309595,6 +309753,164 @@
         "config": {
             "parts": [
                 {
+                    "name": "base",
+                    "optional": true,
+                    "tags": {
+                        "constrain": [
+                            {
+                                "tag": "shape"
+                            },
+                            {
+                                "tag": "size|width"
+                            },
+                            {
+                                "tag": "texture"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "shape|base"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        "file_metadata": {
+            "file": "dungeon_stone%eroded#wall,door+rectangular+narrow.BA.openforge,side+dragonlock.stl",
+            "file_modified_at": "2026-10-27T16:52:15.521750",
+            "full_name": "tiles/dungeon_stone/separate_wall/primary_walls/door+rectangular/openforge/side,dragonlock/dungeon_stone%eroded#wall,door+rectangular+narrow.BA.openforge,side+dragonlock.stl",
+            "md5": "9573d049894d68d3a71a9d77116e9a1b",
+            "size": 14257484,
+            "storage_address": "https://objects.openforge.tools/models/9573d0/9573d049894d68d3a71a9d77116e9a1b.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/9573d0/9573d049894d68d3a71a9d77116e9a1b.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "build|separate wall",
+            "component|door",
+            "component|door|narrow",
+            "component|door|rectangular",
+            "component|wall",
+            "connection|openforge",
+            "connection|side",
+            "connection|side|dragonlock",
+            "shape|square",
+            "shape|wall",
+            "size|openlock|BA",
+            "size|width|1.5",
+            "texture|dungeon_stone",
+            "texture|dungeon_stone|eroded"
+        ],
+        "type": "model"
+    },
+    {
+        "config": {
+            "parts": [
+                {
                     "name": "door",
                     "tags": {
                         "require": [
@@ -309934,6 +310250,164 @@
             "shape|wall",
             "size|openlock|A",
             "size|width|2",
+            "texture|dungeon_stone",
+            "texture|dungeon_stone|block"
+        ],
+        "type": "model"
+    },
+    {
+        "config": {
+            "parts": [
+                {
+                    "name": "base",
+                    "optional": true,
+                    "tags": {
+                        "constrain": [
+                            {
+                                "tag": "shape"
+                            },
+                            {
+                                "tag": "size|width"
+                            },
+                            {
+                                "tag": "texture"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "shape|base"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        "file_metadata": {
+            "file": "dungeon_stone%block#wall,door+rectangular+narrow.BA.openforge,side.stl",
+            "file_modified_at": "2026-10-27T16:51:54.694555",
+            "full_name": "tiles/dungeon_stone/separate_wall/primary_walls/door+rectangular/openforge/side/dungeon_stone%block#wall,door+rectangular+narrow.BA.openforge,side.stl",
+            "md5": "96c0f3cdcb847007281b36c0f63fc44d",
+            "size": 13553584,
+            "storage_address": "https://objects.openforge.tools/models/96c0f3/96c0f3cdcb847007281b36c0f63fc44d.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/96c0f3/96c0f3cdcb847007281b36c0f63fc44d.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "build|separate wall",
+            "component|door",
+            "component|door|narrow",
+            "component|door|rectangular",
+            "component|wall",
+            "connection|openforge",
+            "connection|side",
+            "connection|side|openlock",
+            "shape|square",
+            "shape|wall",
+            "size|openlock|BA",
+            "size|width|1.5",
             "texture|dungeon_stone",
             "texture|dungeon_stone|block"
         ],
@@ -310471,6 +310945,164 @@
             "shape|wall",
             "size|openlock|A",
             "size|width|2",
+            "texture|dungeon_stone",
+            "texture|dungeon_stone|eroded"
+        ],
+        "type": "model"
+    },
+    {
+        "config": {
+            "parts": [
+                {
+                    "name": "base",
+                    "optional": true,
+                    "tags": {
+                        "constrain": [
+                            {
+                                "tag": "shape"
+                            },
+                            {
+                                "tag": "size|width"
+                            },
+                            {
+                                "tag": "texture"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "shape|base"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        "file_metadata": {
+            "file": "dungeon_stone%eroded#wall,door+rectangular+narrow.BA.openforge,side.stl",
+            "file_modified_at": "2026-10-27T16:52:01.206566",
+            "full_name": "tiles/dungeon_stone/separate_wall/primary_walls/door+rectangular/openforge/side/dungeon_stone%eroded#wall,door+rectangular+narrow.BA.openforge,side.stl",
+            "md5": "47953b29271327440fc4b26cdb85719c",
+            "size": 13538284,
+            "storage_address": "https://objects.openforge.tools/models/47953b/47953b29271327440fc4b26cdb85719c.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/47953b/47953b29271327440fc4b26cdb85719c.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "build|separate wall",
+            "component|door",
+            "component|door|narrow",
+            "component|door|rectangular",
+            "component|wall",
+            "connection|openforge",
+            "connection|side",
+            "connection|side|openlock",
+            "shape|square",
+            "shape|wall",
+            "size|openlock|BA",
+            "size|width|1.5",
             "texture|dungeon_stone",
             "texture|dungeon_stone|eroded"
         ],
@@ -315418,6 +316050,138 @@
         "type": "model"
     },
     {
+        "file_metadata": {
+            "file": "dungeon_stone%block#wall,door+rectangular+narrow.BA.openlock,side.stl",
+            "file_modified_at": "2026-10-27T16:42:07.372512",
+            "full_name": "tiles/dungeon_stone/separate_wall/primary_walls/door+rectangular/openlock/side/dungeon_stone%block#wall,door+rectangular+narrow.BA.openlock,side.stl",
+            "md5": "9994f08094fe46af8667c2b028e4ae55",
+            "size": 9815284,
+            "storage_address": "https://objects.openforge.tools/models/9994f0/9994f08094fe46af8667c2b028e4ae55.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/9994f0/9994f08094fe46af8667c2b028e4ae55.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "build|separate wall",
+            "component|door",
+            "component|door|narrow",
+            "component|door|rectangular",
+            "component|wall",
+            "connection|openlock",
+            "connection|side",
+            "connection|side|openlock",
+            "shape|square",
+            "shape|wall",
+            "size|openlock|BA",
+            "size|width|1.5",
+            "texture|dungeon_stone",
+            "texture|dungeon_stone|block"
+        ],
+        "type": "model"
+    },
+    {
         "config": {
             "parts": [
                 {
@@ -315879,6 +316643,138 @@
             "shape|wall",
             "size|openlock|A",
             "size|width|2",
+            "texture|dungeon_stone",
+            "texture|dungeon_stone|eroded"
+        ],
+        "type": "model"
+    },
+    {
+        "file_metadata": {
+            "file": "dungeon_stone%eroded#wall,door+rectangular+narrow.BA.openlock,side.stl",
+            "file_modified_at": "2026-10-27T16:42:16.285837",
+            "full_name": "tiles/dungeon_stone/separate_wall/primary_walls/door+rectangular/openlock/side/dungeon_stone%eroded#wall,door+rectangular+narrow.BA.openlock,side.stl",
+            "md5": "08e209cc1b22b1d2fb8b7d570a0d9bbf",
+            "size": 9800284,
+            "storage_address": "https://objects.openforge.tools/models/08e209/08e209cc1b22b1d2fb8b7d570a0d9bbf.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/08e209/08e209cc1b22b1d2fb8b7d570a0d9bbf.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "build|separate wall",
+            "component|door",
+            "component|door|narrow",
+            "component|door|rectangular",
+            "component|wall",
+            "connection|openlock",
+            "connection|side",
+            "connection|side|openlock",
+            "shape|square",
+            "shape|wall",
+            "size|openlock|BA",
+            "size|width|1.5",
             "texture|dungeon_stone",
             "texture|dungeon_stone|eroded"
         ],
