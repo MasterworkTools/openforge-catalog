@@ -25374,6 +25374,7 @@
             "interface|door|arched",
             "part|door",
             "part|door|arched",
+            "part|door|arched|corner",
             "size|narrow",
             "texture|tudor"
         ],
@@ -25497,6 +25498,7 @@
             "interface|door|arched",
             "part|door",
             "part|door|arched",
+            "part|door|arched|corner",
             "size|narrow",
             "texture|wood"
         ],
@@ -51604,6 +51606,11 @@
                 {
                     "name": "door",
                     "tags": {
+                        "deny": [
+                            {
+                                "tag": "part|door|arched|corner"
+                            }
+                        ],
                         "require": [
                             {
                                 "tag": "interface|door|arched"
@@ -51772,6 +51779,11 @@
                 {
                     "name": "door",
                     "tags": {
+                        "deny": [
+                            {
+                                "tag": "part|door|arched|corner"
+                            }
+                        ],
                         "require": [
                             {
                                 "tag": "interface|door|arched"
@@ -51940,6 +51952,11 @@
                 {
                     "name": "door",
                     "tags": {
+                        "deny": [
+                            {
+                                "tag": "part|door|arched|corner"
+                            }
+                        ],
                         "require": [
                             {
                                 "tag": "interface|door|arched"
@@ -52419,6 +52436,11 @@
                 {
                     "name": "door",
                     "tags": {
+                        "deny": [
+                            {
+                                "tag": "part|door|arched|corner"
+                            }
+                        ],
                         "require": [
                             {
                                 "tag": "interface|door|arched"
@@ -52587,6 +52609,11 @@
                 {
                     "name": "door",
                     "tags": {
+                        "deny": [
+                            {
+                                "tag": "part|door|arched|corner"
+                            }
+                        ],
                         "require": [
                             {
                                 "tag": "interface|door|arched"
@@ -52755,6 +52782,11 @@
                 {
                     "name": "door",
                     "tags": {
+                        "deny": [
+                            {
+                                "tag": "part|door|arched|corner"
+                            }
+                        ],
                         "require": [
                             {
                                 "tag": "interface|door|arched"
@@ -52925,6 +52957,11 @@
                 {
                     "name": "door",
                     "tags": {
+                        "deny": [
+                            {
+                                "tag": "part|door|arched|corner"
+                            }
+                        ],
                         "require": [
                             {
                                 "tag": "interface|door|arched"
@@ -53095,6 +53132,11 @@
                 {
                     "name": "door",
                     "tags": {
+                        "deny": [
+                            {
+                                "tag": "part|door|arched|corner"
+                            }
+                        ],
                         "require": [
                             {
                                 "tag": "interface|door|arched"
@@ -53265,6 +53307,11 @@
                 {
                     "name": "door",
                     "tags": {
+                        "deny": [
+                            {
+                                "tag": "part|door|arched|corner"
+                            }
+                        ],
                         "require": [
                             {
                                 "tag": "interface|door|arched"
@@ -53435,6 +53482,11 @@
                 {
                     "name": "door",
                     "tags": {
+                        "deny": [
+                            {
+                                "tag": "part|door|arched|corner"
+                            }
+                        ],
                         "require": [
                             {
                                 "tag": "interface|door|arched"
@@ -53605,6 +53657,11 @@
                 {
                     "name": "door",
                     "tags": {
+                        "deny": [
+                            {
+                                "tag": "part|door|arched|corner"
+                            }
+                        ],
                         "require": [
                             {
                                 "tag": "interface|door|arched"
@@ -53775,6 +53832,11 @@
                 {
                     "name": "door",
                     "tags": {
+                        "deny": [
+                            {
+                                "tag": "part|door|arched|corner"
+                            }
+                        ],
                         "require": [
                             {
                                 "tag": "interface|door|arched"
@@ -53921,6 +53983,11 @@
                 {
                     "name": "door",
                     "tags": {
+                        "deny": [
+                            {
+                                "tag": "part|door|arched|corner"
+                            }
+                        ],
                         "require": [
                             {
                                 "tag": "interface|door|arched"
@@ -54067,6 +54134,11 @@
                 {
                     "name": "door",
                     "tags": {
+                        "deny": [
+                            {
+                                "tag": "part|door|arched|corner"
+                            }
+                        ],
                         "require": [
                             {
                                 "tag": "interface|door|arched"
@@ -54472,6 +54544,11 @@
                 {
                     "name": "door",
                     "tags": {
+                        "deny": [
+                            {
+                                "tag": "part|door|arched|corner"
+                            }
+                        ],
                         "require": [
                             {
                                 "tag": "interface|door|arched"
@@ -54618,6 +54695,11 @@
                 {
                     "name": "door",
                     "tags": {
+                        "deny": [
+                            {
+                                "tag": "part|door|arched|corner"
+                            }
+                        ],
                         "require": [
                             {
                                 "tag": "interface|door|arched"
@@ -54764,6 +54846,11 @@
                 {
                     "name": "door",
                     "tags": {
+                        "deny": [
+                            {
+                                "tag": "part|door|arched|corner"
+                            }
+                        ],
                         "require": [
                             {
                                 "tag": "interface|door|arched"
@@ -54912,6 +54999,11 @@
                 {
                     "name": "door",
                     "tags": {
+                        "deny": [
+                            {
+                                "tag": "part|door|arched|corner"
+                            }
+                        ],
                         "require": [
                             {
                                 "tag": "interface|door|arched"
@@ -55060,6 +55152,11 @@
                 {
                     "name": "door",
                     "tags": {
+                        "deny": [
+                            {
+                                "tag": "part|door|arched|corner"
+                            }
+                        ],
                         "require": [
                             {
                                 "tag": "interface|door|arched"
@@ -57172,7 +57269,8 @@
             "part|door",
             "part|door|rectangular",
             "size|single",
-            "texture|wood"
+            "texture|wood",
+            "texture|wood|grain"
         ],
         "type": "model"
     },
@@ -58292,28 +58390,6 @@
                             },
                             {
                                 "tag": "size|width|sw"
-                            }
-                        ]
-                    }
-                },
-                {
-                    "name": "base",
-                    "optional": true,
-                    "tags": {
-                        "constrain": [
-                            {
-                                "tag": "shape"
-                            },
-                            {
-                                "tag": "size|width"
-                            },
-                            {
-                                "tag": "texture"
-                            }
-                        ],
-                        "require": [
-                            {
-                                "tag": "shape|base"
                             }
                         ]
                     }
