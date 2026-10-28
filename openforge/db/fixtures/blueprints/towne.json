@@ -39056,7 +39056,8 @@
             "part|door",
             "part|door|rectangular",
             "size|single",
-            "texture|wood"
+            "texture|wood",
+            "texture|wood|grain"
         ],
         "type": "model"
     },
