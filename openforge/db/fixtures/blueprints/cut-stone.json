@@ -61034,9 +61034,242 @@
                             }
                         ]
                     }
+                },
+                {
+                    "name": "base",
+                    "optional": true,
+                    "tags": {
+                        "constrain": [
+                            {
+                                "tag": "shape"
+                            },
+                            {
+                                "tag": "size|width"
+                            },
+                            {
+                                "tag": "texture"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "shape|base"
+                            }
+                        ]
+                    }
                 }
             ]
         },
+        "file_metadata": {
+            "file": "cut-stone#wall,door+rectangular.A.openforge,side.stl",
+            "file_modified_at": "2026-10-27T21:07:38.198057",
+            "full_name": "tiles/cut-stone/separate_wall/primary_walls/door+rectangular/openforge/side/cut-stone#wall,door+rectangular.A.openforge,side.stl",
+            "md5": "6499171ea31172b56a3919c2575d2f71",
+            "size": 10233884,
+            "storage_address": "https://objects.openforge.tools/models/649917/6499171ea31172b56a3919c2575d2f71.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/649917/6499171ea31172b56a3919c2575d2f71.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": true,
+        "tags": [
+            "build|separate wall",
+            "component|door",
+            "component|door|rectangular",
+            "component|wall",
+            "connection|openforge",
+            "connection|side",
+            "connection|side|openlock",
+            "shape|square",
+            "shape|wall",
+            "size|openlock|A",
+            "size|width|2",
+            "texture|cut-stone"
+        ],
+        "type": "model"
+    },
+    {
+        "config": {
+            "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|rectangular"
+                            },
+                            {
+                                "tag": "size|single"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "name": "lintel",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|lintel"
+                            },
+                            {
+                                "tag": "shape|square"
+                            },
+                            {
+                                "tag": "size|single"
+                            },
+                            {
+                                "tag": "size|width|sw"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "name": "base",
+                    "optional": true,
+                    "tags": {
+                        "constrain": [
+                            {
+                                "tag": "shape"
+                            },
+                            {
+                                "tag": "size|width"
+                            },
+                            {
+                                "tag": "texture"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "shape|base"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "name": "base",
+                    "optional": true,
+                    "tags": {
+                        "constrain": [
+                            {
+                                "tag": "shape"
+                            },
+                            {
+                                "tag": "size|width"
+                            },
+                            {
+                                "tag": "texture"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "shape|base"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        "deprecated": true,
         "file_metadata": {
             "file": "cut-stone#wall,door+rectangular.A.openforge,side.stl",
             "file_modified_at": "2024-06-16T10:06:20.068482",
@@ -62827,6 +63060,173 @@
             "shape|wall",
             "size|openlock|Q",
             "size|width|4",
+            "texture|cut-stone"
+        ],
+        "type": "model"
+    },
+    {
+        "config": {
+            "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|rectangular"
+                            },
+                            {
+                                "tag": "size|single"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "name": "lintel",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|lintel"
+                            },
+                            {
+                                "tag": "shape|square"
+                            },
+                            {
+                                "tag": "size|single"
+                            },
+                            {
+                                "tag": "size|width|sw"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        "file_metadata": {
+            "file": "cut-stone#wall,door+rectangular.A.openlock+unsupported,side.stl",
+            "file_modified_at": "2026-10-27T21:18:34.413381",
+            "full_name": "tiles/cut-stone/separate_wall/primary_walls/door+rectangular/openlock+unsupported/side/cut-stone#wall,door+rectangular.A.openlock+unsupported,side.stl",
+            "md5": "aa4bee172d4733d917d5521d64c7ca58",
+            "size": 10808684,
+            "storage_address": "https://objects.openforge.tools/models/aa4bee/aa4bee172d4733d917d5521d64c7ca58.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/aa4bee/aa4bee172d4733d917d5521d64c7ca58.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": true,
+        "tags": [
+            "build|separate wall",
+            "component|door",
+            "component|door|rectangular",
+            "component|wall",
+            "connection|openlock",
+            "connection|openlock|unsupported",
+            "connection|side",
+            "connection|side|openlock",
+            "shape|square",
+            "shape|wall",
+            "size|openlock|A",
+            "size|width|2",
             "texture|cut-stone"
         ],
         "type": "model"
@@ -64931,6 +65331,173 @@
                 }
             ]
         },
+        "file_metadata": {
+            "file": "cut-stone#wall,door+rectangular.A.openlock,side.stl",
+            "file_modified_at": "2026-10-27T21:20:08.660294",
+            "full_name": "tiles/cut-stone/separate_wall/primary_walls/door+rectangular/openlock/side/cut-stone#wall,door+rectangular.A.openlock,side.stl",
+            "md5": "3c69d8d643543b1169ea41b6dfcfdedc",
+            "size": 10889584,
+            "storage_address": "https://objects.openforge.tools/models/3c69d8/3c69d8d643543b1169ea41b6dfcfdedc.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/3c69d8/3c69d8d643543b1169ea41b6dfcfdedc.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": true,
+        "tags": [
+            "build|separate wall",
+            "component|door",
+            "component|door|rectangular",
+            "component|wall",
+            "connection|openlock",
+            "connection|side",
+            "connection|side|openlock",
+            "shape|square",
+            "shape|wall",
+            "size|openlock|A",
+            "size|width|2",
+            "texture|cut-stone"
+        ],
+        "type": "model"
+    },
+    {
+        "config": {
+            "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|rectangular"
+                            },
+                            {
+                                "tag": "size|single"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "name": "lintel",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|lintel"
+                            },
+                            {
+                                "tag": "shape|square"
+                            },
+                            {
+                                "tag": "size|single"
+                            },
+                            {
+                                "tag": "size|width|sw"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        "deprecated": true,
         "file_metadata": {
             "file": "cut-stone#wall,door+rectangular.A.openlock,side.stl",
             "file_modified_at": "2024-06-16T10:07:02.691792",

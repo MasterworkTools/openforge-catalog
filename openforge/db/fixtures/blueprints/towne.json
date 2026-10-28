@@ -42335,9 +42335,243 @@
                             }
                         ]
                     }
+                },
+                {
+                    "name": "base",
+                    "optional": true,
+                    "tags": {
+                        "constrain": [
+                            {
+                                "tag": "shape"
+                            },
+                            {
+                                "tag": "size|width"
+                            },
+                            {
+                                "tag": "texture"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "shape|base"
+                            }
+                        ]
+                    }
                 }
             ]
         },
+        "file_metadata": {
+            "file": "towne+broken_stucco-a#wall,door+rectangular.A.openforge,side.stl",
+            "file_modified_at": "2026-10-27T21:16:01.320395",
+            "full_name": "tiles/towne/separate_wall/primary_walls/door+rectangular/openforge/side/towne+broken_stucco-a#wall,door+rectangular.A.openforge,side.stl",
+            "md5": "a46ad41c332dad7fb8f1f7bebf89a0a4",
+            "size": 10925384,
+            "storage_address": "https://objects.openforge.tools/models/a46ad4/a46ad41c332dad7fb8f1f7bebf89a0a4.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/a46ad4/a46ad41c332dad7fb8f1f7bebf89a0a4.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": true,
+        "tags": [
+            "build|separate wall",
+            "component|door",
+            "component|door|rectangular",
+            "component|wall",
+            "connection|openforge",
+            "connection|side",
+            "connection|side|openlock",
+            "shape|square",
+            "shape|wall",
+            "size|openlock|A",
+            "size|width|2",
+            "texture|towne",
+            "texture|towne|broken_stucco-a"
+        ],
+        "type": "model"
+    },
+    {
+        "config": {
+            "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|rectangular"
+                            },
+                            {
+                                "tag": "size|single"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "name": "lintel",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|lintel"
+                            },
+                            {
+                                "tag": "shape|square"
+                            },
+                            {
+                                "tag": "size|single"
+                            },
+                            {
+                                "tag": "size|width|sw"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "name": "base",
+                    "optional": true,
+                    "tags": {
+                        "constrain": [
+                            {
+                                "tag": "shape"
+                            },
+                            {
+                                "tag": "size|width"
+                            },
+                            {
+                                "tag": "texture"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "shape|base"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "name": "base",
+                    "optional": true,
+                    "tags": {
+                        "constrain": [
+                            {
+                                "tag": "shape"
+                            },
+                            {
+                                "tag": "size|width"
+                            },
+                            {
+                                "tag": "texture"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "shape|base"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        "deprecated": true,
         "file_metadata": {
             "file": "towne+broken_stucco-a#wall,door+rectangular.A.openforge,side.stl",
             "file_modified_at": "2020-01-13T12:14:44",
@@ -42840,9 +43074,243 @@
                             }
                         ]
                     }
+                },
+                {
+                    "name": "base",
+                    "optional": true,
+                    "tags": {
+                        "constrain": [
+                            {
+                                "tag": "shape"
+                            },
+                            {
+                                "tag": "size|width"
+                            },
+                            {
+                                "tag": "texture"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "shape|base"
+                            }
+                        ]
+                    }
                 }
             ]
         },
+        "file_metadata": {
+            "file": "towne+broken_stucco-b#wall,door+rectangular.A.openforge,side.stl",
+            "file_modified_at": "2026-10-27T21:16:04.626222",
+            "full_name": "tiles/towne/separate_wall/primary_walls/door+rectangular/openforge/side/towne+broken_stucco-b#wall,door+rectangular.A.openforge,side.stl",
+            "md5": "7f3f2547bfd676c859c8317a1effadfe",
+            "size": 10836784,
+            "storage_address": "https://objects.openforge.tools/models/7f3f25/7f3f2547bfd676c859c8317a1effadfe.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/7f3f25/7f3f2547bfd676c859c8317a1effadfe.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": true,
+        "tags": [
+            "build|separate wall",
+            "component|door",
+            "component|door|rectangular",
+            "component|wall",
+            "connection|openforge",
+            "connection|side",
+            "connection|side|openlock",
+            "shape|square",
+            "shape|wall",
+            "size|openlock|A",
+            "size|width|2",
+            "texture|towne",
+            "texture|towne|broken_stucco-b"
+        ],
+        "type": "model"
+    },
+    {
+        "config": {
+            "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|rectangular"
+                            },
+                            {
+                                "tag": "size|single"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "name": "lintel",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|lintel"
+                            },
+                            {
+                                "tag": "shape|square"
+                            },
+                            {
+                                "tag": "size|single"
+                            },
+                            {
+                                "tag": "size|width|sw"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "name": "base",
+                    "optional": true,
+                    "tags": {
+                        "constrain": [
+                            {
+                                "tag": "shape"
+                            },
+                            {
+                                "tag": "size|width"
+                            },
+                            {
+                                "tag": "texture"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "shape|base"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "name": "base",
+                    "optional": true,
+                    "tags": {
+                        "constrain": [
+                            {
+                                "tag": "shape"
+                            },
+                            {
+                                "tag": "size|width"
+                            },
+                            {
+                                "tag": "texture"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "shape|base"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        "deprecated": true,
         "file_metadata": {
             "file": "towne+broken_stucco-b#wall,door+rectangular.A.openforge,side.stl",
             "file_modified_at": "2020-01-13T12:59:43",
@@ -43725,9 +44193,243 @@
                             }
                         ]
                     }
+                },
+                {
+                    "name": "base",
+                    "optional": true,
+                    "tags": {
+                        "constrain": [
+                            {
+                                "tag": "shape"
+                            },
+                            {
+                                "tag": "size|width"
+                            },
+                            {
+                                "tag": "texture"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "shape|base"
+                            }
+                        ]
+                    }
                 }
             ]
         },
+        "file_metadata": {
+            "file": "towne+stone#wall,door+rectangular.A.openforge,side.stl",
+            "file_modified_at": "2026-10-27T21:15:22.595827",
+            "full_name": "tiles/towne/separate_wall/primary_walls/door+rectangular/openforge/side/towne+stone#wall,door+rectangular.A.openforge,side.stl",
+            "md5": "9e494dbc05ae1fddec4433aa71a40021",
+            "size": 11444684,
+            "storage_address": "https://objects.openforge.tools/models/9e494d/9e494dbc05ae1fddec4433aa71a40021.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/9e494d/9e494dbc05ae1fddec4433aa71a40021.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": true,
+        "tags": [
+            "build|separate wall",
+            "component|door",
+            "component|door|rectangular",
+            "component|wall",
+            "connection|openforge",
+            "connection|side",
+            "connection|side|openlock",
+            "shape|square",
+            "shape|wall",
+            "size|openlock|A",
+            "size|width|2",
+            "texture|towne",
+            "texture|towne|stone"
+        ],
+        "type": "model"
+    },
+    {
+        "config": {
+            "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|rectangular"
+                            },
+                            {
+                                "tag": "size|single"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "name": "lintel",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|lintel"
+                            },
+                            {
+                                "tag": "shape|square"
+                            },
+                            {
+                                "tag": "size|single"
+                            },
+                            {
+                                "tag": "size|width|sw"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "name": "base",
+                    "optional": true,
+                    "tags": {
+                        "constrain": [
+                            {
+                                "tag": "shape"
+                            },
+                            {
+                                "tag": "size|width"
+                            },
+                            {
+                                "tag": "texture"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "shape|base"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "name": "base",
+                    "optional": true,
+                    "tags": {
+                        "constrain": [
+                            {
+                                "tag": "shape"
+                            },
+                            {
+                                "tag": "size|width"
+                            },
+                            {
+                                "tag": "texture"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "shape|base"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        "deprecated": true,
         "file_metadata": {
             "file": "towne+stone#wall,door+rectangular.A.openforge,side.stl",
             "file_modified_at": "2020-01-13T14:04:11",
@@ -44610,9 +45312,243 @@
                             }
                         ]
                     }
+                },
+                {
+                    "name": "base",
+                    "optional": true,
+                    "tags": {
+                        "constrain": [
+                            {
+                                "tag": "shape"
+                            },
+                            {
+                                "tag": "size|width"
+                            },
+                            {
+                                "tag": "texture"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "shape|base"
+                            }
+                        ]
+                    }
                 }
             ]
         },
+        "file_metadata": {
+            "file": "towne+stone-stucco#wall,door+rectangular.A.openforge,side.stl",
+            "file_modified_at": "2026-10-27T21:15:19.301882",
+            "full_name": "tiles/towne/separate_wall/primary_walls/door+rectangular/openforge/side/towne+stone-stucco#wall,door+rectangular.A.openforge,side.stl",
+            "md5": "acfa79378a39e5470d8f0c23ccb56725",
+            "size": 10930984,
+            "storage_address": "https://objects.openforge.tools/models/acfa79/acfa79378a39e5470d8f0c23ccb56725.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/acfa79/acfa79378a39e5470d8f0c23ccb56725.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": true,
+        "tags": [
+            "build|separate wall",
+            "component|door",
+            "component|door|rectangular",
+            "component|wall",
+            "connection|openforge",
+            "connection|side",
+            "connection|side|openlock",
+            "shape|square",
+            "shape|wall",
+            "size|openlock|A",
+            "size|width|2",
+            "texture|towne",
+            "texture|towne|stone-stucco"
+        ],
+        "type": "model"
+    },
+    {
+        "config": {
+            "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|rectangular"
+                            },
+                            {
+                                "tag": "size|single"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "name": "lintel",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|lintel"
+                            },
+                            {
+                                "tag": "shape|square"
+                            },
+                            {
+                                "tag": "size|single"
+                            },
+                            {
+                                "tag": "size|width|sw"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "name": "base",
+                    "optional": true,
+                    "tags": {
+                        "constrain": [
+                            {
+                                "tag": "shape"
+                            },
+                            {
+                                "tag": "size|width"
+                            },
+                            {
+                                "tag": "texture"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "shape|base"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "name": "base",
+                    "optional": true,
+                    "tags": {
+                        "constrain": [
+                            {
+                                "tag": "shape"
+                            },
+                            {
+                                "tag": "size|width"
+                            },
+                            {
+                                "tag": "texture"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "shape|base"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        "deprecated": true,
         "file_metadata": {
             "file": "towne+stone-stucco#wall,door+rectangular.A.openforge,side.stl",
             "file_modified_at": "2020-01-13T14:04:30",
@@ -45495,9 +46431,243 @@
                             }
                         ]
                     }
+                },
+                {
+                    "name": "base",
+                    "optional": true,
+                    "tags": {
+                        "constrain": [
+                            {
+                                "tag": "shape"
+                            },
+                            {
+                                "tag": "size|width"
+                            },
+                            {
+                                "tag": "texture"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "shape|base"
+                            }
+                        ]
+                    }
                 }
             ]
         },
+        "file_metadata": {
+            "file": "towne+stucco#wall,door+rectangular.A.openforge,side.stl",
+            "file_modified_at": "2026-10-27T21:15:14.547379",
+            "full_name": "tiles/towne/separate_wall/primary_walls/door+rectangular/openforge/side/towne+stucco#wall,door+rectangular.A.openforge,side.stl",
+            "md5": "5e9a2da0edc1b20fbc5321b775d6b036",
+            "size": 10552784,
+            "storage_address": "https://objects.openforge.tools/models/5e9a2d/5e9a2da0edc1b20fbc5321b775d6b036.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/5e9a2d/5e9a2da0edc1b20fbc5321b775d6b036.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": true,
+        "tags": [
+            "build|separate wall",
+            "component|door",
+            "component|door|rectangular",
+            "component|wall",
+            "connection|openforge",
+            "connection|side",
+            "connection|side|openlock",
+            "shape|square",
+            "shape|wall",
+            "size|openlock|A",
+            "size|width|2",
+            "texture|towne",
+            "texture|towne|stucco"
+        ],
+        "type": "model"
+    },
+    {
+        "config": {
+            "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|rectangular"
+                            },
+                            {
+                                "tag": "size|single"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "name": "lintel",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|lintel"
+                            },
+                            {
+                                "tag": "shape|square"
+                            },
+                            {
+                                "tag": "size|single"
+                            },
+                            {
+                                "tag": "size|width|sw"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "name": "base",
+                    "optional": true,
+                    "tags": {
+                        "constrain": [
+                            {
+                                "tag": "shape"
+                            },
+                            {
+                                "tag": "size|width"
+                            },
+                            {
+                                "tag": "texture"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "shape|base"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "name": "base",
+                    "optional": true,
+                    "tags": {
+                        "constrain": [
+                            {
+                                "tag": "shape"
+                            },
+                            {
+                                "tag": "size|width"
+                            },
+                            {
+                                "tag": "texture"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "shape|base"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        "deprecated": true,
         "file_metadata": {
             "file": "towne+stucco#wall,door+rectangular.A.openforge,side.stl",
             "file_modified_at": "2020-01-13T14:04:55",
@@ -46380,9 +47550,243 @@
                             }
                         ]
                     }
+                },
+                {
+                    "name": "base",
+                    "optional": true,
+                    "tags": {
+                        "constrain": [
+                            {
+                                "tag": "shape"
+                            },
+                            {
+                                "tag": "size|width"
+                            },
+                            {
+                                "tag": "texture"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "shape|base"
+                            }
+                        ]
+                    }
                 }
             ]
         },
+        "file_metadata": {
+            "file": "towne+stucco-stone#wall,door+rectangular.A.openforge,side.stl",
+            "file_modified_at": "2026-10-27T21:15:11.404957",
+            "full_name": "tiles/towne/separate_wall/primary_walls/door+rectangular/openforge/side/towne+stucco-stone#wall,door+rectangular.A.openforge,side.stl",
+            "md5": "e4c7887172fdc33b4662c507fc7b1f49",
+            "size": 11055284,
+            "storage_address": "https://objects.openforge.tools/models/e4c788/e4c7887172fdc33b4662c507fc7b1f49.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/e4c788/e4c7887172fdc33b4662c507fc7b1f49.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": true,
+        "tags": [
+            "build|separate wall",
+            "component|door",
+            "component|door|rectangular",
+            "component|wall",
+            "connection|openforge",
+            "connection|side",
+            "connection|side|openlock",
+            "shape|square",
+            "shape|wall",
+            "size|openlock|A",
+            "size|width|2",
+            "texture|towne",
+            "texture|towne|stucco-stone"
+        ],
+        "type": "model"
+    },
+    {
+        "config": {
+            "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|rectangular"
+                            },
+                            {
+                                "tag": "size|single"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "name": "lintel",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|lintel"
+                            },
+                            {
+                                "tag": "shape|square"
+                            },
+                            {
+                                "tag": "size|single"
+                            },
+                            {
+                                "tag": "size|width|sw"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "name": "base",
+                    "optional": true,
+                    "tags": {
+                        "constrain": [
+                            {
+                                "tag": "shape"
+                            },
+                            {
+                                "tag": "size|width"
+                            },
+                            {
+                                "tag": "texture"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "shape|base"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "name": "base",
+                    "optional": true,
+                    "tags": {
+                        "constrain": [
+                            {
+                                "tag": "shape"
+                            },
+                            {
+                                "tag": "size|width"
+                            },
+                            {
+                                "tag": "texture"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "shape|base"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        "deprecated": true,
         "file_metadata": {
             "file": "towne+stucco-stone#wall,door+rectangular.A.openforge,side.stl",
             "file_modified_at": "2020-01-13T14:05:09",
@@ -54092,6 +55496,174 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|rectangular"
+                            },
+                            {
+                                "tag": "size|single"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "name": "lintel",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|lintel"
+                            },
+                            {
+                                "tag": "shape|square"
+                            },
+                            {
+                                "tag": "size|single"
+                            },
+                            {
+                                "tag": "size|width|sw"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        "file_metadata": {
+            "file": "towne+broken_stucco-a#wall,door+rectangular.A.openlock+unsupported,side.stl",
+            "file_modified_at": "2026-10-27T21:20:56.715877",
+            "full_name": "tiles/towne/separate_wall/primary_walls/door+rectangular/openlock+unsupported/side/towne+broken_stucco-a#wall,door+rectangular.A.openlock+unsupported,side.stl",
+            "md5": "2e423c2a4b8654ebbee60cff2878231e",
+            "size": 11435384,
+            "storage_address": "https://objects.openforge.tools/models/2e423c/2e423c2a4b8654ebbee60cff2878231e.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/2e423c/2e423c2a4b8654ebbee60cff2878231e.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": true,
+        "tags": [
+            "build|separate wall",
+            "component|door",
+            "component|door|rectangular",
+            "component|wall",
+            "connection|openlock",
+            "connection|openlock|unsupported",
+            "connection|side",
+            "connection|side|openlock",
+            "shape|square",
+            "shape|wall",
+            "size|openlock|A",
+            "size|width|2",
+            "texture|towne",
+            "texture|towne|broken_stucco-a"
+        ],
+        "type": "model"
+    },
+    {
         "file_metadata": {
             "file": "towne+broken_stucco-b#wall,door+rectangular+narrow.A.openlock+unsupported,side.stl",
             "file_modified_at": "2026-10-27T14:56:58.293967",
@@ -54352,6 +55924,174 @@
             "shape|wall",
             "size|openlock|BA",
             "size|width|1.5",
+            "texture|towne",
+            "texture|towne|broken_stucco-b"
+        ],
+        "type": "model"
+    },
+    {
+        "config": {
+            "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|rectangular"
+                            },
+                            {
+                                "tag": "size|single"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "name": "lintel",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|lintel"
+                            },
+                            {
+                                "tag": "shape|square"
+                            },
+                            {
+                                "tag": "size|single"
+                            },
+                            {
+                                "tag": "size|width|sw"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        "file_metadata": {
+            "file": "towne+broken_stucco-b#wall,door+rectangular.A.openlock+unsupported,side.stl",
+            "file_modified_at": "2026-10-27T21:21:00.512662",
+            "full_name": "tiles/towne/separate_wall/primary_walls/door+rectangular/openlock+unsupported/side/towne+broken_stucco-b#wall,door+rectangular.A.openlock+unsupported,side.stl",
+            "md5": "f1a83f3fc21c8b69f52738d66975d416",
+            "size": 11360684,
+            "storage_address": "https://objects.openforge.tools/models/f1a83f/f1a83f3fc21c8b69f52738d66975d416.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/f1a83f/f1a83f3fc21c8b69f52738d66975d416.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": true,
+        "tags": [
+            "build|separate wall",
+            "component|door",
+            "component|door|rectangular",
+            "component|wall",
+            "connection|openlock",
+            "connection|openlock|unsupported",
+            "connection|side",
+            "connection|side|openlock",
+            "shape|square",
+            "shape|wall",
+            "size|openlock|A",
+            "size|width|2",
             "texture|towne",
             "texture|towne|broken_stucco-b"
         ],
@@ -54793,6 +56533,174 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|rectangular"
+                            },
+                            {
+                                "tag": "size|single"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "name": "lintel",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|lintel"
+                            },
+                            {
+                                "tag": "shape|square"
+                            },
+                            {
+                                "tag": "size|single"
+                            },
+                            {
+                                "tag": "size|width|sw"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        "file_metadata": {
+            "file": "towne+stone#wall,door+rectangular.A.openlock+unsupported,side.stl",
+            "file_modified_at": "2026-10-27T21:21:14.598824",
+            "full_name": "tiles/towne/separate_wall/primary_walls/door+rectangular/openlock+unsupported/side/towne+stone#wall,door+rectangular.A.openlock+unsupported,side.stl",
+            "md5": "83087d772bc525c70ddc61406b3c84e3",
+            "size": 11996684,
+            "storage_address": "https://objects.openforge.tools/models/83087d/83087d772bc525c70ddc61406b3c84e3.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/83087d/83087d772bc525c70ddc61406b3c84e3.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": true,
+        "tags": [
+            "build|separate wall",
+            "component|door",
+            "component|door|rectangular",
+            "component|wall",
+            "connection|openlock",
+            "connection|openlock|unsupported",
+            "connection|side",
+            "connection|side|openlock",
+            "shape|square",
+            "shape|wall",
+            "size|openlock|A",
+            "size|width|2",
+            "texture|towne",
+            "texture|towne|stone"
+        ],
+        "type": "model"
+    },
+    {
         "file_metadata": {
             "file": "towne+stone-stucco#wall,door+rectangular+narrow.A.openlock+unsupported,side.stl",
             "file_modified_at": "2026-10-27T14:56:59.261444",
@@ -55222,6 +57130,174 @@
             "shape|wall",
             "size|openlock|Q",
             "size|width|4",
+            "texture|towne",
+            "texture|towne|stone-stucco"
+        ],
+        "type": "model"
+    },
+    {
+        "config": {
+            "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|rectangular"
+                            },
+                            {
+                                "tag": "size|single"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "name": "lintel",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|lintel"
+                            },
+                            {
+                                "tag": "shape|square"
+                            },
+                            {
+                                "tag": "size|single"
+                            },
+                            {
+                                "tag": "size|width|sw"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        "file_metadata": {
+            "file": "towne+stone-stucco#wall,door+rectangular.A.openlock+unsupported,side.stl",
+            "file_modified_at": "2026-10-27T21:21:16.531602",
+            "full_name": "tiles/towne/separate_wall/primary_walls/door+rectangular/openlock+unsupported/side/towne+stone-stucco#wall,door+rectangular.A.openlock+unsupported,side.stl",
+            "md5": "6363ef5ea6580eb57e221a92ea17e56d",
+            "size": 11454984,
+            "storage_address": "https://objects.openforge.tools/models/6363ef/6363ef5ea6580eb57e221a92ea17e56d.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/6363ef/6363ef5ea6580eb57e221a92ea17e56d.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": true,
+        "tags": [
+            "build|separate wall",
+            "component|door",
+            "component|door|rectangular",
+            "component|wall",
+            "connection|openlock",
+            "connection|openlock|unsupported",
+            "connection|side",
+            "connection|side|openlock",
+            "shape|square",
+            "shape|wall",
+            "size|openlock|A",
+            "size|width|2",
             "texture|towne",
             "texture|towne|stone-stucco"
         ],
@@ -55663,6 +57739,174 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|rectangular"
+                            },
+                            {
+                                "tag": "size|single"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "name": "lintel",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|lintel"
+                            },
+                            {
+                                "tag": "shape|square"
+                            },
+                            {
+                                "tag": "size|single"
+                            },
+                            {
+                                "tag": "size|width|sw"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        "file_metadata": {
+            "file": "towne+stucco#wall,door+rectangular.A.openlock+unsupported,side.stl",
+            "file_modified_at": "2026-10-27T21:21:15.891464",
+            "full_name": "tiles/towne/separate_wall/primary_walls/door+rectangular/openlock+unsupported/side/towne+stucco#wall,door+rectangular.A.openlock+unsupported,side.stl",
+            "md5": "a53eb6c27dbf5ab76aef7df50c2d72b2",
+            "size": 11053184,
+            "storage_address": "https://objects.openforge.tools/models/a53eb6/a53eb6c27dbf5ab76aef7df50c2d72b2.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/a53eb6/a53eb6c27dbf5ab76aef7df50c2d72b2.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": true,
+        "tags": [
+            "build|separate wall",
+            "component|door",
+            "component|door|rectangular",
+            "component|wall",
+            "connection|openlock",
+            "connection|openlock|unsupported",
+            "connection|side",
+            "connection|side|openlock",
+            "shape|square",
+            "shape|wall",
+            "size|openlock|A",
+            "size|width|2",
+            "texture|towne",
+            "texture|towne|stucco"
+        ],
+        "type": "model"
+    },
+    {
         "file_metadata": {
             "file": "towne+stucco-stone#wall,door+rectangular+narrow.A.openlock+unsupported,side.stl",
             "file_modified_at": "2026-10-27T14:57:00.419964",
@@ -56092,6 +58336,174 @@
             "shape|wall",
             "size|openlock|Q",
             "size|width|4",
+            "texture|towne",
+            "texture|towne|stucco-stone"
+        ],
+        "type": "model"
+    },
+    {
+        "config": {
+            "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|rectangular"
+                            },
+                            {
+                                "tag": "size|single"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "name": "lintel",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|lintel"
+                            },
+                            {
+                                "tag": "shape|square"
+                            },
+                            {
+                                "tag": "size|single"
+                            },
+                            {
+                                "tag": "size|width|sw"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        "file_metadata": {
+            "file": "towne+stucco-stone#wall,door+rectangular.A.openlock+unsupported,side.stl",
+            "file_modified_at": "2026-10-27T21:21:20.484998",
+            "full_name": "tiles/towne/separate_wall/primary_walls/door+rectangular/openlock+unsupported/side/towne+stucco-stone#wall,door+rectangular.A.openlock+unsupported,side.stl",
+            "md5": "1da45251a8dad9356924c00564c5bbf5",
+            "size": 11568784,
+            "storage_address": "https://objects.openforge.tools/models/1da452/1da45251a8dad9356924c00564c5bbf5.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/1da452/1da45251a8dad9356924c00564c5bbf5.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": true,
+        "tags": [
+            "build|separate wall",
+            "component|door",
+            "component|door|rectangular",
+            "component|wall",
+            "connection|openlock",
+            "connection|openlock|unsupported",
+            "connection|side",
+            "connection|side|openlock",
+            "shape|square",
+            "shape|wall",
+            "size|openlock|A",
+            "size|width|2",
             "texture|towne",
             "texture|towne|stucco-stone"
         ],
@@ -60434,6 +62846,174 @@
         },
         "file_metadata": {
             "file": "towne+broken_stucco-a#wall,door+rectangular.A.openlock,side.stl",
+            "file_modified_at": "2026-10-27T21:19:37.433589",
+            "full_name": "tiles/towne/separate_wall/primary_walls/door+rectangular/openlock/side/towne+broken_stucco-a#wall,door+rectangular.A.openlock,side.stl",
+            "md5": "fc0ac573abdd69bad6ad2fd7e1746e28",
+            "size": 11480084,
+            "storage_address": "https://objects.openforge.tools/models/fc0ac5/fc0ac573abdd69bad6ad2fd7e1746e28.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/fc0ac5/fc0ac573abdd69bad6ad2fd7e1746e28.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": true,
+        "tags": [
+            "build|separate wall",
+            "component|door",
+            "component|door|rectangular",
+            "component|wall",
+            "connection|openlock",
+            "connection|side",
+            "connection|side|openlock",
+            "shape|square",
+            "shape|wall",
+            "size|openlock|A",
+            "size|width|2",
+            "texture|towne",
+            "texture|towne|broken_stucco-a"
+        ],
+        "type": "model"
+    },
+    {
+        "config": {
+            "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|rectangular"
+                            },
+                            {
+                                "tag": "size|single"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "name": "lintel",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|lintel"
+                            },
+                            {
+                                "tag": "shape|square"
+                            },
+                            {
+                                "tag": "size|single"
+                            },
+                            {
+                                "tag": "size|width|sw"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        "deprecated": true,
+        "file_metadata": {
+            "file": "towne+broken_stucco-a#wall,door+rectangular.A.openlock,side.stl",
             "file_modified_at": "2020-01-13T13:03:05",
             "full_name": "tiles/towne/separate_wall/primary_walls/door+rectangular/openlock/side/towne+broken_stucco-a#wall,door+rectangular.A.openlock,side.stl",
             "md5": "9f2a4984816f7355c4b35c7b009caa4c",
@@ -60863,6 +63443,174 @@
                 }
             ]
         },
+        "file_metadata": {
+            "file": "towne+broken_stucco-b#wall,door+rectangular.A.openlock,side.stl",
+            "file_modified_at": "2026-10-27T21:19:40.649976",
+            "full_name": "tiles/towne/separate_wall/primary_walls/door+rectangular/openlock/side/towne+broken_stucco-b#wall,door+rectangular.A.openlock,side.stl",
+            "md5": "7e61dbceaec4b3467ae28d806365d7b8",
+            "size": 11404084,
+            "storage_address": "https://objects.openforge.tools/models/7e61db/7e61dbceaec4b3467ae28d806365d7b8.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/7e61db/7e61dbceaec4b3467ae28d806365d7b8.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": true,
+        "tags": [
+            "build|separate wall",
+            "component|door",
+            "component|door|rectangular",
+            "component|wall",
+            "connection|openlock",
+            "connection|side",
+            "connection|side|openlock",
+            "shape|square",
+            "shape|wall",
+            "size|openlock|A",
+            "size|width|2",
+            "texture|towne",
+            "texture|towne|broken_stucco-b"
+        ],
+        "type": "model"
+    },
+    {
+        "config": {
+            "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|rectangular"
+                            },
+                            {
+                                "tag": "size|single"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "name": "lintel",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|lintel"
+                            },
+                            {
+                                "tag": "shape|square"
+                            },
+                            {
+                                "tag": "size|single"
+                            },
+                            {
+                                "tag": "size|width|sw"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        "deprecated": true,
         "file_metadata": {
             "file": "towne+broken_stucco-b#wall,door+rectangular.A.openlock,side.stl",
             "file_modified_at": "2021-10-30T14:42:28.216584",
@@ -61632,6 +64380,174 @@
         },
         "file_metadata": {
             "file": "towne+stone#wall,door+rectangular.A.openlock,side.stl",
+            "file_modified_at": "2026-10-27T21:19:43.277342",
+            "full_name": "tiles/towne/separate_wall/primary_walls/door+rectangular/openlock/side/towne+stone#wall,door+rectangular.A.openlock,side.stl",
+            "md5": "d1713cb73dbdc58711dd96d781241e02",
+            "size": 12040284,
+            "storage_address": "https://objects.openforge.tools/models/d1713c/d1713cb73dbdc58711dd96d781241e02.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/d1713c/d1713cb73dbdc58711dd96d781241e02.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": true,
+        "tags": [
+            "build|separate wall",
+            "component|door",
+            "component|door|rectangular",
+            "component|wall",
+            "connection|openlock",
+            "connection|side",
+            "connection|side|openlock",
+            "shape|square",
+            "shape|wall",
+            "size|openlock|A",
+            "size|width|2",
+            "texture|towne",
+            "texture|towne|stone"
+        ],
+        "type": "model"
+    },
+    {
+        "config": {
+            "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|rectangular"
+                            },
+                            {
+                                "tag": "size|single"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "name": "lintel",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|lintel"
+                            },
+                            {
+                                "tag": "shape|square"
+                            },
+                            {
+                                "tag": "size|single"
+                            },
+                            {
+                                "tag": "size|width|sw"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        "deprecated": true,
+        "file_metadata": {
+            "file": "towne+stone#wall,door+rectangular.A.openlock,side.stl",
             "file_modified_at": "2020-01-13T14:55:45",
             "full_name": "tiles/towne/separate_wall/primary_walls/door+rectangular/openlock/side/towne+stone#wall,door+rectangular.A.openlock,side.stl",
             "md5": "6d4ec71121845ba613c1420cc4c3a981",
@@ -62397,6 +65313,174 @@
                 }
             ]
         },
+        "file_metadata": {
+            "file": "towne+stone-stucco#wall,door+rectangular.A.openlock,side.stl",
+            "file_modified_at": "2026-10-27T21:19:17.692637",
+            "full_name": "tiles/towne/separate_wall/primary_walls/door+rectangular/openlock/side/towne+stone-stucco#wall,door+rectangular.A.openlock,side.stl",
+            "md5": "83910cddca8c8b80fbf74e7dc70521b6",
+            "size": 11499384,
+            "storage_address": "https://objects.openforge.tools/models/83910c/83910cddca8c8b80fbf74e7dc70521b6.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/83910c/83910cddca8c8b80fbf74e7dc70521b6.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": true,
+        "tags": [
+            "build|separate wall",
+            "component|door",
+            "component|door|rectangular",
+            "component|wall",
+            "connection|openlock",
+            "connection|side",
+            "connection|side|openlock",
+            "shape|square",
+            "shape|wall",
+            "size|openlock|A",
+            "size|width|2",
+            "texture|towne",
+            "texture|towne|stone-stucco"
+        ],
+        "type": "model"
+    },
+    {
+        "config": {
+            "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|rectangular"
+                            },
+                            {
+                                "tag": "size|single"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "name": "lintel",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|lintel"
+                            },
+                            {
+                                "tag": "shape|square"
+                            },
+                            {
+                                "tag": "size|single"
+                            },
+                            {
+                                "tag": "size|width|sw"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        "deprecated": true,
         "file_metadata": {
             "file": "towne+stone-stucco#wall,door+rectangular.A.openlock,side.stl",
             "file_modified_at": "2020-01-13T14:55:23",
@@ -63166,6 +66250,174 @@
         },
         "file_metadata": {
             "file": "towne+stucco#wall,door+rectangular.A.openlock,side.stl",
+            "file_modified_at": "2026-10-27T21:19:14.811123",
+            "full_name": "tiles/towne/separate_wall/primary_walls/door+rectangular/openlock/side/towne+stucco#wall,door+rectangular.A.openlock,side.stl",
+            "md5": "51b24060aaf16e9b29f8cfb2f36f660b",
+            "size": 11096684,
+            "storage_address": "https://objects.openforge.tools/models/51b240/51b24060aaf16e9b29f8cfb2f36f660b.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/51b240/51b24060aaf16e9b29f8cfb2f36f660b.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": true,
+        "tags": [
+            "build|separate wall",
+            "component|door",
+            "component|door|rectangular",
+            "component|wall",
+            "connection|openlock",
+            "connection|side",
+            "connection|side|openlock",
+            "shape|square",
+            "shape|wall",
+            "size|openlock|A",
+            "size|width|2",
+            "texture|towne",
+            "texture|towne|stucco"
+        ],
+        "type": "model"
+    },
+    {
+        "config": {
+            "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|rectangular"
+                            },
+                            {
+                                "tag": "size|single"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "name": "lintel",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|lintel"
+                            },
+                            {
+                                "tag": "shape|square"
+                            },
+                            {
+                                "tag": "size|single"
+                            },
+                            {
+                                "tag": "size|width|sw"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        "deprecated": true,
+        "file_metadata": {
+            "file": "towne+stucco#wall,door+rectangular.A.openlock,side.stl",
             "file_modified_at": "2020-01-13T14:55:08",
             "full_name": "tiles/towne/separate_wall/primary_walls/door+rectangular/openlock/side/towne+stucco#wall,door+rectangular.A.openlock,side.stl",
             "md5": "07056ccc843c8c8116d99d5f7af7ded0",
@@ -63931,6 +67183,174 @@
                 }
             ]
         },
+        "file_metadata": {
+            "file": "towne+stucco-stone#wall,door+rectangular.A.openlock,side.stl",
+            "file_modified_at": "2026-10-27T21:19:11.785809",
+            "full_name": "tiles/towne/separate_wall/primary_walls/door+rectangular/openlock/side/towne+stucco-stone#wall,door+rectangular.A.openlock,side.stl",
+            "md5": "16a0f569b6a4d2f67d1ae763e868104b",
+            "size": 11613384,
+            "storage_address": "https://objects.openforge.tools/models/16a0f5/16a0f569b6a4d2f67d1ae763e868104b.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/16a0f5/16a0f569b6a4d2f67d1ae763e868104b.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": true,
+        "tags": [
+            "build|separate wall",
+            "component|door",
+            "component|door|rectangular",
+            "component|wall",
+            "connection|openlock",
+            "connection|side",
+            "connection|side|openlock",
+            "shape|square",
+            "shape|wall",
+            "size|openlock|A",
+            "size|width|2",
+            "texture|towne",
+            "texture|towne|stucco-stone"
+        ],
+        "type": "model"
+    },
+    {
+        "config": {
+            "parts": [
+                {
+                    "name": "door",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|door|rectangular"
+                            },
+                            {
+                                "tag": "size|single"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "name": "lintel",
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|lintel"
+                            },
+                            {
+                                "tag": "shape|square"
+                            },
+                            {
+                                "tag": "size|single"
+                            },
+                            {
+                                "tag": "size|width|sw"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        "deprecated": true,
         "file_metadata": {
             "file": "towne+stucco-stone#wall,door+rectangular.A.openlock,side.stl",
             "file_modified_at": "2020-01-13T14:54:48",
