@@ -2590,30 +2590,33 @@ def test_a_fitting_still_takes_what_fits_when_no_preference_matches():
 
 
 def test_a_fitting_narrows_by_every_preference_it_can_satisfy():
+    """And every fitting the part brought, not only the first of them."""
     guide = copy.deepcopy(SLOT_GUIDE)
     guide["roles"]["wall"]["slot_prefer"] = ["texture|wood", "build|braced"]
 
+    def pair(kind):
+        return [
+            _door(f"a plain wooden {kind}", "texture|wood"),
+            _door(f"z braced wooden {kind}", "texture|wood", "build|braced"),
+        ]
+
+    catalog = [_wall("a wall", "door", "lintel"), BASE]
+    for kind in ("door", "lintel"):
+        for part in pair(kind):
+            part["tags"] = [f"interface|{kind}", *part["tags"][1:]]
+            catalog.append(part)
+
     parts = parts_by_role(
-        resolve(
-            guide,
-            {"method": "separate"},
-            matching_finder(
-                [
-                    _wall("a wall", "door"),
-                    BASE,
-                    _door("a plain wooden door", "texture|wood"),
-                    _door("z braced wooden door", "texture|wood", "build|braced"),
-                ]
-            ),
-        )
+        resolve(guide, {"method": "separate"}, matching_finder(catalog))
     )
 
-    assert (
-        parts["wall.door"]["blueprint"]["blueprint_name"] == "z braced wooden door"
-    ), (
-        "the plain one sorts first, so only the second preference could "
-        "have chosen the braced one"
-    )
+    for kind in ("door", "lintel"):
+        name = parts[f"wall.{kind}"]["blueprint"]["blueprint_name"]
+        assert name == f"z braced wooden {kind}", (
+            f"the plain {kind} sorts first, so only the second preference "
+            f"could have chosen the braced one, and it has to reach every "
+            f"fitting rather than the first"
+        )
 
 
 def test_a_fitting_drops_its_preferences_from_the_end():

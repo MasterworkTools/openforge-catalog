@@ -245,6 +245,16 @@ def test_a_preference_for_fittings_is_a_list_of_tags(guide):
     with pytest.raises(ValueError, match="should be non-empty"):
         validate_guide_document(guide)
 
+    guide["roles"]["wall"]["slot_prefer"] = ["texture|wood|"]
+    with pytest.raises(ValueError, match="does not match"):
+        validate_guide_document(guide)
+
+    # Capped for the same reason `prefer` is: each term costs a query
+    # when it has to be dropped.
+    guide["roles"]["wall"]["slot_prefer"] = [f"texture|t{n}" for n in range(9)]
+    with pytest.raises(ValueError, match="too long"):
+        validate_guide_document(guide)
+
     guide["roles"]["wall"]["slot_prefer"] = ["texture|wood"]
     assert validate_guide_document(guide) is guide
 
