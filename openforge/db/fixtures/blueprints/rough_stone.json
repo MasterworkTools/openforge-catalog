@@ -6507,7 +6507,25 @@
         "config": {
             "parts": [
                 {
-                    "name": "door",
+                    "name": "door-left",
+                    "tags": {
+                        "deny": [
+                            {
+                                "tag": "build|wall on tile"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "interface|door|rectangular"
+                            },
+                            {
+                                "tag": "size|double"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "name": "door-right",
                     "tags": {
                         "deny": [
                             {
@@ -6699,7 +6717,25 @@
         "config": {
             "parts": [
                 {
-                    "name": "door",
+                    "name": "door-left",
+                    "tags": {
+                        "deny": [
+                            {
+                                "tag": "build|wall on tile"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "interface|door|rectangular"
+                            },
+                            {
+                                "tag": "size|double"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "name": "door-right",
                     "tags": {
                         "deny": [
                             {
@@ -7396,7 +7432,25 @@
         "config": {
             "parts": [
                 {
-                    "name": "door",
+                    "name": "door-left",
+                    "tags": {
+                        "deny": [
+                            {
+                                "tag": "build|wall on tile"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "interface|door|rectangular"
+                            },
+                            {
+                                "tag": "size|double"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "name": "door-right",
                     "tags": {
                         "deny": [
                             {
@@ -7904,7 +7958,25 @@
         "config": {
             "parts": [
                 {
-                    "name": "door",
+                    "name": "door-left",
+                    "tags": {
+                        "deny": [
+                            {
+                                "tag": "build|wall on tile"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "interface|door|rectangular"
+                            },
+                            {
+                                "tag": "size|double"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "name": "door-right",
                     "tags": {
                         "deny": [
                             {
@@ -8681,7 +8753,25 @@
         "config": {
             "parts": [
                 {
-                    "name": "door",
+                    "name": "door-left",
+                    "tags": {
+                        "deny": [
+                            {
+                                "tag": "build|wall on tile"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "interface|door|rectangular"
+                            },
+                            {
+                                "tag": "size|double"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "name": "door-right",
                     "tags": {
                         "deny": [
                             {
@@ -8852,7 +8942,25 @@
         "config": {
             "parts": [
                 {
-                    "name": "door",
+                    "name": "door-left",
+                    "tags": {
+                        "deny": [
+                            {
+                                "tag": "build|wall on tile"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "interface|door|rectangular"
+                            },
+                            {
+                                "tag": "size|double"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "name": "door-right",
                     "tags": {
                         "deny": [
                             {
@@ -9457,7 +9565,25 @@
         "config": {
             "parts": [
                 {
-                    "name": "door",
+                    "name": "door-left",
+                    "tags": {
+                        "deny": [
+                            {
+                                "tag": "build|wall on tile"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "interface|door|rectangular"
+                            },
+                            {
+                                "tag": "size|double"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "name": "door-right",
                     "tags": {
                         "deny": [
                             {
@@ -10189,7 +10315,25 @@
         "config": {
             "parts": [
                 {
-                    "name": "door",
+                    "name": "door-left",
+                    "tags": {
+                        "deny": [
+                            {
+                                "tag": "build|wall on tile"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "interface|door|rectangular"
+                            },
+                            {
+                                "tag": "size|double"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "name": "door-right",
                     "tags": {
                         "deny": [
                             {
@@ -10359,7 +10503,25 @@
         "config": {
             "parts": [
                 {
-                    "name": "door",
+                    "name": "door-left",
+                    "tags": {
+                        "deny": [
+                            {
+                                "tag": "build|wall on tile"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "interface|door|rectangular"
+                            },
+                            {
+                                "tag": "size|double"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "name": "door-right",
                     "tags": {
                         "deny": [
                             {
@@ -10960,7 +11122,25 @@
         "config": {
             "parts": [
                 {
-                    "name": "door",
+                    "name": "door-left",
+                    "tags": {
+                        "deny": [
+                            {
+                                "tag": "build|wall on tile"
+                            }
+                        ],
+                        "require": [
+                            {
+                                "tag": "interface|door|rectangular"
+                            },
+                            {
+                                "tag": "size|double"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "name": "door-right",
                     "tags": {
                         "deny": [
                             {
