@@ -2,6 +2,7 @@ import json
 from pathlib import Path
 
 import pytest
+from jsonschema import ValidationError
 from psycopg.rows import dict_row
 
 from openforge.db.fixtures import load_fixtures
@@ -98,3 +99,62 @@ def test_a_deprecated_record_with_no_live_twin_still_loads(test_db, tmp_path):
         assert [(r["full_name"], r["deprecated"]) for r in rows_for_md5(conn)] == [
             (OLD, True)
         ]
+
+
+def test_records_without_file_metadata_load_alongside_a_rename(test_db, tmp_path):
+    compositions = [
+        {"type": "blueprint", "name": "live composition", "tags": []},
+        {
+            "type": "blueprint",
+            "name": "old composition",
+            "tags": [],
+            "deprecated": True,
+        },
+    ]
+    records = [a_record(OLD, "left", deprecated=True), a_record(NEW, "right")]
+    with test_db.connection() as conn:
+        load_fixtures(
+            conn,
+            "",
+            [write_fixture(tmp_path, "ds.json", compositions + records)],
+            incremental=False,
+        )
+        with conn.cursor(row_factory=dict_row) as curs:
+            curs.execute(
+                "SELECT blueprint_name, deprecated FROM blueprints"
+                " WHERE file_md5 IS NULL ORDER BY blueprint_name"
+            )
+            assert curs.fetchall() == [
+                {"blueprint_name": "live composition", "deprecated": False},
+                {"blueprint_name": "old composition", "deprecated": True},
+            ]
+        assert [r["full_name"] for r in rows_for_md5(conn)] == [NEW]
+
+
+def test_a_record_missing_its_md5_fails_with_the_record_named(
+    test_db, tmp_path, capsys
+):
+    broken = a_record(NEW, "right")
+    del broken["file_metadata"]["md5"]
+    with test_db.connection() as conn:
+        with pytest.raises(KeyError):
+            load_fixtures(
+                conn,
+                "",
+                [write_fixture(tmp_path, "ds.json", [broken])],
+                incremental=False,
+            )
+    assert "Failed record" in capsys.readouterr().out
+
+
+def test_a_malformed_file_is_refused_by_the_schema(test_db, tmp_path):
+    broken = a_record(NEW, "right")
+    broken["file_metadata"] = NEW
+    with test_db.connection() as conn:
+        with pytest.raises(ValidationError):
+            load_fixtures(
+                conn,
+                "",
+                [write_fixture(tmp_path, "ds.json", [broken])],
+                incremental=False,
+            )
