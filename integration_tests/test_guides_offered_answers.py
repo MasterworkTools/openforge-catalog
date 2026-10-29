@@ -3,9 +3,7 @@
 Two promises, and they fail in opposite directions. A guide withholds
 an answer that would leave a part empty, so whatever it does offer has
 to resolve complete. And an answer it documents has to be reachable
-somewhere, or the guide is advertising something nothing can use —
-which is how Low walls came to be greyed out on every texture of the
-corner guide while the parts for four of them sat in the catalog.
+somewhere, or the guide is advertising something nothing can use.
 
 Driven the way the page drives it: answer each published question with
 the engine's own recommendation, then look at what is left on offer.
@@ -14,9 +12,9 @@ Three sources, none interchangeable. The document says what is
 and the availability endpoint says what is *refused* there.
 """
 
-#: Guides these hold for today. The floor and wall guides each still
-#: offer an answer that resolves to an empty part, so adding them here
-#: would assert a failure that is in the data rather than in the code.
+#: The guides these hold for today. A guide joins the tuple once it has
+#: no offered answer that resolves empty; the ones left out are tracked
+#: separately, not forgotten.
 GUARDED = ("corner",)
 
 
@@ -125,6 +123,11 @@ def _empty_roles(payload):
     return [p["role"] for p in parts if not p.get("blueprint")]
 
 
+#: Settled states, keyed by what produced them. A walk is several round
+#: trips and both guards want the same ones.
+_SETTLED: dict = {}
+
+
 def _states(client, key, document):
     """Every texture and build method, walked to a settled state.
 
@@ -140,7 +143,11 @@ def _states(client, key, document):
                 start["texture"] = tag
             if method:
                 start["method"] = method
-            state, payload = _walked(client, key, start)
+            settled = _SETTLED.get((key, tag, method))
+            if settled is None:
+                settled = _walked(client, key, start)
+                _SETTLED[(key, tag, method)] = settled
+            state, payload = settled
             label = f"{tag or 'default texture'} / {method or 'any method'}"
             yield label, state, payload
 
