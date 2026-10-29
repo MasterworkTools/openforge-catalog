@@ -293,7 +293,7 @@ def _live_md5s(loaded: list) -> set:
         if _get_fixture_type(f) == "blueprint"
         for rec in data
         if "file_metadata" in rec and not rec.get("deprecated")
-    } - {None}
+    }
 
 
 def _renamed_away(rec: dict, live_md5s: set) -> bool:
