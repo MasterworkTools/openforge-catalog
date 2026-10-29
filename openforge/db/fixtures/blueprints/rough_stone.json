@@ -6509,6 +6509,11 @@
                 {
                     "name": "door",
                     "tags": {
+                        "deny": [
+                            {
+                                "tag": "build|wall on tile"
+                            }
+                        ],
                         "require": [
                             {
                                 "tag": "interface|door|rectangular"
@@ -6696,6 +6701,11 @@
                 {
                     "name": "door",
                     "tags": {
+                        "deny": [
+                            {
+                                "tag": "build|wall on tile"
+                            }
+                        ],
                         "require": [
                             {
                                 "tag": "interface|door|rectangular"
@@ -6883,6 +6893,11 @@
                 {
                     "name": "door",
                     "tags": {
+                        "deny": [
+                            {
+                                "tag": "build|wall on tile"
+                            }
+                        ],
                         "require": [
                             {
                                 "tag": "interface|door|rectangular"
@@ -7383,6 +7398,11 @@
                 {
                     "name": "door",
                     "tags": {
+                        "deny": [
+                            {
+                                "tag": "build|wall on tile"
+                            }
+                        ],
                         "require": [
                             {
                                 "tag": "interface|door|rectangular"
@@ -7886,6 +7906,11 @@
                 {
                     "name": "door",
                     "tags": {
+                        "deny": [
+                            {
+                                "tag": "build|wall on tile"
+                            }
+                        ],
                         "require": [
                             {
                                 "tag": "interface|door|rectangular"
@@ -8075,6 +8100,11 @@
                 {
                     "name": "door",
                     "tags": {
+                        "deny": [
+                            {
+                                "tag": "build|wall on tile"
+                            }
+                        ],
                         "require": [
                             {
                                 "tag": "interface|door|rectangular"
@@ -8653,6 +8683,11 @@
                 {
                     "name": "door",
                     "tags": {
+                        "deny": [
+                            {
+                                "tag": "build|wall on tile"
+                            }
+                        ],
                         "require": [
                             {
                                 "tag": "interface|door|rectangular"
@@ -8819,6 +8854,11 @@
                 {
                     "name": "door",
                     "tags": {
+                        "deny": [
+                            {
+                                "tag": "build|wall on tile"
+                            }
+                        ],
                         "require": [
                             {
                                 "tag": "interface|door|rectangular"
@@ -8985,6 +9025,11 @@
                 {
                     "name": "door",
                     "tags": {
+                        "deny": [
+                            {
+                                "tag": "build|wall on tile"
+                            }
+                        ],
                         "require": [
                             {
                                 "tag": "interface|door|rectangular"
@@ -9414,6 +9459,11 @@
                 {
                     "name": "door",
                     "tags": {
+                        "deny": [
+                            {
+                                "tag": "build|wall on tile"
+                            }
+                        ],
                         "require": [
                             {
                                 "tag": "interface|door|rectangular"
@@ -9582,6 +9632,11 @@
                 {
                     "name": "door",
                     "tags": {
+                        "deny": [
+                            {
+                                "tag": "build|wall on tile"
+                            }
+                        ],
                         "require": [
                             {
                                 "tag": "interface|door|rectangular"
@@ -10136,6 +10191,11 @@
                 {
                     "name": "door",
                     "tags": {
+                        "deny": [
+                            {
+                                "tag": "build|wall on tile"
+                            }
+                        ],
                         "require": [
                             {
                                 "tag": "interface|door|rectangular"
@@ -10301,6 +10361,11 @@
                 {
                     "name": "door",
                     "tags": {
+                        "deny": [
+                            {
+                                "tag": "build|wall on tile"
+                            }
+                        ],
                         "require": [
                             {
                                 "tag": "interface|door|rectangular"
@@ -10466,6 +10531,11 @@
                 {
                     "name": "door",
                     "tags": {
+                        "deny": [
+                            {
+                                "tag": "build|wall on tile"
+                            }
+                        ],
                         "require": [
                             {
                                 "tag": "interface|door|rectangular"
@@ -10892,6 +10962,11 @@
                 {
                     "name": "door",
                     "tags": {
+                        "deny": [
+                            {
+                                "tag": "build|wall on tile"
+                            }
+                        ],
                         "require": [
                             {
                                 "tag": "interface|door|rectangular"
@@ -11059,6 +11134,11 @@
                 {
                     "name": "door",
                     "tags": {
+                        "deny": [
+                            {
+                                "tag": "build|wall on tile"
+                            }
+                        ],
                         "require": [
                             {
                                 "tag": "interface|door|rectangular"
