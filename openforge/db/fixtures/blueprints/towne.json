@@ -37903,6 +37903,7 @@
         "type": "model"
     },
     {
+        "deprecated": true,
         "file_metadata": {
             "file": "door.lintel.1.separate_wall.stl",
             "file_modified_at": "2020-01-13T16:37:52",
@@ -38151,6 +38152,7 @@
         "type": "model"
     },
     {
+        "deprecated": true,
         "file_metadata": {
             "file": "door.lintel.2.separate_wall.stl",
             "file_modified_at": "2020-01-13T16:38:13",
@@ -38399,6 +38401,7 @@
         "type": "model"
     },
     {
+        "deprecated": true,
         "file_metadata": {
             "file": "door.lintel.3.separate_wall.stl",
             "file_modified_at": "2020-01-13T16:38:30",
