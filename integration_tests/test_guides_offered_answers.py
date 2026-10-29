@@ -13,8 +13,7 @@ and the availability endpoint says what is *refused* there.
 """
 
 #: The guides these hold for today. A guide joins the tuple once it has
-#: no offered answer that resolves empty; the ones left out are tracked
-#: separately, not forgotten.
+#: no offered answer that resolves empty.
 GUARDED = ("corner",)
 
 
