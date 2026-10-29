@@ -247,19 +247,22 @@ def load_fixtures(
             else:
                 raise ValueError(f"Unknown fixture type for file: {f}")
     else:
-        # Existing full replacement logic
         with conn.cursor(row_factory=dict_row) as curs:
             # Use transaction to ensure all-or-nothing behavior
             with conn.transaction():
                 clear_db(curs)
-                for f in ffiles:
-                    data = _load_data(f, verbose=verbose)
+                loaded = [(f, _load_data(f, verbose=verbose)) for f in ffiles]
+                for f, data in loaded:
+                    if _get_fixture_type(f) == "blueprint":
+                        is_blueprint_fixture(data)
+                live_md5s = _live_md5s(loaded)
+                for f, data in loaded:
                     fixture_type = _get_fixture_type(f)
 
                     if fixture_type == "blueprint":
-                        # Validate blueprint fixture
-                        is_blueprint_fixture(data)
                         for rec in data:
+                            if _renamed_away(rec, live_md5s):
+                                continue
                             load_blueprint_fixture(curs, rec)
                     elif fixture_type == "tag_description":
                         # Validate tag description fixture
@@ -280,6 +283,29 @@ def load_fixtures(
                         raise ValueError(f"Unknown fixture type for file: {f}")
 
     return results
+
+
+def _live_md5s(loaded: list) -> set:
+    """The md5s a live blueprint record carries, in any file of the load."""
+    return {
+        rec["file_metadata"].get("md5")
+        for f, data in loaded
+        if _get_fixture_type(f) == "blueprint"
+        for rec in data
+        if "file_metadata" in rec and not rec.get("deprecated")
+    }
+
+
+def _renamed_away(rec: dict, live_md5s: set) -> bool:
+    """A deprecated record whose bytes now live under another path.
+
+    Inserted, it would claim the md5 first or lend the live row its old tags.
+    """
+    return (
+        rec.get("deprecated", False)
+        and "file_metadata" in rec
+        and rec["file_metadata"].get("md5") in live_md5s
+    )
 
 
 def _load_data(f, verbose=False):
