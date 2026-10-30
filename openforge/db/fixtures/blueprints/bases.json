@@ -151768,11 +151768,27 @@
         "file_metadata": {
             "file": "plain#base+s2w+square+wall.2x2.magnetic+flex.stl",
             "file_modified_at": "2024-03-16T16:36:24.258998",
-            "full_name": "tiles/bases/s2w/base#square+s2w+wall%plain/magnetic+fex/plain#base+s2w+square+wall.2x2.magnetic+flex.stl",
+            "full_name": "tiles/bases/s2w/base#square+s2w+wall%plain/magnetic+flex/plain#base+s2w+square+wall.2x2.magnetic+flex.stl",
             "md5": "bf27dc2fa31b7cefd7f683b57be66a4a",
             "size": 326063,
             "storage_address": "https://objects.openforge.tools/models/bf27dc/bf27dc2fa31b7cefd7f683b57be66a4a.stl"
         },
+        "metadata": false,
+        "tags": [
+            "build|s2w",
+            "connection|magnetic",
+            "connection|magnetic|flex",
+            "shape|base",
+            "shape|base|s2w",
+            "shape|base|square",
+            "shape|base|wall",
+            "shape|square",
+            "shape|wall",
+            "size|depth|2",
+            "size|width|2",
+            "texture|plain"
+        ],
+        "type": "model",
         "images": [
             {
                 "image_name": "thumbnail",
@@ -151876,7 +151892,17 @@
                     "tile_size": 512
                 }
             }
-        ],
+        ]
+    },
+    {
+        "file_metadata": {
+            "file": "plain#base+s2w+square+wall.3x3.magnetic+flex.stl",
+            "file_modified_at": "2024-03-16T16:36:28.710054",
+            "full_name": "tiles/bases/s2w/base#square+s2w+wall%plain/magnetic+flex/plain#base+s2w+square+wall.3x3.magnetic+flex.stl",
+            "md5": "e16be80a5e880c86330f3fc228f85e2f",
+            "size": 540344,
+            "storage_address": "https://objects.openforge.tools/models/e16be8/e16be80a5e880c86330f3fc228f85e2f.stl"
+        },
         "metadata": false,
         "tags": [
             "build|s2w",
@@ -151888,21 +151914,11 @@
             "shape|base|wall",
             "shape|square",
             "shape|wall",
-            "size|depth|2",
-            "size|width|2",
+            "size|depth|3",
+            "size|width|3",
             "texture|plain"
         ],
-        "type": "model"
-    },
-    {
-        "file_metadata": {
-            "file": "plain#base+s2w+square+wall.3x3.magnetic+flex.stl",
-            "file_modified_at": "2024-03-16T16:36:28.710054",
-            "full_name": "tiles/bases/s2w/base#square+s2w+wall%plain/magnetic+fex/plain#base+s2w+square+wall.3x3.magnetic+flex.stl",
-            "md5": "e16be80a5e880c86330f3fc228f85e2f",
-            "size": 540344,
-            "storage_address": "https://objects.openforge.tools/models/e16be8/e16be80a5e880c86330f3fc228f85e2f.stl"
-        },
+        "type": "model",
         "images": [
             {
                 "image_name": "thumbnail",
@@ -152006,7 +152022,17 @@
                     "tile_size": 512
                 }
             }
-        ],
+        ]
+    },
+    {
+        "file_metadata": {
+            "file": "plain#base+s2w+square+wall.4x2.magnetic+flex.stl",
+            "file_modified_at": "2024-03-16T16:36:33.561351",
+            "full_name": "tiles/bases/s2w/base#square+s2w+wall%plain/magnetic+flex/plain#base+s2w+square+wall.4x2.magnetic+flex.stl",
+            "md5": "a88cd913a5eca6c73ac9b78e3145d0e8",
+            "size": 540272,
+            "storage_address": "https://objects.openforge.tools/models/a88cd9/a88cd913a5eca6c73ac9b78e3145d0e8.stl"
+        },
         "metadata": false,
         "tags": [
             "build|s2w",
@@ -152018,21 +152044,11 @@
             "shape|base|wall",
             "shape|square",
             "shape|wall",
-            "size|depth|3",
-            "size|width|3",
+            "size|depth|2",
+            "size|width|4",
             "texture|plain"
         ],
-        "type": "model"
-    },
-    {
-        "file_metadata": {
-            "file": "plain#base+s2w+square+wall.4x2.magnetic+flex.stl",
-            "file_modified_at": "2024-03-16T16:36:33.561351",
-            "full_name": "tiles/bases/s2w/base#square+s2w+wall%plain/magnetic+fex/plain#base+s2w+square+wall.4x2.magnetic+flex.stl",
-            "md5": "a88cd913a5eca6c73ac9b78e3145d0e8",
-            "size": 540272,
-            "storage_address": "https://objects.openforge.tools/models/a88cd9/a88cd913a5eca6c73ac9b78e3145d0e8.stl"
-        },
+        "type": "model",
         "images": [
             {
                 "image_name": "thumbnail",
@@ -152136,7 +152152,17 @@
                     "tile_size": 512
                 }
             }
-        ],
+        ]
+    },
+    {
+        "file_metadata": {
+            "file": "plain#base+s2w+square+wall.4x4.magnetic+flex.stl",
+            "file_modified_at": "2024-03-16T16:36:40.237900",
+            "full_name": "tiles/bases/s2w/base#square+s2w+wall%plain/magnetic+flex/plain#base+s2w+square+wall.4x4.magnetic+flex.stl",
+            "md5": "6e798a6e15e5c37292cdd9d1e2dbfc5a",
+            "size": 754705,
+            "storage_address": "https://objects.openforge.tools/models/6e798a/6e798a6e15e5c37292cdd9d1e2dbfc5a.stl"
+        },
         "metadata": false,
         "tags": [
             "build|s2w",
@@ -152148,21 +152174,11 @@
             "shape|base|wall",
             "shape|square",
             "shape|wall",
-            "size|depth|2",
+            "size|depth|4",
             "size|width|4",
             "texture|plain"
         ],
-        "type": "model"
-    },
-    {
-        "file_metadata": {
-            "file": "plain#base+s2w+square+wall.4x4.magnetic+flex.stl",
-            "file_modified_at": "2024-03-16T16:36:40.237900",
-            "full_name": "tiles/bases/s2w/base#square+s2w+wall%plain/magnetic+fex/plain#base+s2w+square+wall.4x4.magnetic+flex.stl",
-            "md5": "6e798a6e15e5c37292cdd9d1e2dbfc5a",
-            "size": 754705,
-            "storage_address": "https://objects.openforge.tools/models/6e798a/6e798a6e15e5c37292cdd9d1e2dbfc5a.stl"
-        },
+        "type": "model",
         "images": [
             {
                 "image_name": "thumbnail",
@@ -152266,23 +152282,7 @@
                     "tile_size": 512
                 }
             }
-        ],
-        "metadata": false,
-        "tags": [
-            "build|s2w",
-            "connection|magnetic",
-            "connection|magnetic|flex",
-            "shape|base",
-            "shape|base|s2w",
-            "shape|base|square",
-            "shape|base|wall",
-            "shape|square",
-            "shape|wall",
-            "size|depth|4",
-            "size|width|4",
-            "texture|plain"
-        ],
-        "type": "model"
+        ]
     },
     {
         "file_metadata": {
