@@ -20,10 +20,26 @@ jest.mock('../part-selection-modal', () => ({
   __esModule: true,
   default: () => null,
 }));
-jest.mock('../tab-part-search', () => ({
-  __esModule: true,
-  default: () => <div data-testid="part-search" />,
-}));
+// Part Search takes its own parameters out of the URL when it mounts,
+// through `use-url-parameters`. The stub does the same, using that
+// module's own helper so the two cannot drift: the tab strip reads the
+// landing URL to decide which tab a link meant, and the question is
+// whether it reads it before this happens.
+jest.mock('../tab-part-search', () => {
+  const { useEffect } = jest.requireActual('react');
+  const { withoutConsumed } = jest.requireActual('@/hooks/use-url-parameters');
+  function PartSearchStub() {
+    useEffect(() => {
+      const kept = withoutConsumed(window.location.search);
+      const next = window.location.pathname + (kept ? `?${kept}` : '');
+      if (next !== window.location.pathname + window.location.search) {
+        window.history.replaceState({}, '', next);
+      }
+    }, []);
+    return <div data-testid="part-search" />;
+  }
+  return { __esModule: true, default: PartSearchStub };
+});
 jest.mock('../tab-admin', () => ({
   __esModule: true,
   default: () => <div data-testid="admin" />,
@@ -320,6 +336,85 @@ describe('TabbedInterface', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Guided Builds' }));
 
     expect(window.history.length).toBe(before);
+
+    window.history.replaceState({}, '', '/');
+  });
+
+  it.each([
+    ['a copied blueprint link', '/?md5=0a0e4b7e1f2c3d4e5f60718293a4b5c6'],
+    ['an old Patreon tag link', '/?tag=texture%7Cnova_trail'],
+    ['a blueprint id link', '/?blueprint_id=42'],
+    ['a search link', '/?search=corner'],
+  ])('opens Part Search for %s', async (_label, url) => {
+    // The copy-link button builds these and they get posted publicly,
+    // so the tab has to follow them. Part Search strips its own
+    // parameters once it mounts, which is why the landing URL is read
+    // in the first render rather than in the effect.
+    noGuides();
+    window.history.replaceState({}, '', url);
+
+    render(<TabbedInterface />);
+
+    await waitFor(() =>
+      expect(
+        screen.getByRole('button', { name: 'Part Search' }).className
+      ).toContain('active')
+    );
+    expect(
+      screen.getByRole('button', { name: 'Guided Builds' }).className
+    ).not.toContain('active');
+
+    window.history.replaceState({}, '', '/');
+  });
+
+  it('lets a guide win when a link carries both', async () => {
+    // `?guide=x&tag=y` is a guide link carrying a stale parameter
+    // rather than a search, so the guide decides.
+    noGuides();
+    window.history.replaceState({}, '', '/?guide=wall&tag=texture%7Cnova_trail');
+
+    render(<TabbedInterface />);
+
+    await waitFor(() =>
+      expect(
+        screen.getByRole('button', { name: 'Guided Builds' }).className
+      ).toContain('active')
+    );
+
+    window.history.replaceState({}, '', '/');
+  });
+
+  it('goes back to Part Search on the Back button', async () => {
+    // Back after landing on a shared link. The mount path reads the
+    // captured URL; this one has to read the live one, because back
+    // and forward put the parameters back.
+    noGuides();
+    window.history.replaceState({}, '', '/');
+
+    render(<TabbedInterface />);
+    await screen.findByRole('heading', { name: 'Guided builds' });
+
+    window.history.replaceState({}, '', '/?md5=0a0e4b7e1f2c3d4e5f60718293a4b5c6');
+    fireEvent.popState(window);
+
+    await waitFor(() =>
+      expect(
+        screen.getByRole('button', { name: 'Part Search' }).className
+      ).toContain('active')
+    );
+
+    window.history.replaceState({}, '', '/');
+  });
+
+  it('leaves the landing tab alone for a URL naming no tab', async () => {
+    noGuides();
+    window.history.replaceState({}, '', '/?utm_source=patreon');
+
+    render(<TabbedInterface />);
+
+    expect(
+      screen.getByRole('button', { name: 'Guided Builds' }).className
+    ).toContain('active');
 
     window.history.replaceState({}, '', '/');
   });
