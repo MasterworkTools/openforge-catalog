@@ -14,12 +14,15 @@ and the availability endpoint says what is *refused* there.
 
 #: The guides the empty-part invariant holds for today. A guide joins
 #: once it has no offered answer that resolves empty.
-GUARDED = ("corner",)
+# Not `wall`: it offers mortar_and_stone at its widest sizes with no
+# wall base of that texture to stand on, which is a gap in the catalog
+# rather than in the guide.
+GUARDED = ("corner", "door", "floor")
 
 #: Reachability is the weaker claim and holds for more guides: it asks
 #: only that a documented answer be reachable somewhere, which a guide
 #: can satisfy while still having a state that resolves empty.
-REACHABLE = GUARDED + ("door",)
+REACHABLE = GUARDED
 
 
 def _resolve(client, key, state):

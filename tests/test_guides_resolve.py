@@ -6,8 +6,10 @@ import pytest
 from openforge.db.sql.tags import tag_search_blueprints
 from openforge.guides.resolve import (
     GuideSelectionError,
+    _closest_offered,
     _is_fitting,
     _recommend,
+    _unofferable,
     resolve,
     to_tag_query,
 )
@@ -2418,6 +2420,66 @@ def test_an_arched_door_wall_offers_only_a_door():
 
     assert "wall.door" in parts
     assert "wall.lintel" not in parts
+
+
+def _choice(tag):
+    return {"tag": tag}
+
+
+def test_the_nearest_offered_answer_keeps_what_it_can_of_the_default():
+    """A 1x1 base holds one lock on its face, so the combination the
+    document asks for is not among the answers the build can carry."""
+    wanted = "connection|magnetic,connection|openlock,connection|openlock|topless"
+    offered = [
+        _choice("connection|dragonlock"),
+        _choice("connection|magnetic"),
+        _choice("connection|openlock"),
+        _choice("connection|openlock,connection|openlock|topless"),
+    ]
+
+    assert (
+        _closest_offered(wanted, offered)
+        == "connection|openlock,connection|openlock|topless"
+    )
+
+
+def test_a_tie_goes_to_the_answer_derived_first():
+    wanted = "a,b"
+    offered = [_choice("a,z"), _choice("b,z")]
+
+    assert _closest_offered(wanted, offered) == "a,z"
+
+
+def test_an_answer_sharing_nothing_is_still_better_than_none():
+    """Never unanswered: the guide promises a complete build on the
+    first screen, so a question with answers gets one of them."""
+    assert _closest_offered("x", [_choice("y"), _choice("z")]) == "y"
+
+
+def test_an_offered_default_is_left_alone():
+    derived = {"clips": [_choice("a"), _choice("b")]}
+
+    assert _unofferable({"clips": "a"}, {}, derived) == {}
+
+
+def test_an_unofferable_default_is_replaced():
+    derived = {"clips": [_choice("a,b"), _choice("c")]}
+
+    assert _unofferable({"clips": "a,z"}, {}, derived) == {"clips": "a,b"}
+
+
+def test_what_the_person_actually_answered_is_never_moved():
+    """Their answer is theirs. An answer that cannot be had is refused
+    where answers are validated, not quietly swapped for another."""
+    derived = {"clips": [_choice("a"), _choice("b")]}
+
+    assert _unofferable({"clips": "z"}, {"clips": "z"}, derived) == {}
+
+
+def test_a_question_deriving_nothing_keeps_its_default():
+    """A derivation comes back empty when the parts it applies to match
+    nothing, which is not a reason to throw the default away."""
+    assert _unofferable({"clips": "a"}, {}, {"clips": []}) == {}
 
 
 def test_a_wide_door_wall_offers_a_leaf_for_each_side():
