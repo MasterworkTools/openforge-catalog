@@ -197,6 +197,19 @@ from authored folder metadata, not from the parser — `apply_default_metadata` 
 appends `base`. They are real choices a person makes, out of scope for the first slice,
 and a later guide step should offer them by reading the chosen part's own slots.
 
+**Height is a question for plain walls only.** Low walls exist in the wall and corner
+guides and nowhere else: every special wall is full height, so a door, window or
+portcullis guide asks nothing about height and requires the full-height markers on its
+wall role instead.
+
+The reason it is a requirement rather than a question with one usable answer is in the
+tags. A low wall carries `shape|wall|low` and `component|wall|low` *instead of*
+`shape|wall` and `component|wall`, not beneath them, so the two heights are disjoint
+sets rather than a modifier on one set. A role that wants full height asks for that pair
+and gets it. This is also why a wing's height step in the corner guide names both
+markers rather than only the component one: leaving `shape|wall` in the role's own query
+excludes every low wall before the step is reached.
+
 ## Mechanisms that already exist and must be reconciled
 
 The instruction was to look at blueprints because most of the concepts are already there.
