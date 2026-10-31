@@ -221,12 +221,14 @@ def resolve(
     instead = _unofferable(assumed, selections, derived)
     if instead:
         # The whole pass again rather than patching the pieces of it.
-        # A corrected answer is an answer like any other: a later
-        # question's `when` may turn on it, and its own default may
-        # read it, so walking the document again is what keeps the
-        # questions, the roles in play and the parts describing one
-        # build. `recommended` keeps the corrected value, because what
-        # the page marks as recommended has to be an answer it offers.
+        # A corrected answer is an answer like any other, so the
+        # questions it could open and the roles they put in play are
+        # re-read from it. No guide turns a `when` on a derived answer
+        # today, so only the re-defaulting and the parts are covered by
+        # a test; the rest is here so that the state is consistent
+        # rather than because something is known to need it.
+        # `recommended` keeps the corrected value, because what the
+        # page marks as recommended has to be an answer it offers.
         assumed, recommended = _with_defaults(document, {**selections, **instead})
         recommended = {**recommended, **instead}
         steps, answered = _available_steps(document, assumed)
