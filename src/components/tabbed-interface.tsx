@@ -1,18 +1,42 @@
 'use client'
 
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import TabPartSearch from './tab-part-search';
 import GuidePage from './guides/guide-page';
 import TabAdmin from './tab-admin';
 import { useAdminContext } from '@/contexts/admin-context';
 import { loadAppConfig } from '@/utils/app-config';
 import { clearGuide } from '@/hooks/use-guide-state';
+import { CONSUMED } from '@/hooks/use-url-parameters';
+
+/** Which tab a URL is asking for, or null if it does not say. */
+function tabFor(search: string): 'guides' | 'partSearch' | null {
+  const params = new URLSearchParams(search);
+  // A guide wins over everything: `?guide=x&tag=y` is a guide link
+  // that happens to carry a stale parameter, not a search.
+  if (params.get('guide')) return 'guides';
+  return CONSUMED.some((key) => params.has(key)) ? 'partSearch' : null;
+}
 
 const TabbedInterface = () => {
   const [activeTab, setActiveTab] = useState<'partSearch' | 'guides' | 'baseGenerator' | 'admin'>('guides');
   const [baseGeneratorUrl, setBaseGeneratorUrl] = useState(process.env.NEXT_PUBLIC_BASE_GENERATOR_URL || 'http://localhost:8000');
 
   const { state } = useAdminContext();
+
+  // The query string the page was opened with.
+  //
+  // Captured in the first render rather than read in the effect below,
+  // and that is load-bearing: `use-url-parameters` takes its own
+  // parameters out of the URL once Part Search mounts, and a child's
+  // effect runs before its parent's, so by the time the effect looks
+  // there is nothing left to see. A parent renders before its children
+  // mount, so this still sees them. Nothing is rendered from it, so
+  // the prerendered markup is unaffected.
+  const landing = useRef<string | null>(null);
+  if (landing.current === null) {
+    landing.current = typeof window === 'undefined' ? '' : window.location.search;
+  }
 
   const showGuides = useCallback(() => setActiveTab('guides'), []);
 
@@ -26,29 +50,32 @@ const TabbedInterface = () => {
     clearGuide();
   }, [showGuides]);
 
-  // A guide in the URL means the person is looking at a guide, so this
-  // follows it back onto that tab — on `popstate` as well as at mount,
-  // because back and forward move the URL without remounting anything,
-  // and the person may have moved to another tab since.
+  // The URL says which tab the person meant, so this follows it — on
+  // `popstate` as well as at mount, because back and forward move the
+  // URL without remounting anything and the person may have moved to
+  // another tab since.
   //
-  // Only ever *into* the guides tab. A URL with no guide in it means
-  // the cards, which is this tab anyway; switching away would take
-  // someone off a tab they are using.
+  // Both ways. A link carrying Part Search's own parameters is a
+  // shared result, and the copy-link button builds them, so landing
+  // such a link on the guides tab hides what it pointed at. A URL
+  // naming neither leaves the tab alone.
   //
   // In an effect rather than a `useState` initialiser, and that is not
   // a style choice: this is a static export, so the markup is
   // prerendered with no `window` and an initialiser reading
   // `location.search` would bake the build-time answer into it.
   useEffect(() => {
-    const follow = () => {
-      if (new URLSearchParams(window.location.search).get('guide')) {
-        showGuides();
-      }
+    const go = (want: 'guides' | 'partSearch' | null) => {
+      if (want) setActiveTab(want);
     };
-    follow();
+    // The landing URL at mount, because Part Search has taken its own
+    // parameters out by now; the live one afterwards, because back and
+    // forward put them back.
+    go(tabFor(landing.current ?? ''));
+    const follow = () => go(tabFor(window.location.search));
     window.addEventListener('popstate', follow);
     return () => window.removeEventListener('popstate', follow);
-  }, [showGuides]);
+  }, []);
 
   useEffect(() => {
     // Load base generator URL from localStorage and app-config.json
