@@ -197,10 +197,9 @@ from authored folder metadata, not from the parser — `apply_default_metadata` 
 appends `base`. They are real choices a person makes, out of scope for the first slice,
 and a later guide step should offer them by reading the chosen part's own slots.
 
-**Height is a question for plain walls only.** Low walls exist in the wall and corner
-guides and nowhere else: every special wall is full height, so a door, window or
-portcullis guide asks nothing about height and requires the full-height markers on its
-wall role instead.
+**Height is a question the wall and corner guides ask, and no other guide does.** A
+component guide — door, window, portcullis — requires the full-height markers on its
+wall role instead of asking, because the component walls it offers are full height.
 
 The reason it is a requirement rather than a question with one usable answer is in the
 tags. A low wall carries `shape|wall|low` and `component|wall|low` *instead of*
@@ -209,6 +208,12 @@ sets rather than a modifier on one set. A role that wants full height asks for t
 and gets it. This is also why a wing's height step in the corner guide names both
 markers rather than only the component one: leaving `shape|wall` in the role's own query
 excludes every low wall before the step is reached.
+
+The rule is about which guide asks, not about what the catalog holds. Low pieces do
+exist for a component that *is* the wall — the low secret doors are the case — and they
+carry `shape|wall|low` without the component marker. A guide for such a component would
+decide its own height question; a guide for a wall with something set into it does not
+have one to decide.
 
 ## Mechanisms that already exist and must be reconciled
 

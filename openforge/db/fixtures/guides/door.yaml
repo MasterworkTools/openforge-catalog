@@ -11,8 +11,8 @@ title: Door
 # leaving a second one behind and a URL to update.
 hero_image: https://objects.openforge.tools/guides/guide.door.webp
 # The card's blurb, under the title. One line, because the card is a
-# way in rather than a place to read: it says which of Floor, Wall and
-# Corner this is, and the guide itself explains the three methods.
+# way in rather than a place to read: it says which guide this is, and
+# the guide itself explains the three methods.
 summary: A wall with a door in it
 position: 4
 
@@ -125,7 +125,8 @@ steps:
           #
           # Neither base is an s2w piece: the composition blueprints ask
           # their base part for build|s2w, but that is not what a wall
-          # stands on, and no wall base carries it.
+          # stands on, and the wall bases of a given texture do not
+          # carry it.
           floor:
             require: ['build|s2w', 'shape|floor|wall']
             allow: ['shape|floor|s2w']
@@ -166,7 +167,7 @@ steps:
         blurb: >
           The wall and its base are one model. Half the pieces and
           nothing to align, and the wall is fixed to the kind of
-          connector it was printed with. 249 walls print this way.
+          connector it was printed with.
         roles:
           # No wall-base role at all — that is the point of the option.
           #
@@ -326,8 +327,7 @@ steps:
   # deny_children: ['connection'], and a wall with side clips carries
   # the bare `connection|side` parent as well as the specific tag — so
   # requiring connection|side|openlock alone matches nothing, because
-  # the parent is swept, which made every wall with side openlock
-  # unreachable.
+  # the parent is swept.
   - key: connectors
     prompt: Side clips on the wall ends?
     # Wall on tile is the exception: the wall is part of the tile, so
@@ -356,7 +356,7 @@ steps:
         title: OpenLOCK side clips
         blurb: >
           A clip on each end joins wall to wall, so a run of wall holds
-          its line. 175 walls have them.
+          its line.
         roles:
           wall:
             require: ['connection|side|openlock']
@@ -365,7 +365,7 @@ steps:
         title: DragonLock side clips
         blurb: >
           The same idea in Dragonlock's fitting, for mixing with a
-          Dragonlock collection. 79 walls.
+          Dragonlock collection.
         roles:
           wall:
             require: ['connection|side|dragonlock']
@@ -399,8 +399,8 @@ roles:
       # sweep keeps the s2w tiles, the curved, the concave and the
       # diagonal out of its answer.
       require: ['shape|floor']
-      # The component sweep the wall has had all along, and the floor
-      # has not. A floor with a brazier in it, or a pool, or tram
+      # The component sweep matters on the floor as much as on the
+      # wall. A floor with a brazier in it, or a pool, or tram
       # tracks, carries `component|brazier` and `shape|floor` and
       # nothing else to tell it apart — so without this the guide can
       # and does answer "your floor" with a brazier. A plain floor
@@ -412,10 +412,9 @@ roles:
       # The sweep covers the whole shape namespace, not just
       # `shape|floor`. A corner tile is `shape|corner` beside
       # `shape|floor`, a sibling rather than a child, so a sweep
-      # scoped to `shape|floor` walked straight past it and the guide
-      # answered "your floor" with a corner piece. The wall role has
-      # always swept the whole namespace; this is the floor catching
-      # up. `shape|floor` is exempt because it is required, and the
+      # scoped to `shape|floor` would miss it and the guide would
+      # answer "your floor" with a corner piece.
+      # `shape|floor` is exempt because it is required, and the
       # methods that want `shape|floor|wall` and `shape|floor|s2w`
       # name them themselves.
       deny_children: ['shape', 'component']
@@ -427,19 +426,11 @@ roles:
       # its sweep is the whole shape namespace.
       deny:
         - 'shape|base'
-    # 2x2 is the default tile and by a distance the most common.
-    # Size is listed last because it is dropped first — a dungeon stone floor of another size is a
-    # better answer than a 2x2 floor of some other texture.
-    # connection|openforge last, not first. `prefer` drops from the end,
-    # so a term the single-piece option *denies* has to be the least
-    # wanted — leading with it meant every surviving subset contained a
-    # contradiction, prefer ran out entirely, and the floor fell back to
-    # alphabetical order.
-    # Block ahead of bare dungeon stone, because there is no such
-    # thing as a bare one: every dungeon stone floor in the catalog is
-    # block or eroded, so "dungeon stone" on its own is a coin toss
-    # and this is which way it lands. First, so it is the last thing
-    # dropped — the tie is about looks rather than fit.
+    # Block rather than bare dungeon stone, because there is no such
+    # thing as a bare one: every dungeon stone floor is block or
+    # eroded, so "dungeon stone" alone is a coin toss and this is
+    # which way it lands.
+    #
     # One term, and it has to stay that way. Preferred tags are required
     # as a prefix and dropped from the end, so a term that cannot match
     # discards every term after it. This one picks block over eroded for
@@ -478,8 +469,8 @@ roles:
       # texture carries a doorway and the low pair together.
       #
       # component|door is what restricts this guide to walls with a
-      # doorway in them. The shape of the doorway is a child of it and
-      # the refinement below asks for one, so it is not required here.
+      # doorway in them. The shape of the doorway is a child of it,
+      # left unasked so every shape stays in play.
       require:
         - 'build|separate wall'
         - 'component|door'
@@ -573,9 +564,13 @@ roles:
     match: ['size|width', 'size|depth']
   wall-base:
     title: Base for the wall
-    query: {require: ['shape|base']}
-    # Dungeon stone like the wall it sits under: a parts list that mixes
-    # textures looks like a mistake even when every piece fits.
+    # The component sweep matters here. Foundation carries feature
+    # bases — a chimney, a door cut — under the same shape and clips
+    # as the plain one, and without the sweep the tie goes
+    # alphabetically and a door wall is recommended a chimney base.
+    query:
+      require: ['shape|base']
+      deny_children: ['component']
     # Nothing to prefer: the texture question reaches this role too, and
     # substitutes wood for towne where the bases are filed that way.
     under: wall
@@ -588,7 +583,7 @@ refinements:
     role: '*'
     # Texture is the obvious thing to go looking for: any wall of the
     # right shape fits, whatever it is carved as, and the catalog has
-    # forty-odd textures against the eight worth recommending.
+    # far more textures than have door walls worth recommending.
     browsable: true
     prompt: Wall texture
     default: 'texture|dungeon_stone'
@@ -617,12 +612,11 @@ refinements:
     # base at all, so without this, asking for towne empties both base
     # roles.
     #
-    # A few more wall textures have no base of their own name and no
-    # mapping: cavern, mine, dwarven_halls, large_brick and
-    # foundations, where the base texture is `foundation`, singular.
-    # Choosing one of those empties the wall
-    # base, which is the honest answer until someone says what it
-    # stands on — guessing would quietly recommend the wrong base
+    # The textures this guide offers are the ones with door walls, and
+    # they all map or carry a base of their own name. A texture reached
+    # through the catalog dialog need not, and an unmapped one empties
+    # the wall base, which is the honest answer until someone says what
+    # it stands on — guessing would quietly recommend the wrong base
     # instead of visibly recommending none.
     # The floor base is not in this vocabulary at all: every base that
     # carries shape|base|square is texture|plain, and the textured
@@ -638,11 +632,9 @@ refinements:
       #
       # Only the parent is mapped. `substitute` is keyed by the answer
       # given, and this question's `choices` offer `texture|stone_brick`
-      # and nothing under it, so entries for `|ground` and `|upper`
-      # could never fire — they were written for a list that offered
-      # the storeys separately. The storey is reachable through the
-      # catalog dialog instead, and a piece picked there brings its own
-      # base with it.
+      # and nothing under it, so an entry for `|ground` or `|upper`
+      # could never fire. The storey is reachable through the catalog
+      # dialog instead, and a piece picked there brings its own base.
       'texture|stone_brick':
         wall-base: 'texture|foundation'
 
@@ -760,9 +752,9 @@ refinements:
       'connection|dragonlock': DragonLock
       'connection|magnetic': Magnets
     from_combination: connection
-    # Every magnetic base is also magnetic|flex, so showing both
-    # doubles the label and separates nothing. Hidden, not refused —
-    # the pieces still carry it.
+    # Flex is hidden rather than refused: it rides along with the
+    # magnet combinations and showing it doubles the label. Snap is a
+    # real alternative and stays on its own.
     exclude: ['connection|magnetic|flex']
 
   # A piece printed with its base built in *is* the base, so it has
@@ -819,9 +811,9 @@ refinements:
   # along a run: these join floor to floor up a building, and a wall
   # can have both, either or neither.
   #
-  # Several textures have no pegged walls at all, so this question has
-  # no answer on them and the page drops it rather than asking
-  # something unanswerable.
+  # Published only where the walls in play carry pegs. No door wall
+  # does, so this question does not appear in this guide today; it is
+  # here so that it does when one is pegged.
   - key: pegs
     role: wall
     browsable: true
