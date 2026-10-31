@@ -210,10 +210,9 @@ markers rather than only the component one: leaving `shape|wall` in the role's o
 excludes every low wall before the step is reached.
 
 The rule is about which guide asks, not about what the catalog holds. Low pieces do
-exist for a component that *is* the wall — the low secret doors are the case — and they
-carry `shape|wall|low` without the component marker. A guide for such a component would
-decide its own height question; a guide for a wall with something set into it does not
-have one to decide.
+exist for a component that *is* the wall — the low secret doors are the case. A guide
+for such a component would decide its own height question; a guide for a wall with
+something set into it does not have one to decide.
 
 ## Mechanisms that already exist and must be reconciled
 
