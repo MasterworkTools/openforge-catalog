@@ -210,7 +210,7 @@ export interface GuideDocument {
   summary?: string;
   steps: { key: string; prompt: string; options: GuideOption[] }[];
   refinements?: { key: string }[];
-  roles: Record<string, unknown>;
+  roles: Record<string, { slots?: boolean }>;
 }
 
 export interface ResolvedGuide {
@@ -264,7 +264,7 @@ export async function fetchGuides(): Promise<GuideSummary[]> {
  * The whole document, not just its title.
  *
  * The page needs the keys it defines before it can resolve anything —
- * see `selectionKeys` — so fetching the title alone would mean asking
+ * see `answersTo` — so fetching the title alone would mean asking
  * twice.
  */
 export async function fetchGuide(guideKey: string): Promise<GuideDocument> {
@@ -276,20 +276,8 @@ export async function fetchGuide(guideKey: string): Promise<GuideDocument> {
   return body.document;
 }
 
-/**
- * Every query key this guide answers to.
- *
- * The API refuses a key it does not recognise, so the page builds its
- * request from these rather than forwarding the browser's query string.
- * A shared link that has been through Facebook or a campaign tracker
- * arrives carrying `fbclid` or `utm_source`, and forwarding it would
- * answer 400 and show the person an error instead of their build.
- *
- * The API stays strict on purpose — ignoring unknown keys there would
- * let a typo'd selection resolve silently against the wrong state — so
- * the filtering belongs here, where the guide's own vocabulary is known.
- */
-export function selectionKeys(document: GuideDocument): Set<string> {
+/** The keys the document names outright. */
+function selectionKeys(document: GuideDocument): Set<string> {
   return new Set([
     ...document.steps.map((step) => step.key),
     ...(document.refinements ?? []).map((refinement) => refinement.key),
@@ -297,6 +285,29 @@ export function selectionKeys(document: GuideDocument): Set<string> {
     // is as much a part of a shared link as any answer is.
     ...Object.keys(document.roles ?? {}).map(pinKey),
   ]);
+}
+
+/**
+ * Does this guide answer to this query key?
+ *
+ * The API refuses a key it does not recognise, and it stays strict on
+ * purpose — ignoring unknown keys there would let a typo'd selection
+ * resolve silently against the wrong state — so the page filters here,
+ * where the guide's own vocabulary is known. A link that has been
+ * through Facebook or a campaign tracker arrives carrying `fbclid` or
+ * `utm_source`, and forwarding it would answer 400 and show the person
+ * an error instead of their build.
+ *
+ * A role that offers its chosen part's fittings grows a role per slot
+ * as it resolves — `part.wall.door` — so which ones exist depends on
+ * the part that lands and cannot be listed from the document.
+ */
+export function answersTo(document: GuideDocument, key: string): boolean {
+  if (selectionKeys(document).has(key)) return true;
+  return Object.entries(document.roles ?? {}).some(([name, role]) => {
+    const prefix = `${pinKey(name)}.`;
+    return role.slots && key.startsWith(prefix) && key.length > prefix.length;
+  });
 }
 
 /**
@@ -339,6 +350,20 @@ export function thumbnailOf(
   return (
     blueprint?.images?.find((image) => image.image_type === 'thumbnail') ?? null
   );
+}
+
+/**
+ * What to call an answer.
+ *
+ * A curated choice carries its own title. A derived one carries only
+ * the tag, so the name is its last element with the underscores taken
+ * out — not the brand's own capitalisation, since a list of those
+ * would be the stale thing deriving exists to avoid.
+ */
+export function nameFor(choice: GuideChoice): string {
+  if (choice.title) return choice.title;
+  const name = (choice.tag.split('|').pop() ?? choice.tag).replace(/_/g, ' ');
+  return name.charAt(0).toUpperCase() + name.slice(1);
 }
 
 /** What is not on offer, and why, by question; and how many each part has. */
@@ -518,8 +543,22 @@ export function askedOf(
   );
 }
 
+/**
+ * Is this a role a part brought with it, rather than one the guide names?
+ *
+ * A derived name is `<role>.<slot>` and a declared one has no dot, so
+ * the name says which kind it is. None of the guide's own questions
+ * reach a fitting: they are about the build, and a fitting is asked
+ * only what its slot asks. `_is_fitting` in `resolve.py` is the same
+ * test, and the two have to agree.
+ */
+export function isFitting(role: string): boolean {
+  return role.includes('.');
+}
+
 /** Does this question apply to that role? Same test the engine makes. */
 export function reaches(refinement: GuideRefinement, role: string): boolean {
+  if (isFitting(role)) return false;
   if (refinement.role !== '*' && refinement.role !== role) return false;
   return !(refinement.except_roles ?? []).includes(role);
 }
@@ -556,6 +595,7 @@ export function releasedBy(
  * whatever the earlier answers put in play, which is every role.
  */
 export function narrows(question: GuideStep | GuideRefinement, role: string): boolean {
+  if (isFitting(role)) return false;
   if (!('options' in question)) return reaches(question, role);
   return question.options.some(
     (option) => !option.roles || role in option.roles

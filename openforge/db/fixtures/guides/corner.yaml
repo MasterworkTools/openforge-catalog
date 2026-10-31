@@ -285,8 +285,8 @@ steps:
       - key: normal
         title: Normal walls
         roles:
-          left-wall: {require: ['component|wall']}
-          right-wall: {require: ['component|wall']}
+          left-wall: {require: ['component|wall', 'shape|wall']}
+          right-wall: {require: ['component|wall', 'shape|wall']}
           pillar: {deny: ['shape|column|low']}
       - key: low
         title: Low walls
@@ -294,8 +294,8 @@ steps:
           Half height, so you can see over them. Useful for balconies
           and for a corner you want to look past.
         roles:
-          left-wall: {require: ['component|wall|low']}
-          right-wall: {require: ['component|wall|low']}
+          left-wall: {require: ['component|wall|low', 'shape|wall|low']}
+          right-wall: {require: ['component|wall|low', 'shape|wall|low']}
           pillar: {require: ['shape|column|low']}
 
 roles:
@@ -344,9 +344,10 @@ roles:
       # A plain wall, by the wall guide's rule: component|wall is what
       # makes it a wall rather than a wall-shaped feature, and sweeping
       # the component namespace is what makes it plain. The height
-      # question names which component marker it keeps, so neither is
+      # question names both markers a wing keeps, the shape as well as
+      # the component, because a low wall carries `shape|wall|low`
+      # instead of `shape|wall` rather than beneath it. So neither is
       # required here.
-      require: ['shape|wall']
       # `both` is the whole corner in one piece — it stands in for
       # the pillar and both wings at once — so it is not a wing and
       # carries no side to deny it by.
@@ -363,7 +364,11 @@ roles:
         - 'connection|openforge'
         - 'connection|openlock'
         - 'connection|side'
-    prefer: ['size|width|2']
+    # Towne weathers its two broken stucco finishes differently, and a
+    # corner reads better with one on each wing than the same twice.
+    # Second, so it is the first dropped: it cannot match any other
+    # texture, and the footprint ahead of it has to survive that.
+    prefer: ['size|width|2', 'texture|towne|broken_stucco-a']
     avoid: ['decoration']
   right-wall:
     title: Right wing
@@ -380,7 +385,6 @@ roles:
     reversible_view: front-right
     query:
       # Mirror of the left wing above.
-      require: ['shape|wall']
       # `both` is the whole corner in one piece — it stands in for
       # the pillar and both wings at once — so it is not a wing and
       # carries no side to deny it by.
@@ -397,7 +401,10 @@ roles:
         - 'connection|openforge'
         - 'connection|openlock'
         - 'connection|side'
-    prefer: ['size|width|2']
+    # The other broken stucco finish, so the two wings of a towne
+    # corner do not weather identically. Second for the same reason as
+    # the left wing's.
+    prefer: ['size|width|2', 'texture|towne|broken_stucco-b']
     avoid: ['decoration']
   pillar:
     title: Pillar

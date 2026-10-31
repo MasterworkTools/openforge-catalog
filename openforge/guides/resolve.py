@@ -1056,6 +1056,16 @@ def _applies_to_any(refinement: dict, in_play: list[str]) -> bool:
     return any(_reaches(refinement, name) for name in in_play)
 
 
+def _is_fitting(role_name: str) -> bool:
+    """Is this a role a part brought with it, rather than one the guide names?
+
+    A derived name is `<role>.<slot>` and a declared one is a `url_key`,
+    which has no dot, so the name says which kind it is. `isFitting` in
+    `guide-service.ts` is the same test and has to stay that way.
+    """
+    return "." in role_name
+
+
 def _reaches(refinement: dict, role_name: str) -> bool:
     """Does this refinement ask anything of that role?
 
@@ -1063,6 +1073,8 @@ def _reaches(refinement: dict, role_name: str) -> bool:
     the contract: it decides which pins a click lets go of, so a
     disagreement here offers an answer the click cannot deliver.
     """
+    if _is_fitting(role_name):
+        return False
     if refinement["role"] not in ("*", role_name):
         return False
     return role_name not in refinement.get("except_roles", [])
@@ -1081,6 +1093,8 @@ def _narrows(question: dict, role_name: str) -> bool:
     answers put in play, while an option that names roles says nothing
     about the ones it leaves out.
     """
+    if _is_fitting(role_name):
+        return False
     if "options" not in question:
         return _reaches(question, role_name)
     return any(
@@ -1155,6 +1169,14 @@ def _reject_unknown_selections(
     # part of the key space — `part.wall` — where it cannot collide
     # with a step: a question key is a url_key and has no dot in it.
     known |= {f"{PIN}{name}" for name in document["roles"]}
+    # A selector derived from a slot is a role the document never
+    # names, so its pin is recognised by shape instead: the role it
+    # hangs off, a dot, and the slot.
+    known |= {
+        key
+        for key in selections
+        if key.startswith(PIN) and _owner_of_slot(key, document) is not None
+    }
     unknown = sorted(set(selections) - known)
     if unknown:
         # `repr` and bounded, like every other message that echoes a
@@ -1166,6 +1188,18 @@ def _reject_unknown_selections(
         )
     for refinement in refinements:
         _reject_bad_refinement_value(refinement, selections)
+
+
+def _owner_of_slot(key: str, document: dict) -> str | None:
+    """The role a slot pin hangs off, if the document offers its slots.
+
+    `part.wall.door` is the door slot of the wall role.
+    """
+    owner, _, slot = key[len(PIN) :].partition(".")
+    if not slot:
+        return None
+    role = document["roles"].get(owner)
+    return owner if role and role.get("slots") else None
 
 
 def _reject_bad_refinement_value(refinement: dict, selections: dict) -> None:
@@ -1208,8 +1242,15 @@ def _parts(
 ) -> list[dict]:
     in_play = _roles_in_play(chosen)
     parts = {}
-    for name in _resolution_order(in_play, document["roles"]):
-        role = document["roles"][name]
+    # A role that offers its slots adds more roles as it resolves, so
+    # the list is walked rather than iterated.
+    roles = dict(document["roles"])
+    order = list(_resolution_order(in_play, document["roles"]))
+    position = 0
+    while position < len(order):
+        name = order[position]
+        position += 1
+        role = roles[name]
         predicate = _compose(role["query"], chosen, refinements, selections, name)
         inherited = _matched(role, parts)
         if inherited is not None:
@@ -1219,6 +1260,16 @@ def _parts(
             pinned, inherited, predicate, role, find_candidates
         )
         reversible = _reversible(role, blueprint)
+        # A selector sits with the part that brought it, so it takes
+        # that part's position and its place in the list just behind.
+        after = in_play.index(name)
+        for offset, (slot_name, slot_role) in enumerate(
+            _slot_roles(name, role, blueprint)
+        ):
+            slot_role["position"] = role.get("position")
+            roles[slot_name] = slot_role
+            order.insert(position + offset, slot_name)
+            in_play.insert(after + 1 + offset, slot_name)
         parts[name] = {
             "role": name,
             "title": role["title"],
@@ -1241,12 +1292,12 @@ def _parts(
     # order the roles were written in is gone by the time this reads
     # them. A role without a position keeps its place after the ones
     # that have one.
-    order = {name: document["roles"][name].get("position") for name in in_play}
+    at = {name: roles[name].get("position") for name in in_play}
     return sorted(
         (parts[name] for name in in_play),
         key=lambda part: (
-            order[part["role"]] is None,
-            order[part["role"]] or 0,
+            at[part["role"]] is None,
+            at[part["role"]] or 0,
             in_play.index(part["role"]),
         ),
     )
@@ -1425,6 +1476,72 @@ def _pinned(role_name: str, selections: dict, find_pinned) -> dict | None:
     return find_pinned(md5)
 
 
+#: A blueprint's slot is a fitting rather than a part of the build when
+#: it asks for an interface. The base slot every wall carries asks for a
+#: shape, and the guide has a role for that already.
+INTERFACE = "interface|"
+
+
+def _slot_roles(role_name: str, role: dict, blueprint) -> list[tuple[str, dict]]:
+    """The selectors a resolved part brings with it, one per fitting.
+
+    Which selectors belong on the page is a property of the piece that
+    landed rather than of the guide, so they are built here, from the
+    blueprint, and resolved on the same pass.
+
+    Only slots asking for an `interface` tag. The base slot is the
+    thing the wall stands in, which the guide names as a role of its
+    own, and it is the one slot that uses `constrain`, which guides do
+    not read.
+    """
+    if not role.get("slots") or blueprint is None:
+        return []
+    derived = {}
+    # `blueprint_config`, not `config`: every finder hands the engine a
+    # blueprint that has been through `_convert_config`, which renames
+    # that column and deletes the original.
+    for slot in (blueprint.get("blueprint_config") or {}).get("parts") or []:
+        tags = slot.get("tags") or {}
+        query = {
+            term: [t["tag"] for t in tags.get(term, []) if "tag" in t]
+            for term in PREDICATES
+            if tags.get(term)
+        }
+        if not any(t.startswith(INTERFACE) for t in query.get("require", [])):
+            continue
+        # Prose names collapse to the same key — `grate (right)` and
+        # `grate right` both give `grate-right` — and a name of nothing
+        # but punctuation gives none at all. A pin names one slot, so
+        # the key is what there is one selector per.
+        key = _slot_key(slot.get("name") or "")
+        if not key:
+            continue
+        derived[key] = {
+            "title": slot["name"],
+            "query": query,
+            "under": role_name,
+        }
+        # A slot's own predicate says what fits, never which of those
+        # to recommend: a doorway takes any door of its shape and size,
+        # and the catalog has them in several materials. The owner says
+        # what its fittings should lean towards, because the slot
+        # cannot.
+        if role.get("slot_prefer"):
+            derived[key]["prefer"] = role["slot_prefer"]
+    return [(f"{role_name}.{key}", slot) for key, slot in derived.items()]
+
+
+def _slot_key(name: str) -> str:
+    """A slot's name as a role name, which is half of a query key.
+
+    Slot names are prose — `grate (right)`, `grate flange` — and a pin
+    is `part.<role>`, so what survives here ends up in a URL someone
+    shares.
+    """
+    key = "".join(c if c.isalnum() else "-" for c in name.lower())
+    return "-".join(part for part in key.split("-") if part)
+
+
 def _roles_in_play(chosen: list[dict]) -> list[str]:
     """Role names the chosen options call for, first mention first."""
     names = []
@@ -1506,6 +1623,8 @@ def _option_predicates(option: dict, role_name: str) -> list[dict]:
     the shorthand for the part that is true of every role the option
     names, and an option says nothing about a role it does not name.
     """
+    if _is_fitting(role_name):
+        return []
     roles = option.get("roles")
     if roles is None:
         # An option with no roles of its own narrows whatever the

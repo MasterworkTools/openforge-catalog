@@ -497,6 +497,52 @@ describe('GuidePage', () => {
       expect(titles).toEqual(['Wall', 'Base for the wall']);
     });
 
+    it('gives a fitting a column beside its wall, not a layer under it', async () => {
+      // A door is not stacked under the wall the way a base is; it goes
+      // in the doorway. So it takes a pile of its own, which leaves the
+      // wall and its base together and puts the door beside them rather
+      // than between them.
+      const door = {
+        ...RESOLVED_WITH_PARTS.parts[1],
+        role: 'wall.door',
+        title: 'door',
+        under: 'wall',
+        blueprint: {
+          ...RESOLVED_WITH_PARTS.parts[1].blueprint!,
+          id: 'bp-door',
+          blueprint_name: 'a wooden door',
+          file_md5: 'ddd',
+        },
+      };
+      const withDoor = {
+        ...RESOLVED_WITH_PARTS,
+        parts: [
+          RESOLVED_WITH_PARTS.parts[0],
+          door,
+          ...RESOLVED_WITH_PARTS.parts.slice(1),
+        ],
+      };
+
+      visit('?guide=wall&method=separate-wall');
+      mockFetch((url) =>
+        url.includes('/resolve') ? withDoor : GUIDE_DOCUMENT
+      );
+
+      render(<GuidePage />);
+      await screen.findByText('a wooden door');
+
+      const wallPile = screen
+        .getByText('Wall')
+        .closest('div')!
+        .parentElement!.parentElement!;
+      const inWallPile = [...wallPile.querySelectorAll('div')]
+        .map((node) => node.textContent)
+        .filter((t) => t === 'Wall' || t === 'Base for the wall' || t === 'door');
+
+      expect(inWallPile).toEqual(['Wall', 'Base for the wall']);
+      expect(screen.getByText('door')).toBeInTheDocument();
+    });
+
     it('shows each piece its tags', async () => {
       // While the guides are being written, the tags are how you see
       // that a recommendation is wrong — the filename does not say.
@@ -2924,10 +2970,6 @@ describe('inspecting a part', () => {
   });
 
   it('offers a way back to the cards from a guide that loaded fine', async () => {
-    // The only exit. `All guides` appears on the error arm, which is
-    // exactly when there is no guide to leave — so a guide that loaded
-    // successfully had no way out at all inside the tab, where the tab
-    // strip switches tabs rather than clearing the guide.
     visit('?guide=wall&method=separate-wall');
     mockFetch((url) =>
       url.includes('/availability')

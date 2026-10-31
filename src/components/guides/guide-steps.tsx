@@ -8,6 +8,7 @@ import {
   askedOf,
   deadAnswers,
   MissingReason,
+  nameFor,
   reaches,
   Selections,
 } from '@/services/guide-service';
@@ -899,24 +900,15 @@ function ChoicePicker({
 }
 
 /**
- * What to call a derived answer.
+ * An answer's name, and the count behind it.
  *
- * A curated choice carries its own title. A derived one carries only
- * the tag, so the label is its last element with the underscores taken
- * out — and the count beside it, because "OpenLOCK (135)" and
- * "DragonLock (46)" is the difference between two answers that
- * otherwise look equally good.
+ * The count separates two answers that otherwise look equally good. A
+ * curated title is the whole label without one: the author wrote what
+ * they wanted the button to say.
  */
 function labelFor(choice: GuideChoice): string {
   if (choice.title) return choice.title;
-  // A derived answer is a tag: its last element, underscores out, and
-  // the first letter up. Not a brand's own capitalisation — a list of
-  // those would be the stale thing deriving exists to avoid — but
-  // enough that "openlock" does not read as a typo.
-  const name = (choice.tag.split('|').pop() ?? choice.tag).replace(/_/g, ' ');
-  const pretty = name.charAt(0).toUpperCase() + name.slice(1);
-  // The count is the difference between two answers that otherwise
-  // look equally good: 135 pieces behind one and 46 behind another.
+  const pretty = nameFor(choice);
   return choice.count === undefined ? pretty : `${pretty} (${choice.count})`;
 }
 

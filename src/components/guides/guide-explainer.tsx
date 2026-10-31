@@ -1,5 +1,9 @@
 import React from 'react';
-import { GuideRefinement, GuideStep } from '@/services/guide-service';
+import {
+  GuideRefinement,
+  GuideStep,
+  nameFor,
+} from '@/services/guide-service';
 
 /**
  * The question, explained, in the column where the answer will appear.
@@ -213,7 +217,7 @@ function asQuestion(q: GuideStep | GuideRefinement, dead: string[]): Question {
     })) ??
     choices?.map((c) => ({
       key: c.tag,
-      title: c.title ?? c.tag,
+      title: nameFor(c),
       blurb: c.blurb,
     })) ??
     [];

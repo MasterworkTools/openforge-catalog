@@ -151,11 +151,6 @@ export default function GuidePage() {
     // height for the route, the same way it supplies the landmark.
     <div className="p-6 lg:h-full flex flex-col">
       {/* Title and the way out on one line, the exit pushed right.
-          It is the only way back when a guide loads successfully — the
-          `All guides` link below appears on the error arm, which is
-          exactly when there is no guide to leave. Inside the tab there
-          is no other exit: the tab strip switches tabs rather than
-          clearing the guide.
 
           A real link to `/guides/`, so it opens a page in a new tab,
           with a plain click intercepted to clear in place — the same
