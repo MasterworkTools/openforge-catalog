@@ -245,6 +245,15 @@ def resolve(
             find_pinned,
         )
 
+    # The recommendation is advice about what this question offers, so
+    # it is corrected whether or not the person has answered. Their
+    # answer is left alone — that is the map above — but a page that
+    # marks nothing as recommended because the marked answer is not on
+    # the list is the same bug wearing a different hat.
+    marked = _unofferable(recommended, {}, derived)
+    if marked:
+        recommended = {**recommended, **marked}
+
     # Only the questions the page is about to publish. The sweep asks
     # the catalog about every answer of every question it is given, and
     # the page shows one or two of them, so the rest is bought and

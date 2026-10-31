@@ -2184,6 +2184,27 @@ def test_resolve_never_moves_an_answer_the_person_sent(guide):
     assert clips["selected"] == "connection|dragonlock"
 
 
+def test_the_recommendation_is_one_of_the_answers_on_offer(guide):
+    """Advice about this question, so it is corrected whether or not
+    the question has been answered. A page that marks nothing as
+    recommended, because the marked answer is not on the list, is the
+    same bug wearing a different hat."""
+    guide = _clips_guide(guide, "connection|openforge,connection|magnetic")
+
+    resolved = resolve(
+        guide,
+        {"method": "s2w-modular", "clips": "connection|dragonlock"},
+        find_candidates,
+        facets=find_facets,
+        combinations=OFFERED,
+    )
+
+    clips = {r["key"]: r for r in resolved["refinements"]}["clips"]
+    offered = [choice["tag"] for choice in clips["choices"]]
+    assert clips["recommended"] in offered
+    assert clips["selected"] == "connection|dragonlock"
+
+
 def _sweeping_finder(pieces):
     """A finder with the SQL's `deny_children`: every tag strictly
     beneath the parent is refused unless required or allowed."""
