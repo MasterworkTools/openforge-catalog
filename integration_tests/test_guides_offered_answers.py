@@ -12,9 +12,14 @@ Three sources, none interchangeable. The document says what is
 and the availability endpoint says what is *refused* there.
 """
 
-#: The guides these hold for today. A guide joins the tuple once it has
-#: no offered answer that resolves empty.
+#: The guides the empty-part invariant holds for today. A guide joins
+#: once it has no offered answer that resolves empty.
 GUARDED = ("corner",)
+
+#: Reachability is the weaker claim and holds for more guides: it asks
+#: only that a documented answer be reachable somewhere, which a guide
+#: can satisfy while still having a state that resolves empty.
+REACHABLE = GUARDED + ("door",)
 
 
 def _resolve(client, key, state):
@@ -41,16 +46,16 @@ def _document(client, key):
     return response.json()["document"]
 
 
-def _guide_keys(client):
+def _guide_keys(client, guarded=GUARDED):
     """The guarded guides, confirmed to be guides this server serves."""
     response = client.get("/api/guides")
     assert response.status_code == 200
     body = response.json()
     guides = body["guides"] if isinstance(body, dict) else body
     served = {g["guide_key"] for g in guides if g.get("guide_key")}
-    missing = sorted(set(GUARDED) - served)
+    missing = sorted(set(guarded) - served)
     assert not missing, f"guarded guide not served: {missing}"
-    return [key for key in GUARDED if key in served]
+    return [key for key in guarded if key in served]
 
 
 def _documented_options(document):
@@ -185,7 +190,7 @@ class TestDocumentedAnswersAreReachable:
 
     def test_every_documented_answer_is_reachable_somewhere(self, api_client_no_auth):
         client = api_client_no_auth
-        for key in _guide_keys(client):
+        for key in _guide_keys(client, REACHABLE):
             document = _document(client, key)
             documented = _documented_options(document)
             reachable = {question: set() for question in documented}
