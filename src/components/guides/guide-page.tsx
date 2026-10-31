@@ -153,9 +153,7 @@ export default function GuidePage() {
       {/* Title and the way out on one line, the exit pushed right.
           It is the only way back when a guide loads successfully — the
           `All guides` link below appears on the error arm, which is
-          exactly when there is no guide to leave. Inside the tab there
-          is no other exit: the tab strip switches tabs rather than
-          clearing the guide.
+          exactly when there is no guide to leave.
 
           A real link to `/guides/`, so it opens a page in a new tab,
           with a plain click intercepted to clear in place — the same

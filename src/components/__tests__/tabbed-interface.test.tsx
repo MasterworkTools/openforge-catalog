@@ -233,6 +233,42 @@ describe('TabbedInterface', () => {
     ).toBeInTheDocument();
   });
 
+  it('clears the guide when the strip returns you to Guided Builds', async () => {
+    // The tab is the obvious way out of a build, and the answers are the
+    // URL, so activating a tab you are already on has to drop them or
+    // the button does nothing.
+    noGuides();
+    window.history.replaceState({}, '', '/?guide=wall');
+
+    render(<TabbedInterface />);
+    await screen.findByRole('heading', { name: 'Guided build' });
+
+    fireEvent.click(screen.getByRole('button', { name: 'Guided Builds' }));
+
+    // The cards, which is the `Guided builds` heading rather than the
+    // singular one a loaded guide shows.
+    expect(
+      await screen.findByRole('heading', { name: 'Guided builds' })
+    ).toBeInTheDocument();
+    expect(window.location.search).toBe('');
+
+    window.history.replaceState({}, '', '/');
+  });
+
+  it('leaves the cards alone when you are already on them', async () => {
+    // Clearing unconditionally would push a history entry per click,
+    // each one a Back that changes nothing.
+    noGuides();
+    window.history.replaceState({}, '', '/');
+    const before = window.history.length;
+
+    render(<TabbedInterface />);
+    await screen.findByRole('heading', { name: 'Guided builds' });
+    fireEvent.click(screen.getByRole('button', { name: 'Guided Builds' }));
+
+    expect(window.history.length).toBe(before);
+  });
+
   it('reads Guided Builds before Part Search in the strip', async () => {
     noGuides();
 

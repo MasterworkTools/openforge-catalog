@@ -405,6 +405,9 @@ export function selectGuide(guideKey: string) {
  */
 export function clearGuide() {
   if (typeof window === 'undefined') return;
+  // Already on the cards: pushing the same URL again would leave a
+  // history entry that looks like a step back and changes nothing.
+  if (!window.location.search) return;
   cameFromInPageNav = true;
   window.history.pushState({}, '', window.location.pathname);
   window.dispatchEvent(new Event(URL_CHANGED));

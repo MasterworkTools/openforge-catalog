@@ -6,6 +6,7 @@ import GuidePage from './guides/guide-page';
 import TabAdmin from './tab-admin';
 import { useAdminContext } from '@/contexts/admin-context';
 import { loadAppConfig } from '@/utils/app-config';
+import { clearGuide } from '@/hooks/use-guide-state';
 
 const TabbedInterface = () => {
   const [activeTab, setActiveTab] = useState<'partSearch' | 'guides' | 'baseGenerator' | 'admin'>('guides');
@@ -13,7 +14,17 @@ const TabbedInterface = () => {
 
   const { state } = useAdminContext();
 
-  const openGuides = useCallback(() => setActiveTab('guides'), []);
+  const showGuides = useCallback(() => setActiveTab('guides'), []);
+
+  // The tab strip is also the way out of a build. The answers live in
+  // the query string, so without clearing them the button is a no-op
+  // for anyone already inside a guide — it activates the tab they are
+  // already on. Only the button: the effect below follows a guide URL
+  // onto this tab and must leave that guide alone.
+  const openGuides = useCallback(() => {
+    showGuides();
+    clearGuide();
+  }, [showGuides]);
 
   // A guide in the URL means the person is looking at a guide, so this
   // follows it back onto that tab — on `popstate` as well as at mount,
@@ -31,13 +42,13 @@ const TabbedInterface = () => {
   useEffect(() => {
     const follow = () => {
       if (new URLSearchParams(window.location.search).get('guide')) {
-        openGuides();
+        showGuides();
       }
     };
     follow();
     window.addEventListener('popstate', follow);
     return () => window.removeEventListener('popstate', follow);
-  }, [openGuides]);
+  }, [showGuides]);
 
   useEffect(() => {
     // Load base generator URL from localStorage and app-config.json
