@@ -2970,10 +2970,6 @@ describe('inspecting a part', () => {
   });
 
   it('offers a way back to the cards from a guide that loaded fine', async () => {
-    // The only exit. `All guides` appears on the error arm, which is
-    // exactly when there is no guide to leave — so a guide that loaded
-    // successfully had no way out at all inside the tab, where the tab
-    // strip switches tabs rather than clearing the guide.
     visit('?guide=wall&method=separate-wall');
     mockFetch((url) =>
       url.includes('/availability')

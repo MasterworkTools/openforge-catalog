@@ -150,9 +150,7 @@ export default function GuidePage() {
     // inside it. `src/app/guides/page.tsx` supplies the viewport
     // height for the route, the same way it supplies the landmark.
     <div className="p-6 lg:h-full flex flex-col">
-      {/* Title and the way out on one line, the exit pushed right. The
-          `All guides` link below is the error arm's, which is exactly
-          when there is no guide to leave.
+      {/* Title and the way out on one line, the exit pushed right.
 
           A real link to `/guides/`, so it opens a page in a new tab,
           with a plain click intercepted to clear in place — the same

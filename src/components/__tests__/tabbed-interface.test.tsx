@@ -307,6 +307,23 @@ describe('TabbedInterface', () => {
     window.history.replaceState({}, '', '/');
   });
 
+  it('treats an empty guide parameter as the cards', async () => {
+    // `?guide=` is a URL with no guide in it, which is how the page
+    // reads it too, so the guard has to ask for the value and not just
+    // for the parameter.
+    noGuides();
+    window.history.replaceState({}, '', '/?guide=');
+    const before = window.history.length;
+
+    render(<TabbedInterface />);
+    await screen.findByRole('heading', { name: 'Guided builds' });
+    fireEvent.click(screen.getByRole('button', { name: 'Guided Builds' }));
+
+    expect(window.history.length).toBe(before);
+
+    window.history.replaceState({}, '', '/');
+  });
+
   it('reads Guided Builds before Part Search in the strip', async () => {
     noGuides();
 

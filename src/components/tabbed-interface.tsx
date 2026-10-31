@@ -16,11 +16,11 @@ const TabbedInterface = () => {
 
   const showGuides = useCallback(() => setActiveTab('guides'), []);
 
-  // The tab is a way out of a build, from any tab and whether or not
-  // one is open: a build is its query string, so leaving it there
-  // would make the button do nothing for the person already looking at
-  // it. Only the button — the effect below follows a guide URL onto
-  // this tab and must not throw away the guide it came for.
+  // The tab is a way out of a build, clicked from any tab: a build is
+  // its query string, so leaving it there would make the button do
+  // nothing for the person already looking at it. Only the button —
+  // the effect below follows a guide URL onto this tab and must not
+  // throw away the guide it came for.
   const openGuides = useCallback(() => {
     showGuides();
     clearGuide();
