@@ -220,10 +220,20 @@ def resolve(
     # were built from the answer being replaced.
     instead = _unofferable(assumed, selections, derived)
     if instead:
-        assumed = {**assumed, **instead}
+        # The whole pass again rather than patching the pieces of it.
+        # A corrected answer is an answer like any other: a later
+        # question's `when` may turn on it, and its own default may
+        # read it, so walking the document again is what keeps the
+        # questions, the roles in play and the parts describing one
+        # build. `recommended` keeps the corrected value, because what
+        # the page marks as recommended has to be an answer it offers.
+        assumed, recommended = _with_defaults(document, {**selections, **instead})
         recommended = {**recommended, **instead}
-        answered = {**answered, **instead}
+        steps, answered = _available_steps(document, assumed)
+        chosen = _chosen_options(steps, answered)
+        in_play = _roles_in_play(chosen)
         refinements = _available_refinements(document, answered, in_play)
+        given = {key: value for key, value in answered.items() if key in selections}
         parts = _parts(
             document,
             chosen,

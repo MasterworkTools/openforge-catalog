@@ -2104,6 +2104,86 @@ def test_a_combination_answer_uses_the_titles_the_catalog_cannot_spell(guide):
     assert [c["title"] for c in clips["choices"]] == ["OpenLOCK"]
 
 
+def _clips_guide(guide, default):
+    """A guide whose only refinement derives its answers, with a
+    default the caller chooses — offered or not."""
+    guide["refinements"][0] = {
+        "key": "clips",
+        "role": "*",
+        "prompt": "Clips?",
+        "from_combination": "connection",
+        "default": default,
+    }
+    guide["steps"][1]["when"] = {"selected": {"method": ["nonesuch"]}}
+    return guide
+
+
+def _offering(*tags):
+    """A catalog that derives exactly these combinations."""
+
+    def combinations(predicate, namespace, exclude):
+        return [{"tags": [tag], "count": 1} for tag in tags]
+
+    return combinations
+
+
+OFFERED = _offering("connection|dragonlock", "connection|openforge")
+
+
+def test_resolve_does_not_apply_a_default_the_question_withholds(guide):
+    """The 1x1 floor base in miniature. The document asks for a
+    combination this build cannot carry, and the role that answer
+    decides must not come back empty because of it."""
+    guide = _clips_guide(guide, "connection|openforge,connection|magnetic")
+
+    resolved = resolve(
+        guide,
+        {"method": "s2w-modular"},
+        find_candidates,
+        facets=find_facets,
+        combinations=OFFERED,
+    )
+
+    clips = {r["key"]: r for r in resolved["refinements"]}["clips"]
+    # Nearest rather than first: openforge shares a tag with what was
+    # asked for, dragonlock shares none and sorts ahead of it.
+    assert clips["recommended"] == "connection|openforge"
+    assert parts_by_role(resolved)["wall"]["blueprint"]
+
+
+def test_resolve_keeps_a_default_the_question_offers(guide):
+    guide = _clips_guide(guide, "connection|openforge")
+
+    resolved = resolve(
+        guide,
+        {"method": "s2w-modular"},
+        find_candidates,
+        facets=find_facets,
+        combinations=OFFERED,
+    )
+
+    clips = {r["key"]: r for r in resolved["refinements"]}["clips"]
+    assert clips["recommended"] == "connection|openforge"
+    assert parts_by_role(resolved)["wall"]["blueprint"]
+
+
+def test_resolve_never_moves_an_answer_the_person_sent(guide):
+    """Theirs to get wrong. An answer that cannot be had is refused
+    where answers are validated, not swapped for a different build."""
+    guide = _clips_guide(guide, "connection|openforge")
+
+    resolved = resolve(
+        guide,
+        {"method": "s2w-modular", "clips": "connection|dragonlock"},
+        find_candidates,
+        facets=find_facets,
+        combinations=OFFERED,
+    )
+
+    clips = {r["key"]: r for r in resolved["refinements"]}["clips"]
+    assert clips["selected"] == "connection|dragonlock"
+
+
 def _sweeping_finder(pieces):
     """A finder with the SQL's `deny_children`: every tag strictly
     beneath the parent is refused unless required or allowed."""
