@@ -151,6 +151,11 @@ describe('TabbedInterface', () => {
         screen.getByRole('button', { name: 'Guided Builds' }).className
       ).toContain('active')
     );
+    // Following a guide URL must not clear it. The tab button shares
+    // this tab but not this callback, and wiring the effect to the
+    // button's would throw away the guide it arrived for.
+    await screen.findByRole('heading', { name: 'Guided build' });
+    expect(window.location.search).toBe('?guide=wall');
 
     // And going back to a URL with no guide keeps you on the tab: that
     // is the card list, which is still this tab. Switching away would
@@ -234,9 +239,6 @@ describe('TabbedInterface', () => {
   });
 
   it('clears the guide when the strip returns you to Guided Builds', async () => {
-    // The tab is the obvious way out of a build, and the answers are the
-    // URL, so activating a tab you are already on has to drop them or
-    // the button does nothing.
     noGuides();
     window.history.replaceState({}, '', '/?guide=wall');
 
@@ -256,8 +258,6 @@ describe('TabbedInterface', () => {
   });
 
   it('leaves the cards alone when you are already on them', async () => {
-    // Clearing unconditionally would push a history entry per click,
-    // each one a Back that changes nothing.
     noGuides();
     window.history.replaceState({}, '', '/');
     const before = window.history.length;
@@ -267,6 +267,61 @@ describe('TabbedInterface', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Guided Builds' }));
 
     expect(window.history.length).toBe(before);
+  });
+
+  it('clears the guide even when you arrive from another tab', async () => {
+    // Deliberate, and the reading to keep: the tab is a reset wherever
+    // it is clicked from, not only when it is already active.
+    noGuides();
+    window.history.replaceState({}, '', '/?guide=wall');
+
+    render(<TabbedInterface />);
+    await screen.findByRole('heading', { name: 'Guided build' });
+
+    fireEvent.click(screen.getByRole('button', { name: 'Part Search' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Guided Builds' }));
+
+    expect(
+      await screen.findByRole('heading', { name: 'Guided builds' })
+    ).toBeInTheDocument();
+    expect(window.location.search).toBe('');
+
+    window.history.replaceState({}, '', '/');
+  });
+
+  it('leaves an unrelated query parameter alone on the cards', async () => {
+    // The guard asks whether a guide is open, not whether the URL has a
+    // query string, so a tracking parameter is neither a reason to push
+    // a history entry nor something to drop on the way past.
+    noGuides();
+    window.history.replaceState({}, '', '/?utm_source=mail');
+    const before = window.history.length;
+
+    render(<TabbedInterface />);
+    await screen.findByRole('heading', { name: 'Guided builds' });
+    fireEvent.click(screen.getByRole('button', { name: 'Guided Builds' }));
+
+    expect(window.location.search).toBe('?utm_source=mail');
+    expect(window.history.length).toBe(before);
+
+    window.history.replaceState({}, '', '/');
+  });
+
+  it('treats an empty guide parameter as the cards', async () => {
+    // `?guide=` is a URL with no guide in it, which is how the page
+    // reads it too, so the guard has to ask for the value and not just
+    // for the parameter.
+    noGuides();
+    window.history.replaceState({}, '', '/?guide=');
+    const before = window.history.length;
+
+    render(<TabbedInterface />);
+    await screen.findByRole('heading', { name: 'Guided builds' });
+    fireEvent.click(screen.getByRole('button', { name: 'Guided Builds' }));
+
+    expect(window.history.length).toBe(before);
+
+    window.history.replaceState({}, '', '/');
   });
 
   it('reads Guided Builds before Part Search in the strip', async () => {
