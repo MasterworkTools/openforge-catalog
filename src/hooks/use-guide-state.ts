@@ -398,16 +398,18 @@ export function selectGuide(guideKey: string) {
 /**
  * Go back to the cards without leaving the page.
  *
- * The counterpart to `selectGuide`, for the "All guides" recovery link.
- * Its `href` is `./`, which from `/?guide=wall` resolves to `/` — a
+ * The counterpart to `selectGuide`. A link doing this itself would
+ * need `href="./"`, which from `/?guide=wall` resolves to `/` — a
  * document navigation that reloads onto Part Search and strands the
  * person exactly the way following a card's href used to.
  */
 export function clearGuide() {
   if (typeof window === 'undefined') return;
-  // Already on the cards: pushing the same URL again would leave a
-  // history entry that looks like a step back and changes nothing.
-  if (!window.location.search) return;
+  // Already on the cards: pushing again would leave a history entry
+  // that looks like a step back and changes nothing. Asks for the
+  // guide rather than for any query string, so a URL carrying only an
+  // unrelated parameter still counts as the cards.
+  if (!new URLSearchParams(window.location.search).get('guide')) return;
   cameFromInPageNav = true;
   window.history.pushState({}, '', window.location.pathname);
   window.dispatchEvent(new Event(URL_CHANGED));
