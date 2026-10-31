@@ -13,7 +13,7 @@ import {
   Selections,
   fetchGuide,
   resolveGuide,
-  selectionKeys,
+  answersTo,
   Availability,
   fetchAvailability,
 } from '@/services/guide-service';
@@ -36,7 +36,7 @@ import {
  *
  * The document is fetched first because the API refuses a query key it
  * does not recognise, so the page has to know the guide's vocabulary
- * before it can ask anything — see `selectionKeys`.
+ * before it can ask anything — see `answersTo`.
  */
 export function useGuideState(guideKey: string | null | undefined) {
   const { guide, guideError } = useGuideDocument(guideKey);
@@ -354,10 +354,9 @@ function subscribeToUrl(onChange: () => void) {
  * guide's answers. Neither belongs in the request.
  */
 function ownedBy(guide: GuideDocument, search: string | undefined): Selections {
-  const known = selectionKeys(guide);
   const selections: Selections = {};
   new URLSearchParams(search ?? '').forEach((value, key) => {
-    if (known.has(key)) {
+    if (answersTo(guide, key)) {
       selections[key] = value;
     }
   });

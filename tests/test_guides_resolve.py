@@ -6,6 +6,7 @@ import pytest
 from openforge.db.sql.tags import tag_search_blueprints
 from openforge.guides.resolve import (
     GuideSelectionError,
+    _is_fitting,
     _recommend,
     resolve,
     to_tag_query,
@@ -2339,3 +2340,515 @@ def test_the_reversible_angle_outranks_the_method_s_own():
 
     assert parts_by_role(handed)["right-wing"]["view"] == "front"
     assert parts_by_role(reversible)["right-wing"]["view"] == "back-right"
+
+
+SLOT_GUIDE = {
+    "key": "door",
+    "title": "How do I make a door?",
+    "steps": [
+        {
+            "key": "method",
+            "prompt": "How?",
+            "options": [
+                {
+                    "key": "separate",
+                    "title": "Separate wall",
+                    "roles": {"wall": None, "base": None},
+                }
+            ],
+        }
+    ],
+    "roles": {
+        "wall": {
+            "title": "Door wall",
+            "position": 1,
+            "slots": True,
+            "query": {"require": ["shape|wall", "component|door"]},
+        },
+        "base": {"title": "Base", "position": 2, "query": {"require": ["shape|base"]}},
+    },
+}
+
+
+def _wall(name, *slots):
+    """A door wall carrying the slots named, plus the base every wall has."""
+    parts = [
+        {"name": slot, "tags": {"require": [{"tag": f"interface|{slot}"}]}}
+        for slot in slots
+    ]
+    parts.append(
+        {
+            "name": "base",
+            "optional": True,
+            "tags": {
+                "constrain": [{"tag": "texture"}],
+                "require": [{"tag": "shape|base"}],
+            },
+        }
+    )
+    return {
+        "id": name,
+        "blueprint_name": name,
+        "tags": ["shape|wall", "component|door"],
+        # The key the finders actually produce, via `_convert_config`.
+        "blueprint_config": {"parts": parts},
+    }
+
+
+BASE = {"id": "b", "blueprint_name": "z base", "tags": ["shape|base"]}
+
+
+def _resolved(wall):
+    return parts_by_role(
+        resolve(SLOT_GUIDE, {"method": "separate"}, matching_finder([wall, BASE]))
+    )
+
+
+def test_a_rectangular_door_wall_offers_a_door_and_a_lintel():
+    parts = _resolved(_wall("a rectangular wall", "door", "lintel"))
+
+    assert "wall.door" in parts
+    assert "wall.lintel" in parts
+    assert parts["wall.door"]["query"]["require"] == ["interface|door"]
+    assert parts["wall.door"]["title"] == "door"
+
+
+def test_an_arched_door_wall_offers_only_a_door():
+    parts = _resolved(_wall("a arched wall", "door"))
+
+    assert "wall.door" in parts
+    assert "wall.lintel" not in parts
+
+
+def test_a_wall_with_the_door_moulded_in_offers_no_fitting():
+    """The slots a part carries decide, so a wall with none adds none."""
+    parts = _resolved(_wall("a built in wall"))
+
+    assert not [name for name in parts if name.startswith("wall.")]
+
+
+def test_the_base_slot_is_not_a_fitting():
+    """Every wall carries one, the guide names it as a role of its own,
+    and it is the slot that uses `constrain`, which guides do not read."""
+    parts = _resolved(_wall("a rectangular wall", "door", "lintel"))
+
+    assert "wall.base" not in parts
+    assert "base" in parts
+
+
+def test_a_selector_sits_with_the_part_that_brought_it():
+    resolved = resolve(
+        SLOT_GUIDE,
+        {"method": "separate"},
+        matching_finder([_wall("a rectangular wall", "door", "lintel"), BASE]),
+    )
+
+    assert [p["role"] for p in resolved["parts"]] == [
+        "wall",
+        "wall.door",
+        "wall.lintel",
+        "base",
+    ]
+
+
+def test_a_selector_sits_with_its_part_when_nothing_else_orders_them():
+    """The position the selector inherits is not what puts it there.
+
+    With positions, a selector sorts beside its owner whatever order
+    it was added in, so a guide that gives none is the case that can
+    tell the two apart: here only the order the roles were put in play
+    decides, and the selector has to land behind the part that brought
+    it rather than at the end.
+    """
+    guide = copy.deepcopy(SLOT_GUIDE)
+    for role in guide["roles"].values():
+        del role["position"]
+
+    resolved = resolve(
+        guide,
+        {"method": "separate"},
+        matching_finder([_wall("a rectangular wall", "door", "lintel"), BASE]),
+    )
+
+    assert [p["role"] for p in resolved["parts"]] == [
+        "wall",
+        "wall.door",
+        "wall.lintel",
+        "base",
+    ]
+
+
+def test_each_selector_sits_behind_its_own_part():
+    """Two parts each bring their own, so the place one selector goes
+    is not the place the other does."""
+    guide = copy.deepcopy(SLOT_GUIDE)
+    del guide["roles"]["wall"]["position"]
+    del guide["roles"]["base"]["position"]
+    guide["roles"]["floor"] = {
+        "title": "Floor",
+        "slots": True,
+        "query": {"require": ["shape|floor"]},
+    }
+    guide["steps"][0]["options"][0]["roles"] = {
+        "wall": None,
+        "floor": None,
+        "base": None,
+    }
+    floor = {
+        "id": "f",
+        "blueprint_name": "a floor",
+        "tags": ["shape|floor"],
+        "blueprint_config": {
+            "parts": [
+                {"name": "gate", "tags": {"require": [{"tag": "interface|gate"}]}}
+            ]
+        },
+    }
+
+    resolved = resolve(
+        guide,
+        {"method": "separate"},
+        matching_finder([_wall("a rectangular wall", "door", "lintel"), floor, BASE]),
+    )
+
+    assert [p["role"] for p in resolved["parts"]] == [
+        "wall",
+        "wall.door",
+        "wall.lintel",
+        "floor",
+        "floor.gate",
+        "base",
+    ]
+
+
+def test_a_name_says_whether_a_role_is_a_fitting():
+    """`isFitting` in `guide-service.ts` is this test, and the page's
+    answer and this one have to match."""
+    assert _is_fitting("wall.door")
+    assert not _is_fitting("wall-base")
+
+
+def test_a_fitting_leans_the_way_its_owner_says():
+    """A slot says what fits, never which of those to recommend.
+
+    A doorway takes any door of its shape, and the catalog carves
+    those in several materials, so without the owner saying so the
+    recommendation is whichever sorts first.
+    """
+    guide = copy.deepcopy(SLOT_GUIDE)
+    guide["roles"]["wall"]["slot_prefer"] = ["texture|wood"]
+    tudor = {
+        "id": "t",
+        "blueprint_name": "a tudor door",
+        "tags": ["interface|door", "texture|tudor"],
+    }
+    wooden = {
+        "id": "w",
+        "blueprint_name": "z wooden door",
+        "tags": ["interface|door", "texture|wood"],
+    }
+
+    parts = parts_by_role(
+        resolve(
+            guide,
+            {"method": "separate"},
+            matching_finder([_wall("a wall", "door"), BASE, tudor, wooden]),
+        )
+    )
+
+    assert parts["wall.door"]["blueprint"]["blueprint_name"] == "z wooden door", (
+        "the tudor door sorts first, so a preference is the only thing "
+        "that could have chosen the wooden one"
+    )
+
+
+def _door(name, *tags):
+    return {"id": name, "blueprint_name": name, "tags": ["interface|door", *tags]}
+
+
+def test_a_fitting_still_takes_what_fits_when_no_preference_matches():
+    """A preference ranks the candidates; it never filters them.
+
+    Read as a requirement instead, a doorway whose doors are all the
+    wrong material would come back with no door at all rather than
+    with the one that fits.
+    """
+    guide = copy.deepcopy(SLOT_GUIDE)
+    guide["roles"]["wall"]["slot_prefer"] = ["texture|wood"]
+
+    parts = parts_by_role(
+        resolve(
+            guide,
+            {"method": "separate"},
+            matching_finder(
+                [_wall("a wall", "door"), BASE, _door("a tudor door", "texture|tudor")]
+            ),
+        )
+    )
+
+    assert parts["wall.door"]["blueprint"]["blueprint_name"] == "a tudor door"
+
+
+def test_a_fitting_narrows_by_every_preference_it_can_satisfy():
+    """And every fitting the part brought, not only the first of them."""
+    guide = copy.deepcopy(SLOT_GUIDE)
+    guide["roles"]["wall"]["slot_prefer"] = ["texture|wood", "build|braced"]
+
+    def pair(kind):
+        return [
+            _door(f"a plain wooden {kind}", "texture|wood"),
+            _door(f"z braced wooden {kind}", "texture|wood", "build|braced"),
+        ]
+
+    catalog = [_wall("a wall", "door", "lintel"), BASE]
+    for kind in ("door", "lintel"):
+        for part in pair(kind):
+            part["tags"] = [f"interface|{kind}", *part["tags"][1:]]
+            catalog.append(part)
+
+    parts = parts_by_role(
+        resolve(guide, {"method": "separate"}, matching_finder(catalog))
+    )
+
+    for kind in ("door", "lintel"):
+        name = parts[f"wall.{kind}"]["blueprint"]["blueprint_name"]
+        assert name == f"z braced wooden {kind}", (
+            f"the plain {kind} sorts first, so only the second preference "
+            f"could have chosen the braced one, and it has to reach every "
+            f"fitting rather than the first"
+        )
+
+
+def test_a_fitting_drops_its_preferences_from_the_end():
+    """Which is why the order matters, and why the broad term goes
+    first: no candidate here carries both, so the last term is let go
+    and the first still decides."""
+    guide = copy.deepcopy(SLOT_GUIDE)
+    guide["roles"]["wall"]["slot_prefer"] = ["texture|wood", "build|braced"]
+
+    catalog = [
+        _wall("a wall", "door"),
+        BASE,
+        _door("a braced door", "build|braced"),
+        _door("z wooden door", "texture|wood"),
+    ]
+
+    parts = parts_by_role(
+        resolve(guide, {"method": "separate"}, matching_finder(catalog))
+    )
+
+    assert parts["wall.door"]["blueprint"]["blueprint_name"] == "z wooden door", (
+        "the braced door sorts first and satisfies the second term, so "
+        "anything but the wooden one means the terms were not dropped "
+        "from the end"
+    )
+
+
+def test_a_fitting_takes_the_first_candidate_when_its_owner_says_nothing():
+    """The premise of the test above: without `slot_prefer` the order
+    is the catalog's, so the preference is what does the work."""
+    tudor = {
+        "id": "t",
+        "blueprint_name": "a tudor door",
+        "tags": ["interface|door", "texture|tudor"],
+    }
+    wooden = {
+        "id": "w",
+        "blueprint_name": "z wooden door",
+        "tags": ["interface|door", "texture|wood"],
+    }
+
+    parts = parts_by_role(
+        resolve(
+            SLOT_GUIDE,
+            {"method": "separate"},
+            matching_finder([_wall("a wall", "door"), BASE, tudor, wooden]),
+        )
+    )
+
+    assert parts["wall.door"]["blueprint"]["blueprint_name"] == "a tudor door"
+
+
+def test_a_fitting_is_offered_no_chip_for_a_tag_it_never_had():
+    """The catalog dialog peels tags off the part's own query, so a
+    chip for a tag the fitting was never asked removes nothing."""
+    guide = copy.deepcopy(SLOT_GUIDE)
+    guide["steps"].append(
+        {
+            "key": "size",
+            "prompt": "How wide?",
+            "browsable": True,
+            "options": [{"key": "2", "title": "2x2", "tags": {"require": ["size|2"]}}],
+        }
+    )
+    # Both arms: the chips come from the chosen options and from the
+    # answered refinements, and each reaches a role by its own test.
+    guide["refinements"] = [
+        {
+            "key": "texture",
+            "role": "*",
+            "prompt": "Which texture?",
+            "browsable": True,
+            "from_namespace": "texture",
+        }
+    ]
+    wall = _wall("a rectangular wall", "door")
+    wall["tags"] += ["size|2", "texture|dungeon_stone"]
+
+    parts = parts_by_role(
+        resolve(
+            guide,
+            {
+                "method": "separate",
+                "size": "2",
+                "texture": "texture|dungeon_stone",
+            },
+            matching_finder([wall, BASE]),
+        )
+    )
+
+    assert parts["wall"]["relaxable"] == ["size|2", "texture|dungeon_stone"]
+    assert parts["wall.door"]["relaxable"] == []
+
+
+def test_a_role_that_does_not_ask_for_its_slots_derives_none():
+    guide = copy.deepcopy(SLOT_GUIDE)
+    del guide["roles"]["wall"]["slots"]
+
+    parts = parts_by_role(
+        resolve(
+            guide,
+            {"method": "separate"},
+            matching_finder([_wall("a rectangular wall", "door", "lintel"), BASE]),
+        )
+    )
+
+    assert not [name for name in parts if name.startswith("wall.")]
+
+
+def test_a_selector_names_the_part_that_brought_it_as_its_owner():
+    """`under` is what piles the selector with its part in the list."""
+    parts = _resolved(_wall("a rectangular wall", "door", "lintel"))
+
+    assert parts["wall.door"]["under"] == "wall"
+    assert parts["wall.lintel"]["under"] == "wall"
+
+
+def test_a_slot_named_in_prose_becomes_a_key_a_url_can_carry():
+    parts = _resolved(_wall("a rectangular wall", "grate (right)"))
+
+    assert "wall.grate-right" in parts
+    assert parts["wall.grate-right"]["title"] == "grate (right)"
+
+
+def test_two_slots_whose_names_collapse_alike_offer_one_selector():
+    """Both would pin to `part.wall.grate-right`, which names one part."""
+    parts = _resolved(_wall("a wall", "grate (right)", "grate right"))
+
+    assert [name for name in parts if name.startswith("wall.")] == ["wall.grate-right"]
+
+
+def test_a_slot_whose_name_carries_no_key_offers_no_selector():
+    """`part.wall.` is a pin the engine cannot answer, so nothing
+    should ever hand someone a link holding one."""
+    parts = _resolved(_wall("a wall", "()"))
+
+    assert not [name for name in parts if name.startswith("wall.")]
+
+
+def test_a_role_that_resolves_to_nothing_offers_no_selector():
+    parts = parts_by_role(
+        resolve(SLOT_GUIDE, {"method": "separate"}, matching_finder([BASE]))
+    )
+
+    assert not [name for name in parts if name.startswith("wall.")]
+
+
+def test_a_fitting_is_not_asked_the_width_the_build_was_asked():
+    """An option with no roles narrows every role in play, which would
+    reach a fitting the question was never about."""
+    guide = copy.deepcopy(SLOT_GUIDE)
+    guide["steps"].append(
+        {
+            "key": "size",
+            "prompt": "How wide?",
+            "options": [{"key": "2", "title": "2x2", "tags": {"require": ["size|2"]}}],
+        }
+    )
+
+    wall = _wall("a rectangular wall", "door")
+    wall["tags"].append("size|2")
+
+    parts = parts_by_role(
+        resolve(
+            guide,
+            {"method": "separate", "size": "2"},
+            matching_finder([wall, BASE]),
+        )
+    )
+
+    assert parts["wall"]["query"]["require"] == [
+        "shape|wall",
+        "component|door",
+        "size|2",
+    ]
+    assert parts["wall.door"]["query"]["require"] == ["interface|door"]
+
+
+def test_a_fitting_is_not_asked_the_texture_the_build_was_asked():
+    """A refinement reaching every role would ask a wooden door for
+    the wall's stone."""
+    guide = copy.deepcopy(SLOT_GUIDE)
+    guide["refinements"] = [
+        {
+            "key": "texture",
+            "role": "*",
+            "prompt": "Which texture?",
+            "from_namespace": "texture",
+        }
+    ]
+
+    wall = _wall("a rectangular wall", "door")
+    wall["tags"].append("texture|dungeon_stone")
+
+    parts = parts_by_role(
+        resolve(
+            guide,
+            {"method": "separate", "texture": "texture|dungeon_stone"},
+            matching_finder([wall, BASE]),
+        )
+    )
+
+    assert "texture|dungeon_stone" in parts["wall"]["query"]["require"]
+    assert parts["wall.door"]["query"]["require"] == ["interface|door"]
+
+
+def test_a_slot_pin_is_a_selection_the_guide_recognises():
+    """Rejecting it would answer 400 to a shared link naming a door."""
+    handpicked = {
+        "id": "h",
+        "blueprint_name": "a handpicked door",
+        "tags": ["interface|door"],
+    }
+
+    parts = parts_by_role(
+        resolve(
+            SLOT_GUIDE,
+            {"method": "separate", "part.wall.door": "a" * 32},
+            matching_finder([_wall("a rectangular wall", "door"), BASE, handpicked]),
+            find_pinned=lambda md5: handpicked,
+        )
+    )
+
+    assert parts["wall.door"]["blueprint"]["blueprint_name"] == "a handpicked door"
+
+
+def test_a_pin_on_a_role_that_offers_no_slots_is_still_refused():
+    with pytest.raises(GuideSelectionError) as excinfo:
+        resolve(
+            SLOT_GUIDE,
+            {"method": "separate", "part.base.handle": "a" * 32},
+            matching_finder([_wall("a arched wall", "door"), BASE]),
+        )
+
+    assert "part.base.handle" in str(excinfo.value)
