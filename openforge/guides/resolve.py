@@ -212,6 +212,48 @@ def resolve(
         if facets is not None
         else {}
     )
+    # A derived question offers what the build in hand can carry, and
+    # the document's default is written for the catalog, so the two
+    # part company where the build is narrower. Applying a default the
+    # question does not offer empties the roles it decides, against an
+    # answer nobody was shown. The parts are recomputed because they
+    # were built from the answer being replaced.
+    instead = _unofferable(assumed, selections, derived)
+    if instead:
+        # The whole pass again rather than patching the pieces of it.
+        # A corrected answer is an answer like any other, so the
+        # questions it could open and the roles they put in play are
+        # re-read from it. No guide turns a `when` on a derived answer
+        # today, so only the re-defaulting and the parts are covered by
+        # a test; the rest is here so that the state is consistent
+        # rather than because something is known to need it.
+        # `recommended` keeps the corrected value, because what the
+        # page marks as recommended has to be an answer it offers.
+        assumed, recommended = _with_defaults(document, {**selections, **instead})
+        recommended = {**recommended, **instead}
+        steps, answered = _available_steps(document, assumed)
+        chosen = _chosen_options(steps, answered)
+        in_play = _roles_in_play(chosen)
+        refinements = _available_refinements(document, answered, in_play)
+        given = {key: value for key, value in answered.items() if key in selections}
+        parts = _parts(
+            document,
+            chosen,
+            refinements,
+            assumed,
+            find_candidates,
+            find_pinned,
+        )
+
+    # The recommendation is advice about what this question offers, so
+    # it is corrected whether or not the person has answered. Their
+    # answer is left alone — that is the map above — but a page that
+    # marks nothing as recommended because the marked answer is not on
+    # the list is the same bug wearing a different hat.
+    marked = _unofferable(recommended, {}, derived)
+    if marked:
+        recommended = {**recommended, **marked}
+
     # Only the questions the page is about to publish. The sweep asks
     # the catalog about every answer of every question it is given, and
     # the page shows one or two of them, so the rest is bought and
@@ -275,6 +317,45 @@ def resolve(
             for refinement in shown_refinements
         ],
     }
+
+
+def _closest_offered(wanted: str, choices: list) -> str | None:
+    """The offered answer nearest the one the document asked for.
+
+    Nearest means sharing the most tags with it, ties going to
+    whichever the catalog derived first. A document default is written
+    for the catalog as a whole, and a derived question offers only what
+    the build in hand can carry, so the two disagree wherever the build
+    is narrower than the catalog: a 1x1 base holds one lock on its
+    face, and the default asks for magnets and topless OpenLOCK
+    together. Taking the nearest keeps the half of the answer that can
+    be had rather than whatever sorts first.
+    """
+    tags = [c["tag"] for c in choices if c.get("tag")]
+    if not tags:
+        return None
+    asked = set(wanted.split(","))
+    return max(tags, key=lambda tag: len(asked & set(tag.split(","))))
+
+
+def _unofferable(assumed: dict, selections: dict, derived: dict) -> dict:
+    """Assumed answers their own question does not offer.
+
+    Only the assumed ones. An answer the person actually sent is their
+    business and is refused elsewhere if it cannot be had; silently
+    moving it would change the build they are looking at.
+    """
+    fixed = {}
+    for key, choices in derived.items():
+        if key in selections or key not in assumed:
+            continue
+        offered = {c["tag"] for c in choices if c.get("tag")}
+        if not offered or assumed[key] in offered:
+            continue
+        instead = _closest_offered(assumed[key], choices)
+        if instead is not None:
+            fixed[key] = instead
+    return fixed
 
 
 def _honoured(document: dict, selections: dict) -> dict:

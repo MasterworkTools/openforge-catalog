@@ -6,8 +6,10 @@ import pytest
 from openforge.db.sql.tags import tag_search_blueprints
 from openforge.guides.resolve import (
     GuideSelectionError,
+    _closest_offered,
     _is_fitting,
     _recommend,
+    _unofferable,
     resolve,
     to_tag_query,
 )
@@ -2102,6 +2104,107 @@ def test_a_combination_answer_uses_the_titles_the_catalog_cannot_spell(guide):
     assert [c["title"] for c in clips["choices"]] == ["OpenLOCK"]
 
 
+def _clips_guide(guide, default):
+    """A guide whose only refinement derives its answers, with a
+    default the caller chooses — offered or not."""
+    guide["refinements"][0] = {
+        "key": "clips",
+        "role": "*",
+        "prompt": "Clips?",
+        "from_combination": "connection",
+        "default": default,
+    }
+    guide["steps"][1]["when"] = {"selected": {"method": ["nonesuch"]}}
+    return guide
+
+
+def _offering(*tags):
+    """A catalog that derives exactly these combinations."""
+
+    def combinations(predicate, namespace, exclude):
+        return [{"tags": [tag], "count": 1} for tag in tags]
+
+    return combinations
+
+
+OFFERED = _offering("connection|dragonlock", "connection|openforge")
+
+
+def test_resolve_does_not_apply_a_default_the_question_withholds(guide):
+    """The 1x1 floor base in miniature. The document asks for a
+    combination this build cannot carry, and the role that answer
+    decides must not come back empty because of it."""
+    guide = _clips_guide(guide, "connection|openforge,connection|magnetic")
+
+    resolved = resolve(
+        guide,
+        {"method": "s2w-modular"},
+        find_candidates,
+        facets=find_facets,
+        combinations=OFFERED,
+    )
+
+    clips = {r["key"]: r for r in resolved["refinements"]}["clips"]
+    # Nearest rather than first: openforge shares a tag with what was
+    # asked for, dragonlock shares none and sorts ahead of it.
+    assert clips["recommended"] == "connection|openforge"
+    assert parts_by_role(resolved)["wall"]["blueprint"]
+
+
+def test_resolve_keeps_a_default_the_question_offers(guide):
+    guide = _clips_guide(guide, "connection|openforge")
+
+    resolved = resolve(
+        guide,
+        {"method": "s2w-modular"},
+        find_candidates,
+        facets=find_facets,
+        combinations=OFFERED,
+    )
+
+    clips = {r["key"]: r for r in resolved["refinements"]}["clips"]
+    assert clips["recommended"] == "connection|openforge"
+    assert parts_by_role(resolved)["wall"]["blueprint"]
+
+
+def test_resolve_never_moves_an_answer_the_person_sent(guide):
+    """Theirs to get wrong. An answer that cannot be had is refused
+    where answers are validated, not swapped for a different build."""
+    guide = _clips_guide(guide, "connection|openforge")
+
+    resolved = resolve(
+        guide,
+        {"method": "s2w-modular", "clips": "connection|dragonlock"},
+        find_candidates,
+        facets=find_facets,
+        combinations=OFFERED,
+    )
+
+    clips = {r["key"]: r for r in resolved["refinements"]}["clips"]
+    assert clips["selected"] == "connection|dragonlock"
+
+
+def test_the_recommendation_is_one_of_the_answers_on_offer(guide):
+    """Advice about this question, so it is corrected whether or not
+    the question has been answered. A page that marks nothing as
+    recommended, because the marked answer is not on the list, is the
+    same bug wearing a different hat."""
+    guide = _clips_guide(guide, "connection|openforge,connection|magnetic")
+
+    resolved = resolve(
+        guide,
+        {"method": "s2w-modular", "clips": "connection|dragonlock"},
+        find_candidates,
+        facets=find_facets,
+        combinations=OFFERED,
+    )
+
+    clips = {r["key"]: r for r in resolved["refinements"]}["clips"]
+    offered = [choice["tag"] for choice in clips["choices"]]
+    assert clips["recommended"] in offered
+    assert clips["selected"] == "connection|dragonlock"
+
+
 def _sweeping_finder(pieces):
     """A finder with the SQL's `deny_children`: every tag strictly
     beneath the parent is refused unless required or allowed."""
@@ -2418,6 +2521,66 @@ def test_an_arched_door_wall_offers_only_a_door():
 
     assert "wall.door" in parts
     assert "wall.lintel" not in parts
+
+
+def _choice(tag):
+    return {"tag": tag}
+
+
+def test_the_nearest_offered_answer_keeps_what_it_can_of_the_default():
+    """A 1x1 base holds one lock on its face, so the combination the
+    document asks for is not among the answers the build can carry."""
+    wanted = "connection|magnetic,connection|openlock,connection|openlock|topless"
+    offered = [
+        _choice("connection|dragonlock"),
+        _choice("connection|magnetic"),
+        _choice("connection|openlock"),
+        _choice("connection|openlock,connection|openlock|topless"),
+    ]
+
+    assert (
+        _closest_offered(wanted, offered)
+        == "connection|openlock,connection|openlock|topless"
+    )
+
+
+def test_a_tie_goes_to_the_answer_derived_first():
+    wanted = "a,b"
+    offered = [_choice("a,z"), _choice("b,z")]
+
+    assert _closest_offered(wanted, offered) == "a,z"
+
+
+def test_an_answer_sharing_nothing_is_still_better_than_none():
+    """Never unanswered: the guide promises a complete build on the
+    first screen, so a question with answers gets one of them."""
+    assert _closest_offered("x", [_choice("y"), _choice("z")]) == "y"
+
+
+def test_an_offered_default_is_left_alone():
+    derived = {"clips": [_choice("a"), _choice("b")]}
+
+    assert _unofferable({"clips": "a"}, {}, derived) == {}
+
+
+def test_an_unofferable_default_is_replaced():
+    derived = {"clips": [_choice("a,b"), _choice("c")]}
+
+    assert _unofferable({"clips": "a,z"}, {}, derived) == {"clips": "a,b"}
+
+
+def test_what_the_person_actually_answered_is_never_moved():
+    """Their answer is theirs. An answer that cannot be had is refused
+    where answers are validated, not quietly swapped for another."""
+    derived = {"clips": [_choice("a"), _choice("b")]}
+
+    assert _unofferable({"clips": "z"}, {"clips": "z"}, derived) == {}
+
+
+def test_a_question_deriving_nothing_keeps_its_default():
+    """A derivation comes back empty when the parts it applies to match
+    nothing, which is not a reason to throw the default away."""
+    assert _unofferable({"clips": "a"}, {}, {"clips": []}) == {}
 
 
 def test_a_wide_door_wall_offers_a_leaf_for_each_side():
