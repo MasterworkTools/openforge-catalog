@@ -153,24 +153,22 @@ def guide_availability(guide_key: str):
         with conn.cursor(row_factory=dict_row) as curs:
             guide = _guide_or_404(curs, guide_key)
             try:
-                # No `facets`/`combinations`: those only feed the
-                # derived `choices` list, which this response does not
-                # carry. Measured, the saving is two statements a
-                # request, all of it `combinations` — `facets` never ran
-                # on this endpoint at all — and the responses are
-                # byte-identical either way. Small, but it is the
-                # endpoint whose own docstring is an apology for what it
-                # costs. `unavailable` and `because` come from `exists`
-                # and are unaffected.
-                #
-                # No absolute counts here: they rot, and the note that
-                # says so should not quote one either. The delta and the
-                # reason survive a rebase.
+                # `facets` and `combinations` cost this endpoint a
+                # couple of statements and it does not publish the
+                # derived `choices` they produce. They are passed
+                # anyway, because the engine also needs them to know
+                # which answers a question offers, and it declines to
+                # apply a default that is not among them. Without them
+                # this endpoint would sweep a build the resolution
+                # never shows: the counts would omit a role, and no
+                # answer would ever be judged dead for emptying it.
                 resolved = resolve(
                     guide["document"],
                     _selections_from_request(),
                     _candidate_finder(curs),
                     exists=_existence_finder(curs),
+                    facets=_facet_finder(curs),
+                    combinations=_combination_finder(curs),
                     find_pinned=_pinned_finder(curs),
                 )
             except GuideSelectionError as e:
