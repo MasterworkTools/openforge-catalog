@@ -24,18 +24,15 @@ jest.mock('@/utils/app-config', () => ({
 }));
 
 /**
- * Which tab opens is decided from the URL, and the *mechanism* is the
- * bug — not the outcome.
+ * The frontend is a static export, so the markup is prerendered with
+ * no `window` and the browser hydrates it at a real address. The tab
+ * the strip shows has to be the same in both, or React discards the
+ * server markup and the first paint flickers.
  *
- * The frontend is a static export: the HTML is prerendered at build
- * time with no `window`, so reading `location.search` in a `useState`
- * initialiser picks `partSearch` and bakes it into the markup. On the
- * real site `/?guide=wall` opened Part Search with no guide; in jsdom
- * the same code passed, because `render()` never does a server pass.
- *
- * So this renders to a string first — the markup the export ships — and
- * hydrates it against a URL, which is the only arrangement that can
- * tell an initialiser from an effect.
+ * Guided Builds is the tab the site opens on, which is why this no
+ * longer tests a flip: it tests that nothing flips. `render()` never
+ * does a server pass, so a string render followed by `hydrateRoot` is
+ * the only arrangement that can tell the two apart.
  */
 describe('TabbedInterface, hydrated', () => {
   const realFetch = global.fetch;
@@ -55,23 +52,33 @@ describe('TabbedInterface, hydrated', () => {
     window.history.replaceState({}, '', '/');
   });
 
-  it('opens the guides tab from a URL the prerender never saw', async () => {
-    // The prerender has no URL at all, so its markup is Part Search.
+  it.each([
+    ['an address naming a guide', '/?guide=wall'],
+    ['a bare address', '/'],
+  ])('stays on Guided Builds when hydrated at %s', async (_what, url) => {
+    // The prerender has no URL at all, and its markup already shows
+    // the landing tab active.
     const markup = renderToString(<TabbedInterface />);
-    expect(markup).toContain('part-search');
+    expect(markup).toContain('tab active');
 
-    // The browser then loads that markup at an address naming a guide.
-    window.history.replaceState({}, '', '/?guide=wall');
+    window.history.replaceState({}, '', url);
     const host = document.createElement('div');
     host.innerHTML = markup;
     document.body.appendChild(host);
 
+    const warn = jest.spyOn(console, 'error').mockImplementation(() => {});
     await act(async () => {
       hydrateRoot(host, <TabbedInterface />);
     });
 
     const active = host.querySelector('button.tab.active');
     expect(active?.textContent).toBe('Guided Builds');
+    // A tab mismatch between the two passes is what this exists to
+    // catch, and React reports it through console.error.
+    expect(
+      warn.mock.calls.filter((c) => /hydrat/i.test(String(c[0])))
+    ).toHaveLength(0);
+    warn.mockRestore();
 
     host.remove();
   });

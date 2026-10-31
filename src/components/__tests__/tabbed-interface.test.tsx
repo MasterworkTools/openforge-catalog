@@ -69,24 +69,24 @@ describe('TabbedInterface', () => {
     ).not.toBeInTheDocument();
   });
 
-  it('does not ask for the guides until the tab is opened', async () => {
-    // A hidden component still runs its effects. Mounting the entry page
-    // beside the others would spend a Lambda invocation on /api/guides
-    // for every visitor who never opens this tab, which on a 128MB
-    // function with a Patreon budget is the kind of cost that only shows
-    // up on the bill.
+  it('asks for the guides once on load, and not again per tab switch', async () => {
+    // This is the tab the site opens on, so the /api/guides invocation
+    // is paid by every visitor and there is nothing to defer. What is
+    // still worth holding is that it is paid once: the pane stays
+    // mounted, so moving away and back does not refetch.
     const fetch = noGuides();
 
     render(<TabbedInterface />);
-
-    expect(guideRequests(fetch)).toHaveLength(0);
-
-    fireEvent.click(screen.getByRole('button', { name: 'Guided Builds' }));
 
     await waitFor(() => expect(guideRequests(fetch)).toHaveLength(1));
     expect(
       await screen.findByRole('heading', { name: 'Guided builds' })
     ).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Part Search' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Guided Builds' }));
+
+    expect(guideRequests(fetch)).toHaveLength(1);
   });
 
   it('does not nest a second landmark inside the page', async () => {
@@ -135,6 +135,9 @@ describe('TabbedInterface', () => {
     window.history.replaceState({}, '', '/');
 
     render(<TabbedInterface />);
+    // Moved off the landing tab first, or there is nothing for the URL
+    // to switch and the test passes without the effect it is about.
+    fireEvent.click(screen.getByRole('button', { name: 'Part Search' }));
     expect(
       screen.getByRole('button', { name: 'Part Search' }).className
     ).toContain('active');
@@ -213,14 +216,68 @@ describe('TabbedInterface', () => {
     window.history.replaceState({}, '', '/');
   });
 
-  it('starts on Part Search', async () => {
+  it('starts on Guided Builds, with Part Search beside it', async () => {
+    noGuides();
+    window.history.replaceState({}, '', '/');
+
+    render(<TabbedInterface />);
+
+    expect(
+      screen.getByRole('button', { name: 'Guided Builds' }).className
+    ).toContain('active');
+    expect(
+      screen.getByRole('button', { name: 'Part Search' }).className
+    ).not.toContain('active');
+    expect(
+      await screen.findByRole('heading', { name: 'Guided builds' })
+    ).toBeInTheDocument();
+  });
+
+  it('clears the guide when the strip returns you to Guided Builds', async () => {
+    // The tab is the obvious way out of a build, and the answers are the
+    // URL, so activating a tab you are already on has to drop them or
+    // the button does nothing.
+    noGuides();
+    window.history.replaceState({}, '', '/?guide=wall');
+
+    render(<TabbedInterface />);
+    await screen.findByRole('heading', { name: 'Guided build' });
+
+    fireEvent.click(screen.getByRole('button', { name: 'Guided Builds' }));
+
+    // The cards, which is the `Guided builds` heading rather than the
+    // singular one a loaded guide shows.
+    expect(
+      await screen.findByRole('heading', { name: 'Guided builds' })
+    ).toBeInTheDocument();
+    expect(window.location.search).toBe('');
+
+    window.history.replaceState({}, '', '/');
+  });
+
+  it('leaves the cards alone when you are already on them', async () => {
+    // Clearing unconditionally would push a history entry per click,
+    // each one a Back that changes nothing.
+    noGuides();
+    window.history.replaceState({}, '', '/');
+    const before = window.history.length;
+
+    render(<TabbedInterface />);
+    await screen.findByRole('heading', { name: 'Guided builds' });
+    fireEvent.click(screen.getByRole('button', { name: 'Guided Builds' }));
+
+    expect(window.history.length).toBe(before);
+  });
+
+  it('reads Guided Builds before Part Search in the strip', async () => {
     noGuides();
 
     render(<TabbedInterface />);
 
-    expect(screen.getByTestId('part-search')).toBeInTheDocument();
-    expect(
-      screen.queryByRole('heading', { name: 'Guided builds' })
-    ).not.toBeInTheDocument();
+    const labels = Array.from(
+      document.querySelectorAll('.tabButtons button')
+    ).map((b) => b.textContent);
+
+    expect(labels.slice(0, 2)).toEqual(['Guided Builds', 'Part Search']);
   });
 });
