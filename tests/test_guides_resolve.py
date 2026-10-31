@@ -2420,6 +2420,18 @@ def test_an_arched_door_wall_offers_only_a_door():
     assert "wall.lintel" not in parts
 
 
+def test_a_wide_door_wall_offers_a_leaf_for_each_side():
+    """A double door is two standard leaves, so the wall carries a slot
+    per side and the hyphen in the name survives into the role."""
+    parts = _resolved(_wall("a wide wall", "door-left", "door-right"))
+
+    assert "wall.door-left" in parts
+    assert "wall.door-right" in parts
+    assert "wall.door" not in parts
+    assert parts["wall.door-left"]["query"]["require"] == ["interface|door-left"]
+    assert parts["wall.door-right"]["query"]["require"] == ["interface|door-right"]
+
+
 def test_a_wall_with_the_door_moulded_in_offers_no_fitting():
     """The slots a part carries decide, so a wall with none adds none."""
     parts = _resolved(_wall("a built in wall"))
