@@ -6,10 +6,12 @@ import {
   fetchGuide,
   fetchGuides,
   impliedBy,
+  isFitting,
   narrows,
+  reaches,
   releasedBy,
+  answersTo,
   resolveGuide,
-  selectionKeys,
   thumbnailOf,
 } from '../guide-service';
 
@@ -99,20 +101,60 @@ describe('fetchGuide', () => {
   });
 });
 
-describe('selectionKeys', () => {
-  it('is every step key and every refinement key', () => {
-    expect(selectionKeys(DOCUMENT)).toEqual(
-      new Set(['method', 'width', 'texture'])
-    );
+describe('answersTo', () => {
+  it('answers to every step key and every refinement key', () => {
+    expect(answersTo(DOCUMENT, 'method')).toBe(true);
+    expect(answersTo(DOCUMENT, 'width')).toBe(true);
+    expect(answersTo(DOCUMENT, 'texture')).toBe(true);
+  });
+
+  it('does not answer to a tracker a shared link picked up', () => {
+    expect(answersTo(DOCUMENT, 'fbclid')).toBe(false);
   });
 
   it('copes with a guide that defines no refinements', () => {
     const { refinements, ...withoutRefinements } = DOCUMENT;
     void refinements;
 
-    expect(selectionKeys(withoutRefinements)).toEqual(
-      new Set(['method', 'width'])
-    );
+    expect(answersTo(withoutRefinements, 'texture')).toBe(false);
+    expect(answersTo(withoutRefinements, 'method')).toBe(true);
+  });
+
+  it('answers to a pin on a role', () => {
+    const document = { ...DOCUMENT, roles: { wall: {} } };
+
+    expect(answersTo(document, 'part.wall')).toBe(true);
+  });
+
+  it('answers to a pin on a slot of a role that offers its fittings', () => {
+    const document = { ...DOCUMENT, roles: { wall: { slots: true } } };
+
+    expect(answersTo(document, 'part.wall.door')).toBe(true);
+  });
+
+  it('does not answer to a slot of a role that keeps its fittings', () => {
+    const document = { ...DOCUMENT, roles: { wall: {} } };
+
+    expect(answersTo(document, 'part.wall.door')).toBe(false);
+  });
+
+  // The server answers 400 to this one, so keeping it in a link would
+  // show the person an error instead of their build.
+  it('does not answer to a pin that names an owner but no slot', () => {
+    const document = { ...DOCUMENT, roles: { wall: { slots: true } } };
+
+    expect(answersTo(document, 'part.wall.')).toBe(false);
+  });
+
+  // `wall-base` starts with `wall`, so matching the owner without the
+  // separator would hand one role's slots to the other.
+  it('does not answer to a slot of a role whose name merely starts the same', () => {
+    const document = {
+      ...DOCUMENT,
+      roles: { wall: { slots: true }, 'wall-base': {} },
+    };
+
+    expect(answersTo(document, 'part.wall-base.door')).toBe(false);
   });
 });
 
@@ -480,6 +522,33 @@ describe('impliedBy', () => {
     const size = refinement({ key: 'size', browsable: false, selected: 'a' });
 
     expect(impliedBy({ tags: ['size|width|2'] }, 'wall', [size])).toEqual({});
+  });
+});
+
+describe('isFitting', () => {
+  // The two sides have to agree.
+  it('tells a derived role from one the document names', () => {
+    expect(isFitting('wall.door')).toBe(true);
+    expect(isFitting('wall-base')).toBe(false);
+  });
+
+  it('keeps every question off a fitting', () => {
+    const texture = refinement({ key: 'texture', role: '*', selected: 'a' });
+    const size = {
+      key: 'size',
+      prompt: 'What size tiles?',
+      selected: null,
+      unavailable: [],
+      because: {},
+      recommended: null,
+      options: [{ key: '2x2', title: '2x2' }],
+    };
+
+    expect(reaches(texture, 'wall.door')).toBe(false);
+    expect(narrows(size, 'wall.door')).toBe(false);
+    expect(releasedBy(size, ['wall', 'wall.door'])).toEqual({
+      'part.wall': null,
+    });
   });
 });
 

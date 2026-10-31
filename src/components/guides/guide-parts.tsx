@@ -5,6 +5,7 @@ import {
   GuidePart,
   GuideRefinement,
   impliedBy,
+  isFitting,
   pinKey,
 } from '@/services/guide-service';
 import {
@@ -261,13 +262,19 @@ function asConfigTags(query: GuidePart['query']): ConfigTags {
  * top-down, which is the order they are drawn in. A part whose `under`
  * names a role not in this list stands on its own rather than
  * disappearing.
+ *
+ * A fitting is the exception, and `under` means something else for it:
+ * a door is not a layer beneath the wall, it is the piece that goes in
+ * it. So it takes a pile of its own, which the walked order puts
+ * beside the wall rather than between the wall and its base.
  */
 function stacks(parts: GuidePart[]): GuidePart[][] {
   const byRole = new Map(parts.map((part) => [part.role, part]));
   const piles = new Map<string, GuidePart[]>();
 
   for (const part of parts) {
-    const top = part.under && byRole.has(part.under) ? part.under : part.role;
+    const owner = isFitting(part.role) ? undefined : part.under;
+    const top = owner && byRole.has(owner) ? owner : part.role;
     if (!piles.has(top)) piles.set(top, [byRole.get(top)!]);
     if (top !== part.role) piles.get(top)!.push(part);
   }
