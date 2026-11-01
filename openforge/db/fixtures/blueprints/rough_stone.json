@@ -20319,6 +20319,40 @@
         "config": {
             "parts": [
                 {
+                    "name": "pane-left",
+                    "optional": true,
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|window_pane"
+                            },
+                            {
+                                "tag": "size|standard"
+                            },
+                            {
+                                "tag": "texture|rough_stone"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "name": "pane-right",
+                    "optional": true,
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|window_pane"
+                            },
+                            {
+                                "tag": "size|standard"
+                            },
+                            {
+                                "tag": "texture|rough_stone"
+                            }
+                        ]
+                    }
+                },
+                {
                     "name": "base",
                     "optional": true,
                     "tags": {
@@ -20454,7 +20488,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|wall",
@@ -20473,6 +20507,40 @@
     {
         "config": {
             "parts": [
+                {
+                    "name": "pane-left",
+                    "optional": true,
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|window_pane"
+                            },
+                            {
+                                "tag": "size|standard"
+                            },
+                            {
+                                "tag": "texture|rough_stone"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "name": "pane-right",
+                    "optional": true,
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|window_pane"
+                            },
+                            {
+                                "tag": "size|standard"
+                            },
+                            {
+                                "tag": "texture|rough_stone"
+                            }
+                        ]
+                    }
+                },
                 {
                     "name": "base",
                     "optional": true,
@@ -20609,7 +20677,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|wall",
@@ -20628,6 +20696,23 @@
     {
         "config": {
             "parts": [
+                {
+                    "name": "pane",
+                    "optional": true,
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|window_pane"
+                            },
+                            {
+                                "tag": "size|narrow"
+                            },
+                            {
+                                "tag": "texture|rough_stone"
+                            }
+                        ]
+                    }
+                },
                 {
                     "name": "base",
                     "optional": true,
@@ -20764,7 +20849,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|wall",
@@ -20783,6 +20868,23 @@
     {
         "config": {
             "parts": [
+                {
+                    "name": "pane",
+                    "optional": true,
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|window_pane"
+                            },
+                            {
+                                "tag": "size|narrow"
+                            },
+                            {
+                                "tag": "texture|rough_stone"
+                            }
+                        ]
+                    }
+                },
                 {
                     "name": "base",
                     "optional": true,
@@ -20919,7 +21021,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|wall",
@@ -20938,6 +21040,23 @@
     {
         "config": {
             "parts": [
+                {
+                    "name": "pane",
+                    "optional": true,
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|window_pane"
+                            },
+                            {
+                                "tag": "size|standard"
+                            },
+                            {
+                                "tag": "texture|rough_stone"
+                            }
+                        ]
+                    }
+                },
                 {
                     "name": "base",
                     "optional": true,
@@ -21074,7 +21193,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|wall",
@@ -21092,6 +21211,23 @@
     {
         "config": {
             "parts": [
+                {
+                    "name": "pane",
+                    "optional": true,
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|window_pane"
+                            },
+                            {
+                                "tag": "size|standard"
+                            },
+                            {
+                                "tag": "texture|rough_stone"
+                            }
+                        ]
+                    }
+                },
                 {
                     "name": "base",
                     "optional": true,
@@ -21228,7 +21364,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|wall",
@@ -21246,6 +21382,23 @@
     {
         "config": {
             "parts": [
+                {
+                    "name": "pane",
+                    "optional": true,
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|window_pane"
+                            },
+                            {
+                                "tag": "size|standard"
+                            },
+                            {
+                                "tag": "texture|rough_stone"
+                            }
+                        ]
+                    }
+                },
                 {
                     "name": "base",
                     "optional": true,
@@ -21382,7 +21535,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|wall",
@@ -21400,6 +21553,23 @@
     {
         "config": {
             "parts": [
+                {
+                    "name": "pane",
+                    "optional": true,
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|window_pane"
+                            },
+                            {
+                                "tag": "size|standard"
+                            },
+                            {
+                                "tag": "texture|rough_stone"
+                            }
+                        ]
+                    }
+                },
                 {
                     "name": "base",
                     "optional": true,
@@ -21536,7 +21706,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|wall",
@@ -21554,6 +21724,40 @@
     {
         "config": {
             "parts": [
+                {
+                    "name": "pane-left",
+                    "optional": true,
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|window_pane"
+                            },
+                            {
+                                "tag": "size|standard"
+                            },
+                            {
+                                "tag": "texture|rough_stone"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "name": "pane-right",
+                    "optional": true,
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|window_pane"
+                            },
+                            {
+                                "tag": "size|standard"
+                            },
+                            {
+                                "tag": "texture|rough_stone"
+                            }
+                        ]
+                    }
+                },
                 {
                     "name": "base",
                     "optional": true,
@@ -21690,7 +21894,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|wall",
@@ -21711,6 +21915,40 @@
     {
         "config": {
             "parts": [
+                {
+                    "name": "pane-left",
+                    "optional": true,
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|window_pane"
+                            },
+                            {
+                                "tag": "size|standard"
+                            },
+                            {
+                                "tag": "texture|rough_stone"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "name": "pane-right",
+                    "optional": true,
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|window_pane"
+                            },
+                            {
+                                "tag": "size|standard"
+                            },
+                            {
+                                "tag": "texture|rough_stone"
+                            }
+                        ]
+                    }
+                },
                 {
                     "name": "base",
                     "optional": true,
@@ -21847,7 +22085,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|wall",
@@ -21868,6 +22106,23 @@
     {
         "config": {
             "parts": [
+                {
+                    "name": "pane",
+                    "optional": true,
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|window_pane"
+                            },
+                            {
+                                "tag": "size|narrow"
+                            },
+                            {
+                                "tag": "texture|rough_stone"
+                            }
+                        ]
+                    }
+                },
                 {
                     "name": "base",
                     "optional": true,
@@ -22004,7 +22259,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|wall",
@@ -22025,6 +22280,23 @@
     {
         "config": {
             "parts": [
+                {
+                    "name": "pane",
+                    "optional": true,
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|window_pane"
+                            },
+                            {
+                                "tag": "size|narrow"
+                            },
+                            {
+                                "tag": "texture|rough_stone"
+                            }
+                        ]
+                    }
+                },
                 {
                     "name": "base",
                     "optional": true,
@@ -22161,7 +22433,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|wall",
@@ -22182,6 +22454,23 @@
     {
         "config": {
             "parts": [
+                {
+                    "name": "pane",
+                    "optional": true,
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|window_pane"
+                            },
+                            {
+                                "tag": "size|standard"
+                            },
+                            {
+                                "tag": "texture|rough_stone"
+                            }
+                        ]
+                    }
+                },
                 {
                     "name": "base",
                     "optional": true,
@@ -22318,7 +22607,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|wall",
@@ -22338,6 +22627,23 @@
     {
         "config": {
             "parts": [
+                {
+                    "name": "pane",
+                    "optional": true,
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|window_pane"
+                            },
+                            {
+                                "tag": "size|standard"
+                            },
+                            {
+                                "tag": "texture|rough_stone"
+                            }
+                        ]
+                    }
+                },
                 {
                     "name": "base",
                     "optional": true,
@@ -22474,7 +22780,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|wall",
@@ -22494,6 +22800,23 @@
     {
         "config": {
             "parts": [
+                {
+                    "name": "pane",
+                    "optional": true,
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|window_pane"
+                            },
+                            {
+                                "tag": "size|standard"
+                            },
+                            {
+                                "tag": "texture|rough_stone"
+                            }
+                        ]
+                    }
+                },
                 {
                     "name": "base",
                     "optional": true,
@@ -22630,7 +22953,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|wall",
@@ -22650,6 +22973,23 @@
     {
         "config": {
             "parts": [
+                {
+                    "name": "pane",
+                    "optional": true,
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|window_pane"
+                            },
+                            {
+                                "tag": "size|standard"
+                            },
+                            {
+                                "tag": "texture|rough_stone"
+                            }
+                        ]
+                    }
+                },
                 {
                     "name": "base",
                     "optional": true,
@@ -22786,7 +23126,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|wall",
@@ -22806,6 +23146,40 @@
     {
         "config": {
             "parts": [
+                {
+                    "name": "pane-left",
+                    "optional": true,
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|window_pane"
+                            },
+                            {
+                                "tag": "size|standard"
+                            },
+                            {
+                                "tag": "texture|rough_stone"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "name": "pane-right",
+                    "optional": true,
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|window_pane"
+                            },
+                            {
+                                "tag": "size|standard"
+                            },
+                            {
+                                "tag": "texture|rough_stone"
+                            }
+                        ]
+                    }
+                },
                 {
                     "name": "base",
                     "optional": true,
@@ -22942,7 +23316,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|wall",
@@ -22963,6 +23337,40 @@
     {
         "config": {
             "parts": [
+                {
+                    "name": "pane-left",
+                    "optional": true,
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|window_pane"
+                            },
+                            {
+                                "tag": "size|standard"
+                            },
+                            {
+                                "tag": "texture|rough_stone"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "name": "pane-right",
+                    "optional": true,
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|window_pane"
+                            },
+                            {
+                                "tag": "size|standard"
+                            },
+                            {
+                                "tag": "texture|rough_stone"
+                            }
+                        ]
+                    }
+                },
                 {
                     "name": "base",
                     "optional": true,
@@ -23099,7 +23507,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|wall",
@@ -23120,6 +23528,23 @@
     {
         "config": {
             "parts": [
+                {
+                    "name": "pane",
+                    "optional": true,
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|window_pane"
+                            },
+                            {
+                                "tag": "size|narrow"
+                            },
+                            {
+                                "tag": "texture|rough_stone"
+                            }
+                        ]
+                    }
+                },
                 {
                     "name": "base",
                     "optional": true,
@@ -23256,7 +23681,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|wall",
@@ -23277,6 +23702,23 @@
     {
         "config": {
             "parts": [
+                {
+                    "name": "pane",
+                    "optional": true,
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|window_pane"
+                            },
+                            {
+                                "tag": "size|narrow"
+                            },
+                            {
+                                "tag": "texture|rough_stone"
+                            }
+                        ]
+                    }
+                },
                 {
                     "name": "base",
                     "optional": true,
@@ -23413,7 +23855,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|wall",
@@ -23434,6 +23876,23 @@
     {
         "config": {
             "parts": [
+                {
+                    "name": "pane",
+                    "optional": true,
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|window_pane"
+                            },
+                            {
+                                "tag": "size|standard"
+                            },
+                            {
+                                "tag": "texture|rough_stone"
+                            }
+                        ]
+                    }
+                },
                 {
                     "name": "base",
                     "optional": true,
@@ -23570,7 +24029,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|wall",
@@ -23590,6 +24049,23 @@
     {
         "config": {
             "parts": [
+                {
+                    "name": "pane",
+                    "optional": true,
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|window_pane"
+                            },
+                            {
+                                "tag": "size|standard"
+                            },
+                            {
+                                "tag": "texture|rough_stone"
+                            }
+                        ]
+                    }
+                },
                 {
                     "name": "base",
                     "optional": true,
@@ -23726,7 +24202,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|wall",
@@ -23746,6 +24222,23 @@
     {
         "config": {
             "parts": [
+                {
+                    "name": "pane",
+                    "optional": true,
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|window_pane"
+                            },
+                            {
+                                "tag": "size|standard"
+                            },
+                            {
+                                "tag": "texture|rough_stone"
+                            }
+                        ]
+                    }
+                },
                 {
                     "name": "base",
                     "optional": true,
@@ -23882,7 +24375,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|wall",
@@ -23902,6 +24395,23 @@
     {
         "config": {
             "parts": [
+                {
+                    "name": "pane",
+                    "optional": true,
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|window_pane"
+                            },
+                            {
+                                "tag": "size|standard"
+                            },
+                            {
+                                "tag": "texture|rough_stone"
+                            }
+                        ]
+                    }
+                },
                 {
                     "name": "base",
                     "optional": true,
@@ -24038,7 +24548,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|wall",
@@ -24056,6 +24566,44 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "pane-left",
+                    "optional": true,
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|window_pane"
+                            },
+                            {
+                                "tag": "size|standard"
+                            },
+                            {
+                                "tag": "texture|rough_stone"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "name": "pane-right",
+                    "optional": true,
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|window_pane"
+                            },
+                            {
+                                "tag": "size|standard"
+                            },
+                            {
+                                "tag": "texture|rough_stone"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "rough_stone#wall,window+square+double.D.openlock+unsupported.stl",
             "file_modified_at": "2026-10-30T16:08:59.388132",
@@ -24168,7 +24716,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|wall",
@@ -24186,6 +24734,44 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "pane-left",
+                    "optional": true,
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|window_pane"
+                            },
+                            {
+                                "tag": "size|standard"
+                            },
+                            {
+                                "tag": "texture|rough_stone"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "name": "pane-right",
+                    "optional": true,
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|window_pane"
+                            },
+                            {
+                                "tag": "size|standard"
+                            },
+                            {
+                                "tag": "texture|rough_stone"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "rough_stone#wall,window+square+double.Q.openlock+unsupported.stl",
             "file_modified_at": "2026-10-30T16:04:51.378223",
@@ -24298,7 +24884,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|wall",
@@ -24316,6 +24902,27 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "pane",
+                    "optional": true,
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|window_pane"
+                            },
+                            {
+                                "tag": "size|narrow"
+                            },
+                            {
+                                "tag": "texture|rough_stone"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "rough_stone#wall,window+square+narrow.BA.openlock+unsupported.stl",
             "file_modified_at": "2026-10-30T16:05:47.197346",
@@ -24428,7 +25035,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|wall",
@@ -24446,6 +25053,27 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "pane",
+                    "optional": true,
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|window_pane"
+                            },
+                            {
+                                "tag": "size|narrow"
+                            },
+                            {
+                                "tag": "texture|rough_stone"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "rough_stone#wall,window+square+narrow.IA.openlock+unsupported.stl",
             "file_modified_at": "2026-10-30T16:06:33.329658",
@@ -24558,7 +25186,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|wall",
@@ -24576,6 +25204,27 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "pane",
+                    "optional": true,
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|window_pane"
+                            },
+                            {
+                                "tag": "size|standard"
+                            },
+                            {
+                                "tag": "texture|rough_stone"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "rough_stone#wall,window+square.A.openlock+unsupported.stl",
             "file_modified_at": "2026-10-29T08:46:01.894114",
@@ -24688,7 +25337,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|wall",
@@ -24705,6 +25354,27 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "pane",
+                    "optional": true,
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|window_pane"
+                            },
+                            {
+                                "tag": "size|standard"
+                            },
+                            {
+                                "tag": "texture|rough_stone"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "rough_stone#wall,window+square.BA.openlock+unsupported.stl",
             "file_modified_at": "2026-10-29T08:47:00.940308",
@@ -24817,7 +25487,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|wall",
@@ -24834,6 +25504,27 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "pane",
+                    "optional": true,
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|window_pane"
+                            },
+                            {
+                                "tag": "size|standard"
+                            },
+                            {
+                                "tag": "texture|rough_stone"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "rough_stone#wall,window+square.D.openlock+unsupported.stl",
             "file_modified_at": "2026-10-29T08:48:16.636409",
@@ -24946,7 +25637,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|wall",
@@ -24963,6 +25654,27 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "pane",
+                    "optional": true,
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|window_pane"
+                            },
+                            {
+                                "tag": "size|standard"
+                            },
+                            {
+                                "tag": "texture|rough_stone"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "rough_stone#wall,window+square.Q.openlock+unsupported.stl",
             "file_modified_at": "2026-10-29T08:52:09.365865",
@@ -25075,7 +25787,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|wall",
@@ -25092,6 +25804,44 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "pane-left",
+                    "optional": true,
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|window_pane"
+                            },
+                            {
+                                "tag": "size|standard"
+                            },
+                            {
+                                "tag": "texture|rough_stone"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "name": "pane-right",
+                    "optional": true,
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|window_pane"
+                            },
+                            {
+                                "tag": "size|standard"
+                            },
+                            {
+                                "tag": "texture|rough_stone"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "rough_stone#wall,window+square+double.D.openlock+unsupported,side.stl",
             "file_modified_at": "2026-10-30T16:09:33.278891",
@@ -25204,7 +25954,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|wall",
@@ -25224,6 +25974,44 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "pane-left",
+                    "optional": true,
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|window_pane"
+                            },
+                            {
+                                "tag": "size|standard"
+                            },
+                            {
+                                "tag": "texture|rough_stone"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "name": "pane-right",
+                    "optional": true,
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|window_pane"
+                            },
+                            {
+                                "tag": "size|standard"
+                            },
+                            {
+                                "tag": "texture|rough_stone"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "rough_stone#wall,window+square+double.Q.openlock+unsupported,side.stl",
             "file_modified_at": "2026-10-30T16:05:03.066885",
@@ -25336,7 +26124,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|wall",
@@ -25356,6 +26144,27 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "pane",
+                    "optional": true,
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|window_pane"
+                            },
+                            {
+                                "tag": "size|narrow"
+                            },
+                            {
+                                "tag": "texture|rough_stone"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "rough_stone#wall,window+square+narrow.BA.openlock+unsupported,side.stl",
             "file_modified_at": "2026-10-30T16:05:53.610027",
@@ -25468,7 +26277,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|wall",
@@ -25488,6 +26297,27 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "pane",
+                    "optional": true,
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|window_pane"
+                            },
+                            {
+                                "tag": "size|narrow"
+                            },
+                            {
+                                "tag": "texture|rough_stone"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "rough_stone#wall,window+square+narrow.IA.openlock+unsupported,side.stl",
             "file_modified_at": "2026-10-30T16:06:39.628225",
@@ -25600,7 +26430,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|wall",
@@ -25620,6 +26450,27 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "pane",
+                    "optional": true,
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|window_pane"
+                            },
+                            {
+                                "tag": "size|standard"
+                            },
+                            {
+                                "tag": "texture|rough_stone"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "rough_stone#wall,window+square.A.openlock+unsupported,side.stl",
             "file_modified_at": "2026-10-29T08:46:10.317084",
@@ -25732,7 +26583,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|wall",
@@ -25751,6 +26602,27 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "pane",
+                    "optional": true,
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|window_pane"
+                            },
+                            {
+                                "tag": "size|standard"
+                            },
+                            {
+                                "tag": "texture|rough_stone"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "rough_stone#wall,window+square.BA.openlock+unsupported,side.stl",
             "file_modified_at": "2026-10-29T08:47:10.017361",
@@ -25863,7 +26735,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|wall",
@@ -25882,6 +26754,27 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "pane",
+                    "optional": true,
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|window_pane"
+                            },
+                            {
+                                "tag": "size|standard"
+                            },
+                            {
+                                "tag": "texture|rough_stone"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "rough_stone#wall,window+square.D.openlock+unsupported,side.stl",
             "file_modified_at": "2026-10-29T08:48:27.048210",
@@ -25994,7 +26887,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|wall",
@@ -26013,6 +26906,27 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "pane",
+                    "optional": true,
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|window_pane"
+                            },
+                            {
+                                "tag": "size|standard"
+                            },
+                            {
+                                "tag": "texture|rough_stone"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "rough_stone#wall,window+square.Q.openlock+unsupported,side.stl",
             "file_modified_at": "2026-10-29T08:52:18.580545",
@@ -26125,7 +27039,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|wall",
@@ -26144,6 +27058,44 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "pane-left",
+                    "optional": true,
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|window_pane"
+                            },
+                            {
+                                "tag": "size|standard"
+                            },
+                            {
+                                "tag": "texture|rough_stone"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "name": "pane-right",
+                    "optional": true,
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|window_pane"
+                            },
+                            {
+                                "tag": "size|standard"
+                            },
+                            {
+                                "tag": "texture|rough_stone"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "rough_stone#wall,window+square+double.D.openlock.stl",
             "file_modified_at": "2026-10-30T16:08:50.963169",
@@ -26256,7 +27208,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|wall",
@@ -26273,6 +27225,44 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "pane-left",
+                    "optional": true,
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|window_pane"
+                            },
+                            {
+                                "tag": "size|standard"
+                            },
+                            {
+                                "tag": "texture|rough_stone"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "name": "pane-right",
+                    "optional": true,
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|window_pane"
+                            },
+                            {
+                                "tag": "size|standard"
+                            },
+                            {
+                                "tag": "texture|rough_stone"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "rough_stone#wall,window+square+double.Q.openlock.stl",
             "file_modified_at": "2026-10-30T16:04:32.374029",
@@ -26385,7 +27375,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|wall",
@@ -26402,6 +27392,27 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "pane",
+                    "optional": true,
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|window_pane"
+                            },
+                            {
+                                "tag": "size|narrow"
+                            },
+                            {
+                                "tag": "texture|rough_stone"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "rough_stone#wall,window+square+narrow.BA.openlock.stl",
             "file_modified_at": "2026-10-30T16:05:34.585385",
@@ -26514,7 +27525,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|wall",
@@ -26531,6 +27542,27 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "pane",
+                    "optional": true,
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|window_pane"
+                            },
+                            {
+                                "tag": "size|narrow"
+                            },
+                            {
+                                "tag": "texture|rough_stone"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "rough_stone#wall,window+square+narrow.IA.openlock.stl",
             "file_modified_at": "2026-10-30T16:06:22.648512",
@@ -26643,7 +27675,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|wall",
@@ -26660,6 +27692,27 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "pane",
+                    "optional": true,
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|window_pane"
+                            },
+                            {
+                                "tag": "size|standard"
+                            },
+                            {
+                                "tag": "texture|rough_stone"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "rough_stone#wall,window+square.A.openlock.stl",
             "file_modified_at": "2026-10-29T08:52:02.300255",
@@ -26772,7 +27825,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|wall",
@@ -26788,6 +27841,27 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "pane",
+                    "optional": true,
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|window_pane"
+                            },
+                            {
+                                "tag": "size|standard"
+                            },
+                            {
+                                "tag": "texture|rough_stone"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "rough_stone#wall,window+square.BA.openlock.stl",
             "file_modified_at": "2026-10-29T08:46:48.182050",
@@ -26900,7 +27974,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|wall",
@@ -26916,6 +27990,27 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "pane",
+                    "optional": true,
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|window_pane"
+                            },
+                            {
+                                "tag": "size|standard"
+                            },
+                            {
+                                "tag": "texture|rough_stone"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "rough_stone#wall,window+square.D.openlock.stl",
             "file_modified_at": "2026-10-29T08:47:57.970730",
@@ -27028,7 +28123,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|wall",
@@ -27044,6 +28139,27 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "pane",
+                    "optional": true,
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|window_pane"
+                            },
+                            {
+                                "tag": "size|standard"
+                            },
+                            {
+                                "tag": "texture|rough_stone"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "rough_stone#wall,window+square.Q.openlock.stl",
             "file_modified_at": "2026-10-29T08:52:05.801298",
@@ -27156,7 +28272,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|wall",
@@ -27172,6 +28288,44 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "pane-left",
+                    "optional": true,
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|window_pane"
+                            },
+                            {
+                                "tag": "size|standard"
+                            },
+                            {
+                                "tag": "texture|rough_stone"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "name": "pane-right",
+                    "optional": true,
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|window_pane"
+                            },
+                            {
+                                "tag": "size|standard"
+                            },
+                            {
+                                "tag": "texture|rough_stone"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "rough_stone#wall,window+square+double.D.openlock,side.stl",
             "file_modified_at": "2026-10-30T16:09:26.204241",
@@ -27284,7 +28438,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|wall",
@@ -27303,6 +28457,44 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "pane-left",
+                    "optional": true,
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|window_pane"
+                            },
+                            {
+                                "tag": "size|standard"
+                            },
+                            {
+                                "tag": "texture|rough_stone"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "name": "pane-right",
+                    "optional": true,
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|window_pane"
+                            },
+                            {
+                                "tag": "size|standard"
+                            },
+                            {
+                                "tag": "texture|rough_stone"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "rough_stone#wall,window+square+double.Q.openlock,side.stl",
             "file_modified_at": "2026-10-30T16:04:44.022639",
@@ -27415,7 +28607,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|wall",
@@ -27434,6 +28626,27 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "pane",
+                    "optional": true,
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|window_pane"
+                            },
+                            {
+                                "tag": "size|narrow"
+                            },
+                            {
+                                "tag": "texture|rough_stone"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "rough_stone#wall,window+square+narrow.BA.openlock,side.stl",
             "file_modified_at": "2026-10-30T16:05:42.457124",
@@ -27546,7 +28759,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|wall",
@@ -27565,6 +28778,27 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "pane",
+                    "optional": true,
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|window_pane"
+                            },
+                            {
+                                "tag": "size|narrow"
+                            },
+                            {
+                                "tag": "texture|rough_stone"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "rough_stone#wall,window+square+narrow.IA.openlock,side.stl",
             "file_modified_at": "2026-10-30T16:06:28.840969",
@@ -27677,7 +28911,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|wall",
@@ -27696,6 +28930,27 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "pane",
+                    "optional": true,
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|window_pane"
+                            },
+                            {
+                                "tag": "size|standard"
+                            },
+                            {
+                                "tag": "texture|rough_stone"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "rough_stone#wall,window+square.A.openlock,side.stl",
             "file_modified_at": "2026-10-29T08:45:56.548438",
@@ -27808,7 +29063,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|wall",
@@ -27826,6 +29081,27 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "pane",
+                    "optional": true,
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|window_pane"
+                            },
+                            {
+                                "tag": "size|standard"
+                            },
+                            {
+                                "tag": "texture|rough_stone"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "rough_stone#wall,window+square.BA.openlock,side.stl",
             "file_modified_at": "2026-10-29T08:46:55.782063",
@@ -27938,7 +29214,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|wall",
@@ -27956,6 +29232,27 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "pane",
+                    "optional": true,
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|window_pane"
+                            },
+                            {
+                                "tag": "size|standard"
+                            },
+                            {
+                                "tag": "texture|rough_stone"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "rough_stone#wall,window+square.D.openlock,side.stl",
             "file_modified_at": "2026-10-29T08:48:08.963138",
@@ -28068,7 +29365,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|wall",
@@ -28086,6 +29383,27 @@
         "type": "model"
     },
     {
+        "config": {
+            "parts": [
+                {
+                    "name": "pane",
+                    "optional": true,
+                    "tags": {
+                        "require": [
+                            {
+                                "tag": "interface|window_pane"
+                            },
+                            {
+                                "tag": "size|standard"
+                            },
+                            {
+                                "tag": "texture|rough_stone"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "file_metadata": {
             "file": "rough_stone#wall,window+square.Q.openlock,side.stl",
             "file_modified_at": "2026-10-29T08:52:26.070216",
@@ -28198,7 +29516,7 @@
                 }
             }
         ],
-        "metadata": false,
+        "metadata": true,
         "tags": [
             "build|separate wall",
             "component|wall",
@@ -28211,6 +29529,250 @@
             "shape|wall",
             "size|openlock|Q",
             "size|width|4",
+            "texture|rough_stone"
+        ],
+        "type": "model"
+    },
+    {
+        "file_metadata": {
+            "file": "pane.narrow.stl",
+            "file_modified_at": "2026-10-31T20:48:40.050660",
+            "full_name": "tiles/rough_stone/separate_wall/primary_walls/window+square/pane.narrow.stl",
+            "md5": "55193aea89823baee27a42e58a280e2c",
+            "size": 20584,
+            "storage_address": "https://objects.openforge.tools/models/55193a/55193aea89823baee27a42e58a280e2c.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/55193a/55193aea89823baee27a42e58a280e2c.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": true,
+        "tags": [
+            "interface|window_pane",
+            "part|window_pane",
+            "size|narrow",
+            "texture|rough_stone"
+        ],
+        "type": "model"
+    },
+    {
+        "file_metadata": {
+            "file": "pane.standard.stl",
+            "file_modified_at": "2026-10-31T20:48:40.086147",
+            "full_name": "tiles/rough_stone/separate_wall/primary_walls/window+square/pane.standard.stl",
+            "md5": "bed2155636c11c5541db2e3ec1bf7ba8",
+            "size": 20484,
+            "storage_address": "https://objects.openforge.tools/models/bed215/bed2155636c11c5541db2e3ec1bf7ba8.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/bed215/bed2155636c11c5541db2e3ec1bf7ba8.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": true,
+        "tags": [
+            "interface|window_pane",
+            "part|window_pane",
+            "size|standard",
             "texture|rough_stone"
         ],
         "type": "model"
