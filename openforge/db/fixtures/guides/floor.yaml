@@ -231,13 +231,12 @@ refinements:
       never have to think about polarity.
 
       The snap bases take cylinders only — no spheres, so if what you
-      have is 5mm spheres, the flex bases are the ones you want. Each
-      bay has a hole in the bottom and you push the magnet through it:
-      the pressure fit is what holds it, and it still turns freely
-      once it is in, so polarity is no more of a worry than on the
-      flex bases. I have them working with 5mm×3mm, 5mm×2mm, 4mm×3mm
-      and 4mm×2mm, and 3/16"×1/8" may fit as well, though I have not
-      checked that one.
+      have is 5mm spheres, take an answer without snap in its name.
+      Each bay has a hole in the bottom and you push the magnet
+      through it: the pressure fit is what holds it, and it still
+      turns freely once it is in, so polarity does not come up. I have
+      them working with 5mm×3mm, 5mm×2mm, 4mm×3mm and 4mm×2mm, and
+      3/16"×1/8" may fit as well, though I have not checked that one.
 
       Topless removes the material above the clip bay, which is not thick to
       begin with: faster to print, and no supports to take out. Plain topless
