@@ -572,6 +572,15 @@ refinements:
       magnetic bases take 5mm spheres and five cylindrical sizes, and
       they spin in place, so polarity never comes up.
 
+      The snap bases take cylinders only — no spheres, so if what you
+      have is 5mm spheres, the flex bases are the ones you want. Each
+      bay has a hole in the bottom and you push the magnet through it:
+      the pressure fit is what holds it, and it still turns freely
+      once it is in, so polarity is no more of a worry than on the
+      flex bases. I have them working with 5mm×3mm, 5mm×2mm, 4mm×3mm
+      and 4mm×2mm, and 3/16"×1/8" may fit as well, though I have not
+      checked that one.
+
       Print your clips in PETG, not PLA.
     links:
       5mm×3mm: https://amzn.to/3TiebAV
