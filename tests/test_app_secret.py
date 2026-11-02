@@ -124,9 +124,11 @@ def test_init_app_refuses_to_start_on_an_incomplete_secret(monkeypatch):
 
     # Absent and present-but-empty both have to count as missing.
     short = {"SECRET_KEY": "k", "CLOUDFLARE_ENDPOINT": ""}
+    pool = AssertionError("the pool was built before the guard")
     with (
         patch("openforge.app.load_dotenv"),
         patch("openforge.app._app_secret", return_value=short),
+        patch("openforge.app.PgDB", side_effect=pool),
     ):
         with pytest.raises(ValueError) as caught:
             init_app(Flask(__name__))
