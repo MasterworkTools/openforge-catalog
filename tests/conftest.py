@@ -14,6 +14,10 @@ logger = logging.getLogger(__name__)
 os.environ["API_TOKEN"] = "test_token"
 os.environ["SECRET_KEY"] = "test_secret_key_for_csrf_tokens"
 
+# A developer with this exported would send every test that reaches
+# `init_app` to Secrets Manager.
+os.environ.pop("APP_SECRET_ARN", None)
+
 # Set PostgreSQL environment variables for testing. The database name
 # is pinned rather than taken from the environment: these tests truncate
 # every table, so a stray PGDATABASE pointing at a development database
