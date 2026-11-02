@@ -35,12 +35,12 @@ locals {
 # is the thing to keep out of the replacement: the value happened to still be
 # current, but nothing would have told anyone the day it stopped being.
 
-data "aws_secretsmanager_secret_version" "app" {
-  secret_id = "${local.name}/staging/app"
-}
-
-locals {
-  app_secret = jsondecode(data.aws_secretsmanager_secret_version.app.secret_string)
+# The ARN only. Reading the version here is what put API_TOKEN, SECRET_KEY
+# and the CLOUDFLARE_* values into state and into the function's
+# environment, where a plan role or lambda:GetFunction could read them.
+# The Lambda fetches them itself at cold start.
+data "aws_secretsmanager_secret" "app" {
+  name = "${local.name}/staging/app"
 }
 
 # ─── Lambda IAM ───────────────────────────────────────────────────────────────
@@ -77,7 +77,7 @@ resource "aws_iam_role_policy_attachment" "api_vpc" {
 data "aws_iam_policy_document" "api_db_secret" {
   statement {
     actions   = ["secretsmanager:GetSecretValue"]
-    resources = [local.infra.db_secret_arn]
+    resources = [local.infra.db_secret_arn, data.aws_secretsmanager_secret.app.arn]
   }
 }
 
@@ -114,13 +114,9 @@ resource "aws_lambda_function" "api" {
 
   environment {
     variables = {
-      PGHOST                       = local.infra.db_cluster_endpoint
-      DB_SECRET_ARN                = local.infra.db_secret_arn
-      API_TOKEN                    = local.app_secret.API_TOKEN
-      SECRET_KEY                   = local.app_secret.SECRET_KEY
-      CLOUDFLARE_ENDPOINT          = local.app_secret.CLOUDFLARE_ENDPOINT
-      CLOUDFLARE_ACCESS_KEY_ID     = local.app_secret.CLOUDFLARE_ACCESS_KEY_ID
-      CLOUDFLARE_SECRET_ACCESS_KEY = local.app_secret.CLOUDFLARE_SECRET_ACCESS_KEY
+      PGHOST         = local.infra.db_cluster_endpoint
+      DB_SECRET_ARN  = local.infra.db_secret_arn
+      APP_SECRET_ARN = data.aws_secretsmanager_secret.app.arn
     }
   }
 
