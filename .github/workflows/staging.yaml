@@ -101,6 +101,7 @@ jobs:
   docker-build:
     name: Staging Docker Build
     needs: [python-test, react-test, js-lint, python-lint]
+    environment: staging
     runs-on: ubuntu-latest
     permissions:
       id-token: write
@@ -339,6 +340,7 @@ jobs:
     name: Staging Frontend Deploy
     needs: tofu-apply
     if: ${{ needs.tofu-apply.result == 'success' }}
+    environment: staging
     runs-on: ubuntu-latest
     permissions:
       id-token: write

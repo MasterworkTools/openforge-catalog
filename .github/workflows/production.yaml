@@ -101,6 +101,7 @@ jobs:
   docker-build:
     name: Production Docker Build
     needs: [python-test, react-test, js-lint, python-lint]
+    environment: production
     runs-on: ubuntu-latest
     permissions:
       id-token: write
@@ -331,6 +332,7 @@ jobs:
     name: Production Frontend Deploy
     needs: tofu-apply
     if: ${{ needs.tofu-apply.result == 'success' }}
+    environment: production
     runs-on: ubuntu-latest
     permissions:
       id-token: write

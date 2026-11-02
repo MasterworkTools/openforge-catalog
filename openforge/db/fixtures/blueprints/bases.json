@@ -151773,22 +151773,6 @@
             "size": 326063,
             "storage_address": "https://objects.openforge.tools/models/bf27dc/bf27dc2fa31b7cefd7f683b57be66a4a.stl"
         },
-        "metadata": false,
-        "tags": [
-            "build|s2w",
-            "connection|magnetic",
-            "connection|magnetic|flex",
-            "shape|base",
-            "shape|base|s2w",
-            "shape|base|square",
-            "shape|base|wall",
-            "shape|square",
-            "shape|wall",
-            "size|depth|2",
-            "size|width|2",
-            "texture|plain"
-        ],
-        "type": "model",
         "images": [
             {
                 "image_name": "thumbnail",
@@ -151892,17 +151876,7 @@
                     "tile_size": 512
                 }
             }
-        ]
-    },
-    {
-        "file_metadata": {
-            "file": "plain#base+s2w+square+wall.3x3.magnetic+flex.stl",
-            "file_modified_at": "2024-03-16T16:36:28.710054",
-            "full_name": "tiles/bases/s2w/base#square+s2w+wall%plain/magnetic+flex/plain#base+s2w+square+wall.3x3.magnetic+flex.stl",
-            "md5": "e16be80a5e880c86330f3fc228f85e2f",
-            "size": 540344,
-            "storage_address": "https://objects.openforge.tools/models/e16be8/e16be80a5e880c86330f3fc228f85e2f.stl"
-        },
+        ],
         "metadata": false,
         "tags": [
             "build|s2w",
@@ -151914,11 +151888,21 @@
             "shape|base|wall",
             "shape|square",
             "shape|wall",
-            "size|depth|3",
-            "size|width|3",
+            "size|depth|2",
+            "size|width|2",
             "texture|plain"
         ],
-        "type": "model",
+        "type": "model"
+    },
+    {
+        "file_metadata": {
+            "file": "plain#base+s2w+square+wall.3x3.magnetic+flex.stl",
+            "file_modified_at": "2024-03-16T16:36:28.710054",
+            "full_name": "tiles/bases/s2w/base#square+s2w+wall%plain/magnetic+flex/plain#base+s2w+square+wall.3x3.magnetic+flex.stl",
+            "md5": "e16be80a5e880c86330f3fc228f85e2f",
+            "size": 540344,
+            "storage_address": "https://objects.openforge.tools/models/e16be8/e16be80a5e880c86330f3fc228f85e2f.stl"
+        },
         "images": [
             {
                 "image_name": "thumbnail",
@@ -152022,17 +152006,7 @@
                     "tile_size": 512
                 }
             }
-        ]
-    },
-    {
-        "file_metadata": {
-            "file": "plain#base+s2w+square+wall.4x2.magnetic+flex.stl",
-            "file_modified_at": "2024-03-16T16:36:33.561351",
-            "full_name": "tiles/bases/s2w/base#square+s2w+wall%plain/magnetic+flex/plain#base+s2w+square+wall.4x2.magnetic+flex.stl",
-            "md5": "a88cd913a5eca6c73ac9b78e3145d0e8",
-            "size": 540272,
-            "storage_address": "https://objects.openforge.tools/models/a88cd9/a88cd913a5eca6c73ac9b78e3145d0e8.stl"
-        },
+        ],
         "metadata": false,
         "tags": [
             "build|s2w",
@@ -152044,11 +152018,21 @@
             "shape|base|wall",
             "shape|square",
             "shape|wall",
-            "size|depth|2",
-            "size|width|4",
+            "size|depth|3",
+            "size|width|3",
             "texture|plain"
         ],
-        "type": "model",
+        "type": "model"
+    },
+    {
+        "file_metadata": {
+            "file": "plain#base+s2w+square+wall.4x2.magnetic+flex.stl",
+            "file_modified_at": "2024-03-16T16:36:33.561351",
+            "full_name": "tiles/bases/s2w/base#square+s2w+wall%plain/magnetic+flex/plain#base+s2w+square+wall.4x2.magnetic+flex.stl",
+            "md5": "a88cd913a5eca6c73ac9b78e3145d0e8",
+            "size": 540272,
+            "storage_address": "https://objects.openforge.tools/models/a88cd9/a88cd913a5eca6c73ac9b78e3145d0e8.stl"
+        },
         "images": [
             {
                 "image_name": "thumbnail",
@@ -152152,17 +152136,7 @@
                     "tile_size": 512
                 }
             }
-        ]
-    },
-    {
-        "file_metadata": {
-            "file": "plain#base+s2w+square+wall.4x4.magnetic+flex.stl",
-            "file_modified_at": "2024-03-16T16:36:40.237900",
-            "full_name": "tiles/bases/s2w/base#square+s2w+wall%plain/magnetic+flex/plain#base+s2w+square+wall.4x4.magnetic+flex.stl",
-            "md5": "6e798a6e15e5c37292cdd9d1e2dbfc5a",
-            "size": 754705,
-            "storage_address": "https://objects.openforge.tools/models/6e798a/6e798a6e15e5c37292cdd9d1e2dbfc5a.stl"
-        },
+        ],
         "metadata": false,
         "tags": [
             "build|s2w",
@@ -152174,11 +152148,21 @@
             "shape|base|wall",
             "shape|square",
             "shape|wall",
-            "size|depth|4",
+            "size|depth|2",
             "size|width|4",
             "texture|plain"
         ],
-        "type": "model",
+        "type": "model"
+    },
+    {
+        "file_metadata": {
+            "file": "plain#base+s2w+square+wall.4x4.magnetic+flex.stl",
+            "file_modified_at": "2024-03-16T16:36:40.237900",
+            "full_name": "tiles/bases/s2w/base#square+s2w+wall%plain/magnetic+flex/plain#base+s2w+square+wall.4x4.magnetic+flex.stl",
+            "md5": "6e798a6e15e5c37292cdd9d1e2dbfc5a",
+            "size": 754705,
+            "storage_address": "https://objects.openforge.tools/models/6e798a/6e798a6e15e5c37292cdd9d1e2dbfc5a.stl"
+        },
         "images": [
             {
                 "image_name": "thumbnail",
@@ -152282,7 +152266,23 @@
                     "tile_size": 512
                 }
             }
-        ]
+        ],
+        "metadata": false,
+        "tags": [
+            "build|s2w",
+            "connection|magnetic",
+            "connection|magnetic|flex",
+            "shape|base",
+            "shape|base|s2w",
+            "shape|base|square",
+            "shape|base|wall",
+            "shape|square",
+            "shape|wall",
+            "size|depth|4",
+            "size|width|4",
+            "texture|plain"
+        ],
+        "type": "model"
     },
     {
         "file_metadata": {
@@ -234616,6 +234616,136 @@
     {
         "file_metadata": {
             "file": "foundation#base+wall,door.A.magnetic+flex.stl",
+            "file_modified_at": "2026-11-01T11:54:42.509670",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%foundation/magnetic+flex/foundation#base+wall,door.A.magnetic+flex.stl",
+            "md5": "8ece177087d6036c6129d5a18050f24d",
+            "size": 8649471,
+            "storage_address": "https://objects.openforge.tools/models/8ece17/8ece177087d6036c6129d5a18050f24d.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/8ece17/8ece177087d6036c6129d5a18050f24d.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "build|separate wall",
+            "component|door",
+            "connection|magnetic",
+            "connection|magnetic|flex",
+            "shape|base",
+            "shape|base|wall",
+            "shape|square",
+            "shape|wall",
+            "size|openlock|A",
+            "size|width|2",
+            "texture|foundation"
+        ],
+        "type": "model"
+    },
+    {
+        "deprecated": true,
+        "file_metadata": {
+            "file": "foundation#base+wall,door.A.magnetic+flex.stl",
             "file_modified_at": "2024-04-14T08:35:23.026699",
             "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%foundation/magnetic+flex/foundation#base+wall,door.A.magnetic+flex.stl",
             "md5": "f2f055369e883e37940a17e036ed8bbb",
@@ -234738,6 +234868,135 @@
             "shape|wall",
             "size|openlock|A",
             "size|width|2",
+            "texture|foundation"
+        ],
+        "type": "model"
+    },
+    {
+        "file_metadata": {
+            "file": "foundation#base+wall,door.BA.magnetic+flex.stl",
+            "file_modified_at": "2026-11-01T11:54:42.247429",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%foundation/magnetic+flex/foundation#base+wall,door.BA.magnetic+flex.stl",
+            "md5": "f2f055369e883e37940a17e036ed8bbb",
+            "size": 1438284,
+            "storage_address": "https://objects.openforge.tools/models/f2f055/f2f055369e883e37940a17e036ed8bbb.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/f2f055/f2f055369e883e37940a17e036ed8bbb.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "build|separate wall",
+            "component|door",
+            "connection|magnetic",
+            "connection|magnetic|flex",
+            "shape|base",
+            "shape|base|wall",
+            "shape|square",
+            "shape|wall",
+            "size|openlock|BA",
+            "size|width|1.5",
             "texture|foundation"
         ],
         "type": "model"
@@ -235250,6 +235509,264 @@
             "shape|wall",
             "size|openlock|IA",
             "size|width|1",
+            "texture|foundation"
+        ],
+        "type": "model"
+    },
+    {
+        "file_metadata": {
+            "file": "foundation#base+wall,door.A.magnetic+snap.stl",
+            "file_modified_at": "2026-11-01T11:54:42.634797",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%foundation/magnetic+snap/foundation#base+wall,door.A.magnetic+snap.stl",
+            "md5": "2ab31f41f3033fd98111a690f1fbcf7e",
+            "size": 10278038,
+            "storage_address": "https://objects.openforge.tools/models/2ab31f/2ab31f41f3033fd98111a690f1fbcf7e.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/2ab31f/2ab31f41f3033fd98111a690f1fbcf7e.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "build|separate wall",
+            "component|door",
+            "connection|magnetic",
+            "connection|magnetic|snap",
+            "shape|base",
+            "shape|base|wall",
+            "shape|square",
+            "shape|wall",
+            "size|openlock|A",
+            "size|width|2",
+            "texture|foundation"
+        ],
+        "type": "model"
+    },
+    {
+        "file_metadata": {
+            "file": "foundation#base+wall,door.BA.magnetic+snap.stl",
+            "file_modified_at": "2026-11-01T11:54:42.733938",
+            "full_name": "tiles/bases/separate_wall/primary_walls/base#wall%foundation/magnetic+snap/foundation#base+wall,door.BA.magnetic+snap.stl",
+            "md5": "1fccb60cb74cc4ff0471c5bd57f8f7ca",
+            "size": 8716472,
+            "storage_address": "https://objects.openforge.tools/models/1fccb6/1fccb60cb74cc4ff0471c5bd57f8f7ca.stl"
+        },
+        "images": [
+            {
+                "image_name": "thumbnail",
+                "image_url": "https://objects.openforge.tools/sprites/1fccb6/1fccb60cb74cc4ff0471c5bd57f8f7ca.png",
+                "sprite_metadata": {
+                    "angles": [
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 0,
+                            "name": "front"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 1,
+                            "name": "front-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 2,
+                            "name": "right"
+                        },
+                        {
+                            "camera_pos": [
+                                2,
+                                3,
+                                3
+                            ],
+                            "index": 3,
+                            "name": "back-right"
+                        },
+                        {
+                            "camera_pos": [
+                                0,
+                                2,
+                                4
+                            ],
+                            "index": 4,
+                            "name": "back"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                2,
+                                3
+                            ],
+                            "index": 5,
+                            "name": "back-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -4,
+                                0,
+                                2
+                            ],
+                            "index": 6,
+                            "name": "left"
+                        },
+                        {
+                            "camera_pos": [
+                                -3,
+                                -3,
+                                2
+                            ],
+                            "index": 7,
+                            "name": "front-left"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                0,
+                                5
+                            ],
+                            "index": 8,
+                            "name": "top"
+                        },
+                        {
+                            "camera_pos": [
+                                -2,
+                                -3,
+                                0
+                            ],
+                            "index": 9,
+                            "name": "bottom"
+                        }
+                    ],
+                    "default_angle": 0,
+                    "grid_cols": 5,
+                    "grid_rows": 2,
+                    "tile_size": 512
+                }
+            }
+        ],
+        "metadata": false,
+        "tags": [
+            "build|separate wall",
+            "component|door",
+            "connection|magnetic",
+            "connection|magnetic|snap",
+            "shape|base",
+            "shape|base|wall",
+            "shape|square",
+            "shape|wall",
+            "size|openlock|BA",
+            "size|width|1.5",
             "texture|foundation"
         ],
         "type": "model"
