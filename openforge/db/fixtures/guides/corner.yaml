@@ -156,8 +156,8 @@ steps:
       The wings and the pillar join along their vertical edges, and
       whichever system you pick has to be the same on all three.
 
-      Print printed clips in PETG, not PLA — PLA is rigid and brittle,
-      so a clip snaps where it should flex.
+      Print printed clips in PETG, not PLA — PLA is more rigid, so a
+      clip printed in it is more likely to break.
 
       OpenLOCK is the one answer every texture has for every method. The
       others are made for fewer of them, so an answer that disappears
@@ -576,11 +576,12 @@ refinements:
       have is 5mm spheres, take an answer without snap in its name.
       Each bay has a hole in the bottom and you push the magnet
       through it: the pressure fit is what holds it, and it still
-      turns freely once it is in, so polarity does not come up. I have
-      them working with 5mm×3mm, 5mm×2mm, 4mm×3mm and 4mm×2mm, and
-      3/16"×1/8" may fit as well, though I have not checked that one.
+      turns freely once it is in, so polarity does not come up. Designed
+      for 5mm×3mm, 5mm×2mm, 4mm×3mm and 4mm×2mm. 3/16"×1/8" may fit as
+      well, though I have not checked that one.
 
-      Print your clips in PETG, not PLA.
+      Print your clips in PETG, not PLA: PLA is more rigid, so a clip
+      printed in it is more likely to break.
     links:
       5mm×3mm: https://amzn.to/3TiebAV
       5mm×2mm: https://amzn.to/3n2prFa
