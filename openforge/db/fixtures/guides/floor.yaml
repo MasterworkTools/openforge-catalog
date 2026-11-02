@@ -291,8 +291,8 @@ refinements:
 
       Print it in whatever you are printing everything else in. The advice to
       use PETG applies to the clips, not to the tiles they go into: PLA is
-      more rigid, so a clip printed in it is more likely to break. A tile
-      has no clip in it to break.
+      more rigid, so a clip printed in it is more likely to break. The
+      tile is not the part that breaks.
 
       Unsupported removes the built-in supports over the clip bay, on the
       bet that a modern printer bridges the gap cleanly. If a clip will not go
