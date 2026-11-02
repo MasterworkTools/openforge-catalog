@@ -9,7 +9,10 @@ winning over the secret.
 import json
 from unittest.mock import MagicMock, patch
 
-from openforge.app import _app_secret, _setting
+import pytest
+from flask import Flask
+
+from openforge.app import FROM_SECRET, _app_secret, _setting, init_app
 
 
 def test_no_arn_fetches_nothing(monkeypatch):
@@ -69,3 +72,98 @@ def test_the_default_is_the_last_resort(monkeypatch):
     monkeypatch.delenv("API_TOKEN", raising=False)
 
     assert _setting("API_TOKEN", {}, "fallback") == "fallback"
+
+
+def test_every_value_the_lambda_needs_is_required_from_the_secret():
+    """The five the Lambda cannot start without. API_TOKEN carries a
+    development default, so a secret missing it would otherwise serve
+    `1234567890` to the internet rather than fail."""
+    assert set(FROM_SECRET) == {
+        "API_TOKEN",
+        "SECRET_KEY",
+        "CLOUDFLARE_ENDPOINT",
+        "CLOUDFLARE_ACCESS_KEY_ID",
+        "CLOUDFLARE_SECRET_ACCESS_KEY",
+    }
+
+
+def test_an_incomplete_secret_does_not_fall_back_to_the_default_token(monkeypatch):
+    """The default is for a developer with no ARN, never for a Lambda
+    whose secret came back short."""
+    monkeypatch.setenv("APP_SECRET_ARN", "arn:aws:secretsmanager:::secret:app")
+    for name in FROM_SECRET:
+        monkeypatch.delenv(name, raising=False)
+
+    assert _setting("API_TOKEN", {"SECRET_KEY": "k"}) is None
+    assert _setting("API_TOKEN", {"SECRET_KEY": "k"}, "1234567890") == "1234567890"
+
+    # So the guard, not the resolver, is what has to catch it.
+    missing = [n for n in FROM_SECRET if not _setting(n, {"SECRET_KEY": "k"})]
+    assert "API_TOKEN" in missing
+
+
+def test_init_app_refuses_to_start_on_an_incomplete_secret(monkeypatch):
+    """Through `init_app`, not through the pieces: the guard is what
+    stands between a short secret and a Lambda serving the development
+    token, and nothing else in the suite exercises it.
+
+    It runs before the connection pool, so no database is needed here —
+    and that ordering is itself the point of running it early.
+    """
+    monkeypatch.setenv("APP_SECRET_ARN", "arn:aws:secretsmanager:::secret:app")
+    for name in FROM_SECRET:
+        monkeypatch.delenv(name, raising=False)
+
+    short = {"SECRET_KEY": "k", "CLOUDFLARE_ENDPOINT": "https://r2"}
+    with (
+        patch("openforge.app.load_dotenv"),
+        patch("openforge.app._app_secret", return_value=short),
+    ):
+        with pytest.raises(ValueError) as caught:
+            init_app(Flask(__name__))
+
+    message = str(caught.value)
+    assert "API_TOKEN" in message
+    assert "CLOUDFLARE_ACCESS_KEY_ID" in message
+    # The one the short secret does carry must not be named.
+    assert "SECRET_KEY" not in message
+
+
+def test_init_app_is_happy_when_the_secret_is_complete(monkeypatch):
+    """The guard must not fire on a good secret, or every cold start
+    fails instead of the bad ones."""
+    monkeypatch.setenv("APP_SECRET_ARN", "arn:aws:secretsmanager:::secret:app")
+    for name in FROM_SECRET:
+        monkeypatch.delenv(name, raising=False)
+
+    whole = {name: f"value-for-{name}" for name in FROM_SECRET}
+    app = Flask(__name__)
+    app.config["TESTING"] = True
+    with (
+        patch("openforge.app.load_dotenv"),
+        patch("openforge.app._app_secret", return_value=whole),
+        patch("openforge.app.PgDB"),
+    ):
+        init_app(app)
+
+    assert app.config["API_TOKEN"] == "value-for-API_TOKEN"
+
+
+def test_a_developer_without_an_arn_is_not_held_to_the_secret(monkeypatch):
+    """The guard is for a Lambda reading a secret. Applying it to a
+    developer who has set only SECRET_KEY would make the app refuse to
+    start locally, which is the thing this change promised not to do.
+    """
+    monkeypatch.delenv("APP_SECRET_ARN", raising=False)
+    for name in FROM_SECRET:
+        monkeypatch.delenv(name, raising=False)
+    monkeypatch.setenv("SECRET_KEY", "local-only")
+
+    app = Flask(__name__)
+    app.config["TESTING"] = True
+    with patch("openforge.app.load_dotenv"), patch("openforge.app.PgDB"):
+        init_app(app)
+
+    # No Cloudflare values anywhere, and it still starts.
+    assert app.config["CLOUDFLARE_ENDPOINT"] is None
+    assert app.config["API_TOKEN"] == "1234567890"

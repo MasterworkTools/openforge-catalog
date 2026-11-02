@@ -7,6 +7,18 @@ from flask import Flask
 from openforge.app.services.session_service import SessionService
 from openforge.db import PgDB
 
+#: What the Lambda cannot start without once it reads from a secret.
+#: The CLOUDFLARE values are here because their absence is invisible
+#: until someone asks for a file, and then it is a 500 rather than a
+#: configuration error anyone can see.
+FROM_SECRET = (
+    "API_TOKEN",
+    "SECRET_KEY",
+    "CLOUDFLARE_ENDPOINT",
+    "CLOUDFLARE_ACCESS_KEY_ID",
+    "CLOUDFLARE_SECRET_ACCESS_KEY",
+)
+
 
 def _app_secret() -> dict:
     """The app secret's values, or nothing when none is configured.
@@ -42,14 +54,26 @@ def _setting(name: str, secret: dict, default=None):
 def init_app(app: Flask):
     load_dotenv()
 
-    # Use pool-less mode for testing to avoid logging errors during cleanup
-    use_pool = not app.config.get("TESTING", False)
-    db = PgDB(os.environ, app.logger, use_pool=use_pool)
+    # Before the pool, so a failed fetch does not build one per retry:
+    # `_initialized` is only set once this returns, so every request
+    # would come back here and make another.
     secret = _app_secret()
 
     def setting(name, default=None):
         return _setting(name, secret, default)
 
+    # A secret in use has to carry everything. Terraform used to fail
+    # its plan on a missing key; nothing would now, and API_TOKEN has a
+    # development default that would otherwise be served to the
+    # internet.
+    if os.environ.get("APP_SECRET_ARN"):
+        missing = [name for name in FROM_SECRET if not setting(name)]
+        if missing:
+            raise ValueError(f"app secret is missing: {', '.join(missing)}")
+
+    # Use pool-less mode for testing to avoid logging errors during cleanup
+    use_pool = not app.config.get("TESTING", False)
+    db = PgDB(os.environ, app.logger, use_pool=use_pool)
     app.config["API_TOKEN"] = setting("API_TOKEN", "1234567890")
     app.config["SECRET_KEY"] = setting("SECRET_KEY")
     if not app.config["SECRET_KEY"]:
