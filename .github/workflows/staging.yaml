@@ -336,6 +336,29 @@ jobs:
           tofu plan -input=false -no-color -var image_tag=${{ github.sha }} -out=tfplan
           tofu apply -input=false -auto-approve tfplan
 
+      # The app secret used to be read at plan time, so a bad one failed the
+      # plan. It is now read at cold start, and the lambda target group has no
+      # health check, so nothing else here would notice an API that starts by
+      # raising. `/health` is not routed through the ALB -- the listener rule
+      # forwards `/api/*` only -- and a 404 from this path means the fixtures
+      # left no guides behind.
+      - name: the API answers
+        working-directory: terraform/environments/staging
+        run: |
+          host=$(tofu output -raw api_alb_dns_name)
+          for attempt in 1 2 3 4 5 6; do
+            code=$(curl -s -o /dev/null -m 20 -w '%{http_code}' \
+              "http://$host/api/guides") || code=refused
+            if [ "$code" = 200 ]; then
+              echo "the API answered 200"
+              exit 0
+            fi
+            echo "attempt $attempt: $code"
+            sleep 10
+          done
+          echo "::error::the API did not answer 200; the new image is live"
+          exit 1
+
   frontend-deploy:
     name: Staging Frontend Deploy
     needs: tofu-apply
