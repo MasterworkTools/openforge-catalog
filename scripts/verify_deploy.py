@@ -56,6 +56,9 @@ def _fetch(method, url, timeout, headers=None, body=None):
     a cold start can be retried and so no exception quoting the URL can
     reach a log. `URLError.reason` is the underlying socket error and
     never holds the URL; for anything else only the type is named.
+
+    The cost of catching that broadly: a bug in this function reads as
+    `no answer: TypeError` and gets retried rather than raising.
     """
     try:
         # Inside the try: a malformed URL raises here, from a ValueError
@@ -70,7 +73,14 @@ def _fetch(method, url, timeout, headers=None, body=None):
         with opener.open(request, timeout=timeout) as response:
             return response.status, _lower(response.headers), response.read()
     except urllib.error.HTTPError as answer:
-        return answer.code, _lower(answer.headers), answer.read()
+        # Read in its own try: a sibling clause does not cover the
+        # handler, and a stalled error body would escape as a crash.
+        # No check reads an error response's body.
+        try:
+            error_body = answer.read()
+        except Exception:
+            error_body = b""
+        return answer.code, _lower(answer.headers), error_body
     except urllib.error.URLError as broken:
         raise Failed(f"no answer: {broken.reason}") from None
     except Exception as broken:
@@ -84,7 +94,7 @@ def _document(body):
     except ValueError:
         raise Failed("answered 200 with a body that is not JSON") from None
     if not isinstance(document, dict):
-        raise Failed("answered 200 with JSON that is not an object") from None
+        raise Failed("answered 200 with JSON that is not an object")
     return document
 
 
@@ -98,8 +108,9 @@ def _guides(fetch, base):
     status, _, body = fetch("GET", base + GUIDES)
     if status != 200:
         raise Failed(f"HTTP {status}")
-    guides = _document(body).get("guides")
-    if not isinstance(guides, list) or not guides:
+    listed = _document(body).get("guides")
+    guides = [g for g in listed if isinstance(g, dict)] if listed else []
+    if not guides:
         raise Failed("answered 200 with no guides")
     keys = sorted(str(guide.get("guide_key", "?")) for guide in guides)
     return guides[0], f"{len(guides)} guides: {', '.join(keys)}"
@@ -108,14 +119,16 @@ def _guides(fetch, base):
 def _blueprint_id(fetch, base, guide):
     """A real blueprint id, from a bounded response.
 
-    `/api/blueprints` returns every row and exceeds the ALB's response
-    limit, so a guide's resolved parts are where an id comes from.
+    `/api/blueprints` returns every row, so an id comes from a guide's
+    resolved parts instead.
     """
     key = guide.get("guide_key")
     status, _, body = fetch("GET", f"{base}/api/guides/{key}/resolve")
     if status != 200:
         raise Failed(f"resolve {key}: HTTP {status}")
     for part in _document(body).get("parts") or []:
+        if not isinstance(part, dict):
+            continue
         found = (part.get("blueprint") or {}).get("id")
         if found:
             return found, f"resolved {key}"
@@ -127,8 +140,8 @@ def _signed_url(fetch, base, blueprint_id):
 
     Without them the route answers 404 rather than erroring, so a
     redirect is the positive result. The target has to be an absolute
-    https URL: a malformed one reaches urllib as a `ValueError` quoting
-    the whole presigned URL.
+    https URL on an R2 host before anything fetches it, so that this
+    only ever follows the API to the object store.
     """
     url = f"{base}/api/blueprints/{blueprint_id}/download"
     status, headers, _ = fetch("GET", url)
@@ -174,11 +187,12 @@ def _rejects_anonymous(fetch, base):
 
 def _retrying(call, attempts, delay, sleep):
     """The first answer, retried: a cold start is not a broken deploy."""
-    for attempt in range(1, attempts + 1):
+    last = max(attempts, 1)
+    for attempt in range(1, last + 1):
         try:
             return call()
         except Failed as failure:
-            if attempt == attempts:
+            if attempt == last:
                 raise
             print(f"  attempt {attempt}: {failure}", flush=True)
             sleep(delay)
@@ -237,7 +251,7 @@ def main(argv=None):
 
     print(f"verifying {base}", flush=True)
     results = run_checks(fetch, base, args.attempts, args.delay, time.sleep)
-    if not results or not all(ok for _, ok, _ in results):
+    if not all(ok for _, ok, _ in results):
         print("::error::the deployed API is not serving correctly")
         return 1
     print("every check passed", flush=True)

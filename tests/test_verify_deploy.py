@@ -7,10 +7,13 @@ itself run against a real server on the loopback, because a stub cannot
 show whether a 302 is followed or a 401 raises.
 """
 
+import email.message
 import importlib.util
 import json
 import pathlib
 import threading
+import time
+import urllib.error
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
 import pytest
@@ -121,18 +124,24 @@ def test_guides_served_empty_is_a_failure():
 
 
 @pytest.mark.parametrize(
-    "body",
-    ["<html>a gateway error page</html>", "[]", '{"guides": "floor"}'],
+    "body,says",
+    [
+        ("<html>a gateway error page</html>", "not JSON"),
+        ("[]", "not an object"),
+        ('{"guides": "floor"}', "no guides"),
+    ],
     ids=["not-json", "json-but-a-list", "guides-not-a-list"],
 )
-def test_a_body_that_is_not_what_it_should_be_fails_cleanly(body):
+def test_a_body_that_is_not_what_it_should_be_fails_cleanly(body, says):
     """Cleanly means naming the check rather than raising: a traceback
     says a deploy broke without saying where."""
     answers = _answers({("GET", f"{BASE}/api/guides"): (200, {}, body)})
 
     verdicts = _verdicts(answers)
 
-    assert verdicts["the API answers"][0] is False
+    ok, detail = verdicts["the API answers"]
+    assert ok is False
+    assert says in detail
 
 
 def test_a_resolve_that_fails_is_reported_as_the_resolve():
@@ -160,7 +169,7 @@ def test_a_resolve_with_no_parts_is_a_failure():
     assert "no blueprint" in verdicts["a guide resolves"][1]
 
 
-def test_the_id_comes_from_a_part_not_from_anything_with_an_id():
+def test_an_id_elsewhere_in_the_response_is_not_mistaken_for_a_part():
     """A resolve response carries ids for steps, roles and refinements
     too. Picking one of those would make the download check fail and
     blame signing."""
@@ -184,37 +193,45 @@ def test_the_id_comes_from_a_part_not_from_anything_with_an_id():
     assert verdicts["a file is signed"][0] is True
 
 
-def test_a_missing_cloudflare_endpoint_fails_rather_than_passing():
-    """The download route answers 404 rather than erroring when the
-    endpoint is absent, so only a redirect is a pass."""
-    answers = _answers({("GET", f"{BASE}/api/blueprints/bp-1/download"): (404, {}, "")})
+@pytest.mark.parametrize("status", [404, 200, 500])
+def test_only_a_redirect_is_a_signed_download(status):
+    """The route answers 404 rather than erroring when the Cloudflare
+    endpoint is absent, so a redirect is the only pass."""
+    answers = _answers(
+        {("GET", f"{BASE}/api/blueprints/bp-1/download"): (status, {}, "")}
+    )
 
     verdicts = _verdicts(answers)
 
-    assert verdicts["a file is signed"] == (False, "HTTP 404, expected 302")
+    assert verdicts["a file is signed"] == (False, f"HTTP {status}, expected 302")
 
 
-def test_a_200_on_the_download_is_not_a_pass():
-    answers = _answers({("GET", f"{BASE}/api/blueprints/bp-1/download"): (200, {}, "")})
-
-    verdicts = _verdicts(answers)
-
-    assert verdicts["a file is signed"][0] is False
+ABSOLUTE = "not an absolute https URL"
+NOT_R2 = "not R2"
 
 
 @pytest.mark.parametrize(
-    "location",
+    "location,expected",
     [
-        "",
-        "/relative/path?sig=abc",
-        "//acct.r2.cloudflarestorage.com/f?X-Amz-Signature=abc",
-        "http://acct.r2.cloudflarestorage.com/f?X-Amz-Signature=abc",
-        "https://notr2.cloudflare.example/f?X-Amz-Signature=abc",
-        "https://acct.r2.cloudflarestorage.com.evil.example/f?sig=abc",
+        ("", ABSOLUTE),
+        ("/relative/path?sig=abc", ABSOLUTE),
+        ("//acct.r2.cloudflarestorage.com/f?X-Amz-Signature=abc", ABSOLUTE),
+        ("http://acct.r2.cloudflarestorage.com/f?X-Amz-Sig=abc", ABSOLUTE),
+        ("https://notr2.cloudflare.example/f?X-Amz-Signature=abc", NOT_R2),
+        ("https://acct.r2.cloudflarestorage.com.evil.example/f?sig=abc", NOT_R2),
+        ("https://evilr2.cloudflarestorage.com/f?sig=abc", NOT_R2),
     ],
-    ids=["empty", "relative", "scheme-relative", "http", "wrong-host", "suffix-trick"],
+    ids=[
+        "empty",
+        "relative",
+        "scheme-relative",
+        "http",
+        "wrong-host",
+        "suffix-trick",
+        "no-leading-dot",
+    ],
 )
-def test_only_an_absolute_https_r2_url_is_accepted(location):
+def test_only_an_absolute_https_r2_url_is_accepted(location, expected):
     """A scheme-relative or malformed target reaches urllib as a
     ValueError quoting the whole presigned URL, so it has to be refused
     here rather than fetched."""
@@ -232,6 +249,9 @@ def test_only_an_absolute_https_r2_url_is_accepted(location):
 
     ok, detail = verdicts["a file is signed"]
     assert ok is False
+    # Which check refused it, so a host test written without the
+    # leading dot cannot pass by hitting the other branch.
+    assert expected in detail
     assert "X-Amz-Signature" not in detail
     assert "sig=abc" not in detail
 
@@ -259,24 +279,18 @@ def test_only_a_served_byte_counts_as_a_good_signature(status):
     assert verdicts["the signature is good"][0] is False
 
 
-def test_an_unauthenticated_write_being_accepted_is_a_failure():
-    answers = _answers({("POST", f"{BASE}/api/blueprints"): (201, {}, "")})
+@pytest.mark.parametrize("status", [201, 200, 403, 500])
+def test_only_a_401_proves_the_write_route_is_guarded(status):
+    """An absent signing key is a 500 there rather than a 401, and a 403
+    is some other refusal, not this one."""
+    answers = _answers({("POST", f"{BASE}/api/blueprints"): (status, {}, "")})
 
     verdicts = _verdicts(answers)
 
     assert verdicts["anonymous writes are refused"] == (
         False,
-        "HTTP 201, expected 401",
+        f"HTTP {status}, expected 401",
     )
-
-
-def test_a_500_on_the_write_route_is_also_a_failure():
-    """An absent signing key is a 500 there, not a 401."""
-    answers = _answers({("POST", f"{BASE}/api/blueprints"): (500, {}, "")})
-
-    verdicts = _verdicts(answers)
-
-    assert verdicts["anonymous writes are refused"][0] is False
 
 
 def test_no_signed_url_is_ever_logged(capsys, monkeypatch):
@@ -332,10 +346,36 @@ def test_main_exits_zero_on_a_healthy_deploy(monkeypatch):
 
 
 class _Handler(BaseHTTPRequestHandler):
-    """Answers the three shapes `_fetch` has to get right."""
+    """Answers the shapes `_fetch` has to get right, and echoes the
+    request so the headers and body it sends are observable."""
+
+    def _echo(self):
+        self.send_response(200)
+        self.send_header("Content-Type", "application/json")
+        self.end_headers()
+        length = int(self.headers.get("Content-Length") or 0)
+        self.wfile.write(
+            json.dumps(
+                {
+                    "method": self.command,
+                    "agent": self.headers.get("User-Agent"),
+                    "range": self.headers.get("Range"),
+                    "body": self.rfile.read(length).decode(),
+                }
+            ).encode()
+        )
+
+    def do_POST(self):
+        self._echo()
 
     def do_GET(self):
-        if self.path == "/redirect":
+        if self.path == "/echo":
+            self._echo()
+        elif self.path == "/slow":
+            time.sleep(1.5)
+            self.send_response(200)
+            self.end_headers()
+        elif self.path == "/redirect":
             self.send_response(302)
             self.send_header("Location", "https://elsewhere.example/x")
             self.end_headers()
@@ -360,6 +400,14 @@ def server():
     thread.start()
     yield f"http://127.0.0.1:{httpd.server_port}"
     httpd.shutdown()
+    httpd.server_close()
+
+
+@pytest.fixture(autouse=True)
+def _no_proxy(monkeypatch):
+    """urllib honours http_proxy, so a proxied runner would send the
+    loopback tests to the proxy."""
+    monkeypatch.setenv("no_proxy", "127.0.0.1,localhost")
 
 
 def test_a_redirect_is_returned_not_followed(server):
@@ -407,3 +455,167 @@ def test_a_malformed_url_never_reaches_the_log_with_its_query():
         verify._fetch("GET", "//host/path?X-Amz-Signature=abc", 2)
 
     assert "X-Amz-Signature" not in str(caught.value)
+
+
+def test_a_stalled_error_body_is_still_reported_as_its_status(monkeypatch):
+    """`answer.read()` runs inside the HTTPError handler, where a
+    sibling except clause cannot reach it. A 5xx whose body stalls --
+    a cold Lambda -- would otherwise skip the retry and crash."""
+
+    class Stalled(urllib.error.HTTPError):
+        def read(self, *args):
+            raise TimeoutError("timed out")
+
+    stalled = Stalled(
+        url="http://alb.example/api/guides",
+        code=503,
+        msg="unavailable",
+        hdrs=email.message.Message(),
+        fp=None,
+    )
+
+    class Opener:
+        def open(self, *args, **kwargs):
+            raise stalled
+
+    monkeypatch.setattr(verify.urllib.request, "build_opener", lambda *a: Opener())
+
+    status, _, body = verify._fetch("GET", "http://alb.example/api/guides", 2)
+
+    assert (status, body) == (503, b"")
+
+
+def test_a_mistyped_attempt_count_does_not_crash():
+    """`--attempts 0` would leave the retry returning None, and
+    unpacking that is a traceback rather than a verdict."""
+    answers = _answers({("GET", f"{BASE}/api/guides"): (500, {}, "")})
+
+    results = verify.run_checks(
+        _fetch_from(answers), BASE, attempts=0, delay=0, sleep=lambda _: None
+    )
+
+    assert results == [("the API answers", False, "HTTP 500")]
+
+
+def test_guides_that_are_not_objects_fail_cleanly():
+    """A list of strings is a broken API, so it has to name the check
+    rather than raise from `.get`."""
+    answers = _answers(
+        {
+            ("GET", f"{BASE}/api/guides"): (
+                200,
+                {},
+                json.dumps({"guides": ["floor", "door"]}),
+            )
+        }
+    )
+
+    verdicts = _verdicts(answers)
+
+    assert verdicts["the API answers"][0] is False
+
+
+def test_a_part_that_is_not_an_object_is_skipped_not_fatal():
+    answers = _answers(
+        {
+            ("GET", f"{BASE}/api/guides/floor/resolve"): (
+                200,
+                {},
+                json.dumps({"parts": ["junk", {"blueprint": {"id": "bp-1"}}]}),
+            )
+        }
+    )
+
+    verdicts = _verdicts(answers)
+
+    assert verdicts["a guide resolves"][0] is True
+
+
+def test_a_host_that_never_answers_times_out_rather_than_hanging(server):
+    """Without the timeout a blackholed ALB hangs the verify job to the
+    job default instead of failing, holding the deploy's concurrency
+    group with it."""
+    with pytest.raises(verify.Failed) as caught:
+        verify._fetch("GET", server + "/slow", 0.2)
+
+    assert "no answer" in str(caught.value)
+
+
+def test_the_request_carries_the_agent_the_range_and_the_body(server):
+    """A CDN may refuse urllib's default agent, the signature check
+    needs the Range to read one byte, and the write check has to be a
+    POST with a body or the 401 proves nothing."""
+    _, _, body = verify._fetch(
+        "POST",
+        server + "/echo",
+        5,
+        headers={"Range": "bytes=0-0"},
+        body=b'{"x": 1}',
+    )
+    sent = json.loads(body)
+
+    assert sent["method"] == "POST"
+    assert sent["agent"] == verify.AGENT
+    assert sent["range"] == "bytes=0-0"
+    assert sent["body"] == '{"x": 1}'
+
+
+def test_main_passes_the_retry_settings_and_the_scheme_through(monkeypatch):
+    """`main` could stop forwarding these and every check would still
+    pass: the default is one attempt, so cold starts would fail
+    releases and nothing here would say so."""
+    seen = {"urls": [], "sleeps": []}
+
+    def fake(method, url, timeout, headers=None, body=None):
+        seen["urls"].append(url)
+        return 500, {}, b""
+
+    monkeypatch.setattr(verify, "_fetch", fake)
+    monkeypatch.setattr(verify.time, "sleep", seen["sleeps"].append)
+
+    code = verify.main(
+        [
+            "--host",
+            "alb.example",
+            "--scheme",
+            "https",
+            "--attempts",
+            "3",
+            "--delay",
+            "7",
+        ]
+    )
+
+    assert code == 1
+    assert seen["urls"] == ["https://alb.example/api/guides"] * 3
+    assert seen["sleeps"] == [7.0, 7.0]
+
+
+def test_a_failure_stops_the_checks_after_it():
+    """Each check needs the one before, so running on would report
+    failures caused by the first rather than found independently."""
+    answers = _answers({("GET", f"{BASE}/api/blueprints/bp-1/download"): (404, {}, "")})
+
+    results = verify.run_checks(_fetch_from(answers), BASE)
+
+    assert [name for name, _, _ in results] == [
+        "the API answers",
+        "a guide resolves",
+        "a file is signed",
+    ]
+
+
+@pytest.mark.parametrize(
+    "document",
+    ['{"parts": null}', '{"parts": [{"blueprint": null}]}', "{}"],
+    ids=["parts-null", "blueprint-null", "no-parts-key"],
+)
+def test_a_resolve_missing_its_parts_fails_cleanly(document):
+    answers = _answers(
+        {("GET", f"{BASE}/api/guides/floor/resolve"): (200, {}, document)}
+    )
+
+    verdicts = _verdicts(answers)
+
+    assert verdicts["a guide resolves"][0] is False
+    assert "no blueprint" in verdicts["a guide resolves"][1]
