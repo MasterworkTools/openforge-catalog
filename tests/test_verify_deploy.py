@@ -196,7 +196,7 @@ def test_an_id_elsewhere_in_the_response_is_not_mistaken_for_a_part():
     assert verdicts["a file is signed"][0] is True
 
 
-@pytest.mark.parametrize("status", [404, 200, 500])
+@pytest.mark.parametrize("status", [404, 200, 500, 301, 307])
 def test_only_a_redirect_is_a_signed_download(status):
     """The route answers 404 rather than erroring when the Cloudflare
     endpoint is absent, so a redirect is the only pass."""
