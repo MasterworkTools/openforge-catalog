@@ -309,6 +309,8 @@ jobs:
     permissions:
       id-token: write
       contents: read
+    outputs:
+      api_host: ${{ steps.apply.outputs.api_host }}
     steps:
       - uses: actions/checkout@v6
 
@@ -330,34 +332,22 @@ jobs:
       # at a new image at all, so staging served a current frontend against a
       # nine-month-old backend.
       - name: tofu apply
+        id: apply
         working-directory: terraform/environments/staging
         run: |
           tofu init -input=false -lockfile=readonly
           tofu plan -input=false -no-color -var image_tag=${{ github.sha }} -out=tfplan
           tofu apply -input=false -auto-approve tfplan
 
-      # The app secret used to be read at plan time, so a bad one failed the
-      # plan. It is now read at cold start, and the lambda target group has no
-      # health check, so nothing else here would notice an API that starts by
-      # raising. `/health` is not routed through the ALB -- the listener rule
-      # forwards `/api/*` only -- and a 404 from this path means the fixtures
-      # left no guides behind.
-      - name: the API answers
-        working-directory: terraform/environments/staging
-        run: |
+          # Captured rather than echoed inline: the step's status would
+          # otherwise be the echo's, and a failed output would reach
+          # `verify` as an empty host.
           host=$(tofu output -raw api_alb_dns_name)
-          for attempt in 1 2 3 4 5 6; do
-            code=$(curl -s -o /dev/null -m 20 -w '%{http_code}' \
-              "http://$host/api/guides") || code=refused
-            if [ "$code" = 200 ]; then
-              echo "the API answered 200"
-              exit 0
-            fi
-            echo "attempt $attempt: $code"
-            sleep 10
-          done
-          echo "::error::the API did not answer 200; the new image is live"
-          exit 1
+          if [ -z "$host" ]; then
+            echo "::error::the state holds no ALB hostname to verify"
+            exit 1
+          fi
+          echo "api_host=$host" >> "$GITHUB_OUTPUT"
 
   frontend-deploy:
     name: Staging Frontend Deploy
@@ -422,3 +412,30 @@ jobs:
           aws s3 cp --recursive "s3://$BUCKET/$SHA" "s3://$BUCKET/current" --exclude "*.html"
           aws s3 cp --recursive "s3://$BUCKET/$SHA" "s3://$BUCKET/current" --exclude "*" --include "*.html"
           echo "Deployed to staging: current now serves $SHA"
+
+  verify:
+    name: Staging Verify
+    needs: [tofu-apply, frontend-deploy]
+    if: ${{ needs.frontend-deploy.result == 'success' }}
+    runs-on: ubuntu-latest
+    # Roughly twice the worst case, which is about four minutes: six
+    # retries of a 20s timeout, then four checks that do not retry. The
+    # cap is here because urllib's timeout is per socket operation, so a
+    # response that trickles is unbounded -- and this ref's concurrency
+    # group is held until the job ends.
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+
+      # Every step above can succeed over an API that answers 500 to
+      # everything: the lambda target group carries no health check, so
+      # the ALB never ejects the target. Read-only, and needs no
+      # credentials.
+      - name: The deployed API serves
+        env:
+          API_HOST: ${{ needs.tofu-apply.outputs.api_host }}
+        run: python3 scripts/verify_deploy.py --host "$API_HOST"
