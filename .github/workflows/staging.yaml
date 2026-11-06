@@ -418,6 +418,12 @@ jobs:
     needs: [tofu-apply, frontend-deploy]
     if: ${{ needs.frontend-deploy.result == 'success' }}
     runs-on: ubuntu-latest
+    # Roughly twice the worst case, which is about four minutes: six
+    # retries of a 20s timeout, then four checks that do not retry. The
+    # cap is here because urllib's timeout is per socket operation, so a
+    # response that trickles is unbounded -- and this ref's concurrency
+    # group is held until the job ends.
+    timeout-minutes: 10
     permissions:
       contents: read
     steps:

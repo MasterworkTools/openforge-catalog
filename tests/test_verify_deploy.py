@@ -14,7 +14,7 @@ import pathlib
 import threading
 import time
 import urllib.error
-from http.server import BaseHTTPRequestHandler, HTTPServer
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 import pytest
 
@@ -60,8 +60,12 @@ def _answers(overrides=None):
     return answers
 
 
-def _fetch_from(answers):
+def _fetch_from(answers, calls=None):
     def fetch(method, url, headers=None, body=None):
+        if calls is not None:
+            calls.append(
+                {"method": method, "url": url, "headers": headers or {}, "body": body}
+            )
         status, response_headers, text = answers[(method, url)]
         return status, response_headers, text.encode()
 
@@ -73,10 +77,20 @@ def _verdicts(answers):
     return {name: (ok, detail) for name, ok, detail in results}
 
 
-def _run(answers, monkeypatch, argv=("--host", "alb.example")):
+def _run(answers, monkeypatch, argv=("--host", "alb.example"), calls=None):
     """`main`, with the network replaced."""
 
     def fake(method, url, timeout, headers=None, body=None):
+        if calls is not None:
+            calls.append(
+                {
+                    "method": method,
+                    "url": url,
+                    "timeout": timeout,
+                    "headers": headers or {},
+                    "body": body,
+                }
+            )
         status, response_headers, text = answers[(method, url)]
         return status, response_headers, text.encode()
 
@@ -111,26 +125,15 @@ def test_a_dead_api_makes_the_job_fail(monkeypatch):
     assert _run(answers, monkeypatch) == 1
 
 
-def test_guides_served_empty_is_a_failure():
-    """A 200 with nothing in it means the fixtures did not land."""
-    answers = _answers(
-        {("GET", f"{BASE}/api/guides"): (200, {}, json.dumps({"guides": []}))}
-    )
-
-    verdicts = _verdicts(answers)
-
-    assert verdicts["the API answers"][0] is False
-    assert "no guides" in verdicts["the API answers"][1]
-
-
 @pytest.mark.parametrize(
     "body,says",
     [
         ("<html>a gateway error page</html>", "not JSON"),
         ("[]", "not an object"),
         ('{"guides": "floor"}', "no guides"),
+        ('{"guides": []}', "no guides"),
     ],
-    ids=["not-json", "json-but-a-list", "guides-not-a-list"],
+    ids=["not-json", "json-but-a-list", "guides-not-a-list", "guides-empty"],
 )
 def test_a_body_that_is_not_what_it_should_be_fails_cleanly(body, says):
     """Cleanly means naming the check rather than raising: a traceback
@@ -256,27 +259,20 @@ def test_only_an_absolute_https_r2_url_is_accepted(location, expected):
     assert "sig=abc" not in detail
 
 
-def test_credentials_r2_refuses_are_caught_despite_a_good_redirect():
-    """The check that earns its place: bad Cloudflare values still
-    produce a 302, and only R2's answer tells them apart."""
-    answers = _answers({("GET", SIGNED): (403, {}, "")})
+@pytest.mark.parametrize("status", [403, 301, 302, 404, 500])
+def test_only_a_served_byte_counts_as_a_good_signature(status):
+    """The check that earns its place: bad Cloudflare credentials still
+    produce a 302, and only R2's answer tells them apart. So the
+    redirect step has to pass while this one fails."""
+    answers = _answers({("GET", SIGNED): (status, {}, "")})
 
     verdicts = _verdicts(answers)
 
     assert verdicts["a file is signed"][0] is True
     assert verdicts["the signature is good"] == (
         False,
-        "R2 answered 403 for the signed URL",
+        f"R2 answered {status} for the signed URL",
     )
-
-
-@pytest.mark.parametrize("status", [301, 302, 404, 500])
-def test_only_a_served_byte_counts_as_a_good_signature(status):
-    answers = _answers({("GET", SIGNED): (status, {}, "")})
-
-    verdicts = _verdicts(answers)
-
-    assert verdicts["the signature is good"][0] is False
 
 
 @pytest.mark.parametrize("status", [201, 200, 403, 500])
@@ -395,7 +391,10 @@ class _Handler(BaseHTTPRequestHandler):
 
 @pytest.fixture(scope="module")
 def server():
-    httpd = HTTPServer(("127.0.0.1", 0), _Handler)
+    # Threading, so `/slow` sleeping past its client's timeout does not
+    # make the next test queue behind it.
+    httpd = ThreadingHTTPServer(("127.0.0.1", 0), _Handler)
+    httpd.daemon_threads = True
     thread = threading.Thread(target=httpd.serve_forever, daemon=True)
     thread.start()
     yield f"http://127.0.0.1:{httpd.server_port}"
@@ -619,3 +618,63 @@ def test_a_resolve_missing_its_parts_fails_cleanly(document):
 
     assert verdicts["a guide resolves"][0] is False
     assert "no blueprint" in verdicts["a guide resolves"][1]
+
+
+@pytest.mark.parametrize(
+    "broken",
+    [
+        {("GET", f"{BASE}/api/guides/floor/resolve"): (500, {}, "")},
+        {("GET", f"{BASE}/api/blueprints/bp-1/download"): (404, {}, "")},
+        {("GET", SIGNED): (403, {}, "")},
+        {("POST", f"{BASE}/api/blueprints"): (201, {}, "")},
+    ],
+    ids=["resolve", "download", "signature", "write"],
+)
+def test_a_failure_at_any_step_makes_the_job_fail(broken, monkeypatch):
+    """Not only the first one. `any` in place of `all` would print
+    "every check passed" and exit 0 for every failure after step 1,
+    which is the green-over-broken deploy this exists to stop."""
+    assert _run(_answers(broken), monkeypatch) == 1
+
+
+def test_each_check_sends_what_it_needs_to_mean_anything():
+    """Without the Range the signature check downloads a whole STL, and
+    without a POST body the 401 proves nothing about the write path."""
+    calls = []
+
+    verify.run_checks(_fetch_from(_answers(), calls), BASE)
+    sent = {(call["method"], call["url"]): call for call in calls}
+
+    assert sent[("GET", SIGNED)]["headers"]["Range"] == "bytes=0-0"
+    write = sent[("POST", f"{BASE}/api/blueprints")]
+    assert write["body"] == b"{}"
+    assert write["headers"]["Content-Type"] == "application/json"
+
+
+def test_main_hands_the_timeout_and_the_pieces_to_each_request(monkeypatch):
+    """`main` wraps `_fetch` to bind the timeout. A wrapper that
+    swapped the headers and body, or pinned its own timeout, would
+    leave every check passing."""
+    calls = []
+
+    _run(
+        _answers(),
+        monkeypatch,
+        argv=("--host", "alb.example", "--timeout", "7"),
+        calls=calls,
+    )
+
+    assert {call["timeout"] for call in calls} == {7.0}
+    write = next(call for call in calls if call["method"] == "POST")
+    assert write["body"] == b"{}"
+    assert write["headers"]["Content-Type"] == "application/json"
+
+
+def test_the_default_timeout_is_short_enough_to_be_a_timeout(monkeypatch):
+    """The Lambda's own limit is 30s, so a client default above that
+    would never fire."""
+    calls = []
+
+    _run(_answers(), monkeypatch, calls=calls)
+
+    assert {call["timeout"] for call in calls} == {20.0}
