@@ -330,7 +330,16 @@ jobs:
           tofu init -input=false -lockfile=readonly
           tofu plan -input=false -no-color -var image_tag=${{ github.sha }} -out=tfplan
           tofu apply -input=false -auto-approve tfplan
-          echo "api_host=$(tofu output -raw api_alb_dns_name)" >> "$GITHUB_OUTPUT"
+
+          # Captured rather than echoed inline: the step's status would
+          # otherwise be the echo's, and a failed output would reach
+          # `verify` as an empty host.
+          host=$(tofu output -raw api_alb_dns_name)
+          if [ -z "$host" ]; then
+            echo "::error::the state holds no ALB hostname to verify"
+            exit 1
+          fi
+          echo "api_host=$host" >> "$GITHUB_OUTPUT"
 
   frontend-deploy:
     name: Production Frontend Deploy
@@ -397,14 +406,18 @@ jobs:
     needs: [tofu-apply, frontend-deploy]
     if: ${{ needs.frontend-deploy.result == 'success' }}
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
 
       # Every step above can succeed over an API that answers 500 to
-      # everything: the lambda target group carries no health check, and
-      # lambda target groups have them off by default, so the ALB never
-      # ejects the target. Read-only, and needs no credentials.
+      # everything: the lambda target group carries no health check, so
+      # the ALB never ejects the target. Read-only, and needs no
+      # credentials.
       - name: The deployed API serves
-        run: |
-          python3 scripts/verify_deploy.py \
-            --host "${{ needs.tofu-apply.outputs.api_host }}"
+        env:
+          API_HOST: ${{ needs.tofu-apply.outputs.api_host }}
+        run: python3 scripts/verify_deploy.py --host "$API_HOST"

@@ -2,27 +2,24 @@
 """Ask a deployed API whether it actually works, and fail if it does not.
 
 The deploy chain is green when every step succeeded, which is not the
-same as the API serving. Nothing else notices an API that starts by
-raising: the lambda target group carries no health check, and lambda
-target groups have them off by default, so the ALB keeps routing to a
-function returning 500.
+same as the API serving. The lambda target group carries no health
+check, so nothing else notices an API that starts by raising: the ALB
+keeps routing to a function returning 500.
 
 Stdlib only. The deploy jobs have no virtualenv and install nothing.
-
-Never prints a signed URL. The signature and access key live in the
-query string, so every URL is reduced to its host before it is logged.
 """
 
 import argparse
 import json
 import sys
+import time
 import urllib.error
 import urllib.request
 from urllib.parse import urlsplit
 
-# `/health` is not routed through the ALB -- the listener rule forwards
-# `/api/*` only -- so a probe of it reports the listener's fixed 404
-# whatever the app is doing.
+# `/health` is not routed through the ALB: the listener rule forwards
+# `/api/*` only, so probing it reports the listener's fixed 404 whatever
+# the app is doing.
 GUIDES = "/api/guides"
 
 R2_SUFFIX = ".r2.cloudflarestorage.com"
@@ -32,6 +29,14 @@ R2_SUFFIX = ".r2.cloudflarestorage.com"
 AGENT = "openforge-catalog-deploy-verify"
 
 
+class Failed(Exception):
+    """A check that did not pass.
+
+    The message is logged, so it must never carry a URL: the download
+    redirect is presigned and its signature rides in the query string.
+    """
+
+
 class _NoRedirect(urllib.request.HTTPRedirectHandler):
     """A 302 is the result here, not something to follow."""
 
@@ -39,20 +44,48 @@ class _NoRedirect(urllib.request.HTTPRedirectHandler):
         return None
 
 
+def _lower(headers):
+    """Header names folded, because a response may spell them either way."""
+    return {name.lower(): value for name, value in headers.items()}
+
+
 def _fetch(method, url, timeout, headers=None, body=None):
-    """Status, headers and body, with an HTTP error being an answer."""
-    request = urllib.request.Request(
-        url,
-        method=method,
-        data=body,
-        headers={"User-Agent": AGENT, **(headers or {})},
-    )
-    opener = urllib.request.build_opener(_NoRedirect)
+    """Status, headers and body. An HTTP error is an answer; nothing else.
+
+    A transport failure raises `Failed` rather than propagating, both so
+    a cold start can be retried and so no exception quoting the URL can
+    reach a log. `URLError.reason` is the underlying socket error and
+    never holds the URL; for anything else only the type is named.
+    """
     try:
+        # Inside the try: a malformed URL raises here, from a ValueError
+        # that quotes the whole URL.
+        request = urllib.request.Request(
+            url,
+            method=method,
+            data=body,
+            headers={"User-Agent": AGENT, **(headers or {})},
+        )
+        opener = urllib.request.build_opener(_NoRedirect)
         with opener.open(request, timeout=timeout) as response:
-            return response.status, dict(response.headers), response.read()
-    except urllib.error.HTTPError as caught:
-        return caught.code, dict(caught.headers), caught.read()
+            return response.status, _lower(response.headers), response.read()
+    except urllib.error.HTTPError as answer:
+        return answer.code, _lower(answer.headers), answer.read()
+    except urllib.error.URLError as broken:
+        raise Failed(f"no answer: {broken.reason}") from None
+    except Exception as broken:
+        raise Failed(f"no answer: {type(broken).__name__}") from None
+
+
+def _document(body):
+    """A JSON object, or a failure saying what arrived instead."""
+    try:
+        document = json.loads(body)
+    except ValueError:
+        raise Failed("answered 200 with a body that is not JSON") from None
+    if not isinstance(document, dict):
+        raise Failed("answered 200 with JSON that is not an object") from None
+    return document
 
 
 def _host_of(url):
@@ -64,12 +97,12 @@ def _host_of(url):
 def _guides(fetch, base):
     status, _, body = fetch("GET", base + GUIDES)
     if status != 200:
-        return False, f"HTTP {status}", None
-    guides = json.loads(body).get("guides") or []
-    if not guides:
-        return False, "answered 200 with no guides", None
-    keys = sorted(g.get("guide_key", "?") for g in guides)
-    return True, f"{len(guides)} guides: {', '.join(keys)}", guides[0]
+        raise Failed(f"HTTP {status}")
+    guides = _document(body).get("guides")
+    if not isinstance(guides, list) or not guides:
+        raise Failed("answered 200 with no guides")
+    keys = sorted(str(guide.get("guide_key", "?")) for guide in guides)
+    return guides[0], f"{len(guides)} guides: {', '.join(keys)}"
 
 
 def _blueprint_id(fetch, base, guide):
@@ -81,43 +114,33 @@ def _blueprint_id(fetch, base, guide):
     key = guide.get("guide_key")
     status, _, body = fetch("GET", f"{base}/api/guides/{key}/resolve")
     if status != 200:
-        return False, f"resolve {key}: HTTP {status}", None
-    found = _ids(json.loads(body), [])
-    if not found:
-        return False, f"resolve {key}: no blueprint in the parts", None
-    return True, f"resolved {key}", found[0]
-
-
-def _ids(node, out):
-    if isinstance(node, dict):
-        named = "full_name" in node or "name" in node
-        if "id" in node and named:
-            out.append(node["id"])
-        for value in node.values():
-            _ids(value, out)
-    elif isinstance(node, list):
-        for value in node:
-            _ids(value, out)
-    return out
+        raise Failed(f"resolve {key}: HTTP {status}")
+    for part in _document(body).get("parts") or []:
+        found = (part.get("blueprint") or {}).get("id")
+        if found:
+            return found, f"resolved {key}"
+    raise Failed(f"resolve {key}: no blueprint in the parts")
 
 
 def _signed_url(fetch, base, blueprint_id):
     """The download redirect, which needs the Cloudflare values.
 
     Without them the route answers 404 rather than erroring, so a
-    redirect is the positive result.
+    redirect is the positive result. The target has to be an absolute
+    https URL: a malformed one reaches urllib as a `ValueError` quoting
+    the whole presigned URL.
     """
     url = f"{base}/api/blueprints/{blueprint_id}/download"
     status, headers, _ = fetch("GET", url)
     if status != 302:
-        return False, f"HTTP {status}, expected 302", None
-    target = headers.get("Location", "")
-    if not target:
-        return False, "302 with no Location", None
-    host = _host_of(target)
-    if not urlsplit(target).netloc.endswith(R2_SUFFIX):
-        return False, f"redirect to {host}, not R2", None
-    return True, f"redirect to {host}", target
+        raise Failed(f"HTTP {status}, expected 302")
+    target = headers.get("location", "")
+    parts = urlsplit(target)
+    if parts.scheme != "https" or not parts.netloc:
+        raise Failed("302 to something that is not an absolute https URL")
+    if not parts.netloc.endswith(R2_SUFFIX):
+        raise Failed(f"redirect to {_host_of(target)}, not R2")
+    return target, f"redirect to {_host_of(target)}"
 
 
 def _r2_accepts(fetch, target):
@@ -128,8 +151,8 @@ def _r2_accepts(fetch, target):
     """
     status, _, _ = fetch("GET", target, headers={"Range": "bytes=0-0"})
     if status not in (200, 206):
-        return False, f"R2 answered {status} for the signed URL", None
-    return True, f"R2 served the signed URL ({status})", None
+        raise Failed(f"R2 answered {status} for the signed URL")
+    return None, f"R2 served the signed URL ({status})"
 
 
 def _rejects_anonymous(fetch, base):
@@ -145,53 +168,53 @@ def _rejects_anonymous(fetch, base):
         body=b"{}",
     )
     if status != 401:
-        return False, f"HTTP {status}, expected 401", None
-    return True, "401 without credentials", None
+        raise Failed(f"HTTP {status}, expected 401")
+    return None, "401 without credentials"
 
 
-def run_checks(fetch, base):
+def _retrying(call, attempts, delay, sleep):
+    """The first answer, retried: a cold start is not a broken deploy."""
+    for attempt in range(1, attempts + 1):
+        try:
+            return call()
+        except Failed as failure:
+            if attempt == attempts:
+                raise
+            print(f"  attempt {attempt}: {failure}", flush=True)
+            sleep(delay)
+
+
+def run_checks(fetch, base, attempts=1, delay=0.0, sleep=time.sleep):
     """Every check, in order, each needing what came before it.
 
-    Returns a list of (name, ok, detail). Stops at the first failure,
-    because each later check needs the previous one's result.
+    Returns a list of (name, ok, detail) and stops at the first failure,
+    because a later check cannot run without an earlier one's result.
     """
     results = []
 
-    ok, detail, guide = _guides(fetch, base)
-    results.append(("the API answers", ok, detail))
-    if not ok:
-        return results
+    def step(name, call, *args):
+        try:
+            value, detail = call(*args)
+        except Failed as failure:
+            results.append((name, False, str(failure)))
+            print(f"  FAIL {name}: {failure}", flush=True)
+            raise
+        results.append((name, True, detail))
+        print(f"  ok   {name}: {detail}", flush=True)
+        return value
 
-    ok, detail, blueprint_id = _blueprint_id(fetch, base, guide)
-    results.append(("a guide resolves", ok, detail))
-    if not ok:
-        return results
+    def answer_or_retry():
+        return _retrying(lambda: _guides(fetch, base), attempts, delay, sleep)
 
-    ok, detail, target = _signed_url(fetch, base, blueprint_id)
-    results.append(("a file is signed", ok, detail))
-    if not ok:
-        return results
-
-    ok, detail, _ = _r2_accepts(fetch, target)
-    results.append(("the signature is good", ok, detail))
-    if not ok:
-        return results
-
-    ok, detail, _ = _rejects_anonymous(fetch, base)
-    results.append(("anonymous writes are refused", ok, detail))
+    try:
+        guide = step("the API answers", answer_or_retry)
+        found = step("a guide resolves", _blueprint_id, fetch, base, guide)
+        target = step("a file is signed", _signed_url, fetch, base, found)
+        step("the signature is good", _r2_accepts, fetch, target)
+        step("anonymous writes are refused", _rejects_anonymous, fetch, base)
+    except Failed:
+        pass
     return results
-
-
-def _wait_for_the_api(fetch, base, attempts, delay, sleep):
-    """The first answer, retried, because a cold start is not a failure."""
-    for attempt in range(1, attempts + 1):
-        ok, detail, _ = _guides(fetch, base)
-        if ok:
-            return True
-        print(f"  attempt {attempt}: {detail}", flush=True)
-        if attempt < attempts:
-            sleep(delay)
-    return False
 
 
 def main(argv=None):
@@ -203,7 +226,9 @@ def main(argv=None):
     parser.add_argument("--delay", type=float, default=10.0)
     args = parser.parse_args(argv)
 
-    import time
+    if not args.host.strip():
+        print("::error::no API hostname was given")
+        return 1
 
     base = f"{args.scheme}://{args.host}"
 
@@ -211,15 +236,8 @@ def main(argv=None):
         return _fetch(method, url, args.timeout, headers, body)
 
     print(f"verifying {base}", flush=True)
-    if not _wait_for_the_api(fetch, base, args.attempts, args.delay, time.sleep):
-        print("::error::the API never answered")
-        return 1
-
-    failed = False
-    for name, ok, detail in run_checks(fetch, base):
-        print(f"  {'ok  ' if ok else 'FAIL'} {name}: {detail}", flush=True)
-        failed = failed or not ok
-    if failed:
+    results = run_checks(fetch, base, args.attempts, args.delay, time.sleep)
+    if not results or not all(ok for _, ok, _ in results):
         print("::error::the deployed API is not serving correctly")
         return 1
     print("every check passed", flush=True)
