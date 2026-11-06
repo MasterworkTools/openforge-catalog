@@ -386,6 +386,8 @@ jobs:
         run: npm run build
 
       # The build is environment-agnostic; this is what makes staging say so.
+      # BASE_GENERATOR_URL points at the production openscad on purpose: there
+      # is no staging one, and a second is not worth paying for.
       - name: Write staging runtime config
         run: |
           cat > out/app-config.json <<'JSON'
