@@ -20,7 +20,7 @@ Whole-PR generalist review. This repo has no Gemini Code Assist or Cursor Bugbot
 **Do NOT flag:**
 
 - Anything a specialist owns: complexity, exception handling, test coverage, resource leaks, dead code, logging, package-data loading, migration mechanics, serverless cost, frontend conventions, hooks/async, credentials.
-- Comment, docstring or PR-body wording — `comment-analyzer` owns it. A docstring that contradicts the code is in scope as a *logic* finding about the code.
+- Comment and docstring wording — `comment-analyzer` owns it. PR-body wording is P3 for every reviewer under `.reviewers/README.md`, so it is not a finding here either. A docstring that contradicts the code is in scope as a *logic* finding about the code.
 - A design the PR body, a ticket or `CLAUDE.md` states as Devon's decision. Evidence that the code does not do what the decision says is a finding; an argument that the decision is wrong is not.
 - What CI enforces: ruff, ESLint, `tsc`, the test suites.
 - A future-ticket conflict you cannot quote from the ticket.
