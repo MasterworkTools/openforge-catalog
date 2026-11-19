@@ -358,9 +358,7 @@ jobs:
         with:
           node-version: '22'
 
-      # npm, not pnpm: package-lock.json is the only lockfile in this repo, so pnpm
-      # resolved newer deps than the tests run against and the build failed on React
-      # Compiler lint errors that never reach the test jobs.
+      # npm, not pnpm: package-lock.json is the only lockfile in this repo.
       - name: Install dependencies
         run: npm ci
 
