@@ -16,7 +16,8 @@ class PgDB:
         if use_pool:
             # Lambda serves one request per container and the pool fills
             # to min_size eagerly, so the library default would hold
-            # idle Aurora sessions for the container's whole life.
+            # idle Aurora sessions for the container's whole life. The
+            # spare slot is for the threaded dev server, not Lambda.
             self.pool = ConnectionPool(
                 self.database_url, open=True, min_size=1, max_size=2
             )
