@@ -10,16 +10,6 @@ from psycopg_pool import PoolTimeout
 from openforge.db import PgDB, db_url
 
 
-def _db_env():
-    """The environment without LOG_LEVEL.
-
-    `db_url` sets the `openforge.db` logger level from it, and app init
-    has `load_dotenv`'d it in by now, so passing it would leave that
-    logger reconfigured for every test that runs after this one.
-    """
-    return {k: v for k, v in os.environ.items() if k != "LOG_LEVEL"}
-
-
 def _pids(control, dbname):
     with control.cursor() as curs:
         curs.execute("SELECT pid FROM pg_stat_activity WHERE datname = %s", (dbname,))
@@ -51,7 +41,7 @@ def test_the_pool_holds_one_connection(test_db):
     whether or not `close()` ran, without setting `closed`, so that flag
     is the only thing that distinguishes them.
     """
-    env = _db_env()
+    env = os.environ
     dbname = env["PGDATABASE"]
     with connect(db_url(env), autocommit=True) as control:
         before = _pids(control, dbname)
@@ -69,7 +59,7 @@ def test_the_pool_holds_one_connection(test_db):
 
 
 def test_the_pool_will_not_grow_past_two(test_db):
-    env = _db_env()
+    env = os.environ
     dbname = env["PGDATABASE"]
     with connect(db_url(env), autocommit=True) as control:
         before = _pids(control, dbname)

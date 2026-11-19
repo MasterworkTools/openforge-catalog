@@ -11,6 +11,8 @@ point the handler at a small set of files it builds itself.
 """
 
 import json
+import logging
+import os
 from pathlib import Path
 from unittest.mock import patch
 
@@ -424,3 +426,15 @@ def test_a_duplicate_counts_as_answerable(test_db, blueprint_fixture, monkeypatc
         with conn.cursor(row_factory=dict_row) as curs:
             curs.execute("SELECT count(*) AS n FROM blueprints WHERE NOT deprecated")
             assert curs.fetchone()["n"] == 1
+
+
+def test_the_handler_sets_the_db_log_level(test_db, blueprint_fixture, monkeypatch):
+    f = blueprint_fixture([_item("tiles/h/a.stl", "M_a")])
+    monkeypatch.setattr(handler, "find_fixtures", lambda _: [f])
+    monkeypatch.setattr(handler, "PgDB", lambda *a, **k: test_db)
+    monkeypatch.setitem(os.environ, "LOG_LEVEL", "WARNING")
+    logging.getLogger("openforge.db").setLevel(logging.NOTSET)
+
+    handler.lambda_handler({}, None)
+
+    assert logging.getLogger("openforge.db").level == logging.WARNING

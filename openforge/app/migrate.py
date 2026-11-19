@@ -29,7 +29,7 @@ import os
 
 import psycopg
 
-from openforge.db import PgDB
+from openforge.db import PgDB, set_log_level
 from openforge.db.schema import get_schema_versions
 
 
@@ -98,6 +98,7 @@ def _apply(db, versions):
 
 
 def lambda_handler(event, context):
+    set_log_level(os.environ)
     db = PgDB(os.environ, use_pool=False)
 
     # Checked before anything touches the database, and named for what it is.

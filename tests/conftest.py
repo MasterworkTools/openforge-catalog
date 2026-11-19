@@ -35,6 +35,20 @@ os.environ.setdefault("PGHOST", "localhost")
 os.environ.setdefault("PGPORT", "5432")
 
 
+@pytest.fixture(autouse=True)
+def contain_db_log_level():
+    """Keep one test's log level out of the next one's.
+
+    Entry points set the `openforge.db` level, and `logging` is process-wide,
+    so without this one test's level reaches every later test. `caplog` cannot
+    mask it: it sets root, not this logger.
+    """
+    logger = logging.getLogger("openforge.db")
+    before = logger.level
+    yield
+    logger.setLevel(before)
+
+
 @pytest.fixture(scope="session")
 def test_db():
     """Create a test database connection and run migrations in the public schema"""

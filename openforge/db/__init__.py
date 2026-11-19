@@ -10,8 +10,8 @@ LOGGER = logging.getLogger(__name__)
 
 
 class PgDB:
-    def __init__(self, vars, ext_logger=None, use_pool=True):
-        self.database_url = db_url(vars, ext_logger)
+    def __init__(self, vars, *, use_pool=True):
+        self.database_url = db_url(vars)
         self.use_pool = use_pool
         if use_pool:
             # Lambda serves one request per container and the pool fills
@@ -57,7 +57,7 @@ class PgDB:
                 pass
 
 
-def db_url(vars, ext_logger=None):
+def db_url(vars):
     args = {
         "user": "openforge",
         "database": "openforge",
@@ -65,7 +65,6 @@ def db_url(vars, ext_logger=None):
         "host": "localhost",
         "port": 5432,
     }
-    LOGGER = ext_logger if ext_logger else logging.getLogger(__name__)
     if "PGUSER" in vars:
         args["user"] = vars["PGUSER"]
     if "PGPASSWORD" in vars:
@@ -78,8 +77,6 @@ def db_url(vars, ext_logger=None):
         args["port"] = vars["PGPORT"]
     if "PGDATABASE" in vars:
         args["database"] = vars["PGDATABASE"]
-    if "LOG_LEVEL" in vars:
-        LOGGER.setLevel(vars["LOG_LEVEL"])
 
     # libpq percent-decodes the URI, so a password containing '%' must be encoded.
     password = quote(args["password"], safe="")
@@ -109,3 +106,13 @@ def get_logger():
     if current_app:
         return current_app.logger
     return LOGGER
+
+
+def set_log_level(vars):
+    """Set the `openforge.db` logger's level from LOG_LEVEL.
+
+    Nothing else sets it: with no Flask app, `get_logger()` returns this
+    module's logger. Entry points call this; `db_url` deliberately does not.
+    """
+    if "LOG_LEVEL" in vars:
+        LOGGER.setLevel(vars["LOG_LEVEL"])
