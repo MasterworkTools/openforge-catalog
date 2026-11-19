@@ -1,7 +1,7 @@
-"""The `bin/` tools set the `openforge.db` log level; nothing else does.
+"""The two `bin/` database tools set the `openforge.db` log level.
 
-These two are the only `bin/` tools under test. They are extensionless click
-scripts, so they are loaded by path rather than imported.
+They are extensionless click scripts, so they are loaded by path rather than
+imported.
 """
 
 import importlib.machinery
@@ -34,11 +34,7 @@ def test_db_update_sets_the_db_log_level(test_db, monkeypatch):
 
 
 def test_fixtures_sets_the_db_log_level(test_db, monkeypatch):
-    """Invoked with a fixture that does not exist, so it loads nothing.
-
-    The level is set before any of that, which is the point here; exiting
-    non-zero on an unknown fixture is pinned at the same time.
-    """
+    """Invoked with a fixture that does not exist, so it loads nothing."""
     monkeypatch.setitem(os.environ, "LOG_LEVEL", "WARNING")
     logging.getLogger("openforge.db").setLevel(logging.NOTSET)
 
@@ -46,5 +42,7 @@ def test_fixtures_sets_the_db_log_level(test_db, monkeypatch):
         _load("fixtures").main, ["--fixture", "no-such-fixture.json"]
     )
 
+    assert isinstance(result.exception, SystemExit)
     assert result.exit_code == 1
+    assert "not found in fixtures directory" in result.output
     assert logging.getLogger("openforge.db").level == logging.WARNING
