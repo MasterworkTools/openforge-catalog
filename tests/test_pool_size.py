@@ -31,20 +31,24 @@ def test_the_pool_holds_one_connection(test_db):
     Counts new backend pids rather than a total, so an unrelated session
     on the same database does not change the result. The control
     connection is autocommit because `pg_stat_activity` is snapshotted
-    for the transaction.
+    for the transaction. The pool is held in a local because `close()`
+    drops the attribute, and the finalizer would then close the pool for
+    us — leaving the backend gone whether or not `close()` did it.
     """
     env = _db_env()
     dbname = env["PGDATABASE"]
     with connect(db_url(env), autocommit=True) as control:
         before = _pids(control, dbname)
         db = PgDB(env)
+        pool = db.pool
         try:
-            db.pool.wait(timeout=10)
+            pool.wait(timeout=10)
             opened = _pids(control, dbname) - before
         finally:
             db.close()
 
         assert len(opened) == 1
+        assert pool.closed
         assert _pids(control, dbname) & opened == set()
 
 
