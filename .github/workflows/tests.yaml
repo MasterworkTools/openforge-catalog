@@ -17,7 +17,8 @@ jobs:
     runs-on: ubuntu-latest
     services:
       postgres:
-        image: postgres:latest
+        # The major Aurora runs. Minors float, as they do there.
+        image: postgres:15
         env:
           POSTGRES_USER: openforge
           POSTGRES_PASSWORD: openforge
