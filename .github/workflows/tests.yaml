@@ -3,9 +3,6 @@ name: Tests
 # The four test jobs, defined once. The Test, Staging and Production
 # workflows all call this, so a gate added here applies to all three and any
 # one sha is tested once.
-#
-# A called workflow inherits neither `permissions` nor `defaults` from its
-# caller, so both are set here.
 on:
   workflow_call:
 

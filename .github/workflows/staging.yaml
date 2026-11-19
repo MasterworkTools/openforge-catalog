@@ -92,8 +92,7 @@ jobs:
       # `aws_lambda_function` waits for LastUpdateStatus=Successful, so a single
       # apply would put the new API image live *before* the migrate job ran —
       # /api/* serving new code against the old schema, which is the unhandled
-      # 500 this step exists to prevent. The frontend was already gated; the API
-      # image never was.
+      # 500 this step exists to prevent.
       #
       # So: move only the migration function first (-target pulls in its role and
       # log group), let the migrate job run against it, then apply everything else
