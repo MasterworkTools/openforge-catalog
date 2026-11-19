@@ -3,7 +3,7 @@ import os
 
 import click
 
-from openforge.db import PgDB
+from openforge.db import PgDB, set_log_level
 from openforge.db.schema import (
     get_current_schema_version,
     get_schema_versions,
@@ -16,6 +16,7 @@ from openforge.db.schema import (
 def cli(ctx, debug):
     ctx.ensure_object(dict)
     ctx.obj["debug"] = debug
+    set_log_level(os.environ)
 
 
 @cli.command()

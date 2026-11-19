@@ -7,8 +7,6 @@ through the migration system itself, so they stay version-agnostic and
 exercise the `down_impl` they stand in for.
 """
 
-import logging
-
 import psycopg
 import pytest
 from psycopg import sql
@@ -16,31 +14,6 @@ from psycopg.rows import dict_row
 
 from openforge.app import migrate
 from openforge.db.schema import get_schema_versions
-
-
-@pytest.fixture(autouse=True)
-def restore_db_log_level():
-    """Put the `openforge.db` logger back, because these tests move it.
-
-    `PgDB(os.environ)` is what the handler does in production, and `db_url`
-    sets the logger's level from `LOG_LEVEL` as a side effect of building the
-    URL. `init_app()` calls `load_dotenv()`, so once any earlier test has
-    built the app, a developer's `.env` has put `LOG_LEVEL=DEBUG` into the
-    environment — and the first `PgDB` built after that pins this logger at
-    DEBUG for the rest of the session.
-
-    That broke `test_tags_sql.py`'s
-    `test_a_query_is_not_rendered_when_nothing_is_listening` from two files
-    away: it gates on the effective level, and `caplog.at_level(WARNING)`
-    sets root, which cannot mask a level set on the logger itself.
-
-    Invisible in CI, which has no `.env` — so the suite was green there and
-    red locally, on state no assertion mentions (openforge_catalog-4ea).
-    """
-    logger = logging.getLogger("openforge.db")
-    before = logger.level
-    yield
-    logger.setLevel(before)
 
 
 def _schema_shape(db):

@@ -4,7 +4,7 @@ import sys
 
 import click
 
-from openforge.db import PgDB
+from openforge.db import PgDB, set_log_level
 from openforge.db.fixtures import find_fixtures, load_fixtures
 
 
@@ -19,6 +19,7 @@ from openforge.db.fixtures import find_fixtures, load_fixtures
 @click.option("--dry-run", is_flag=True, help="Preview changes without applying")
 @click.option("--verbose", is_flag=True, help="Enable verbose debug output")
 def main(alt, fixture, full_replacement, dry_run, verbose):
+    set_log_level(os.environ)
     with PgDB(os.environ) as db:
         with db.pool.connection() as conn:
             if fixture:

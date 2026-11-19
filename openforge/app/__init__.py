@@ -73,7 +73,7 @@ def init_app(app: Flask):
 
     # Use pool-less mode for testing to avoid logging errors during cleanup
     use_pool = not app.config.get("TESTING", False)
-    db = PgDB(os.environ, app.logger, use_pool=use_pool)
+    db = PgDB(os.environ, use_pool=use_pool)
     app.config["API_TOKEN"] = setting("API_TOKEN", "1234567890")
     app.config["SECRET_KEY"] = setting("SECRET_KEY")
     if not app.config["SECRET_KEY"]:

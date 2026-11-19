@@ -32,7 +32,7 @@ import os
 
 from yaml import safe_load
 
-from openforge.db import PgDB
+from openforge.db import PgDB, set_log_level
 from openforge.db.fixtures import (
     _get_fixture_type,
     check_guide_fixture,
@@ -171,6 +171,7 @@ def _moved_blueprints(results):
 
 def lambda_handler(event, context):
     fixture = (event or {}).get("fixture")
+    set_log_level(os.environ)
     db = PgDB(os.environ, use_pool=False)
     files = _fixture_files(fixture)
 

@@ -35,6 +35,23 @@ os.environ.setdefault("PGHOST", "localhost")
 os.environ.setdefault("PGPORT", "5432")
 
 
+@pytest.fixture(autouse=True)
+def contain_db_log_level():
+    """Keep one test's log level out of the next one's.
+
+    The migrate and loader entry points set the `openforge.db` level from
+    LOG_LEVEL, which is what they are supposed to do — but `logging` is
+    process-wide, so invoking one in a test would otherwise pin that level for
+    the rest of the session. `test_tags_sql.py` gates on the effective level,
+    and `caplog.at_level` sets root, which cannot mask a level set on the
+    logger itself.
+    """
+    logger = logging.getLogger("openforge.db")
+    before = logger.level
+    yield
+    logger.setLevel(before)
+
+
 @pytest.fixture(scope="session")
 def test_db():
     """Create a test database connection and run migrations in the public schema"""
