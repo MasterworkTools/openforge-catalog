@@ -429,11 +429,6 @@ def test_a_duplicate_counts_as_answerable(test_db, blueprint_fixture, monkeypatc
 
 
 def test_the_handler_sets_the_db_log_level(test_db, blueprint_fixture, monkeypatch):
-    """This Lambda has no Flask app, so nothing else gives that logger a level.
-
-    `get_logger()` falls back to the `openforge.db` logger without an app
-    context, and the handler is the only caller positioned to configure it.
-    """
     f = blueprint_fixture([_item("tiles/h/a.stl", "M_a")])
     monkeypatch.setattr(handler, "find_fixtures", lambda _: [f])
     monkeypatch.setattr(handler, "PgDB", lambda *a, **k: test_db)

@@ -519,11 +519,6 @@ def test_each_migration_runs_with_a_bounded_lock_wait(test_db, monkeypatch):
 
 
 def test_the_handler_sets_the_db_log_level(test_db, monkeypatch):
-    """This Lambda has no Flask app, so nothing else gives that logger a level.
-
-    `get_logger()` falls back to the `openforge.db` logger without an app
-    context, and the handler is the only caller positioned to configure it.
-    """
     monkeypatch.setitem(os.environ, "LOG_LEVEL", "WARNING")
     logging.getLogger("openforge.db").setLevel(logging.NOTSET)
 

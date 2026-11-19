@@ -10,7 +10,7 @@ LOGGER = logging.getLogger(__name__)
 
 
 class PgDB:
-    def __init__(self, vars, use_pool=True):
+    def __init__(self, vars, *, use_pool=True):
         self.database_url = db_url(vars)
         self.use_pool = use_pool
         if use_pool:
@@ -111,9 +111,8 @@ def get_logger():
 def set_log_level(vars):
     """Set the `openforge.db` logger's level from LOG_LEVEL.
 
-    For entry points with no Flask app -- the migrate and loader Lambdas and
-    the `bin/` tools -- `get_logger()` returns this module's logger, and this
-    is the only thing that gives it a level.
+    Nothing else sets it: with no Flask app, `get_logger()` returns this
+    module's logger. Entry points call this; `db_url` deliberately does not.
     """
     if "LOG_LEVEL" in vars:
         LOGGER.setLevel(vars["LOG_LEVEL"])

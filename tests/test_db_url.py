@@ -7,7 +7,7 @@ secret named by DB_SECRET_ARN.
 import json
 import logging
 
-from openforge.db import db_url, set_log_level
+from openforge.db import PgDB, db_url, set_log_level
 
 
 class FakeSecretsManager:
@@ -59,28 +59,29 @@ def test_password_is_percent_encoded_for_libpq():
 
 
 def test_building_a_url_does_not_touch_the_logger():
-    """Pins the purity: a level set here would outlive the test that set it.
-
-    `logging.getLogger` is process-wide, so a level set on `openforge.db`
-    while building a URL would hold for every test that ran afterwards, and
-    `caplog.at_level` sets root, which cannot mask it.
-    """
     logger = logging.getLogger("openforge.db")
     before = logger.level
-    try:
-        db_url({"LOG_LEVEL": "DEBUG"})
-        assert logger.level == before
-    finally:
-        logger.setLevel(before)
+
+    db_url({"LOG_LEVEL": "DEBUG"})
+
+    assert logger.level == before
+
+
+def test_constructing_a_db_does_not_touch_the_logger():
+    """The URL builder is not the only way in: `PgDB` takes the same mapping."""
+    logger = logging.getLogger("openforge.db")
+    before = logger.level
+
+    PgDB({"LOG_LEVEL": "DEBUG"}, use_pool=False)
+
+    assert logger.level == before
 
 
 def test_set_log_level_sets_it_and_a_missing_level_leaves_it_alone():
     logger = logging.getLogger("openforge.db")
-    before = logger.level
-    try:
-        set_log_level({"LOG_LEVEL": "WARNING"})
-        assert logger.level == logging.WARNING
-        set_log_level({})
-        assert logger.level == logging.WARNING
-    finally:
-        logger.setLevel(before)
+
+    set_log_level({"LOG_LEVEL": "WARNING"})
+    assert logger.level == logging.WARNING
+
+    set_log_level({})
+    assert logger.level == logging.WARNING

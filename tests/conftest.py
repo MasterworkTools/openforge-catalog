@@ -39,12 +39,9 @@ os.environ.setdefault("PGPORT", "5432")
 def contain_db_log_level():
     """Keep one test's log level out of the next one's.
 
-    The migrate and loader entry points set the `openforge.db` level from
-    LOG_LEVEL, which is what they are supposed to do — but `logging` is
-    process-wide, so invoking one in a test would otherwise pin that level for
-    the rest of the session. `test_tags_sql.py` gates on the effective level,
-    and `caplog.at_level` sets root, which cannot mask a level set on the
-    logger itself.
+    Entry points set the `openforge.db` level, and `logging` is process-wide,
+    so without this one test's level reaches every later test. `caplog` cannot
+    mask it: it sets root, not this logger.
     """
     logger = logging.getLogger("openforge.db")
     before = logger.level
