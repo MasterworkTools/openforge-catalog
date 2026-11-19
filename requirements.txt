@@ -17,3 +17,4 @@ requests==2.32.5
 bleach==6.3.0
 beautifulsoup4==4.14.3
 Pillow==11.1.0
+patreon==0.5.0

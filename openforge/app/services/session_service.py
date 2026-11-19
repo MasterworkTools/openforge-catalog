@@ -55,6 +55,27 @@ class SessionService:
             "csrf_token": csrf_token,
         }
 
+    def create_user_session(self, user_id: str) -> Dict:
+        """Create new session for authenticated user (30 days duration)."""
+        # Generate secure session token
+        session_token = secrets.token_urlsafe(32)
+        session_token_hash = self._hash_token(session_token)
+
+        # Set expiration to 30 days from now
+        expires_at = datetime.now(timezone.utc) + timedelta(days=30)
+
+        # Store hash in database with user_id
+        session_id = self._insert_user_session(session_token_hash, expires_at, user_id)
+
+        # Generate CSRF token for the session
+        csrf_token = self.get_csrf_token_for_session(session_id)
+
+        return {
+            "session_token": session_token,
+            "expires_at": expires_at.isoformat(),
+            "csrf_token": csrf_token,
+        }
+
     def validate_session(self, session_token: str) -> Optional[Dict]:
         """Validate session token and update last_used_at (throttled by trigger).
 
@@ -65,6 +86,10 @@ class SessionService:
         # First validate the session exists and is not expired
         session = self._get_session_by_hash(session_token_hash)
         if not session or session["expires_at"] < datetime.now(timezone.utc):
+            return None
+
+        # Check if user is blocked
+        if session.get("user_id") and session.get("blocked"):
             return None
 
         # If valid, trigger an UPDATE to refresh last_used_at
@@ -81,12 +106,23 @@ class SessionService:
             logger.exception("Failed to update session last_used_at")
 
         # Return safe session data (exclude sensitive fields like session_token_hash)
-        return {
+        result = {
             "id": session["id"],
             "created_at": session["created_at"],
             "expires_at": session["expires_at"],
             "last_used_at": session["last_used_at"],
         }
+
+        # Include user info if this is a user session
+        if session.get("user_id"):
+            result["user"] = {
+                "id": session["user_id"],
+                "email": session["email"],
+                "role": session["role"],
+                "patreon_tier": session["patreon_tier"],
+            }
+
+        return result
 
     def delete_session(self, session_token: str) -> bool:
         """Delete session (logout).
@@ -148,15 +184,46 @@ class SessionService:
                 result = curs.fetchone()
                 return str(result["id"])
 
+    def _insert_user_session(
+        self, session_token_hash: str, expires_at: datetime, user_id: str
+    ) -> str:
+        """Insert new user session into database."""
+        with self.db.connection() as conn:
+            with conn.cursor(row_factory=dict_row) as curs:
+                query = sql.SQL(
+                    """
+                    INSERT INTO sessions (session_token_hash, expires_at, user_id)
+                    VALUES ({session_token_hash}, {expires_at}, {user_id})
+                    RETURNING id
+                    """
+                ).format(
+                    session_token_hash=sql.Placeholder("session_token_hash"),
+                    expires_at=sql.Placeholder("expires_at"),
+                    user_id=sql.Placeholder("user_id"),
+                )
+                curs.execute(
+                    query,
+                    {
+                        "session_token_hash": session_token_hash,
+                        "expires_at": expires_at,
+                        "user_id": user_id,
+                    },
+                )
+                result = curs.fetchone()
+                return str(result["id"])
+
     def _get_session_by_hash(self, session_token_hash: str) -> Optional[Dict]:
         """Get session by token hash."""
         with self.db.connection() as conn:
             with conn.cursor(row_factory=dict_row) as curs:
                 query = sql.SQL(
                     """
-                    SELECT id, session_token_hash, created_at, expires_at, last_used_at
-                    FROM sessions
-                    WHERE session_token_hash = {session_token_hash}
+                    SELECT s.id, s.session_token_hash, s.created_at, s.expires_at,
+                           s.last_used_at, s.user_id,
+                           u.email, u.role, u.patreon_tier, u.blocked
+                    FROM sessions s
+                    LEFT JOIN users u ON s.user_id = u.id
+                    WHERE s.session_token_hash = {session_token_hash}
                     """
                 ).format(session_token_hash=sql.Placeholder("session_token_hash"))
                 curs.execute(query, {"session_token_hash": session_token_hash})
