@@ -58,7 +58,7 @@ jobs:
         with:
           node-version: '22'
       - name: Install dependencies
-        run: npm install
+        run: npm ci
       - name: Run React tests
         run: npm test
 
@@ -71,9 +71,12 @@ jobs:
         with:
           node-version: '22'
       - name: Install dependencies
-        run: npm install
+        run: npm ci
       - name: Run linting and type checking
         run: npm run lint:all
+
+      - name: Build frontend
+        run: npm run build
 
   python-lint:
     runs-on: ubuntu-latest
