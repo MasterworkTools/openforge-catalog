@@ -55,9 +55,11 @@ For Debian/Ubuntu users: `sudo apt install libpq-dev libyaml-dev postgresql-clie
 
 For Mac users: `brew install libpq` & `brew install postgresql` & `brew install openssl`
 
-After that, recompile psycopg with `pip install --upgrade --force-reinstall psycopg==3.2.3` and `pip install "psycopg[binary]==3.2.3"`.
+After that, recompile psycopg with `pip install --upgrade --force-reinstall -r requirements.txt`. The pinned versions live in `requirements.txt`, so this stays right when they change.
 
-To start the postgres container, run `docker compose up -d`.
+To start the postgres container, run `docker compose up -d`. It runs the same
+Postgres major as Aurora, so a `db-data/` directory left behind by a newer one
+will refuse to start and has to be removed.
 
 To connect to the postgres container, run `psql -U openforge -W openforge -h 127.0.0.1`.
 
