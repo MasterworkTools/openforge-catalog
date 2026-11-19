@@ -14,93 +14,12 @@ defaults:
     shell: bash
 
 jobs:
-  python-test:
-    runs-on: ubuntu-latest
-    services:
-      postgres:
-        image: postgres:latest
-        env:
-          POSTGRES_USER: openforge
-          POSTGRES_PASSWORD: openforge
-          POSTGRES_DB: openforge_test
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
+  tests:
+    uses: ./.github/workflows/tests.yaml
 
-    steps:
-    - uses: actions/checkout@v6
-
-    - name: Set up Python
-      uses: actions/setup-python@v6
-      with:
-        python-version: '3.13'
-
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt
-        pip install -r requirements-dev.txt
-        pip install -e .
-
-    - name: Run tests
-      env:
-        PGHOST: localhost
-        PGUSER: openforge
-        PGPASSWORD: openforge
-        PGDATABASE: openforge_test
-        PGPORT: 5432
-      run: |
-        pytest tests/ --cov=openforge
-
-  react-test:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-      - name: Use Node.js
-        uses: actions/setup-node@v6
-        with:
-          node-version: '22'
-      - name: Install dependencies
-        run: npm ci
-      - name: Run React tests
-        run: npm test
-
-  js-lint:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-      - name: Use Node.js
-        uses: actions/setup-node@v6
-        with:
-          node-version: '22'
-      - name: Install dependencies
-        run: npm ci
-      - name: Run linting and type checking
-        run: npm run lint:all
-
-  python-lint:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-      - name: Set up Python
-        uses: actions/setup-python@v6
-        with:
-          python-version: '3.13'
-      - name: Install ruff
-        run: |
-          python -m pip install --upgrade pip
-          pip install ruff==0.8.6
-      - name: Run ruff linting
-        run: ruff check .
-      - name: Run ruff formatting check
-        run: ruff format --check .
   docker-build:
     name: Staging Docker Build
-    needs: [python-test, react-test, js-lint, python-lint]
+    needs: [tests]
     environment: staging
     runs-on: ubuntu-latest
     permissions:
@@ -172,9 +91,8 @@ jobs:
       #
       # `aws_lambda_function` waits for LastUpdateStatus=Successful, so a single
       # apply would put the new API image live *before* the migrate job ran —
-      # /api/* serving new code against the old schema, which is exactly the
-      # unhandled 500 openforge_catalog-jag measured. The frontend was gated; the
-      # API image never was.
+      # /api/* serving new code against the old schema, which is the unhandled
+      # 500 this step exists to prevent.
       #
       # So: move only the migration function first (-target pulls in its role and
       # log group), let the migrate job run against it, then apply everything else
@@ -328,9 +246,7 @@ jobs:
 
       # Everything, including promoting the API image to this run's sha. It happens
       # after the migration, so the code that needs the new schema never runs against
-      # the old one. Until this pipeline existed nothing pointed the staging function
-      # at a new image at all, so staging served a current frontend against a
-      # nine-month-old backend.
+      # the old one.
       - name: tofu apply
         id: apply
         working-directory: terraform/environments/staging
