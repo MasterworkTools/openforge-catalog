@@ -53,7 +53,6 @@ jobs:
 
       - name: Docker Build and Push
         id: docker-build
-        if: ${{ ! inputs.use_cache }}
         uses: docker/build-push-action@v6
         with:
           context: ./
