@@ -55,9 +55,9 @@ For Debian/Ubuntu users: `sudo apt install libpq-dev libyaml-dev postgresql-clie
 
 For Mac users: `brew install libpq` & `brew install postgresql` & `brew install openssl`
 
-After that, recompile psycopg with `pip install --upgrade --force-reinstall psycopg==3.2.3` and `pip install "psycopg[binary]==3.2.3"`.
-
-To start the postgres container, run `docker compose up -d`.
+To start the postgres container, run `docker compose up -d`. It runs the same
+Postgres major as Aurora, so a `db-data/` directory left behind by a newer one
+will refuse to start and has to be removed.
 
 To connect to the postgres container, run `psql -U openforge -W openforge -h 127.0.0.1`.
 
@@ -65,7 +65,7 @@ To run the db update script, run `bin/db_update up`.
 
 If you want to load the fixtures, run `bin/fixtures`.
 
-Now you can run `yarn flask-dev` to start the flask server.
+Now you can run `npm run flask-dev` to start the flask server.
 
 ### Testing
 To run the test suite, first create the test database:
