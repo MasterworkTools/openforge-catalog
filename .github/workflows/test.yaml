@@ -75,9 +75,6 @@ jobs:
       - name: Run linting and type checking
         run: npm run lint:all
 
-      # The deploy's own build is the only other one, and it runs after
-      # tofu-apply has already changed infrastructure. React Compiler
-      # errors reach the build without reaching lint:all.
       - name: Build frontend
         run: npm run build
 
