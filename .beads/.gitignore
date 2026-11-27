@@ -82,3 +82,10 @@ beads.right.jsonl
 beads.right.meta.json
 .migration-hint-ts
 .jsonl.lock
+
+# Added by bd (missing required patterns)
+*.gate.lock*
+last_pull
+proxieddb/
+dolt-server-config.yaml
+proxied_server_client_info.json
